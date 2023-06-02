@@ -1,4 +1,8 @@
-lockfileVersion: '6.0'
+lockfileVersion: '6.1'
+
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
 
 dependencies:
   '@nestjs/common':
@@ -51,6 +55,9 @@ devDependencies:
   '@typescript-eslint/parser':
     specifier: ^5.0.0
     version: 5.0.0(eslint@8.0.1)(typescript@5.0.2)
+  commitlint-config-git-commit-emoji:
+    specifier: ^1.0.0
+    version: 1.0.0
   eslint:
     specifier: ^8.0.1
     version: 8.0.1
@@ -2273,6 +2280,10 @@ packages:
   /commander@4.1.1:
     resolution: {integrity: sha512-NOKm8xhkzAjzFx8B2v5OAHT+u5pRQc2UCa2Vq9jYL/31o2wi9mxBA7LIFs3sV5VSC49z6pEhfbMULvShKj26WA==}
     engines: {node: '>= 6'}
+    dev: true
+
+  /commitlint-config-git-commit-emoji@1.0.0:
+    resolution: {integrity: sha512-AnWvAu50BZ2ikzlsECKya4nAvPdu62RC3U/8wmb8TlSiLbaLrz10jV8On/8tc2UW1C9ckuLQx3WkLhaiFcvPhg==}
     dev: true
 
   /compare-func@2.0.0:
