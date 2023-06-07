@@ -11,13 +11,13 @@ export class UsersService {
       userId: 1,
       username: 'john',
       email: 'john@gmail.com',
-      password: 'changeme',
+      password: '$2b$10$RVet/L9xDhUHOfOWo3yeEO6WF7WbL7aJdFcJjcvaQ7Dt5hb3V5p/.',
     },
     {
       userId: 2,
       email: 'maria@gmail.com',
       username: 'maria',
-      password: 'guess',
+      password: '$2b$10$RVet/L9xDhUHOfOWo3yeEO6WF7WbL7aJdFcJjcvaQ7Dt5hb3V5p/.',
     },
   ]
 

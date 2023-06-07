@@ -2,16 +2,17 @@ import { Injectable, UnauthorizedException } from '@nestjs/common'
 import { UsersService } from '../users/users.service'
 import { JwtService } from '@nestjs/jwt'
 import { CookieOptions, Response } from 'express'
+import * as bcrypt from 'bcrypt'
 
 @Injectable()
 export class AuthenticationService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
-  // TODO: need to hash password
   async signIn(email: string, pass: string, response: Response) {
     const user = await this.usersService.findOne(email)
+    const isVerifiedPassword = await bcrypt.compare(pass, user.password)
 
-    if (user?.password !== pass) {
+    if (!isVerifiedPassword) {
       throw new UnauthorizedException()
     }
 

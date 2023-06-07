@@ -14,6 +14,8 @@ export class AuthenticationController {
     return this.authService.signIn(signInDto.email, signInDto.password, response)
   }
 
+  // TODO: Generate SignUp Controller
+
   @UseGuards(AuthGuard)
   @Get('profile')
   getProfile(@Request() req) {
