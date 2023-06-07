@@ -1,7 +1,8 @@
-import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Get, Request } from '@nestjs/common'
+import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Get, Request, Res } from '@nestjs/common'
 import { AuthenticationService } from './authentication.service'
 import { AuthGuard } from './authentication.guard'
 import { LoginReq } from './dto/request/login.req'
+import { Response } from 'express'
 
 @Controller('auth')
 export class AuthenticationController {
@@ -9,8 +10,8 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: LoginReq) {
-    return this.authService.signIn(signInDto.email, signInDto.password)
+  signIn(@Body() signInDto: LoginReq, @Res({ passthrough: true }) response: Response) {
+    return this.authService.signIn(signInDto.email, signInDto.password, response)
   }
 
   @UseGuards(AuthGuard)
