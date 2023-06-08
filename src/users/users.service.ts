@@ -11,7 +11,7 @@ export class UsersService {
       userId: 1,
       username: 'john',
       email: 'john@gmail.com',
-      password: '$2b$10$RVet/L9xDhUHOfOWo3yeEO6WF7WbL7aJdFcJjcvaQ7Dt5hb3V5p/.',
+      password: 'no',
     },
     {
       userId: 2,
