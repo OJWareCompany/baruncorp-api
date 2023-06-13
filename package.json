@@ -9,7 +9,7 @@
     "build": "nest build",
     "db:format": "pnpx prisma format",
     "db:generate": "pnpx prisma generate",
-    "db:migrate": "pnpx prisma migrate dev",
+    "db:migrate": "pnpx prisma migrate dev", 
     "db:push":"npx prisma db push",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
