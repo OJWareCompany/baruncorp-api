@@ -1,9 +1,20 @@
-import { IsEmail, IsString } from 'class-validator'
+import { IsEmail, IsString, IsStrongPassword, Matches } from 'class-validator'
+import { PasswordOption } from '../../../users/vo/password.vo'
 
 export class LoginReq {
   @IsEmail()
-  email: string
+  readonly email: string
 
-  @IsString()
-  password: string
+  @IsStrongPassword(PasswordOption, { message: '10111' })
+  readonly password: string
+
+  // constructor() {}
+
+  // getEmail(): EmailVO {
+  //   return new EmailVO(this.email)
+  // }
+
+  // getPassword(): InputPasswordVO {
+  //   return new InputPasswordVO(this.password)
+  // }
 }

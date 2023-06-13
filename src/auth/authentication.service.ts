@@ -1,28 +1,48 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
 import { UsersService } from '../users/users.service'
 import { JwtService } from '@nestjs/jwt'
 import { CookieOptions, Response } from 'express'
-import * as bcrypt from 'bcrypt'
+import { SignUpReq } from './dto/request/signup.req'
+import { EmailVO } from '../users/vo/email.vo'
+import { InputPasswordVO } from '../users/vo/password.vo'
 
 @Injectable()
 export class AuthenticationService {
   constructor(private usersService: UsersService, private jwtService: JwtService) {}
 
-  async signIn(email: string, pass: string, response: Response) {
-    const user = await this.usersService.findOne(email)
-    const isVerifiedPassword = await bcrypt.compare(pass, user.password)
+  async signIn(email: EmailVO, password: InputPasswordVO, response: Response) {
+    const user = await this.usersService.findUserIdByEmail(email)
+    if (!user) throw new NotFoundException()
+
+    const originalPassword = await this.usersService.findPasswordByUserId(user.id)
+    const isVerifiedPassword = await password.compare(originalPassword)
 
     if (!isVerifiedPassword) {
       throw new UnauthorizedException()
     }
 
-    const payload = { sub: user.userId, username: user.username }
-    const access_token = await this.jwtService.signAsync(payload)
-    this.setToken(access_token, response)
+    const payload = { sub: user.id }
+    const accessToken = await this.jwtService.signAsync(payload)
+    this.setToken(accessToken, response)
 
     return {
-      access_token,
+      accessToken,
     }
+  }
+
+  async signUp(signUpReq: SignUpReq) {
+    // Check Code
+    const { code, password, ...rest } = signUpReq
+
+    const invitationMail = await this.usersService.findInvitationMail(code)
+    // if (!invitationMail) throw new NotFoundException()
+
+    // Check Company
+
+    // Give User Role
+
+    await this.usersService.insertUser(rest, new InputPasswordVO(password))
+    await this.usersService.deleteInvitationMail(code)
   }
 
   // TODO: turn secure on after setup https
