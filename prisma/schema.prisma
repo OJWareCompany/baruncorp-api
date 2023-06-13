@@ -1,0 +1,90 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model CompanyTypes {
+  type         String         @id
+  Companies    Companies[]
+  CompanyRoles CompanyRoles[]
+
+  @@map("company_types")
+}
+
+model Companies {
+  id                Int               @id @default(autoincrement())
+  description       String
+  companyTypeEntity CompanyTypes      @relation(fields: [companyType], references: [type])
+  companyType       String            @map("company_type")
+  InvitationEmail   InvitationEmail[]
+
+  @@map("companies")
+}
+
+model Roles {
+  role         String         @id
+  CompanyRoles CompanyRoles[]
+
+  @@map("roles")
+}
+
+model CompanyRoles {
+  rolesEntity       Roles             @relation(fields: [role], references: [role])
+  role              String
+  companyTypeEntity CompanyTypes      @relation(fields: [companyType], references: [type])
+  companyType       String            @map("company_type")
+  InvitationEmail   InvitationEmail[]
+  UserRole          UserRole[]
+
+  @@id([companyType, role])
+  @@map("company_roles")
+}
+
+model InvitationEmail {
+  code              String       @id
+  company           Companies    @relation(fields: [companyId], references: [id])
+  companyId         Int          @map("company_id")
+  companyRoleEntity CompanyRoles @relation(fields: [role, companyType], references: [role, companyType])
+  role              String
+  companyType       String       @map("company_type")
+
+  @@map("invitation_email")
+}
+
+model UserRole {
+  companyRoleEntity CompanyRoles @relation(fields: [role, companyType], references: [role, companyType])
+  role              String
+  companyType       String       @map("company_type")
+  user              Users        @relation(fields: [userId], references: [id])
+  userId            String       @map("user_id")
+
+  @@id([userId, role, companyType])
+  @@map("user_role")
+}
+
+model Users {
+  id             String     @id @default(uuid())
+  email          String     @unique
+  firstName      String     @map("first_name")
+  lastName       String     @map("last_name")
+  passwordEntity Passwords?
+  UserRole       UserRole[]
+
+  @@map("users")
+}
+
+model Passwords {
+  user     Users  @relation(fields: [userId], references: [id])
+  userId   String @unique @map("user_id")
+  password String
+
+  @@id([userId, password])
+  @@map("passwords")
+}
