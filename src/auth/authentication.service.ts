@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
-import { UsersService } from '../users/users.service'
+import { UserService } from '../users/users.service'
 import { JwtService } from '@nestjs/jwt'
 import { CookieOptions, Response } from 'express'
 import { SignUpReq } from './dto/request/signup.req'
@@ -11,7 +11,7 @@ import { CompanyService } from '../company/company.service'
 export class AuthenticationService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly usersService: UsersService,
+    private readonly usersService: UserService,
     private readonly companyService: CompanyService,
   ) {}
 
@@ -26,7 +26,7 @@ export class AuthenticationService {
       throw new UnauthorizedException()
     }
 
-    const payload = { sub: user.id }
+    const payload = { zcode: user.id }
     const accessToken = await this.jwtService.signAsync(payload)
     this.setToken(accessToken, response)
 

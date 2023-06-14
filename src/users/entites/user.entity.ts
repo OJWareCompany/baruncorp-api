@@ -13,4 +13,8 @@ export class UserEntity implements UserProp {
   constructor(email: EmailVO) {
     this.email = email.email
   }
+
+  getFullname() {
+    return this.firstName + this.lastName
+  }
 }

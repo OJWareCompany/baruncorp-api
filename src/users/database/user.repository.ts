@@ -9,6 +9,29 @@ import { InputPasswordVO } from '../vo/password.vo'
 export class UserRepository implements UserRepositoryPort {
   constructor(private readonly prismaService: PrismaService) {}
 
+  // maybe userentity no need 'id'
+  async findOneById(id: string): Promise<UserProp> {
+    return await this.prismaService.users.findUnique({
+      where: { id },
+      // select: {
+      //   email: true,
+      //   firstName: true,
+      //   lastName: true,
+      //   company: true,
+      // },
+    })
+  }
+
+  async update(userId: string, { firstName, lastName }: Pick<UserProp, 'firstName' | 'lastName'>): Promise<UserProp> {
+    return await this.prismaService.users.update({
+      where: { id: userId },
+      data: {
+        firstName,
+        lastName,
+      },
+    })
+  }
+
   // TODO: Check a transaction
   async insertUser(companyId: number, data: UserProp, password: InputPasswordVO): Promise<UserProp> {
     return await this.prismaService.users.create({

@@ -1,4 +1,4 @@
-import { UserProp } from 'src/users/interfaces/user.interface'
+import { UserProp } from '../../users/interfaces/user.interface'
 import { CompanyProp } from '../interfaces/company.interface'
 import { UserRoleProp } from '../interfaces/user-role.interface'
 

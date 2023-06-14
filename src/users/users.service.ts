@@ -8,11 +8,19 @@ import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationRepository: InvitationMailRepositoryPort,
   ) {}
+
+  async getUserInfo(userId: string): Promise<UserProp> {
+    return await this.userRepository.findOneById(userId)
+  }
+
+  async upadteUser(userId: string, props: Pick<UserProp, 'firstName' | 'lastName'>): Promise<UserProp> {
+    return await this.userRepository.update(userId, props)
+  }
 
   async findOneByEmail(email: EmailVO): Promise<UserProp> {
     return await this.userRepository.findOneByEmail(email)
