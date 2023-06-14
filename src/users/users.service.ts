@@ -26,8 +26,8 @@ export class UsersService {
     return await this.userRepository.findPasswordByUserId(id)
   }
 
-  async insertUser(createUserDto: Omit<UserProp, 'id'>, password: InputPasswordVO) {
-    return await this.userRepository.insertUser(createUserDto, password)
+  async insertUser(companyId: number, createUserDto: Omit<UserProp, 'id' | 'companyId'>, password: InputPasswordVO) {
+    return await this.userRepository.insertUser(companyId, createUserDto, password)
   }
 
   async deleteInvitationMail(code: string): Promise<void> {

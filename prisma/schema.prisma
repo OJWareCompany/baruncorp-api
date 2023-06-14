@@ -12,8 +12,8 @@ datasource db {
 
 model CompanyTypes {
   type         String         @id
-  Companies    Companies[]
-  CompanyRoles CompanyRoles[]
+  companies    Companies[]
+  companyRoles CompanyRoles[]
 
   @@map("company_types")
 }
@@ -24,14 +24,15 @@ model Companies {
   description       String
   companyTypeEntity CompanyTypes      @relation(fields: [companyType], references: [type])
   companyType       String            @map("company_type")
-  InvitationEmail   InvitationEmail[]
+  invitationEmail   InvitationEmail[]
+  users             Users[]
 
   @@map("companies")
 }
 
 model Roles {
   role         String         @id
-  CompanyRoles CompanyRoles[]
+  companyRoles CompanyRoles[]
 
   @@map("roles")
 }
@@ -41,7 +42,7 @@ model CompanyRoles {
   role              String
   companyTypeEntity CompanyTypes      @relation(fields: [companyType], references: [type])
   companyType       String            @map("company_type")
-  InvitationEmail   InvitationEmail[]
+  invitationEmail   InvitationEmail[]
   UserRole          UserRole[]
 
   @@id([companyType, role])
@@ -77,6 +78,8 @@ model Users {
   lastName       String     @map("last_name")
   passwordEntity Passwords?
   UserRole       UserRole[]
+  company        Companies? @relation(fields: [companyId], references: [id])
+  companyId      Int?
 
   @@map("users")
 }

@@ -8,6 +8,7 @@ export class UserEntity implements UserProp {
   readonly firstName: string
   readonly lastName: string
   readonly password: string
+  readonly companyId: number
 
   constructor(email: EmailVO) {
     this.email = email.email

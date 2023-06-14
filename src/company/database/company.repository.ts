@@ -1,17 +1,84 @@
 import { Injectable } from '@nestjs/common'
-import { CompanyRepositoryPort } from './company.repository.port'
+import { CompanyMember, CompanyRepositoryPort } from './company.repository.port'
 import { CompanyProp } from '../interfaces/company.interface'
 import { PrismaService } from '../../database/prisma.service'
 import { UserRoleProp } from '../interfaces/user-role.interface'
+
+// Where should I put member list? Event Storming Helpful Decide
 
 @Injectable()
 export class CompanyRepository implements CompanyRepositoryPort {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async findMembers(): Promise<CompanyMember[]> {
+    const joinUserRole = {
+      userRole: {
+        select: {
+          role: true,
+        },
+      },
+    }
+
+    const joinUser = {
+      users: {
+        select: {
+          lastName: true,
+          firstName: true,
+          email: true,
+          // ...joinUserRole,
+        },
+      },
+    }
+
+    const companyMember = await this.prismaService.companies.findMany({
+      select: {
+        name: true,
+        ...joinUser,
+      },
+    })
+
+    console.log(companyMember)
+
+    return companyMember
+  }
+
+  async findMembersByCompanyId(companyId: number): Promise<CompanyMember> {
+    const joinUserRole = {
+      userRole: {
+        select: {
+          role: true,
+        },
+      },
+    }
+
+    const joinUser = {
+      users: {
+        select: {
+          lastName: true,
+          firstName: true,
+          email: true,
+          // ...joinUserRole,
+        },
+      },
+    }
+
+    return await this.prismaService.companies.findFirst({
+      where: { id: companyId },
+      select: {
+        name: true,
+        ...joinUser,
+      },
+    })
+  }
+
+  async findAll(): Promise<CompanyProp[]> {
+    return await this.prismaService.companies.findMany()
+  }
+
   async findOneById(companyId: number): Promise<CompanyProp> {
     return await this.prismaService.companies.findUnique({ where: { id: companyId } })
   }
-  async findOneByName(name: string): Promise<CompanyProp[]> {
+  async findByName(name: string): Promise<CompanyProp[]> {
     return await this.prismaService.companies.findMany({ where: { name: { contains: name } } })
   }
 

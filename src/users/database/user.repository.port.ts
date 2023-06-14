@@ -8,6 +8,10 @@ export interface UserRepositoryPort {
   findOneByEmail(email: EmailVO): Promise<UserProp>
   findUserIdByEmail(email: EmailVO): Promise<Pick<UserProp, 'id'>>
   findPasswordByUserId(id: string): Promise<string>
-  insertUser(userProps: Omit<UserProp, 'id'>, password: InputPasswordVO): Promise<UserProp>
+  insertUser(
+    companyId: number,
+    userProps: Omit<UserProp, 'id' | 'companyId'>,
+    password: InputPasswordVO,
+  ): Promise<UserProp>
   transaction(...args: any[]): Promise<any>
 }

@@ -10,10 +10,11 @@ export class UserRepository implements UserRepositoryPort {
   constructor(private readonly prismaService: PrismaService) {}
 
   // TODO: Check a transaction
-  async insertUser(data: UserProp, password: InputPasswordVO): Promise<UserProp> {
+  async insertUser(companyId: number, data: UserProp, password: InputPasswordVO): Promise<UserProp> {
     return await this.prismaService.users.create({
       data: {
         ...data,
+        companyId,
         passwordEntity: {
           create: {
             password: await password.hash(),

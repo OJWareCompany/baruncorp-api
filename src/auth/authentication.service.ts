@@ -45,7 +45,7 @@ export class AuthenticationService {
     const company = await this.companyService.findCompanyById(invitationMail.companyId)
     if (!company) throw new NotFoundException('Company Not Found')
 
-    const user = await this.usersService.insertUser(rest, new InputPasswordVO(password))
+    const user = await this.usersService.insertUser(company.id, rest, new InputPasswordVO(password))
 
     // Give User Role
     await this.companyService.giveUserRole({
