@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { CompanyRepositoryPort } from './company.repository.port'
 import { CompanyProp } from '../interfaces/company.interface'
-import { PrismaService } from 'src/database/prisma.service'
+import { PrismaService } from '../../database/prisma.service'
 import { UserRoleProp } from '../interfaces/user-role.interface'
 
 @Injectable()
@@ -27,6 +27,7 @@ export class CompanyRepository implements CompanyRepositoryPort {
     return await this.prismaService.userRole.create({ data: prop })
   }
 
+  // TODO: how to soft delete
   // TODO: how to use only userId when i delete record
   async removeRole(userRoleProp: UserRoleProp): Promise<void> {
     await this.prismaService.userRole.delete({
