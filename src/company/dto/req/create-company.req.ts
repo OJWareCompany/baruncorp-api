@@ -10,6 +10,6 @@ export class CreateCompnayReq implements Omit<CompanyProp, 'id'> {
 
   // TODO: use constant variable
   @IsString()
-  @Matches(/[(barunCorp)(client)(individual)(outsourcing)]/)
+  @Matches(/(barunCorp|client|individual|outsourcing)/, { message: 'Company Type Not Found' })
   companyType: string
 }

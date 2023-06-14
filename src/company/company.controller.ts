@@ -1,7 +1,8 @@
-import { Controller, Get, Query } from '@nestjs/common'
+import { Body, Controller, Get, Post, Query } from '@nestjs/common'
 import { CompanyService } from './company.service'
 import { CompanyProp } from './interfaces/company.interface'
 import { CompanyMember } from './database/company.repository.port'
+import { CreateCompnayReq } from './dto/req/create-company.req'
 
 @Controller('companies')
 export class CompanyController {
@@ -19,5 +20,10 @@ export class CompanyController {
     } else {
       return await this.companyService.findMembers()
     }
+  }
+
+  @Post('')
+  async createCompany(@Body() dto: CreateCompnayReq) {
+    return await this.companyService.createCompany(dto)
   }
 }

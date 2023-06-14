@@ -8,7 +8,7 @@ import { UserRoleProp } from './interfaces/user-role.interface'
 export class CompanyService {
   constructor(@Inject(COMPANY_REPOSITORY) private readonly companyRepository: CompanyRepositoryPort) {}
 
-  async createCompany(props: CompanyProp): Promise<CompanyProp> {
+  async createCompany(props: Omit<CompanyProp, 'id'>): Promise<CompanyProp> {
     return await this.companyRepository.insertCompany(props)
   }
 

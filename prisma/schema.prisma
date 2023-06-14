@@ -20,7 +20,7 @@ model CompanyTypes {
 
 model Companies {
   id                Int               @id @default(autoincrement())
-  name              String
+  name              String            @unique
   description       String
   companyTypeEntity CompanyTypes      @relation(fields: [companyType], references: [type])
   companyType       String            @map("company_type")
