@@ -18,6 +18,12 @@ export class AuthenticationController {
   }
 
   @HttpCode(HttpStatus.OK)
+  @Post('logout')
+  async logout(@Res({ passthrough: true }) response: Response) {
+    response.clearCookie('token')
+  }
+
+  @HttpCode(HttpStatus.OK)
   @Post('signup')
   async signUp(@Body() signUpDto: SignUpReq) {
     return await this.authService.signUp(signUpDto)
