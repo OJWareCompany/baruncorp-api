@@ -10,3 +10,20 @@ services:
     volumes:
       - ./db/conf.d:/etc/mysql/conf.d
       - ./db/data:/var/lib/mysql
+
+  # app:
+  #   # container_name: app
+  #   build:
+  #     context: ./
+  #     dockerfile: Dockerfile
+  #   # tty: true
+  #   command: pnpm run start:dev
+  #   ports:
+  #     - '3001:8080'
+  #     # - '5555:5555'
+  #   volumes:
+  #     - .:/app
+  #   # depends_on:
+  #   #   - db
+  #   env_file:
+  #     - ./.env
