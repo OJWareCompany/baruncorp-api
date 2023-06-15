@@ -21,6 +21,8 @@ COPY . .
 RUN pnpx prisma generate
 RUN pnpm build
 
+# RUN pnpx prisma db push
 
 CMD ["pnpm", "run", "start:dev"]
-EXPOSE 8080
+
+EXPOSE 3000
