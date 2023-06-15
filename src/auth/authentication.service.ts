@@ -1,14 +1,19 @@
 import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
-import { UsersService } from '../users/users.service'
+import { UserService } from '../users/users.service'
 import { JwtService } from '@nestjs/jwt'
 import { CookieOptions, Response } from 'express'
 import { SignUpReq } from './dto/request/signup.req'
 import { EmailVO } from '../users/vo/email.vo'
 import { InputPasswordVO } from '../users/vo/password.vo'
+import { CompanyService } from '../company/company.service'
 
 @Injectable()
 export class AuthenticationService {
-  constructor(private usersService: UsersService, private jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly usersService: UserService,
+    private readonly companyService: CompanyService,
+  ) {}
 
   async signIn(email: EmailVO, password: InputPasswordVO, response: Response) {
     const user = await this.usersService.findUserIdByEmail(email)
@@ -21,7 +26,7 @@ export class AuthenticationService {
       throw new UnauthorizedException()
     }
 
-    const payload = { sub: user.id }
+    const payload = { zcode: user.id }
     const accessToken = await this.jwtService.signAsync(payload)
     this.setToken(accessToken, response)
 
@@ -34,14 +39,21 @@ export class AuthenticationService {
     // Check Code
     const { code, password, ...rest } = signUpReq
 
-    const invitationMail = await this.usersService.findInvitationMail(code)
-    // if (!invitationMail) throw new NotFoundException()
+    const invitationMail = await this.usersService.findInvitationMail(code, new EmailVO(signUpReq.email))
+    if (!invitationMail) throw new NotFoundException('Invitation Not Found')
 
-    // Check Company
+    const company = await this.companyService.findCompanyById(invitationMail.companyId)
+    if (!company) throw new NotFoundException('Company Not Found')
+
+    const user = await this.usersService.insertUser(company.id, rest, new InputPasswordVO(password))
 
     // Give User Role
+    await this.companyService.giveUserRole({
+      userId: user.id,
+      role: invitationMail.role,
+      companyType: invitationMail.companyType,
+    })
 
-    await this.usersService.insertUser(rest, new InputPasswordVO(password))
     await this.usersService.deleteInvitationMail(code)
   }
 

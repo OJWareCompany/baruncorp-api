@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { ConflictException, Inject, Injectable } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
 import { EmailVO } from './vo/email.vo'
 import { InputPasswordVO } from './vo/password.vo'
@@ -6,13 +6,23 @@ import { UserProp } from './interfaces/user.interface'
 import { InvitationEmailProp } from './interfaces/invitationMail.interface'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
+import { CreateInvitationMailReq } from './dto/req/create-invitation-mail.req'
+import { randomBytes } from 'crypto'
 
 @Injectable()
-export class UsersService {
+export class UserService {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationRepository: InvitationMailRepositoryPort,
   ) {}
+
+  async getUserProfile(userId: string): Promise<UserProp> {
+    return await this.userRepository.findOneById(userId)
+  }
+
+  async upadteProfile(userId: string, props: Pick<UserProp, 'firstName' | 'lastName'>): Promise<UserProp> {
+    return await this.userRepository.update(userId, props)
+  }
 
   async findOneByEmail(email: EmailVO): Promise<UserProp> {
     return await this.userRepository.findOneByEmail(email)
@@ -26,8 +36,8 @@ export class UsersService {
     return await this.userRepository.findPasswordByUserId(id)
   }
 
-  async insertUser(createUserDto: Omit<UserProp, 'id'>, password: InputPasswordVO) {
-    return await this.userRepository.insertUser(createUserDto, password)
+  async insertUser(companyId: number, createUserDto: Omit<UserProp, 'id' | 'companyId'>, password: InputPasswordVO) {
+    return await this.userRepository.insertUser(companyId, createUserDto, password)
   }
 
   async deleteInvitationMail(code: string): Promise<void> {
@@ -38,11 +48,29 @@ export class UsersService {
     return await this.userRepository.transaction(args)
   }
 
-  async findInvitationMail(code: string): Promise<InvitationEmailProp> {
-    return await this.invitationRepository.findOne(code)
+  async findInvitationMail(code: string, email: EmailVO): Promise<InvitationEmailProp> {
+    return await this.invitationRepository.findOne(code, email)
   }
 
-  async sendInvitationMail(props: InvitationEmailProp): Promise<InvitationEmailProp> {
-    return await this.invitationRepository.insertOne(props)
+  async sendInvitationMail(dto: CreateInvitationMailReq): Promise<InvitationEmailProp> {
+    try {
+      console.log(dto)
+      const user = await this.userRepository.findOneByEmail(new EmailVO(dto.email))
+      if (user) throw new ConflictException('User Already Existed')
+
+      // TODO: to VO
+      const code = randomBytes(10).toString('hex').toUpperCase().slice(0, 6)
+
+      return await this.invitationRepository.insertOne({
+        email: dto.email,
+        code: code,
+        // role: 'manager',
+        role: dto.role,
+        companyId: dto.companyId,
+        companyType: 'BarunCorp',
+      })
+    } catch (error) {
+      console.log(error)
+    }
   }
 }
