@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../../database/prisma.service'
 import { InvitationEmailProp } from '../interfaces/invitationMail.interface'
 import { InvitationMailRepositoryPort } from './invitationMail.repository.port'
+import { EmailVO } from '../vo/email.vo'
 
 @Injectable()
 export class InvitationMailRepository implements InvitationMailRepositoryPort {
@@ -17,10 +18,11 @@ export class InvitationMailRepository implements InvitationMailRepositoryPort {
     })
   }
 
-  async findOne(code: string): Promise<any> {
-    return await this.prismaService.invitationEmail.findUnique({
+  async findOne(code: string, email: EmailVO): Promise<any> {
+    return await this.prismaService.invitationEmail.findFirst({
       where: {
         code,
+        email: email.email,
       },
     })
   }

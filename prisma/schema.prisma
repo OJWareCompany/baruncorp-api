@@ -51,6 +51,7 @@ model CompanyRoles {
 
 model InvitationEmail {
   code              String       @id
+  email             String
   company           Companies    @relation(fields: [companyId], references: [id])
   companyId         Int          @map("company_id")
   companyRoleEntity CompanyRoles @relation(fields: [role, companyType], references: [role, companyType])

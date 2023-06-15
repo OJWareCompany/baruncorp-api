@@ -39,7 +39,7 @@ export class AuthenticationService {
     // Check Code
     const { code, password, ...rest } = signUpReq
 
-    const invitationMail = await this.usersService.findInvitationMail(code)
+    const invitationMail = await this.usersService.findInvitationMail(code, new EmailVO(signUpReq.email))
     if (!invitationMail) throw new NotFoundException('Invitation Not Found')
 
     const company = await this.companyService.findCompanyById(invitationMail.companyId)
