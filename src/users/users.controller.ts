@@ -4,6 +4,12 @@ import { UpdateUserReq } from './dto/req/update-user.req'
 import { CreateInvitationMailReq } from './dto/req/create-invitation-mail.req'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../auth/authentication.guard'
+import { randomBytes } from 'crypto'
+import nodemailer from 'nodemailer'
+import { ConfigModule } from '@nestjs/config'
+ConfigModule.forRoot()
+
+const { EMAIL_USER, EMAIL_PASS } = process.env
 
 @Controller('users')
 export class UsersController {
@@ -24,6 +30,36 @@ export class UsersController {
   @Post('invitations')
   @UseGuards(AuthGuard)
   async sendInvitationMail(@Body() dto: CreateInvitationMailReq) {
-    return await this.userService.sendInvitationMail(dto)
+    // TODO: to VO
+    const code = randomBytes(10).toString('hex').toUpperCase().slice(0, 6)
+
+    const result = await this.userService.sendInvitationMail(dto, code)
+
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.gmail.com',
+      port: 587,
+      secure: false, // upgrade later with STARTTLS
+      auth: {
+        user: EMAIL_USER,
+        pass: EMAIL_PASS,
+      },
+    })
+
+    const mailOptions = {
+      from: EMAIL_USER,
+      to: dto.email,
+      subject: 'BarunCorp Invitation Email',
+      text: `[www.barun.com] / CODE: ${code}`,
+    }
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error)
+      } else {
+        console.log('Email sent!: ' + info.response)
+      }
+    })
+
+    return result
   }
 }

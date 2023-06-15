@@ -7,7 +7,6 @@ import { InvitationEmailProp } from './interfaces/invitationMail.interface'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
 import { CreateInvitationMailReq } from './dto/req/create-invitation-mail.req'
-import { randomBytes } from 'crypto'
 
 @Injectable()
 export class UserService {
@@ -52,20 +51,16 @@ export class UserService {
     return await this.invitationRepository.findOne(code, email)
   }
 
-  async sendInvitationMail(dto: CreateInvitationMailReq): Promise<InvitationEmailProp> {
+  async sendInvitationMail(dto: CreateInvitationMailReq, code: string): Promise<InvitationEmailProp> {
     try {
-      console.log(dto)
       const user = await this.userRepository.findOneByEmail(new EmailVO(dto.email))
       if (user) throw new ConflictException('User Already Existed')
-
-      // TODO: to VO
-      const code = randomBytes(10).toString('hex').toUpperCase().slice(0, 6)
 
       return await this.invitationRepository.insertOne({
         email: dto.email,
         code: code,
         // role: 'manager',
-        role: dto.role,
+        role: dto.role || 'guest',
         companyId: dto.companyId,
         companyType: 'BarunCorp',
       })

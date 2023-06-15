@@ -9,8 +9,8 @@
     "build": "nest build",
     "db:format": "pnpx prisma format",
     "db:generate": "pnpx prisma generate",
-    "db:migrate": "pnpx prisma migrate dev", 
-    "db:push":"npx prisma db push",
+    "db:migrate": "pnpx prisma migrate dev",
+    "db:push": "npx prisma db push",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -31,6 +31,7 @@
     ]
   },
   "dependencies": {
+    "@nestjs-modules/mailer": "^1.8.1",
     "@nestjs/common": "^9.0.0",
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
@@ -42,6 +43,8 @@
     "class-validator": "^0.14.0",
     "cookie-parser": "^1.4.6",
     "date-fns": "^2.30.0",
+    "handlebars": "^4.7.7",
+    "nodemailer": "^6.9.3",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.2.0"
   },
