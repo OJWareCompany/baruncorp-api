@@ -6,3 +6,5 @@ Dockerfile
 .gitignore
 .eslintrc.js
 README.md
+test
+dist
