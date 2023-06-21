@@ -8,6 +8,10 @@ COPY . .
 RUN pnpx prisma generate
 RUN pnpm build
 
+# wait-for-it.sh
+COPY wait-for-it.sh ./
+RUN chmod +x wait-for-it.sh
+
 CMD ["pnpm", "run", "start:dev"]
 
 EXPOSE 3000

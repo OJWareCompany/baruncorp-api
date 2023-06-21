@@ -27,6 +27,10 @@ COPY package*.json pnpm-lock.yaml tsconfig.build.json ./
 COPY --from=build /app/dist/ ./dist/
 COPY --from=build /app/node_modules ./node_modules
 
+# wait-for-it.sh
+COPY wait-for-it.sh ./
+RUN chmod +x wait-for-it.sh
+
 ENTRYPOINT ["pnpm", "run", "start:prod"]
 
 EXPOSE 3000

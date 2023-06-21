@@ -12,15 +12,22 @@ services:
       - ./db/data:/var/lib/mysql
 
   api:
+    container_name: 'barun-api'
     build:
       context: ./
       dockerfile: Dockerfile
     tty: true
+    command:
+      - sh
+      - -c
+      - |
+        /app/wait-for-it.sh db:33906 -t 10
+        pnpm run start:dev
     ports:
       - '3000:3000'
     volumes:
-      - /app/node_modules
       - .:/app
+      - /app/node_modules
     depends_on:
       - db
     env_file:
