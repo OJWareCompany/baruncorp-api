@@ -6,6 +6,8 @@ import { JwtModule } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
 import { CompanyModule } from '../company/company.module'
 
+const { JWT_EXPIRED_TIME } = process.env
+
 @Module({
   imports: [
     UsersModule,
@@ -13,7 +15,7 @@ import { CompanyModule } from '../company/company.module'
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,
-      signOptions: { expiresIn: '24h' },
+      signOptions: { expiresIn: JWT_EXPIRED_TIME },
     }),
   ],
   providers: [AuthenticationService],
