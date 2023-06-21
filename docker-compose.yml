@@ -12,16 +12,15 @@ services:
       - ./db/data:/var/lib/mysql
 
   api:
-    container_name: 'barun-api'
     build:
       context: ./
       dockerfile: Dockerfile
     tty: true
     ports:
       - '3000:3000'
-    volumes:
-      - .:/app
-      - /app/node_modules
+    # volumes:
+    #   - /app/node_modules
+    #   - .:/app
     depends_on:
       - db
     env_file:
