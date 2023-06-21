@@ -17,12 +17,6 @@ services:
       context: ./
       dockerfile: Dockerfile
     tty: true
-    command:
-      - sh
-      - -c
-      - |
-        /app/wait-for-it.sh db:33906 -t 10
-        pnpm run start:dev
     ports:
       - '3000:3000'
     volumes:
