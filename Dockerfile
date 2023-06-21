@@ -23,7 +23,7 @@ RUN pnpm prune --prod
 FROM base AS deploy
 
 WORKDIR /app
-COPY package*.json pnpm-lock.yaml tsconfig.build.json .env ./
+COPY package*.json pnpm-lock.yaml tsconfig.build.json ./
 COPY --from=build /app/dist/ ./dist/
 COPY --from=build /app/node_modules ./node_modules
 
