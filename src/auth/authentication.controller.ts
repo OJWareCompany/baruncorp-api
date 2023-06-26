@@ -6,6 +6,10 @@ import { LoginReq } from './dto/request/login.req'
 import { SignUpReq } from './dto/request/signup.req'
 import { EmailVO } from '../users/vo/email.vo'
 import { InputPasswordVO } from '../users/vo/password.vo'
+import { TokenResponse } from './dto/response/token.res'
+import { AuthRefreshGuard } from './authentication.refresh.guard'
+import { User } from '../common/decorators/requests/logged-in-user.decorator'
+import { UserProp } from '../users/interfaces/user.interface'
 
 @Controller('auth')
 export class AuthenticationController {
@@ -13,7 +17,7 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: LoginReq, @Res({ passthrough: true }) response: Response) {
+  signIn(@Body() signInDto: LoginReq, @Res({ passthrough: true }) response: Response): Promise<TokenResponse> {
     return this.authService.signIn(new EmailVO(signInDto.email), new InputPasswordVO(signInDto.password), response)
   }
 
@@ -33,5 +37,22 @@ export class AuthenticationController {
   @Get('profile')
   getProfile(@Request() req) {
     return req.user
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(AuthGuard)
+  @Get('me')
+  me() {
+    return
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Get('refresh')
+  @UseGuards(AuthRefreshGuard)
+  async refresh(
+    @User() user: UserProp, // TODO: guard에서 반환하는 객체 정의하기
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<{ accessToken: string }> {
+    return await this.authService.refreshAccessToken(user, response)
   }
 }

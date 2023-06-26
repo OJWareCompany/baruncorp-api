@@ -6,6 +6,8 @@ import { SignUpReq } from './dto/request/signup.req'
 import { EmailVO } from '../users/vo/email.vo'
 import { InputPasswordVO } from '../users/vo/password.vo'
 import { CompanyService } from '../company/company.service'
+import { TokenResponse } from './dto/response/token.res'
+import { UserProp } from 'src/users/interfaces/user.interface'
 
 @Injectable()
 export class AuthenticationService {
@@ -15,7 +17,7 @@ export class AuthenticationService {
     private readonly companyService: CompanyService,
   ) {}
 
-  async signIn(email: EmailVO, password: InputPasswordVO, response: Response) {
+  async signIn(email: EmailVO, password: InputPasswordVO, response: Response): Promise<TokenResponse> {
     const user = await this.usersService.findUserIdByEmail(email)
     if (!user) throw new NotFoundException()
 
@@ -28,10 +30,13 @@ export class AuthenticationService {
 
     const payload = { zcode: user.id }
     const accessToken = await this.jwtService.signAsync(payload)
-    this.setToken(accessToken, response)
+    const refreshToken = await this.jwtService.signAsync(payload, { expiresIn: process.env.JWT_REFRESH_EXPIRED_TIME })
+    this.setToken('token', accessToken, response)
+    this.setToken('refreshToken', refreshToken, response)
 
     return {
       accessToken,
+      refreshToken,
     }
   }
 
@@ -57,14 +62,24 @@ export class AuthenticationService {
     await this.usersService.deleteInvitationMail(code)
   }
 
+  async refreshAccessToken(user: UserProp, response: Response): Promise<{ accessToken: string }> {
+    const payload = { zcode: user.id }
+    const accessToken = await this.jwtService.signAsync(payload)
+    this.setToken('token', accessToken, response)
+
+    return {
+      accessToken,
+    }
+  }
+
   // TODO: turn secure on after setup https
-  setToken(token: string, res: Response) {
+  private setToken(name: 'token' | 'refreshToken', token: string, res: Response) {
     const options: CookieOptions = {
       maxAge: 24 * 60 * 60 * 1000, //1 day
       httpOnly: true,
       // sameSite: 'none',
       // secure: true,
     }
-    res.cookie('token', token, options)
+    res.cookie(name, token, options)
   }
 }
