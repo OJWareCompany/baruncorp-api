@@ -1,16 +1,5 @@
 version: '3'
 services:
-  db:
-    image: 'mariadb:10.11.4'
-    restart: always
-    ports:
-      - '33906:3306'
-    environment:
-      MARIADB_ROOT_PASSWORD: example
-    volumes:
-      - ./db/conf.d:/etc/mysql/conf.d
-      - ./db/data:/var/lib/mysql
-
   api:
     build:
       context: ./
@@ -18,10 +7,5 @@ services:
     tty: true
     ports:
       - '3000:3000'
-    # volumes:
-    #   - /app/node_modules
-    #   - .:/app
-    depends_on:
-      - db
     env_file:
       - ./.env

@@ -1,0 +1,14 @@
+version: '3'
+services:
+  db:
+    build:
+      context: ./mariadb
+      dockerfile: Dockerfile
+    restart: always
+    ports:
+      - '33906:3306'
+    environment:
+      MARIADB_ROOT_PASSWORD: example
+    volumes:
+      - ./mariadb/conf:/etc/mysql/conf.d
+      - ./mariadb/data:/var/lib/mysql
