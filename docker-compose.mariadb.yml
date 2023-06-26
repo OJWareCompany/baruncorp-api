@@ -1,9 +1,7 @@
 version: '3'
 services:
   db:
-    build:
-      context: ./mariadb
-      dockerfile: Dockerfile
+    image: 'mariadb:10.11.4'
     restart: always
     ports:
       - '33906:3306'
