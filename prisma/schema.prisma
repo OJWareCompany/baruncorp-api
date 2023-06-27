@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -10,65 +7,60 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model CompanyTypes {
-  type         String         @id
-  companies    Companies[]
-  companyRoles CompanyRoles[]
+model OrganizationTypes {
+  type              String              @id
+  organizationRoles OrganizationRoles[]
+  organizations     Organizations[]
 
-  @@map("company_types")
+  @@map("organization_types")
 }
 
-model Companies {
-  id                Int               @id @default(autoincrement())
-  name              String            @unique
-  description       String
-  companyTypeEntity CompanyTypes      @relation(fields: [companyType], references: [type])
-  companyType       String            @map("company_type")
-  invitationEmail   InvitationEmail[]
-  users             Users[]
+model Organizations {
+  id                     Int               @id @default(autoincrement())
+  name                   String            @unique
+  description            String
+  organizationType       String            @map("organization_type")
+  organizationTypeEntity OrganizationTypes @relation(fields: [organizationType], references: [type])
 
-  @@map("companies")
+  @@index([organizationType], map: "organizations_organization_type_fkey")
+  @@map("organizations")
 }
 
 model Roles {
-  role         String         @id
-  companyRoles CompanyRoles[]
+  role              String              @id
+  organizationRoles OrganizationRoles[]
 
   @@map("roles")
 }
 
-model CompanyRoles {
-  rolesEntity       Roles             @relation(fields: [role], references: [role])
-  role              String
-  companyTypeEntity CompanyTypes      @relation(fields: [companyType], references: [type])
-  companyType       String            @map("company_type")
-  invitationEmail   InvitationEmail[]
-  UserRole          UserRole[]
+model OrganizationRoles {
+  role                   String
+  organizationType       String            @map("organization_type")
+  organizationTypeEntity OrganizationTypes @relation(fields: [organizationType], references: [type])
+  rolesEntity            Roles             @relation(fields: [role], references: [role])
 
-  @@id([companyType, role])
-  @@map("company_roles")
+  @@id([organizationType, role])
+  @@index([role], map: "organization_roles_role_fkey")
+  @@map("organization_roles")
 }
 
 model InvitationEmail {
-  code              String       @id
-  email             String
-  company           Companies    @relation(fields: [companyId], references: [id])
-  companyId         Int          @map("company_id")
-  companyRoleEntity CompanyRoles @relation(fields: [role, companyType], references: [role, companyType])
-  role              String
-  companyType       String       @map("company_type")
+  code             String @id
+  organizationId   Int    @map("organization_id")
+  role             String
+  organizationType String @map("organization_type")
+  email            String
 
   @@map("invitation_email")
 }
 
 model UserRole {
-  companyRoleEntity CompanyRoles @relation(fields: [role, companyType], references: [role, companyType])
-  role              String
-  companyType       String       @map("company_type")
-  user              Users        @relation(fields: [userId], references: [id])
-  userId            String       @map("user_id")
+  role             String
+  organizationType String @map("organization_type")
+  userId           String @map("user_id")
+  user             Users  @relation(fields: [userId], references: [id])
 
-  @@id([userId, role, companyType])
+  @@id([userId, role, organizationType])
   @@map("user_role")
 }
 
@@ -77,18 +69,17 @@ model Users {
   email          String     @unique
   firstName      String     @map("first_name")
   lastName       String     @map("last_name")
+  organizationId Int?
   passwordEntity Passwords?
   UserRole       UserRole[]
-  company        Companies? @relation(fields: [companyId], references: [id])
-  companyId      Int?
 
   @@map("users")
 }
 
 model Passwords {
-  user     Users  @relation(fields: [userId], references: [id])
   userId   String @unique @map("user_id")
   password String
+  user     Users  @relation(fields: [userId], references: [id])
 
   @@id([userId, password])
   @@map("passwords")

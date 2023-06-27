@@ -2,8 +2,8 @@ import { InvitationEmail } from '@prisma/client'
 
 export interface InvitationEmailProp extends InvitationEmail {
   code: string
-  companyId: number
+  organizationId: number
   email: string
   role: string
-  companyType: string
+  organizationType: string
 }

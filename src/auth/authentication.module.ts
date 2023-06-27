@@ -4,14 +4,14 @@ import { AuthenticationService } from './authentication.service'
 import { AuthenticationController } from './authentication.controller'
 import { JwtModule } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
-import { CompanyModule } from '../company/company.module'
+import { OrganizationModule } from '../organization/organization.module'
 
 const { JWT_EXPIRED_TIME } = process.env
 
 @Module({
   imports: [
     UsersModule,
-    CompanyModule,
+    OrganizationModule,
     JwtModule.register({
       global: true,
       secret: jwtConstants.secret,

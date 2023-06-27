@@ -2,11 +2,11 @@ import { Module } from '@nestjs/common'
 import { APP_FILTER } from '@nestjs/core'
 import { AuthenticationModule } from './auth/authentication.module'
 import { UsersModule } from './users/users.module'
-import { CompanyModule } from './company/company.module'
+import { OrganizationModule } from './organization/organization.module'
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter'
 
 @Module({
-  imports: [AuthenticationModule, UsersModule, CompanyModule],
+  imports: [AuthenticationModule, UsersModule, OrganizationModule],
   controllers: [],
   providers: [
     {

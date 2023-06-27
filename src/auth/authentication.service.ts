@@ -5,7 +5,7 @@ import { CookieOptions, Response } from 'express'
 import { SignUpReq } from './dto/request/signup.req'
 import { EmailVO } from '../users/vo/email.vo'
 import { InputPasswordVO } from '../users/vo/password.vo'
-import { CompanyService } from '../company/company.service'
+import { OrganizationService } from '../organization/organization.service'
 import { TokenResponse } from './dto/response/token.res'
 import { UserProp } from 'src/users/interfaces/user.interface'
 
@@ -16,7 +16,7 @@ export class AuthenticationService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UserService,
-    private readonly companyService: CompanyService,
+    private readonly organizationService: OrganizationService,
   ) {}
 
   async signIn(email: EmailVO, password: InputPasswordVO, response: Response): Promise<TokenResponse> {
@@ -53,16 +53,16 @@ export class AuthenticationService {
     const invitationMail = await this.usersService.findInvitationMail(code, new EmailVO(signUpReq.email))
     if (!invitationMail) throw new NotFoundException('Invitation Not Found')
 
-    const company = await this.companyService.findCompanyById(invitationMail.companyId)
-    if (!company) throw new NotFoundException('Company Not Found')
+    const organization = await this.organizationService.findOrganizationById(invitationMail.organizationId)
+    if (!organization) throw new NotFoundException('Organization Not Found')
 
-    const user = await this.usersService.insertUser(company.id, rest, new InputPasswordVO(password))
+    const user = await this.usersService.insertUser(organization.id, rest, new InputPasswordVO(password))
 
     // Give User Role
-    await this.companyService.giveUserRole({
+    await this.organizationService.giveUserRole({
       userId: user.id,
       role: invitationMail.role,
-      companyType: invitationMail.companyType,
+      organizationType: invitationMail.organizationType,
     })
 
     await this.usersService.deleteInvitationMail(code)

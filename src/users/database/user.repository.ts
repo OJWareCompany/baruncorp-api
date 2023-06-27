@@ -17,7 +17,7 @@ export class UserRepository implements UserRepositoryPort {
       //   email: true,
       //   firstName: true,
       //   lastName: true,
-      //   company: true,
+      //   organization: true,
       // },
     })
   }
@@ -33,11 +33,11 @@ export class UserRepository implements UserRepositoryPort {
   }
 
   // TODO: Check a transaction
-  async insertUser(companyId: number, data: UserProp, password: InputPasswordVO): Promise<UserProp> {
+  async insertUser(organizationId: number, data: UserProp, password: InputPasswordVO): Promise<UserProp> {
     return await this.prismaService.users.create({
       data: {
         ...data,
-        companyId,
+        organizationId,
         passwordEntity: {
           create: {
             password: await password.hash(),

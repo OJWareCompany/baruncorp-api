@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common'
-import { CompanyMember, CompanyRepositoryPort } from './company.repository.port'
-import { CompanyProp } from '../interfaces/company.interface'
+import { OrganizationMember, OrganizationRepositoryPort } from './organization.repository.port'
+import { OrganizationProp } from '../interfaces/organization.interface'
 import { PrismaService } from '../../database/prisma.service'
 import { UserRoleProp } from '../interfaces/user-role.interface'
 
 // Where should I put member list? Event Storming Helpful Decide
 
 @Injectable()
-export class CompanyRepository implements CompanyRepositoryPort {
+export class OrganizationRepository implements OrganizationRepositoryPort {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async findMembers(): Promise<CompanyMember[]> {
+  async findMembers(): Promise<OrganizationMember[]> {
     const joinUserRole = {
       userRole: {
         select: {
@@ -30,19 +30,19 @@ export class CompanyRepository implements CompanyRepositoryPort {
       },
     }
 
-    const companyMember = await this.prismaService.companies.findMany({
+    const organizationMember = await this.prismaService.organizations.findMany({
       select: {
         name: true,
         ...joinUser,
       },
     })
 
-    console.log(companyMember)
+    console.log(organizationMember)
 
-    return companyMember
+    return organizationMember
   }
 
-  async findMembersByCompanyId(companyId: number): Promise<CompanyMember> {
+  async findMembersByOrganizationId(organizationId: number): Promise<OrganizationMember> {
     const joinUserRole = {
       userRole: {
         select: {
@@ -62,8 +62,8 @@ export class CompanyRepository implements CompanyRepositoryPort {
       },
     }
 
-    return await this.prismaService.companies.findFirst({
-      where: { id: companyId },
+    return await this.prismaService.organizations.findFirst({
+      where: { id: organizationId },
       select: {
         name: true,
         ...joinUser,
@@ -71,19 +71,24 @@ export class CompanyRepository implements CompanyRepositoryPort {
     })
   }
 
-  async findAll(): Promise<CompanyProp[]> {
-    return await this.prismaService.companies.findMany()
+  async findAll(): Promise<OrganizationProp[]> {
+    return await this.prismaService.organizations.findMany()
   }
 
-  async findOneById(companyId: number): Promise<CompanyProp> {
-    return await this.prismaService.companies.findUnique({ where: { id: companyId } })
-  }
-  async findByName(name: string): Promise<CompanyProp[]> {
-    return await this.prismaService.companies.findMany({ where: { name: { contains: name } } })
+  async findOneById(organizationId: number): Promise<OrganizationProp> {
+    return await this.prismaService.organizations.findUnique({ where: { id: organizationId } })
   }
 
-  async insertCompany(props: Omit<CompanyProp, 'id'>): Promise<CompanyProp> {
-    return await this.prismaService.companies.create({ data: props })
+  async findByName(name: string): Promise<OrganizationProp[]> {
+    return await this.prismaService.organizations.findMany({ where: { name: { contains: name } } })
+  }
+
+  // async isExisteByName(name: string): Promise<CompanyProp[]> {
+  //   // return await this.prismaService.companies
+  // }
+
+  async insertOrganization(props: Omit<OrganizationProp, 'id'>): Promise<OrganizationProp> {
+    return await this.prismaService.organizations.create({ data: props })
   }
 
   async getRoleByUserId(userId: string): Promise<UserRoleProp> {
@@ -98,7 +103,7 @@ export class CompanyRepository implements CompanyRepositoryPort {
   // TODO: how to use only userId when i delete record
   async removeRole(userRoleProp: UserRoleProp): Promise<void> {
     await this.prismaService.userRole.delete({
-      where: { userId_role_companyType: userRoleProp },
+      where: { userId_role_organizationType: userRoleProp },
     })
   }
 }

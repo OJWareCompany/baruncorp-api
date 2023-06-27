@@ -22,8 +22,8 @@ export class AuthenticationController {
   }
 
   @HttpCode(HttpStatus.OK)
-  @Post('logout')
-  async logout(@Res({ passthrough: true }) response: Response) {
+  @Post('signout')
+  async signout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('token')
   }
 

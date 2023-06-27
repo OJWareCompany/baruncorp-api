@@ -35,8 +35,12 @@ export class UserService {
     return await this.userRepository.findPasswordByUserId(id)
   }
 
-  async insertUser(companyId: number, createUserDto: Omit<UserProp, 'id' | 'companyId'>, password: InputPasswordVO) {
-    return await this.userRepository.insertUser(companyId, createUserDto, password)
+  async insertUser(
+    organizationId: number,
+    createUserDto: Omit<UserProp, 'id' | 'organizationId'>,
+    password: InputPasswordVO,
+  ) {
+    return await this.userRepository.insertUser(organizationId, createUserDto, password)
   }
 
   async deleteInvitationMail(code: string): Promise<void> {
@@ -61,8 +65,8 @@ export class UserService {
         code: code,
         // role: 'manager',
         role: dto.role || 'guest',
-        companyId: dto.companyId,
-        companyType: 'BarunCorp',
+        organizationId: dto.organizationId,
+        organizationType: 'BarunCorp',
       })
     } catch (error) {
       console.log(error)

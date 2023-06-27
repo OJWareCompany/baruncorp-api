@@ -9,8 +9,8 @@ export interface UserRepositoryPort {
   findUserIdByEmail(email: EmailVO): Promise<Pick<UserProp, 'id'>>
   findPasswordByUserId(id: string): Promise<string>
   insertUser(
-    companyId: number,
-    userProps: Omit<UserProp, 'id' | 'companyId'>,
+    organizationId: number,
+    userProps: Omit<UserProp, 'id' | 'organizationId'>,
     password: InputPasswordVO,
   ): Promise<UserProp>
   update(userId: string, props: Pick<UserProp, 'firstName' | 'lastName'>): Promise<UserProp>

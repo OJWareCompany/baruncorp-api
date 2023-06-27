@@ -2,6 +2,6 @@ import { UserRole } from '@prisma/client'
 
 export interface UserRoleProp extends UserRole {
   role: string
-  companyType: string
+  organizationType: string
   userId: string
 }
