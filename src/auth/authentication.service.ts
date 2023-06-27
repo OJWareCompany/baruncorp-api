@@ -9,6 +9,8 @@ import { CompanyService } from '../company/company.service'
 import { TokenResponse } from './dto/response/token.res'
 import { UserProp } from 'src/users/interfaces/user.interface'
 
+const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_SECRET } = process.env
+
 @Injectable()
 export class AuthenticationService {
   constructor(
@@ -28,10 +30,14 @@ export class AuthenticationService {
       throw new UnauthorizedException()
     }
 
-    const payload = { zcode: user.id }
+    const payload = { id: user.id }
     const accessToken = await this.jwtService.signAsync(payload)
-    const refreshToken = await this.jwtService.signAsync(payload, { expiresIn: process.env.JWT_REFRESH_EXPIRED_TIME })
     this.setToken('token', accessToken, response)
+
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: JWT_REFRESH_EXPIRED_TIME,
+      secret: JWT_REFRESH_SECRET,
+    })
     this.setToken('refreshToken', refreshToken, response)
 
     return {
@@ -63,7 +69,7 @@ export class AuthenticationService {
   }
 
   async refreshAccessToken(user: UserProp, response: Response): Promise<{ accessToken: string }> {
-    const payload = { zcode: user.id }
+    const payload = { id: user.id }
     const accessToken = await this.jwtService.signAsync(payload)
     this.setToken('token', accessToken, response)
 

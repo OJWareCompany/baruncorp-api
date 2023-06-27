@@ -7,6 +7,7 @@ import { AuthGuard } from '../auth/authentication.guard'
 import { randomBytes } from 'crypto'
 import nodemailer from 'nodemailer'
 import { ConfigModule } from '@nestjs/config'
+import { UserProp } from './interfaces/user.interface'
 ConfigModule.forRoot()
 
 const { EMAIL_USER, EMAIL_PASS } = process.env
@@ -17,14 +18,14 @@ export class UsersController {
 
   @Patch('profile')
   @UseGuards(AuthGuard)
-  async updateUser(@Body() dto: UpdateUserReq, @User() user: { zcode: string }) {
-    return await this.userService.upadteProfile(user.zcode, dto)
+  async updateUser(@Body() dto: UpdateUserReq, @User() user: Pick<UserProp, 'id'>) {
+    return await this.userService.upadteProfile(user.id, dto)
   }
 
   @Get('profile')
   @UseGuards(AuthGuard)
-  async getUserInfo(@User() userId: { zcode: string }) {
-    return await this.userService.getUserProfile(userId.zcode)
+  async getUserInfo(@User() user: Pick<UserProp, 'id'>) {
+    return await this.userService.getUserProfile(user.id)
   }
 
   @Post('invitations')

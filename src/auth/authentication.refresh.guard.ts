@@ -1,7 +1,8 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { jwtConstants } from './constants'
 import { Request } from 'express'
+
+const { JWT_REFRESH_SECRET } = process.env
 
 @Injectable()
 export class AuthRefreshGuard implements CanActivate {
@@ -11,13 +12,12 @@ export class AuthRefreshGuard implements CanActivate {
     const request = context.switchToHttp().getRequest()
     const token = this.extractTokenFromHeader(request) ?? this.extractTokenFromCookie(request)
 
-    console.log(2)
     if (!token) {
       throw new UnauthorizedException()
     }
     try {
       const payload = await this.jwtService.verifyAsync(token, {
-        secret: jwtConstants.secret,
+        secret: JWT_REFRESH_SECRET,
       })
       request['user'] = payload
     } catch {
