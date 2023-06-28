@@ -16,7 +16,7 @@ export class AuthenticationController {
   constructor(private authService: AuthenticationService) {}
 
   @HttpCode(HttpStatus.OK)
-  @Post('login')
+  @Post('signin')
   signIn(@Body() signInDto: LoginReq, @Res({ passthrough: true }) response: Response): Promise<TokenResponse> {
     return this.authService.signIn(new EmailVO(signInDto.email), new InputPasswordVO(signInDto.password), response)
   }
