@@ -17,12 +17,20 @@ model OrganizationTypes {
 model Organizations {
   id                     String             @id @default(uuid())
   name                   String             @unique
-  description            String
+  description            String?
   organizationType       String             @map("organization_type")
+  city                   String?
+  country                String?
+  phoneNumber            String?            @map("phone_number")
+  postalCode             String?            @map("postal_code")
+  stateOrRegion          String?            @map("state_or_region")
+  street1                String?
+  street2                String?
+  invitationEmailEntity  InvitationEmails[]
   organizationTypeEntity OrganizationTypes  @relation(fields: [organizationType], references: [type])
   users                  Users[]
-  invitationEmailEntity  InvitationEmails[]
 
+  @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
 }
 
@@ -35,43 +43,47 @@ model Roles {
 }
 
 model InvitationEmails {
-  code               String         @id
+  code               String        @id
   email              String
-  rolesEntity        Roles?         @relation(fields: [role], references: [role])
   role               String
-  organizationEntity Organizations? @relation(fields: [organizationId], references: [id])
-  organizationId     String         @map("organization_id")
+  organizationId     String        @map("organization_id")
+  organizationEntity Organizations @relation(fields: [organizationId], references: [id])
+  rolesEntity        Roles         @relation(fields: [role], references: [role])
 
+  @@index([organizationId], map: "invitation_emails_organization_id_fkey")
+  @@index([role], map: "invitation_emails_role_fkey")
   @@map("invitation_emails")
 }
 
 model UserRole {
-  rolesEntity Roles? @relation(fields: [role], references: [role])
   role        String
-  userEntity  Users  @relation(fields: [userId], references: [id])
   userId      String @map("user_id")
+  rolesEntity Roles  @relation(fields: [role], references: [role])
+  userEntity  Users  @relation(fields: [userId], references: [id])
 
   @@id([userId, role])
+  @@index([role], map: "user_role_role_fkey")
   @@map("user_role")
 }
 
 model Users {
-  id                 String         @id @default(uuid())
-  email              String         @unique
-  firstName          String         @map("first_name")
-  lastName           String         @map("last_name")
-  organizationEntity Organizations? @relation(fields: [organizationId], references: [id])
-  organizationId     String         @map("organization_id")
-  userRoleEntity     UserRole[]
+  id                 String        @id @default(uuid())
+  email              String        @unique
+  firstName          String        @map("first_name")
+  lastName           String        @map("last_name")
+  organizationId     String        @map("organization_id")
   passwordEntity     Passwords?
+  userRoleEntity     UserRole[]
+  organizationEntity Organizations @relation(fields: [organizationId], references: [id])
 
+  @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
 }
 
 model Passwords {
-  user     Users  @relation(fields: [userId], references: [id])
   userId   String @unique @map("user_id")
   password String
+  user     Users  @relation(fields: [userId], references: [id])
 
   @@map("passwords")
 }
