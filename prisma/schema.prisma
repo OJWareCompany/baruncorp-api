@@ -8,79 +8,70 @@ datasource db {
 }
 
 model OrganizationTypes {
-  type              String              @id
-  organizationRoles OrganizationRoles[]
-  organizations     Organizations[]
+  type               String          @id
+  organizationEntity Organizations[]
 
   @@map("organization_types")
 }
 
 model Organizations {
-  id                     Int               @id @default(autoincrement())
-  name                   String            @unique
+  id                     String             @id @default(uuid())
+  name                   String             @unique
   description            String
-  organizationType       String            @map("organization_type")
-  organizationTypeEntity OrganizationTypes @relation(fields: [organizationType], references: [type])
+  organizationType       String             @map("organization_type")
+  organizationTypeEntity OrganizationTypes  @relation(fields: [organizationType], references: [type])
+  users                  Users[]
+  invitationEmailEntity  InvitationEmails[]
 
-  @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
 }
 
 model Roles {
-  role              String              @id
-  organizationRoles OrganizationRoles[]
+  role                  String             @id
+  invitationEmailEntity InvitationEmails[]
+  UserRole              UserRole[]
 
   @@map("roles")
 }
 
-model OrganizationRoles {
-  role                   String
-  organizationType       String            @map("organization_type")
-  organizationTypeEntity OrganizationTypes @relation(fields: [organizationType], references: [type])
-  rolesEntity            Roles             @relation(fields: [role], references: [role])
+model InvitationEmails {
+  code               String         @id
+  email              String
+  rolesEntity        Roles?         @relation(fields: [role], references: [role])
+  role               String
+  organizationEntity Organizations? @relation(fields: [organizationId], references: [id])
+  organizationId     String         @map("organization_id")
 
-  @@id([organizationType, role])
-  @@index([role], map: "organization_roles_role_fkey")
-  @@map("organization_roles")
-}
-
-model InvitationEmail {
-  code             String @id
-  organizationId   Int    @map("organization_id")
-  role             String
-  organizationType String @map("organization_type")
-  email            String
-
-  @@map("invitation_email")
+  @@map("invitation_emails")
 }
 
 model UserRole {
-  role             String
-  organizationType String @map("organization_type")
-  userId           String @map("user_id")
-  user             Users  @relation(fields: [userId], references: [id])
+  rolesEntity Roles? @relation(fields: [role], references: [role])
+  role        String
+  userEntity  Users  @relation(fields: [userId], references: [id])
+  userId      String @map("user_id")
 
-  @@id([userId, role, organizationType])
+  @@id([userId, role])
   @@map("user_role")
 }
 
 model Users {
-  id             String     @id @default(uuid())
-  email          String     @unique
-  firstName      String     @map("first_name")
-  lastName       String     @map("last_name")
-  organizationId Int?
-  passwordEntity Passwords?
-  UserRole       UserRole[]
+  id                 String         @id @default(uuid())
+  email              String         @unique
+  firstName          String         @map("first_name")
+  lastName           String         @map("last_name")
+  organizationEntity Organizations? @relation(fields: [organizationId], references: [id])
+  organizationId     String         @map("organization_id")
+  userRoleEntity     UserRole[]
+  passwordEntity     Passwords?
 
   @@map("users")
 }
 
 model Passwords {
+  user     Users  @relation(fields: [userId], references: [id])
   userId   String @unique @map("user_id")
   password String
-  user     Users  @relation(fields: [userId], references: [id])
 
-  @@id([userId, password])
   @@map("passwords")
 }
