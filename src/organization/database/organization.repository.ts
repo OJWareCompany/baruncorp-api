@@ -42,7 +42,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     return organizationMember
   }
 
-  async findMembersByOrganizationId(organizationId: number): Promise<OrganizationMember> {
+  async findMembersByOrganizationId(organizationId: string): Promise<OrganizationMember> {
     const joinUserRole = {
       userRole: {
         select: {
@@ -75,7 +75,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     return await this.prismaService.organizations.findMany()
   }
 
-  async findOneById(organizationId: number): Promise<OrganizationProp> {
+  async findOneById(organizationId: string): Promise<OrganizationProp> {
     return await this.prismaService.organizations.findUnique({ where: { id: organizationId } })
   }
 
@@ -103,7 +103,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
   // TODO: how to use only userId when i delete record
   async removeRole(userRoleProp: UserRoleProp): Promise<void> {
     await this.prismaService.userRole.delete({
-      where: { userId_role_organizationType: userRoleProp },
+      where: { userId_role: userRoleProp },
     })
   }
 }

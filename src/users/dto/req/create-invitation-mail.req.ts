@@ -5,8 +5,9 @@ export class CreateInvitationMailReq implements Pick<InvitationEmailProp, 'email
   // @IsString()
   readonly role: string
 
+  // TODO: to name
   @IsNumber()
-  readonly organizationId: number
+  readonly organizationId: string
 
   @IsString()
   readonly email: string

@@ -36,7 +36,7 @@ export class UserService {
   }
 
   async insertUser(
-    organizationId: number,
+    organizationId: string,
     createUserDto: Omit<UserProp, 'id' | 'organizationId'>,
     password: InputPasswordVO,
   ) {
@@ -59,14 +59,11 @@ export class UserService {
     try {
       const user = await this.userRepository.findOneByEmail(new EmailVO(dto.email))
       if (user) throw new ConflictException('User Already Existed')
-
       return await this.invitationRepository.insertOne({
         email: dto.email,
         code: code,
-        // role: 'manager',
         role: dto.role || 'guest',
         organizationId: dto.organizationId,
-        organizationType: 'BarunCorp',
       })
     } catch (error) {
       console.log(error)

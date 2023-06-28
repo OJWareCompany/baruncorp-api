@@ -7,7 +7,7 @@ import { UserRoleProp } from '../interfaces/user-role.interface'
 export type OrganizationMember = { users: Partial<UserProp>[] } & Partial<OrganizationProp>
 
 export interface OrganizationRepositoryPort {
-  findOneById(organizationId: number): Promise<OrganizationProp>
+  findOneById(organizationId: string): Promise<OrganizationProp>
   findByName(name: string): Promise<OrganizationProp[]>
   findAll(): Promise<OrganizationProp[]>
   insertOrganization(props: Omit<OrganizationProp, 'id'>): Promise<OrganizationProp>
@@ -15,5 +15,5 @@ export interface OrganizationRepositoryPort {
   getRoleByUserId(userId: string): Promise<UserRoleProp>
   removeRole(userRoleProp: UserRoleProp): Promise<void>
   findMembers(): Promise<OrganizationMember[]>
-  findMembersByOrganizationId(organizationId: number): Promise<OrganizationMember>
+  findMembersByOrganizationId(organizationId: string): Promise<OrganizationMember>
 }

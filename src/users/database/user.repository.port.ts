@@ -9,7 +9,7 @@ export interface UserRepositoryPort {
   findUserIdByEmail(email: EmailVO): Promise<Pick<UserProp, 'id'>>
   findPasswordByUserId(id: string): Promise<string>
   insertUser(
-    organizationId: number,
+    organizationId: string,
     userProps: Omit<UserProp, 'id' | 'organizationId'>,
     password: InputPasswordVO,
   ): Promise<UserProp>

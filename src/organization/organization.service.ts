@@ -14,7 +14,7 @@ export class OrganizationService {
     return await this.organizationRepository.insertOrganization(props)
   }
 
-  async findOrganizationById(organizationId: number): Promise<OrganizationProp> {
+  async findOrganizationById(organizationId: string): Promise<OrganizationProp> {
     return await this.organizationRepository.findOneById(organizationId)
   }
 
@@ -30,7 +30,7 @@ export class OrganizationService {
     return await this.organizationRepository.findMembers()
   }
 
-  async findMembersByOrganizationId(organizationId: number): Promise<OrganizationMember> {
+  async findMembersByOrganizationId(organizationId: string): Promise<OrganizationMember> {
     return await this.organizationRepository.findMembersByOrganizationId(organizationId)
   }
 }

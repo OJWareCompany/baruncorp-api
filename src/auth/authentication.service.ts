@@ -7,7 +7,7 @@ import { EmailVO } from '../users/vo/email.vo'
 import { InputPasswordVO } from '../users/vo/password.vo'
 import { OrganizationService } from '../organization/organization.service'
 import { TokenResponse } from './dto/response/token.res'
-import { UserProp } from 'src/users/interfaces/user.interface'
+import { UserProp } from '../users/interfaces/user.interface'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_SECRET } = process.env
 
@@ -62,7 +62,6 @@ export class AuthenticationService {
     await this.organizationService.giveUserRole({
       userId: user.id,
       role: invitationMail.role,
-      organizationType: invitationMail.organizationType,
     })
 
     await this.usersService.deleteInvitationMail(code)

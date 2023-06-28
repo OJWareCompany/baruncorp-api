@@ -18,7 +18,7 @@ export class OrganizationController {
 
   @Get('members')
   async findMembers(
-    @Query('organizationId') organizationId: number,
+    @Query('organizationId') organizationId: string,
   ): Promise<OrganizationMember | OrganizationMember[]> {
     if (organizationId) {
       return await this.organizationService.findMembersByOrganizationId(organizationId)

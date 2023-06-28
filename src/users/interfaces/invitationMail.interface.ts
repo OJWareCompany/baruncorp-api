@@ -1,9 +1,24 @@
-import { InvitationEmail } from '@prisma/client'
+import { InvitationEmails } from '@prisma/client'
 
-export interface InvitationEmailProp extends InvitationEmail {
+/**
+ * For Entity
+ * Entity
+ * RequestDTO -> CommandDTO (convert in Controller) -> Entity (convert in Service) -> Persistence (convert in Repository)
+ *                                                                                      Mapper convert Entity to Model
+ * Entity를 컨트롤러나 영속성과 상관없이 만드는건가
+ * Entity전용 Create Prop은.. ReqDTO랑 다르니까
+ */
+
+export interface InvitationEmailProp extends InvitationEmails {
   code: string
-  organizationId: number
+  organizationId: string
   email: string
   role: string
-  organizationType: string
+}
+
+export interface CreateInvitationMailProp {
+  code: string
+  email: string
+  role: string
+  organizationId: string
 }
