@@ -18,6 +18,7 @@ model Organizations {
   id                     String             @id @default(uuid())
   name                   String             @unique
   description            String?
+  email                  String?
   organizationType       String             @map("organization_type")
   city                   String?
   country                String?
