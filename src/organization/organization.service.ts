@@ -8,8 +8,9 @@ import { UserRoleProp } from './interfaces/user-role.interface'
 export class OrganizationService {
   constructor(@Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort) {}
 
+  // TODO: remove id field!
   async createOrganization(props: Omit<OrganizationProp, 'id'>): Promise<OrganizationProp> {
-    const organization = await this.organizationRepository.findByName(props.name)
+    const organization = await this.organizationRepository.findOneByName(props.name)
     if (organization) throw new ConflictException(`${props.name} is aleady existed.`, '20001')
     return await this.organizationRepository.insertOrganization(props)
   }

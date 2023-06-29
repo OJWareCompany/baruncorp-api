@@ -1,13 +1,11 @@
-import { IsNumber, IsString } from 'class-validator'
-import { InvitationEmailProp } from '../../../users/interfaces/invitationMail.interface'
+import { IsString } from 'class-validator'
 
-export class CreateInvitationMailReq implements Pick<InvitationEmailProp, 'email' | 'organizationId' | 'role'> {
-  // @IsString()
-  readonly role: string
+export class CreateInvitationMailReq {
+  @IsString()
+  readonly organizationName: string
 
-  // TODO: to name
-  @IsNumber()
-  readonly organizationId: string
+  @IsString()
+  readonly roleName: string
 
   @IsString()
   readonly email: string

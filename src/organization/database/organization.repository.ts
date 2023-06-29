@@ -37,8 +37,6 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
       },
     })
 
-    console.log(organizationMember)
-
     return organizationMember
   }
 
@@ -81,6 +79,10 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
 
   async findByName(name: string): Promise<OrganizationProp[]> {
     return await this.prismaService.organizations.findMany({ where: { name: { contains: name } } })
+  }
+
+  async findOneByName(name: string): Promise<OrganizationProp> {
+    return await this.prismaService.organizations.findFirst({ where: { name: { contains: name } } })
   }
 
   // async isExisteByName(name: string): Promise<CompanyProp[]> {

@@ -7,12 +7,15 @@ import { InvitationEmailProp } from './interfaces/invitationMail.interface'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
 import { CreateInvitationMailReq } from './dto/req/create-invitation-mail.req'
+import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
+import { OrganizationRepositoryPort } from '../organization/database/organization.repository.port'
 
 @Injectable()
 export class UserService {
   constructor(
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationRepository: InvitationMailRepositoryPort,
+    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
   ) {}
 
   async getUserProfile(userId: string): Promise<UserProp> {
@@ -58,12 +61,14 @@ export class UserService {
   async sendInvitationMail(dto: CreateInvitationMailReq, code: string): Promise<InvitationEmailProp> {
     try {
       const user = await this.userRepository.findOneByEmail(new EmailVO(dto.email))
+      // What if organizationId is provided by parameter?
+      const organization = await this.organizationRepository.findOneByName(dto.organizationName)
       if (user) throw new ConflictException('User Already Existed')
       return await this.invitationRepository.insertOne({
         email: dto.email,
         code: code,
-        role: dto.role || 'guest',
-        organizationId: dto.organizationId,
+        role: dto.roleName || 'guest',
+        organizationId: organization.id,
       })
     } catch (error) {
       console.log(error)
