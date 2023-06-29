@@ -5,6 +5,7 @@ services:
       context: ./
       dockerfile: Dockerfile
     tty: true
+    restart: always
     ports:
       - '3000:3000'
     env_file:
