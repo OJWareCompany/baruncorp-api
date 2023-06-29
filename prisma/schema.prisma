@@ -68,14 +68,17 @@ model UserRole {
 }
 
 model Users {
-  id                 String        @id @default(uuid())
-  email              String        @unique
-  firstName          String        @map("first_name")
-  lastName           String        @map("last_name")
-  organizationId     String        @map("organization_id")
-  passwordEntity     Passwords?
-  userRoleEntity     UserRole[]
-  organizationEntity Organizations @relation(fields: [organizationId], references: [id])
+  id                     String                   @id @default(uuid())
+  email                  String                   @unique
+  firstName              String                   @map("first_name")
+  lastName               String                   @map("last_name")
+  organizationId         String                   @map("organization_id")
+  passwordEntity         Passwords?
+  userRoleEntity         UserRole[]
+  organizationEntity     Organizations            @relation(fields: [organizationId], references: [id])
+  UserService            UserService[]
+  UserStructuralLicenses UserStructuralLicenses[]
+  UserElectricalLicenses UserElectricalLicenses[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -83,8 +86,90 @@ model Users {
 
 model Passwords {
   userId   String @unique @map("user_id")
-  password String
   user     Users  @relation(fields: [userId], references: [id])
+  password String
 
   @@map("passwords")
+}
+
+model Departments {
+  id          String      @id @default(uuid())
+  name        String
+  description String
+  Positions   Positions[]
+
+  @@map("departments")
+}
+
+model Positions {
+  id               String            @id @default(uuid())
+  name             String
+  description      String
+  departmentId     String            @map("department_id")
+  departmentEntity Departments       @relation(fields: [departmentId], references: [id])
+  PositionService  PositionService[]
+
+  @@map("positions")
+}
+
+model Services {
+  id              String            @id @default(uuid())
+  name            String
+  description     String
+  PositionService PositionService[]
+  UserService     UserService[]
+
+  @@map("services")
+}
+
+model PositionService {
+  positionId     String    @map("position_id")
+  positionEntity Positions @relation(fields: [positionId], references: [id])
+  serviceId      String    @map("service_id")
+  serviceEntity  Services  @relation(fields: [serviceId], references: [id])
+
+  @@id([positionId, serviceId])
+  @@map("position_service")
+}
+
+model UserService {
+  userId        String   @map("user_id")
+  userEntity    Users    @relation(fields: [userId], references: [id])
+  serviceId     String   @map("service_id")
+  serviceEntity Services @relation(fields: [serviceId], references: [id])
+
+  @@id([userId, serviceId])
+  @@map("user_service")
+}
+
+model States {
+  name                   String
+  abbreviation           String
+  UserStructuralLicenses UserStructuralLicenses[]
+  UserElectricalLicenses UserElectricalLicenses[]
+
+  @@id([name, abbreviation])
+  @@map("states")
+}
+
+model UserStructuralLicenses {
+  userId             String @map("user_id")
+  userEntity         Users  @relation(fields: [userId], references: [id])
+  issuingCountryName String @map("issuing_country_name")
+  abbreviation       String
+  stateEntity        States @relation(fields: [issuingCountryName, abbreviation], references: [name, abbreviation])
+
+  @@id([userId, issuingCountryName])
+  @@map("user_structural_licenses")
+}
+
+model UserElectricalLicenses {
+  userId             String @map("user_id")
+  userEntity         Users  @relation(fields: [userId], references: [id])
+  issuingCountryName String @map("issuing_country_name")
+  abbreviation       String
+  stateEntity        States @relation(fields: [issuingCountryName, abbreviation], references: [name, abbreviation])
+
+  @@id([userId, issuingCountryName])
+  @@map("user_electrical_licenses")
 }
