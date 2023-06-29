@@ -9,7 +9,7 @@ import { OrganizationService } from '../organization/organization.service'
 import { TokenResponse } from './dto/response/token.res'
 import { UserProp } from '../users/interfaces/user.interface'
 
-const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_SECRET } = process.env
+const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
 @Injectable()
 export class AuthenticationService {
@@ -36,6 +36,40 @@ export class AuthenticationService {
 
     const refreshToken = await this.jwtService.signAsync(payload, {
       expiresIn: JWT_REFRESH_EXPIRED_TIME,
+      secret: JWT_REFRESH_SECRET,
+    })
+    this.setToken('refreshToken', refreshToken, response)
+
+    return {
+      accessToken,
+      refreshToken,
+    }
+  }
+
+  async signInCustomTokenTime(
+    email: EmailVO,
+    password: InputPasswordVO,
+    response: Response,
+    time: { jwt: number; refresh: number },
+  ): Promise<TokenResponse> {
+    const user = await this.usersService.findUserIdByEmail(email)
+    if (!user) throw new NotFoundException()
+
+    const originalPassword = await this.usersService.findPasswordByUserId(user.id)
+    const isVerifiedPassword = await password.compare(originalPassword)
+
+    if (!isVerifiedPassword) {
+      throw new UnauthorizedException()
+    }
+
+    const payload = { id: user.id }
+    const accessToken = await this.jwtService.signAsync(payload, {
+      expiresIn: time.jwt ?? JWT_EXPIRED_TIME,
+    })
+    this.setToken('token', accessToken, response)
+
+    const refreshToken = await this.jwtService.signAsync(payload, {
+      expiresIn: time.refresh ?? JWT_REFRESH_EXPIRED_TIME,
       secret: JWT_REFRESH_SECRET,
     })
     this.setToken('refreshToken', refreshToken, response)

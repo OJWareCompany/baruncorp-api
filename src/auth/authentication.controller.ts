@@ -1,5 +1,17 @@
 import { Response } from 'express'
-import { Body, Controller, Post, HttpCode, HttpStatus, UseGuards, Get, Request, Res } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Post,
+  HttpCode,
+  HttpStatus,
+  UseGuards,
+  Get,
+  Request,
+  Res,
+  Query,
+  BadRequestException,
+} from '@nestjs/common'
 import { AuthGuard } from './authentication.guard'
 import { AuthenticationService } from './authentication.service'
 import { LoginReq } from './dto/request/login.req'
@@ -19,6 +31,23 @@ export class AuthenticationController {
   @Post('signin')
   signIn(@Body() signInDto: LoginReq, @Res({ passthrough: true }) response: Response): Promise<TokenResponse> {
     return this.authService.signIn(new EmailVO(signInDto.email), new InputPasswordVO(signInDto.password), response)
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('signin-time')
+  signInTime(
+    @Body() signInDto: LoginReq,
+    @Query('jwt') jwt: number,
+    @Query('refresh') refresh: number,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<TokenResponse> {
+    if (jwt > 300 || refresh > 300) throw new BadRequestException('Too Long Time', '12345')
+    return this.authService.signInCustomTokenTime(
+      new EmailVO(signInDto.email),
+      new InputPasswordVO(signInDto.password),
+      response,
+      { jwt, refresh },
+    )
   }
 
   @HttpCode(HttpStatus.OK)
