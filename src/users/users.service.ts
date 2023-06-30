@@ -2,7 +2,7 @@ import { ConflictException, Inject, Injectable } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
 import { EmailVO } from './vo/email.vo'
 import { InputPasswordVO } from './vo/password.vo'
-import { UserProp } from './interfaces/user.interface'
+import { UserProp, UserRoles } from './interfaces/user.interface'
 import { InvitationEmailProp } from './interfaces/invitationMail.interface'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
@@ -67,7 +67,7 @@ export class UserService {
       return await this.invitationRepository.insertOne({
         email: dto.email,
         code: code,
-        role: dto.roleName || 'guest',
+        role: UserRoles.guest,
         organizationId: organization.id,
       })
     } catch (error) {

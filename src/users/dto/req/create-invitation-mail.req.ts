@@ -5,8 +5,5 @@ export class CreateInvitationMailReq {
   readonly organizationName: string
 
   @IsString()
-  readonly roleName: string
-
-  @IsString()
   readonly email: string
 }
