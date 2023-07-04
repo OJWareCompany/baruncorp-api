@@ -21,7 +21,6 @@ import { InputPasswordVO } from '../users/vo/password.vo'
 import { TokenResponse } from './dto/response/token.res'
 import { AuthRefreshGuard } from './authentication.refresh.guard'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
-import { UserProp } from '../users/interfaces/user.interface'
 
 @Controller('auth')
 export class AuthenticationController {
@@ -54,18 +53,13 @@ export class AuthenticationController {
   @Post('signout')
   async signout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('token')
+    response.clearCookie('refreshToken')
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('signup')
   async signUp(@Body() signUpDto: SignUpReq) {
     return await this.authService.signUp(signUpDto)
-  }
-
-  @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user
   }
 
   @HttpCode(HttpStatus.OK)
@@ -79,9 +73,9 @@ export class AuthenticationController {
   @Get('refresh')
   @UseGuards(AuthRefreshGuard)
   async refresh(
-    @User() user: UserProp, // TODO: guard에서 반환하는 객체 정의하기
+    @User() user: { id: string }, // TODO: guard에서 반환하는 객체 정의하기
     @Res({ passthrough: true }) response: Response,
   ): Promise<{ accessToken: string }> {
-    return await this.authService.refreshAccessToken(user, response)
+    return await this.authService.refreshAccessToken(user.id, response)
   }
 }

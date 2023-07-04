@@ -7,7 +7,9 @@ import { EmailVO } from '../users/vo/email.vo'
 import { InputPasswordVO } from '../users/vo/password.vo'
 import { OrganizationService } from '../organization/organization.service'
 import { TokenResponse } from './dto/response/token.res'
-import { UserProp } from '../users/interfaces/user.interface'
+import { UserName } from '../users/vo/user-name.vo'
+import { UserEntity } from '../users/entities/user.entity'
+import { UserRoles } from '../users/interfaces/user-role.interface'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
@@ -15,7 +17,7 @@ const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = proce
 export class AuthenticationService {
   constructor(
     private readonly jwtService: JwtService,
-    private readonly usersService: UserService,
+    private readonly usersService: UserService, // ?
     private readonly organizationService: OrganizationService,
   ) {}
 
@@ -30,6 +32,7 @@ export class AuthenticationService {
       throw new UnauthorizedException()
     }
 
+    // TODO: create a class to generate the payload
     const payload = { id: user.id }
     const accessToken = await this.jwtService.signAsync(payload)
     this.setToken('token', accessToken, response)
@@ -81,7 +84,7 @@ export class AuthenticationService {
   }
 
   async signUp(signUpReq: SignUpReq) {
-    // Check Code
+    // TODO: Validate Code in DTO
     const { code, password, ...rest } = signUpReq
 
     const invitationMail = await this.usersService.findInvitationMail(code, new EmailVO(signUpReq.email))
@@ -90,19 +93,25 @@ export class AuthenticationService {
     const organization = await this.organizationService.findOrganizationById(invitationMail.organizationId)
     if (!organization) throw new NotFoundException('Organization Not Found')
 
-    const user = await this.usersService.insertUser(organization.id, rest, new InputPasswordVO(password))
+    const userEntity = UserEntity.create({
+      email: rest.email,
+      userName: new UserName({ firstName: rest.firstName, lastName: rest.lastName }),
+      organizationId: organization.id,
+    })
+
+    await this.usersService.insertUser(userEntity, new InputPasswordVO(password))
 
     // Give User Role
-    await this.organizationService.giveUserRole({
-      userId: user.id,
-      role: invitationMail.role,
+    await this.usersService.giveRole({
+      userId: userEntity.id,
+      role: UserRoles.guest,
     })
 
     await this.usersService.deleteInvitationMail(code)
   }
 
-  async refreshAccessToken(user: UserProp, response: Response): Promise<{ accessToken: string }> {
-    const payload = { id: user.id }
+  async refreshAccessToken(id: string, response: Response): Promise<{ accessToken: string }> {
+    const payload = { id }
     const accessToken = await this.jwtService.signAsync(payload)
     this.setToken('token', accessToken, response)
 

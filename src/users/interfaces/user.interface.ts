@@ -1,12 +1,16 @@
-import { Users } from '@prisma/client'
+import { UserName } from '../vo/user-name.vo'
 
-export interface UserProp extends Users {
+// id field should be in base entity
+// TODO: Generate entity.base.ts
+
+export interface UserProps {
   email: string
+  userName: UserName
   organizationId: string
 }
 
-export enum UserRoles {
-  admin = 'admin',
-  member = 'member',
-  guest = 'guest',
+export interface CreateUserProps {
+  email: string
+  userName: UserName
+  organizationId: string
 }

@@ -4,9 +4,10 @@ import { AuthenticationModule } from './auth/authentication.module'
 import { UsersModule } from './users/users.module'
 import { OrganizationModule } from './organization/organization.module'
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter'
+import { DepartmentModule } from './department/department.module'
 
 @Module({
-  imports: [AuthenticationModule, UsersModule, OrganizationModule],
+  imports: [AuthenticationModule, UsersModule, OrganizationModule, DepartmentModule],
   controllers: [],
   providers: [
     {

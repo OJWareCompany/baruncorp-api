@@ -1,8 +1,7 @@
 import { IsEmail, IsString, IsStrongPassword } from 'class-validator'
-import { UserProp } from '../../../users/interfaces/user.interface'
 import { PasswordOption } from '../../../users/vo/password.vo'
 
-export class SignUpReq implements Omit<UserProp, 'id' | 'organizationId'> {
+export class SignUpReq {
   @IsString()
   firstName: string
 

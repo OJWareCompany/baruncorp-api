@@ -1,12 +1,20 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import {
+  CanActivate,
+  ExecutionContext,
+  ForbiddenException,
+  Inject,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
 import { Request } from 'express'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
+import { UserRoles } from '../users/interfaces/user-role.interface'
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class AdminGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
@@ -25,10 +33,13 @@ export class AuthGuard implements CanActivate {
         secret: jwtConstants.secret,
       })
       // TODO: what data needed
-      const user = this.userRepository.findOneById(payload.id)
+      const user = await this.userRepository.findOneById(payload.id)
+      const role = await this.userRepository.findRoleByUserId(user.id)
+      if (role.getProps().role !== UserRoles.admin) throw new Error()
+
       request['user'] = user
     } catch {
-      throw new UnauthorizedException('Authentication Issue', '10005')
+      throw new ForbiddenException('does not have proper authorization.', '10010')
     }
     return true
   }
