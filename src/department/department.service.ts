@@ -8,6 +8,7 @@ import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
 import { PositionResponseDto } from './dto/position.response.dto'
 import { PositionMapper } from './position.mapper'
+import { ServiceMapper, ServiceResponseDto } from './service.mapper'
 
 @Injectable()
 export class DepartmentService {
@@ -15,7 +16,21 @@ export class DepartmentService {
     @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
     private readonly positionMapper: PositionMapper,
+    private readonly serviceMapper: ServiceMapper,
   ) {}
+
+  async putMemberInChageOfTheService(userId: string, serviceId: string): Promise<void> {
+    await this.departmentRepository.putMemberInChargeOfService(userId, serviceId)
+  }
+
+  async terminateServiceMemberIsInChargeOf(userId: string, serviceId: string): Promise<void> {
+    await this.departmentRepository.terminateServiceMemberIsInChargeOf(userId, serviceId)
+  }
+
+  async findAllServices(): Promise<ServiceResponseDto[]> {
+    const entities = await this.departmentRepository.findAllServices()
+    return entities.map(this.serviceMapper.toResponse)
+  }
 
   async findAllPositions(): Promise<PositionResponseDto[]> {
     const entities = await this.departmentRepository.findAllPositions()

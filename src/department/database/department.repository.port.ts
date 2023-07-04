@@ -4,6 +4,7 @@ import { LicenseEntity } from '../entities/license.entity'
 import { StateEntity } from '../entities/state.entity'
 import { LicenseType } from '../interfaces/license.interface'
 import { UserEntity } from '../../users/entities/user.entity'
+import { ServiceEntity } from '../entities/service.entity'
 
 /**
  * Mapper constructs objects that are used in different layers:
@@ -29,4 +30,9 @@ export interface DepartmentRepositoryPort {
   findLicensesByUser(user: UserEntity): Promise<LicenseEntity[]>
   registerLicense(entity: LicenseEntity): Promise<void>
   revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<void>
+
+  findAllServices(): Promise<ServiceEntity[]>
+  findServicesByUserId(userId: string): Promise<ServiceEntity[]>
+  putMemberInChargeOfService(userId: string, serviceId: string): Promise<void>
+  terminateServiceMemberIsInChargeOf(userId: string, serviceId: string): Promise<void>
 }

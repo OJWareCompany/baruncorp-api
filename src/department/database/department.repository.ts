@@ -1,5 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
-import { Departments, Positions, UserStructuralLicenses } from '@prisma/client'
+import { ConflictException, Injectable, NotFoundException } from '@nestjs/common'
+import { Departments, Positions, Services, UserStructuralLicenses } from '@prisma/client'
 import { DepartmentEntity } from '../entities/department.entity'
 import { LicenseEntity } from '../entities/license.entity'
 import { PositionEntity } from '../entities/position.entity'
@@ -11,10 +11,13 @@ import { DepartmentRepositoryPort } from './department.repository.port'
 import { PositionMapper } from '../position.mapper'
 import { UserEntity } from '../../users/entities/user.entity'
 import UserMapper from '../../users/user.mapper'
+import { ServiceEntity } from '../entities/service.entity'
+import { ServiceMapper } from '../service.mapper'
 
 export type DepartmentModel = Departments
 export type PositionModel = Positions
 export type LicenseModel = UserStructuralLicenses
+export type ServiceModel = Services
 
 @Injectable()
 export class DepartmentRepository implements DepartmentRepositoryPort {
@@ -23,7 +26,63 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
     private readonly licenseMapper: LicenseMapper,
     private readonly positionMapper: PositionMapper,
     private readonly userMapper: UserMapper,
+    private readonly serviceMapper: ServiceMapper,
   ) {}
+
+  async putMemberInChargeOfService(userId: string, serviceId: string): Promise<void> {
+    const record = await this.prismaService.userService.findUnique({
+      where: {
+        userId_serviceId: {
+          userId,
+          serviceId,
+        },
+      },
+      include: {
+        serviceEntity: true,
+      },
+    })
+
+    if (record) throw new ConflictException('already has service.', '10020')
+
+    await this.prismaService.userService.create({ data: { userId, serviceId } })
+  }
+
+  async terminateServiceMemberIsInChargeOf(userId: string, serviceId: string): Promise<void> {
+    const record = await this.prismaService.userService.findUnique({
+      where: {
+        userId_serviceId: {
+          userId,
+          serviceId,
+        },
+      },
+      include: {
+        serviceEntity: true,
+      },
+    })
+
+    if (!record) throw new NotFoundException('has no that service.', '10021')
+
+    await this.prismaService.userService.delete({ where: { userId_serviceId: { userId, serviceId } } })
+  }
+
+  async findServicesByUserId(userId: string): Promise<ServiceEntity[]> {
+    const records = await this.prismaService.userService.findMany({
+      where: {
+        userId,
+      },
+      include: {
+        serviceEntity: true,
+      },
+    })
+
+    const services = records.map((record) => record.serviceEntity)
+    return services.map(this.serviceMapper.toDomain)
+  }
+
+  async findAllServices(): Promise<ServiceEntity[]> {
+    const records = await this.prismaService.services.findMany()
+    return records.map(this.serviceMapper.toDomain)
+  }
 
   async findAll(): Promise<DepartmentEntity[]> {
     return await this.prismaService.departments.findMany()

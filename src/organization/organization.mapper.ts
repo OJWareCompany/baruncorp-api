@@ -4,6 +4,7 @@ import { OrganizationEntity } from './entites/organization.entity'
 import { Organizations } from '@prisma/client'
 import { CreateOrganizationProps } from './interfaces/organization.interface'
 import { Address } from './vo/address.vo'
+import { Injectable } from '@nestjs/common'
 
 export class OrganizationResponseDto {
   name: string
@@ -28,7 +29,7 @@ export class OrganizationResponseDto {
  * 5. Reposi
  * 6. Controller
  */
-
+@Injectable()
 export class OrganizationMapper implements Mapper<OrganizationEntity, OrganizationModel, OrganizationResponseDto> {
   toPersistence(entity: OrganizationEntity): Organizations {
     const props = entity.getProps()

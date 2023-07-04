@@ -13,6 +13,7 @@ import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationMapper } from './organization.mapper'
+import { ServiceMapper } from '../department/service.mapper'
 
 const repositories: Provider[] = [
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
@@ -22,7 +23,14 @@ const repositories: Provider[] = [
 
 const providers: Provider[] = [OrganizationService, PrismaService]
 
-const mappers: Provider[] = [UserMapper, PositionMapper, LicenseMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [
+  UserMapper,
+  PositionMapper,
+  LicenseMapper,
+  UserRoleMapper,
+  OrganizationMapper,
+  ServiceMapper,
+]
 
 @Module({
   providers: [...providers, ...repositories, ...mappers],

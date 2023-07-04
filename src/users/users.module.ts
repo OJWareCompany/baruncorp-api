@@ -14,6 +14,7 @@ import { PositionMapper } from '../department/position.mapper'
 import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
 import { DepartmentRepository } from '../department/database/department.repository'
 import { OrganizationMapper } from '../organization/organization.mapper'
+import { ServiceMapper } from '../department/service.mapper'
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
@@ -22,7 +23,14 @@ const repositories: Provider[] = [
   { provide: DEPARTMENT_REPOSITORY, useClass: DepartmentRepository },
 ]
 
-const mappers: Provider[] = [UserMapper, PositionMapper, LicenseMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [
+  UserMapper,
+  PositionMapper,
+  LicenseMapper,
+  UserRoleMapper,
+  OrganizationMapper,
+  ServiceMapper,
+]
 
 @Module({
   imports: [PrismaModule],
