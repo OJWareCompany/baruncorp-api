@@ -12,7 +12,7 @@ import { UserRoles } from './interfaces/user-role.interface'
 import { GiveRoleRequestDto } from './dto/req/give-role.request.dto'
 import { EmailVO } from './vo/email.vo'
 import { UserName } from './vo/user-name.vo'
-import { AdminGuard } from '../auth/authentication.admin.guard'
+
 ConfigModule.forRoot()
 
 const { EMAIL_USER, EMAIL_PASS } = process.env

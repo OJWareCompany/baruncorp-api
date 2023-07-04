@@ -1,7 +1,6 @@
 import { IsEmail, IsString, Matches } from 'class-validator'
-import { OrganizationProp } from '../../interfaces/organization.interface'
 
-export class CreateOrganizationReq implements Omit<OrganizationProp, 'id'> {
+export class CreateOrganizationReq {
   @IsEmail()
   email: string
 

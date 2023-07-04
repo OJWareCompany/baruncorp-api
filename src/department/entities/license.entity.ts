@@ -1,7 +1,7 @@
 import { LicenseProps } from '../interfaces/license.interface'
 
 export class LicenseEntity {
-  props: LicenseProps
+  protected readonly props: LicenseProps
 
   constructor(props: LicenseProps) {
     this.props = props

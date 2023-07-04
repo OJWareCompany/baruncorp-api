@@ -1,17 +1,27 @@
-import { OrganizationProp } from '../interfaces/organization.interface'
-
-// TODO: gonna be with VO
+import { CreateOrganizationProps, OrganizationProps } from '../interfaces/organization.interface'
+import { v4 } from 'uuid'
 export class OrganizationEntity {
-  email: string
-  city: string
-  country: string
-  phoneNumber: string
-  postalCode: string
-  stateOrRegion: string
-  street1: string
-  street2: string
   id: string
-  name: string
-  description: string
-  organizationType: string
+  protected readonly props: OrganizationProps
+
+  static create(create: CreateOrganizationProps) {
+    const id = v4()
+    const props: OrganizationProps = {
+      ...create,
+    }
+    return new OrganizationEntity({ id, props })
+  }
+
+  constructor({ id, props }: { id: string; props: CreateOrganizationProps }) {
+    this.id = id
+    this.props = props
+  }
+
+  getProps() {
+    const copyProps = {
+      id: this.id,
+      ...this.props,
+    }
+    return Object.freeze(copyProps)
+  }
 }

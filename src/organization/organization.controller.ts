@@ -1,16 +1,17 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common'
 import { OrganizationService } from './organization.service'
-import { OrganizationProp } from './interfaces/organization.interface'
 import { CreateOrganizationReq } from './dto/req/create-organization.req'
 import { AuthGuard } from '../auth/authentication.guard'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { UserResponseDto } from '../users/dto/req/user.response.dto'
+import { OrganizationResponseDto } from './organization.mapper'
+import { Address } from './vo/address.vo'
 
 @Controller('organizations')
 export class OrganizationController {
   constructor(private readonly organizationService: OrganizationService) {}
   @Get('')
-  async findAll(): Promise<OrganizationProp[]> {
+  async findAll(): Promise<OrganizationResponseDto[]> {
     return await this.organizationService.findAll()
   }
 
@@ -27,6 +28,20 @@ export class OrganizationController {
 
   @Post('')
   async createOrganization(@Body() dto: CreateOrganizationReq) {
-    return await this.organizationService.createOrganization(dto)
+    return await this.organizationService.createOrganization({
+      name: dto.name,
+      description: dto.description,
+      email: dto.email,
+      phoneNumber: dto.phoneNumber,
+      organizationType: dto.organizationType,
+      address: new Address({
+        street1: dto.street1,
+        street2: dto.street2,
+        city: dto.city,
+        stateOrRegion: dto.stateOrRegion,
+        postalCode: dto.postalCode,
+        country: dto.country,
+      }),
+    })
   }
 }

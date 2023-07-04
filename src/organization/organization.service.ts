@@ -1,7 +1,7 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepositoryPort } from './database/organization.repository.port'
-import { OrganizationProp } from './interfaces/organization.interface'
+import { CreateOrganizationProps } from './interfaces/organization.interface'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserResponseDto } from '../users/dto/req/user.response.dto'
@@ -10,6 +10,8 @@ import { PositionMapper } from '../department/position.mapper'
 import { LicenseMapper } from '../department/license.mapper'
 import { DepartmentRepositoryPort } from '../department/database/department.repository.port'
 import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
+import { OrganizationEntity } from './entites/organization.entity'
+import { OrganizationMapper, OrganizationResponseDto } from './organization.mapper'
 
 @Injectable()
 export class OrganizationService {
@@ -17,24 +19,27 @@ export class OrganizationService {
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
     @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
+    private readonly organizationMapper: OrganizationMapper,
     private readonly userMapper: UserMapper,
     private readonly positionMapper: PositionMapper,
     private readonly licenseMapper: LicenseMapper,
   ) {}
 
   // TODO: remove id field!
-  async createOrganization(props: Omit<OrganizationProp, 'id'>): Promise<OrganizationProp> {
+  async createOrganization(props: Omit<CreateOrganizationProps, 'id'>): Promise<void> {
     const organization = await this.organizationRepository.findOneByName(props.name)
     if (organization) throw new ConflictException(`${props.name} is aleady existed.`, '20001')
-    return await this.organizationRepository.insertOrganization(props)
+    const entity = OrganizationEntity.create(props)
+    await this.organizationRepository.insertOrganization(entity)
   }
 
-  async findOrganizationById(organizationId: string): Promise<OrganizationProp> {
+  async findOrganizationById(organizationId: string): Promise<OrganizationEntity> {
     return await this.organizationRepository.findOneById(organizationId)
   }
 
-  async findAll(): Promise<OrganizationProp[]> {
-    return await this.organizationRepository.findAll()
+  async findAll(): Promise<OrganizationResponseDto[]> {
+    const entities = await this.organizationRepository.findAll()
+    return entities.map(this.organizationMapper.toResponse)
   }
 
   /**
@@ -50,6 +55,7 @@ export class OrganizationService {
    */
   async findMembersByOrganizationId(organizationId: string): Promise<UserResponseDto[]> {
     const userEntity = await this.userRepository.findByOrganizationId(organizationId)
+    const organization = await this.organizationRepository.findOneById(organizationId)
     const result: Promise<UserResponseDto>[] = userEntity.map(async (user) => {
       const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
       const licenseEntities = await this.departmentRepository.findLicensesByUser(user)
@@ -57,6 +63,7 @@ export class OrganizationService {
       return this.userMapper.toResponse(
         user,
         userRoleEntity,
+        organization,
         this.positionMapper.toResponse(positionEntity),
         licenseEntities.map(this.licenseMapper.toResponse),
       )

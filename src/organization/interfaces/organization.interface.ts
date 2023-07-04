@@ -1,16 +1,19 @@
-import { Organizations } from '@prisma/client'
+import { Address } from '../vo/address.vo'
 
-export interface OrganizationProp extends Organizations {
-  id: string
+export interface OrganizationProps {
   name: string
-  description: string | null
-  email: string | null
+  description: string
+  email: string
+  phoneNumber: string
   organizationType: string
-  city: string | null
-  country: string | null
-  phoneNumber: string | null
-  postalCode: string | null
-  stateOrRegion: string | null
-  street1: string | null
-  street2: string | null
+  address: Address
+}
+
+export interface CreateOrganizationProps {
+  name: string
+  description: string
+  email: string
+  phoneNumber: string
+  organizationType: string
+  address: Address
 }
