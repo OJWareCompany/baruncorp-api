@@ -1,3 +1,9 @@
+## References
+
+This is an attempt to combine multiple architectural patterns and styles together.
+
+- https://github.com/Sairyss/domain-driven-hexagon
+
 ## Installation
 
 ```bash
