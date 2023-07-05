@@ -5,6 +5,7 @@ import { LicenseType } from './interfaces/license.interface'
 import { PositionResponseDto } from './dto/position.response.dto'
 import { ServiceResponseDto } from './service.mapper'
 import { PutMemberInChargeOfTheService } from './dto/put-member-in-charge-of-the-service.request.dto'
+import { AuthGuard } from '../auth/authentication.guard'
 
 @Controller('departments')
 export class DepartmentController {
@@ -16,12 +17,14 @@ export class DepartmentController {
 
   // can use manager
   @Post('user-position')
+  @UseGuards(AuthGuard)
   async appointPosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
     return await this.departmentService.appointPosition(userId, positionId)
   }
 
   // can use only manager
   @Delete('user-position')
+  @UseGuards(AuthGuard)
   async revokePosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
     return await this.departmentService.revokePosition(userId, positionId)
   }
@@ -43,6 +46,7 @@ export class DepartmentController {
 
   // TODO: create api doesn't retrieve? how handel conflict error?
   @Post('licenses')
+  @UseGuards(AuthGuard)
   async postLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
     return await this.departmentService.registerLicense(
       dto.userId,
@@ -56,6 +60,7 @@ export class DepartmentController {
   }
 
   @Delete('licenses')
+  @UseGuards(AuthGuard)
   async deleteLicense(
     @Query('userId') userId: string,
     @Query('type') type: LicenseType,
@@ -71,11 +76,13 @@ export class DepartmentController {
 
   // TODO: create api doesn't retrieve? how handel conflict error?
   @Post('member-services')
+  @UseGuards(AuthGuard)
   async putMemberInChageOfTheService(@Body() dto: PutMemberInChargeOfTheService): Promise<void> {
     return this.departmentService.putMemberInChageOfTheService(dto.userId, dto.serviceId)
   }
 
   @Delete('member-services')
+  @UseGuards(AuthGuard)
   async terminateServiceMemberIsInChargeOf(
     @Query('userId') userId: string,
     @Query('serviceId') serviceId: string,
