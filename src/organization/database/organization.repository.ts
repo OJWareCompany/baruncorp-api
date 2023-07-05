@@ -35,7 +35,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
 
   async findOneByName(name: string): Promise<OrganizationEntity> {
     const record = await this.prismaService.organizations.findFirst({ where: { name: { contains: name } } })
-    return this.organizationMapper.toDomain(record)
+    return record && this.organizationMapper.toDomain(record)
   }
 
   // async isExisteByName(name: string): Promise<CompanyProp[]> {
@@ -44,6 +44,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
 
   async insertOrganization(entity: OrganizationEntity): Promise<void> {
     const record = this.organizationMapper.toPersistence(entity)
+    console.log(entity)
     await this.prismaService.organizations.create({ data: record })
   }
 }

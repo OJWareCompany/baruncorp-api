@@ -19,18 +19,18 @@ export class UserRepository implements UserRepositoryPort {
     private readonly userRoleMapper: UserRoleMapper,
   ) {}
   async findAll(): Promise<UserEntity[]> {
-    const record = await this.prismaService.users.findMany()
-    return record.map(this.userMapper.toDomain)
+    const records = await this.prismaService.users.findMany()
+    return records && records.map(this.userMapper.toDomain)
   }
 
   async findByOrganizationId(organizationId: string): Promise<UserEntity[]> {
     const records = await this.prismaService.users.findMany({ where: { organizationId } })
-    return records.map(this.userMapper.toDomain)
+    return records && records.map(this.userMapper.toDomain)
   }
 
   async findOneById(id: string): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({ where: { id } })
-    return this.userMapper.toDomain(user)
+    return user && this.userMapper.toDomain(user)
   }
 
   async update(userId: string, userName: UserName): Promise<void> {
@@ -60,7 +60,7 @@ export class UserRepository implements UserRepositoryPort {
 
   async findOneByEmail({ email }: EmailVO): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({ where: { email } })
-    return user ? this.userMapper.toDomain(user) : undefined
+    return user && this.userMapper.toDomain(user)
   }
 
   async findUserIdByEmail({ email }: EmailVO): Promise<Pick<UserEntity, 'id'>> {
@@ -82,7 +82,7 @@ export class UserRepository implements UserRepositoryPort {
 
   async findRoleByUserId(userId: string): Promise<UserRoleEntity> {
     const record = await this.prismaService.userRole.findFirst({ where: { userId } })
-    return record ? this.userRoleMapper.toDomain(record) : null
+    return record && this.userRoleMapper.toDomain(record)
   }
 
   async giveRole(prop: UserRoleEntity): Promise<void> {

@@ -29,7 +29,7 @@ export class AuthenticationService {
     const isVerifiedPassword = await password.compare(originalPassword)
 
     if (!isVerifiedPassword) {
-      throw new UnauthorizedException()
+      throw new UnauthorizedException('UnauthorizedException', '10022')
     }
 
     // TODO: create a class to generate the payload
