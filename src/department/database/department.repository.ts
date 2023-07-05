@@ -131,7 +131,7 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
         userEntity: true,
       },
     })
-    const structuralLicenses = await this.prismaService.userElectricalLicenses.findMany({
+    const structuralLicenses = await this.prismaService.userStructuralLicenses.findMany({
       include: {
         userEntity: true,
       },
@@ -160,7 +160,7 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
     const electricalLicenses: LicenseModel[] = await this.prismaService.userElectricalLicenses.findMany({
       where: { userId: user.getProps().id },
     })
-    const structuralLicenses: LicenseModel[] = await this.prismaService.userElectricalLicenses.findMany({
+    const structuralLicenses: LicenseModel[] = await this.prismaService.userStructuralLicenses.findMany({
       where: { userId: user.getProps().id },
     })
 
@@ -194,7 +194,7 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
         where: { userId_issuingCountryName: { userId, issuingCountryName } },
       })
     } else if (type === 'Structural') {
-      await this.prismaService.userElectricalLicenses.delete({
+      await this.prismaService.userStructuralLicenses.delete({
         where: { userId_issuingCountryName: { userId, issuingCountryName } },
       })
     }
