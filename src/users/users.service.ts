@@ -18,6 +18,7 @@ import { PositionMapper } from '../department/position.mapper'
 import { LicenseMapper } from '../department/license.mapper'
 import { CreateUserRoleProps, UserRoles } from './interfaces/user-role.interface'
 import { UserRoleEntity } from './entities/user-role.entity'
+import { ServiceMapper } from '../department/service.mapper'
 
 @Injectable()
 export class UserService {
@@ -29,6 +30,7 @@ export class UserService {
     private readonly userMapper: UserMapper,
     private readonly positionMapper: PositionMapper,
     private readonly licenseMapper: LicenseMapper,
+    private readonly serviceMapper: ServiceMapper,
   ) {}
 
   async giveRole(create: CreateUserRoleProps): Promise<void> {
@@ -52,15 +54,17 @@ export class UserService {
   async getUserProfile(userId: string): Promise<UserResponseDto> {
     // TODO: Consider an Aggregate Pattern
     const userEntity = await this.userRepository.findOneById(userId)
+    const userRoleEntity = await this.userRepository.findRoleByUserId(userEntity.id)
     const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organizationId)
     const positionEntity = await this.departmentRepository.findPositionByUserId(userEntity.id)
+    const serviceEntities = await this.departmentRepository.findServicesByUserId(userEntity.id)
     const licenseEntities = await this.departmentRepository.findLicensesByUser(userEntity)
-    const userRoleEntity = await this.userRepository.findRoleByUserId(userEntity.id)
     return this.userMapper.toResponse(
       userEntity,
       userRoleEntity,
       organizationEntity,
       this.positionMapper.toResponse(positionEntity),
+      serviceEntities.map(this.serviceMapper.toResponse),
       licenseEntities.map(this.licenseMapper.toResponse),
     )
   }
@@ -72,15 +76,17 @@ export class UserService {
   async findUsers(): Promise<UserResponseDto[]> {
     const userEntity = await this.userRepository.findAll()
     const result: Promise<UserResponseDto>[] = userEntity.map(async (user) => {
+      const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
       const organizationEntity = await this.organizationRepository.findOneById(user.getProps().organizationId)
       const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
+      const serviceEntities = await this.departmentRepository.findServicesByUserId(user.id)
       const licenseEntities = await this.departmentRepository.findLicensesByUser(user)
-      const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
       return this.userMapper.toResponse(
         user,
         userRoleEntity,
         organizationEntity,
         this.positionMapper.toResponse(positionEntity),
+        serviceEntities.map(this.serviceMapper.toResponse),
         licenseEntities.map(this.licenseMapper.toResponse),
       )
     })
@@ -90,16 +96,18 @@ export class UserService {
 
   async findOneByEmail(email: EmailVO): Promise<UserResponseDto> {
     const userEntity = await this.userRepository.findOneByEmail(email)
+    const userRoleEntity = await this.userRepository.findRoleByUserId(userEntity.id)
     const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organizationId)
     const positionEntity = await this.departmentRepository.findPositionByUserId(userEntity.id)
+    const serviceEntities = await this.departmentRepository.findServicesByUserId(userEntity.id)
     const licenseEntities = await this.departmentRepository.findLicensesByUser(userEntity)
-    const userRoleEntity = await this.userRepository.findRoleByUserId(userEntity.id)
 
     return this.userMapper.toResponse(
       userEntity,
       userRoleEntity,
       organizationEntity,
       this.positionMapper.toResponse(positionEntity),
+      serviceEntities.map(this.serviceMapper.toResponse),
       licenseEntities.map(this.licenseMapper.toResponse),
     )
   }

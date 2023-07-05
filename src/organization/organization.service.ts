@@ -12,6 +12,7 @@ import { DepartmentRepositoryPort } from '../department/database/department.repo
 import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
 import { OrganizationEntity } from './entites/organization.entity'
 import { OrganizationMapper, OrganizationResponseDto } from './organization.mapper'
+import { ServiceMapper } from '../department/service.mapper'
 
 @Injectable()
 export class OrganizationService {
@@ -23,6 +24,7 @@ export class OrganizationService {
     private readonly userMapper: UserMapper,
     private readonly positionMapper: PositionMapper,
     private readonly licenseMapper: LicenseMapper,
+    private readonly serviceMapper: ServiceMapper,
   ) {}
 
   // TODO: remove id field!
@@ -54,17 +56,20 @@ export class OrganizationService {
    * 이때! Aggregate 개념이 필요한 것 같다! (여러가지 Entity의 묶음)
    */
   async findMembersByOrganizationId(organizationId: string): Promise<UserResponseDto[]> {
+    console.log(organizationId)
     const userEntity = await this.userRepository.findByOrganizationId(organizationId)
     const organization = await this.organizationRepository.findOneById(organizationId)
     const result: Promise<UserResponseDto>[] = userEntity.map(async (user) => {
-      const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
-      const licenseEntities = await this.departmentRepository.findLicensesByUser(user)
       const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
+      const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
+      const servicesEntity = await this.departmentRepository.findServicesByUserId(user.id)
+      const licenseEntities = await this.departmentRepository.findLicensesByUser(user)
       return this.userMapper.toResponse(
         user,
         userRoleEntity,
         organization,
         this.positionMapper.toResponse(positionEntity),
+        servicesEntity.map(this.serviceMapper.toResponse),
         licenseEntities.map(this.licenseMapper.toResponse),
       )
     })

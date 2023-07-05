@@ -8,6 +8,7 @@ import { PositionResponseDto } from '../department/dto/position.response.dto'
 import { UserRoleEntity } from './entities/user-role.entity'
 import { Injectable } from '@nestjs/common'
 import { OrganizationEntity } from '../organization/entites/organization.entity'
+import { ServiceResponseDto } from '../department/service.mapper'
 
 @Injectable()
 export default class UserMapper implements Mapper<UserEntity, UserModel, UserResponseDto> {
@@ -42,6 +43,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     role: UserRoleEntity,
     organizationEntity: OrganizationEntity,
     position: PositionResponseDto,
+    services: ServiceResponseDto[],
     licenses: LincenseResponseDto[],
   ): UserResponseDto {
     const props = entity.getProps()
@@ -52,6 +54,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.lastName = props.userName.getLastName()
     response.fullName = props.userName.getFullName()
     response.organization = organizationEntity.getProps().name
+    response.services = services
     response.position = position
     response.licenses = licenses
     response.role = role?.getProps().role || null
