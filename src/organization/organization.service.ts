@@ -56,7 +56,6 @@ export class OrganizationService {
    * 이때! Aggregate 개념이 필요한 것 같다! (여러가지 Entity의 묶음)
    */
   async findMembersByOrganizationId(organizationId: string): Promise<UserResponseDto[]> {
-    console.log(organizationId)
     const userEntity = await this.userRepository.findByOrganizationId(organizationId)
     const organization = await this.organizationRepository.findOneById(organizationId)
     const result: Promise<UserResponseDto>[] = userEntity.map(async (user) => {

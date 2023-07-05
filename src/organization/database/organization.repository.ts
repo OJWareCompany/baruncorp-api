@@ -44,7 +44,6 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
 
   async insertOrganization(entity: OrganizationEntity): Promise<void> {
     const record = this.organizationMapper.toPersistence(entity)
-    console.log(entity)
     await this.prismaService.organizations.create({ data: record })
   }
 }
