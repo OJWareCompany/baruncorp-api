@@ -25,7 +25,7 @@ export class AuthGuard implements CanActivate {
         secret: jwtConstants.secret,
       })
       // TODO: what data needed
-      const user = this.userRepository.findOneById(payload.id)
+      const user = await this.userRepository.findOneById(payload.id)
       request['user'] = user
     } catch {
       throw new UnauthorizedException('Authentication Issue', '10005')

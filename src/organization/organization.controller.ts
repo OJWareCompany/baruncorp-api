@@ -6,6 +6,7 @@ import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { UserResponseDto } from '../users/dto/req/user.response.dto'
 import { OrganizationResponseDto } from './organization.mapper'
 import { Address } from './vo/address.vo'
+import { UserEntity } from '../users/entities/user.entity'
 
 @Controller('organizations')
 export class OrganizationController {
@@ -20,10 +21,11 @@ export class OrganizationController {
     return await this.organizationService.findMembersByOrganizationId(organizationId)
   }
 
+  // user decorator expose entity above the controller layer
   @Get('my/members')
   @UseGuards(AuthGuard)
-  async findMyMembers(@User() user: { id: string; organizationId: string }): Promise<UserResponseDto[]> {
-    return await this.organizationService.findMembersByOrganizationId(user.organizationId)
+  async findMyMembers(@User() user: UserEntity): Promise<UserResponseDto[]> {
+    return await this.organizationService.findMembersByOrganizationId(user.getProps().organizationId)
   }
 
   @Post('')
