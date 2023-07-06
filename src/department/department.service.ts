@@ -21,8 +21,9 @@ export class DepartmentService {
 
   async putMemberInChageOfTheService(userId: string, serviceId: string): Promise<void> {
     const services = await this.departmentRepository.findServicesByUserId(userId)
-    const existed = services.filter((service) => service.getProps().id === serviceId)
+    const existed = services.filter((service) => service.getProps().id === serviceId).length === 0 ? false : true
     if (existed) return
+    // if (existed) throw new ConflictException('already has that service.', '10023')
     await this.departmentRepository.putMemberInChargeOfService(userId, serviceId)
   }
 
