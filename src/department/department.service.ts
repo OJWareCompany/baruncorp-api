@@ -29,7 +29,7 @@ export class DepartmentService {
   async terminateServiceMemberIsInChargeOf(userId: string, serviceId: string): Promise<void> {
     const services = await this.departmentRepository.findServicesByUserId(userId)
     const existed = services.filter((service) => service.getProps().id === serviceId)
-    if (existed) return
+    if (!existed) return
     await this.departmentRepository.terminateServiceMemberIsInChargeOf(userId, serviceId)
   }
 
