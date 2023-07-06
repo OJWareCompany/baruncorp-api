@@ -97,7 +97,7 @@ export class UsersController {
       from: EMAIL_USER,
       to: dto.email,
       subject: 'BarunCorp Invitation Email',
-      text: `[www.barun.com] / CODE: ${code}`,
+      text: `${process.env.SERVICE_HOST}  [CODE: ${code}]`,
     }
 
     transporter.sendMail(mailOptions, function (error, info) {
