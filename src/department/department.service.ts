@@ -20,10 +20,16 @@ export class DepartmentService {
   ) {}
 
   async putMemberInChageOfTheService(userId: string, serviceId: string): Promise<void> {
+    const services = await this.departmentRepository.findServicesByUserId(userId)
+    const existed = services.filter((service) => service.getProps().id === serviceId)
+    if (existed) return
     await this.departmentRepository.putMemberInChargeOfService(userId, serviceId)
   }
 
   async terminateServiceMemberIsInChargeOf(userId: string, serviceId: string): Promise<void> {
+    const services = await this.departmentRepository.findServicesByUserId(userId)
+    const existed = services.filter((service) => service.getProps().id === serviceId)
+    if (existed) return
     await this.departmentRepository.terminateServiceMemberIsInChargeOf(userId, serviceId)
   }
 
@@ -45,13 +51,28 @@ export class DepartmentService {
   async appointPosition(userId: string, positionId: string): Promise<void> {
     const existed = await this.departmentRepository.findPositionByUserId(userId)
     if (existed) throw new ConflictException('already has a position.', '10013')
-    return await this.departmentRepository.appointPosition(userId, positionId)
+    await this.departmentRepository.appointPosition(userId, positionId)
+
+    const serviceEntities = await this.departmentRepository.findServicesByPositionId(positionId)
+    const putServices = serviceEntities.map(async (service) => {
+      await this.departmentRepository.putMemberInChargeOfService(userId, service.getProps().id)
+    })
+
+    await Promise.all(putServices)
   }
 
   async revokePosition(userId: string, positionId: string): Promise<any> {
     const existed = await this.departmentRepository.findPositionByUserId(userId)
     if (!existed) throw new NotFoundException('has no a position.', '10014')
-    return await this.departmentRepository.revokePosition(userId, positionId)
+    await this.departmentRepository.revokePosition(userId, positionId)
+
+    const serviceEntities = await this.departmentRepository.findServicesByPositionId(positionId)
+
+    const putServices = serviceEntities.map(async (service) => {
+      await this.departmentRepository.terminateServiceMemberIsInChargeOf(userId, service.getProps().id)
+    })
+
+    await Promise.all(putServices)
   }
 
   async findAllStates(): Promise<any> {

@@ -29,6 +29,20 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
     private readonly serviceMapper: ServiceMapper,
   ) {}
 
+  async findServicesByPositionId(positionId: string): Promise<ServiceEntity[]> {
+    const records = await this.prismaService.positionService.findMany({
+      where: {
+        positionId,
+      },
+      include: {
+        serviceEntity: true,
+      },
+    })
+
+    const services = records.map((record) => record.serviceEntity)
+    return services.map(this.serviceMapper.toDomain)
+  }
+
   async putMemberInChargeOfService(userId: string, serviceId: string): Promise<void> {
     const record = await this.prismaService.userService.findUnique({
       where: {

@@ -33,6 +33,7 @@ export interface DepartmentRepositoryPort {
 
   findAllServices(): Promise<ServiceEntity[]>
   findServicesByUserId(userId: string): Promise<ServiceEntity[]>
+  findServicesByPositionId(positionId: string): Promise<ServiceEntity[]>
   putMemberInChargeOfService(userId: string, serviceId: string): Promise<void>
   terminateServiceMemberIsInChargeOf(userId: string, serviceId: string): Promise<void>
 }
