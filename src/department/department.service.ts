@@ -53,27 +53,12 @@ export class DepartmentService {
     const existed = await this.departmentRepository.findPositionByUserId(userId)
     if (existed) throw new ConflictException('already has a position.', '10013')
     await this.departmentRepository.appointPosition(userId, positionId)
-
-    const serviceEntities = await this.departmentRepository.findServicesByPositionId(positionId)
-    const putServices = serviceEntities.map(async (service) => {
-      await this.departmentRepository.putMemberInChargeOfService(userId, service.getProps().id)
-    })
-
-    await Promise.all(putServices)
   }
 
   async revokePosition(userId: string, positionId: string): Promise<any> {
     const existed = await this.departmentRepository.findPositionByUserId(userId)
     if (!existed) throw new NotFoundException('has no a position.', '10014')
     await this.departmentRepository.revokePosition(userId, positionId)
-
-    const serviceEntities = await this.departmentRepository.findServicesByPositionId(positionId)
-
-    const putServices = serviceEntities.map(async (service) => {
-      await this.departmentRepository.terminateServiceMemberIsInChargeOf(userId, service.getProps().id)
-    })
-
-    await Promise.all(putServices)
   }
 
   async findAllStates(): Promise<any> {

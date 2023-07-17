@@ -7,6 +7,7 @@ import { Address } from './vo/address.vo'
 import { Injectable } from '@nestjs/common'
 
 export class OrganizationResponseDto {
+  id: string
   name: string
   description: string
   email: string
@@ -71,6 +72,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
 
   toResponse(entity: OrganizationEntity): OrganizationResponseDto {
     const response = new OrganizationResponseDto()
+    response.id = entity.getProps().id
     response.name = entity.getProps().name
     response.description = entity.getProps().description
     response.email = entity.getProps().email
