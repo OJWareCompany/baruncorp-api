@@ -201,3 +201,41 @@ model UserPosition {
   @@index([positionId], map: "user_position_position_id_fkey")
   @@map("user_position")
 }
+
+model CountySubdivisions {
+  geoId      String  @id @map("geo_id") @db.VarChar(20)
+  stateCode  String? @map("state_code") @db.VarChar(20)
+  stateName  String? @map("state_name") @db.VarChar(200)
+  countyCode String? @map("county_code") @db.VarChar(20)
+  name       String? @map("name") @db.VarChar(200)
+  ansiCode   String? @map("ansi_code") @db.VarChar(20)
+
+  @@map("county_subdivisions")
+}
+
+model Counties {
+  geoId          String  @id @map("geo_id") @db.VarChar(20)
+  stateCode      String? @map("state_code") @db.VarChar(20)
+  stateName      String? @map("state_name") @db.VarChar(100)
+  countyCode     String? @map("county_code") @db.VarChar(20)
+  ansiCode       String? @map("ansi_code") @db.VarChar(20)
+  countyName     String? @map("county_name") @db.VarChar(100)
+  countyLongName String? @map("county_long_name") @db.VarChar(100)
+
+  @@map("counties")
+}
+
+model Places {
+  geoId           String  @id @map("geo_id") @db.VarChar(20)
+  stateCode       String? @map("state_code") @db.VarChar(20)
+  stateName       String? @map("state_name") @db.VarChar(100)
+  placeC          String? @map("place_c") @db.VarChar(20)
+  placeNsAnsiCode String? @map("place_ns_ansi_code") @db.VarChar(20)
+  placeFips       String? @map("place_fips") @db.VarChar(20)
+  placeName       String? @map("place_name") @db.VarChar(100)
+  placeType       String? @map("place_type") @db.VarChar(20)
+  lsadCode        String? @map("lsad_code") @db.VarChar(20)
+  counties        String? @map("counties") @db.VarChar(100)
+
+  @@map("places")
+}
