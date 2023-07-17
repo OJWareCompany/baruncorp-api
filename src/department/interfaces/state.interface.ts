@@ -1,4 +1,8 @@
 export interface StateProps {
-  name: string
-  abbreviation: string
+  stateName: string
+  abbreviation?: string
+  geoId?: string
+  stateCode?: string
+  ansiCode?: string
+  stateLongName?: string
 }

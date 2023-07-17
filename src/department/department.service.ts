@@ -93,7 +93,7 @@ export class DepartmentService {
         userId,
         userName: user.getProps().userName,
         type,
-        stateEntity: new StateEntity({ name: issuingCountryName, abbreviation }),
+        stateEntity: new StateEntity({ stateName: issuingCountryName, abbreviation }),
         priority,
         issuedDate,
         expiryDate,
@@ -106,7 +106,7 @@ export class DepartmentService {
     const existed = await this.departmentRepository.findLicensesByUser(user)
     const filterd = existed.map((license) => {
       const state = license.getProps().stateEntity
-      return state.name === issuingCountryName && license.getProps().type === type
+      return state.stateName === issuingCountryName && license.getProps().type === type
     })
     if (!filterd.includes(true)) throw new NotFoundException('has no a license.', '10016')
     return await this.departmentRepository.revokeLicense(userId, type, issuingCountryName)

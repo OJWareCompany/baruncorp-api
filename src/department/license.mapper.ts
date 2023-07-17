@@ -18,7 +18,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
     const props: LicenseProps = entity.getProps()
     const record: LicenseModel = {
       userId: props.userId,
-      issuingCountryName: props.stateEntity.name,
+      issuingCountryName: props.stateEntity.stateName,
       abbreviation: props.stateEntity.abbreviation,
       priority: props.priority,
       issuedDate: props.issuedDate,
@@ -31,7 +31,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
     const props: CreateLicenseProps = {
       userId: record.userId,
       userName: user.getProps().userName,
-      stateEntity: new StateEntity({ name: record.issuingCountryName, abbreviation: record.abbreviation }),
+      stateEntity: new StateEntity({ stateName: record.issuingCountryName, abbreviation: record.abbreviation }),
       type,
       priority: record.priority,
       issuedDate: record.issuedDate,
@@ -45,7 +45,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
     const copyProps = entity.getProps()
     const response = new LincenseResponseDto()
     response.abbreviation = copyProps.stateEntity.abbreviation
-    response.issuingCountryName = copyProps.stateEntity.name
+    response.issuingCountryName = copyProps.stateEntity.stateName
     response.expiryDate = copyProps.expiryDate
     response.issuedDate = copyProps.issuedDate
     response.priority = copyProps.priority

@@ -18,15 +18,15 @@ model Organizations {
   id                     String             @id @default(uuid())
   name                   String             @unique
   description            String?
-  email                  String?
   organizationType       String             @map("organization_type")
   city                   String?
   country                String?
+  street1                String?
+  street2                String?
+  email                  String?
   phoneNumber            String?            @map("phone_number")
   postalCode             String?            @map("postal_code")
   stateOrRegion          String?            @map("state_or_region")
-  street1                String?
-  street2                String?
   invitationEmailEntity  InvitationEmails[]
   organizationTypeEntity OrganizationTypes  @relation(fields: [organizationType], references: [type])
   users                  Users[]
@@ -74,12 +74,12 @@ model Users {
   lastName               String                   @map("last_name")
   organizationId         String                   @map("organization_id")
   passwordEntity         Passwords?
-  userRoleEntity         UserRole[]
-  organizationEntity     Organizations            @relation(fields: [organizationId], references: [id])
-  UserService            UserService[]
-  UserStructuralLicenses UserStructuralLicenses[]
   UserElectricalLicenses UserElectricalLicenses[]
   UserPosition           UserPosition[]
+  userRoleEntity         UserRole[]
+  UserService            UserService[]
+  UserStructuralLicenses UserStructuralLicenses[]
+  organizationEntity     Organizations            @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -87,8 +87,8 @@ model Users {
 
 model Passwords {
   userId   String @unique @map("user_id")
-  user     Users  @relation(fields: [userId], references: [id])
   password String
+  user     Users  @relation(fields: [userId], references: [id])
 
   @@map("passwords")
 }
@@ -107,10 +107,11 @@ model Positions {
   name             String
   description      String
   departmentId     String            @map("department_id")
-  departmentEntity Departments       @relation(fields: [departmentId], references: [id])
   PositionService  PositionService[]
+  departmentEntity Departments       @relation(fields: [departmentId], references: [id])
   UserPosition     UserPosition[]
 
+  @@index([departmentId], map: "positions_department_id_fkey")
   @@map("positions")
 }
 
@@ -126,68 +127,77 @@ model Services {
 
 model PositionService {
   positionId     String    @map("position_id")
-  positionEntity Positions @relation(fields: [positionId], references: [id])
   serviceId      String    @map("service_id")
+  positionEntity Positions @relation(fields: [positionId], references: [id])
   serviceEntity  Services  @relation(fields: [serviceId], references: [id])
 
   @@id([positionId, serviceId])
+  @@index([serviceId], map: "position_service_service_id_fkey")
   @@map("position_service")
 }
 
 model UserService {
   userId        String   @map("user_id")
-  userEntity    Users    @relation(fields: [userId], references: [id])
   serviceId     String   @map("service_id")
   serviceEntity Services @relation(fields: [serviceId], references: [id])
+  userEntity    Users    @relation(fields: [userId], references: [id])
 
   @@id([userId, serviceId])
+  @@index([serviceId], map: "user_service_service_id_fkey")
   @@map("user_service")
 }
 
 model States {
-  name                   String
-  abbreviation           String
-  UserStructuralLicenses UserStructuralLicenses[]
+  stateName              String                   @map("state_name")
+  abbreviation           String                   @map("abbreviation")
+  geoId                  String                   @map("geo_id") @db.VarChar(20)
+  stateCode              String?                  @map("state_code") @db.VarChar(20)
+  ansiCode               String?                  @map("ansi_code") @db.VarChar(20)
+  stateLongName          String?                  @map("state_long_name")
   UserElectricalLicenses UserElectricalLicenses[]
+  UserStructuralLicenses UserStructuralLicenses[]
 
-  @@id([name, abbreviation])
+  @@id([stateName, abbreviation])
   @@map("states")
 }
 
 model UserStructuralLicenses {
   userId             String    @map("user_id")
-  userEntity         Users     @relation(fields: [userId], references: [id])
   issuingCountryName String    @map("issuing_country_name")
   abbreviation       String
-  stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [name, abbreviation])
   priority           Int?
-  issuedDate         DateTime? @map("issue_date")
   expiryDate         DateTime? @map("expiry_date")
+  issuedDate         DateTime? @map("issue_date")
+  stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
+  userEntity         Users     @relation(fields: [userId], references: [id])
 
   @@id([userId, issuingCountryName])
+  @@index([issuingCountryName, abbreviation], map: "user_structural_licenses_issuing_country_name_abbreviation_fkey")
   @@map("user_structural_licenses")
 }
 
 model UserElectricalLicenses {
   userId             String    @map("user_id")
-  userEntity         Users     @relation(fields: [userId], references: [id])
   issuingCountryName String    @map("issuing_country_name")
   abbreviation       String
-  stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [name, abbreviation])
-  priority           Int?
-  issuedDate         DateTime? @map("issue_date")
   expiryDate         DateTime? @map("expiry_date")
+  issuedDate         DateTime? @map("issue_date")
+  priority           Int?
+  stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
+  userEntity         Users     @relation(fields: [userId], references: [id])
 
   @@id([userId, issuingCountryName])
+  @@index([issuingCountryName, abbreviation], map: "user_electrical_licenses_issuing_country_name_abbreviation_fkey")
   @@map("user_electrical_licenses")
 }
 
 model UserPosition {
   userId         String    @map("user_id")
-  userEntity     Users     @relation(fields: [userId], references: [id])
   positionId     String    @map("position_id")
   positionEntity Positions @relation(fields: [positionId], references: [id])
+  userEntity     Users     @relation(fields: [userId], references: [id])
 
   @@id([userId, positionId])
+  @@index([positionId], map: "user_position_position_id_fkey")
   @@map("user_position")
 }
