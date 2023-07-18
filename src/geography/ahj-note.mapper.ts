@@ -38,6 +38,16 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       type: type,
     }
 
+    response.design = {
+      fireSetBack: model.fireSetBack,
+      utilityNotes: model.utilityNotes,
+      designNotes: model.designNotes,
+      PVMeterRequired: model.pvMeterRequired,
+      ACDisconnectRequired: model.acDisconnectRequired,
+      centerFed120Percent: model.centerFed120Percent,
+      deratedAmpacity: model.deratedAmpacity,
+    }
+
     response.engineering = {
       engineeringNotes: model.engineeringNotes,
       iEBCAccepted: model.iebcAccepted,
