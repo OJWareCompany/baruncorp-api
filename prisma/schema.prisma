@@ -240,7 +240,7 @@ model Places {
   @@map("places")
 }
 
-model ahj_notes {
+model AHJNotes {
   geoId                         String    @id @map("geo_id") @db.VarChar(20)
   geoIdState                    String    @map("geo_id_state") @db.VarChar(20)
   geoIdCounty                   String?   @map("geo_id_county") @db.VarChar(20)
@@ -276,10 +276,13 @@ model ahj_notes {
   ofWetStamps                   String?   @map("of_wet_stamps") @db.VarChar(11)
   wetStampSize                  String?   @map("wet_stamp_size") @db.VarChar(6)
   engineeringNotes              String?   @map("engineering_notes") @db.Text
+  electrical_notes              String?   @db.Text
   modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
   funcStat                      String?   @map("func_stat") @db.VarChar(11)
   address                       String?   @map("address") @db.VarChar(300)
   lsad                          String?   @map("lsad") @db.VarChar(20)
   usps                          String?   @map("usps") @db.VarChar(20)
   ansiCode                      String?   @map("ansi_code") @db.VarChar(20)
+
+  @@map("ahj_notes")
 }
