@@ -276,7 +276,7 @@ model AHJNotes {
   ofWetStamps                   String?   @map("of_wet_stamps") @db.VarChar(11)
   wetStampSize                  String?   @map("wet_stamp_size") @db.VarChar(6)
   engineeringNotes              String?   @map("engineering_notes") @db.Text
-  electrical_notes              String?   @db.Text
+  electricalNotes              String?   @map("electrical_notes") @db.Text
   modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
   funcStat                      String?   @map("func_stat") @db.VarChar(11)
   address                       String?   @map("address") @db.VarChar(300)
