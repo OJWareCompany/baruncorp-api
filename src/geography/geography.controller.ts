@@ -3,10 +3,11 @@ import { GeographyService } from './geography.service'
 import { AHJNotesModel } from './database/geography.repository'
 import { UpdateNoteRequestDto } from './dto/update-notes.request.dto'
 import { Page } from '../common/helpers/pagination/page'
+import { AhjNoteMapper, AhjNoteResponseDto } from './ahj-note.mapper'
 
 @Controller('geography')
 export class GeographyController {
-  constructor(private readonly geographyService: GeographyService) {}
+  constructor(private readonly geographyService: GeographyService, private readonly ahjNoteMapper: AhjNoteMapper) {}
 
   @Get('notes')
   async findNotes(
@@ -18,8 +19,8 @@ export class GeographyController {
   }
 
   @Get(':geoId/notes')
-  async findNoteByGeoId(@Param('geoId') geoId: string): Promise<AHJNotesModel> {
-    return await this.geographyService.findNoteByGeoId(geoId)
+  async findNoteByGeoId(@Param('geoId') geoId: string): Promise<AhjNoteResponseDto> {
+    return this.ahjNoteMapper.toResponse(await this.geographyService.findNoteByGeoId(geoId))
   }
 
   @Put(':geoId/notes')
