@@ -3,13 +3,14 @@ import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
 import { UpdateNoteType } from './types/update-notes.type'
+import { Page } from 'src/common/helpers/pagination/page'
 
 @Injectable()
 export class GeographyService {
   constructor(@Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort) {}
 
-  async findNotes(): Promise<Partial<AHJNotesModel>[]> {
-    return await this.geographyRepository.findNotes()
+  async findNotes(pageNo: number, pageSize: number, fullAhjName?: string): Promise<Page<Partial<AHJNotesModel>>> {
+    return await this.geographyRepository.findNotes(pageNo, pageSize, fullAhjName)
   }
 
   async findNoteByGeoId(geoId: string): Promise<AHJNotesModel> {
