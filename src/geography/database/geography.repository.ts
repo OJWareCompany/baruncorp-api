@@ -29,7 +29,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
         name: true,
         fullAhjName: true,
         modifiedBy: true,
-        createdAt: true,
+        modifiedAt: true,
       },
       where: { ...where },
       orderBy: {
