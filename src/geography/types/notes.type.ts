@@ -2,17 +2,18 @@ import { AHJNotesModel } from '../database/geography.repository'
 
 export type Type = 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE'
 
-export type General = {
-  website?: string
-  specificFormRequired?: string
-  generalNotes?: string
-  buildingCodes?: string
-  name?: string
-  modifiedBy?: string
-  createdAt?: string
-  modifiedAt?: string
-  type?: Type
-}
+export type General = Pick<
+  AHJNotesModel,
+  | 'website'
+  | 'specificFormRequired'
+  | 'generalNotes'
+  | 'buildingCodes'
+  | 'name'
+  | 'modifiedBy'
+  | 'createdAt'
+  | 'modifiedAt'
+  | 'type'
+>
 
 export type Design = Pick<
   AHJNotesModel,
@@ -25,36 +26,36 @@ export type Design = Pick<
   | 'deratedAmpacity'
 >
 
-export type Engineering = {
-  engineeringNotes?: string
-  iEBCAccepted?: string
-  structuralObservationRequired?: string
-  windUpliftCalculationRequired?: string
-  wetStampsRequired?: string
-  digitalSignatureType?: string
-  windExposure?: string
-  wetStampSize?: string
-  windSpeed?: string
-  snowLoadGround?: string
-  snowLoadFlatRoof?: string
-  snowLoadSlopedRoof?: string
-  ofWetStamps?: string
-}
+export type Engineering = Pick<
+  AHJNotesModel,
+  | 'engineeringNotes'
+  | 'iebcAccepted'
+  | 'structuralObservationRequired'
+  | 'windUpliftCalculationRequired'
+  | 'wetStampsRequired'
+  | 'digitalSignatureType'
+  | 'windExposure'
+  | 'wetStampSize'
+  | 'windSpeed'
+  | 'snowLoadGround'
+  | 'snowLoadFlatRoof'
+  | 'snowLoadSlopedRoof'
+  | 'ofWetStamps'
+>
 
-export type ElectricalEngineering = {
-  electricalNotes?: string
-}
+export type ElectricalEngineering = Pick<AHJNotesModel, 'electricalNotes'>
 
-export type Additional = {
-  FUNCSTAT: string
-  address: string
-  fullAHJName: string
-  LSAD: string
-  USPS: string
-  ansiCode: string
-  geoId: string
-  geoIdState: string
-  geoIdCounty: string
-  geoIdCountySubdivision: string
-  geoIdPlace: string
-}
+export type Additional = Pick<
+  AHJNotesModel,
+  | 'funcStat'
+  | 'address'
+  | 'fullAhjName'
+  | 'lsad'
+  | 'usps'
+  | 'ansiCode'
+  | 'geoId'
+  | 'geoIdState'
+  | 'geoIdCounty'
+  | 'geoIdCountySubdivision'
+  | 'geoIdPlace'
+>

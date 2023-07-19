@@ -37,8 +37,8 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       buildingCodes: model.buildingCodes,
       name: model.name,
       modifiedBy: model.modifiedBy,
-      createdAt: model.createdAt?.toString() || null,
-      modifiedAt: model.modifiedAt?.toString() || null,
+      createdAt: model.createdAt,
+      modifiedAt: model.modifiedAt,
       type: type,
     }
 
@@ -54,7 +54,7 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
 
     response.engineering = {
       engineeringNotes: model.engineeringNotes,
-      iEBCAccepted: model.iebcAccepted,
+      iebcAccepted: model.iebcAccepted,
       structuralObservationRequired: model.structuralObservationRequired,
       windUpliftCalculationRequired: model.windUpliftCalculationRequired,
       wetStampsRequired: model.wetStampsRequired,
