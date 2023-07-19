@@ -1,28 +1,37 @@
-export type UpdateNoteType = {
-  website?: string
-  specificFormRequired?: string
-  generalNotes?: string
-  buildingCodes?: string
-  fireSetBack?: string
-  utilityNotes?: string
-  designNotes?: string
-  PVMeterRequired?: string
-  ACDisconnectRequired?: string
-  centerFed120Percent?: string
-  deratedAmpacity?: string
-  engineeringNotes?: string
-  iEBCAccepted?: string
-  structuralObservationRequired?: string
-  windUpliftCalculationRequired?: string
-  wetStampsRequired?: string
-  digitalSignature?: string
-  windExposure?: string
-  wetStampSize?: string
-  windSpeed?: string
-  snowLoadGround?: string
-  snowLoadFlatRoof?: string
-  snowLoadSlopedRoof?: string
-  ofWetStamps?: string
-  electricalNotes?: string
-  notes?: string
-}
+import { AHJNotesModel } from '../database/geography.repository'
+
+export type UpdateNoteType = Partial<
+  Pick<
+    AHJNotesModel,
+    | 'website'
+    | 'specificFormRequired'
+    | 'generalNotes'
+    | 'buildingCodes'
+    | 'fireSetBack'
+    | 'utilityNotes'
+    | 'designNotes'
+    | 'pvMeterRequired'
+    | 'acDisconnectRequired'
+    | 'centerFed120Percent'
+    | 'deratedAmpacity'
+    | 'engineeringNotes'
+    | 'iebcAccepted'
+    | 'structuralObservationRequired'
+    | 'windUpliftCalculationRequired'
+    | 'wetStampsRequired'
+    | 'digitalSignatureType'
+    | 'windExposure'
+    | 'wetStampSize'
+    | 'windSpeed'
+    | 'snowLoadGround'
+    | 'snowLoadFlatRoof'
+    | 'snowLoadSlopedRoof'
+    | 'ofWetStamps'
+    | 'electricalNotes'
+    | 'generalNotes'
+    | 'utilityNotes'
+    | 'designNotes'
+    | 'engineeringNotes'
+    | 'electricalNotes'
+  >
+>

@@ -50,7 +50,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     })
   }
 
-  async updateNote(model: AHJNotes): Promise<void> {
+  async updateNote(model: AHJNotesModel): Promise<void> {
     await this.prismaService.aHJNotes.update({ data: { ...model }, where: { geoId: model.geoId } })
   }
 }

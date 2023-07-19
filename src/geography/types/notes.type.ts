@@ -1,3 +1,5 @@
+import { AHJNotesModel } from '../database/geography.repository'
+
 export type Type = 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE'
 
 export type General = {
@@ -12,15 +14,16 @@ export type General = {
   type?: Type
 }
 
-export type Design = {
-  fireSetBack?: string
-  utilityNotes?: string
-  designNotes?: string
-  PVMeterRequired?: string
-  ACDisconnectRequired?: string
-  centerFed120Percent?: string
-  deratedAmpacity?: string
-}
+export type Design = Pick<
+  AHJNotesModel,
+  | 'fireSetBack'
+  | 'utilityNotes'
+  | 'designNotes'
+  | 'pvMeterRequired'
+  | 'acDisconnectRequired'
+  | 'centerFed120Percent'
+  | 'deratedAmpacity'
+>
 
 export type Engineering = {
   engineeringNotes?: string

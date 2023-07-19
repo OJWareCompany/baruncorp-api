@@ -15,6 +15,10 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
     throw new Error('Method not implemented.')
   }
 
+  /**
+   * 일관성을 위해서
+   * e.g. Request Dto등에서 필드명이 달라질수있음.. (how to disallow extra properties)
+   */
   toDomain(record: any, ...entity: any) {
     throw new Error('Method not implemented.')
   }
@@ -42,8 +46,8 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       fireSetBack: model.fireSetBack,
       utilityNotes: model.utilityNotes,
       designNotes: model.designNotes,
-      PVMeterRequired: model.pvMeterRequired,
-      ACDisconnectRequired: model.acDisconnectRequired,
+      pvMeterRequired: model.pvMeterRequired,
+      acDisconnectRequired: model.acDisconnectRequired,
       centerFed120Percent: model.centerFed120Percent,
       deratedAmpacity: model.deratedAmpacity,
     }
