@@ -47,6 +47,8 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       stateOrRegion: props.address.stateOrRegion,
       street1: props.address.street1,
       street2: props.address.street2,
+      updatedAt: new Date(),
+      createdAt: new Date(),
     }
     return record
   }

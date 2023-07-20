@@ -20,6 +20,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       firstName: copy.userName.getFirstName(),
       lastName: copy.userName.getLastName(),
       organizationId: copy.organizationId,
+      updatedAt: new Date(),
+      createdAt: new Date(),
     }
     return record
   }

@@ -15,6 +15,8 @@ export class UserRoleMapper implements Mapper<UserRoleEntity, UserRoleModel, Use
     const copy = entity.getProps()
     const record: UserRoleModel = {
       ...copy,
+      updatedAt: new Date(),
+      createdAt: new Date(),
     }
     return record
   }

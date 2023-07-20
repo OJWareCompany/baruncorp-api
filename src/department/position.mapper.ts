@@ -14,6 +14,8 @@ export class PositionMapper implements Mapper<PositionEntity, PositionModel, Pos
       name: copy.name,
       description: copy.description,
       departmentId: copy.departmentId,
+      updatedAt: new Date(),
+      createdAt: new Date(),
     }
     return record
   }

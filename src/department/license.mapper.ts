@@ -23,6 +23,8 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
       priority: props.priority,
       issuedDate: props.issuedDate,
       expiryDate: props.expiryDate,
+      updatedAt: new Date(),
+      createdAt: new Date(),
     }
     return record
   }

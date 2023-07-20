@@ -17,6 +17,8 @@ export class ServiceMapper implements Mapper<ServiceEntity, ServiceModel, Servic
       id: props.id,
       name: props.description,
       description: props.description,
+      updatedAt: new Date(),
+      createdAt: new Date(),
     }
     return record
   }
