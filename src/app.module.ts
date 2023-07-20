@@ -6,9 +6,10 @@ import { OrganizationModule } from './organization/organization.module'
 import { HttpExceptionFilter } from './common/exceptions/http-exception.filter'
 import { DepartmentModule } from './department/department.module'
 import { GeographyModule } from './geography/geography.module'
+import { ProjectModule } from './project/project.module'
 
 @Module({
-  imports: [AuthenticationModule, UsersModule, OrganizationModule, DepartmentModule, GeographyModule],
+  imports: [AuthenticationModule, UsersModule, OrganizationModule, DepartmentModule, GeographyModule, ProjectModule],
   controllers: [],
   providers: [
     {

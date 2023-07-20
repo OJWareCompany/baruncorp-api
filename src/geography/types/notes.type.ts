@@ -50,7 +50,7 @@ export type Additional = Pick<
   | 'funcStat'
   | 'address'
   | 'fullAhjName'
-  | 'lsad'
+  | 'lsadCode'
   | 'usps'
   | 'ansiCode'
   | 'geoId'

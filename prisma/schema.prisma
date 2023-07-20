@@ -269,20 +269,20 @@ model Counties {
 }
 
 model Places {
-  geoId           String    @id @map("geo_id") @db.VarChar(20)
-  stateCode       String?   @map("state_code") @db.VarChar(20)
-  stateName       String?   @map("state_name") @db.VarChar(100)
-  placeC          String?   @map("place_c") @db.VarChar(20)
-  placeNsAnsiCode String?   @map("place_ns_ansi_code") @db.VarChar(20)
-  placeFips       String?   @map("place_fips") @db.VarChar(20)
-  placeName       String?   @map("place_name") @db.VarChar(100)
-  placeType       String?   @map("place_type") @db.VarChar(20)
-  lsadCode        String?   @map("lsad_code") @db.VarChar(20)
-  counties        String?   @map("counties") @db.VarChar(100)
-  funcStat        String?   @map("func_stat") @db.VarChar(20)
-  placeLongName   String?   @map("place_long_name") @db.VarChar(200)
-  updatedAt       DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt       DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  geoId         String    @id @map("geo_id") @db.VarChar(20)
+  stateCode     String?   @map("state_code") @db.VarChar(20)
+  stateName     String?   @map("state_name") @db.VarChar(100)
+  placeC        String?   @map("place_c") @db.VarChar(20)
+  ansiCode      String?   @map("ansi_code") @db.VarChar(20)
+  placeFips     String?   @map("place_fips") @db.VarChar(20)
+  placeName     String?   @map("place_name") @db.VarChar(100)
+  placeType     String?   @map("place_type") @db.VarChar(20)
+  lsadCode      String?   @map("lsad_code") @db.VarChar(20)
+  counties      String?   @map("counties") @db.VarChar(100)
+  funcStat      String?   @map("func_stat") @db.VarChar(20)
+  placeLongName String?   @map("place_long_name") @db.VarChar(200)
+  updatedAt     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
 
   @@map("places")
 }
@@ -305,7 +305,6 @@ model AHJNotes {
   acDisconnectRequired          String?   @map("ac_disconnect_required") @db.VarChar(200)
   centerFed120Percent           String?   @map("center_fed_120_percent") @db.VarChar(200)
   deratedAmpacity               String?   @map("derated_ampacity") @db.VarChar(200)
-  createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
   fireSetBack                   String?   @map("fire_set_back") @db.Text
   utilityNotes                  String?   @map("utility_notes") @db.Text
   designNotes                   String?   @map("design_notes") @db.Text
@@ -324,14 +323,71 @@ model AHJNotes {
   wetStampSize                  String?   @map("wet_stamp_size") @db.VarChar(300)
   engineeringNotes              String?   @map("engineering_notes") @db.Text
   electricalNotes               String?   @map("electrical_notes") @db.Text
-  modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
+  stateCode                     String?   @map("state_code") @db.VarChar(20)
   funcStat                      String?   @map("func_stat") @db.VarChar(300)
   address                       String?   @map("address") @db.VarChar(300)
-  lsad                          String?   @map("lsad") @db.VarChar(20)
+  lsadCode                      String?   @map("lsad_code") @db.VarChar(20)
   usps                          String?   @map("usps") @db.VarChar(20)
   ansiCode                      String?   @map("ansi_code") @db.VarChar(20)
   type                          String?   @db.VarChar(20)
+  longName                      String?   @map("long_name") @db.VarChar(300)
+  countyCode                    String?   @map("county_code") @db.VarChar(20)
+  createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt                     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
+  modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
 
   @@map("ahj_notes")
+}
+
+model AHJNoteHistory {
+  id                            Int       @id @default(autoincrement()) @db.UnsignedInt
+  geoId                         String    @map("geo_id") @db.VarChar(20)
+  geoIdState                    String    @map("geo_id_state") @db.VarChar(20)
+  geoIdCounty                   String?   @map("geo_id_county") @db.VarChar(20)
+  geoIdCountySubdivision        String?   @map("geo_id_county_subdivision") @db.VarChar(20)
+  geoIdPlace                    String?   @map("geo_id_place") @db.VarChar(20)
+  name                          String    @map("name") @db.VarChar(300)
+  fullAhjName                   String    @map("full_ahj_name") @db.VarChar(300)
+  queryState                    String?   @map("query_state") @db.VarChar(20)
+  queryCounty                   String?   @map("query_county") @db.VarChar(200)
+  website                       String?   @map("website") @db.VarChar(242)
+  specificFormRequired          String?   @map("specific_form_required") @db.VarChar(200)
+  buildingCodes                 String?   @map("building_codes") @db.Text
+  generalNotes                  String?   @map("general_notes") @db.Text
+  pvMeterRequired               String?   @map("pv_meter_required") @db.VarChar(200)
+  acDisconnectRequired          String?   @map("ac_disconnect_required") @db.VarChar(200)
+  centerFed120Percent           String?   @map("center_fed_120_percent") @db.VarChar(200)
+  deratedAmpacity               String?   @map("derated_ampacity") @db.VarChar(200)
+  fireSetBack                   String?   @map("fire_set_back") @db.Text
+  utilityNotes                  String?   @map("utility_notes") @db.Text
+  designNotes                   String?   @map("design_notes") @db.Text
+  iebcAccepted                  String?   @map("iebc_accepted") @db.VarChar(300)
+  structuralObservationRequired String?   @map("structural_observation_required") @db.VarChar(20)
+  digitalSignatureType          String?   @map("digital_signature_type") @db.VarChar(300)
+  windUpliftCalculationRequired String?   @map("wind_uplift_calculation_required") @db.VarChar(300)
+  windSpeed                     String?   @map("wind_speed") @db.VarChar(300)
+  modifiedBy                    String?   @map("modified_by") @db.VarChar(300)
+  windExposure                  String?   @map("wind_exposure") @db.VarChar(300)
+  snowLoadGround                String?   @map("snow_load_ground") @db.VarChar(300)
+  snowLoadFlatRoof              String?   @map("snow_load_flat_roof") @db.VarChar(300)
+  snowLoadSlopedRoof            String?   @map("snow_load_sloped_roof") @db.VarChar(300)
+  wetStampsRequired             String?   @map("wet_stamps_required") @db.VarChar(300)
+  ofWetStamps                   String?   @map("of_wet_stamps") @db.VarChar(300)
+  wetStampSize                  String?   @map("wet_stamp_size") @db.VarChar(300)
+  engineeringNotes              String?   @map("engineering_notes") @db.Text
+  electricalNotes               String?   @map("electrical_notes") @db.Text
+  stateCode                     String?   @map("state_code") @db.VarChar(20)
+  funcStat                      String?   @map("func_stat") @db.VarChar(300)
+  address                       String?   @map("address") @db.VarChar(300)
+  lsadCode                      String?   @map("lsad_code") @db.VarChar(20)
+  usps                          String?   @map("usps") @db.VarChar(20)
+  ansiCode                      String?   @map("ansi_code") @db.VarChar(20)
+  type                          String?   @db.VarChar(20)
+  longName                      String?   @map("long_name") @db.VarChar(300)
+  countyCode                    String?   @map("county_code") @db.VarChar(20)
+  createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt                     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
+  modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
+
+  @@map("ahj_note_history")
 }

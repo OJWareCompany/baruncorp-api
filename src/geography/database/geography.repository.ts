@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { GeographyRepositoryPort } from './geography.repository.port'
-import { AHJNotes } from '@prisma/client'
+import { AHJNotes, Counties, CountySubdivisions, Places, States } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
 import { Page } from '../../common/helpers/pagination/page'
 
@@ -9,6 +9,19 @@ export type AHJNotesModel = AHJNotes
 @Injectable()
 export class GeographyRepository implements GeographyRepositoryPort {
   constructor(private readonly prismaService: PrismaService) {}
+
+  findStateByGeoId(geoId: string): Promise<States> {
+    throw new Error('Method not implemented.')
+  }
+  findCountiesByGeoId(geoId: string): Promise<Counties> {
+    throw new Error('Method not implemented.')
+  }
+  findCountySubdivisionByGeoId(geoId: string): Promise<CountySubdivisions> {
+    throw new Error('Method not implemented.')
+  }
+  findPlaceByGeoId(geoId: string): Promise<Places> {
+    throw new Error('Method not implemented.')
+  }
 
   async findNotes(pageNo: number, pageSize: number, fullAhjName?: string): Promise<Page<Partial<AHJNotesModel>>> {
     const offset = (pageNo - 1) * pageSize ?? 0
