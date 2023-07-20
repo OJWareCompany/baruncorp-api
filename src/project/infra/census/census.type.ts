@@ -1,6 +1,13 @@
 import { Exclude, Expose } from 'class-transformer'
 import { IsString } from 'class-validator'
 
+export const type = {
+  STATE: 'STATE',
+  COUNTY: 'COUNTY',
+  COUNTY_SUBDIVISIONS: 'COUNTY SUBDIVISIONS',
+  PLACE: 'PLACE',
+}
+
 export class AddressFromMapBox {
   @IsString()
   street1: string
@@ -68,7 +75,7 @@ export class CensusState {
       fullAhjName: this.stateLongName,
       longName: this.stateLongName,
       usps: this.abbreviation,
-      type: 'STATE',
+      type: type.STATE,
     }
   }
 }
@@ -123,7 +130,7 @@ export class CensusCounties {
       name: this.countyName,
       fullAhjName: this.countyLongName,
       longName: this.countyLongName,
-      type: 'COUNTY',
+      type: type.COUNTY,
     }
   }
 }
@@ -180,7 +187,7 @@ export class CensusCountySubdivisions {
       name: this.name,
       fullAhjName: this.longName,
       longName: this.longName,
-      type: 'COUNTY_SUBDIVISIONS',
+      type: type.COUNTY_SUBDIVISIONS,
     }
   }
 }
@@ -246,7 +253,7 @@ export class CensusPlace {
       name: this.placeName,
       fullAhjName: this.placeLongName,
       longName: this.placeLongName,
-      type: 'PLACE',
+      type: type.PLACE,
     }
   }
 }

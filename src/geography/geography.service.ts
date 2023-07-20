@@ -3,7 +3,7 @@ import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
 import { UpdateNoteType } from './types/update-notes.type'
-import { Page } from 'src/common/helpers/pagination/page'
+import { Page } from '../common/helpers/pagination/page'
 
 @Injectable()
 export class GeographyService {
