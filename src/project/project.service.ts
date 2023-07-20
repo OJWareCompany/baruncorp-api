@@ -47,7 +47,6 @@ export class ProjectService {
      * County Subdivisions & Note
      */
     await this.geographyRepository.createCountySubdivisions(countySubdivisions)
-
     await this.geographyRepository.updateCountySubdivisionsNote(countySubdivisions, state, county)
 
     /**
