@@ -15,22 +15,6 @@ export class AddressFromMapBox {
 }
 
 export class CensusState {
-  @Expose({ name: 'STATENS' })
-  ansiCode: string
-  @Expose({ name: 'BASENAME' })
-  stateName: string
-  @Expose({ name: 'FUNCSTAT' })
-  funcStat: string
-  @Expose({ name: 'GEOID' })
-  geoId: string
-  @Expose({ name: 'LSADC' })
-  lsadCode: string
-  @Expose({ name: 'NAME' })
-  stateLongName: string
-  @Expose({ name: 'STATE' })
-  stateCode: string
-  @Expose({ name: 'STUSAB' })
-  abbreviation: string
   @Exclude()
   private AREALAND: number
   @Exclude()
@@ -53,15 +37,11 @@ export class CensusState {
   private OID: string
   @Exclude()
   private REGION: string
-}
 
-export class CensusCounties {
-  @Expose({ name: 'COUNTYNS' })
+  @Expose({ name: 'STATENS' })
   ansiCode: string
   @Expose({ name: 'BASENAME' })
-  countyName: string
-  @Expose({ name: 'COUNTY' })
-  countyCode: string
+  stateName: string
   @Expose({ name: 'FUNCSTAT' })
   funcStat: string
   @Expose({ name: 'GEOID' })
@@ -69,10 +49,31 @@ export class CensusCounties {
   @Expose({ name: 'LSADC' })
   lsadCode: string
   @Expose({ name: 'NAME' })
-  countyLongName: string
+  stateLongName: string
   @Expose({ name: 'STATE' })
   stateCode: string
-  @Exclude()
+  @Expose({ name: 'STUSAB' })
+  abbreviation: string
+
+  getNoteInputData() {
+    const copyState = { ...this }
+    delete copyState['stateName']
+    delete copyState['abbreviation']
+    delete copyState['stateLongName']
+    return {
+      ...copyState,
+      geoId: this.geoId,
+      geoIdState: this.geoId,
+      name: this.stateName,
+      fullAhjName: this.stateLongName,
+      longName: this.stateLongName,
+      usps: this.abbreviation,
+      type: 'STATE',
+    }
+  }
+}
+
+export class CensusCounties {
   private AREALAND: number
   @Exclude()
   private AREAWATER: number
@@ -92,13 +93,11 @@ export class CensusCounties {
   private OBJECTID: number
   @Exclude()
   private OID: string
-}
 
-export class CensusCountySubdivisions {
-  @Expose({ name: 'COUSUBNS' })
+  @Expose({ name: 'COUNTYNS' })
   ansiCode: string
   @Expose({ name: 'BASENAME' })
-  name: string
+  countyName: string
   @Expose({ name: 'COUNTY' })
   countyCode: string
   @Expose({ name: 'FUNCSTAT' })
@@ -108,10 +107,28 @@ export class CensusCountySubdivisions {
   @Expose({ name: 'LSADC' })
   lsadCode: string
   @Expose({ name: 'NAME' })
-  longName: string
+  countyLongName: string
   @Expose({ name: 'STATE' })
   stateCode: string
+  @Exclude()
+  getNoteInputData(state: CensusState) {
+    const copyCounty = { ...this }
+    delete copyCounty['countyName']
+    delete copyCounty['countyLongName']
+    return {
+      ...copyCounty,
+      geoId: this.geoId,
+      geoIdState: state.geoId,
+      geoIdCounty: this.geoId,
+      name: this.countyName,
+      fullAhjName: this.countyLongName,
+      longName: this.countyLongName,
+      type: 'COUNTY',
+    }
+  }
+}
 
+export class CensusCountySubdivisions {
   @Exclude()
   private MTFCC: string
   @Exclude()
@@ -134,13 +151,13 @@ export class CensusCountySubdivisions {
   private OBJECTID: 16122
   @Exclude()
   private OID: string
-}
 
-// lsadCode
-// counties
-export class CensusPlace {
+  @Expose({ name: 'COUSUBNS' })
+  ansiCode: string
   @Expose({ name: 'BASENAME' })
-  placeName: string
+  name: string
+  @Expose({ name: 'COUNTY' })
+  countyCode: string
   @Expose({ name: 'FUNCSTAT' })
   funcStat: string
   @Expose({ name: 'GEOID' })
@@ -148,16 +165,29 @@ export class CensusPlace {
   @Expose({ name: 'LSADC' })
   lsadCode: string
   @Expose({ name: 'NAME' })
-  placeLongName: string
-  @Expose({ name: 'PLACE' })
-  placeFips: string
-  @Expose({ name: 'PLACECC' })
-  placeC: string
-  @Expose({ name: 'PLACENS' })
-  ansiCode: string
+  longName: string
   @Expose({ name: 'STATE' })
   stateCode: string
 
+  getNoteInputData(state: CensusState, county: CensusCounties) {
+    const copyCountySubdivisions = { ...this }
+    return {
+      ...copyCountySubdivisions,
+      geoId: this.geoId,
+      geoIdState: state.geoId,
+      geoIdCounty: county.geoId,
+      geoIdCountySubdivision: this.geoId,
+      name: this.name,
+      fullAhjName: this.longName,
+      longName: this.longName,
+      type: 'COUNTY_SUBDIVISIONS',
+    }
+  }
+}
+
+// lsadCode
+// counties
+export class CensusPlace {
   @Exclude()
   private MTFCC: string
   @Exclude()
@@ -180,4 +210,43 @@ export class CensusPlace {
   private AREALAND: number
   @Exclude()
   private AREAWATER: number
+
+  @Expose({ name: 'BASENAME' })
+  placeName: string
+  @Expose({ name: 'FUNCSTAT' })
+  funcStat: string
+  @Expose({ name: 'GEOID' })
+  geoId: string
+  @Expose({ name: 'LSADC' })
+  lsadCode: string
+  @Expose({ name: 'NAME' })
+  placeLongName: string
+  @Expose({ name: 'PLACE' })
+  placeFips: string
+  @Expose({ name: 'PLACECC' })
+  placeC: string
+  @Expose({ name: 'PLACENS' })
+  ansiCode: string
+  @Expose({ name: 'STATE' })
+  stateCode: string
+
+  getNoteInputData(state: CensusState, county: CensusCounties, countySubdivisions: CensusCountySubdivisions) {
+    const placeCopy = { ...this }
+    delete placeCopy['placeName']
+    delete placeCopy['placeFips']
+    delete placeCopy['placeLongName']
+    delete placeCopy['placeC']
+    return {
+      ...placeCopy,
+      geoId: this.geoId,
+      geoIdState: state.geoId,
+      geoIdCounty: county.geoId,
+      geoIdCountySubdivision: countySubdivisions.geoId,
+      geoIdPlace: this.geoId,
+      name: this.placeName,
+      fullAhjName: this.placeLongName,
+      longName: this.placeLongName,
+      type: 'PLACE',
+    }
+  }
 }
