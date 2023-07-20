@@ -1,10 +1,10 @@
-import got from 'got'
 import { Inject, Injectable } from '@nestjs/common'
 import { PrismaService } from '../database/prisma.service'
 import { AddressFromMapBox } from './infra/census/census.type'
 import { CensusResponseDto } from './infra/census/census.response'
 import { GeographyRepositoryPort } from '../geography/database/geography.repository.port'
 import { GEOGRAPHY_REPOSITORY } from '../geography/geography.di-token'
+import { CensusSearchInput, CensusSearchRequestDto } from './infra/census/census.search.request.dto'
 
 @Injectable()
 export class ProjectService {
@@ -16,15 +16,16 @@ export class ProjectService {
 
   async createProject(createProjectDto: AddressFromMapBox) {
     const { state, postalCode, city, street1, street2 } = createProjectDto
-    const baseUrl = 'https://geocoding.geo.census.gov'
-    const path = '/geocoder/geographies/address'
-    const query = `?street=${
-      street1 || 'none'
-    } ${street2}&city=${city}&state=${state}&zip=${postalCode}&benchmark=4&vintage=4&format=json`
 
-    const response = await got.get(`${baseUrl}${path}${query}`).json()
-    const hasAddressMatches = !!response['result']['addressMatches'][0]
-    const censusResponse = hasAddressMatches ? new CensusResponseDto(response) : undefined
+    const searchInput = new CensusSearchInput({
+      street: `${street1 || 'none'} ${street2}`,
+      city,
+      state,
+      zipCode: postalCode,
+    })
+    const censusSearch = new CensusSearchRequestDto(searchInput)
+    const censusResponse = await censusSearch.getResponse()
+
     await this.generateGeographyAndAhjNotes(censusResponse)
   }
 
