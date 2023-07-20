@@ -9,9 +9,9 @@ export type General = Pick<
   | 'generalNotes'
   | 'buildingCodes'
   | 'name'
-  | 'modifiedBy'
+  | 'updatedAt'
   | 'createdAt'
-  | 'modifiedAt'
+  | 'updatedBy'
   | 'type'
 >
 

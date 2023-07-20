@@ -4,6 +4,7 @@ import { AHJNotesModel } from './database/geography.repository'
 import { Design, ElectricalEngineering, Engineering, General, Type } from './types/notes.type'
 
 export class AhjNoteResponseDto {
+  id?: number
   general: General
   design: Design
   engineering: Engineering
@@ -36,9 +37,9 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       generalNotes: model.generalNotes,
       buildingCodes: model.buildingCodes,
       name: model.name,
-      modifiedBy: model.modifiedBy,
+      updatedBy: model.updatedBy,
       createdAt: model.createdAt,
-      modifiedAt: model.modifiedAt,
+      updatedAt: model.modifiedAt,
       type: type,
     }
 

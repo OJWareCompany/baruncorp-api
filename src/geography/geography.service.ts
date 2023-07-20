@@ -13,8 +13,16 @@ export class GeographyService {
     return await this.geographyRepository.findNotes(pageNo, pageSize, fullAhjName)
   }
 
+  async findNoteUpdateHistory(pageNo: number, pageSize: number, geoId?: string): Promise<Page<Partial<AHJNotesModel>>> {
+    return await this.geographyRepository.findNoteHistory(pageNo, pageSize, geoId)
+  }
+
   async findNoteByGeoId(geoId: string): Promise<AHJNotesModel> {
     return await this.geographyRepository.findNoteByGeoId(geoId)
+  }
+
+  async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNotesModel> {
+    return await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
   }
 
   async updateNote(geoId: string, dto: UpdateNoteType): Promise<void> {

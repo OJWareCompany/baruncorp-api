@@ -28,4 +28,18 @@ export class GeographyController {
     const { general, design, engineering, electricalEngineering } = dto
     await this.geographyService.updateNote(geoId, { ...general, ...design, ...engineering, ...electricalEngineering })
   }
+
+  @Get('notes/history/:historyId')
+  async findNoteUpdateHistoryDetail(@Param('historyId') historyId: number): Promise<AhjNoteResponseDto> {
+    return this.ahjNoteMapper.toResponse(await this.geographyService.findNoteUpdateHistoryDetail(historyId))
+  }
+
+  @Get('notes/history')
+  async findNoteUpdateHistory(
+    @Query('pageNo') pageNo = 1,
+    pageSize = 20,
+    @Query('geoId') geoId?: string,
+  ): Promise<Page<Partial<AHJNotesModel>>> {
+    return await this.geographyService.findNoteUpdateHistory(pageNo, pageSize, geoId)
+  }
 }
