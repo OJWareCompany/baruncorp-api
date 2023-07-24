@@ -4,6 +4,7 @@ import { AHJNotesModel } from './database/geography.repository'
 import { UpdateNoteRequestDto } from './dto/update-notes.request.dto'
 import { Page } from '../common/helpers/pagination/page'
 import { AhjNoteMapper, AhjNoteResponseDto } from './ahj-note.mapper'
+import { PaginatedQueryRequestDto } from '../common/helpers/pagination/paginated-query.req.dto'
 
 @Controller('geography')
 export class GeographyController {
@@ -11,11 +12,14 @@ export class GeographyController {
 
   @Get('notes')
   async findNotes(
-    @Query('pageNo') pageNo = 1,
-    pageSize = 20,
+    @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query('fullAhjName') fullAhjName?: string,
   ): Promise<Page<Partial<AHJNotesModel>>> {
-    return await this.geographyService.findNotes(pageNo, pageSize, fullAhjName)
+    return await this.geographyService.findNotes(
+      paginatedQueryRequestDto.page,
+      paginatedQueryRequestDto.limit,
+      fullAhjName,
+    )
   }
 
   @Get(':geoId/notes')
@@ -36,10 +40,15 @@ export class GeographyController {
 
   @Get('notes/history')
   async findNoteUpdateHistory(
-    @Query('pageNo') pageNo = 1,
-    pageSize = 20,
+    @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query('geoId') geoId?: string,
   ): Promise<Page<Partial<AHJNotesModel>>> {
-    return await this.geographyService.findNoteUpdateHistory(pageNo, pageSize, geoId)
+    console.log(geoId)
+    console.log(paginatedQueryRequestDto)
+    return await this.geographyService.findNoteUpdateHistory(
+      paginatedQueryRequestDto.page,
+      paginatedQueryRequestDto.limit,
+      geoId,
+    )
   }
 }
