@@ -6,7 +6,7 @@ import {
   CensusCountySubdivisions,
   CensusPlace,
   CensusState,
-} from '../../project/infra/census/census.type'
+} from '../../project/infra/census/census.type.dto'
 
 export interface GeographyRepositoryPort {
   findNotes(pageNo: number, pageSize: number, fullAhjName?: string): Promise<Page<Partial<AHJNotesModel>>>

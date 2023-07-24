@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common'
 import { OrganizationService } from './organization.service'
-import { CreateOrganizationReq } from './dto/req/create-organization.req'
+import { CreateOrganizationReq } from './dto/req/create-organization.req.dto'
 import { AuthGuard } from '../auth/authentication.guard'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { UserResponseDto } from '../users/dto/req/user.response.dto'

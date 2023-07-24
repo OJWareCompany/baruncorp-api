@@ -1,5 +1,5 @@
 import got from 'got'
-import { CensusResponseDto } from './census.response'
+import { CensusResponseDto } from './census.response.dto'
 
 export class CensusSearchInput {
   street: string

@@ -1,7 +1,6 @@
 import { AHJNotesModel } from '../database/geography.repository'
 
 export type Type = 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE'
-
 export type General = Pick<
   AHJNotesModel,
   | 'website'

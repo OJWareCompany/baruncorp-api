@@ -1,5 +1,5 @@
 import { plainToInstance } from 'class-transformer'
-import { CensusCounties, CensusCountySubdivisions, CensusPlace, CensusState } from './census.type'
+import { CensusCounties, CensusCountySubdivisions, CensusPlace, CensusState } from './census.type.dto'
 
 export class CensusResponseDto {
   state: CensusState

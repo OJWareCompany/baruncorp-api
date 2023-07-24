@@ -1,5 +1,5 @@
 import { Body, Controller, Post } from '@nestjs/common'
-import { AddressFromMapBox } from './infra/census/census.type'
+import { AddressFromMapBox } from './infra/census/census.type.dto'
 import { ProjectService } from './project.service'
 
 @Controller('projects')

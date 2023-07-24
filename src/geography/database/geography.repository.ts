@@ -9,7 +9,7 @@ import {
   CensusCountySubdivisions,
   CensusPlace,
   type,
-} from '../../project/infra/census/census.type'
+} from '../../project/infra/census/census.type.dto'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
