@@ -41,8 +41,8 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       buildingCodes: model.buildingCodes,
       name: model.name,
       updatedBy: model.updatedBy,
-      createdAt: model.createdAt.toISOString(),
-      updatedAt: model.updatedAt.toISOString(),
+      createdAt: model?.createdAt?.toISOString(),
+      updatedAt: model?.updatedAt?.toISOString(),
       type: type,
     }
 
