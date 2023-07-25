@@ -3,6 +3,7 @@ import { Mapper } from '../department/license.mapper'
 import { AHJNotesModel } from './database/geography.repository'
 import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
 import { AHJType } from './types/ahj.type'
+import { AhjNoteHistoryResponseDto } from './dto/find-ahj-notes-history.response.dto'
 
 export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {
   toPersistence(entity: any): AHJNotes {
@@ -75,6 +76,11 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       electricalNotes: model.electricalNotes,
     }
 
-    return response
+    // for history id
+    const id = model['id'] ? { id: model['id'] } : undefined
+    return {
+      ...id,
+      ...response,
+    }
   }
 }

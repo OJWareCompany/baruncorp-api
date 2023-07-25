@@ -1,6 +1,7 @@
 import { General, Design, Engineering, ElectricalEngineering } from './ahj-note.dto'
 
-export class AhjNoteResponseDto {
+export class AhjNoteHistoryResponseDto {
+  id: number
   general: General
   design: Design
   engineering: Engineering
