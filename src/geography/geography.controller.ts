@@ -2,15 +2,18 @@ import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common'
 import { GeographyService } from './geography.service'
 import { AHJNotesModel } from './database/geography.repository'
 import { UpdateNoteRequestDto } from './dto/update-notes.request.dto'
-import { Page } from '../common/helpers/pagination/page'
-import { AhjNoteMapper, AhjNoteResponseDto } from './ahj-note.mapper'
+import { Page } from '../common/helpers/pagination/page.res.dto'
+import { AhjNoteMapper } from './ahj-note.mapper'
 import { PaginatedQueryRequestDto } from '../common/helpers/pagination/paginated-query.req.dto'
+import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
+import { ApiResponse } from '@nestjs/swagger'
 
 @Controller('geography')
 export class GeographyController {
   constructor(private readonly geographyService: GeographyService, private readonly ahjNoteMapper: AhjNoteMapper) {}
 
   @Get('notes')
+  @ApiResponse({ type: Page })
   async findNotes(
     @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query('fullAhjName') fullAhjName?: string,

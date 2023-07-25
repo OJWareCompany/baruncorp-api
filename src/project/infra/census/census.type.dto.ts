@@ -1,12 +1,6 @@
 import { Exclude, Expose } from 'class-transformer'
 import { IsString } from 'class-validator'
-
-export const type = {
-  STATE: 'STATE',
-  COUNTY: 'COUNTY',
-  COUNTY_SUBDIVISIONS: 'COUNTY SUBDIVISIONS',
-  PLACE: 'PLACE',
-}
+import { AHJType } from '../../../geography/types/ahj.type'
 
 export class AddressFromMapBox {
   @IsString()
@@ -75,7 +69,7 @@ export class CensusState {
       fullAhjName: this.stateLongName,
       longName: this.stateLongName,
       usps: this.abbreviation,
-      type: type.STATE,
+      type: AHJType.STATE,
     }
   }
 }
@@ -130,7 +124,7 @@ export class CensusCounties {
       name: this.countyName,
       fullAhjName: this.countyLongName,
       longName: this.countyLongName,
-      type: type.COUNTY,
+      type: AHJType.COUNTY,
     }
   }
 }
@@ -187,7 +181,7 @@ export class CensusCountySubdivisions {
       name: this.name,
       fullAhjName: this.longName,
       longName: this.longName,
-      type: type.COUNTY_SUBDIVISIONS,
+      type: AHJType.COUNTY_SUBDIVISIONS,
     }
   }
 }
@@ -253,7 +247,7 @@ export class CensusPlace {
       name: this.placeName,
       fullAhjName: this.placeLongName,
       longName: this.placeLongName,
-      type: type.PLACE,
+      type: AHJType.PLACE,
     }
   }
 }

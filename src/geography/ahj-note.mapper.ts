@@ -1,15 +1,8 @@
 import { AHJNotes } from '@prisma/client'
 import { Mapper } from '../department/license.mapper'
 import { AHJNotesModel } from './database/geography.repository'
-import { Design, ElectricalEngineering, Engineering, General, Type } from './types/notes.type'
-
-export class AhjNoteResponseDto {
-  id?: number
-  general: General
-  design: Design
-  engineering: Engineering
-  electricalEngineering: ElectricalEngineering
-}
+import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
+import { AHJType } from './types/ahj.type'
 
 export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {
   toPersistence(entity: any): AHJNotes {
@@ -25,10 +18,10 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
   }
 
   toResponse(model: AHJNotesModel): AhjNoteResponseDto {
-    let type: Type = 'STATE'
-    if (model.geoIdCounty) type = 'COUNTY'
-    if (model.geoIdCountySubdivision) type = 'COUNTY SUBDIVISIONS'
-    if (model.geoIdPlace) type = 'PLACE'
+    let type: AHJType = AHJType.STATE
+    if (model.geoIdCounty) type = AHJType.COUNTY
+    if (model.geoIdCountySubdivision) type = AHJType.COUNTY_SUBDIVISIONS
+    if (model.geoIdPlace) type = AHJType.PLACE
 
     const response = new AhjNoteResponseDto()
     response.general = {
@@ -38,8 +31,8 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       buildingCodes: model.buildingCodes,
       name: model.name,
       updatedBy: model.updatedBy,
-      createdAt: model.createdAt,
-      updatedAt: model.modifiedAt,
+      createdAt: model.createdAt.toISOString(),
+      updatedAt: model.updatedAt.toISOString(),
       type: type,
     }
 

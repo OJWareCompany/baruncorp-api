@@ -3,7 +3,7 @@ import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
 import { UpdateNoteType } from './types/update-notes.type'
-import { Page } from '../common/helpers/pagination/page'
+import { Page } from '../common/helpers/pagination/page.res.dto'
 
 @Injectable()
 export class GeographyService {
@@ -27,9 +27,11 @@ export class GeographyService {
 
   async updateNote(geoId: string, dto: UpdateNoteType): Promise<void> {
     const model = await this.findNoteByGeoId(geoId)
+    // FIX
+    const copyModel = { ...model }
     Object.entries(dto).forEach(([key, value]) => {
-      model[key] = value
+      copyModel[key] = value
     })
-    await this.geographyRepository.updateNote(model)
+    await this.geographyRepository.updateNote(model, copyModel)
   }
 }

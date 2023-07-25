@@ -1,6 +1,6 @@
 import { Counties, CountySubdivisions, Places, States } from '@prisma/client'
 import { AHJNoteHistoryModel, AHJNotesModel } from './geography.repository'
-import { Page } from '../../common/helpers/pagination/page'
+import { Page } from '../../common/helpers/pagination/page.res.dto'
 import {
   CensusCounties,
   CensusCountySubdivisions,
@@ -11,7 +11,7 @@ import {
 export interface GeographyRepositoryPort {
   findNotes(pageNo: number, pageSize: number, fullAhjName?: string): Promise<Page<Partial<AHJNotesModel>>>
   findNoteByGeoId(geoId: string): Promise<AHJNotesModel>
-  updateNote(model: AHJNotesModel): Promise<void>
+  updateNote(model: AHJNotesModel, update: AHJNotesModel): Promise<void>
   findNoteHistory(pageNo: number, pageSize: number, geoId?: string): Promise<Page<Partial<AHJNoteHistoryModel>>>
 
   findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel>

@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { GeographyRepositoryPort } from './geography.repository.port'
-import { AHJNoteHistory, AHJNotes, Counties, CountySubdivisions, Places, States } from '@prisma/client'
+import { AHJNoteHistory, AHJNotes } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
-import { Page } from '../../common/helpers/pagination/page'
+import { Page } from '../../common/helpers/pagination/page.res.dto'
 import {
   CensusState,
   CensusCounties,
   CensusCountySubdivisions,
   CensusPlace,
-  type,
 } from '../../project/infra/census/census.type.dto'
+import { AHJType } from '../types/ahj.type'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -32,7 +32,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
   async updateStateNote(create: CensusState): Promise<void> {
     const existedStateNote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: create.geoId } })
 
-    if (existedStateNote && existedStateNote?.type !== type.STATE) {
+    if (existedStateNote && existedStateNote?.type !== AHJType.STATE) {
       await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData() },
         where: { geoId: create.geoId },
@@ -47,7 +47,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
 
   async updateCountyNote(create: CensusCounties, state: CensusState): Promise<void> {
     const existedCountyNote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: create.geoId } })
-    if (existedCountyNote && existedCountyNote?.type !== type.COUNTY) {
+    if (existedCountyNote && existedCountyNote?.type !== AHJType.COUNTY) {
       await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData(state) },
         where: { geoId: create.geoId },
@@ -69,7 +69,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
       where: { geoId: create.geoId },
     })
 
-    if (existedCountySubdivisionsNotes && existedCountySubdivisionsNotes?.type !== type.COUNTY_SUBDIVISIONS) {
+    if (existedCountySubdivisionsNotes && existedCountySubdivisionsNotes?.type !== AHJType.COUNTY_SUBDIVISIONS) {
       await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData(state, county) },
         where: { geoId: create.geoId },
@@ -89,7 +89,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     subdivision: CensusCountySubdivisions,
   ): Promise<void> {
     const placeNotes = await this.prismaService.aHJNotes.findFirst({ where: { geoId: create.geoId } })
-    if (placeNotes && placeNotes?.type !== type.PLACE) {
+    if (placeNotes && placeNotes?.type !== AHJType.PLACE) {
       await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData(state, county, subdivision) },
         where: { geoId: create.geoId },
@@ -206,7 +206,9 @@ export class GeographyRepository implements GeographyRepositoryPort {
     })
   }
 
-  async updateNote(model: AHJNotesModel): Promise<void> {
-    await this.prismaService.aHJNotes.update({ data: { ...model }, where: { geoId: model.geoId } })
+  // TOFIX
+  async updateNote(model: AHJNotesModel, update: AHJNotesModel): Promise<void> {
+    await this.prismaService.aHJNotes.update({ data: { ...update }, where: { geoId: update.geoId } })
+    await this.prismaService.aHJNoteHistory.create({ data: { ...model } })
   }
 }

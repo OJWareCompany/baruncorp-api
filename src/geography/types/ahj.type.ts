@@ -1,0 +1,6 @@
+export enum AHJType {
+  STATE = 'STATE',
+  COUNTY = 'COUNTY',
+  COUNTY_SUBDIVISIONS = 'COUNTY SUBDIVISIONS',
+  PLACE = 'PLACE',
+}

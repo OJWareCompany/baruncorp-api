@@ -1,5 +1,5 @@
 import { IsOptional } from 'class-validator'
-import { Design, ElectricalEngineering, Engineering, General } from '../types/notes.type'
+import { Design, ElectricalEngineering, Engineering, General } from './ahj-note.dto'
 
 export class UpdateNoteRequestDto {
   @IsOptional()
