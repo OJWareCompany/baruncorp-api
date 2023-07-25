@@ -1,142 +1,135 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { AHJType } from '../types/ahj.type'
+import { AHJType, ANSI, DigitalSignatureType, SelectOption, WindExposure } from '../types/ahj.type'
 
-type SelectOption = 'No' | 'Yes' | 'See Notes'
-type ANSI = 'ANSI A (8.5x11 INCH)' | 'ANSI B (11x17 INCH)' | 'ANSI D (22x34 INCH)' | 'ARCH D (24x36 INCH)' | 'See Notes'
-type WindExposure = 'B' | 'C' | 'D' | 'See Notes'
-type DigitalSignatureType = 'Certified' | 'Signed'
-type Types = 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE'
-
-// TOFIX
 export class General {
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'https://google.com' })
   website: string
 
-  @ApiProperty({ enum: AHJType, example: AHJType.COUNTY })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   specificFormRequired: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'generalNotes...' })
   generalNotes: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: '2015 IBC2' })
   buildingCodes: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'Santa Rosa County' })
   name: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: new Date().toISOString() })
   createdAt: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: new Date().toISOString() })
   updatedAt: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: new Date().toISOString() })
   updatedBy: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: AHJType, example: AHJType.COUNTY })
   type: string
 }
 
 export class Design {
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'fireSetBack...' })
   fireSetBack: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'utilityNotes...' })
   utilityNotes: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'designNotes...' })
   designNotes: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   pvMeterRequired: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   acDisconnectRequired: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   centerFed120Percent: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'deratedAmpacity...' })
   deratedAmpacity: string
 }
 
 export class Engineering {
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   iebcAccepted: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   structuralObservationRequired: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: DigitalSignatureType, example: DigitalSignatureType.Certified })
   digitalSignatureType: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   windUpliftCalculationRequired: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: '115' })
   windSpeed: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: WindExposure, example: WindExposure.SeeNotes })
   windExposure: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: '30' })
   snowLoadGround: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: '30' })
   snowLoadFlatRoof: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: '30' })
   snowLoadSlopedRoof: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
   wetStampsRequired: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'ofWetStamps...' })
   ofWetStamps: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ enum: ANSI, example: ANSI.ANSI_B })
   wetStampSize: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'engineeringNotes...' })
   engineeringNotes: string
 }
 
 export class ElectricalEngineering {
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'electricalNotes...' })
   electricalNotes: string
 }
 
 export class Additional {
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'geoId...' })
   geoId: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'geoIdState...' })
   geoIdState: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'geoIdCounty...' })
   geoIdCounty: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'geoIdCountySubdivision...' })
   geoIdCountySubdivision: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'geoIdPlace...' })
   geoIdPlace: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'fullAhjName...' })
   fullAhjName: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'funcStat...' })
   funcStat: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'address...' })
   address: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'lsadCode...' })
   lsadCode: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'usps...' })
   usps: string
 
-  @ApiProperty({ example: 'http://google.com' })
+  @ApiProperty({ example: 'ansiCode...' })
   ansiCode: string
 }

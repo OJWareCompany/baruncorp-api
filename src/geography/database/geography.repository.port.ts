@@ -6,12 +6,12 @@ import {
   CensusPlace,
   CensusState,
 } from '../../project/infra/census/census.type.dto'
-import { UpdateNoteType } from '../types/update-notes.type'
+import { UpdateNoteDto } from '../dto/update-notes.dto'
 
 export interface GeographyRepositoryPort {
   findNotes(pageNo: number, pageSize: number, fullAhjName?: string): Promise<Page<Partial<AHJNotesModel>>>
   findNoteByGeoId(geoId: string): Promise<AHJNotesModel>
-  updateNote(geoId: string, update: UpdateNoteType): Promise<void>
+  updateNote(geoId: string, update: UpdateNoteDto): Promise<void>
   findNoteHistory(pageNo: number, pageSize: number, geoId?: string): Promise<Page<Partial<AHJNoteHistoryModel>>>
 
   findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel>

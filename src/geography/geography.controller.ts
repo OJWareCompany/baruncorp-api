@@ -7,6 +7,7 @@ import { AhjNoteMapper } from './ahj-note.mapper'
 import { PaginatedQueryRequestDto } from '../common/helpers/pagination/paginated-query.req.dto'
 import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
 import { ApiResponse } from '@nestjs/swagger'
+import { UpdateNoteDto } from './dto/update-notes.dto'
 
 @Controller('geography')
 export class GeographyController {
@@ -33,7 +34,8 @@ export class GeographyController {
   @Put(':geoId/notes')
   async updateNote(@Param('geoId') geoId: string, @Body() dto: UpdateNoteRequestDto): Promise<void> {
     const { general, design, engineering, electricalEngineering } = dto
-    await this.geographyService.updateNote(geoId, { ...general, ...design, ...engineering, ...electricalEngineering })
+    const update = new UpdateNoteDto({ ...general, ...design, ...engineering, ...electricalEngineering })
+    await this.geographyService.updateNote(geoId, update)
   }
 
   @Get('notes/history/:historyId')
@@ -46,8 +48,6 @@ export class GeographyController {
     @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query('geoId') geoId?: string,
   ): Promise<Page<Partial<AHJNotesModel>>> {
-    console.log(geoId)
-    console.log(paginatedQueryRequestDto)
     return await this.geographyService.findNoteUpdateHistory(
       paginatedQueryRequestDto.page,
       paginatedQueryRequestDto.limit,

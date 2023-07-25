@@ -17,6 +17,15 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
     throw new Error('Method not implemented.')
   }
 
+  /**
+   * Swagger에서 UNION 타입을 표현하기 위해 enum을 사용했으나, DB는 string 타입이어서 호환되지 않음
+   * Entity에서 enum으로 관리하면 될수도 있다.
+   *
+   * 그냥 쿼리 날리고싶은데 포맷을 맞춰야해서 Mapper와 ResponseDto를 쓴다.
+   *
+   * 아.. ApiProperty에서만 타입을 enum으로 해보자
+   * 그리고 enum으로 명시하면 swagger에서는, 혹은 모듈화 패키지에서는 내부적으로 union으로 파싱되는듯
+   */
   toResponse(model: AHJNotesModel): AhjNoteResponseDto {
     let type: AHJType = AHJType.STATE
     if (model.geoIdCounty) type = AHJType.COUNTY

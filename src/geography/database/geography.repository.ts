@@ -10,7 +10,7 @@ import {
   CensusPlace,
 } from '../../project/infra/census/census.type.dto'
 import { AHJType } from '../types/ahj.type'
-import { UpdateNoteType } from '../types/update-notes.type'
+import { UpdateNoteDto } from '../dto/update-notes.dto'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -208,7 +208,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
   }
 
   // TOFIX
-  async updateNote(geoId: string, update: UpdateNoteType): Promise<void> {
+  async updateNote(geoId: string, update: UpdateNoteDto): Promise<void> {
     const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
     if (!model) new NotFoundException('Ahj note is not founded.')
 

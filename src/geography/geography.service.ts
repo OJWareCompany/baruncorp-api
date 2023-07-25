@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
-import { UpdateNoteType } from './types/update-notes.type'
+import { UpdateNoteDto } from './dto/update-notes.dto'
 import { Page } from '../common/helpers/pagination/page.res.dto'
 
 @Injectable()
@@ -25,7 +25,7 @@ export class GeographyService {
     return await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
   }
 
-  async updateNote(geoId: string, dto: UpdateNoteType): Promise<void> {
+  async updateNote(geoId: string, dto: UpdateNoteDto): Promise<void> {
     await this.geographyRepository.updateNote(geoId, dto)
   }
 }

@@ -1,4 +1,4 @@
-export class UpdateNoteType {
+export class UpdateNoteDto {
   readonly website: string
   readonly specificFormRequired: string
   readonly generalNotes: string
@@ -28,7 +28,7 @@ export class UpdateNoteType {
   /**
    * 클래스에 정의되지 않은 필드를 수정하는 것을 방지
    */
-  constructor(create: UpdateNoteType) {
+  constructor(create: UpdateNoteDto) {
     this.website = create.website
     this.specificFormRequired = create.specificFormRequired
     this.generalNotes = create.generalNotes
