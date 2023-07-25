@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { GeographyRepositoryPort } from './geography.repository.port'
 import { AHJNoteHistory, AHJNotes } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
@@ -10,6 +10,7 @@ import {
   CensusPlace,
 } from '../../project/infra/census/census.type.dto'
 import { AHJType } from '../types/ahj.type'
+import { UpdateNoteType } from '../types/update-notes.type'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -207,8 +208,17 @@ export class GeographyRepository implements GeographyRepositoryPort {
   }
 
   // TOFIX
-  async updateNote(model: AHJNotesModel, update: AHJNotesModel): Promise<void> {
-    await this.prismaService.aHJNotes.update({ data: { ...update }, where: { geoId: update.geoId } })
+  async updateNote(geoId: string, update: UpdateNoteType): Promise<void> {
+    const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
+    if (!model) new NotFoundException('Ahj note is not founded.')
+
+    // convert undefined to null
+    // const copy = { ...update }
+    // Object.entries(copy).forEach(([key, value]) => {
+    //   if (!value) copy[key] = null
+    // })
+
+    await this.prismaService.aHJNotes.update({ data: { ...update }, where: { geoId } })
     await this.prismaService.aHJNoteHistory.create({ data: { ...model } })
   }
 }
