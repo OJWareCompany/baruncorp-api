@@ -110,15 +110,24 @@ export interface PutMemberInChargeOfTheService {
   serviceId: string
 }
 
-export interface Page {
+export interface AhjNoteListResponseDto {
+  geoId: string
+  name: string
+  fullAhjName: string
+  updatedBy: string
+  updatedAt: string
+}
+
+export interface AhjNotePaginatedResponseDto {
+  /** @default 1 */
+  page: number
   /** @default 20 */
   pageSize: number
-  /** @default 10000 */
+  /** @example 10000 */
   totalCount: number
-  /** @default 500 */
+  /** @example 500 */
   totalPage: number
-  /** @default [{}] */
-  items: string[]
+  items: AhjNoteListResponseDto[]
 }
 
 export interface General {
@@ -130,13 +139,15 @@ export interface General {
   generalNotes: string
   /** @example "2015 IBC2" */
   buildingCodes: string
-  /** @example "Santa Rosa County" */
+  /** @example "Arcata city" */
   name: string
-  /** @example "2023-07-25T09:56:28.925Z" */
+  /** @example "Arroyo Grande city, California" */
+  fullAhjName: string
+  /** @example "2023-07-26T08:08:22.825Z" */
   createdAt: string
-  /** @example "2023-07-25T09:56:28.925Z" */
+  /** @example "2023-07-26T08:08:22.825Z" */
   updatedAt: string
-  /** @example "2023-07-25T09:56:28.925Z" */
+  /** @example "2023-07-26T08:08:22.825Z" */
   updatedBy: string
   /** @example "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE'
@@ -199,7 +210,6 @@ export interface ElectricalEngineering {
 }
 
 export interface AhjNoteResponseDto {
-  id?: number
   general: General
   design: Design
   engineering: Engineering
@@ -222,6 +232,35 @@ export interface UpdateNoteRequestDto {
   design: Design
   engineering: Engineering
   electricalEngineering: ElectricalEngineering
+}
+
+export interface AhjNoteHistoryResponseDto {
+  id: number
+  general: General
+  design: Design
+  engineering: Engineering
+  electricalEngineering: ElectricalEngineering
+}
+
+export interface AhjNoteHistoryListResponseDto {
+  id: number
+  geoId: string
+  name: string
+  fullAhjName: string
+  updatedBy: string
+  updatedAt: string
+}
+
+export interface AhjNoteHistoryPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: AhjNoteHistoryListResponseDto[]
 }
 
 export interface AddressFromMapBox {
@@ -764,7 +803,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name DepartmentControllerAppointPosition
-     * @request POST:/departments/user-position
+     * @request POST:/departments/user-positions
      */
     departmentControllerAppointPosition: (
       query: {
@@ -774,7 +813,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/departments/user-position`,
+        path: `/departments/user-positions`,
         method: 'POST',
         query: query,
         ...params,
@@ -784,7 +823,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name DepartmentControllerRevokePosition
-     * @request DELETE:/departments/user-position
+     * @request DELETE:/departments/user-positions
      */
     departmentControllerRevokePosition: (
       query: {
@@ -794,7 +833,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/departments/user-position`,
+        path: `/departments/user-positions`,
         method: 'DELETE',
         query: query,
         ...params,
@@ -817,11 +856,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @description 등록된 모든 라이센스 조회 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
      *
      * @name DepartmentControllerFindAllLicenses
-     * @request GET:/departments/licenses
+     * @request GET:/departments/member-licenses
      */
     departmentControllerFindAllLicenses: (params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/departments/licenses`,
+        path: `/departments/member-licenses`,
         method: 'GET',
         ...params,
       }),
@@ -830,11 +869,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name DepartmentControllerPostLicense
-     * @request POST:/departments/licenses
+     * @request POST:/departments/member-licenses
      */
     departmentControllerPostLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/departments/licenses`,
+        path: `/departments/member-licenses`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
@@ -845,7 +884,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name DepartmentControllerDeleteLicense
-     * @request DELETE:/departments/licenses
+     * @request DELETE:/departments/member-licenses
      */
     departmentControllerDeleteLicense: (
       query: {
@@ -856,7 +895,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/departments/licenses`,
+        path: `/departments/member-licenses`,
         method: 'DELETE',
         query: query,
         ...params,
@@ -918,11 +957,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @tags geography
      * @name GeographyControllerFindNotes
      * @request GET:/geography/notes
+     * @secure
      */
     geographyControllerFindNotes: (
-      query: {
+      query?: {
         /**
          * Specifies a limit of returned records
          * @default 20
@@ -933,27 +974,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
          * @default 1
          */
         page?: number
-        fullAhjName: string
+        geoId?: string
+        fullAhjName?: string
+        name?: string
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, Page>({
+      this.request<AhjNotePaginatedResponseDto, any>({
         path: `/geography/notes`,
         method: 'GET',
         query: query,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name GeographyControllerFindNoteByGeoId
-     * @request GET:/geography/{geoId}/notes
-     */
-    geographyControllerFindNoteByGeoId: (geoId: string, params: RequestParams = {}) =>
-      this.request<AhjNoteResponseDto, any>({
-        path: `/geography/${geoId}/notes`,
-        method: 'GET',
+        secure: true,
         format: 'json',
         ...params,
       }),
@@ -961,14 +992,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @tags geography
+     * @name GeographyControllerFindNoteByGeoId
+     * @request GET:/geography/{geoId}/notes
+     * @secure
+     */
+    geographyControllerFindNoteByGeoId: (geoId: string, params: RequestParams = {}) =>
+      this.request<AhjNoteResponseDto, any>({
+        path: `/geography/${geoId}/notes`,
+        method: 'GET',
+        secure: true,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags geography
      * @name GeographyControllerUpdateNote
      * @request PUT:/geography/{geoId}/notes
+     * @secure
      */
     geographyControllerUpdateNote: (geoId: string, data: UpdateNoteRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/geography/${geoId}/notes`,
         method: 'PUT',
         body: data,
+        secure: true,
         type: ContentType.Json,
         ...params,
       }),
@@ -976,13 +1027,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @tags geography
      * @name GeographyControllerFindNoteUpdateHistoryDetail
      * @request GET:/geography/notes/history/{historyId}
+     * @secure
      */
     geographyControllerFindNoteUpdateHistoryDetail: (historyId: number, params: RequestParams = {}) =>
-      this.request<AhjNoteResponseDto, any>({
+      this.request<AhjNoteHistoryResponseDto, any>({
         path: `/geography/notes/history/${historyId}`,
         method: 'GET',
+        secure: true,
         format: 'json',
         ...params,
       }),
@@ -990,11 +1044,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @tags geography
      * @name GeographyControllerFindNoteUpdateHistory
      * @request GET:/geography/notes/history
+     * @secure
      */
     geographyControllerFindNoteUpdateHistory: (
-      query: {
+      query?: {
         /**
          * Specifies a limit of returned records
          * @default 20
@@ -1005,14 +1061,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
          * @default 1
          */
         page?: number
-        geoId: string
+        geoId?: string
       },
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<AhjNoteHistoryPaginatedResponseDto, any>({
         path: `/geography/notes/history`,
         method: 'GET',
         query: query,
+        secure: true,
+        format: 'json',
         ...params,
       }),
   }
