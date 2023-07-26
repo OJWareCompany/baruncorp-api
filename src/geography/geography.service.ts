@@ -3,17 +3,27 @@ import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
 import { UpdateNoteDto } from './dto/update-notes.dto'
-import { Page } from '../common/helpers/pagination/page.res.dto'
+import { Paginated, PaginatedResponseDto } from '../common/helpers/pagination/page.res.dto'
+import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find-ahj-notes-search-by-title-query.request.dto'
+import { AhjNoteListResponseDto } from './dto/ahj-note-list.response.dto'
 
 @Injectable()
 export class GeographyService {
   constructor(@Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort) {}
 
-  async findNotes(pageNo: number, pageSize: number, fullAhjName?: string): Promise<Page<Partial<AHJNotesModel>>> {
-    return await this.geographyRepository.findNotes(pageNo, pageSize, fullAhjName)
+  async findNotes(
+    pageNo: number,
+    pageSize: number,
+    searchQuery: FindAhjNotesSearchQueryRequestDto,
+  ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>> {
+    return await this.geographyRepository.findNotes(pageNo, pageSize, searchQuery)
   }
 
-  async findNoteUpdateHistory(pageNo: number, pageSize: number, geoId?: string): Promise<Page<Partial<AHJNotesModel>>> {
+  async findNoteUpdateHistory(
+    pageNo: number,
+    pageSize: number,
+    geoId?: string,
+  ): Promise<PaginatedResponseDto<Partial<AHJNotesModel>>> {
     return await this.geographyRepository.findNoteHistory(pageNo, pageSize, geoId)
   }
 

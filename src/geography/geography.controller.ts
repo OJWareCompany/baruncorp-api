@@ -2,29 +2,32 @@ import { Body, Controller, Get, Param, Put, Query } from '@nestjs/common'
 import { GeographyService } from './geography.service'
 import { AHJNotesModel } from './database/geography.repository'
 import { UpdateNoteRequestDto } from './dto/update-notes.request.dto'
-import { Page } from '../common/helpers/pagination/page.res.dto'
+import { AhjNotePaginatedResponseDto, Paginated, PaginatedResponseDto } from '../common/helpers/pagination/page.res.dto'
 import { AhjNoteMapper } from './ahj-note.mapper'
 import { PaginatedQueryRequestDto } from '../common/helpers/pagination/paginated-query.req.dto'
 import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
 import { ApiResponse } from '@nestjs/swagger'
 import { UpdateNoteDto } from './dto/update-notes.dto'
 import { AhjNoteHistoryResponseDto } from './dto/find-ahj-notes-history.response.dto'
+import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find-ahj-notes-search-by-title-query.request.dto'
 
 @Controller('geography')
 export class GeographyController {
   constructor(private readonly geographyService: GeographyService, private readonly ahjNoteMapper: AhjNoteMapper) {}
 
   @Get('notes')
-  @ApiResponse({ type: Page })
+  @ApiResponse({ type: AhjNotePaginatedResponseDto })
   async findNotes(
     @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
-    @Query('fullAhjName') fullAhjName?: string,
-  ): Promise<Page<Partial<AHJNotesModel>>> {
-    return await this.geographyService.findNotes(
+    @Query() searchQuery: FindAhjNotesSearchQueryRequestDto,
+  ): Promise<AhjNotePaginatedResponseDto> {
+    const result: Paginated<Partial<AHJNotesModel>> = await this.geographyService.findNotes(
       paginatedQueryRequestDto.page,
       paginatedQueryRequestDto.limit,
-      fullAhjName,
+      searchQuery,
     )
+    const items = result.items.map(this.ahjNoteMapper.toListResponse)
+    return new AhjNotePaginatedResponseDto({ ...result, items })
   }
 
   @Get(':geoId/notes')
@@ -50,7 +53,7 @@ export class GeographyController {
   async findNoteUpdateHistory(
     @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query('geoId') geoId?: string,
-  ): Promise<Page<Partial<AHJNotesModel>>> {
+  ): Promise<PaginatedResponseDto<Partial<AHJNotesModel>>> {
     return await this.geographyService.findNoteUpdateHistory(
       paginatedQueryRequestDto.page,
       paginatedQueryRequestDto.limit,

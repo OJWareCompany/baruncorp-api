@@ -3,7 +3,7 @@ import { Mapper } from '../department/license.mapper'
 import { AHJNotesModel } from './database/geography.repository'
 import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
 import { AHJType } from './types/ahj.type'
-import { AhjNoteHistoryResponseDto } from './dto/find-ahj-notes-history.response.dto'
+import { AhjNoteListResponseDto } from './dto/ahj-note-list.response.dto'
 
 export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {
   toPersistence(entity: any): AHJNotes {
@@ -40,6 +40,7 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       generalNotes: model.generalNotes,
       buildingCodes: model.buildingCodes,
       name: model.name,
+      fullAhjName: model.fullAhjName,
       updatedBy: model.updatedBy,
       createdAt: model?.createdAt?.toISOString(),
       updatedAt: model?.updatedAt?.toISOString(),
@@ -82,5 +83,15 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       ...id,
       ...response,
     }
+  }
+
+  toListResponse(model: AHJNotesModel): AhjNoteListResponseDto {
+    const response = new AhjNoteListResponseDto()
+    response.geoId = model.geoId
+    response.name = model.name
+    response.fullAhjName = model.fullAhjName
+    response.updatedBy = model.updatedBy
+    response.updatedAt = model.updatedAt?.toISOString() || null
+    return response
   }
 }

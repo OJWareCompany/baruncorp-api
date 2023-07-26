@@ -14,8 +14,11 @@ export class General {
   @ApiProperty({ example: '2015 IBC2' })
   buildingCodes: string
 
-  @ApiProperty({ example: 'Santa Rosa County' })
+  @ApiProperty({ example: 'Arcata city' })
   name: string
+
+  @ApiProperty({ example: 'Arroyo Grande city, California' })
+  fullAhjName: string
 
   @ApiProperty({ example: new Date().toISOString() })
   createdAt: string
