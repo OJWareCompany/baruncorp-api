@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { AhjNoteListResponseDto } from '../../../geography/dto/ahj-note-list.response.dto'
+import { AhjNoteListResponseDto } from '../../../geography/dto/ahj-note.paginated.response.dto'
+import { AhjNoteHistoryListResponseDto } from 'src/geography/dto/ahj-note-history.paginated.response.dto'
 
 /**
  * Repository, Service에서 사용
@@ -44,12 +45,4 @@ export abstract class PaginatedResponseDto<T> extends Paginated<T> {
   constructor(props: Omit<PaginatedResponseDto<T>, 'totalPage'>) {
     super(props)
   }
-}
-
-/**
- * Controller에서 사용
- */
-export class AhjNotePaginatedResponseDto extends PaginatedResponseDto<AhjNoteListResponseDto> {
-  @ApiProperty({ type: AhjNoteListResponseDto, isArray: true })
-  readonly items: readonly AhjNoteListResponseDto[]
 }

@@ -11,8 +11,9 @@ import {
 } from '../../project/infra/census/census.type.dto'
 import { AHJType } from '../types/ahj.type'
 import { UpdateNoteDto } from '../dto/update-notes.dto'
-import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-by-title-query.request.dto'
-import { AhjNoteListResponseDto } from '../dto/ahj-note-list.response.dto'
+import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
+import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
+import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -146,7 +147,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     pageNo: number,
     pageSize: number,
     geoId?: string,
-  ): Promise<Paginated<Partial<AHJNoteHistoryModel>>> {
+  ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>> {
     const offset = (pageNo - 1) * pageSize ?? 0
     const where = geoId ? { geoId: geoId } : undefined
 
@@ -164,7 +165,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
       },
       where: { ...where },
       orderBy: {
-        modifiedAt: 'desc',
+        id: 'desc',
       },
       skip: offset,
       take: pageSize,

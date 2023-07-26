@@ -1,12 +1,13 @@
-import { AHJNotes } from '@prisma/client'
 import { Mapper } from '../department/license.mapper'
-import { AHJNotesModel } from './database/geography.repository'
+import { AHJNoteHistoryModel, AHJNotesModel } from './database/geography.repository'
 import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
 import { AHJType } from './types/ahj.type'
-import { AhjNoteListResponseDto } from './dto/ahj-note-list.response.dto'
+import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
+import { AhjNoteHistoryResponseDto } from './dto/find-ahj-notes-history.response.dto'
+import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 
 export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {
-  toPersistence(entity: any): AHJNotes {
+  toPersistence(entity: any): AHJNotesModel {
     throw new Error('Method not implemented.')
   }
 
@@ -87,6 +88,17 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
 
   toListResponse(model: AHJNotesModel): AhjNoteListResponseDto {
     const response = new AhjNoteListResponseDto()
+    response.geoId = model.geoId
+    response.name = model.name
+    response.fullAhjName = model.fullAhjName
+    response.updatedBy = model.updatedBy
+    response.updatedAt = model.updatedAt?.toISOString() || null
+    return response
+  }
+
+  toHistoryListResponse(model: AHJNoteHistoryModel): AhjNoteHistoryListResponseDto {
+    const response = new AhjNoteHistoryListResponseDto()
+    response.id = model.id
     response.geoId = model.geoId
     response.name = model.name
     response.fullAhjName = model.fullAhjName

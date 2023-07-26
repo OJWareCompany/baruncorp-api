@@ -7,8 +7,9 @@ import {
   CensusState,
 } from '../../project/infra/census/census.type.dto'
 import { UpdateNoteDto } from '../dto/update-notes.dto'
-import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-by-title-query.request.dto'
-import { AhjNoteListResponseDto } from '../dto/ahj-note-list.response.dto'
+import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
+import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
+import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
 
 export interface GeographyRepositoryPort {
   findNotes(
@@ -18,7 +19,11 @@ export interface GeographyRepositoryPort {
   ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>>
   findNoteByGeoId(geoId: string): Promise<AHJNotesModel>
   updateNote(geoId: string, update: UpdateNoteDto): Promise<void>
-  findNoteHistory(pageNo: number, pageSize: number, geoId?: string): Promise<Paginated<Partial<AHJNoteHistoryModel>>>
+  findNoteHistory(
+    pageNo: number,
+    pageSize: number,
+    geoId?: string,
+  ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>>
 
   findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel>
   // findStateByGeoId(geoId: string): Promise<States>
