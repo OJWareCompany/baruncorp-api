@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { SelectOption } from '../types/ahj.type'
 import { Design, ElectricalEngineering, Engineering } from './ahj-note.dto'
+import { IsOptional } from 'class-validator'
 
 /**
  * DTO에서만 Enum?
@@ -22,8 +23,12 @@ class UpdateGeneral {
 }
 
 export class UpdateNoteRequestDto {
+  @IsOptional()
   general: UpdateGeneral
+  @IsOptional()
   design: Design
+  @IsOptional()
   engineering: Engineering
+  @IsOptional()
   electricalEngineering: ElectricalEngineering
 }
