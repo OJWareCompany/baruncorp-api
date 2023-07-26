@@ -16,14 +16,14 @@ export class DepartmentController {
   }
 
   // can use manager
-  @Post('user-position')
+  @Post('user-positions')
   @UseGuards(AuthGuard)
   async appointPosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
     return await this.departmentService.appointPosition(userId, positionId)
   }
 
   // can use only manager
-  @Delete('user-position')
+  @Delete('user-positions')
   @UseGuards(AuthGuard)
   async revokePosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
     return await this.departmentService.revokePosition(userId, positionId)
@@ -39,13 +39,13 @@ export class DepartmentController {
    * 등록된 모든 라이센스 조회
    * 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
    */
-  @Get('licenses')
+  @Get('member-licenses')
   async findAllLicenses(): Promise<void> {
     return await this.departmentService.findAllLicenses()
   }
 
   // TODO: create api doesn't retrieve? how handel conflict error?
-  @Post('licenses')
+  @Post('member-licenses')
   @UseGuards(AuthGuard)
   async postLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
     return await this.departmentService.registerLicense(
@@ -59,7 +59,7 @@ export class DepartmentController {
     )
   }
 
-  @Delete('licenses')
+  @Delete('member-licenses')
   @UseGuards(AuthGuard)
   async deleteLicense(
     @Query('userId') userId: string,
