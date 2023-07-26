@@ -5,13 +5,22 @@ import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
 import { GeographyRepository } from './database/geography.repository'
 import { PrismaModule } from '../database/prisma.module'
 import { AhjNoteMapper } from './ahj-note.mapper'
+import { UsersModule } from '../users/users.module'
+import { UserRepository } from '../users/database/user.repository'
+import { USER_REPOSITORY } from '../users/user.di-tokens'
+import UserMapper from '../users/user.mapper'
+import { UserRoleMapper } from '../users/user-role.mapper'
 
-const repositories: Provider[] = [{ provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository }]
-const mappers: Provider[] = [AhjNoteMapper]
+const repositories: Provider[] = [
+  { provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository },
+
+  { provide: USER_REPOSITORY, useClass: UserRepository },
+]
+const mappers: Provider[] = [AhjNoteMapper, UserMapper, UserRoleMapper]
 const services: Provider[] = [GeographyService]
 
 @Module({
-  imports: [PrismaModule],
+  imports: [PrismaModule, UsersModule],
   providers: [...services, ...repositories, ...mappers],
   controllers: [GeographyController],
 })

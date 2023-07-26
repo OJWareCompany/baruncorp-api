@@ -18,7 +18,7 @@ export interface GeographyRepositoryPort {
     searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>>
   findNoteByGeoId(geoId: string): Promise<AHJNotesModel>
-  updateNote(geoId: string, update: UpdateNoteDto): Promise<void>
+  updateNote(username: string, geoId: string, update: UpdateNoteDto): Promise<void>
   findNoteHistory(
     pageNo: number,
     pageSize: number,

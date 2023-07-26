@@ -7,6 +7,7 @@ import { Paginated, PaginatedResponseDto } from '../common/helpers/pagination/pa
 import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
 import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
+import { UserEntity } from 'src/users/entities/user.entity'
 
 @Injectable()
 export class GeographyService {
@@ -36,7 +37,8 @@ export class GeographyService {
     return await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
   }
 
-  async updateNote(geoId: string, dto: UpdateNoteDto): Promise<void> {
-    await this.geographyRepository.updateNote(geoId, dto)
+  async updateNote(user: UserEntity, geoId: string, dto: UpdateNoteDto): Promise<void> {
+    console.log(user.getProps())
+    await this.geographyRepository.updateNote(user.getProps().userName.getFullName(), geoId, dto)
   }
 }

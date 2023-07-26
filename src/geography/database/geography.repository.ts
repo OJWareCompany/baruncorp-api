@@ -220,7 +220,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
   }
 
   // TOFIX
-  async updateNote(geoId: string, update: UpdateNoteDto): Promise<void> {
+  async updateNote(username: string, geoId: string, update: UpdateNoteDto): Promise<void> {
     const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
     if (!model) new NotFoundException('Ahj note is not founded.')
 
@@ -230,7 +230,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     //   if (!value) copy[key] = null
     // })
 
-    await this.prismaService.aHJNotes.update({ data: { ...update }, where: { geoId } })
-    await this.prismaService.aHJNoteHistory.create({ data: { ...model } })
+    await this.prismaService.aHJNotes.update({ data: { ...update, updatedBy: username }, where: { geoId } })
+    await this.prismaService.aHJNoteHistory.create({ data: { ...model, updatedBy: username } })
   }
 }
