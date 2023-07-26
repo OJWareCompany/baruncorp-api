@@ -16,14 +16,14 @@ export class DepartmentController {
   }
 
   // can use manager
-  @Post('user-positions')
+  @Post('member-positions')
   @UseGuards(AuthGuard)
   async appointPosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
     return await this.departmentService.appointPosition(userId, positionId)
   }
 
   // can use only manager
-  @Delete('user-positions')
+  @Delete('member-positions')
   @UseGuards(AuthGuard)
   async revokePosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
     return await this.departmentService.revokePosition(userId, positionId)
