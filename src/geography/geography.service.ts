@@ -2,12 +2,12 @@ import { Inject, Injectable } from '@nestjs/common'
 import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNoteHistoryModel, AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
-import { UpdateNoteDto } from './dto/update-notes.dto'
-import { Paginated, PaginatedResponseDto } from '../common/helpers/pagination/page.res.dto'
+import { Paginated } from '../common/helpers/pagination/page.response.dto'
 import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
 import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
-import { UserEntity } from 'src/users/entities/user.entity'
+import { UserEntity } from '../users/domain/user.entity'
+import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto'
 
 @Injectable()
 export class GeographyService {
@@ -37,8 +37,7 @@ export class GeographyService {
     return await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
   }
 
-  async updateNote(user: UserEntity, geoId: string, dto: UpdateNoteDto): Promise<void> {
-    console.log(user.getProps())
+  async updateNote(user: UserEntity, geoId: string, dto: UpdateAhjNoteDto): Promise<void> {
     await this.geographyRepository.updateNote(user.getProps().userName.getFullName(), geoId, dto)
   }
 }

@@ -1,21 +1,21 @@
 import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common'
 import { GeographyService } from './geography.service'
 import { AHJNotesModel } from './database/geography.repository'
-import { UpdateNoteRequestDto } from './dto/update-notes.request.dto'
-import { Paginated } from '../common/helpers/pagination/page.res.dto'
+import { Paginated } from '../common/helpers/pagination/page.response.dto'
 import { AhjNoteMapper } from './ahj-note.mapper'
-import { PaginatedQueryRequestDto } from '../common/helpers/pagination/paginated-query.req.dto'
-import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
-import { UpdateNoteDto } from './dto/update-notes.dto'
-import { AhjNoteHistoryResponseDto } from './dto/find-ahj-notes-history.response.dto'
+import { PaginatedQueryRequestDto } from '../common/helpers/pagination/paginated-query.request.dto'
+import { AhjNoteResponseDto } from './dto/ahj-note.response.dto'
+import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
 import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
 import { AhjNotePaginatedResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryPaginatedResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { FindAhjNotesHistorySearchQueryRequestDto } from './queries/find-ahj-history/find-ahj-notes-history-search-query.request.dto'
 import { AuthGuard } from '../auth/authentication.guard'
-import { UserEntity } from '../users/entities/user.entity'
+import { UserEntity } from '../users/domain/user.entity'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
+import { UpdateAhjNoteRequestDto } from './commands/update-ahj-note/update-ahj-note.request.dto'
+import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto'
 
 @ApiBearerAuth()
 @ApiTags('geography')
@@ -47,10 +47,10 @@ export class GeographyController {
   async updateNote(
     @User() user: UserEntity,
     @Param('geoId') geoId: string,
-    @Body() dto: UpdateNoteRequestDto,
+    @Body() dto: UpdateAhjNoteRequestDto,
   ): Promise<void> {
     const { general, design, engineering, electricalEngineering } = dto
-    const update = new UpdateNoteDto({ ...general, ...design, ...engineering, ...electricalEngineering })
+    const update = new UpdateAhjNoteDto({ ...general, ...design, ...engineering, ...electricalEngineering })
     await this.geographyService.updateNote(user, geoId, update)
   }
 

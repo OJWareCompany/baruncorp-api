@@ -1,6 +1,6 @@
 import { Exclude, Expose } from 'class-transformer'
 import { IsString } from 'class-validator'
-import { AHJType } from '../../../geography/types/ahj.type'
+import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 
 export class AddressFromMapBox {
   @IsString()

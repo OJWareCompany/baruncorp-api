@@ -1,18 +1,19 @@
 import { ConflictException, Inject, Injectable } from '@nestjs/common'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepositoryPort } from './database/organization.repository.port'
-import { CreateOrganizationProps } from './interfaces/organization.interface'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserResponseDto } from '../users/dto/req/user.response.dto'
+import { UserResponseDto } from '../users/dtos/user.response.dto'
 import UserMapper from '../users/user.mapper'
 import { PositionMapper } from '../department/position.mapper'
 import { LicenseMapper } from '../department/license.mapper'
 import { DepartmentRepositoryPort } from '../department/database/department.repository.port'
 import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
-import { OrganizationEntity } from './entites/organization.entity'
-import { OrganizationMapper, OrganizationResponseDto } from './organization.mapper'
+import { OrganizationMapper } from './organization.mapper'
 import { ServiceMapper } from '../department/service.mapper'
+import { OrganizationEntity } from './domain/organization.entity'
+import { CreateOrganizationProps } from './domain/organization.types'
+import { OrganizationResponseDto } from './dtos/organization.response.dto'
 
 @Injectable()
 export class OrganizationService {
@@ -62,7 +63,7 @@ export class OrganizationService {
       const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
       const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
       const servicesEntity = await this.departmentRepository.findServicesByUserId(user.id)
-      const licenseEntities = await this.departmentRepository.findLicensesByUser(user)
+      const licenseEntities = await this.userRepository.findLicensesByUser(user)
       return this.userMapper.toResponse(
         user,
         userRoleEntity,

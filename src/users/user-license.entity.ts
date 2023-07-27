@@ -1,0 +1,46 @@
+import { UserName } from './domain/value-objects/user-name.vo'
+import { State } from '../department/domain/value-objects/state.vo'
+
+export type LicenseType = 'Electrical' | 'Structural'
+
+// TODO: issuingCountryName로 명시하고싶은데
+export interface LicenseProps {
+  userId: string
+  userName: UserName
+  type: LicenseType
+  stateEntity: State
+  priority: number
+  issuedDate: Date
+  expiryDate: Date
+}
+
+export interface CreateLicenseProps {
+  userId: string
+  userName: UserName
+  type: LicenseType
+  stateEntity: State
+  priority: number
+  issuedDate: Date
+  expiryDate: Date
+}
+
+export interface DeleteLicenseProps {
+  userId: string
+  type: LicenseType
+  stateEntity: State
+}
+
+export class LicenseEntity {
+  protected readonly props: LicenseProps
+
+  constructor(props: LicenseProps) {
+    this.props = props
+  }
+
+  getProps(): LicenseProps {
+    const propsCopy = {
+      ...this.props,
+    }
+    return Object.freeze(propsCopy)
+  }
+}

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from './license.mapper'
-import { ServiceEntity } from './entities/service.entity'
 import { ServiceModel } from './database/department.repository'
+import { ServiceEntity } from './domain/service.entity'
 
 export class ServiceResponseDto {
   id: string

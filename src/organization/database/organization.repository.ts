@@ -3,8 +3,8 @@ import { OrganizationRepositoryPort } from './organization.repository.port'
 import { PrismaService } from '../../database/prisma.service'
 import { Organizations, UserRole } from '@prisma/client'
 import { UserRoleMapper } from '../../users/user-role.mapper'
-import { OrganizationEntity } from '../entites/organization.entity'
 import { OrganizationMapper } from '../organization.mapper'
+import { OrganizationEntity } from '../domain/organization.entity'
 
 // Where should I put member list? Event Storming Helpful Decide
 

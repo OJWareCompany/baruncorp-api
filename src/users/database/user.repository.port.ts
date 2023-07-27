@@ -1,8 +1,9 @@
-import { EmailVO } from '../vo/email.vo'
-import { InputPasswordVO } from '../vo/password.vo'
-import { UserEntity } from '../entities/user.entity'
-import { UserName } from '../vo/user-name.vo'
-import { UserRoleEntity } from '../entities/user-role.entity'
+import { EmailVO } from '../domain/value-objects/email.vo'
+import { InputPasswordVO } from '../domain/value-objects/password.vo'
+import { UserEntity } from '../domain/user.entity'
+import { UserName } from '../domain/value-objects/user-name.vo'
+import { UserRole } from '../domain/value-objects/user-role.vo'
+import { LicenseEntity, LicenseType } from '../user-license.entity'
 
 export interface UserRepositoryPort {
   // TODO: generate uuidVO
@@ -14,8 +15,14 @@ export interface UserRepositoryPort {
   findPasswordByUserId(id: string): Promise<string>
   insertUser(entity: UserEntity, password: InputPasswordVO): Promise<void>
   update(userId: string, props: UserName): Promise<void>
-  findRoleByUserId(userId: string): Promise<UserRoleEntity>
-  giveRole(prop: UserRoleEntity): Promise<void>
-  removeRole(entity: UserRoleEntity): Promise<void>
+  findRoleByUserId(userId: string): Promise<UserRole>
+  giveRole(prop: UserRole): Promise<void>
+  removeRole(entity: UserRole): Promise<void>
   transaction(...args: any[]): Promise<any>
+
+  // findUserLicenses? findLicensesByUserId?
+  findAllLicenses(): Promise<LicenseEntity[]>
+  findLicensesByUser(user: UserEntity): Promise<LicenseEntity[]>
+  registerLicense(entity: LicenseEntity): Promise<void>
+  revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<void>
 }

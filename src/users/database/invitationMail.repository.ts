@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../../database/prisma.service'
-import { CreateInvitationMailProp, InvitationEmailProp } from '../interfaces/invitationMail.interface'
+import { CreateInvitationMailProp, InvitationEmailProp } from '../domain/invitationMail.types'
 import { InvitationMailRepositoryPort } from './invitationMail.repository.port'
-import { EmailVO } from '../vo/email.vo'
+import { EmailVO } from '../domain/value-objects/email.vo'
 
 @Injectable()
 export class InvitationMailRepository implements InvitationMailRepositoryPort {

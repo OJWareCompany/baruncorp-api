@@ -39,3 +39,13 @@ const mappers: Provider[] = [
   exports: [UserService],
 })
 export class UsersModule {}
+
+/**
+ * 폴더 구조 개선사항
+ * - users.service 에서
+ * - CUD는 각 커맨드 핸들러로 (service)
+ * - R은 쿼리 핸들러로 (query-handler)
+ * - 나머지 기능은 비슷한것끼리 묶어서 여러개의 Application Service로 나눌수 있다.
+ *
+ * 각 get에 필요한 dto(query,param,등) queries로 이동
+ */

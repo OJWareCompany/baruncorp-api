@@ -2,14 +2,14 @@ import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/co
 import { UserService } from '../users/users.service'
 import { JwtService } from '@nestjs/jwt'
 import { CookieOptions, Response } from 'express'
-import { SignUpReq } from './dto/request/signup.req.dto'
-import { EmailVO } from '../users/vo/email.vo'
-import { InputPasswordVO } from '../users/vo/password.vo'
+import { SignUpRequestDto } from './dto/request/signup.request.dto'
+import { EmailVO } from '../users/domain/value-objects/email.vo'
+import { InputPasswordVO } from '../users/domain/value-objects/password.vo'
 import { OrganizationService } from '../organization/organization.service'
-import { TokenResponse } from './dto/response/token.res.dto'
-import { UserName } from '../users/vo/user-name.vo'
-import { UserEntity } from '../users/entities/user.entity'
-import { UserRoles } from '../users/interfaces/user-role.interface'
+import { TokenResponseDto } from './dto/response/token.response.dto'
+import { UserName } from '../users/domain/value-objects/user-name.vo'
+import { UserEntity } from '../users/domain/user.entity'
+import { UserRoles } from '../users/domain/value-objects/user-role.vo'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
@@ -21,7 +21,7 @@ export class AuthenticationService {
     private readonly organizationService: OrganizationService,
   ) {}
 
-  async signIn(email: EmailVO, password: InputPasswordVO, response: Response): Promise<TokenResponse> {
+  async signIn(email: EmailVO, password: InputPasswordVO, response: Response): Promise<TokenResponseDto> {
     const user = await this.usersService.findUserIdByEmail(email)
     if (!user) throw new NotFoundException()
 
@@ -54,7 +54,7 @@ export class AuthenticationService {
     password: InputPasswordVO,
     response: Response,
     time: { jwt: number; refresh: number },
-  ): Promise<TokenResponse> {
+  ): Promise<TokenResponseDto> {
     const user = await this.usersService.findUserIdByEmail(email)
     if (!user) throw new NotFoundException()
 
@@ -83,7 +83,7 @@ export class AuthenticationService {
     }
   }
 
-  async signUp(signUpReq: SignUpReq) {
+  async signUp(signUpReq: SignUpRequestDto) {
     // TODO: Validate Code in DTO
     const { code, password, ...rest } = signUpReq
 

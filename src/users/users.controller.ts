@@ -1,17 +1,19 @@
 import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common'
 import { UserService } from './users.service'
-import { UpdateUserReq } from './dto/req/update-user.req.dto'
-import { CreateInvitationMailReq } from './dto/req/create-invitation-mail.req.dto'
+import { CreateInvitationMailRequestDto } from './commands/create-invitation-mail/create-invitation-mail.request.dto'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../auth/authentication.guard'
 import { randomBytes } from 'crypto'
 import nodemailer from 'nodemailer'
 import { ConfigModule } from '@nestjs/config'
-import { UserResponseDto } from './dto/req/user.response.dto'
-import { UserRoles } from './interfaces/user-role.interface'
-import { GiveRoleRequestDto } from './dto/req/give-role.request.dto'
-import { EmailVO } from './vo/email.vo'
-import { UserName } from './vo/user-name.vo'
+import { UserResponseDto } from './dtos/user.response.dto'
+import { EmailVO } from './domain/value-objects/email.vo'
+import { UserName } from './domain/value-objects/user-name.vo'
+import { GiveRoleRequestDto } from './commands/give-role/give-role.request.dto'
+import { UpdateUserRequestDto } from './commands/update-user/update-user.request.dto'
+import { UserRoles } from './domain/value-objects/user-role.vo'
+import { LicenseType } from './user-license.entity'
+import { CreateLicenseRequestDto } from '../users/commands/create-user-license/create-license.request.dto'
 
 ConfigModule.forRoot()
 
@@ -43,13 +45,13 @@ export class UsersController {
 
   @Patch('profile/:userId')
   @UseGuards(AuthGuard)
-  async updateUserByUserId(@Param('userId') userId: string, @Body() dto: UpdateUserReq): Promise<void> {
+  async updateUserByUserId(@Param('userId') userId: string, @Body() dto: UpdateUserRequestDto): Promise<void> {
     return await this.userService.upadteProfile(userId, new UserName(dto))
   }
 
   @Patch('profile')
   @UseGuards(AuthGuard)
-  async updateUser(@User() { id }: { id: string }, @Body() dto: UpdateUserReq): Promise<void> {
+  async updateUser(@User() { id }: { id: string }, @Body() dto: UpdateUserRequestDto): Promise<void> {
     return await this.userService.upadteProfile(id, new UserName(dto))
   }
 
@@ -77,7 +79,7 @@ export class UsersController {
 
   @Post('invitations')
   @UseGuards(AuthGuard)
-  async sendInvitationMail(@Body() dto: CreateInvitationMailReq) {
+  async sendInvitationMail(@Body() dto: CreateInvitationMailRequestDto) {
     // TODO: to VO
     const code = randomBytes(10).toString('hex').toUpperCase().slice(0, 6)
 
@@ -109,5 +111,39 @@ export class UsersController {
     })
 
     return result
+  }
+
+  /**
+   * 등록된 모든 라이센스 조회
+   * 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
+   */
+  @Get('member-licenses')
+  async findAllLicenses(): Promise<void> {
+    return await this.userService.findAllLicenses()
+  }
+
+  // TODO: create api doesn't retrieve? how handel conflict error?
+  @Post('member-licenses')
+  @UseGuards(AuthGuard)
+  async postLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
+    return await this.userService.registerLicense(
+      dto.userId,
+      dto.type,
+      dto.issuingCountryName,
+      dto.abbreviation,
+      dto.priority,
+      new Date(dto.issuedDate),
+      new Date(dto.expiryDate),
+    )
+  }
+
+  @Delete('member-licenses')
+  @UseGuards(AuthGuard)
+  async deleteLicense(
+    @Query('userId') userId: string,
+    @Query('type') type: LicenseType,
+    @Query('issuingCountryName') issuingCountryName: string,
+  ): Promise<void> {
+    return await this.userService.revokeLicense(userId, type, issuingCountryName)
   }
 }

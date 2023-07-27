@@ -1,9 +1,7 @@
 import { Mapper } from '../department/license.mapper'
 import { AHJNoteHistoryModel, AHJNotesModel } from './database/geography.repository'
-import { AhjNoteResponseDto } from './dto/find-ahj-notes.response.dto'
-import { AHJType } from './types/ahj.type'
+import { AHJType, AhjNoteResponseDto } from './dto/ahj-note.response.dto'
 import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
-import { AhjNoteHistoryResponseDto } from './dto/find-ahj-notes-history.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 
 export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {

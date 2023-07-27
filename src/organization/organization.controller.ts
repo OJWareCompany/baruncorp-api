@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common'
 import { OrganizationService } from './organization.service'
-import { CreateOrganizationReq } from './dto/req/create-organization.req.dto'
+import { CreateOrganizationRequestDto } from './commands/create-organization/create-organization.request.dto'
 import { AuthGuard } from '../auth/authentication.guard'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
-import { UserResponseDto } from '../users/dto/req/user.response.dto'
-import { OrganizationResponseDto } from './organization.mapper'
-import { Address } from './vo/address.vo'
-import { UserEntity } from '../users/entities/user.entity'
+import { UserResponseDto } from '../users/dtos/user.response.dto'
+import { Address } from './domain/value-objects/address.vo'
+import { UserEntity } from '../users/domain/user.entity'
+import { OrganizationResponseDto } from './dtos/organization.response.dto'
 
 @Controller('organizations')
 export class OrganizationController {
@@ -30,7 +30,7 @@ export class OrganizationController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async createOrganization(@Body() dto: CreateOrganizationReq) {
+  async createOrganization(@Body() dto: CreateOrganizationRequestDto) {
     return await this.organizationService.createOrganization({
       name: dto.name,
       description: dto.description,

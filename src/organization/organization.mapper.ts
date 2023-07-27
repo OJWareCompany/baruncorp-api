@@ -1,25 +1,11 @@
 import { Mapper } from '../department/license.mapper'
 import { OrganizationModel } from './database/organization.repository'
-import { OrganizationEntity } from './entites/organization.entity'
 import { Organizations } from '@prisma/client'
-import { CreateOrganizationProps } from './interfaces/organization.interface'
-import { Address } from './vo/address.vo'
+import { Address } from './domain/value-objects/address.vo'
 import { Injectable } from '@nestjs/common'
-
-export class OrganizationResponseDto {
-  id: string
-  name: string
-  description: string
-  email: string
-  phoneNumber: string
-  organizationType: string
-  city: string
-  country: string
-  postalCode: string
-  stateOrRegion: string
-  street1: string
-  street2: string
-}
+import { OrganizationEntity } from './domain/organization.entity'
+import { CreateOrganizationProps } from './domain/organization.types'
+import { OrganizationResponseDto } from './dtos/organization.response.dto'
 
 /**
  * 도메인 api 구현 순서

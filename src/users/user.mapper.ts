@@ -1,14 +1,14 @@
 import { Mapper } from '../department/license.mapper'
-import { UserEntity } from './entities/user.entity'
+import { UserEntity } from './domain/user.entity'
 import { UserModel } from './database/user.repository'
-import { UserResponseDto } from './dto/req/user.response.dto'
-import { UserName } from './vo/user-name.vo'
-import { LincenseResponseDto } from '../department/dto/license.response.dto'
-import { PositionResponseDto } from '../department/dto/position.response.dto'
-import { UserRoleEntity } from './entities/user-role.entity'
+import { UserResponseDto } from './dtos/user.response.dto'
+import { UserName } from './domain/value-objects/user-name.vo'
+import { LincenseResponseDto } from './dtos/license.response.dto'
+import { PositionResponseDto } from '../department/dtos/position.response.dto'
 import { Injectable } from '@nestjs/common'
-import { OrganizationEntity } from '../organization/entites/organization.entity'
 import { ServiceResponseDto } from '../department/service.mapper'
+import { UserRole } from './domain/value-objects/user-role.vo'
+import { OrganizationEntity } from '../organization/domain/organization.entity'
 
 @Injectable()
 export default class UserMapper implements Mapper<UserEntity, UserModel, UserResponseDto> {
@@ -42,7 +42,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
   // when request through repository directly?
   toResponse(
     entity: UserEntity,
-    role: UserRoleEntity,
+    role: UserRole,
     organizationEntity: OrganizationEntity,
     position: PositionResponseDto,
     services: ServiceResponseDto[],

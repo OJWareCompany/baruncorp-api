@@ -2,18 +2,18 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { GeographyRepositoryPort } from './geography.repository.port'
 import { AHJNoteHistory, AHJNotes } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
-import { Paginated } from '../../common/helpers/pagination/page.res.dto'
+import { Paginated } from '../../common/helpers/pagination/page.response.dto'
 import {
   CensusState,
   CensusCounties,
   CensusCountySubdivisions,
   CensusPlace,
 } from '../../project/infra/census/census.type.dto'
-import { AHJType } from '../types/ahj.type'
-import { UpdateNoteDto } from '../dto/update-notes.dto'
 import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
 import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
+import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
+import { AHJType } from '../dto/ahj-note.response.dto'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -220,7 +220,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
   }
 
   // TOFIX
-  async updateNote(username: string, geoId: string, update: UpdateNoteDto): Promise<void> {
+  async updateNote(username: string, geoId: string, update: UpdateAhjNoteDto): Promise<void> {
     const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
     if (!model) new NotFoundException('Ahj note is not founded.')
 

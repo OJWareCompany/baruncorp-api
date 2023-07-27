@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { PaginatedResponseDto } from '../../common/helpers/pagination/page.res.dto'
+import { PaginatedResponseDto } from '../../common/helpers/pagination/page.response.dto'
 
 export class AhjNoteHistoryListResponseDto {
   id: number

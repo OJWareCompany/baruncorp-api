@@ -1,10 +1,9 @@
 import { LicenseModel } from './database/department.repository'
-import { LincenseResponseDto } from './dto/license.response.dto'
-import { LicenseEntity } from './entities/license.entity'
-import { CreateLicenseProps, LicenseProps, LicenseType } from './interfaces/license.interface'
-import { StateEntity } from './entities/state.entity'
+import { LincenseResponseDto } from '../users/dtos/license.response.dto'
 import { Injectable } from '@nestjs/common'
-import { UserEntity } from '../users/entities/user.entity'
+import { UserEntity } from '../users/domain/user.entity'
+import { CreateLicenseProps, LicenseEntity, LicenseProps, LicenseType } from '../users/user-license.entity'
+import { State } from './domain/value-objects/state.vo'
 
 export interface Mapper<DomainEntity, DbRecord, Response = any> {
   toPersistence(entity: DomainEntity): DbRecord
@@ -33,7 +32,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
     const props: CreateLicenseProps = {
       userId: record.userId,
       userName: user.getProps().userName,
-      stateEntity: new StateEntity({ stateName: record.issuingCountryName, abbreviation: record.abbreviation }),
+      stateEntity: new State({ stateName: record.issuingCountryName, abbreviation: record.abbreviation }),
       type,
       priority: record.priority,
       issuedDate: record.issuedDate,

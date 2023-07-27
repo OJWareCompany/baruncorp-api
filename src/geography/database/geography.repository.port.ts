@@ -1,15 +1,15 @@
 import { AHJNoteHistoryModel, AHJNotesModel } from './geography.repository'
-import { Paginated } from '../../common/helpers/pagination/page.res.dto'
+import { Paginated } from '../../common/helpers/pagination/page.response.dto'
 import {
   CensusCounties,
   CensusCountySubdivisions,
   CensusPlace,
   CensusState,
 } from '../../project/infra/census/census.type.dto'
-import { UpdateNoteDto } from '../dto/update-notes.dto'
 import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
 import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
+import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
 
 export interface GeographyRepositoryPort {
   findNotes(
@@ -18,7 +18,7 @@ export interface GeographyRepositoryPort {
     searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>>
   findNoteByGeoId(geoId: string): Promise<AHJNotesModel>
-  updateNote(username: string, geoId: string, update: UpdateNoteDto): Promise<void>
+  updateNote(username: string, geoId: string, update: UpdateAhjNoteDto): Promise<void>
   findNoteHistory(
     pageNo: number,
     pageSize: number,

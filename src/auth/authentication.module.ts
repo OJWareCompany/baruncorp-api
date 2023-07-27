@@ -10,11 +10,12 @@ import { UserRepository } from '../users/database/user.repository'
 import UserMapper from '../users/user.mapper'
 import { PrismaModule } from '../database/prisma.module'
 import { UserRoleMapper } from '../users/user-role.mapper'
+import { LicenseMapper } from '../department/license.mapper'
 
 const { JWT_EXPIRED_TIME } = process.env
 
 const repositories: Provider[] = [{ provide: USER_REPOSITORY, useClass: UserRepository }]
-const mappers: Provider[] = [UserMapper, UserRoleMapper]
+const mappers: Provider[] = [UserMapper, UserRoleMapper, LicenseMapper]
 
 @Module({
   imports: [

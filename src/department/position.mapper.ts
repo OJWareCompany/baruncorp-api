@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common'
 import { DepartmentModel, PositionModel } from './database/department.repository'
-import { PositionResponseDto } from './dto/position.response.dto'
-import { PositionEntity } from './entities/position.entity'
+import { PositionResponseDto } from './dtos/position.response.dto'
 import { Mapper } from './license.mapper'
-import { CreatePositionProps } from './interfaces/position.interface'
+import { PositionEntity, CreatePositionProps } from './domain/position.entity'
 
 @Injectable()
 export class PositionMapper implements Mapper<PositionEntity, PositionModel, PositionResponseDto> {

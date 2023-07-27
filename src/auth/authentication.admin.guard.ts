@@ -11,7 +11,7 @@ import { jwtConstants } from './constants'
 import { Request } from 'express'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
-import { UserRoles } from '../users/interfaces/user-role.interface'
+import { UserRoles } from '../users/domain/value-objects/user-role.vo'
 
 @Injectable()
 export class AdminGuard implements CanActivate {

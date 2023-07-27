@@ -1,24 +1,25 @@
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
-import { EmailVO } from './vo/email.vo'
-import { InputPasswordVO } from './vo/password.vo'
-import { InvitationEmailProp } from './interfaces/invitationMail.interface'
+import { EmailVO } from './domain/value-objects/email.vo'
+import { InputPasswordVO } from './domain/value-objects/password.vo'
+import { InvitationEmailProp } from './domain/invitationMail.types'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
-import { CreateInvitationMailReq } from './dto/req/create-invitation-mail.req.dto'
+import { CreateInvitationMailRequestDto } from './commands/create-invitation-mail/create-invitation-mail.request.dto'
 import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../organization/database/organization.repository.port'
-import { UserResponseDto } from './dto/req/user.response.dto'
-import { UserEntity } from './entities/user.entity'
+import { UserResponseDto } from './dtos/user.response.dto'
+import { UserEntity } from './domain/user.entity'
 import UserMapper from './user.mapper'
-import { UserName } from './vo/user-name.vo'
+import { UserName } from './domain/value-objects/user-name.vo'
 import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
 import { DepartmentRepositoryPort } from '../department/database/department.repository.port'
 import { PositionMapper } from '../department/position.mapper'
 import { LicenseMapper } from '../department/license.mapper'
-import { CreateUserRoleProps, UserRoles } from './interfaces/user-role.interface'
-import { UserRoleEntity } from './entities/user-role.entity'
 import { ServiceMapper } from '../department/service.mapper'
+import { CreateUserRoleProps, UserRole, UserRoles } from './domain/value-objects/user-role.vo'
+import { LicenseType, LicenseEntity } from './user-license.entity'
+import { State } from '../department/domain/value-objects/state.vo'
 
 @Injectable()
 export class UserService {
@@ -34,7 +35,7 @@ export class UserService {
   ) {}
 
   async giveRole(create: CreateUserRoleProps): Promise<void> {
-    const role = new UserRoleEntity(create)
+    const role = new UserRole(create)
     const existed = await this.userRepository.findRoleByUserId(create.userId)
     if (existed) throw new ConflictException('already has roles.', '10011')
     await this.userRepository.giveRole(role)
@@ -58,7 +59,7 @@ export class UserService {
     const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organizationId)
     const positionEntity = await this.departmentRepository.findPositionByUserId(userEntity.id)
     const serviceEntities = await this.departmentRepository.findServicesByUserId(userEntity.id)
-    const licenseEntities = await this.departmentRepository.findLicensesByUser(userEntity)
+    const licenseEntities = await this.userRepository.findLicensesByUser(userEntity)
     return this.userMapper.toResponse(
       userEntity,
       userRoleEntity,
@@ -80,7 +81,7 @@ export class UserService {
       const organizationEntity = await this.organizationRepository.findOneById(user.getProps().organizationId)
       const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
       const serviceEntities = await this.departmentRepository.findServicesByUserId(user.id)
-      const licenseEntities = await this.departmentRepository.findLicensesByUser(user)
+      const licenseEntities = await this.userRepository.findLicensesByUser(user)
       return this.userMapper.toResponse(
         user,
         userRoleEntity,
@@ -100,7 +101,7 @@ export class UserService {
     const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organizationId)
     const positionEntity = await this.departmentRepository.findPositionByUserId(userEntity.id)
     const serviceEntities = await this.departmentRepository.findServicesByUserId(userEntity.id)
-    const licenseEntities = await this.departmentRepository.findLicensesByUser(userEntity)
+    const licenseEntities = await this.userRepository.findLicensesByUser(userEntity)
 
     return this.userMapper.toResponse(
       userEntity,
@@ -137,7 +138,7 @@ export class UserService {
     return await this.invitationEmailRepository.findOne(code, email)
   }
 
-  async sendInvitationMail(dto: CreateInvitationMailReq, code: string): Promise<InvitationEmailProp> {
+  async sendInvitationMail(dto: CreateInvitationMailRequestDto, code: string): Promise<InvitationEmailProp> {
     try {
       const user = await this.userRepository.findOneByEmail(new EmailVO(dto.email))
       // What if organizationId is provided by parameter?
@@ -152,5 +153,52 @@ export class UserService {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  async findAllLicenses(): Promise<any> {
+    return await this.userRepository.findAllLicenses()
+  }
+
+  async registerLicense(
+    userId: string,
+    type: LicenseType,
+    issuingCountryName: string,
+    abbreviation: string,
+    priority: number,
+    issuedDate: Date,
+    expiryDate: Date,
+  ): Promise<void> {
+    const user = await this.userRepository.findOneById(userId)
+
+    const existed = await this.userRepository.findLicensesByUser(user)
+    const filterd = existed.map((license) => {
+      const state = license.getProps().stateEntity
+      return state.abbreviation === abbreviation && license.getProps().type === type
+    })
+
+    if (filterd.includes(true)) throw new NotFoundException('already has a license.', '10015')
+
+    await this.userRepository.registerLicense(
+      new LicenseEntity({
+        userId,
+        userName: user.getProps().userName,
+        type,
+        stateEntity: new State({ stateName: issuingCountryName, abbreviation }),
+        priority,
+        issuedDate,
+        expiryDate,
+      }),
+    )
+  }
+
+  async revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<any> {
+    const user = await this.userRepository.findOneById(userId)
+    const existed = await this.userRepository.findLicensesByUser(user)
+    const filterd = existed.map((license) => {
+      const state = license.getProps().stateEntity
+      return state.stateName === issuingCountryName && license.getProps().type === type
+    })
+    if (!filterd.includes(true)) throw new NotFoundException('has no a license.', '10016')
+    return await this.userRepository.revokeLicense(userId, type, issuingCountryName)
   }
 }
