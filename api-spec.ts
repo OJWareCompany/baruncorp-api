@@ -9,18 +9,22 @@
  * ---------------------------------------------------------------
  */
 
-export interface LoginReq {
+export interface SignInRequestDto {
+  /** @default "ejsvk3284@kakao.com" */
   email: string
+  /** @default "WkdWkdaos123!" */
   password: string
 }
 
-export interface TokenResponse {
+export interface TokenResponseDto {
   accessToken: string
   refreshToken: string
 }
 
-export interface SignUpReq {
+export interface SignUpRequestDto {
+  /** @default "Emma" */
   firstName: string
+  /** @default "Smith" */
   lastName: string
   email: string
   password: string
@@ -61,7 +65,7 @@ export interface UserResponseDto {
   role: string
 }
 
-export interface UpdateUserReq {
+export interface UpdateUserRequestDto {
   firstName: string
   lastName: string
 }
@@ -71,14 +75,50 @@ export interface GiveRoleRequestDto {
   lol: string
 }
 
-export interface CreateInvitationMailReq {
+export interface CreateInvitationMailRequestDto {
   organizationName: string
   email: string
 }
 
-export type OrganizationResponseDto = object
+export interface CreateLicenseRequestDto {
+  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
+  userId: string
+  /** @default "Electrical" */
+  type: object
+  /** @default "FLORIDA" */
+  issuingCountryName: string
+  /** @default "FL" */
+  abbreviation: string
+  /** @default 9 */
+  priority: number
+  /**
+   * @format date-time
+   * @default "2023-07-27T12:33:13.800Z"
+   */
+  issuedDate: string
+  /**
+   * @format date-time
+   * @default "2023-07-27T12:33:13.800Z"
+   */
+  expiryDate: string
+}
 
-export interface CreateOrganizationReq {
+export interface OrganizationResponseDto {
+  id: string
+  name: string
+  description: string
+  email: string
+  phoneNumber: string
+  organizationType: string
+  city: string
+  country: string
+  postalCode: string
+  stateOrRegion: string
+  street1: string
+  street2: string
+}
+
+export interface CreateOrganizationRequestDto {
   email: string
   street1: string
   street2: string
@@ -93,19 +133,9 @@ export interface CreateOrganizationReq {
   organizationType: string
 }
 
-export interface CreateLicenseRequestDto {
-  userId: string
-  type: object
-  issuingCountryName: string
-  abbreviation: string
-  priority: number
-  /** @format date-time */
-  issuedDate: string
-  /** @format date-time */
-  expiryDate: string
-}
+export type State = object
 
-export interface PutMemberInChargeOfTheService {
+export interface PutMemberInChargeOfTheServiceRequestDto {
   userId: string
   serviceId: string
 }
@@ -143,11 +173,11 @@ export interface General {
   name: string
   /** @example "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @example "2023-07-27T01:57:21.796Z" */
+  /** @example "2023-07-27T12:33:13.816Z" */
   createdAt: string
-  /** @example "2023-07-27T01:57:21.796Z" */
+  /** @example "2023-07-27T12:33:13.816Z" */
   updatedAt: string
-  /** @example "2023-07-27T01:57:21.796Z" */
+  /** @example "2023-07-27T12:33:13.816Z" */
   updatedBy: string
   /** @example "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE'
@@ -216,7 +246,7 @@ export interface AhjNoteResponseDto {
   electricalEngineering: ElectricalEngineering
 }
 
-export interface UpdateGeneral {
+export interface UpdateAhjGeneral {
   /** @example "https://google.com" */
   website: string
   /** @example "See Notes" */
@@ -227,8 +257,8 @@ export interface UpdateGeneral {
   buildingCodes: string
 }
 
-export interface UpdateNoteRequestDto {
-  general: UpdateGeneral
+export interface UpdateAhjNoteRequestDto {
+  general: UpdateAhjGeneral
   design: Design
   engineering: Engineering
   electricalEngineering: ElectricalEngineering
@@ -316,7 +346,7 @@ export class HttpClient<SecurityDataType = unknown> {
   private format?: ResponseType
 
   constructor({ securityWorker, secure, format, ...axiosConfig }: ApiConfig<SecurityDataType> = {}) {
-    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || '' })
+    this.instance = axios.create({ ...axiosConfig, baseURL: axiosConfig.baseURL || 'localhost:3000' })
     this.secure = secure
     this.format = format
     this.securityWorker = securityWorker
@@ -405,6 +435,7 @@ export class HttpClient<SecurityDataType = unknown> {
 /**
  * @title Cats example
  * @version 1.0
+ * @baseUrl localhost:3000
  * @contact
  *
  * The cats API description
@@ -417,8 +448,8 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name AuthenticationControllerSignIn
      * @request POST:/auth/signin
      */
-    authenticationControllerSignIn: (data: LoginReq, params: RequestParams = {}) =>
-      this.request<TokenResponse, any>({
+    authenticationControllerSignIn: (data: SignInRequestDto, params: RequestParams = {}) =>
+      this.request<TokenResponseDto, any>({
         path: `/auth/signin`,
         method: 'POST',
         body: data,
@@ -438,10 +469,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         jwt: number
         refresh: number
       },
-      data: LoginReq,
+      data: SignInRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<TokenResponse, any>({
+      this.request<TokenResponseDto, any>({
         path: `/auth/signin-time`,
         method: 'POST',
         query: query,
@@ -470,7 +501,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name AuthenticationControllerSignUp
      * @request POST:/auth/signup
      */
-    authenticationControllerSignUp: (data: SignUpReq, params: RequestParams = {}) =>
+    authenticationControllerSignUp: (data: SignUpRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/auth/signup`,
         method: 'POST',
@@ -546,7 +577,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name UsersControllerUpdateUserByUserId
      * @request PATCH:/users/profile/{userId}
      */
-    usersControllerUpdateUserByUserId: (userId: string, data: UpdateUserReq, params: RequestParams = {}) =>
+    usersControllerUpdateUserByUserId: (userId: string, data: UpdateUserRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/users/profile/${userId}`,
         method: 'PATCH',
@@ -575,7 +606,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name UsersControllerUpdateUser
      * @request PATCH:/users/profile
      */
-    usersControllerUpdateUser: (data: UpdateUserReq, params: RequestParams = {}) =>
+    usersControllerUpdateUser: (data: UpdateUserRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/users/profile`,
         method: 'PATCH',
@@ -631,13 +662,62 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name UsersControllerSendInvitationMail
      * @request POST:/users/invitations
      */
-    usersControllerSendInvitationMail: (data: CreateInvitationMailReq, params: RequestParams = {}) =>
+    usersControllerSendInvitationMail: (data: CreateInvitationMailRequestDto, params: RequestParams = {}) =>
       this.request<ServiceResponseDto, any>({
         path: `/users/invitations`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description 등록된 모든 라이센스 조회 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
+     *
+     * @name UsersControllerFindAllLicenses
+     * @request GET:/users/member-licenses
+     */
+    usersControllerFindAllLicenses: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/member-licenses`,
+        method: 'GET',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UsersControllerPostLicense
+     * @request POST:/users/member-licenses
+     */
+    usersControllerPostLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/member-licenses`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UsersControllerDeleteLicense
+     * @request DELETE:/users/member-licenses
+     */
+    usersControllerDeleteLicense: (
+      query: {
+        userId: string
+        type: string
+        issuingCountryName: string
+      },
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/users/member-licenses`,
+        method: 'DELETE',
+        query: query,
         ...params,
       }),
   }
@@ -662,7 +742,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name OrganizationControllerCreateOrganization
      * @request POST:/organizations
      */
-    organizationControllerCreateOrganization: (data: CreateOrganizationReq, params: RequestParams = {}) =>
+    organizationControllerCreateOrganization: (data: CreateOrganizationRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/organizations`,
         method: 'POST',
@@ -767,58 +847,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/departments/states
      */
     departmentControllerFindAllStates: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<State[], any>({
         path: `/departments/states`,
         method: 'GET',
-        ...params,
-      }),
-
-    /**
-     * @description 등록된 모든 라이센스 조회 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
-     *
-     * @name DepartmentControllerFindAllLicenses
-     * @request GET:/departments/member-licenses
-     */
-    departmentControllerFindAllLicenses: (params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/departments/member-licenses`,
-        method: 'GET',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DepartmentControllerPostLicense
-     * @request POST:/departments/member-licenses
-     */
-    departmentControllerPostLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/departments/member-licenses`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DepartmentControllerDeleteLicense
-     * @request DELETE:/departments/member-licenses
-     */
-    departmentControllerDeleteLicense: (
-      query: {
-        userId: string
-        type: string
-        issuingCountryName: string
-      },
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/departments/member-licenses`,
-        method: 'DELETE',
-        query: query,
+        format: 'json',
         ...params,
       }),
 
@@ -843,7 +875,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/departments/member-services
      */
     departmentControllerPutMemberInChageOfTheService: (
-      data: PutMemberInChargeOfTheService,
+      data: PutMemberInChargeOfTheServiceRequestDto,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
@@ -935,7 +967,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request PUT:/geography/{geoId}/notes
      * @secure
      */
-    geographyControllerUpdateNote: (geoId: string, data: UpdateNoteRequestDto, params: RequestParams = {}) =>
+    geographyControllerUpdateNote: (geoId: string, data: UpdateAhjNoteRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/geography/${geoId}/notes`,
         method: 'PUT',
