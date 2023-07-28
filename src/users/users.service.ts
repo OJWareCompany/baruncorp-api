@@ -176,7 +176,7 @@ export class UserService {
       return state.abbreviation === abbreviation && license.getProps().type === type
     })
 
-    if (filterd.includes(true)) throw new NotFoundException('already has a license.', '10015')
+    if (filterd.includes(true)) throw new ConflictException('already has a license.', '10015')
 
     await this.userRepository.registerLicense(
       new LicenseEntity({

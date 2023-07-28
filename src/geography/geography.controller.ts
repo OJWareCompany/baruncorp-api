@@ -16,6 +16,7 @@ import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { UpdateAhjNoteRequestDto } from './commands/update-ahj-note/update-ahj-note.request.dto'
 import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto'
+import { AhjNoteHistoryParamRequestDto, GeoGraphyParamRequestDto } from './geography.param.request.dto'
 
 @ApiBearerAuth()
 @ApiTags('geography')
@@ -38,26 +39,26 @@ export class GeographyController {
   }
 
   @Get(':geoId/notes')
-  async findNoteByGeoId(@Param('geoId') geoId: string): Promise<AhjNoteResponseDto> {
-    return this.ahjNoteMapper.toResponse(await this.geographyService.findNoteByGeoId(geoId))
+  async findNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<AhjNoteResponseDto> {
+    return this.ahjNoteMapper.toResponse(await this.geographyService.findNoteByGeoId(param.geoId))
   }
 
   @Put(':geoId/notes')
   @UseGuards(AuthGuard)
   async updateNote(
     @User() user: UserEntity,
-    @Param('geoId') geoId: string,
+    @Param() param: GeoGraphyParamRequestDto,
     @Body() dto: UpdateAhjNoteRequestDto,
   ): Promise<void> {
     const { general, design, engineering, electricalEngineering } = dto
     const update = new UpdateAhjNoteDto({ ...general, ...design, ...engineering, ...electricalEngineering })
-    await this.geographyService.updateNote(user, geoId, update)
+    await this.geographyService.updateNote(user, param.geoId, update)
   }
 
   @Get('notes/history/:historyId')
-  async findNoteUpdateHistoryDetail(@Param('historyId') historyId: number): Promise<AhjNoteHistoryResponseDto> {
+  async findNoteUpdateHistoryDetail(@Param() param: AhjNoteHistoryParamRequestDto): Promise<AhjNoteHistoryResponseDto> {
     return this.ahjNoteMapper.toResponse(
-      await this.geographyService.findNoteUpdateHistoryDetail(historyId),
+      await this.geographyService.findNoteUpdateHistoryDetail(param.historyId),
     ) as AhjNoteHistoryResponseDto
   }
 

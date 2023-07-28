@@ -3,12 +3,12 @@ import { PasswordOption } from '../../../users/domain/value-objects/password.vo'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class SignInRequestDto {
-  @IsEmail()
   @ApiProperty({ default: 'ejsvk3284@kakao.com' })
+  @IsEmail()
   readonly email: string
 
-  @IsStrongPassword(PasswordOption, { message: '10111' })
   @ApiProperty({ default: 'WkdWkdaos123!' })
+  @IsStrongPassword(PasswordOption, { message: '10111' })
   readonly password: string
 
   // constructor() {}

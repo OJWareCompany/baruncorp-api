@@ -13,6 +13,11 @@ export enum SelectOption {
   SeeNotes = 'See Notes',
 }
 
+export class SelectClass {
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
+  acDisconnectRequired: string
+}
+
 export enum ANSI {
   ANSI_A = 'ANSI A (8.5x11 INCH)',
   ANSI_B = 'ANSI B (11x17 INCH)',
@@ -34,138 +39,138 @@ export enum DigitalSignatureType {
 }
 
 export class General {
-  @ApiProperty({ example: 'https://google.com' })
+  @ApiProperty({ default: 'https://google.com' })
   website: string
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   specificFormRequired: string
 
-  @ApiProperty({ example: 'generalNotes...' })
+  @ApiProperty({ default: 'generalNotes...' })
   generalNotes: string
 
-  @ApiProperty({ example: '2015 IBC2' })
+  @ApiProperty({ default: '2015 IBC2' })
   buildingCodes: string
 
-  @ApiProperty({ example: 'Arcata city' })
+  @ApiProperty({ default: 'Arcata city' })
   name: string
 
-  @ApiProperty({ example: 'Arroyo Grande city, California' })
+  @ApiProperty({ default: 'Arroyo Grande city, California' })
   fullAhjName: string
 
-  @ApiProperty({ example: new Date().toISOString() })
+  @ApiProperty({ default: new Date().toISOString() })
   createdAt: string
 
-  @ApiProperty({ example: new Date().toISOString() })
+  @ApiProperty({ default: new Date().toISOString() })
   updatedAt: string
 
-  @ApiProperty({ example: new Date().toISOString() })
+  @ApiProperty({ default: new Date().toISOString() })
   updatedBy: string
 
-  @ApiProperty({ enum: AHJType, example: AHJType.COUNTY })
+  @ApiProperty({ enum: AHJType, default: AHJType.COUNTY })
   type: string
 }
 
 export class Design {
-  @ApiProperty({ example: 'fireSetBack...' })
+  @ApiProperty({ default: 'fireSetBack...' })
   fireSetBack: string
 
-  @ApiProperty({ example: 'utilityNotes...' })
+  @ApiProperty({ default: 'utilityNotes...' })
   utilityNotes: string
 
-  @ApiProperty({ example: 'designNotes...' })
+  @ApiProperty({ default: 'designNotes...' })
   designNotes: string
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   pvMeterRequired: string
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   acDisconnectRequired: string
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   centerFed120Percent: string
 
-  @ApiProperty({ example: 'deratedAmpacity...' })
+  @ApiProperty({ default: 'deratedAmpacity...' })
   deratedAmpacity: string
 }
 
 export class Engineering {
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   iebcAccepted: string
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   structuralObservationRequired: string
 
-  @ApiProperty({ enum: DigitalSignatureType, example: DigitalSignatureType.Certified })
+  @ApiProperty({ enum: DigitalSignatureType, default: DigitalSignatureType.Certified })
   digitalSignatureType: string
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   windUpliftCalculationRequired: string
 
-  @ApiProperty({ example: '115' })
+  @ApiProperty({ default: '115' })
   windSpeed: string
 
-  @ApiProperty({ enum: WindExposure, example: WindExposure.SeeNotes })
+  @ApiProperty({ enum: WindExposure, default: WindExposure.SeeNotes })
   windExposure: string
 
-  @ApiProperty({ example: '30' })
+  @ApiProperty({ default: '30' })
   snowLoadGround: string
 
-  @ApiProperty({ example: '30' })
+  @ApiProperty({ default: '30' })
   snowLoadFlatRoof: string
 
-  @ApiProperty({ example: '30' })
+  @ApiProperty({ default: '30' })
   snowLoadSlopedRoof: string
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
   wetStampsRequired: string
 
-  @ApiProperty({ example: 'ofWetStamps...' })
+  @ApiProperty({ default: 'ofWetStamps...' })
   ofWetStamps: string
 
-  @ApiProperty({ enum: ANSI, example: ANSI.ANSI_B })
+  @ApiProperty({ enum: ANSI, default: ANSI.ANSI_B })
   wetStampSize: string
 
-  @ApiProperty({ example: 'engineeringNotes...' })
+  @ApiProperty({ default: 'engineeringNotes...' })
   engineeringNotes: string
 }
 
 export class ElectricalEngineering {
-  @ApiProperty({ example: 'electricalNotes...' })
+  @ApiProperty({ default: 'electricalNotes...' })
   electricalNotes: string
 }
 
 export class Additional {
-  @ApiProperty({ example: 'geoId...' })
+  @ApiProperty({ default: 'geoId...' })
   geoId: string
 
-  @ApiProperty({ example: 'geoIdState...' })
+  @ApiProperty({ default: 'geoIdState...' })
   geoIdState: string
 
-  @ApiProperty({ example: 'geoIdCounty...' })
+  @ApiProperty({ default: 'geoIdCounty...' })
   geoIdCounty: string
 
-  @ApiProperty({ example: 'geoIdCountySubdivision...' })
+  @ApiProperty({ default: 'geoIdCountySubdivision...' })
   geoIdCountySubdivision: string
 
-  @ApiProperty({ example: 'geoIdPlace...' })
+  @ApiProperty({ default: 'geoIdPlace...' })
   geoIdPlace: string
 
-  @ApiProperty({ example: 'fullAhjName...' })
+  @ApiProperty({ default: 'fullAhjName...' })
   fullAhjName: string
 
-  @ApiProperty({ example: 'funcStat...' })
+  @ApiProperty({ default: 'funcStat...' })
   funcStat: string
 
-  @ApiProperty({ example: 'address...' })
+  @ApiProperty({ default: 'address...' })
   address: string
 
-  @ApiProperty({ example: 'lsadCode...' })
+  @ApiProperty({ default: 'lsadCode...' })
   lsadCode: string
 
-  @ApiProperty({ example: 'usps...' })
+  @ApiProperty({ default: 'usps...' })
   usps: string
 
-  @ApiProperty({ example: 'ansiCode...' })
+  @ApiProperty({ default: 'ansiCode...' })
   ansiCode: string
 }
 

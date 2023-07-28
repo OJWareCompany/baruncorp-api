@@ -2,10 +2,10 @@ import got from 'got'
 import { CensusResponseDto } from './census.response.dto'
 
 export class CensusSearchInput {
-  street: string
-  city: string
-  state: string
-  zipCode: string
+  readonly street: string
+  readonly city: string
+  readonly state: string
+  readonly zipCode: string
 
   constructor(create: CensusSearchInput) {
     this.street = create.street

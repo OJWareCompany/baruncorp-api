@@ -1,16 +1,26 @@
 import { Exclude, Expose } from 'class-transformer'
 import { IsString } from 'class-validator'
 import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class AddressFromMapBox {
+  @ApiProperty({ default: 'Apple Valley Airport' })
   @IsString()
   street1: string
+
+  @ApiProperty({ default: 'A 101' })
   @IsString()
   street2: string
+
+  @ApiProperty({ default: 'Apple Valley' })
   @IsString()
   city: string
+
+  @ApiProperty({ default: 'California' })
   @IsString()
   state: string
+
+  @ApiProperty({ default: '92307' })
   @IsString()
   postalCode: string
 }

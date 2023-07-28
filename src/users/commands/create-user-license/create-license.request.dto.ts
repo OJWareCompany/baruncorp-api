@@ -3,31 +3,31 @@ import { ApiProperty } from '@nestjs/swagger'
 import { LicenseType } from '../../user-license.entity'
 
 export class CreateLicenseRequestDto {
-  @IsString()
   @ApiProperty({ default: '96d39061-a4d7-4de9-a147-f627467e11d5' })
-  userId: string
-
   @IsString()
+  readonly userId: string
+
   @ApiProperty({ default: 'Electrical' })
-  type: LicenseType
-
   @IsString()
+  readonly type: LicenseType
+
   @ApiProperty({ default: 'FLORIDA' })
-  issuingCountryName: string
-
   @IsString()
+  readonly issuingCountryName: string
+
   @ApiProperty({ default: 'FL' })
-  abbreviation: string
+  @IsString()
+  readonly abbreviation: string
 
-  @IsNumber()
   @ApiProperty({ default: 9 })
-  priority: number
+  @IsNumber()
+  readonly priority: number
 
-  @IsString()
   @ApiProperty({ default: new Date().toISOString() })
-  issuedDate: Date
+  @IsString()
+  readonly issuedDate: Date
 
-  @IsString()
   @ApiProperty({ default: new Date().toISOString() })
-  expiryDate: Date
+  @IsString()
+  readonly expiryDate: Date
 }

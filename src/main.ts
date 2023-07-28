@@ -25,7 +25,7 @@ async function bootstrap() {
 
   const config = new DocumentBuilder()
     .setTitle('Cats example')
-    .addServer('localhost:3000')
+    .addServer('http://localhost:3000')
     .addServer('http://54.180.214.169:3000')
     .setDescription('The cats API description')
     .setVersion('1.0')

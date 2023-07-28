@@ -125,14 +125,14 @@ export class UserRepository implements UserRepositoryPort {
     return [
       ...electricalLicenses.map((license) =>
         this.licenseMapper.toDomain(
-          { record: license, type: 'Electrical' },
+          { record: license, type: LicenseType.Electrical },
           this.userMapper.toDomain(license.userEntity),
         ),
       ),
 
       ...structuralLicenses.map((license) =>
         this.licenseMapper.toDomain(
-          { record: license, type: 'Structural' },
+          { record: license, type: LicenseType.Structural },
           this.userMapper.toDomain(license.userEntity),
         ),
       ),
@@ -151,11 +151,11 @@ export class UserRepository implements UserRepositoryPort {
 
     return [
       ...electricalLicenses.map((license) =>
-        this.licenseMapper.toDomain({ record: license, type: 'Electrical' }, user),
+        this.licenseMapper.toDomain({ record: license, type: LicenseType.Electrical }, user),
       ),
 
       ...structuralLicenses.map((license) =>
-        this.licenseMapper.toDomain({ record: license, type: 'Structural' }, user),
+        this.licenseMapper.toDomain({ record: license, type: LicenseType.Structural }, user),
       ),
     ]
   }

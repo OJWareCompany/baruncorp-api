@@ -1,12 +1,16 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { IsOptional } from 'class-validator'
 
 export class FindAhjNotesSearchQueryRequestDto {
+  @ApiProperty({ default: '0100460' })
   @IsOptional()
-  geoId?: string
+  readonly geoId?: string
 
+  @ApiProperty({ default: 'city' })
   @IsOptional()
-  fullAhjName?: string
+  readonly fullAhjName?: string
 
+  @ApiProperty({ default: 'city' })
   @IsOptional()
-  name?: string
+  readonly name?: string
 }

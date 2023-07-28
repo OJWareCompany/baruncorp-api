@@ -14,6 +14,9 @@ import { UpdateUserRequestDto } from './commands/update-user/update-user.request
 import { UserRoles } from './domain/value-objects/user-role.vo'
 import { LicenseType } from './user-license.entity'
 import { CreateLicenseRequestDto } from '../users/commands/create-user-license/create-license.request.dto'
+import { UserRequestDto } from './user-param.request.dto'
+import { FindUserRqeustDto } from './queries/find-user.request.dto'
+import { DeleteMemberLicenseRequestDto } from './commands/delete-member-license/delete-member-license.request.dto'
 
 ConfigModule.forRoot()
 
@@ -23,9 +26,9 @@ const { EMAIL_USER, EMAIL_PASS } = process.env
 export class UsersController {
   constructor(private readonly userService: UserService) {}
   @Get('')
-  async findUsers(@Query('email') email: string): Promise<UserResponseDto[]> {
-    if (!email) return await this.userService.findUsers()
-    else if (email) return [await this.userService.findOneByEmail(new EmailVO(email))]
+  async findUsers(@Query() dto: FindUserRqeustDto): Promise<UserResponseDto[]> {
+    if (!dto.email) return await this.userService.findUsers()
+    else if (dto.email) return [await this.userService.findOneByEmail(new EmailVO(dto.email))]
   }
 
   /**
@@ -33,8 +36,8 @@ export class UsersController {
    */
   @Get('profile/:userId')
   @UseGuards(AuthGuard)
-  async getUserInfoByUserId(@Param('userId') userId: string): Promise<UserResponseDto> {
-    return await this.userService.getUserProfile(userId)
+  async getUserInfoByUserId(@Param() param: UserRequestDto): Promise<UserResponseDto> {
+    return await this.userService.getUserProfile(param.userId)
   }
 
   @Get('profile')
@@ -45,8 +48,8 @@ export class UsersController {
 
   @Patch('profile/:userId')
   @UseGuards(AuthGuard)
-  async updateUserByUserId(@Param('userId') userId: string, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    return await this.userService.upadteProfile(userId, new UserName(dto))
+  async updateUserByUserId(@Param() param: UserRequestDto, @Body() dto: UpdateUserRequestDto): Promise<void> {
+    return await this.userService.upadteProfile(param.userId, new UserName(dto))
   }
 
   @Patch('profile')
@@ -73,8 +76,8 @@ export class UsersController {
 
   @Delete('gived-roles/:userId')
   @UseGuards(AuthGuard)
-  async removeRole(@Param('userId') userId: string): Promise<void> {
-    await this.userService.removeRole(userId)
+  async removeRole(@Param() param: UserRequestDto): Promise<void> {
+    await this.userService.removeRole(param.userId)
   }
 
   @Post('invitations')
@@ -137,13 +140,12 @@ export class UsersController {
     )
   }
 
+  /**
+   * // 추후 개선 사항 -> member-licenses/:licenseId
+   */
   @Delete('member-licenses')
   @UseGuards(AuthGuard)
-  async deleteLicense(
-    @Query('userId') userId: string,
-    @Query('type') type: LicenseType,
-    @Query('issuingCountryName') issuingCountryName: string,
-  ): Promise<void> {
-    return await this.userService.revokeLicense(userId, type, issuingCountryName)
+  async deleteLicense(@Query() dto: DeleteMemberLicenseRequestDto): Promise<void> {
+    return await this.userService.revokeLicense(dto.userId, dto.type, dto.issuingCountryName)
   }
 }

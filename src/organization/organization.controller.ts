@@ -7,6 +7,7 @@ import { UserResponseDto } from '../users/dtos/user.response.dto'
 import { Address } from './domain/value-objects/address.vo'
 import { UserEntity } from '../users/domain/user.entity'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
+import { FindOrganizationRequestDto } from './queries/find-orginazation.request.dto'
 
 @Controller('organizations')
 export class OrganizationController {
@@ -17,8 +18,8 @@ export class OrganizationController {
   }
 
   @Get('members')
-  async findMembers(@Query('organizationId') organizationId: string): Promise<UserResponseDto[]> {
-    return await this.organizationService.findMembersByOrganizationId(organizationId)
+  async findMembers(@Query() dto: FindOrganizationRequestDto): Promise<UserResponseDto[]> {
+    return await this.organizationService.findMembersByOrganizationId(dto.organizationId)
   }
 
   // user decorator expose entity above the controller layer

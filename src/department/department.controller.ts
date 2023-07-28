@@ -2,9 +2,12 @@ import { Body, Controller, Delete, Get, Post, Query, UseGuards } from '@nestjs/c
 import { DepartmentService } from './department.service'
 import { PositionResponseDto } from './dtos/position.response.dto'
 import { ServiceResponseDto } from './service.mapper'
-import { PutMemberInChargeOfTheServiceRequestDto } from './commands/update-member-in-charge-of-the-service/put-member-in-charge-of-the-service.request.dto'
+import { CreateMemberInChargeOfTheServiceRequestDto } from './commands/create-member-in-charge-of-the-service/create-member-in-charge-of-the-service.request.dto'
 import { AuthGuard } from '../auth/authentication.guard'
 import { State } from './domain/value-objects/state.vo'
+import { CreateMemberPositionRequestDto } from './commands/craete-member-position/create-user-position.request.dto'
+import { DeleteMemberPositionRequestDto } from './commands/delete-member-position/delete-member-position.request.dto'
+import { DeleteMemberInChargeOfTheServiceRequestDto } from './commands/delete-member-in-charge-of-the-service/delete-member-in-charge-of-the-service.request.dto'
 
 @Controller('departments')
 export class DepartmentController {
@@ -17,15 +20,15 @@ export class DepartmentController {
   // can use manager
   @Post('member-positions')
   @UseGuards(AuthGuard)
-  async appointPosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
-    return await this.departmentService.appointPosition(userId, positionId)
+  async appointPosition(@Query() param: CreateMemberPositionRequestDto): Promise<void> {
+    return await this.departmentService.appointPosition(param.userId, param.positionId)
   }
 
   // can use only manager
   @Delete('member-positions')
   @UseGuards(AuthGuard)
-  async revokePosition(@Query('userId') userId: string, @Query('positionId') positionId: string): Promise<void> {
-    return await this.departmentService.revokePosition(userId, positionId)
+  async revokePosition(@Query() param: DeleteMemberPositionRequestDto): Promise<void> {
+    return await this.departmentService.revokePosition(param.userId, param.positionId)
   }
 
   // when select states that issue a license
@@ -42,16 +45,13 @@ export class DepartmentController {
   // TODO: create api doesn't retrieve? how handel conflict error?
   @Post('member-services')
   @UseGuards(AuthGuard)
-  async putMemberInChageOfTheService(@Body() dto: PutMemberInChargeOfTheServiceRequestDto): Promise<void> {
+  async putMemberInChageOfTheService(@Body() dto: CreateMemberInChargeOfTheServiceRequestDto): Promise<void> {
     return this.departmentService.putMemberInChageOfTheService(dto.userId, dto.serviceId)
   }
 
   @Delete('member-services')
   @UseGuards(AuthGuard)
-  async terminateServiceMemberIsInChargeOf(
-    @Query('userId') userId: string,
-    @Query('serviceId') serviceId: string,
-  ): Promise<void> {
-    return this.departmentService.terminateServiceMemberIsInChargeOf(userId, serviceId)
+  async terminateServiceMemberIsInChargeOf(@Query() query: DeleteMemberInChargeOfTheServiceRequestDto): Promise<void> {
+    return this.departmentService.terminateServiceMemberIsInChargeOf(query.userId, query.serviceId)
   }
 }

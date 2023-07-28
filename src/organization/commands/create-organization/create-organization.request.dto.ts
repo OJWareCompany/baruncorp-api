@@ -1,37 +1,49 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { IsEmail, IsString, Matches } from 'class-validator'
 
 export class CreateOrganizationRequestDto {
+  @ApiProperty({ default: 'hyomin@ojware.com' })
   @IsEmail()
-  email: string
+  readonly email: string
 
+  @ApiProperty({ default: 'Apple Valley Airport' })
   @IsString()
-  street1: string
+  readonly street1: string
 
+  @ApiProperty({ default: 'A 101' })
   @IsString()
-  street2: string
+  readonly street2: string
 
+  @ApiProperty({ default: 'Apple Valley' })
   @IsString()
-  city: string
+  readonly city: string
 
+  @ApiProperty({ default: 'California' })
   @IsString()
-  stateOrRegion: string
+  readonly stateOrRegion: string
 
+  @ApiProperty({ default: '92307' })
   @IsString()
-  postalCode: string
+  readonly postalCode: string
 
+  @ApiProperty({ default: 'United States' })
   @IsString()
-  country: string
+  readonly country: string
 
+  @ApiProperty({ default: '01012341234' })
   @IsString()
-  phoneNumber: string
+  readonly phoneNumber: string
 
+  @ApiProperty({ default: 'OJ Tech' })
   @IsString()
-  name: string
+  readonly name: string
 
+  @ApiProperty({ default: 'This is about organization...' })
   @IsString()
-  description: string
+  readonly description: string
 
+  @ApiProperty({ default: 'client' })
   @IsString()
   @Matches(/(client|individual|outsourcing)/, { message: 'Organization Type Not Found' })
-  organizationType: string
+  readonly organizationType: string
 }
