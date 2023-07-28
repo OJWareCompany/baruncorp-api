@@ -56,7 +56,7 @@ export interface ServiceResponseDto {
 
 export interface LincenseResponseDto {
   userName: string
-  type: LincenseResponseDtoTypeEnum
+  type: 'Electrical' | 'Structural'
   issuingCountryName: string
   abbreviation: string
   priority: number
@@ -104,7 +104,7 @@ export interface CreateLicenseRequestDto {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
   /** @default "Electrical" */
-  type: CreateLicenseRequestDtoTypeEnum
+  type: 'Electrical' | 'Structural'
   /** @default "FLORIDA" */
   issuingCountryName: string
   /** @default "FL" */
@@ -113,12 +113,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-07-28T08:53:58.569Z"
+   * @default "2023-07-28T09:44:33.832Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-07-28T08:53:58.569Z"
+   * @default "2023-07-28T09:44:33.832Z"
    */
   expiryDate: string
 }
@@ -210,76 +210,82 @@ export interface AhjNotePaginatedResponseDto {
 
 export interface General {
   /** @default "https://google.com" */
-  website: string
+  website: string | null
   /** @default "See Notes" */
-  specificFormRequired: GeneralSpecificFormRequiredEnum
+  specificFormRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "generalNotes..." */
-  generalNotes: string
+  generalNotes: string | null
   /** @default "2015 IBC2" */
-  buildingCodes: string
+  buildingCodes: string | null
   /** @default "Arcata city" */
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-07-28T08:53:58.582Z" */
-  createdAt: string
-  /** @default "2023-07-28T08:53:58.582Z" */
-  updatedAt: string
-  /** @default "2023-07-28T08:53:58.582Z" */
-  updatedBy: string
+  /** @default "2023-07-28T09:44:33.844Z" */
+  createdAt: string | null
+  /** @default "2023-07-28T09:44:33.844Z" */
+  updatedAt: string | null
+  /** @default "2023-07-28T09:44:33.844Z" */
+  updatedBy: string | null
   /** @default "COUNTY" */
-  type: GeneralTypeEnum
+  type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
 }
 
 export interface Design {
   /** @default "fireSetBack..." */
-  fireSetBack: string
+  fireSetBack: string | null
   /** @default "utilityNotes..." */
-  utilityNotes: string
+  utilityNotes: string | null
   /** @default "designNotes..." */
-  designNotes: string
+  designNotes: string | null
   /** @default "See Notes" */
-  pvMeterRequired: DesignPvMeterRequiredEnum
+  pvMeterRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "See Notes" */
-  acDisconnectRequired: DesignAcDisconnectRequiredEnum
+  acDisconnectRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "See Notes" */
-  centerFed120Percent: DesignCenterFed120PercentEnum
+  centerFed120Percent: 'No' | 'Yes' | 'See Notes' | null
   /** @default "deratedAmpacity..." */
-  deratedAmpacity: string
+  deratedAmpacity: string | null
 }
 
 export interface Engineering {
   /** @default "See Notes" */
-  iebcAccepted: EngineeringIebcAcceptedEnum
+  iebcAccepted: 'No' | 'Yes' | 'See Notes' | null
   /** @default "See Notes" */
-  structuralObservationRequired: EngineeringStructuralObservationRequiredEnum
+  structuralObservationRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "Certified" */
-  digitalSignatureType: EngineeringDigitalSignatureTypeEnum
+  digitalSignatureType: 'Certified' | 'Signed' | null
   /** @default "See Notes" */
-  windUpliftCalculationRequired: EngineeringWindUpliftCalculationRequiredEnum
+  windUpliftCalculationRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "115" */
-  windSpeed: string
+  windSpeed: string | null
   /** @default "See Notes" */
-  windExposure: EngineeringWindExposureEnum
+  windExposure: 'B' | 'C' | 'D' | 'See Notes' | null
   /** @default "30" */
-  snowLoadGround: string
+  snowLoadGround: string | null
   /** @default "30" */
-  snowLoadFlatRoof: string
+  snowLoadFlatRoof: string | null
   /** @default "30" */
-  snowLoadSlopedRoof: string
+  snowLoadSlopedRoof: string | null
   /** @default "See Notes" */
-  wetStampsRequired: EngineeringWetStampsRequiredEnum
+  wetStampsRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "ofWetStamps..." */
-  ofWetStamps: string
+  ofWetStamps: string | null
   /** @default "ANSI B (11x17 INCH)" */
-  wetStampSize: EngineeringWetStampSizeEnum
+  wetStampSize:
+    | 'ANSI A (8.5x11 INCH)'
+    | 'ANSI B (11x17 INCH)'
+    | 'ANSI D (22x34 INCH)'
+    | 'ARCH D (24x36 INCH)'
+    | 'See Notes'
+    | null
   /** @default "engineeringNotes..." */
-  engineeringNotes: string
+  engineeringNotes: string | null
 }
 
 export interface ElectricalEngineering {
   /** @default "electricalNotes..." */
-  electricalNotes: string
+  electricalNotes: string | null
 }
 
 export interface AhjNoteResponseDto {
@@ -291,13 +297,13 @@ export interface AhjNoteResponseDto {
 
 export interface UpdateAhjGeneral {
   /** @example "https://google.com" */
-  website: string
+  website: string | null
   /** @example "See Notes" */
-  specificFormRequired: UpdateAhjGeneralSpecificFormRequiredEnum
+  specificFormRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @example "generalNotes..." */
-  generalNotes: string
+  generalNotes: string | null
   /** @example "buildingCodes..." */
-  buildingCodes: string
+  buildingCodes: string | null
 }
 
 export interface UpdateAhjNoteRequestDto {
@@ -348,58 +354,6 @@ export interface AddressFromMapBox {
   /** @default "92307" */
   postalCode: string
 }
-
-export type LincenseResponseDtoTypeEnum = 'Electrical' | 'Structural'
-
-/** @default "Electrical" */
-export type CreateLicenseRequestDtoTypeEnum = 'Electrical' | 'Structural'
-
-/** @default "See Notes" */
-export type GeneralSpecificFormRequiredEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "COUNTY" */
-export type GeneralTypeEnum = 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE'
-
-/** @default "See Notes" */
-export type DesignPvMeterRequiredEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "See Notes" */
-export type DesignAcDisconnectRequiredEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "See Notes" */
-export type DesignCenterFed120PercentEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "See Notes" */
-export type EngineeringIebcAcceptedEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "See Notes" */
-export type EngineeringStructuralObservationRequiredEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "Certified" */
-export type EngineeringDigitalSignatureTypeEnum = 'Certified' | 'Signed'
-
-/** @default "See Notes" */
-export type EngineeringWindUpliftCalculationRequiredEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "See Notes" */
-export type EngineeringWindExposureEnum = 'B' | 'C' | 'D' | 'See Notes'
-
-/** @default "See Notes" */
-export type EngineeringWetStampsRequiredEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "ANSI B (11x17 INCH)" */
-export type EngineeringWetStampSizeEnum =
-  | 'ANSI A (8.5x11 INCH)'
-  | 'ANSI B (11x17 INCH)'
-  | 'ANSI D (22x34 INCH)'
-  | 'ARCH D (24x36 INCH)'
-  | 'See Notes'
-
-/** @example "See Notes" */
-export type UpdateAhjGeneralSpecificFormRequiredEnum = 'No' | 'Yes' | 'See Notes'
-
-/** @default "Electrical" */
-export type UsersControllerDeleteLicenseParamsTypeEnum = 'Electrical' | 'Structural'
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 import axios from 'axios'
@@ -814,7 +768,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
         userId: string
         /** @default "Electrical" */
-        type: UsersControllerDeleteLicenseParamsTypeEnum
+        type: 'Electrical' | 'Structural'
         /** @default "FLORIDA" */
         issuingCountryName: string
       },
