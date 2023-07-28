@@ -23,7 +23,7 @@
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json",
-    "swagger": "pnpx swagger-typescript-api -p http://localhost:3000/api-json -o ./ -n api-spec.ts --axios --extract-enums --union-enums"
+    "swagger": "pnpx swagger-typescript-api -p http://localhost:3000/api-json -o ./ -n api-spec.ts --axios"
   },
   "lint-staged": {
     "*.ts": [
