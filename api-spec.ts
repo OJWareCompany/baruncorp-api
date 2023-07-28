@@ -34,6 +34,10 @@ export interface SignUpRequestDto {
   code: string
 }
 
+export interface AccessTokenResponseDto {
+  accessToken: string
+}
+
 export interface PositionResponseDto {
   id: string
   name: string
@@ -41,7 +45,14 @@ export interface PositionResponseDto {
   department: string
 }
 
-export type ServiceResponseDto = object
+export interface ServiceResponseDto {
+  /** @default "9e773832-ad39-401d-b1c2-16d74f9268ea" */
+  id: string
+  /** @default "Structural Calculation" */
+  name: string
+  /** @default "Structural Calculation is service..." */
+  description: string
+}
 
 export interface LincenseResponseDto {
   userName: string
@@ -102,12 +113,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-07-28T07:46:39.535Z"
+   * @default "2023-07-28T08:53:58.569Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-07-28T07:46:39.535Z"
+   * @default "2023-07-28T08:53:58.569Z"
    */
   expiryDate: string
 }
@@ -155,7 +166,20 @@ export interface CreateOrganizationRequestDto {
   organizationType: string
 }
 
-export type State = object
+export interface StatesResponseDto {
+  /** @default "CALIFORNIA" */
+  stateName: string
+  /** @default "CA" */
+  abbreviation: string
+  /** @default "06" */
+  geoId: string
+  /** @default "06" */
+  stateCode: string
+  /** @default "01779778" */
+  ansiCode: string
+  /** @default "California" */
+  stateLongName: string
+}
 
 export interface CreateMemberInChargeOfTheServiceRequestDto {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
@@ -197,11 +221,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-07-28T07:46:39.549Z" */
+  /** @default "2023-07-28T08:53:58.582Z" */
   createdAt: string
-  /** @default "2023-07-28T07:46:39.549Z" */
+  /** @default "2023-07-28T08:53:58.582Z" */
   updatedAt: string
-  /** @default "2023-07-28T07:46:39.549Z" */
+  /** @default "2023-07-28T08:53:58.582Z" */
   updatedBy: string
   /** @default "COUNTY" */
   type: GeneralTypeEnum
@@ -606,9 +630,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/auth/refresh
      */
     authenticationControllerRefresh: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<AccessTokenResponseDto, any>({
         path: `/auth/refresh`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
   }
@@ -740,7 +765,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/users/invitations
      */
     usersControllerSendInvitationMail: (data: CreateInvitationMailRequestDto, params: RequestParams = {}) =>
-      this.request<ServiceResponseDto, any>({
+      this.request<object, any>({
         path: `/users/invitations`,
         method: 'POST',
         body: data,
@@ -756,9 +781,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/users/member-licenses
      */
     usersControllerFindAllLicenses: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<LincenseResponseDto[], any>({
         path: `/users/member-licenses`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 
@@ -932,7 +958,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/departments/states
      */
     departmentControllerFindAllStates: (params: RequestParams = {}) =>
-      this.request<State[], any>({
+      this.request<StatesResponseDto[], any>({
         path: `/departments/states`,
         method: 'GET',
         format: 'json',
