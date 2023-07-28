@@ -113,12 +113,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-07-28T09:44:33.832Z"
+   * @default "2023-07-28T10:36:17.046Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-07-28T09:44:33.832Z"
+   * @default "2023-07-28T10:36:17.046Z"
    */
   expiryDate: string
 }
@@ -221,11 +221,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-07-28T09:44:33.844Z" */
+  /** @default "2023-07-28T10:36:17.058Z" */
   createdAt: string | null
-  /** @default "2023-07-28T09:44:33.844Z" */
+  /** @default "2023-07-28T10:36:17.058Z" */
   updatedAt: string | null
-  /** @default "2023-07-28T09:44:33.844Z" */
+  /** @default "2023-07-28T10:36:17.058Z" */
   updatedBy: string | null
   /** @default "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
@@ -265,8 +265,6 @@ export interface Engineering {
   snowLoadGround: string | null
   /** @default "30" */
   snowLoadFlatRoof: string | null
-  /** @default "30" */
-  snowLoadSlopedRoof: string | null
   /** @default "See Notes" */
   wetStampsRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "ofWetStamps..." */
