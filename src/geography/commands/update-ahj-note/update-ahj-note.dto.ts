@@ -1,29 +1,29 @@
 export class UpdateAhjNoteDto {
-  readonly website: string
-  readonly specificFormRequired: string
-  readonly generalNotes: string
-  readonly buildingCodes: string
-  readonly fireSetBack: string
-  readonly utilityNotes: string
-  readonly designNotes: string
-  readonly pvMeterRequired: string
-  readonly acDisconnectRequired: string
-  readonly centerFed120Percent: string
-  readonly deratedAmpacity: string
-  readonly engineeringNotes: string
-  readonly iebcAccepted: string
-  readonly structuralObservationRequired: string
-  readonly windUpliftCalculationRequired: string
-  readonly wetStampsRequired: string
-  readonly digitalSignatureType: string
-  readonly windExposure: string
-  readonly wetStampSize: string
-  readonly windSpeed: string
-  readonly snowLoadGround: string
-  readonly snowLoadFlatRoof: string
-  readonly snowLoadSlopedRoof: string
-  readonly ofWetStamps: string
-  readonly electricalNotes: string
+  readonly website: string | null
+  readonly specificFormRequired: string | null
+  readonly generalNotes: string | null
+  readonly buildingCodes: string | null
+  readonly fireSetBack: string | null
+  readonly utilityNotes: string | null
+  readonly designNotes: string | null
+  readonly pvMeterRequired: string | null
+  readonly acDisconnectRequired: string | null
+  readonly centerFed120Percent: string | null
+  readonly deratedAmpacity: string | null
+  readonly engineeringNotes: string | null
+  readonly iebcAccepted: string | null
+  readonly structuralObservationRequired: string | null
+  readonly windUpliftCalculationRequired: string | null
+  readonly wetStampsRequired: string | null
+  readonly digitalSignatureType: string | null
+  readonly windExposure: string | null
+  readonly wetStampSize: string | null
+  readonly windSpeed: string | null
+  readonly snowLoadGround: string | null
+  readonly snowLoadFlatRoof: string | null
+  readonly snowLoadSlopedRoof: string | null
+  readonly ofWetStamps: string | null
+  readonly electricalNotes: string | null
 
   /**
    * 클래스에 정의되지 않은 필드를 수정하는 것을 방지

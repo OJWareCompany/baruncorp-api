@@ -13,11 +13,6 @@ export enum SelectOption {
   SeeNotes = 'See Notes',
 }
 
-export class SelectClass {
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  acDisconnectRequired: string
-}
-
 export enum ANSI {
   ANSI_A = 'ANSI A (8.5x11 INCH)',
   ANSI_B = 'ANSI B (11x17 INCH)',
@@ -39,17 +34,17 @@ export enum DigitalSignatureType {
 }
 
 export class General {
-  @ApiProperty({ default: 'https://google.com' })
-  website: string
+  @ApiProperty({ default: 'https://google.com', nullable: true })
+  website: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  specificFormRequired: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  specificFormRequired: string | null
 
-  @ApiProperty({ default: 'generalNotes...' })
-  generalNotes: string
+  @ApiProperty({ default: 'generalNotes...', nullable: true })
+  generalNotes: string | null
 
-  @ApiProperty({ default: '2015 IBC2' })
-  buildingCodes: string
+  @ApiProperty({ default: '2015 IBC2', nullable: true })
+  buildingCodes: string | null
 
   @ApiProperty({ default: 'Arcata city' })
   name: string
@@ -57,121 +52,121 @@ export class General {
   @ApiProperty({ default: 'Arroyo Grande city, California' })
   fullAhjName: string
 
-  @ApiProperty({ default: new Date().toISOString() })
-  createdAt: string
+  @ApiProperty({ default: new Date().toISOString(), nullable: true })
+  createdAt: string | null
 
-  @ApiProperty({ default: new Date().toISOString() })
-  updatedAt: string
+  @ApiProperty({ default: new Date().toISOString(), nullable: true })
+  updatedAt: string | null
 
-  @ApiProperty({ default: new Date().toISOString() })
-  updatedBy: string
+  @ApiProperty({ default: new Date().toISOString(), nullable: true })
+  updatedBy: string | null
 
-  @ApiProperty({ enum: AHJType, default: AHJType.COUNTY })
-  type: string
+  @ApiProperty({ enum: AHJType, default: AHJType.COUNTY, nullable: true })
+  type: string | null
 }
 
 export class Design {
-  @ApiProperty({ default: 'fireSetBack...' })
-  fireSetBack: string
+  @ApiProperty({ default: 'fireSetBack...', nullable: true })
+  fireSetBack: string | null
 
-  @ApiProperty({ default: 'utilityNotes...' })
-  utilityNotes: string
+  @ApiProperty({ default: 'utilityNotes...', nullable: true })
+  utilityNotes: string | null
 
-  @ApiProperty({ default: 'designNotes...' })
-  designNotes: string
+  @ApiProperty({ default: 'designNotes...', nullable: true })
+  designNotes: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  pvMeterRequired: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  pvMeterRequired: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  acDisconnectRequired: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  acDisconnectRequired: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  centerFed120Percent: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  centerFed120Percent: string | null
 
-  @ApiProperty({ default: 'deratedAmpacity...' })
-  deratedAmpacity: string
+  @ApiProperty({ default: 'deratedAmpacity...', nullable: true })
+  deratedAmpacity: string | null
 }
 
 export class Engineering {
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  iebcAccepted: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  iebcAccepted: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  structuralObservationRequired: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  structuralObservationRequired: string | null
 
-  @ApiProperty({ enum: DigitalSignatureType, default: DigitalSignatureType.Certified })
-  digitalSignatureType: string
+  @ApiProperty({ enum: DigitalSignatureType, default: DigitalSignatureType.Certified, nullable: true })
+  digitalSignatureType: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  windUpliftCalculationRequired: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  windUpliftCalculationRequired: string | null
 
-  @ApiProperty({ default: '115' })
-  windSpeed: string
+  @ApiProperty({ default: '115', nullable: true })
+  windSpeed: string | null
 
-  @ApiProperty({ enum: WindExposure, default: WindExposure.SeeNotes })
-  windExposure: string
+  @ApiProperty({ enum: WindExposure, default: WindExposure.SeeNotes, nullable: true })
+  windExposure: string | null
 
-  @ApiProperty({ default: '30' })
-  snowLoadGround: string
+  @ApiProperty({ default: '30', nullable: true })
+  snowLoadGround: string | null
 
-  @ApiProperty({ default: '30' })
-  snowLoadFlatRoof: string
+  @ApiProperty({ default: '30', nullable: true })
+  snowLoadFlatRoof: string | null
 
-  @ApiProperty({ default: '30' })
-  snowLoadSlopedRoof: string
+  @ApiProperty({ default: '30', nullable: true })
+  snowLoadSlopedRoof: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
-  wetStampsRequired: string
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
+  wetStampsRequired: string | null
 
-  @ApiProperty({ default: 'ofWetStamps...' })
-  ofWetStamps: string
+  @ApiProperty({ default: 'ofWetStamps...', nullable: true })
+  ofWetStamps: string | null
 
-  @ApiProperty({ enum: ANSI, default: ANSI.ANSI_B })
-  wetStampSize: string
+  @ApiProperty({ enum: ANSI, default: ANSI.ANSI_B, nullable: true })
+  wetStampSize: string | null
 
-  @ApiProperty({ default: 'engineeringNotes...' })
-  engineeringNotes: string
+  @ApiProperty({ default: 'engineeringNotes...', nullable: true })
+  engineeringNotes: string | null
 }
 
 export class ElectricalEngineering {
-  @ApiProperty({ default: 'electricalNotes...' })
-  electricalNotes: string
+  @ApiProperty({ default: 'electricalNotes...', nullable: true })
+  electricalNotes: string | null
 }
 
 export class Additional {
-  @ApiProperty({ default: 'geoId...' })
-  geoId: string
+  @ApiProperty({ default: 'geoId...', nullable: true })
+  geoId: string | null
 
-  @ApiProperty({ default: 'geoIdState...' })
-  geoIdState: string
+  @ApiProperty({ default: 'geoIdState...', nullable: true })
+  geoIdState: string | null
 
-  @ApiProperty({ default: 'geoIdCounty...' })
-  geoIdCounty: string
+  @ApiProperty({ default: 'geoIdCounty...', nullable: true })
+  geoIdCounty: string | null
 
-  @ApiProperty({ default: 'geoIdCountySubdivision...' })
-  geoIdCountySubdivision: string
+  @ApiProperty({ default: 'geoIdCountySubdivision...', nullable: true })
+  geoIdCountySubdivision: string | null
 
-  @ApiProperty({ default: 'geoIdPlace...' })
-  geoIdPlace: string
+  @ApiProperty({ default: 'geoIdPlace...', nullable: true })
+  geoIdPlace: string | null
 
-  @ApiProperty({ default: 'fullAhjName...' })
-  fullAhjName: string
+  @ApiProperty({ default: 'fullAhjName...', nullable: true })
+  fullAhjName: string | null
 
-  @ApiProperty({ default: 'funcStat...' })
-  funcStat: string
+  @ApiProperty({ default: 'funcStat...', nullable: true })
+  funcStat: string | null
 
-  @ApiProperty({ default: 'address...' })
-  address: string
+  @ApiProperty({ default: 'address...', nullable: true })
+  address: string | null
 
-  @ApiProperty({ default: 'lsadCode...' })
-  lsadCode: string
+  @ApiProperty({ default: 'lsadCode...', nullable: true })
+  lsadCode: string | null
 
-  @ApiProperty({ default: 'usps...' })
-  usps: string
+  @ApiProperty({ default: 'usps...', nullable: true })
+  usps: string | null
 
-  @ApiProperty({ default: 'ansiCode...' })
-  ansiCode: string
+  @ApiProperty({ default: 'ansiCode...', nullable: true })
+  ansiCode: string | null
 }
 
 export class AhjNoteResponseDto {

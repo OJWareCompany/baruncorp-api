@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsString } from 'class-validator'
 import { Design, ElectricalEngineering, Engineering, SelectOption } from '../../../geography/dto/ahj-note.response.dto'
 
 /**
@@ -8,31 +8,31 @@ import { Design, ElectricalEngineering, Engineering, SelectOption } from '../../
  */
 
 class UpdateAhjGeneral {
-  @ApiProperty({ example: 'https://google.com' })
+  @ApiProperty({ example: 'https://google.com', nullable: true })
   @IsString()
-  website: string
+  website: string | null
 
-  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes })
+  @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes, nullable: true })
   @IsString()
-  specificFormRequired: string
+  specificFormRequired: string | null
 
-  @ApiProperty({ example: 'generalNotes...' })
+  @ApiProperty({ example: 'generalNotes...', nullable: true })
   @IsString()
-  generalNotes: string
+  generalNotes: string | null
 
-  @ApiProperty({ example: 'buildingCodes...' })
+  @ApiProperty({ example: 'buildingCodes...', nullable: true })
   @IsString()
-  buildingCodes: string
+  buildingCodes: string | null
 }
 
 export class UpdateAhjNoteRequestDto {
-  @IsOptional()
+  @ApiProperty({ type: UpdateAhjGeneral, default: UpdateAhjGeneral })
   readonly general: UpdateAhjGeneral
-  @IsOptional()
+  @ApiProperty({ type: Design, default: Design })
   readonly design: Design
-  @IsOptional()
+  @ApiProperty({ type: Engineering, default: Engineering })
   readonly engineering: Engineering
-  @IsOptional()
+  @ApiProperty({ type: ElectricalEngineering, default: ElectricalEngineering })
   readonly electricalEngineering: ElectricalEngineering
 }
 
