@@ -21,7 +21,7 @@ export class UpdateAhjNoteDto {
   readonly windSpeed: string | null
   readonly snowLoadGround: string | null
   readonly snowLoadFlatRoof: string | null
-  readonly snowLoadSlopedRoof: string | null
+  readonly snowLoadSlopedRoof?: string | null
   readonly ofWetStamps: string | null
   readonly electricalNotes: string | null
 

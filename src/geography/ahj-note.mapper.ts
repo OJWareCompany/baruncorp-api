@@ -68,7 +68,7 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       windSpeed: model.windSpeed,
       snowLoadGround: model.snowLoadGround,
       snowLoadFlatRoof: model.snowLoadFlatRoof,
-      snowLoadSlopedRoof: model.snowLoadSlopedRoof,
+      // snowLoadSlopedRoof: model.snowLoadSlopedRoof,
       ofWetStamps: model.ofWetStamps,
     }
 

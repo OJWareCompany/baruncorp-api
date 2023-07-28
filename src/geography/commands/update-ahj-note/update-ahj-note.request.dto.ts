@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsString, IsDefined } from 'class-validator'
 import { Design, ElectricalEngineering, Engineering, SelectOption } from '../../../geography/dto/ahj-note.response.dto'
 
 /**
@@ -27,12 +27,19 @@ class UpdateAhjGeneral {
 
 export class UpdateAhjNoteRequestDto {
   @ApiProperty({ type: UpdateAhjGeneral, default: UpdateAhjGeneral })
+  @IsDefined()
   readonly general: UpdateAhjGeneral
+
   @ApiProperty({ type: Design, default: Design })
+  @IsDefined()
   readonly design: Design
+
   @ApiProperty({ type: Engineering, default: Engineering })
+  @IsDefined()
   readonly engineering: Engineering
+
   @ApiProperty({ type: ElectricalEngineering, default: ElectricalEngineering })
+  @IsDefined()
   readonly electricalEngineering: ElectricalEngineering
 }
 
