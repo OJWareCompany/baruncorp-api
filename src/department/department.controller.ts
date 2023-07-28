@@ -4,10 +4,10 @@ import { PositionResponseDto } from './dtos/position.response.dto'
 import { ServiceResponseDto } from './service.mapper'
 import { CreateMemberInChargeOfTheServiceRequestDto } from './commands/create-member-in-charge-of-the-service/create-member-in-charge-of-the-service.request.dto'
 import { AuthGuard } from '../auth/authentication.guard'
-import { State } from './domain/value-objects/state.vo'
 import { CreateMemberPositionRequestDto } from './commands/craete-member-position/create-user-position.request.dto'
 import { DeleteMemberPositionRequestDto } from './commands/delete-member-position/delete-member-position.request.dto'
 import { DeleteMemberInChargeOfTheServiceRequestDto } from './commands/delete-member-in-charge-of-the-service/delete-member-in-charge-of-the-service.request.dto'
+import { FindStatesResponseDto } from './dtos/find-states.response.dto'
 
 @Controller('departments')
 export class DepartmentController {
@@ -33,8 +33,19 @@ export class DepartmentController {
 
   // when select states that issue a license
   @Get('states')
-  async findAllStates(): Promise<State[]> {
-    return await this.departmentService.findAllStates()
+  async findAllStates(): Promise<FindStatesResponseDto[]> {
+    const result = await this.departmentService.findAllStates()
+    return result.map(
+      (state) =>
+        new FindStatesResponseDto({
+          stateName: state.stateName,
+          abbreviation: state.abbreviation,
+          geoId: state.geoId,
+          stateCode: state.stateCode,
+          ansiCode: state.ansiCode,
+          stateLongName: state.stateLongName,
+        }),
+    )
   }
 
   @Get('services')
