@@ -10,6 +10,7 @@ import { TokenResponseDto } from './dto/response/token.response.dto'
 import { UserName } from '../users/domain/value-objects/user-name.vo'
 import { UserEntity } from '../users/domain/user.entity'
 import { UserRoles } from '../users/domain/value-objects/user-role.vo'
+import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
@@ -110,7 +111,7 @@ export class AuthenticationService {
     await this.usersService.deleteInvitationMail(code)
   }
 
-  async refreshAccessToken(id: string, response: Response): Promise<{ accessToken: string }> {
+  async refreshAccessToken(id: string, response: Response): Promise<AccessTokenResponseDto> {
     const payload = { id }
     const accessToken = await this.jwtService.signAsync(payload)
     this.setToken('token', accessToken, response)

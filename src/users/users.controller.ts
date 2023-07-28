@@ -12,11 +12,11 @@ import { UserName } from './domain/value-objects/user-name.vo'
 import { GiveRoleRequestDto } from './commands/give-role/give-role.request.dto'
 import { UpdateUserRequestDto } from './commands/update-user/update-user.request.dto'
 import { UserRoles } from './domain/value-objects/user-role.vo'
-import { LicenseType } from './user-license.entity'
 import { CreateLicenseRequestDto } from '../users/commands/create-user-license/create-license.request.dto'
 import { UserRequestDto } from './user-param.request.dto'
 import { FindUserRqeustDto } from './queries/find-user.request.dto'
 import { DeleteMemberLicenseRequestDto } from './commands/delete-member-license/delete-member-license.request.dto'
+import { LincenseResponseDto } from './dtos/license.response.dto'
 
 ConfigModule.forRoot()
 
@@ -121,8 +121,20 @@ export class UsersController {
    * 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
    */
   @Get('member-licenses')
-  async findAllLicenses(): Promise<void> {
-    return await this.userService.findAllLicenses()
+  async findAllLicenses(): Promise<LincenseResponseDto[]> {
+    const result = await this.userService.findAllLicenses()
+    return result.map(
+      (license) =>
+        new LincenseResponseDto({
+          userName: license.getProps().userName.getFullName(),
+          type: license.getProps().type,
+          issuingCountryName: license.getProps().stateEntity.stateName,
+          abbreviation: license.getProps().stateEntity.abbreviation,
+          priority: license.getProps().priority,
+          issuedDate: license.getProps().issuedDate,
+          expiryDate: license.getProps().expiryDate,
+        }),
+    )
   }
 
   // TODO: create api doesn't retrieve? how handel conflict error?

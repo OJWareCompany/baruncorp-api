@@ -6,9 +6,9 @@ import { UserName } from './domain/value-objects/user-name.vo'
 import { LincenseResponseDto } from './dtos/license.response.dto'
 import { PositionResponseDto } from '../department/dtos/position.response.dto'
 import { Injectable } from '@nestjs/common'
-import { ServiceResponseDto } from '../department/service.mapper'
 import { UserRole } from './domain/value-objects/user-role.vo'
 import { OrganizationEntity } from '../organization/domain/organization.entity'
+import { ServiceResponseDto } from '../department/dtos/service.response.dto'
 
 @Injectable()
 export default class UserMapper implements Mapper<UserEntity, UserModel, UserResponseDto> {

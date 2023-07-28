@@ -2,12 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Mapper } from './license.mapper'
 import { ServiceModel } from './database/department.repository'
 import { ServiceEntity } from './domain/service.entity'
-
-export class ServiceResponseDto {
-  id: string
-  name: string
-  description: string
-}
+import { ServiceResponseDto } from './dtos/service.response.dto'
 
 @Injectable()
 export class ServiceMapper implements Mapper<ServiceEntity, ServiceModel, ServiceResponseDto> {

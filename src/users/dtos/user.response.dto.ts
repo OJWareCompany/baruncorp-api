@@ -1,6 +1,6 @@
-import { ServiceResponseDto } from '../../department/service.mapper'
 import { LincenseResponseDto } from './license.response.dto'
 import { PositionResponseDto } from '../../department/dtos/position.response.dto'
+import { ServiceResponseDto } from '../../department/dtos/service.response.dto'
 
 export class UserResponseDto {
   id: string

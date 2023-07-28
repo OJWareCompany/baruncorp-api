@@ -44,14 +44,15 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
 
   toResponse(entity: LicenseEntity): LincenseResponseDto {
     const copyProps = entity.getProps()
-    const response = new LincenseResponseDto()
-    response.abbreviation = copyProps.stateEntity.abbreviation
-    response.issuingCountryName = copyProps.stateEntity.stateName
-    response.expiryDate = copyProps.expiryDate
-    response.issuedDate = copyProps.issuedDate
-    response.priority = copyProps.priority
-    response.type = copyProps.type
-    response.userName = copyProps.userName.getFullName()
-    return response
+
+    return new LincenseResponseDto({
+      userName: copyProps.userName.getFullName(),
+      type: copyProps.type,
+      issuingCountryName: copyProps.stateEntity.stateName,
+      abbreviation: copyProps.stateEntity.abbreviation,
+      priority: copyProps.priority,
+      issuedDate: copyProps.issuedDate,
+      expiryDate: copyProps.expiryDate,
+    })
   }
 }

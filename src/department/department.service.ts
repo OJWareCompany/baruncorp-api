@@ -5,8 +5,9 @@ import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
 import { PositionResponseDto } from './dtos/position.response.dto'
 import { PositionMapper } from './position.mapper'
-import { ServiceMapper, ServiceResponseDto } from './service.mapper'
+import { ServiceMapper } from './service.mapper'
 import { State } from './domain/value-objects/state.vo'
+import { ServiceResponseDto } from './dtos/service.response.dto'
 
 @Injectable()
 export class DepartmentService {

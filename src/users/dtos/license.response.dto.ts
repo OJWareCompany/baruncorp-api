@@ -8,6 +8,15 @@ export class LincenseResponseDto {
   priority: number
   issuedDate: Date
   expiryDate: Date
+  constructor(create: LincenseResponseDto) {
+    this.userName = create.userName
+    this.type = create.type
+    this.issuingCountryName = create.issuingCountryName
+    this.abbreviation = create.abbreviation
+    this.priority = create.priority
+    this.issuedDate = create.issuedDate
+    this.expiryDate = create.expiryDate
+  }
 }
 
 /**

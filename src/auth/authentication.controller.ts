@@ -21,6 +21,7 @@ import { InputPasswordVO } from '../users/domain/value-objects/password.vo'
 import { TokenResponseDto } from './dto/response/token.response.dto'
 import { AuthRefreshGuard } from './authentication.refresh.guard'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
+import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
 
 @Controller('auth')
 export class AuthenticationController {
@@ -78,7 +79,7 @@ export class AuthenticationController {
   async refresh(
     @User() user: { id: string }, // TODO: guard에서 반환하는 객체 정의하기
     @Res({ passthrough: true }) response: Response,
-  ): Promise<{ accessToken: string }> {
+  ): Promise<AccessTokenResponseDto> {
     return await this.authService.refreshAccessToken(user.id, response)
   }
 }

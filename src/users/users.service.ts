@@ -155,7 +155,7 @@ export class UserService {
     }
   }
 
-  async findAllLicenses(): Promise<any> {
+  async findAllLicenses(): Promise<LicenseEntity[]> {
     return await this.userRepository.findAllLicenses()
   }
 
