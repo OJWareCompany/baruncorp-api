@@ -113,12 +113,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-07-28T10:36:17.046Z"
+   * @default "2023-07-30T15:53:23.942Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-07-28T10:36:17.046Z"
+   * @default "2023-07-30T15:53:23.942Z"
    */
   expiryDate: string
 }
@@ -221,11 +221,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-07-28T10:36:17.058Z" */
+  /** @default "2023-07-30T15:53:23.957Z" */
   createdAt: string | null
-  /** @default "2023-07-28T10:36:17.058Z" */
+  /** @default "2023-07-30T15:53:23.957Z" */
   updatedAt: string | null
-  /** @default "2023-07-28T10:36:17.058Z" */
+  /** @default "2023-07-30T15:53:23.957Z" */
   updatedBy: string | null
   /** @default "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
@@ -1024,6 +1024,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         secure: true,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags geography
+     * @name GeographyControllerDeleteNoteByGeoId
+     * @request DELETE:/geography/{geoId}/notes
+     * @secure
+     */
+    geographyControllerDeleteNoteByGeoId: (geoId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/geography/${geoId}/notes`,
+        method: 'DELETE',
+        secure: true,
         ...params,
       }),
 
