@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { Type } from 'class-transformer'
+import { IsNumber, IsString } from 'class-validator'
 
 export class GeoGraphyParamRequestDto {
   @ApiProperty({ default: '0100460' })
@@ -9,6 +10,7 @@ export class GeoGraphyParamRequestDto {
 
 export class AhjNoteHistoryParamRequestDto {
   @ApiProperty({ default: 1 })
-  @IsString()
+  @IsNumber()
+  @Type(() => Number)
   historyId: number
 }
