@@ -33,6 +33,10 @@ export class GeographyService {
     return await this.geographyRepository.findNoteByGeoId(geoId)
   }
 
+  async deleteNoteByGeoId(geoId: string): Promise<void> {
+    return await this.geographyRepository.deleteNoteByGeoId(geoId)
+  }
+
   async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNotesModel> {
     return await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
   }

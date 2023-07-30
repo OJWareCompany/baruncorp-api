@@ -22,6 +22,10 @@ export type AHJNoteHistoryModel = AHJNoteHistory
 export class GeographyRepository implements GeographyRepositoryPort {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async deleteNoteByGeoId(geoId: string): Promise<void> {
+    await this.prismaService.aHJNotes.delete({ where: { geoId } })
+  }
+
   /**
    * TODO:
    * 생성과 업데이트 두가지 역할을 한다. (무조건 존재해야하며 하나의 데이터만 존재하기때문에 문제는 없어보임)

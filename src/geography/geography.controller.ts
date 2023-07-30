@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Put, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common'
 import { GeographyService } from './geography.service'
 import { AHJNotesModel } from './database/geography.repository'
 import { Paginated } from '../common/helpers/pagination/page.response.dto'
@@ -41,6 +41,11 @@ export class GeographyController {
   @Get(':geoId/notes')
   async findNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<AhjNoteResponseDto> {
     return this.ahjNoteMapper.toResponse(await this.geographyService.findNoteByGeoId(param.geoId))
+  }
+
+  @Delete(':geoId/notes')
+  async deleteNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<void> {
+    await this.geographyService.findNoteByGeoId(param.geoId)
   }
 
   @Put(':geoId/notes')
