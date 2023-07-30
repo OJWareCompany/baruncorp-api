@@ -202,7 +202,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
       },
       where: { ...condition },
       orderBy: {
-        name: 'asc', // 수정/생성 날짜 데이터가 없음
+        updatedAt: 'desc', // 수정/생성 날짜 데이터가 없음
       },
       skip: offset,
       take: pageSize,
