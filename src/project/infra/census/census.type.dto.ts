@@ -85,6 +85,7 @@ export class CensusState {
 }
 
 export class CensusCounties {
+  @Exclude()
   private AREALAND: number
   @Exclude()
   private AREAWATER: number

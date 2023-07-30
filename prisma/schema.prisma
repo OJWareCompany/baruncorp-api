@@ -314,14 +314,12 @@ model AHJNotes {
   digitalSignatureType          String?   @map("digital_signature_type") @db.VarChar(300)
   windUpliftCalculationRequired String?   @map("wind_uplift_calculation_required") @db.VarChar(300)
   windSpeed                     String?   @map("wind_speed") @db.VarChar(300)
-  updatedBy                     String?   @map("updated_by") @db.VarChar(300)
   windExposure                  String?   @map("wind_exposure") @db.VarChar(300)
   snowLoadGround                String?   @map("snow_load_ground") @db.VarChar(300)
   snowLoadFlatRoof              String?   @map("snow_load_flat_roof") @db.VarChar(300)
   snowLoadSlopedRoof            String?   @map("snow_load_sloped_roof") @db.VarChar(300)
   wetStampsRequired             String?   @map("wet_stamps_required") @db.VarChar(300)
   ofWetStamps                   String?   @map("of_wet_stamps") @db.VarChar(300)
-  updatedAt                     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
   wetStampSize                  String?   @map("wet_stamp_size") @db.VarChar(300)
   engineeringNotes              String?   @map("engineering_notes") @db.Text
   electricalNotes               String?   @map("electrical_notes") @db.Text
@@ -334,7 +332,9 @@ model AHJNotes {
   longName                      String?   @map("long_name") @db.VarChar(300)
   countyCode                    String?   @map("county_code") @db.VarChar(20)
   createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
-  modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
+  modifiedAt                    DateTime? @default(now()) @map("modified_at") @db.DateTime(0)
+  updatedAt                     DateTime? @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
+  updatedBy                     String?   @default("system") @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_notes")
 }
@@ -366,7 +366,6 @@ model AHJNoteHistory {
   digitalSignatureType          String?   @map("digital_signature_type") @db.VarChar(300)
   windUpliftCalculationRequired String?   @map("wind_uplift_calculation_required") @db.VarChar(300)
   windSpeed                     String?   @map("wind_speed") @db.VarChar(300)
-  updatedBy                     String?   @map("updated_by") @db.VarChar(300)
   windExposure                  String?   @map("wind_exposure") @db.VarChar(300)
   snowLoadGround                String?   @map("snow_load_ground") @db.VarChar(300)
   snowLoadFlatRoof              String?   @map("snow_load_flat_roof") @db.VarChar(300)
@@ -388,6 +387,7 @@ model AHJNoteHistory {
   createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt                     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
   modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
+  updatedBy                     String?   @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_note_history")
 }
