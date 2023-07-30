@@ -45,7 +45,7 @@ export class GeographyController {
 
   @Delete(':geoId/notes')
   async deleteNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<void> {
-    await this.geographyService.findNoteByGeoId(param.geoId)
+    await this.geographyService.deleteNoteByGeoId(param.geoId)
   }
 
   @Put(':geoId/notes')
