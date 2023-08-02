@@ -7,7 +7,6 @@ services:
     tty: true
     restart: always
     ports:
-      - '3000:3000'
-      - '3001:3001'
+      - "${APP_PORT}:${APP_PORT}"
     env_file:
       - ./.env
