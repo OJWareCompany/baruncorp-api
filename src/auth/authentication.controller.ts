@@ -7,7 +7,6 @@ import {
   HttpStatus,
   UseGuards,
   Get,
-  Request,
   Res,
   Query,
   BadRequestException,
@@ -29,7 +28,7 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signin')
-  signIn(
+  postSignIn(
     @Body() signInDto: SignInRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<TokenResponseDto> {
@@ -38,7 +37,7 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signin-time')
-  signInTime(
+  postSignInTime(
     @Body() signInDto: SignInRequestDto,
     @Query('jwt') jwt: number,
     @Query('refresh') refresh: number,
@@ -55,28 +54,28 @@ export class AuthenticationController {
 
   @HttpCode(HttpStatus.OK)
   @Post('signout')
-  async signout(@Res({ passthrough: true }) response: Response) {
+  async postSignout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('token')
     response.clearCookie('refreshToken')
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('signup')
-  async signUp(@Body() signUpDto: SignUpRequestDto) {
+  async postSignUp(@Body() signUpDto: SignUpRequestDto) {
     return await this.authService.signUp(signUpDto)
   }
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(AuthGuard)
   @Get('me')
-  me() {
+  getMe() {
     return
   }
 
   @HttpCode(HttpStatus.OK)
   @Get('refresh')
   @UseGuards(AuthRefreshGuard)
-  async refresh(
+  async getRefresh(
     @User() user: { id: string }, // TODO: guard에서 반환하는 객체 정의하기
     @Res({ passthrough: true }) response: Response,
   ): Promise<AccessTokenResponseDto> {

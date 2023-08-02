@@ -31,7 +31,7 @@ export class OrganizationController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async createOrganization(@Body() dto: CreateOrganizationRequestDto) {
+  async postCreateOrganization(@Body() dto: CreateOrganizationRequestDto) {
     return await this.organizationService.createOrganization({
       name: dto.name,
       description: dto.description,

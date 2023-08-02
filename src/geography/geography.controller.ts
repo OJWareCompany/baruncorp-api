@@ -25,7 +25,7 @@ export class GeographyController {
   constructor(private readonly geographyService: GeographyService, private readonly ahjNoteMapper: AhjNoteMapper) {}
 
   @Get('notes')
-  async findNotes(
+  async getFindNotes(
     @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query() searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<AhjNotePaginatedResponseDto> {
@@ -39,7 +39,7 @@ export class GeographyController {
   }
 
   @Get(':geoId/notes')
-  async findNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<AhjNoteResponseDto> {
+  async getFindNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<AhjNoteResponseDto> {
     return this.ahjNoteMapper.toResponse(await this.geographyService.findNoteByGeoId(param.geoId))
   }
 
@@ -50,7 +50,7 @@ export class GeographyController {
 
   @Put(':geoId/notes')
   @UseGuards(AuthGuard)
-  async updateNote(
+  async putUpdateNote(
     @User() user: UserEntity,
     @Param() param: GeoGraphyParamRequestDto,
     @Body() dto: UpdateAhjNoteRequestDto,
@@ -61,14 +61,16 @@ export class GeographyController {
   }
 
   @Get('notes/history/:historyId')
-  async findNoteUpdateHistoryDetail(@Param() param: AhjNoteHistoryParamRequestDto): Promise<AhjNoteHistoryResponseDto> {
+  async getFinNoteUpdateHistoryDetail(
+    @Param() param: AhjNoteHistoryParamRequestDto,
+  ): Promise<AhjNoteHistoryResponseDto> {
     return this.ahjNoteMapper.toResponse(
       await this.geographyService.findNoteUpdateHistoryDetail(param.historyId),
     ) as AhjNoteHistoryResponseDto
   }
 
   @Get('notes/history')
-  async findNoteUpdateHistory(
+  async getFindNoteUpdateHistory(
     @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query() query: FindAhjNotesHistorySearchQueryRequestDto,
   ): Promise<AhjNoteHistoryPaginatedResponseDto> {

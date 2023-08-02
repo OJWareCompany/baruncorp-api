@@ -26,7 +26,7 @@ const { EMAIL_USER, EMAIL_PASS } = process.env
 export class UsersController {
   constructor(private readonly userService: UserService) {}
   @Get('')
-  async findUsers(@Query() dto: FindUserRqeustDto): Promise<UserResponseDto[]> {
+  async getFindUsers(@Query() dto: FindUserRqeustDto): Promise<UserResponseDto[]> {
     if (!dto.email) return await this.userService.findUsers()
     else if (dto.email) return [await this.userService.findOneByEmail(new EmailVO(dto.email))]
   }
@@ -48,13 +48,13 @@ export class UsersController {
 
   @Patch('profile/:userId')
   @UseGuards(AuthGuard)
-  async updateUserByUserId(@Param() param: UserRequestDto, @Body() dto: UpdateUserRequestDto): Promise<void> {
+  async patchUpdateUserByUserId(@Param() param: UserRequestDto, @Body() dto: UpdateUserRequestDto): Promise<void> {
     return await this.userService.upadteProfile(param.userId, new UserName(dto))
   }
 
   @Patch('profile')
   @UseGuards(AuthGuard)
-  async updateUser(@User() { id }: { id: string }, @Body() dto: UpdateUserRequestDto): Promise<void> {
+  async patchUpdateUser(@User() { id }: { id: string }, @Body() dto: UpdateUserRequestDto): Promise<void> {
     return await this.userService.upadteProfile(id, new UserName(dto))
   }
 
@@ -66,7 +66,7 @@ export class UsersController {
 
   @Post('gived-roles')
   @UseGuards(AuthGuard)
-  async giveRole(@Body() dto: GiveRoleRequestDto): Promise<void> {
+  async postGiveRole(@Body() dto: GiveRoleRequestDto): Promise<void> {
     let role: UserRoles = UserRoles.guest
     if (dto.lol === 'domain') role = UserRoles.admin
     else if (dto.lol === 'manager') role = UserRoles.manager
@@ -76,13 +76,13 @@ export class UsersController {
 
   @Delete('gived-roles/:userId')
   @UseGuards(AuthGuard)
-  async removeRole(@Param() param: UserRequestDto): Promise<void> {
+  async deleteRemoveRole(@Param() param: UserRequestDto): Promise<void> {
     await this.userService.removeRole(param.userId)
   }
 
   @Post('invitations')
   @UseGuards(AuthGuard)
-  async sendInvitationMail(@Body() dto: CreateInvitationMailRequestDto) {
+  async postSendInvitationMail(@Body() dto: CreateInvitationMailRequestDto) {
     // TODO: to VO
     const code = randomBytes(10).toString('hex').toUpperCase().slice(0, 6)
 
@@ -121,7 +121,7 @@ export class UsersController {
    * 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
    */
   @Get('member-licenses')
-  async findAllLicenses(): Promise<LincenseResponseDto[]> {
+  async getFindAllLicenses(): Promise<LincenseResponseDto[]> {
     const result = await this.userService.findAllLicenses()
     return result.map(
       (license) =>
@@ -140,7 +140,7 @@ export class UsersController {
   // TODO: create api doesn't retrieve? how handel conflict error?
   @Post('member-licenses')
   @UseGuards(AuthGuard)
-  async postLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
+  async postRegisterMemberLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
     return await this.userService.registerLicense(
       dto.userId,
       dto.type,
@@ -157,7 +157,7 @@ export class UsersController {
    */
   @Delete('member-licenses')
   @UseGuards(AuthGuard)
-  async deleteLicense(@Query() dto: DeleteMemberLicenseRequestDto): Promise<void> {
+  async deleteRemoveMemberLicense(@Query() dto: DeleteMemberLicenseRequestDto): Promise<void> {
     return await this.userService.revokeLicense(dto.userId, dto.type, dto.issuingCountryName)
   }
 }

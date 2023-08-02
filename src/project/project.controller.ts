@@ -10,7 +10,7 @@ export class ProjectController {
    * Census 결과와 상관 없이 프로젝트는 생성되어야함
    */
   @Post('')
-  async createProject(@Body() createProjectDto: AddressFromMapBox) {
+  async postCreateProject(@Body() createProjectDto: AddressFromMapBox) {
     return await this.projectService.createProject(createProjectDto)
   }
 }

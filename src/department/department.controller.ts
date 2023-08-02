@@ -13,27 +13,27 @@ import { ServiceResponseDto } from './dtos/service.response.dto'
 export class DepartmentController {
   constructor(private readonly departmentService: DepartmentService) {}
   @Get('positions')
-  async findAllPositions(): Promise<PositionResponseDto[]> {
+  async getFindAllPositions(): Promise<PositionResponseDto[]> {
     return await this.departmentService.findAllPositions()
   }
 
   // can use manager
   @Post('member-positions')
   @UseGuards(AuthGuard)
-  async appointPosition(@Body() dto: CreateMemberPositionRequestDto): Promise<void> {
+  async postAppointPosition(@Body() dto: CreateMemberPositionRequestDto): Promise<void> {
     return await this.departmentService.appointPosition(dto.userId, dto.positionId)
   }
 
   // can use only manager
   @Delete('member-positions')
   @UseGuards(AuthGuard)
-  async revokePosition(@Query() param: DeleteMemberPositionRequestDto): Promise<void> {
+  async deleteRevokePosition(@Query() param: DeleteMemberPositionRequestDto): Promise<void> {
     return await this.departmentService.revokePosition(param.userId, param.positionId)
   }
 
   // when select states that issue a license
   @Get('states')
-  async findAllStates(): Promise<StatesResponseDto[]> {
+  async getFindAllStates(): Promise<StatesResponseDto[]> {
     const result = await this.departmentService.findAllStates()
     return result.map(
       (state) =>
@@ -49,20 +49,22 @@ export class DepartmentController {
   }
 
   @Get('services')
-  async findAllServices(): Promise<ServiceResponseDto[]> {
+  async getFindAllServices(): Promise<ServiceResponseDto[]> {
     return await this.departmentService.findAllServices()
   }
 
   // TODO: create api doesn't retrieve? how handel conflict error?
   @Post('member-services')
   @UseGuards(AuthGuard)
-  async putMemberInChageOfTheService(@Body() dto: CreateMemberInChargeOfTheServiceRequestDto): Promise<void> {
+  async postPutMemberInChageOfTheService(@Body() dto: CreateMemberInChargeOfTheServiceRequestDto): Promise<void> {
     return this.departmentService.putMemberInChageOfTheService(dto.userId, dto.serviceId)
   }
 
   @Delete('member-services')
   @UseGuards(AuthGuard)
-  async terminateServiceMemberIsInChargeOf(@Query() query: DeleteMemberInChargeOfTheServiceRequestDto): Promise<void> {
+  async deleteTerminateServiceMemberIsInChargeOf(
+    @Query() query: DeleteMemberInChargeOfTheServiceRequestDto,
+  ): Promise<void> {
     return this.departmentService.terminateServiceMemberIsInChargeOf(query.userId, query.serviceId)
   }
 }
