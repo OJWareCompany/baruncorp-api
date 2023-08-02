@@ -113,12 +113,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-08-02T00:49:11.111Z"
+   * @default "2023-08-02T02:20:43.236Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-08-02T00:49:11.111Z"
+   * @default "2023-08-02T02:20:43.236Z"
    */
   expiryDate: string
 }
@@ -228,11 +228,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-08-02T00:49:11.124Z" */
+  /** @default "2023-08-02T02:20:43.248Z" */
   createdAt: string | null
-  /** @default "2023-08-02T00:49:11.124Z" */
+  /** @default "2023-08-02T02:20:43.249Z" */
   updatedAt: string | null
-  /** @default "2023-08-02T00:49:11.124Z" */
+  /** @default "2023-08-02T02:20:43.249Z" */
   updatedBy: string | null
   /** @default "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
@@ -360,17 +360,17 @@ export interface AddressFromMapBox {
   postalCode: string
 }
 
-export interface AuthenticationControllerSignInTimeParams {
+export interface AuthenticationControllerPostSignInTimeParams {
   jwt: number
   refresh: number
 }
 
-export interface UsersControllerFindUsersParams {
+export interface UsersControllerGetFindUsersParams {
   /** @default "hyomin@ojware.com" */
   email?: string
 }
 
-export interface UsersControllerDeleteLicenseParams {
+export interface UsersControllerDeleteRemoveMemberLicenseParams {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
   /** @default "Electrical" */
@@ -384,21 +384,21 @@ export interface OrganizationControllerFindMembersParams {
   organizationId: string
 }
 
-export interface DepartmentControllerRevokePositionParams {
+export interface DepartmentControllerDeleteRevokePositionParams {
   /** @default "3696b9c7-916d-4812-871e-976c03a06d7e" */
   positionId: string
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
 }
 
-export interface DepartmentControllerTerminateServiceMemberIsInChargeOfParams {
+export interface DepartmentControllerDeleteTerminateServiceMemberIsInChargeOfParams {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
   /** @default "a061c441-be8c-4bcc-9bcc-2460a01d5a16" */
   serviceId: string
 }
 
-export interface GeographyControllerFindNotesParams {
+export interface GeographyControllerGetFindNotesParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -417,7 +417,7 @@ export interface GeographyControllerFindNotesParams {
   name?: string
 }
 
-export interface GeographyControllerFindNoteUpdateHistoryParams {
+export interface GeographyControllerGetFindNoteUpdateHistoryParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -576,10 +576,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name AuthenticationControllerSignIn
+     * @name AuthenticationControllerPostSignIn
      * @request POST:/auth/signin
      */
-    authenticationControllerSignIn: (data: SignInRequestDto, params: RequestParams = {}) =>
+    authenticationControllerPostSignIn: (data: SignInRequestDto, params: RequestParams = {}) =>
       this.request<TokenResponseDto, any>({
         path: `/auth/signin`,
         method: 'POST',
@@ -592,11 +592,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name AuthenticationControllerSignInTime
+     * @name AuthenticationControllerPostSignInTime
      * @request POST:/auth/signin-time
      */
-    authenticationControllerSignInTime: (
-      query: AuthenticationControllerSignInTimeParams,
+    authenticationControllerPostSignInTime: (
+      query: AuthenticationControllerPostSignInTimeParams,
       data: SignInRequestDto,
       params: RequestParams = {},
     ) =>
@@ -613,10 +613,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name AuthenticationControllerSignout
+     * @name AuthenticationControllerPostSignout
      * @request POST:/auth/signout
      */
-    authenticationControllerSignout: (params: RequestParams = {}) =>
+    authenticationControllerPostSignout: (params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/auth/signout`,
         method: 'POST',
@@ -626,10 +626,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name AuthenticationControllerSignUp
+     * @name AuthenticationControllerPostSignUp
      * @request POST:/auth/signup
      */
-    authenticationControllerSignUp: (data: SignUpRequestDto, params: RequestParams = {}) =>
+    authenticationControllerPostSignUp: (data: SignUpRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/auth/signup`,
         method: 'POST',
@@ -641,10 +641,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name AuthenticationControllerMe
+     * @name AuthenticationControllerGetMe
      * @request GET:/auth/me
      */
-    authenticationControllerMe: (params: RequestParams = {}) =>
+    authenticationControllerGetMe: (params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/auth/me`,
         method: 'GET',
@@ -654,10 +654,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name AuthenticationControllerRefresh
+     * @name AuthenticationControllerGetRefresh
      * @request GET:/auth/refresh
      */
-    authenticationControllerRefresh: (params: RequestParams = {}) =>
+    authenticationControllerGetRefresh: (params: RequestParams = {}) =>
       this.request<AccessTokenResponseDto, any>({
         path: `/auth/refresh`,
         method: 'GET',
@@ -669,10 +669,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UsersControllerFindUsers
+     * @name UsersControllerGetFindUsers
      * @request GET:/users
      */
-    usersControllerFindUsers: (query: UsersControllerFindUsersParams, params: RequestParams = {}) =>
+    usersControllerGetFindUsers: (query: UsersControllerGetFindUsersParams, params: RequestParams = {}) =>
       this.request<UserResponseDto[], any>({
         path: `/users`,
         method: 'GET',
@@ -698,10 +698,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UsersControllerUpdateUserByUserId
+     * @name UsersControllerPatchUpdateUserByUserId
      * @request PATCH:/users/profile/{userId}
      */
-    usersControllerUpdateUserByUserId: (userId: string, data: UpdateUserRequestDto, params: RequestParams = {}) =>
+    usersControllerPatchUpdateUserByUserId: (userId: string, data: UpdateUserRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/users/profile/${userId}`,
         method: 'PATCH',
@@ -727,10 +727,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UsersControllerUpdateUser
+     * @name UsersControllerPatchUpdateUser
      * @request PATCH:/users/profile
      */
-    usersControllerUpdateUser: (data: UpdateUserRequestDto, params: RequestParams = {}) =>
+    usersControllerPatchUpdateUser: (data: UpdateUserRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/users/profile`,
         method: 'PATCH',
@@ -755,10 +755,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UsersControllerGiveRole
+     * @name UsersControllerPostGiveRole
      * @request POST:/users/gived-roles
      */
-    usersControllerGiveRole: (data: GiveRoleRequestDto, params: RequestParams = {}) =>
+    usersControllerPostGiveRole: (data: GiveRoleRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/users/gived-roles`,
         method: 'POST',
@@ -770,10 +770,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UsersControllerRemoveRole
+     * @name UsersControllerDeleteRemoveRole
      * @request DELETE:/users/gived-roles/{userId}
      */
-    usersControllerRemoveRole: (userId: string, params: RequestParams = {}) =>
+    usersControllerDeleteRemoveRole: (userId: string, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/users/gived-roles/${userId}`,
         method: 'DELETE',
@@ -783,10 +783,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UsersControllerSendInvitationMail
+     * @name UsersControllerPostSendInvitationMail
      * @request POST:/users/invitations
      */
-    usersControllerSendInvitationMail: (data: CreateInvitationMailRequestDto, params: RequestParams = {}) =>
+    usersControllerPostSendInvitationMail: (data: CreateInvitationMailRequestDto, params: RequestParams = {}) =>
       this.request<object, any>({
         path: `/users/invitations`,
         method: 'POST',
@@ -799,10 +799,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description 등록된 모든 라이센스 조회 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
      *
-     * @name UsersControllerFindAllLicenses
+     * @name UsersControllerGetFindAllLicenses
      * @request GET:/users/member-licenses
      */
-    usersControllerFindAllLicenses: (params: RequestParams = {}) =>
+    usersControllerGetFindAllLicenses: (params: RequestParams = {}) =>
       this.request<LincenseResponseDto[], any>({
         path: `/users/member-licenses`,
         method: 'GET',
@@ -813,10 +813,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UsersControllerPostLicense
+     * @name UsersControllerPostRegisterMemberLicense
      * @request POST:/users/member-licenses
      */
-    usersControllerPostLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
+    usersControllerPostRegisterMemberLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/users/member-licenses`,
         method: 'POST',
@@ -828,10 +828,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description // 추후 개선 사항 -> member-licenses/:licenseId
      *
-     * @name UsersControllerDeleteLicense
+     * @name UsersControllerDeleteRemoveMemberLicense
      * @request DELETE:/users/member-licenses
      */
-    usersControllerDeleteLicense: (query: UsersControllerDeleteLicenseParams, params: RequestParams = {}) =>
+    usersControllerDeleteRemoveMemberLicense: (
+      query: UsersControllerDeleteRemoveMemberLicenseParams,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/users/member-licenses`,
         method: 'DELETE',
@@ -857,10 +860,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name OrganizationControllerCreateOrganization
+     * @name OrganizationControllerPostCreateOrganization
      * @request POST:/organizations
      */
-    organizationControllerCreateOrganization: (data: CreateOrganizationRequestDto, params: RequestParams = {}) =>
+    organizationControllerPostCreateOrganization: (data: CreateOrganizationRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/organizations`,
         method: 'POST',
@@ -902,10 +905,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerFindAllPositions
+     * @name DepartmentControllerGetFindAllPositions
      * @request GET:/departments/positions
      */
-    departmentControllerFindAllPositions: (params: RequestParams = {}) =>
+    departmentControllerGetFindAllPositions: (params: RequestParams = {}) =>
       this.request<PositionResponseDto[], any>({
         path: `/departments/positions`,
         method: 'GET',
@@ -916,10 +919,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerAppointPosition
+     * @name DepartmentControllerPostAppointPosition
      * @request POST:/departments/member-positions
      */
-    departmentControllerAppointPosition: (data: CreateMemberPositionRequestDto, params: RequestParams = {}) =>
+    departmentControllerPostAppointPosition: (data: CreateMemberPositionRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/departments/member-positions`,
         method: 'POST',
@@ -931,10 +934,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerRevokePosition
+     * @name DepartmentControllerDeleteRevokePosition
      * @request DELETE:/departments/member-positions
      */
-    departmentControllerRevokePosition: (query: DepartmentControllerRevokePositionParams, params: RequestParams = {}) =>
+    departmentControllerDeleteRevokePosition: (
+      query: DepartmentControllerDeleteRevokePositionParams,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/departments/member-positions`,
         method: 'DELETE',
@@ -945,10 +951,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerFindAllStates
+     * @name DepartmentControllerGetFindAllStates
      * @request GET:/departments/states
      */
-    departmentControllerFindAllStates: (params: RequestParams = {}) =>
+    departmentControllerGetFindAllStates: (params: RequestParams = {}) =>
       this.request<StatesResponseDto[], any>({
         path: `/departments/states`,
         method: 'GET',
@@ -959,10 +965,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerFindAllServices
+     * @name DepartmentControllerGetFindAllServices
      * @request GET:/departments/services
      */
-    departmentControllerFindAllServices: (params: RequestParams = {}) =>
+    departmentControllerGetFindAllServices: (params: RequestParams = {}) =>
       this.request<ServiceResponseDto[], any>({
         path: `/departments/services`,
         method: 'GET',
@@ -973,10 +979,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerPutMemberInChageOfTheService
+     * @name DepartmentControllerPostPutMemberInChageOfTheService
      * @request POST:/departments/member-services
      */
-    departmentControllerPutMemberInChageOfTheService: (
+    departmentControllerPostPutMemberInChageOfTheService: (
       data: CreateMemberInChargeOfTheServiceRequestDto,
       params: RequestParams = {},
     ) =>
@@ -991,11 +997,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerTerminateServiceMemberIsInChargeOf
+     * @name DepartmentControllerDeleteTerminateServiceMemberIsInChargeOf
      * @request DELETE:/departments/member-services
      */
-    departmentControllerTerminateServiceMemberIsInChargeOf: (
-      query: DepartmentControllerTerminateServiceMemberIsInChargeOfParams,
+    departmentControllerDeleteTerminateServiceMemberIsInChargeOf: (
+      query: DepartmentControllerDeleteTerminateServiceMemberIsInChargeOfParams,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
@@ -1010,11 +1016,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags geography
-     * @name GeographyControllerFindNotes
+     * @name GeographyControllerGetFindNotes
      * @request GET:/geography/notes
      * @secure
      */
-    geographyControllerFindNotes: (query: GeographyControllerFindNotesParams, params: RequestParams = {}) =>
+    geographyControllerGetFindNotes: (query: GeographyControllerGetFindNotesParams, params: RequestParams = {}) =>
       this.request<AhjNotePaginatedResponseDto, any>({
         path: `/geography/notes`,
         method: 'GET',
@@ -1028,11 +1034,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags geography
-     * @name GeographyControllerFindNoteByGeoId
+     * @name GeographyControllerGetFindNoteByGeoId
      * @request GET:/geography/{geoId}/notes
      * @secure
      */
-    geographyControllerFindNoteByGeoId: (geoId: string, params: RequestParams = {}) =>
+    geographyControllerGetFindNoteByGeoId: (geoId: string, params: RequestParams = {}) =>
       this.request<AhjNoteResponseDto, any>({
         path: `/geography/${geoId}/notes`,
         method: 'GET',
@@ -1061,11 +1067,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags geography
-     * @name GeographyControllerUpdateNote
+     * @name GeographyControllerPutUpdateNote
      * @request PUT:/geography/{geoId}/notes
      * @secure
      */
-    geographyControllerUpdateNote: (geoId: string, data: UpdateAhjNoteRequestDto, params: RequestParams = {}) =>
+    geographyControllerPutUpdateNote: (geoId: string, data: UpdateAhjNoteRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/geography/${geoId}/notes`,
         method: 'PUT',
@@ -1079,11 +1085,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags geography
-     * @name GeographyControllerFindNoteUpdateHistoryDetail
+     * @name GeographyControllerGetFinNoteUpdateHistoryDetail
      * @request GET:/geography/notes/history/{historyId}
      * @secure
      */
-    geographyControllerFindNoteUpdateHistoryDetail: (historyId: number, params: RequestParams = {}) =>
+    geographyControllerGetFinNoteUpdateHistoryDetail: (historyId: number, params: RequestParams = {}) =>
       this.request<AhjNoteHistoryResponseDto, any>({
         path: `/geography/notes/history/${historyId}`,
         method: 'GET',
@@ -1096,12 +1102,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags geography
-     * @name GeographyControllerFindNoteUpdateHistory
+     * @name GeographyControllerGetFindNoteUpdateHistory
      * @request GET:/geography/notes/history
      * @secure
      */
-    geographyControllerFindNoteUpdateHistory: (
-      query: GeographyControllerFindNoteUpdateHistoryParams,
+    geographyControllerGetFindNoteUpdateHistory: (
+      query: GeographyControllerGetFindNoteUpdateHistoryParams,
       params: RequestParams = {},
     ) =>
       this.request<AhjNoteHistoryPaginatedResponseDto, any>({
@@ -1117,10 +1123,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * @description Census에서 행정구역이 매칭되지 않는 주소들이 있음 Census 결과와 상관 없이 프로젝트는 생성되어야함
      *
-     * @name ProjectControllerCreateProject
+     * @name ProjectControllerPostCreateProject
      * @request POST:/projects
      */
-    projectControllerCreateProject: (data: AddressFromMapBox, params: RequestParams = {}) =>
+    projectControllerPostCreateProject: (data: AddressFromMapBox, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/projects`,
         method: 'POST',
