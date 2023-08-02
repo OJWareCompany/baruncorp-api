@@ -21,6 +21,8 @@ import { TokenResponseDto } from './dto/response/token.response.dto'
 import { AuthRefreshGuard } from './authentication.refresh.guard'
 import { User } from '../common/decorators/requests/logged-in-user.decorator'
 import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
+import { ApiResponse } from '@nestjs/swagger'
+import { SignInTimeRequestDto } from './dto/request/sign-in-time.request.dto'
 
 @Controller('auth')
 export class AuthenticationController {
@@ -35,20 +37,25 @@ export class AuthenticationController {
     return this.authService.signIn(new EmailVO(signInDto.email), new InputPasswordVO(signInDto.password), response)
   }
 
+  @ApiResponse({
+    description: 'The value entered for the query is in seconds. (query에 들어가는 숫자는 초 단위 입니다.)',
+  })
   @HttpCode(HttpStatus.OK)
   @Post('signin-time')
   postSignInTime(
     @Body() signInDto: SignInRequestDto,
-    @Query('jwt') jwt: number,
-    @Query('refresh') refresh: number,
+    @Query() query: SignInTimeRequestDto,
     @Res({ passthrough: true }) response: Response,
   ): Promise<TokenResponseDto> {
-    if (jwt > 300 || refresh > 300) throw new BadRequestException('Too Long Time', '12345')
+    if (query.jwt > 300 || query.refresh > 300) throw new BadRequestException('Too Long Time', '12345')
     return this.authService.signInCustomTokenTime(
       new EmailVO(signInDto.email),
       new InputPasswordVO(signInDto.password),
       response,
-      { jwt, refresh },
+      {
+        jwt: query.jwt,
+        refresh: query.refresh,
+      },
     )
   }
 
