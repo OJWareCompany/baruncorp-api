@@ -3,7 +3,7 @@ import { Type } from 'class-transformer'
 import { IsNumber, IsString } from 'class-validator'
 
 export class GeoGraphyParamRequestDto {
-  @ApiProperty({ default: '0100460' })
+  @ApiProperty({ default: '1239525' })
   @IsString()
   geoId: string
 }

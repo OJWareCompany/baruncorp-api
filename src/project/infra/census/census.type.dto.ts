@@ -4,23 +4,23 @@ import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class AddressFromMapBox {
-  @ApiProperty({ default: 'Apple Valley Airport' })
+  @ApiProperty({ default: '3480 Northwest 33rd Court' })
   @IsString()
   street1: string
 
-  @ApiProperty({ default: 'A 101' })
+  @ApiProperty({ default: '' })
   @IsString()
   street2: string
 
-  @ApiProperty({ default: 'Apple Valley' })
+  @ApiProperty({ default: 'Lauderdale Lakes' })
   @IsString()
   city: string
 
-  @ApiProperty({ default: 'California' })
+  @ApiProperty({ default: 'Florida' })
   @IsString()
   state: string
 
-  @ApiProperty({ default: '92307' })
+  @ApiProperty({ default: '33309' })
   @IsString()
   postalCode: string
 }

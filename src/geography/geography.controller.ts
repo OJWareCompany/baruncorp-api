@@ -43,11 +43,6 @@ export class GeographyController {
     return this.ahjNoteMapper.toResponse(await this.geographyService.findNoteByGeoId(param.geoId))
   }
 
-  @Delete(':geoId/notes')
-  async deleteNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<void> {
-    await this.geographyService.deleteNoteByGeoId(param.geoId)
-  }
-
   @Put(':geoId/notes')
   @UseGuards(AuthGuard)
   async putUpdateNote(
@@ -58,6 +53,11 @@ export class GeographyController {
     const { general, design, engineering, electricalEngineering } = dto
     const update = new UpdateAhjNoteDto({ ...general, ...design, ...engineering, ...electricalEngineering })
     await this.geographyService.updateNote(user, param.geoId, update)
+  }
+
+  @Delete(':geoId/notes')
+  async deleteNoteByGeoId(@Param() param: GeoGraphyParamRequestDto): Promise<void> {
+    await this.geographyService.deleteNoteByGeoId(param.geoId)
   }
 
   @Get('notes/history/:historyId')
