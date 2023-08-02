@@ -36,7 +36,8 @@ export class AuthGuard implements CanActivate {
   // TODO: Use http-only Cookie
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? []
-    return type === 'Bearer' ? token : undefined
+    const regExp = /[\{\}\[\]\/\?\*\~\!\@\#\$\%\^\&\*\(\-\_\"\'\,]/
+    return type === 'Bearer' && token && !regExp.test(token[0]) ? token : undefined
   }
 
   private extractTokenFromCookie(request: Request) {
