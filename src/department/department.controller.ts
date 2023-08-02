@@ -20,8 +20,8 @@ export class DepartmentController {
   // can use manager
   @Post('member-positions')
   @UseGuards(AuthGuard)
-  async appointPosition(@Query() param: CreateMemberPositionRequestDto): Promise<void> {
-    return await this.departmentService.appointPosition(param.userId, param.positionId)
+  async appointPosition(@Body() dto: CreateMemberPositionRequestDto): Promise<void> {
+    return await this.departmentService.appointPosition(dto.userId, dto.positionId)
   }
 
   // can use only manager

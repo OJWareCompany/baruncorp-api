@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
 
 export class CreateMemberPositionRequestDto {
-  @ApiProperty({ default: '3696b9c7-916d-4812-871e-976c03a06d7e!' })
+  @ApiProperty({ default: '3696b9c7-916d-4812-871e-976c03a06d7e' })
   @IsString()
   readonly positionId: string
 
