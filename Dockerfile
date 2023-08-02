@@ -33,3 +33,4 @@ COPY --from=build /app/node_modules ./node_modules
 ENTRYPOINT ["pnpm", "run", "start:prod"]
 
 EXPOSE 3000
+EXPOSE 3001
