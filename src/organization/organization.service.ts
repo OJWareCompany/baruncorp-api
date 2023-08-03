@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepositoryPort } from './database/organization.repository.port'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
@@ -12,7 +12,6 @@ import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
 import { OrganizationMapper } from './organization.mapper'
 import { ServiceMapper } from '../department/service.mapper'
 import { OrganizationEntity } from './domain/organization.entity'
-import { CreateOrganizationProps } from './domain/organization.types'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
 
 @Injectable()
@@ -27,14 +26,6 @@ export class OrganizationService {
     private readonly licenseMapper: LicenseMapper,
     private readonly serviceMapper: ServiceMapper,
   ) {}
-
-  // TODO: remove id field!
-  async createOrganization(props: Omit<CreateOrganizationProps, 'id'>): Promise<void> {
-    const organization = await this.organizationRepository.findOneByName(props.name)
-    if (organization) throw new ConflictException(`${props.name} is aleady existed.`, '20001')
-    const entity = OrganizationEntity.create(props)
-    await this.organizationRepository.insertOrganization(entity)
-  }
 
   async findOrganizationById(organizationId: string): Promise<OrganizationEntity> {
     return await this.organizationRepository.findOneById(organizationId)

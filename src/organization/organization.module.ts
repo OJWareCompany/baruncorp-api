@@ -14,6 +14,9 @@ import { UserRepository } from '../users/database/user.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationMapper } from './organization.mapper'
 import { ServiceMapper } from '../department/service.mapper'
+import { CreateOrganizationHttpController } from './commands/create-organization/create-organization.controller.http'
+import { CreateOrganizationService } from './commands/create-organization/create-organization.service'
+import { CqrsModule } from '@nestjs/cqrs'
 
 const repositories: Provider[] = [
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
@@ -21,7 +24,7 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
-const providers: Provider[] = [OrganizationService, PrismaService]
+const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService]
 
 const mappers: Provider[] = [
   UserMapper,
@@ -33,8 +36,9 @@ const mappers: Provider[] = [
 ]
 
 @Module({
+  imports: [CqrsModule],
   providers: [...providers, ...repositories, ...mappers],
-  controllers: [OrganizationController],
+  controllers: [OrganizationController, CreateOrganizationHttpController],
   exports: [OrganizationService],
 })
 export class OrganizationModule {}

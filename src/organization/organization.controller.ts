@@ -28,24 +28,4 @@ export class OrganizationController {
   async findMyMembers(@User() user: UserEntity): Promise<UserResponseDto[]> {
     return await this.organizationService.findMembersByOrganizationId(user.getProps().organizationId)
   }
-
-  @Post('')
-  @UseGuards(AuthGuard)
-  async postCreateOrganization(@Body() dto: CreateOrganizationRequestDto) {
-    return await this.organizationService.createOrganization({
-      name: dto.name,
-      description: dto.description,
-      email: dto.email,
-      phoneNumber: dto.phoneNumber,
-      organizationType: dto.organizationType,
-      address: new Address({
-        street1: dto.street1,
-        street2: dto.street2,
-        city: dto.city,
-        stateOrRegion: dto.stateOrRegion,
-        postalCode: dto.postalCode,
-        country: dto.country,
-      }),
-    })
-  }
 }
