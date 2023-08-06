@@ -6,10 +6,10 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "es2017",
+    "strictPropertyInitialization": false,
+    "target": "ES2016",
     "sourceMap": true,
     "outDir": "./dist",
-    "baseUrl": "./",
     "incremental": true,
     "skipLibCheck": true,
     "strictNullChecks": false,
@@ -17,6 +17,15 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "esModuleInterop": true
-  }
+    "esModuleInterop": true,
+    "baseUrl": "./",
+    // "rootDir": "./",
+    "paths": {
+      "@src/*": ["src/*"],
+      "@modules/*": ["src/modules/*"],
+      "@config/*": ["src/configs/*"],
+      "@libs/*": ["src/libs/*"],
+      "@tests/*": ["tests/*"]
+    }
+  },
 }
