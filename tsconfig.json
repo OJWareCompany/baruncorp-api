@@ -7,7 +7,7 @@
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
     "strictPropertyInitialization": false,
-    "target": "ES2016",
+    "target": "ES2019",
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "baseUrl": "./",
-    // "rootDir": "./",
+    "rootDir": "./",
     "paths": {
       "@src/*": ["src/*"],
       "@modules/*": ["src/modules/*"],
