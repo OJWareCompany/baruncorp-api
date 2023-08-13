@@ -134,13 +134,19 @@ model Positions {
 }
 
 model Services {
-  id              String            @id @default(uuid())
-  name            String
-  description     String
-  updatedAt       DateTime?         @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt       DateTime?         @default(now()) @map("created_at") @db.DateTime(0)
-  PositionService PositionService[]
-  UserService     UserService[]
+  id                                   String            @id @default(uuid())
+  name                                 String
+  description                          String
+  updatedAt                            DateTime?         @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                            DateTime?         @default(now()) @map("created_at") @db.DateTime(0)
+  billing_code                         String?           @db.VarChar(20)
+  state_restricted                     Boolean?
+  is_current_user                      Boolean?
+  internal_only                        Boolean?
+  man_minutes_residential_new_standard Decimal?          @db.Decimal(10, 2)
+  man_minutes_residential_rev_standard Decimal?          @db.Decimal(10, 2)
+  PositionService                      PositionService[]
+  UserService                          UserService[]
 
   @@map("services")
 }
@@ -390,4 +396,367 @@ model AHJNoteHistory {
   updatedBy                     String?   @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_note_history")
+}
+
+model ordered_job_notes {
+  id                 String    @id @db.VarChar(255)
+  job_id             String?   @db.VarChar(255)
+  content            String?   @db.Text
+  created_at         DateTime? @db.DateTime(0)
+  created_by         String?   @db.VarChar(255)
+  created_by_user_id String?   @db.VarChar(255)
+  updated_at         DateTime? @db.DateTime(0)
+  updated_by         String?   @db.VarChar(255)
+}
+
+model ordered_jobs {
+  id                                                    String    @id @db.VarChar(255)
+  job_name                                              String?   @db.Text
+  job_status                                            String?   @db.Text
+  other_comments                                        String?   @db.Text
+  job_notes_f                                           String?   @db.Text
+  additional_information_from_client                    String?   @db.Text
+  agreed_minimum_units                                  Decimal?  @db.Decimal(10, 2)
+  agreed_related_tiered_unit_description                Decimal?  @db.Decimal(10, 2)
+  agreed_tier_1_operator                                String?   @db.VarChar(255)
+  agreed_tier_1_units                                   Decimal?  @db.Decimal(10, 2)
+  agreed_tier_2_operator                                String?   @db.VarChar(255)
+  agreed_tier_2_units                                   Decimal?  @db.Decimal(10, 2)
+  agreed_tier_3_operator                                String?   @db.VarChar(255)
+  agreed_tier_3_units                                   Decimal?  @db.Decimal(10, 2)
+  approved_for_invoice                                  Boolean?
+  line_item_issued                                      Decimal?  @db.Decimal(10, 2)
+  invoice_cancelled_job                                 String?   @db.Text
+  cancel_job                                            String?   @db.Text
+  charge_for_any_revision                               Boolean?
+  charge_for_any_revision_override                      Boolean?
+  charge_for_any_revision_snapshot                      Boolean?
+  client_id                                             String?   @db.VarChar(255)
+  client_contact                                        String?   @db.VarChar(255)
+  client_contact_email                                  String?   @db.VarChar(255)
+  client_contact_email_override                         String?   @db.VarChar(255)
+  commercial_job_price                                  Decimal?  @db.Decimal(10, 2)
+  completed_cancelled_date                              DateTime? @db.Date
+  created_at                                            DateTime? @db.DateTime(0)
+  updated_at                                            DateTime? @db.DateTime(0)
+  received_at                                           DateTime? @db.DateTime(0)
+  deliverables_link                                     String?   @db.Text
+  deliverables_email                                    String?   @db.Text
+  electrical_pe_and_wet_stamp_gl_solargraf              Boolean?
+  estimated_days_to_complete                            Int?
+  estimated_days_to_complete_override                   Int?
+  ever_on_hold                                          Boolean?
+  export_id                                             String?   @db.Text
+  formula_sandbox                                       String?   @db.VarChar(255)
+  formula_sandbox_countdown                             String?   @db.Text
+  formula_sandbox_parcel_tracker                        String?   @db.Text
+  formula_sandbox_2                                     String?   @db.Text
+  formula_sandbox_3                                     String?   @db.Text
+  formula_sandbox_4                                     String?   @db.Text
+  formula_sandbox_5                                     String?   @db.Text
+  formula_sandbox_6                                     String?   @db.Text
+  google_drive_job_deliverables_folder_id               String?   @db.Text
+  google_drive_job_folder_id                            String?   @db.Text
+  in_review                                             Boolean?
+  is_design_job                                         Boolean?
+  is_locked                                             Boolean?
+  is_revision                                           Boolean?
+  updated_by                                            String?   @db.VarChar(255)
+  maximum_message_date_time                             DateTime? @db.DateTime(0)
+  maximum_unix_time                                     Decimal?  @db.Decimal(20, 0)
+  admin_comments                                        String?   @db.Text
+  related_line_item                                     Decimal?  @db.Decimal(10, 2)
+  restricted_access                                     Boolean?
+  service_order_id                                      Int?
+  show_client_structural_upgrade_message                Boolean?
+  six_months_prior                                      DateTime? @db.Date
+  standard_pricing                                      Boolean?
+  structural_or_electrical_pe_and_wet_stamp_selected_gl Boolean?
+  date_due                                              DateTime? @db.Date
+  date_sent_to_client                                   DateTime? @db.Date
+}
+
+model ordered_projects {
+  id                                                String    @id @db.VarChar(255)
+  project_folder                                    String?   @db.VarChar(255)
+  project_number                                    String?   @db.VarChar(255)
+  property_address                                  String?   @db.VarChar(255)
+  property_address_street1                          String?   @db.VarChar(255)
+  property_address_street2                          String?   @db.VarChar(255)
+  property_address_city                             String?   @db.VarChar(255)
+  property_address_state                            String?   @db.VarChar(255)
+  property_address_postal_code                      String?   @db.VarChar(10)
+  property_owner_name                               String?   @db.VarChar(255)
+  date_created                                      DateTime? @db.DateTime(0)
+  master_log_upload                                 Boolean?
+  ahj_automation_complete                           Boolean?
+  updated_at                                        DateTime? @db.DateTime(0)
+  export_id                                         String?   @db.VarChar(255)
+  google_geocoder                                   String?   @db.VarChar(255)
+  re_trigger_activate_create_project_folder_trigger Boolean?
+  last_modified_by                                  String?   @db.VarChar(255)
+  mailing_address_for_wet_stamps                    String?   @db.VarChar(255)
+  new_battery_storage_design                        Boolean?
+  number_of_wet_stamps                              Int?
+  number_of_structural_wet_stamps                   Int?
+  number_of_electrical_wet_stamps                   Int?
+  google_drive_client_account_active_folder_id      String?   @db.VarChar(255)
+  sandbox_checkbox                                  Boolean?
+  ahj_automation_last_run_date                      DateTime? @db.DateTime(0)
+  sandbox_formula                                   String?   @db.VarChar(255)
+  container_id_1                                    String?   @db.VarChar(255)
+  new_share_drive_structure                         String?   @db.VarChar(255)
+  state_id                                          String?   @db.VarChar(255)
+  county_id                                         String?   @db.VarChar(255)
+  county_subdivisions_id                            String?   @db.VarChar(255)
+  place_id                                          String?   @db.VarChar(255)
+  ahj_id                                            String?   @db.VarChar(255)
+  project_property_type                             String?   @db.VarChar(255)
+  is_ground_mount                                   Boolean?
+  mailing_address_for_structural_wet_stamp          String?   @db.VarChar(255)
+  mailing_address_for_electrical_wet_stamp          String?   @db.VarChar(255)
+  client_id                                         String?   @db.VarChar(255)
+  system_size                                       Decimal?  @db.Decimal(10, 2)
+}
+
+model ordered_tasks {
+  id                                                               String    @id @db.VarChar(255)
+  is_locked                                                        Boolean
+  task_name                                                        String?   @db.VarChar(255)
+  other_service_description                                        String?   @db.Text
+  old_task_request_num                                             Int?
+  date_assigned                                                    DateTime? @db.DateTime(0)
+  date_completed_cancelled                                         DateTime? @db.DateTime(0)
+  assigned_to                                                      String?   @db.VarChar(255)
+  task_status                                                      String?   @db.VarChar(255)
+  design_revision_scope                                            String?   @db.VarChar(255)
+  new_storage_design                                               String?   @db.VarChar(255)
+  is_new_task                                                      Boolean
+  not_required                                                     Boolean
+  notes                                                            String?   @db.Text
+  monthly_new_service_index_num                                    Int?
+  line_items                                                       Int?
+  line_items_closed                                                Int?
+  agreed_contractor_flat_price                                     Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_flat_major_revision_price                      Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_task_group_name                                String?   @db.VarChar(255)
+  agreed_contractor_task_group_revision_price                      Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_unit_price                                     Decimal?  @db.Decimal(18, 2)
+  agreed_flat_price                                                Decimal?  @db.Decimal(18, 2)
+  agreed_flat_major_revision_price                                 Decimal?  @db.Decimal(18, 2)
+  agreed_revenue_share                                             Boolean
+  agreed_revenue_share_condition_a                                 String?   @db.Text
+  agreed_revenue_share_condition_a_percent                         Decimal?  @db.Decimal(5, 2)
+  agreed_revenue_share_condition_b                                 String?   @db.Text
+  agreed_revenue_share_condition_b_percent                         Decimal?  @db.Decimal(5, 2)
+  agreed_revision_revenue_share                                    Boolean
+  agreed_task_group_name                                           String?   @db.VarChar(255)
+  agreed_task_group_revision_price                                 Decimal?  @db.Decimal(18, 2)
+  agreed_tier_1_price                                              Decimal?  @db.Decimal(18, 2)
+  agreed_tier_1_major_revision_price                               Decimal?  @db.Decimal(18, 2)
+  agreed_tier_1_units                                              Int?
+  agreed_tier_2_price                                              Decimal?  @db.Decimal(18, 2)
+  agreed_tier_2_major_revision_price                               Decimal?  @db.Decimal(18, 2)
+  agreed_tier_2_units                                              Int?
+  agreed_tier_3_price                                              Decimal?  @db.Decimal(18, 2)
+  agreed_tier_3_major_revision_price                               Decimal?  @db.Decimal(18, 2)
+  agreed_tier_3_units                                              Int?
+  agreed_unit_price                                                Decimal?  @db.Decimal(18, 2)
+  assigned_to_snapshot                                             String?   @db.VarChar(255)
+  calculation_task_assignee_summary_contains_task_assignee         Boolean
+  combined_line_item_nums                                          String?   @db.Text
+  contact_email                                                    String?   @db.VarChar(255)
+  contact_email_2                                                  String?   @db.VarChar(255)
+  contact_email_override                                           String?   @db.VarChar(255)
+  contractor_units                                                 Int?
+  date_created                                                     DateTime? @db.DateTime(0)
+  date_modified                                                    DateTime? @db.DateTime(0)
+  date_outsourced                                                  DateTime? @db.DateTime(0)
+  export_id                                                        String?   @db.VarChar(255)
+  formula_sandbox                                                  String?   @db.VarChar(255)
+  hour                                                             Int?
+  is_active_contractor_snapshot                                    Boolean
+  old_is_new_project_task                                          Boolean
+  total_pv_design_active                                           Int?
+  total_pv_design_on_hold                                          Int?
+  total_structural_pe_stamp_active                                 Int?
+  total_structural_pe_stamp_on_hold                                Int?
+  total_electrical_pe_stamp_active                                 Int?
+  total_electrical_pe_stamp_on_hold                                Int?
+  last_modified_by                                                 String?   @db.VarChar(255)
+  project_index_for_electrical_design                              Int?
+  project_index_for_electrical_load_calculation                    Int?
+  project_index_for_electrical_pe_stamp                            Int?
+  project_index_for_electrical_pil                                 Int?
+  project_index_for_other                                          Int?
+  project_index_for_structural_calculation                         Int?
+  project_index_for_structural_design                              Int?
+  project_index_for_structural_pe_stamp                            Int?
+  project_index_for_structural_pil                                 Int?
+  project_index_for_structural_pre_design_check                    Int?
+  project_index_for_wet_stamp                                      Int?
+  project_minimum_date_formula                                     DateTime? @db.DateTime(0)
+  record_id_num                                                    Int?
+  record_owner                                                     String?   @db.VarChar(255)
+  related_invoice_line_item_detail                                 Int?
+  revenue_share_amount                                             Int?
+  task_count_formula                                               String?   @db.VarChar(255)
+  task_expense_override                                            Decimal?  @db.Decimal(18, 2)
+  task_expense_total                                               Decimal?  @db.Decimal(18, 2)
+  task_price_override                                              Decimal?  @db.Decimal(18, 2)
+  task_price_total                                                 Decimal?  @db.Decimal(18, 2)
+  task_price_total_discount_temp                                   Decimal?  @db.Decimal(18, 2)
+  task_related_invoice                                             Int?
+  task_request_num_override                                        Int?
+  tier                                                             Int?
+  tier_1_price                                                     String?   @db.VarChar(255)
+  tier_2_discount                                                  Decimal?  @db.Decimal(18, 2)
+  tier_2_price                                                     String?   @db.VarChar(255)
+  tier_3_discount                                                  Decimal?  @db.Decimal(18, 2)
+  tier_3_price                                                     String?   @db.VarChar(255)
+  old_tier_discount                                                Decimal?  @db.Decimal(18, 2)
+  tiered_task_price                                                Decimal?  @db.Decimal(18, 2)
+  time_completed                                                   DateTime? @db.Time(0)
+  trigger_lock_task                                                Boolean
+  trigger_outsource                                                Boolean
+  unit_price_task                                                  Boolean
+  units                                                            Int?
+  is_new_task_override                                             Boolean
+  agreed_tier_1_ground_mount_price                                 Decimal?  @db.Decimal(18, 2)
+  agreed_tier_1_ground_mount_major_revision_price                  Decimal?  @db.Decimal(18, 2)
+  agreed_tier_2_ground_mount_price                                 Decimal?  @db.Decimal(18, 2)
+  agreed_tier_2_ground_mount_major_revision_price                  Decimal?  @db.Decimal(18, 2)
+  agreed_tier_3_ground_mount_price                                 Decimal?  @db.Decimal(18, 2)
+  agreed_tier_3_ground_mount_major_revision_price                  Decimal?  @db.Decimal(18, 2)
+  agreed_flat_ground_mount_price                                   Decimal?  @db.Decimal(18, 2)
+  agreed_flat_ground_mount_major_revision_price                    Decimal?  @db.Decimal(18, 2)
+  discount                                                         Decimal?  @db.Decimal(18, 2)
+  formula_sandbox2                                                 String?   @db.VarChar(255)
+  formula_sandbox3                                                 String?   @db.Text
+  task_name_2                                                      String?   @db.VarChar(255)
+  financial_task_name                                              String?   @db.VarChar(255)
+  agreed_flat_minor_revision_price                                 Decimal?  @db.Decimal(18, 2)
+  agreed_flat_ground_mount_minor_revision_price                    Decimal?  @db.Decimal(18, 2)
+  agreed_tier_1_minor_revision_price                               Decimal?  @db.Decimal(18, 2)
+  agreed_tier_1_ground_mount_minor_revision_price                  Decimal?  @db.Decimal(18, 2)
+  agreed_tier_2_minor_revision_price                               Decimal?  @db.Decimal(18, 2)
+  agreed_tier_2_ground_mount_minor_revision_price                  Decimal?  @db.Decimal(18, 2)
+  agreed_tier_3_minor_revision_price                               Decimal?  @db.Decimal(18, 2)
+  agreed_tier_3_ground_mount_minor_revision_price                  Decimal?  @db.Decimal(18, 2)
+  agreed_new_storage_design_additional_price                       Decimal?  @db.Decimal(18, 2)
+  is_new_storage_design_task                                       Boolean
+  is_major_design_revision_task                                    Boolean
+  is_design_task                                                   Boolean
+  is_weekday                                                       Boolean
+  estimated_man_hours                                              Int?
+  direct_labor_costs                                               Decimal?  @db.Decimal(18, 2)
+  invoiced_task_expense_total                                      Decimal?  @db.Decimal(18, 2)
+  date_completed_cancelled_report_formula                          DateTime? @db.DateTime(0)
+  agreed_related_task_revenue_share_condition_a                    Int?
+  agreed_related_task_revenue_share_condition_b                    Int?
+  contact_email_2_override                                         String?   @db.VarChar(255)
+  todate_date_completed_cancelled_report_formula                   DateTime? @db.DateTime(0)
+  tier_1_price_override                                            Decimal?  @db.Decimal(18, 2)
+  tier_2_price_override                                            Decimal?  @db.Decimal(18, 2)
+  tier_3_price_override                                            Decimal?  @db.Decimal(18, 2)
+  tier_1_units_override                                            Int?
+  tier_2_units_override                                            Int?
+  tier_3_units_override                                            Int?
+  tier_1_units                                                     Int?
+  tier_2_units                                                     Int?
+  tier_3_units                                                     Int?
+  tiered_pricing_override                                          Boolean
+  tiered_pricing                                                   Boolean
+  related_tiered_unit_description_override                         Int?
+  related_tiered_unit_description                                  Int?
+  task_index                                                       Int?
+  of_existing_batteries_before_this_design                         Int?
+  price_overridden_for_major_task_price_formula_update             Boolean
+  agreed_additional_or_replaced_storage_design_additional_price    Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_new_storage_design_additional_price            Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_flat_minor_revision_price                      Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_flat_ground_mount_price                        Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_flat_ground_mount_minor_revision_price         Decimal?  @db.Decimal(18, 2)
+  agreed_contractor_flat_ground_mount_major_revision_price         Decimal?  @db.Decimal(18, 2)
+  agreedContractorAdditionalOrReplacedStorageDesignAdditionalPrice Decimal?  @db.Decimal(18, 2)
+  task_expense_formula_fid38_update_2021dec30                      Boolean
+  of_design_tasks_assigned                                         Int?
+  oldest_unassigned_task                                           Int?
+  turnaround_time_hr                                               DateTime? @db.Time(0)
+  pv_design_msg                                                    String?   @db.Text
+  structural_pe_stamp_msg                                          String?   @db.Text
+  electrical_pe_stamp_msg                                          String?   @db.Text
+  time_to_run                                                      DateTime? @db.Time(0)
+  ymd_created                                                      String?   @db.VarChar(255)
+  admin_related_job                                                Int?
+  audit_date_assigned_fix                                          DateTime? @db.DateTime(0)
+  audit_job_vendor_invoice_missing                                 Boolean
+  fix_d628                                                         String?   @db.Text
+  fix_8bdf                                                         String?   @db.Text
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model pricings {
+  id                                                     String    @id @db.VarChar(255)
+  organization_id                                        String?   @db.VarChar(255)
+  service_id                                             String?   @db.VarChar(255)
+  organization_name                                      String?   @db.VarChar(255)
+  task_name                                              String?   @db.VarChar(255)
+  flat_price                                             Decimal?  @db.Decimal(10, 2)
+  new_storage_design_additional_price                    Decimal?  @db.Decimal(10, 2)
+  additional_or_replaced_storage_design_additional_price Decimal?  @db.Decimal(10, 2)
+  flat_major_revision_price                              Decimal?  @db.Decimal(10, 2)
+  flat_minor_revision_price                              Decimal?  @db.Decimal(10, 2)
+  flat_ground_mount_price                                Decimal?  @db.Decimal(10, 2)
+  flat_ground_mount_major_revision_price                 Decimal?  @db.Decimal(10, 2)
+  flat_ground_mount_minor_revision_price                 Decimal?  @db.Decimal(10, 2)
+  unit_price                                             Decimal?  @db.Decimal(10, 2)
+  tier_1_operator                                        String?   @db.VarChar(255)
+  tier_1_units                                           Decimal?  @db.Decimal(10, 0)
+  tier_1_price                                           Decimal?  @db.Decimal(10, 2)
+  tier_1_major_revision_price                            Decimal?  @db.Decimal(10, 2)
+  tier_1_minor_revision_price                            Decimal?  @db.Decimal(10, 2)
+  tier_1_ground_mount_price                              Decimal?  @db.Decimal(10, 2)
+  tier_1_ground_mount_major_revision_price               Decimal?  @db.Decimal(10, 2)
+  tier_1_ground_mount_minor_revision_price               Decimal?  @db.Decimal(10, 2)
+  tier_2_operator                                        String?   @db.VarChar(255)
+  tier_2_units                                           Decimal?  @db.Decimal(10, 0)
+  tier_2_price                                           Decimal?  @db.Decimal(10, 2)
+  tier_2_major_revision_price                            Decimal?  @db.Decimal(10, 2)
+  tier_2_minor_revision_price                            Decimal?  @db.Decimal(10, 2)
+  tier_2_ground_mount_price                              Decimal?  @db.Decimal(10, 2)
+  tier_2_ground_mount_major_revision_price               Decimal?  @db.Decimal(10, 2)
+  tier_2_ground_mount_minor_revision_price               Decimal?  @db.Decimal(10, 2)
+  tier_3_operator                                        String?   @db.VarChar(255)
+  tier_3_units                                           Decimal?  @db.Decimal(10, 0)
+  tier_3_price                                           Decimal?  @db.Decimal(10, 2)
+  tier_3_major_revision_price                            Decimal?  @db.Decimal(10, 2)
+  tier_3_minor_revision_price                            Decimal?  @db.Decimal(10, 2)
+  tier_3_ground_mount_price                              Decimal?  @db.Decimal(10, 2)
+  tier_3_ground_mount_major_revision_price               Decimal?  @db.Decimal(10, 2)
+  tier_3_ground_mount_minor_revision_price               Decimal?  @db.Decimal(10, 2)
+  count_duplicates                                       Decimal?  @db.Decimal(10, 0)
+  created_at                                             DateTime? @db.DateTime(0)
+  updated_at                                             DateTime? @db.DateTime(0)
+  updated_by                                             String?   @db.VarChar(255)
+  service_billing_code_new                               String?   @db.VarChar(255)
+  task_group_revision_price                              Decimal?  @db.Decimal(10, 2)
+  tier_1_related_operator                                Decimal?  @db.Decimal(10, 0)
+  tier_2_related_operator                                Decimal?  @db.Decimal(10, 0)
+  tier_3_related_operator                                Decimal?  @db.Decimal(10, 0)
+  related_service                                        Decimal?  @db.Decimal(10, 0)
+  old_related_tiered_unit_description                    Decimal?  @db.Decimal(10, 0)
+  client_account_tiered_pricing                          Boolean?
+  client_account                                         String?   @db.VarChar(255)
+  related_client_account                                 Decimal?  @db.Decimal(10, 0)
+  internal_account_account_name                          String?   @db.VarChar(255)
+  related_internal_account                               Decimal?  @db.Decimal(10, 0)
+  old_price_group_group_name                             String?   @db.VarChar(255)
+  related_price_group                                    Decimal?  @db.Decimal(10, 0)
+  property_type                                          String?   @db.VarChar(255)
+  related_property_type                                  Decimal?  @db.Decimal(10, 0)
+  record_status                                          String?   @db.VarChar(255)
+  related_record_status                                  Decimal?  @db.Decimal(10, 0)
+
+  @@ignore
 }
