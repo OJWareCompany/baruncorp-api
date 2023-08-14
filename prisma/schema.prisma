@@ -413,6 +413,54 @@ model AHJNoteHistory {
   @@map("ahj_note_history")
 }
 
+model client_accounts {
+  id                                                 String   @id @db.VarChar(255)
+  user_id                                            String?  @db.VarChar(255)
+  first_name                                         String?  @db.VarChar(255)
+  last_name                                          String?  @db.VarChar(255)
+  is_multiple_containers                             Int?     @db.TinyInt
+  is_restricted_access                               Int?     @db.TinyInt
+  file_storage_container_url                         String?  @db.VarChar(255)
+  file_storage_container_id                          String?  @db.VarChar(255)
+  file_storage_client_account_folder_url_formula_url String?  @db.VarChar(255)
+  file_storage_client_account_folder_id              String?  @db.VarChar(255)
+  google_drive_client_account_commercial_folder_url  String?  @db.VarChar(255)
+  google_drive_client_account_commercial_folder_id   String?  @db.VarChar(255)
+  google_drive_client_account_industrial_folder_url  String?  @db.VarChar(255)
+  google_drive_client_account_industrial_folder_id   String?  @db.VarChar(255)
+  google_drive_client_account_residential_folder_url String?  @db.VarChar(255)
+  google_drive_client_account_residential_folder_id  String?  @db.VarChar(255)
+  trigger_create_google_drive_client_account_folders String?  @db.VarChar(255)
+  remaining_credit_balance                           Int?
+  design_notes                                       String?  @db.Text
+  electrical_engineering_notes                       String?  @db.Text
+  structural_engineering_notes                       String?  @db.Text
+  prepaid_services_total                             Decimal? @db.Decimal(10, 2)
+  credits_returned_to_client_as_cash_total           Decimal? @db.Decimal(10, 2)
+  credit_memos_total                                 Decimal? @db.Decimal(10, 2)
+  total_credits_applied_to_invoices                  Decimal? @db.Decimal(10, 2)
+}
+
+model contractors {
+  id                                                       String   @id @db.VarChar(255)
+  prepaid_expenses_total_currency                          Decimal? @db.Decimal(12, 2)
+  credit_memos_total_currency                              Decimal? @db.Decimal(12, 2)
+  credits_returned_to_barun_corp_as_cash_total_currency    Decimal? @db.Decimal(12, 2)
+  total_vendor_credits_applied_to_vendor_invoices_currency Decimal? @db.Decimal(12, 2)
+  remaining_vendor_credit_balance                          Decimal? @db.Decimal(12, 2)
+  revenue_share_checkbox                                   Int?     @db.TinyInt
+  revision_revenue_share_checkbox                          Int?     @db.TinyInt
+  organization_id                                          String?  @db.VarChar(255)
+  organization_name                                        String?  @db.VarChar(255)
+  type                                                     String?  @db.VarChar(255)
+}
+
+model employees {
+  user_id       String   @db.VarChar(255)
+  annual_salary Decimal? @db.Decimal(12, 2)
+  id            String   @id @db.VarChar(255)
+}
+
 model ordered_job_notes {
   id                 String    @id @db.VarChar(255)
   job_id             String?   @db.VarChar(255)
@@ -710,7 +758,6 @@ model ordered_tasks {
   fix_8bdf                                                         String?   @db.Text
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
 model pricings {
   id                                                     String    @id @db.VarChar(255)
   organization_id                                        String?   @db.VarChar(255)
@@ -772,54 +819,4 @@ model pricings {
   related_property_type                                  Decimal?  @db.Decimal(10, 0)
   record_status                                          String?   @db.VarChar(255)
   related_record_status                                  Decimal?  @db.Decimal(10, 0)
-
-  @@ignore
-}
-
-model client_accounts {
-  id                                                 String   @id @db.VarChar(255)
-  user_id                                            String?  @db.VarChar(255)
-  first_name                                         String?  @db.VarChar(255)
-  last_name                                          String?  @db.VarChar(255)
-  is_multiple_containers                             Int?     @db.TinyInt
-  is_restricted_access                               Int?     @db.TinyInt
-  file_storage_container_url                         String?  @db.VarChar(255)
-  file_storage_container_id                          String?  @db.VarChar(255)
-  file_storage_client_account_folder_url_formula_url String?  @db.VarChar(255)
-  file_storage_client_account_folder_id              String?  @db.VarChar(255)
-  google_drive_client_account_commercial_folder_url  String?  @db.VarChar(255)
-  google_drive_client_account_commercial_folder_id   String?  @db.VarChar(255)
-  google_drive_client_account_industrial_folder_url  String?  @db.VarChar(255)
-  google_drive_client_account_industrial_folder_id   String?  @db.VarChar(255)
-  google_drive_client_account_residential_folder_url String?  @db.VarChar(255)
-  google_drive_client_account_residential_folder_id  String?  @db.VarChar(255)
-  trigger_create_google_drive_client_account_folders String?  @db.VarChar(255)
-  remaining_credit_balance                           Int?
-  design_notes                                       String?  @db.Text
-  electrical_engineering_notes                       String?  @db.Text
-  structural_engineering_notes                       String?  @db.Text
-  prepaid_services_total                             Decimal? @db.Decimal(10, 2)
-  credits_returned_to_client_as_cash_total           Decimal? @db.Decimal(10, 2)
-  credit_memos_total                                 Decimal? @db.Decimal(10, 2)
-  total_credits_applied_to_invoices                  Decimal? @db.Decimal(10, 2)
-}
-
-model contractors {
-  id                                                       String   @id @db.VarChar(255)
-  prepaid_expenses_total_currency                          Decimal? @db.Decimal(12, 2)
-  credit_memos_total_currency                              Decimal? @db.Decimal(12, 2)
-  credits_returned_to_barun_corp_as_cash_total_currency    Decimal? @db.Decimal(12, 2)
-  total_vendor_credits_applied_to_vendor_invoices_currency Decimal? @db.Decimal(12, 2)
-  remaining_vendor_credit_balance                          Decimal? @db.Decimal(12, 2)
-  revenue_share_checkbox                                   Int?     @db.TinyInt
-  revision_revenue_share_checkbox                          Int?     @db.TinyInt
-  organization_id                                          String?  @db.VarChar(255)
-  organization_name                                        String?  @db.VarChar(255)
-  type                                                     String?  @db.VarChar(255)
-}
-
-model employees {
-  user_id       String   @db.VarChar(255)
-  annual_salary Decimal? @db.Decimal(12, 2)
-  id            String   @id @db.VarChar(255)
 }
