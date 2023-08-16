@@ -10,10 +10,10 @@ export class CreateOrganizationCommand {
   readonly name: string
   readonly description: string
   readonly organizationType: string
-  readonly isActiveContractor: number | null
-  readonly isActiveWorkResource: number | null
-  readonly revenueShare: number | null
-  readonly revisionRevenueShare: number | null
+  readonly isActiveContractor: boolean | null
+  readonly isActiveWorkResource: boolean | null
+  readonly isRevenueShare: boolean | null
+  readonly isRevisionRevenueShare: boolean | null
   readonly invoiceRecipient: string | null
   readonly invoiceRecipientEmail: string | null
 
@@ -31,8 +31,8 @@ export class CreateOrganizationCommand {
     this.organizationType = props.organizationType
     this.isActiveContractor = props.isActiveContractor
     this.isActiveWorkResource = props.isActiveWorkResource
-    this.revenueShare = props.revenueShare
-    this.revisionRevenueShare = props.revisionRevenueShare
+    this.isRevenueShare = props.isRevenueShare
+    this.isRevisionRevenueShare = props.isRevisionRevenueShare
     this.invoiceRecipient = props.invoiceRecipient
     this.invoiceRecipientEmail = props.invoiceRecipientEmail
   }

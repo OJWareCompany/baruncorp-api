@@ -45,11 +45,11 @@ export class SignUpRequestDto {
 
   @ApiProperty({ default: true })
   @IsString()
-  revenueShare: boolean
+  isRevenueShare: boolean
 
   @ApiProperty({ default: true })
   @IsString()
-  revisionRevenueShare: boolean
+  isRevisionRevenueShare: boolean
 
   @ApiProperty({ default: 'CLIENT' })
   @IsString()

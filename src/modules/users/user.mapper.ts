@@ -27,8 +27,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       isActiveWorkResource: copy.isActiveWorkResource,
       isCurrentUser: copy.isCurrentUser,
       isInactiveOrganizationUser: copy.isInactiveOrganizationUser,
-      revenueShare: copy.revenueShare,
-      revisionRevenueShare: copy.revisionRevenueShare,
+      revenueShare: copy.isRevenueShare,
+      revisionRevenueShare: copy.isRevisionRevenueShare,
       updatedBy: copy.updatedBy,
       type: copy.type,
     }
@@ -47,8 +47,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         isActiveWorkResource: record.isActiveWorkResource,
         isCurrentUser: record.isCurrentUser,
         isInactiveOrganizationUser: record.isInactiveOrganizationUser,
-        revenueShare: record.revenueShare,
-        revisionRevenueShare: record.revisionRevenueShare,
+        isRevenueShare: record.revenueShare,
+        isRevisionRevenueShare: record.revisionRevenueShare,
         type: record.type,
       },
     })

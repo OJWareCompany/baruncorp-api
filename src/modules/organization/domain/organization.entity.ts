@@ -21,6 +21,10 @@ export class OrganizationEntity {
     const copyProps = {
       id: this.id,
       ...this.props,
+      isActiveContractor: !!this.getProps().isActiveContractor,
+      isActiveWorkResource: !!this.getProps().isActiveWorkResource,
+      revenueShare: !!this.getProps().revenueShare,
+      revisionRevenueShare: !!this.getProps().revisionRevenueShare,
     }
     return Object.freeze(copyProps)
   }

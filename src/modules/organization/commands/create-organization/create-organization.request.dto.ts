@@ -47,21 +47,21 @@ export class CreateOrganizationRequestDto {
   @Matches(/(client|individual|outsourcing)/, { message: 'Organization Type Not Found' })
   readonly organizationType: string
 
-  @ApiProperty({ default: 'chris kim' })
+  @ApiProperty({ default: true })
   @IsString()
-  readonly isActiveContractor: number | null
+  readonly isActiveContractor: boolean | null
 
-  @ApiProperty({ default: 'chris kim' })
+  @ApiProperty({ default: true })
   @IsString()
-  readonly isActiveWorkResource: number | null
+  readonly isActiveWorkResource: boolean | null
 
-  @ApiProperty({ default: 'chris kim' })
+  @ApiProperty({ default: true })
   @IsString()
-  readonly revenueShare: number | null
+  readonly isRevenueShare: boolean | null
 
-  @ApiProperty({ default: 'chris kim' })
+  @ApiProperty({ default: true })
   @IsString()
-  readonly revisionRevenueShare: number | null
+  readonly isRevisionRevenueShare: boolean | null
 
   @ApiProperty({ default: 'chris kim' })
   @IsString()

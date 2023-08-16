@@ -12,8 +12,8 @@ export interface UserProps {
   isActiveWorkResource: boolean | null
   isCurrentUser: boolean | null
   isInactiveOrganizationUser: boolean | null
-  revenueShare: boolean | null
-  revisionRevenueShare: boolean | null
+  isRevenueShare: boolean | null
+  isRevisionRevenueShare: boolean | null
   updatedBy: string | null
   type: string | null
 }
@@ -27,7 +27,7 @@ export interface CreateUserProps {
   isActiveWorkResource: boolean | null
   isCurrentUser: boolean | null
   isInactiveOrganizationUser: boolean | null
-  revenueShare: boolean | null
-  revisionRevenueShare: boolean | null
+  isRevenueShare: boolean | null
+  isRevisionRevenueShare: boolean | null
   type: string | null
 }

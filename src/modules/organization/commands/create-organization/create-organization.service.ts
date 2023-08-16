@@ -31,8 +31,8 @@ export class CreateOrganizationService implements ICommandHandler {
       }),
       isActiveContractor: command.isActiveContractor,
       isActiveWorkResource: command.isActiveWorkResource,
-      revenueShare: command.revenueShare,
-      revisionRevenueShare: command.revisionRevenueShare,
+      isRevenueShare: command.isRevenueShare,
+      isRevisionRevenueShare: command.isRevisionRevenueShare,
       invoiceRecipient: command.invoiceRecipient,
       invoiceRecipientEmail: command.invoiceRecipientEmail,
     })

@@ -103,8 +103,8 @@ export class AuthenticationService {
       isActiveWorkResource: rest.isActiveWorkResource,
       isCurrentUser: rest.isCurrentUser,
       isInactiveOrganizationUser: rest.isInactiveOrganizationUser,
-      revenueShare: rest.revenueShare,
-      revisionRevenueShare: rest.revisionRevenueShare,
+      isRevenueShare: rest.isRevenueShare,
+      isRevisionRevenueShare: rest.isRevisionRevenueShare,
       type: rest.type,
     })
 

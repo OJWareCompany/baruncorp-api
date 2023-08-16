@@ -11,10 +11,10 @@ export class OrganizationResponseDto {
   stateOrRegion: string
   street1: string
   street2: string
-  isActiveContractor: number | null
-  isActiveWorkResource: number | null
-  revenueShare: number | null
-  revisionRevenueShare: number | null
+  isActiveContractor: boolean | null
+  isActiveWorkResource: boolean | null
+  isRevenueShare: boolean | null
+  isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
 }

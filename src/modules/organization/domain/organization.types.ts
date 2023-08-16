@@ -7,10 +7,10 @@ export interface OrganizationProps {
   phoneNumber: string
   organizationType: string
   address: Address
-  isActiveContractor: number | null
-  isActiveWorkResource: number | null
-  revenueShare: number | null
-  revisionRevenueShare: number | null
+  isActiveContractor: boolean | null
+  isActiveWorkResource: boolean | null
+  isRevenueShare: boolean | null
+  isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
 }
@@ -22,10 +22,10 @@ export interface CreateOrganizationProps {
   phoneNumber: string
   organizationType: string
   address: Address
-  isActiveContractor: number | null
-  isActiveWorkResource: number | null
-  revenueShare: number | null
-  revisionRevenueShare: number | null
+  isActiveContractor: boolean | null
+  isActiveWorkResource: boolean | null
+  isRevenueShare: boolean | null
+  isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
 }
