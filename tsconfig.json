@@ -19,7 +19,7 @@
     "noFallthroughCasesInSwitch": false,
     "esModuleInterop": true,
     "baseUrl": "./",
-    "rootDir": "./",
+    // "rootDir": "./",
     "paths": {
       "@src/*": ["src/*"],
       "@modules/*": ["src/modules/*"],
