@@ -29,6 +29,12 @@ export class CreateOrganizationService implements ICommandHandler {
         postalCode: command.postalCode,
         country: command.country,
       }),
+      isActiveContractor: command.isActiveContractor,
+      isActiveWorkResource: command.isActiveWorkResource,
+      revenueShare: command.revenueShare,
+      revisionRevenueShare: command.revisionRevenueShare,
+      invoiceRecipient: command.invoiceRecipient,
+      invoiceRecipientEmail: command.invoiceRecipientEmail,
     })
     await this.organizationRepository.insertOrganization(entity)
   }

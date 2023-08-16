@@ -7,10 +7,27 @@ export interface UserProps {
   email: string
   userName: UserName
   organizationId: string
+  address: string | null
+  phoneNumber: string | null
+  isActiveWorkResource: boolean | null
+  isCurrentUser: boolean | null
+  isInactiveOrganizationUser: boolean | null
+  revenueShare: boolean | null
+  revisionRevenueShare: boolean | null
+  updatedBy: string | null
+  type: string | null
 }
 
 export interface CreateUserProps {
   email: string
   userName: UserName
   organizationId: string
+  address: string | null
+  phoneNumber: string | null
+  isActiveWorkResource: boolean | null
+  isCurrentUser: boolean | null
+  isInactiveOrganizationUser: boolean | null
+  revenueShare: boolean | null
+  revisionRevenueShare: boolean | null
+  type: string | null
 }

@@ -17,29 +17,29 @@ model OrganizationTypes {
 }
 
 model Organizations {
-  id                      String             @id @default(uuid())
-  name                    String             @unique
-  description             String?
-  organizationType        String             @map("organization_type")
-  city                    String?
-  country                 String?
-  street1                 String?
-  street2                 String?
-  email                   String?
-  phoneNumber             String?            @map("phone_number")
-  postalCode              String?            @map("postal_code")
-  stateOrRegion           String?            @map("state_or_region")
-  updatedAt               DateTime?          @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt               DateTime?          @default(now()) @map("created_at") @db.DateTime(0)
-  is_active_contractor    Int?               @db.TinyInt
-  is_active_work_resource Int?               @db.TinyInt
-  revenue_share           Int?               @db.TinyInt
-  revision_revenue_share  Int?               @db.TinyInt
-  invoice_recipient       String?            @db.VarChar(255)
-  invoice_recipient_email String?            @db.VarChar(255)
-  invitationEmailEntity   InvitationEmails[]
-  organizationTypeEntity  OrganizationTypes  @relation(fields: [organizationType], references: [type])
-  users                   Users[]
+  id                     String             @id @default(uuid())
+  name                   String             @unique
+  description            String?
+  organizationType       String             @map("organization_type")
+  city                   String?
+  country                String?
+  street1                String?
+  street2                String?
+  email                  String?
+  phoneNumber            String?            @map("phone_number")
+  postalCode             String?            @map("postal_code")
+  stateOrRegion          String?            @map("state_or_region")
+  updatedAt              DateTime?          @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt              DateTime?          @default(now()) @map("created_at") @db.DateTime(0)
+  isActiveContractor     Int?               @map("is_active_contractor") @db.TinyInt
+  isActiveWorkResource   Int?               @map("is_active_work_resource") @db.TinyInt
+  revenueShare           Int?               @map("revenue_share") @db.TinyInt
+  revisionRevenueShare   Int?               @map("revision_revenue_share") @db.TinyInt
+  invoiceRecipient       String?            @map("invoice_recipient") @db.VarChar(255)
+  invoiceRecipientEmail  String?            @map("invoice_recipient_email") @db.VarChar(255)
+  invitationEmailEntity  InvitationEmails[]
+  organizationTypeEntity OrganizationTypes  @relation(fields: [organizationType], references: [type])
+  users                  Users[]
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
@@ -84,29 +84,29 @@ model UserRole {
 }
 
 model Users {
-  id                            String                   @id @default(uuid())
-  email                         String                   @unique
-  firstName                     String                   @map("first_name")
-  lastName                      String                   @map("last_name")
-  organizationId                String                   @map("organization_id")
-  updatedAt                     DateTime?                @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt                     DateTime?                @default(now()) @map("created_at") @db.DateTime(0)
-  address                       String?                  @db.Text
-  phone_number                  String?                  @db.VarChar(20)
-  is_active_work_resource       Boolean?
-  is_current_user               Boolean?
-  is_inactive_organization_user Boolean?
-  revenue_share                 Boolean?
-  revision_revenue_share        Boolean?
-  updated_by                    String?                  @db.VarChar(255)
-  type                          String?                  @db.VarChar(255)
-  passwordEntity                Passwords?
-  UserElectricalLicenses        UserElectricalLicenses[]
-  UserPosition                  UserPosition[]
-  userRoleEntity                UserRole[]
-  UserService                   UserService[]
-  UserStructuralLicenses        UserStructuralLicenses[]
-  organizationEntity            Organizations            @relation(fields: [organizationId], references: [id])
+  id                         String                   @id @default(uuid())
+  email                      String                   @unique
+  firstName                  String                   @map("first_name")
+  lastName                   String                   @map("last_name")
+  organizationId             String                   @map("organization_id")
+  updatedAt                  DateTime?                @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                  DateTime?                @default(now()) @map("created_at") @db.DateTime(0)
+  address                    String?                  @db.Text
+  phoneNumber                String?                  @map("phone_number") @db.VarChar(20)
+  isActiveWorkResource       Boolean?                 @map("is_active_work_resource")
+  isCurrentUser              Boolean?                 @map("is_current_user")
+  isInactiveOrganizationUser Boolean?                 @map("is_inactive_organization_user")
+  revenueShare               Boolean?                 @map("revenue_share")
+  revisionRevenueShare       Boolean?                 @map("revision_revenue_share")
+  updatedBy                  String?                  @map("updated_by") @db.VarChar(255)
+  type                       String?                  @db.VarChar(255)
+  passwordEntity             Passwords?
+  UserElectricalLicenses     UserElectricalLicenses[]
+  UserPosition               UserPosition[]
+  userRoleEntity             UserRole[]
+  UserService                UserService[]
+  UserStructuralLicenses     UserStructuralLicenses[]
+  organizationEntity         Organizations            @relation(fields: [organizationId], references: [id])
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -413,410 +413,420 @@ model AHJNoteHistory {
   @@map("ahj_note_history")
 }
 
-model client_accounts {
-  id                                                 String   @id @db.VarChar(255)
-  user_id                                            String?  @db.VarChar(255)
-  first_name                                         String?  @db.VarChar(255)
-  last_name                                          String?  @db.VarChar(255)
-  is_multiple_containers                             Int?     @db.TinyInt
-  is_restricted_access                               Int?     @db.TinyInt
-  file_storage_container_url                         String?  @db.VarChar(255)
-  file_storage_container_id                          String?  @db.VarChar(255)
-  file_storage_client_account_folder_url_formula_url String?  @db.VarChar(255)
-  file_storage_client_account_folder_id              String?  @db.VarChar(255)
-  google_drive_client_account_commercial_folder_url  String?  @db.VarChar(255)
-  google_drive_client_account_commercial_folder_id   String?  @db.VarChar(255)
-  google_drive_client_account_industrial_folder_url  String?  @db.VarChar(255)
-  google_drive_client_account_industrial_folder_id   String?  @db.VarChar(255)
-  google_drive_client_account_residential_folder_url String?  @db.VarChar(255)
-  google_drive_client_account_residential_folder_id  String?  @db.VarChar(255)
-  trigger_create_google_drive_client_account_folders String?  @db.VarChar(255)
-  remaining_credit_balance                           Int?
-  design_notes                                       String?  @db.Text
-  electrical_engineering_notes                       String?  @db.Text
-  structural_engineering_notes                       String?  @db.Text
-  prepaid_services_total                             Decimal? @db.Decimal(10, 2)
-  credits_returned_to_client_as_cash_total           Decimal? @db.Decimal(10, 2)
-  credit_memos_total                                 Decimal? @db.Decimal(10, 2)
-  total_credits_applied_to_invoices                  Decimal? @db.Decimal(10, 2)
-}
-
 model contractors {
-  id                                                       String   @id @db.VarChar(255)
-  prepaid_expenses_total_currency                          Decimal? @db.Decimal(12, 2)
-  credit_memos_total_currency                              Decimal? @db.Decimal(12, 2)
-  credits_returned_to_barun_corp_as_cash_total_currency    Decimal? @db.Decimal(12, 2)
-  total_vendor_credits_applied_to_vendor_invoices_currency Decimal? @db.Decimal(12, 2)
-  remaining_vendor_credit_balance                          Decimal? @db.Decimal(12, 2)
-  revenue_share_checkbox                                   Int?     @db.TinyInt
-  revision_revenue_share_checkbox                          Int?     @db.TinyInt
-  organization_id                                          String?  @db.VarChar(255)
-  organization_name                                        String?  @db.VarChar(255)
-  type                                                     String?  @db.VarChar(255)
+  id                                                String   @id @map("id") @db.VarChar(255)
+  prepaidExpensesTotalCurrency                      Decimal? @map("prepaid_expenses_total_currency") @db.Decimal(12, 2)
+  creditMemosTotalCurrency                          Decimal? @map("credit_memos_total_currency") @db.Decimal(12, 2)
+  creditsReturnedToBarunCorpAsCashTotalCurrency     Decimal? @map("credits_returned_to_barun_corp_as_cash_total_currency") @db.Decimal(12, 2)
+  totalVendorCreditsAppliedToVendorInvoicesCurrency Decimal? @map("total_vendor_credits_applied_to_vendor_invoices_currency") @db.Decimal(12, 2)
+  remainingVendorCreditBalance                      Decimal? @map("remaining_vendor_credit_balance") @db.Decimal(12, 2)
+  revenueShareCheckbox                              Int?     @map("revenue_share_checkbox") @db.TinyInt
+  revisionRevenueShareCheckbox                      Int?     @map("revision_revenue_share_checkbox") @db.TinyInt
+  organizationId                                    String?  @map("organization_id") @db.VarChar(255)
+  organizationName                                  String?  @map("organization_name") @db.VarChar(255)
+  type                                              String?  @db.VarChar(255)
 }
 
 model employees {
-  user_id       String   @db.VarChar(255)
+  userId        String   @map("user_id") @db.VarChar(255)
   annual_salary Decimal? @db.Decimal(12, 2)
-  id            String   @id @db.VarChar(255)
+  id            String   @id @map("id") @db.VarChar(255)
 }
 
-model ordered_job_notes {
-  id                 String    @id @db.VarChar(255)
-  job_id             String?   @db.VarChar(255)
-  content            String?   @db.Text
-  created_at         DateTime? @db.DateTime(0)
-  created_by         String?   @db.VarChar(255)
-  created_by_user_id String?   @db.VarChar(255)
-  updated_at         DateTime? @db.DateTime(0)
-  updated_by         String?   @db.VarChar(255)
+model orderedJobNotes {
+  id              String    @id @map("id") @db.VarChar(255)
+  jobId           String?   @map("job_id") @db.VarChar(255)
+  content         String?   @db.Text
+  createdAt       DateTime? @map("created_at") @db.DateTime(0)
+  createdBy       String?   @map("created_by") @db.VarChar(255)
+  createdByUserId String?   @map("created_by_user_id") @db.VarChar(255)
+  updatedAt       DateTime? @map("updated_at") @db.DateTime(0)
+  updatedBy       String?   @map("updated_by") @db.VarChar(255)
+
+  @@map("ordered_job_notes")
 }
 
-model ordered_jobs {
-  id                                                    String    @id @db.VarChar(255)
-  job_name                                              String?   @db.Text
-  job_status                                            String?   @db.Text
-  other_comments                                        String?   @db.Text
-  job_notes_f                                           String?   @db.Text
-  additional_information_from_client                    String?   @db.Text
-  agreed_minimum_units                                  Decimal?  @db.Decimal(10, 2)
-  agreed_related_tiered_unit_description                Decimal?  @db.Decimal(10, 2)
-  agreed_tier_1_operator                                String?   @db.VarChar(255)
-  agreed_tier_1_units                                   Decimal?  @db.Decimal(10, 2)
-  agreed_tier_2_operator                                String?   @db.VarChar(255)
-  agreed_tier_2_units                                   Decimal?  @db.Decimal(10, 2)
-  agreed_tier_3_operator                                String?   @db.VarChar(255)
-  agreed_tier_3_units                                   Decimal?  @db.Decimal(10, 2)
-  approved_for_invoice                                  Boolean?
-  line_item_issued                                      Decimal?  @db.Decimal(10, 2)
-  invoice_cancelled_job                                 String?   @db.Text
-  cancel_job                                            String?   @db.Text
-  charge_for_any_revision                               Boolean?
-  charge_for_any_revision_override                      Boolean?
-  charge_for_any_revision_snapshot                      Boolean?
-  client_id                                             String?   @db.VarChar(255)
-  client_contact                                        String?   @db.VarChar(255)
-  client_contact_email                                  String?   @db.VarChar(255)
-  client_contact_email_override                         String?   @db.VarChar(255)
-  commercial_job_price                                  Decimal?  @db.Decimal(10, 2)
-  completed_cancelled_date                              DateTime? @db.Date
-  created_at                                            DateTime? @db.DateTime(0)
-  updated_at                                            DateTime? @db.DateTime(0)
-  received_at                                           DateTime? @db.DateTime(0)
-  deliverables_link                                     String?   @db.Text
-  deliverables_email                                    String?   @db.Text
-  electrical_pe_and_wet_stamp_gl_solargraf              Boolean?
-  estimated_days_to_complete                            Int?
-  estimated_days_to_complete_override                   Int?
-  ever_on_hold                                          Boolean?
-  export_id                                             String?   @db.Text
-  formula_sandbox                                       String?   @db.VarChar(255)
-  formula_sandbox_countdown                             String?   @db.Text
-  formula_sandbox_parcel_tracker                        String?   @db.Text
-  formula_sandbox_2                                     String?   @db.Text
-  formula_sandbox_3                                     String?   @db.Text
-  formula_sandbox_4                                     String?   @db.Text
-  formula_sandbox_5                                     String?   @db.Text
-  formula_sandbox_6                                     String?   @db.Text
-  google_drive_job_deliverables_folder_id               String?   @db.Text
-  google_drive_job_folder_id                            String?   @db.Text
-  in_review                                             Boolean?
-  is_design_job                                         Boolean?
-  is_locked                                             Boolean?
-  is_revision                                           Boolean?
-  updated_by                                            String?   @db.VarChar(255)
-  maximum_message_date_time                             DateTime? @db.DateTime(0)
-  maximum_unix_time                                     Decimal?  @db.Decimal(20, 0)
-  admin_comments                                        String?   @db.Text
-  related_line_item                                     Decimal?  @db.Decimal(10, 2)
-  restricted_access                                     Boolean?
-  service_order_id                                      Int?
-  show_client_structural_upgrade_message                Boolean?
-  six_months_prior                                      DateTime? @db.Date
-  standard_pricing                                      Boolean?
-  structural_or_electrical_pe_and_wet_stamp_selected_gl Boolean?
-  date_due                                              DateTime? @db.Date
-  date_sent_to_client                                   DateTime? @db.Date
+model orderedJobs {
+  id                                            String    @id @map("id") @db.VarChar(255)
+  jobName                                       String?   @map("job_name") @db.Text
+  jobStatus                                     String?   @map("job_status") @db.Text
+  otherComments                                 String?   @map("other_comments") @db.Text
+  jobNotesF                                     String?   @map("job_notes_f") @db.Text
+  additionalInformationFromClient               String?   @map("additional_information_from_client") @db.Text
+  agreedMinimumUnits                            Decimal?  @map("agreed_minimum_units") @db.Decimal(10, 2)
+  agreedRelatedTieredUnitDescription            Decimal?  @map("agreed_related_tiered_unit_description") @db.Decimal(10, 2)
+  agreedTier1Operator                           String?   @map("agreed_tier_1_operator") @db.VarChar(255)
+  agreedTier1Units                              Decimal?  @map("agreed_tier_1_units") @db.Decimal(10, 2)
+  agreedTier2Operator                           String?   @map("agreed_tier_2_operator") @db.VarChar(255)
+  agreedTier2Units                              Decimal?  @map("agreed_tier_2_units") @db.Decimal(10, 2)
+  agreedTier3Operator                           String?   @map("agreed_tier_3_operator") @db.VarChar(255)
+  agreedTier3Units                              Decimal?  @map("agreed_tier_3_units") @db.Decimal(10, 2)
+  approvedForInvoice                            Boolean?  @map("approved_for_invoice")
+  lineItemIssued                                Decimal?  @map("line_item_issued") @db.Decimal(10, 2)
+  invoiceCancelledJob                           String?   @map("invoice_cancelled_job") @db.Text
+  cancelJob                                     String?   @map("cancel_job") @db.Text
+  chargeForAnyRevision                          Boolean?  @map("charge_for_any_revision")
+  chargeForAnyRevisionOverride                  Boolean?  @map("charge_for_any_revision_override")
+  chargeForAnyRevisionSnapshot                  Boolean?  @map("charge_for_any_revision_snapshot")
+  clientId                                      String?   @map("client_id") @db.VarChar(255)
+  clientContact                                 String?   @map("client_contact") @db.VarChar(255)
+  clientContactEmail                            String?   @map("client_contact_email") @db.VarChar(255)
+  clientContactEmailOverride                    String?   @map("client_contact_email_override") @db.VarChar(255)
+  commercialJobPrice                            Decimal?  @map("commercial_job_price") @db.Decimal(10, 2)
+  completedCancelledDate                        DateTime? @map("completed_cancelled_date") @db.Date
+  createdAt                                     DateTime? @map("created_at") @db.DateTime(0)
+  updatedAt                                     DateTime? @map("updated_at") @db.DateTime(0)
+  receivedAt                                    DateTime? @map("received_at") @db.DateTime(0)
+  deliverablesLink                              String?   @map("deliverables_link") @db.Text
+  deliverablesEmail                             String?   @map("deliverables_email") @db.Text
+  electricalPEAndWetStampGlSolargraf            Boolean?  @map("electrical_pe_and_wet_stamp_gl_solargraf")
+  estimatedDaysToComplete                       Int?      @map("estimated_days_to_complete")
+  estimatedDaysToCompleteOverride               Int?      @map("estimated_days_to_complete_override")
+  everOnHold                                    Boolean?  @map("ever_on_hold")
+  exportId                                      String?   @map("export_id") @db.Text
+  formulaSandbox                                String?   @map("formula_sandbox") @db.VarChar(255)
+  formulaSandboxCountdown                       String?   @map("formula_sandbox_countdown") @db.Text
+  formulaSandboxParcelTracker                   String?   @map("formula_sandbox_parcel_tracker") @db.Text
+  formulaSandbox2                               String?   @map("formula_sandbox_2") @db.Text
+  formulaSandbox3                               String?   @map("formula_sandbox_3") @db.Text
+  formulaSandbox4                               String?   @map("formula_sandbox_4") @db.Text
+  formulaSandbox5                               String?   @map("formula_sandbox_5") @db.Text
+  formulaSandbox6                               String?   @map("formula_sandbox_6") @db.Text
+  googleDriveJobDeliverablesFolderId            String?   @map("google_drive_job_deliverables_folder_id") @db.Text
+  googleDriveJobFolderId                        String?   @map("google_drive_job_folder_id") @db.Text
+  inReview                                      Boolean?  @map("in_review")
+  isDesignJob                                   Boolean?  @map("is_design_job")
+  isLocked                                      Boolean?  @map("is_locked")
+  isRevision                                    Boolean?  @map("is_revision")
+  updatedBy                                     String?   @map("updated_by") @db.VarChar(255)
+  maximumMessageDateTime                        DateTime? @map("maximum_message_date_time") @db.DateTime(0)
+  maximumUnixTime                               Decimal?  @map("maximum_unix_time") @db.Decimal(20, 0)
+  adminComments                                 String?   @map("admin_comments") @db.Text
+  relatedLineItem                               Decimal?  @map("related_line_item") @db.Decimal(10, 2)
+  restrictedAccess                              Boolean?  @map("restricted_access")
+  serviceOrderId                                Int?      @map("service_order_id")
+  showClientStructuralUpgradeMessage            Boolean?  @map("show_client_structural_upgrade_message")
+  sixMonthsPrior                                DateTime? @map("six_months_prior") @db.Date
+  standardPricing                               Boolean?  @map("standard_pricing")
+  structuralOrElectricalPEAndWetStampSelectedGl Boolean?  @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
+  dateDue                                       DateTime? @map("date_due") @db.Date
+  dateSentToClient                              DateTime? @map("date_sent_to_client") @db.Date
+
+  @@map("ordered_jobs")
 }
 
-model ordered_projects {
-  id                                                String    @id @db.VarChar(255)
-  project_folder                                    String?   @db.VarChar(255)
-  project_number                                    String?   @db.VarChar(255)
-  property_address                                  String?   @db.VarChar(255)
-  property_address_street1                          String?   @db.VarChar(255)
-  property_address_street2                          String?   @db.VarChar(255)
-  property_address_city                             String?   @db.VarChar(255)
-  property_address_state                            String?   @db.VarChar(255)
-  property_address_postal_code                      String?   @db.VarChar(10)
-  property_owner_name                               String?   @db.VarChar(255)
-  date_created                                      DateTime? @db.DateTime(0)
-  master_log_upload                                 Boolean?
-  ahj_automation_complete                           Boolean?
-  updated_at                                        DateTime? @db.DateTime(0)
-  export_id                                         String?   @db.VarChar(255)
-  google_geocoder                                   String?   @db.VarChar(255)
-  re_trigger_activate_create_project_folder_trigger Boolean?
-  last_modified_by                                  String?   @db.VarChar(255)
-  mailing_address_for_wet_stamps                    String?   @db.VarChar(255)
-  new_battery_storage_design                        Boolean?
-  number_of_wet_stamps                              Int?
-  number_of_structural_wet_stamps                   Int?
-  number_of_electrical_wet_stamps                   Int?
-  google_drive_client_account_active_folder_id      String?   @db.VarChar(255)
-  sandbox_checkbox                                  Boolean?
-  ahj_automation_last_run_date                      DateTime? @db.DateTime(0)
-  sandbox_formula                                   String?   @db.VarChar(255)
-  container_id_1                                    String?   @db.VarChar(255)
-  new_share_drive_structure                         String?   @db.VarChar(255)
-  state_id                                          String?   @db.VarChar(255)
-  county_id                                         String?   @db.VarChar(255)
-  county_subdivisions_id                            String?   @db.VarChar(255)
-  place_id                                          String?   @db.VarChar(255)
-  ahj_id                                            String?   @db.VarChar(255)
-  project_property_type                             String?   @db.VarChar(255)
-  is_ground_mount                                   Boolean?
-  mailing_address_for_structural_wet_stamp          String?   @db.VarChar(255)
-  mailing_address_for_electrical_wet_stamp          String?   @db.VarChar(255)
-  client_id                                         String?   @db.VarChar(255)
-  system_size                                       Decimal?  @db.Decimal(10, 2)
+model orderedProjects {
+  id                                          String    @id @map("id") @db.VarChar(255)
+  projectFolder                               String?   @map("project_folder") @db.VarChar(255)
+  projectNumber                               String?   @map("project_number") @db.VarChar(255)
+  propertyAddress                             String?   @map("property_address") @db.VarChar(255)
+  propertyAddressStreet1                      String?   @map("property_address_street1") @db.VarChar(255)
+  propertyAddressStreet2                      String?   @map("property_address_street2") @db.VarChar(255)
+  propertyAddressCity                         String?   @map("property_address_city") @db.VarChar(255)
+  propertyAddressState                        String?   @map("property_address_state") @db.VarChar(255)
+  propertyAddressPostalCode                   String?   @map("property_address_postal_code") @db.VarChar(10)
+  propertyOwnerName                           String?   @map("property_owner_name") @db.VarChar(255)
+  dateCreated                                 DateTime? @map("date_created") @db.DateTime(0)
+  masterLogUpload                             Boolean?  @map("master_log_upload")
+  ahjAutomationComplete                       Boolean?  @map("ahj_automation_complete")
+  updatedAt                                   DateTime? @map("updated_at") @db.DateTime(0)
+  exportId                                    String?   @map("export_id") @db.VarChar(255)
+  googleGeocoder                              String?   @map("google_geocoder") @db.VarChar(255)
+  reTriggerActivateCreateProjectFolderTrigger Boolean?  @map("re_trigger_activate_create_project_folder_trigger")
+  lastModifiedBy                              String?   @map("last_modified_by") @db.VarChar(255)
+  mailingAddressForWetStamps                  String?   @map("mailing_address_for_wet_stamps") @db.VarChar(255)
+  newBatteryStorageDesign                     Boolean?  @map("new_battery_storage_design")
+  numberOfWetStamps                           Int?      @map("number_of_wet_stamps")
+  numberOfStructuralWetStamps                 Int?      @map("number_of_structural_wet_stamps")
+  numberOfElectricalWetStamps                 Int?      @map("number_of_electrical_wet_stamps")
+  googleDriveClientAccountActiveFolderId      String?   @map("google_drive_client_account_active_folder_id") @db.VarChar(255)
+  sandboxCheckbox                             Boolean?  @map("sandbox_checkbox")
+  ahjAutomationLastRunDate                    DateTime? @map("ahj_automation_last_run_date") @db.DateTime(0)
+  sandboxFormula                              String?   @map("sandbox_formula") @db.VarChar(255)
+  containerId1                                String?   @map("container_id_1") @db.VarChar(255)
+  newShareDriveStructure                      String?   @map("new_share_drive_structure") @db.VarChar(255)
+  stateId                                     String?   @map("state_id") @db.VarChar(255)
+  countyId                                    String?   @map("county_id") @db.VarChar(255)
+  countySubdivisionsId                        String?   @map("county_subdivisions_id") @db.VarChar(255)
+  placeId                                     String?   @map("place_id") @db.VarChar(255)
+  ahjId                                       String?   @map("ahj_id") @db.VarChar(255)
+  projectPropertyType                         String?   @map("project_property_type") @db.VarChar(255)
+  isGroundMount                               Boolean?  @map("is_ground_mount")
+  mailingAddressForStructuralWetStamp         String?   @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
+  mailingAddressForElectricalWetStamp         String?   @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
+  clientId                                    String?   @map("client_id") @db.VarChar(255)
+  systemSize                                  Decimal?  @map("system_size") @db.Decimal(10, 2)
+
+  @@map("ordered_projects")
 }
 
-model ordered_tasks {
-  id                                                               String    @id @db.VarChar(255)
-  is_locked                                                        Boolean
-  task_name                                                        String?   @db.VarChar(255)
-  other_service_description                                        String?   @db.Text
-  old_task_request_num                                             Int?
-  date_assigned                                                    DateTime? @db.DateTime(0)
-  date_completed_cancelled                                         DateTime? @db.DateTime(0)
-  assigned_to                                                      String?   @db.VarChar(255)
-  task_status                                                      String?   @db.VarChar(255)
-  design_revision_scope                                            String?   @db.VarChar(255)
-  new_storage_design                                               String?   @db.VarChar(255)
-  is_new_task                                                      Boolean
-  not_required                                                     Boolean
-  notes                                                            String?   @db.Text
-  monthly_new_service_index_num                                    Int?
-  line_items                                                       Int?
-  line_items_closed                                                Int?
-  agreed_contractor_flat_price                                     Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_flat_major_revision_price                      Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_task_group_name                                String?   @db.VarChar(255)
-  agreed_contractor_task_group_revision_price                      Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_unit_price                                     Decimal?  @db.Decimal(18, 2)
-  agreed_flat_price                                                Decimal?  @db.Decimal(18, 2)
-  agreed_flat_major_revision_price                                 Decimal?  @db.Decimal(18, 2)
-  agreed_revenue_share                                             Boolean
-  agreed_revenue_share_condition_a                                 String?   @db.Text
-  agreed_revenue_share_condition_a_percent                         Decimal?  @db.Decimal(5, 2)
-  agreed_revenue_share_condition_b                                 String?   @db.Text
-  agreed_revenue_share_condition_b_percent                         Decimal?  @db.Decimal(5, 2)
-  agreed_revision_revenue_share                                    Boolean
-  agreed_task_group_name                                           String?   @db.VarChar(255)
-  agreed_task_group_revision_price                                 Decimal?  @db.Decimal(18, 2)
-  agreed_tier_1_price                                              Decimal?  @db.Decimal(18, 2)
-  agreed_tier_1_major_revision_price                               Decimal?  @db.Decimal(18, 2)
-  agreed_tier_1_units                                              Int?
-  agreed_tier_2_price                                              Decimal?  @db.Decimal(18, 2)
-  agreed_tier_2_major_revision_price                               Decimal?  @db.Decimal(18, 2)
-  agreed_tier_2_units                                              Int?
-  agreed_tier_3_price                                              Decimal?  @db.Decimal(18, 2)
-  agreed_tier_3_major_revision_price                               Decimal?  @db.Decimal(18, 2)
-  agreed_tier_3_units                                              Int?
-  agreed_unit_price                                                Decimal?  @db.Decimal(18, 2)
-  assigned_to_snapshot                                             String?   @db.VarChar(255)
-  calculation_task_assignee_summary_contains_task_assignee         Boolean
-  combined_line_item_nums                                          String?   @db.Text
-  contact_email                                                    String?   @db.VarChar(255)
-  contact_email_2                                                  String?   @db.VarChar(255)
-  contact_email_override                                           String?   @db.VarChar(255)
-  contractor_units                                                 Int?
-  date_created                                                     DateTime? @db.DateTime(0)
-  date_modified                                                    DateTime? @db.DateTime(0)
-  date_outsourced                                                  DateTime? @db.DateTime(0)
-  export_id                                                        String?   @db.VarChar(255)
-  formula_sandbox                                                  String?   @db.VarChar(255)
-  hour                                                             Int?
-  is_active_contractor_snapshot                                    Boolean
-  old_is_new_project_task                                          Boolean
-  total_pv_design_active                                           Int?
-  total_pv_design_on_hold                                          Int?
-  total_structural_pe_stamp_active                                 Int?
-  total_structural_pe_stamp_on_hold                                Int?
-  total_electrical_pe_stamp_active                                 Int?
-  total_electrical_pe_stamp_on_hold                                Int?
-  last_modified_by                                                 String?   @db.VarChar(255)
-  project_index_for_electrical_design                              Int?
-  project_index_for_electrical_load_calculation                    Int?
-  project_index_for_electrical_pe_stamp                            Int?
-  project_index_for_electrical_pil                                 Int?
-  project_index_for_other                                          Int?
-  project_index_for_structural_calculation                         Int?
-  project_index_for_structural_design                              Int?
-  project_index_for_structural_pe_stamp                            Int?
-  project_index_for_structural_pil                                 Int?
-  project_index_for_structural_pre_design_check                    Int?
-  project_index_for_wet_stamp                                      Int?
-  project_minimum_date_formula                                     DateTime? @db.DateTime(0)
-  record_id_num                                                    Int?
-  record_owner                                                     String?   @db.VarChar(255)
-  related_invoice_line_item_detail                                 Int?
-  revenue_share_amount                                             Int?
-  task_count_formula                                               String?   @db.VarChar(255)
-  task_expense_override                                            Decimal?  @db.Decimal(18, 2)
-  task_expense_total                                               Decimal?  @db.Decimal(18, 2)
-  task_price_override                                              Decimal?  @db.Decimal(18, 2)
-  task_price_total                                                 Decimal?  @db.Decimal(18, 2)
-  task_price_total_discount_temp                                   Decimal?  @db.Decimal(18, 2)
-  task_related_invoice                                             Int?
-  task_request_num_override                                        Int?
-  tier                                                             Int?
-  tier_1_price                                                     String?   @db.VarChar(255)
-  tier_2_discount                                                  Decimal?  @db.Decimal(18, 2)
-  tier_2_price                                                     String?   @db.VarChar(255)
-  tier_3_discount                                                  Decimal?  @db.Decimal(18, 2)
-  tier_3_price                                                     String?   @db.VarChar(255)
-  old_tier_discount                                                Decimal?  @db.Decimal(18, 2)
-  tiered_task_price                                                Decimal?  @db.Decimal(18, 2)
-  time_completed                                                   DateTime? @db.Time(0)
-  trigger_lock_task                                                Boolean
-  trigger_outsource                                                Boolean
-  unit_price_task                                                  Boolean
-  units                                                            Int?
-  is_new_task_override                                             Boolean
-  agreed_tier_1_ground_mount_price                                 Decimal?  @db.Decimal(18, 2)
-  agreed_tier_1_ground_mount_major_revision_price                  Decimal?  @db.Decimal(18, 2)
-  agreed_tier_2_ground_mount_price                                 Decimal?  @db.Decimal(18, 2)
-  agreed_tier_2_ground_mount_major_revision_price                  Decimal?  @db.Decimal(18, 2)
-  agreed_tier_3_ground_mount_price                                 Decimal?  @db.Decimal(18, 2)
-  agreed_tier_3_ground_mount_major_revision_price                  Decimal?  @db.Decimal(18, 2)
-  agreed_flat_ground_mount_price                                   Decimal?  @db.Decimal(18, 2)
-  agreed_flat_ground_mount_major_revision_price                    Decimal?  @db.Decimal(18, 2)
-  discount                                                         Decimal?  @db.Decimal(18, 2)
-  formula_sandbox2                                                 String?   @db.VarChar(255)
-  formula_sandbox3                                                 String?   @db.Text
-  task_name_2                                                      String?   @db.VarChar(255)
-  financial_task_name                                              String?   @db.VarChar(255)
-  agreed_flat_minor_revision_price                                 Decimal?  @db.Decimal(18, 2)
-  agreed_flat_ground_mount_minor_revision_price                    Decimal?  @db.Decimal(18, 2)
-  agreed_tier_1_minor_revision_price                               Decimal?  @db.Decimal(18, 2)
-  agreed_tier_1_ground_mount_minor_revision_price                  Decimal?  @db.Decimal(18, 2)
-  agreed_tier_2_minor_revision_price                               Decimal?  @db.Decimal(18, 2)
-  agreed_tier_2_ground_mount_minor_revision_price                  Decimal?  @db.Decimal(18, 2)
-  agreed_tier_3_minor_revision_price                               Decimal?  @db.Decimal(18, 2)
-  agreed_tier_3_ground_mount_minor_revision_price                  Decimal?  @db.Decimal(18, 2)
-  agreed_new_storage_design_additional_price                       Decimal?  @db.Decimal(18, 2)
-  is_new_storage_design_task                                       Boolean
-  is_major_design_revision_task                                    Boolean
-  is_design_task                                                   Boolean
-  is_weekday                                                       Boolean
-  estimated_man_hours                                              Int?
-  direct_labor_costs                                               Decimal?  @db.Decimal(18, 2)
-  invoiced_task_expense_total                                      Decimal?  @db.Decimal(18, 2)
-  date_completed_cancelled_report_formula                          DateTime? @db.DateTime(0)
-  agreed_related_task_revenue_share_condition_a                    Int?
-  agreed_related_task_revenue_share_condition_b                    Int?
-  contact_email_2_override                                         String?   @db.VarChar(255)
-  todate_date_completed_cancelled_report_formula                   DateTime? @db.DateTime(0)
-  tier_1_price_override                                            Decimal?  @db.Decimal(18, 2)
-  tier_2_price_override                                            Decimal?  @db.Decimal(18, 2)
-  tier_3_price_override                                            Decimal?  @db.Decimal(18, 2)
-  tier_1_units_override                                            Int?
-  tier_2_units_override                                            Int?
-  tier_3_units_override                                            Int?
-  tier_1_units                                                     Int?
-  tier_2_units                                                     Int?
-  tier_3_units                                                     Int?
-  tiered_pricing_override                                          Boolean
-  tiered_pricing                                                   Boolean
-  related_tiered_unit_description_override                         Int?
-  related_tiered_unit_description                                  Int?
-  task_index                                                       Int?
-  of_existing_batteries_before_this_design                         Int?
-  price_overridden_for_major_task_price_formula_update             Boolean
-  agreed_additional_or_replaced_storage_design_additional_price    Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_new_storage_design_additional_price            Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_flat_minor_revision_price                      Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_flat_ground_mount_price                        Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_flat_ground_mount_minor_revision_price         Decimal?  @db.Decimal(18, 2)
-  agreed_contractor_flat_ground_mount_major_revision_price         Decimal?  @db.Decimal(18, 2)
-  agreedContractorAdditionalOrReplacedStorageDesignAdditionalPrice Decimal?  @db.Decimal(18, 2)
-  task_expense_formula_fid38_update_2021dec30                      Boolean
-  of_design_tasks_assigned                                         Int?
-  oldest_unassigned_task                                           Int?
-  turnaround_time_hr                                               DateTime? @db.Time(0)
-  pv_design_msg                                                    String?   @db.Text
-  structural_pe_stamp_msg                                          String?   @db.Text
-  electrical_pe_stamp_msg                                          String?   @db.Text
-  time_to_run                                                      DateTime? @db.Time(0)
-  ymd_created                                                      String?   @db.VarChar(255)
-  admin_related_job                                                Int?
-  audit_date_assigned_fix                                          DateTime? @db.DateTime(0)
-  audit_job_vendor_invoice_missing                                 Boolean
-  fix_d628                                                         String?   @db.Text
-  fix_8bdf                                                         String?   @db.Text
+model orderedTasks {
+  id                                                               String    @id @map("id") @db.VarChar(255)
+  isLocked                                                         Boolean   @map("is_locked")
+  taskName                                                         String?   @map("task_name") @db.VarChar(255)
+  otherServiceDescription                                          String?   @map("other_service_description") @db.Text
+  oldTaskRequestNum                                                Int?      @map("old_task_request_num")
+  dateAssigned                                                     DateTime? @map("date_assigned") @db.DateTime(0)
+  dateCompletedCancelled                                           DateTime? @map("date_completed_cancelled") @db.DateTime(0)
+  assignedTo                                                       String?   @map("assigned_to") @db.VarChar(255)
+  taskStatus                                                       String?   @map("task_status") @db.VarChar(255)
+  designRevisionScope                                              String?   @map("design_revision_scope") @db.VarChar(255)
+  newStorageDesign                                                 String?   @map("new_storage_design") @db.VarChar(255)
+  isNewTask                                                        Boolean   @map("is_new_task")
+  notRequired                                                      Boolean   @map("not_required")
+  notes                                                            String?   @map("notes") @db.Text
+  monthlyNewServiceIndexNum                                        Int?      @map("monthly_new_service_index_num")
+  lineItems                                                        Int?      @map("line_items")
+  lineItemsClosed                                                  Int?      @map("line_items_closed")
+  agreedContractorFlatPrice                                        Decimal?  @map("agreed_contractor_flat_price") @db.Decimal(18, 2)
+  agreedContractorFlatMajorRevisionPrice                           Decimal?  @map("agreed_contractor_flat_major_revision_price") @db.Decimal(18, 2)
+  agreedContractorTaskGroupName                                    String?   @map("agreed_contractor_task_group_name") @db.VarChar(255)
+  agreedContractorTaskGroupRevisionPrice                           Decimal?  @map("agreed_contractor_task_group_revision_price") @db.Decimal(18, 2)
+  agreedContractorUnitPrice                                        Decimal?  @map("agreed_contractor_unit_price") @db.Decimal(18, 2)
+  agreedFlatPrice                                                  Decimal?  @map("agreed_flat_price") @db.Decimal(18, 2)
+  agreedFlatMajorRevisionPrice                                     Decimal?  @map("agreed_flat_major_revision_price") @db.Decimal(18, 2)
+  agreedRevenueShare                                               Boolean   @map("agreed_revenue_share")
+  agreedRevenueShareConditionA                                     String?   @map("agreed_revenue_share_condition_a") @db.Text
+  agreedRevenueShareConditionAPercent                              Decimal?  @map("agreed_revenue_share_condition_a_percent") @db.Decimal(5, 2)
+  agreedRevenueShareConditionB                                     String?   @map("agreed_revenue_share_condition_b") @db.Text
+  agreedRevenueShareConditionBPercent                              Decimal?  @map("agreed_revenue_share_condition_b_percent") @db.Decimal(5, 2)
+  agreedRevisionRevenueShare                                       Boolean   @map("agreed_revision_revenue_share")
+  agreedTaskGroupName                                              String?   @map("agreed_task_group_name") @db.VarChar(255)
+  agreedTaskGroupRevisionPrice                                     Decimal?  @map("agreed_task_group_revision_price") @db.Decimal(18, 2)
+  agreedTier1Price                                                 Decimal?  @map("agreed_tier_1_price") @db.Decimal(18, 2)
+  agreedTier1MajorRevisionPrice                                    Decimal?  @map("agreed_tier_1_major_revision_price") @db.Decimal(18, 2)
+  agreedTier1Units                                                 Int?      @map("agreed_tier_1_units")
+  agreedTier2Price                                                 Decimal?  @map("agreed_tier_2_price") @db.Decimal(18, 2)
+  agreedTier2MajorRevisionPrice                                    Decimal?  @map("agreed_tier_2_major_revision_price") @db.Decimal(18, 2)
+  agreedTier2Units                                                 Int?      @map("agreed_tier_2_units")
+  agreedTier3Price                                                 Decimal?  @map("agreed_tier_3_price") @db.Decimal(18, 2)
+  agreedTier3MajorRevisionPrice                                    Decimal?  @map("agreed_tier_3_major_revision_price") @db.Decimal(18, 2)
+  agreedTier3Units                                                 Int?      @map("agreed_tier_3_units")
+  agreedUnitPrice                                                  Decimal?  @map("agreed_unit_price") @db.Decimal(18, 2)
+  assignedToSnapshot                                               String?   @map("assigned_to_snapshot") @db.VarChar(255)
+  calculationTaskAssigneeSummaryContainsTaskAssignee               Boolean   @map("calculation_task_assignee_summary_contains_task_assignee")
+  combinedLineItemNums                                             String?   @map("combined_line_item_nums") @db.Text
+  contactEmail                                                     String?   @map("contact_email") @db.VarChar(255)
+  contactEmail2                                                    String?   @map("contact_email_2") @db.VarChar(255)
+  contactEmailOverride                                             String?   @map("contact_email_override") @db.VarChar(255)
+  contractorUnits                                                  Int?      @map("contractor_units")
+  dateCreated                                                      DateTime? @map("date_created") @db.DateTime(0)
+  dateModified                                                     DateTime? @map("date_modified") @db.DateTime(0)
+  dateOutsourced                                                   DateTime? @map("date_outsourced") @db.DateTime(0)
+  exportId                                                         String?   @map("export_id") @db.VarChar(255)
+  formulaSandbox                                                   String?   @map("formula_sandbox") @db.VarChar(255)
+  hour                                                             Int?      @map("hour")
+  isActiveContractorSnapshot                                       Boolean   @map("is_active_contractor_snapshot")
+  oldIsNewProjectTask                                              Boolean   @map("old_is_new_project_task")
+  totalPvDesignActive                                              Int?      @map("total_pv_design_active")
+  totalPvDesignOnHold                                              Int?      @map("total_pv_design_on_hold")
+  totalStructuralPeStampActive                                     Int?      @map("total_structural_pe_stamp_active")
+  totalStructuralPeStampOnHold                                     Int?      @map("total_structural_pe_stamp_on_hold")
+  totalElectricalPeStampActive                                     Int?      @map("total_electrical_pe_stamp_active")
+  totalElectricalPeStampOnHold                                     Int?      @map("total_electrical_pe_stamp_on_hold")
+  lastModifiedBy                                                   String?   @map("last_modified_by") @db.VarChar(255)
+  projectIndexForElectricalDesign                                  Int?      @map("project_index_for_electrical_design")
+  projectIndexForElectricalLoadCalculation                         Int?      @map("project_index_for_electrical_load_calculation")
+  projectIndexForElectricalPeStamp                                 Int?      @map("project_index_for_electrical_pe_stamp")
+  projectIndexForElectricalPil                                     Int?      @map("project_index_for_electrical_pil")
+  projectIndexForOther                                             Int?      @map("project_index_for_other")
+  projectIndexForStructuralCalculation                             Int?      @map("project_index_for_structural_calculation")
+  projectIndexForStructuralDesign                                  Int?      @map("project_index_for_structural_design")
+  projectIndexForStructuralPeStamp                                 Int?      @map("project_index_for_structural_pe_stamp")
+  projectIndexForStructuralPil                                     Int?      @map("project_index_for_structural_pil")
+  projectIndexForStructuralPreDesignCheck                          Int?      @map("project_index_for_structural_pre_design_check")
+  projectIndexForWetStamp                                          Int?      @map("project_index_for_wet_stamp")
+  projectMinimumDateFormula                                        DateTime? @map("project_minimum_date_formula") @db.DateTime(0)
+  recordIdNum                                                      Int?      @map("record_id_num")
+  recordOwner                                                      String?   @map("record_owner") @db.VarChar(255)
+  relatedInvoiceLineItemDetail                                     Int?      @map("related_invoice_line_item_detail")
+  revenueShareAmount                                               Int?      @map("revenue_share_amount")
+  taskCountFormula                                                 String?   @map("task_count_formula") @db.VarChar(255)
+  taskExpenseOverride                                              Decimal?  @map("task_expense_override") @db.Decimal(18, 2)
+  taskExpenseTotal                                                 Decimal?  @map("task_expense_total") @db.Decimal(18, 2)
+  taskPriceOverride                                                Decimal?  @map("task_price_override") @db.Decimal(18, 2)
+  taskPriceTotal                                                   Decimal?  @map("task_price_total") @db.Decimal(18, 2)
+  taskPriceTotalDiscountTemp                                       Decimal?  @map("task_price_total_discount_temp") @db.Decimal(18, 2)
+  taskRelatedInvoice                                               Int?      @map("task_related_invoice")
+  taskRequestNumOverride                                           Int?      @map("task_request_num_override")
+  tier                                                             Int?      @map("tier")
+  tier1Price                                                       String?   @map("tier_1_price") @db.VarChar(255)
+  tier2Discount                                                    Decimal?  @map("tier_2_discount") @db.Decimal(18, 2)
+  tier2Price                                                       String?   @map("tier_2_price") @db.VarChar(255)
+  tier3Discount                                                    Decimal?  @map("tier_3_discount") @db.Decimal(18, 2)
+  tier3Price                                                       String?   @map("tier_3_price") @db.VarChar(255)
+  oldTierDiscount                                                  Decimal?  @map("old_tier_discount") @db.Decimal(18, 2)
+  tieredTaskPrice                                                  Decimal?  @map("tiered_task_price") @db.Decimal(18, 2)
+  timeCompleted                                                    DateTime? @map("time_completed") @db.Time(0)
+  triggerLockTask                                                  Boolean   @map("trigger_lock_task")
+  triggerOutsource                                                 Boolean   @map("trigger_outsource")
+  unitPriceTask                                                    Boolean   @map("unit_price_task")
+  units                                                            Int?      @map("units")
+  isNewTaskOverride                                                Boolean   @map("is_new_task_override")
+  agreedTier1GroundMountPrice                                      Decimal?  @map("agreed_tier_1_ground_mount_price") @db.Decimal(18, 2)
+  agreedTier1GroundMountMajorRevisionPrice                         Decimal?  @map("agreed_tier_1_ground_mount_major_revision_price") @db.Decimal(18, 2)
+  agreedTier2GroundMountPrice                                      Decimal?  @map("agreed_tier_2_ground_mount_price") @db.Decimal(18, 2)
+  agreedTier2GroundMountMajorRevisionPrice                         Decimal?  @map("agreed_tier_2_ground_mount_major_revision_price") @db.Decimal(18, 2)
+  agreedTier3GroundMountPrice                                      Decimal?  @map("agreed_tier_3_ground_mount_price") @db.Decimal(18, 2)
+  agreedTier3GroundMountMajorRevisionPrice                         Decimal?  @map("agreed_tier_3_ground_mount_major_revision_price") @db.Decimal(18, 2)
+  agreedFlatGroundMountPrice                                       Decimal?  @map("agreed_flat_ground_mount_price") @db.Decimal(18, 2)
+  agreedFlatGroundMountMajorRevisionPrice                          Decimal?  @map("agreed_flat_ground_mount_major_revision_price") @db.Decimal(18, 2)
+  discount                                                         Decimal?  @map("discount") @db.Decimal(18, 2)
+  formulaSandbox2                                                  String?   @map("formula_sandbox2") @db.VarChar(255)
+  formulaSandbox3                                                  String?   @map("formula_sandbox3") @db.Text
+  taskName2                                                        String?   @map("task_name_2") @db.VarChar(255)
+  financialTaskName                                                String?   @map("financial_task_name") @db.VarChar(255)
+  agreedFlatMinorRevisionPrice                                     Decimal?  @map("agreed_flat_minor_revision_price") @db.Decimal(18, 2)
+  agreedFlatGroundMountMinorRevisionPrice                          Decimal?  @map("agreed_flat_ground_mount_minor_revision_price") @db.Decimal(18, 2)
+  agreedTier1MinorRevisionPrice                                    Decimal?  @map("agreed_tier_1_minor_revision_price") @db.Decimal(18, 2)
+  agreedTier1GroundMountMinorRevisionPrice                         Decimal?  @map("agreed_tier_1_ground_mount_minor_revision_price") @db.Decimal(18, 2)
+  agreedTier2MinorRevisionPrice                                    Decimal?  @map("agreed_tier_2_minor_revision_price") @db.Decimal(18, 2)
+  agreedTier2GroundMountMinorRevisionPrice                         Decimal?  @map("agreed_tier_2_ground_mount_minor_revision_price") @db.Decimal(18, 2)
+  agreedTier3MinorRevisionPrice                                    Decimal?  @map("agreed_tier_3_minor_revision_price") @db.Decimal(18, 2)
+  agreedTier3GroundMountMinorRevisionPrice                         Decimal?  @map("agreed_tier_3_ground_mount_minor_revision_price") @db.Decimal(18, 2)
+  agreedNewStorageDesignAdditionalPrice                            Decimal?  @map("agreed_new_storage_design_additional_price") @db.Decimal(18, 2)
+  isNewStorageDesignTask                                           Boolean   @map("is_new_storage_design_task")
+  isMajorDesignRevisionTask                                        Boolean   @map("is_major_design_revision_task")
+  isDesignTask                                                     Boolean   @map("is_design_task")
+  isWeekday                                                        Boolean   @map("is_weekday")
+  estimatedManHours                                                Int?      @map("estimated_man_hours")
+  directLaborCosts                                                 Decimal?  @map("direct_labor_costs") @db.Decimal(18, 2)
+  invoicedTaskExpenseTotal                                         Decimal?  @map("invoiced_task_expense_total") @db.Decimal(18, 2)
+  dateCompletedCancelledReportFormula                              DateTime? @map("date_completed_cancelled_report_formula") @db.DateTime(0)
+  agreedRelatedTaskRevenueShareConditionA                          Int?      @map("agreed_related_task_revenue_share_condition_a")
+  agreedRelatedTaskRevenueShareConditionB                          Int?      @map("agreed_related_task_revenue_share_condition_b")
+  contactEmail2Override                                            String?   @map("contact_email_2_override") @db.VarChar(255)
+  todateDateCompletedCancelledReportFormula                        DateTime? @map("todate_date_completed_cancelled_report_formula") @db.DateTime(0)
+  tier1PriceOverride                                               Decimal?  @map("tier_1_price_override") @db.Decimal(18, 2)
+  tier2PriceOverride                                               Decimal?  @map("tier_2_price_override") @db.Decimal(18, 2)
+  tier3PriceOverride                                               Decimal?  @map("tier_3_price_override") @db.Decimal(18, 2)
+  tier1UnitsOverride                                               Int?      @map("tier_1_units_override")
+  tier2UnitsOverride                                               Int?      @map("tier_2_units_override")
+  tier3UnitsOverride                                               Int?      @map("tier_3_units_override")
+  tier1Units                                                       Int?      @map("tier_1_units")
+  tier2Units                                                       Int?      @map("tier_2_units")
+  tier3Units                                                       Int?      @map("tier_3_units")
+  tieredPricingOverride                                            Boolean   @map("tiered_pricing_override")
+  tieredPricing                                                    Boolean   @map("tiered_pricing")
+  relatedTieredUnitDescriptionOverride                             Int?      @map("related_tiered_unit_description_override")
+  relatedTieredUnitDescription                                     Int?      @map("related_tiered_unit_description")
+  taskIndex                                                        Int?      @map("task_index")
+  ofExistingBatteriesBeforeThisDesign                              Int?      @map("of_existing_batteries_before_this_design")
+  priceOverriddenForMajorTaskPriceFormulaUpdate                    Boolean   @map("price_overridden_for_major_task_price_formula_update")
+  agreedAdditionalOrReplacedStorageDesignAdditionalPrice           Decimal?  @map("agreed_additional_or_replaced_storage_design_additional_price") @db.Decimal(18, 2)
+  agreedContractorNewStorageDesignAdditionalPrice                  Decimal?  @map("agreed_contractor_new_storage_design_additional_price") @db.Decimal(18, 2)
+  agreedContractorFlatMinorRevisionPrice                           Decimal?  @map("agreed_contractor_flat_minor_revision_price") @db.Decimal(18, 2)
+  agreedContractorFlatGroundMountPrice                             Decimal?  @map("agreed_contractor_flat_ground_mount_price") @db.Decimal(18, 2)
+  agreedContractorFlatGroundMountMinorRevisionPrice                Decimal?  @map("agreed_contractor_flat_ground_mount_minor_revision_price") @db.Decimal(18, 2)
+  agreedContractorFlatGroundMountMajorRevisionPrice                Decimal?  @map("agreed_contractor_flat_ground_mount_major_revision_price") @db.Decimal(18, 2)
+  agreedContractorAdditionalOrReplacedStorageDesignAdditionalPrice Decimal?  @map("agreedContractorAdditionalOrReplacedStorageDesignAdditionalPrice") @db.Decimal(18, 2)
+  taskExpenseFormulaFid38Update2021Dec30                           Boolean   @map("task_expense_formula_fid38_update_2021dec30")
+  ofDesignTasksAssigned                                            Int?      @map("of_design_tasks_assigned")
+  oldestUnassignedTask                                             Int?      @map("oldest_unassigned_task")
+  turnaroundTimeHr                                                 DateTime? @map("turnaround_time_hr") @db.Time(0)
+  pvDesignMsg                                                      String?   @map("pv_design_msg") @db.Text
+  structuralPeStampMsg                                             String?   @map("structural_pe_stamp_msg") @db.Text
+  electricalPeStampMsg                                             String?   @map("electrical_pe_stamp_msg") @db.Text
+  timeToRun                                                        DateTime? @map("time_to_run") @db.Time(0)
+  ymdCreated                                                       String?   @map("ymd_created") @db.VarChar(255)
+  adminRelatedJob                                                  Int?      @map("admin_related_job")
+  auditDateAssignedFix                                             DateTime? @map("audit_date_assigned_fix") @db.DateTime(0)
+  auditJobVendorInvoiceMissing                                     Boolean   @map("audit_job_vendor_invoice_missing")
+  fixD628                                                          String?   @map("fix_d628") @db.Text
+  fix8Bdf                                                          String?   @map("fix_8bdf") @db.Text
+
+  @@map("ordered_tasks")
 }
 
 model pricings {
-  id                                                     String    @id @db.VarChar(255)
-  organization_id                                        String?   @db.VarChar(255)
-  service_id                                             String?   @db.VarChar(255)
-  organization_name                                      String?   @db.VarChar(255)
-  task_name                                              String?   @db.VarChar(255)
-  flat_price                                             Decimal?  @db.Decimal(10, 2)
-  new_storage_design_additional_price                    Decimal?  @db.Decimal(10, 2)
-  additional_or_replaced_storage_design_additional_price Decimal?  @db.Decimal(10, 2)
-  flat_major_revision_price                              Decimal?  @db.Decimal(10, 2)
-  flat_minor_revision_price                              Decimal?  @db.Decimal(10, 2)
-  flat_ground_mount_price                                Decimal?  @db.Decimal(10, 2)
-  flat_ground_mount_major_revision_price                 Decimal?  @db.Decimal(10, 2)
-  flat_ground_mount_minor_revision_price                 Decimal?  @db.Decimal(10, 2)
-  unit_price                                             Decimal?  @db.Decimal(10, 2)
-  tier_1_operator                                        String?   @db.VarChar(255)
-  tier_1_units                                           Decimal?  @db.Decimal(10, 0)
-  tier_1_price                                           Decimal?  @db.Decimal(10, 2)
-  tier_1_major_revision_price                            Decimal?  @db.Decimal(10, 2)
-  tier_1_minor_revision_price                            Decimal?  @db.Decimal(10, 2)
-  tier_1_ground_mount_price                              Decimal?  @db.Decimal(10, 2)
-  tier_1_ground_mount_major_revision_price               Decimal?  @db.Decimal(10, 2)
-  tier_1_ground_mount_minor_revision_price               Decimal?  @db.Decimal(10, 2)
-  tier_2_operator                                        String?   @db.VarChar(255)
-  tier_2_units                                           Decimal?  @db.Decimal(10, 0)
-  tier_2_price                                           Decimal?  @db.Decimal(10, 2)
-  tier_2_major_revision_price                            Decimal?  @db.Decimal(10, 2)
-  tier_2_minor_revision_price                            Decimal?  @db.Decimal(10, 2)
-  tier_2_ground_mount_price                              Decimal?  @db.Decimal(10, 2)
-  tier_2_ground_mount_major_revision_price               Decimal?  @db.Decimal(10, 2)
-  tier_2_ground_mount_minor_revision_price               Decimal?  @db.Decimal(10, 2)
-  tier_3_operator                                        String?   @db.VarChar(255)
-  tier_3_units                                           Decimal?  @db.Decimal(10, 0)
-  tier_3_price                                           Decimal?  @db.Decimal(10, 2)
-  tier_3_major_revision_price                            Decimal?  @db.Decimal(10, 2)
-  tier_3_minor_revision_price                            Decimal?  @db.Decimal(10, 2)
-  tier_3_ground_mount_price                              Decimal?  @db.Decimal(10, 2)
-  tier_3_ground_mount_major_revision_price               Decimal?  @db.Decimal(10, 2)
-  tier_3_ground_mount_minor_revision_price               Decimal?  @db.Decimal(10, 2)
-  count_duplicates                                       Decimal?  @db.Decimal(10, 0)
-  created_at                                             DateTime? @db.DateTime(0)
-  updated_at                                             DateTime? @db.DateTime(0)
-  updated_by                                             String?   @db.VarChar(255)
-  service_billing_code_new                               String?   @db.VarChar(255)
-  task_group_revision_price                              Decimal?  @db.Decimal(10, 2)
-  tier_1_related_operator                                Decimal?  @db.Decimal(10, 0)
-  tier_2_related_operator                                Decimal?  @db.Decimal(10, 0)
-  tier_3_related_operator                                Decimal?  @db.Decimal(10, 0)
-  related_service                                        Decimal?  @db.Decimal(10, 0)
-  old_related_tiered_unit_description                    Decimal?  @db.Decimal(10, 0)
-  client_account_tiered_pricing                          Boolean?
-  client_account                                         String?   @db.VarChar(255)
-  related_client_account                                 Decimal?  @db.Decimal(10, 0)
-  internal_account_account_name                          String?   @db.VarChar(255)
-  related_internal_account                               Decimal?  @db.Decimal(10, 0)
-  old_price_group_group_name                             String?   @db.VarChar(255)
-  related_price_group                                    Decimal?  @db.Decimal(10, 0)
-  property_type                                          String?   @db.VarChar(255)
-  related_property_type                                  Decimal?  @db.Decimal(10, 0)
-  record_status                                          String?   @db.VarChar(255)
-  related_record_status                                  Decimal?  @db.Decimal(10, 0)
+  id                                               String    @id @map("id") @db.VarChar(255)
+  organizationId                                   String?   @map("organization_id") @db.VarChar(255)
+  serviceId                                        String?   @map("service_id") @db.VarChar(255)
+  organizationName                                 String?   @map("organization_name") @db.VarChar(255)
+  taskName                                         String?   @map("task_name") @db.VarChar(255)
+  flatPrice                                        Decimal?  @map("flat_price") @db.Decimal(10, 2)
+  newStorageDesignAdditionalPrice                  Decimal?  @map("new_storage_design_additional_price") @db.Decimal(10, 2)
+  additionalOrReplacedStorageDesignAdditionalPrice Decimal?  @map("additional_or_replaced_storage_design_additional_price") @db.Decimal(10, 2)
+  flatMajorRevisionPrice                           Decimal?  @map("flat_major_revision_price") @db.Decimal(10, 2)
+  flatMinorRevisionPrice                           Decimal?  @map("flat_minor_revision_price") @db.Decimal(10, 2)
+  flatGroundMountPrice                             Decimal?  @map("flat_ground_mount_price") @db.Decimal(10, 2)
+  flatGroundMountMajorRevisionPrice                Decimal?  @map("flat_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  flatGroundMountMinorRevisionPrice                Decimal?  @map("flat_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  unitPrice                                        Decimal?  @map("unit_price") @db.Decimal(10, 2)
+  tier1Operator                                    String?   @map("tier_1_operator") @db.VarChar(255)
+  tier1Units                                       Decimal?  @map("tier_1_units") @db.Decimal(10, 0)
+  tier1Price                                       Decimal?  @map("tier_1_price") @db.Decimal(10, 2)
+  tier1MajorRevisionPrice                          Decimal?  @map("tier_1_major_revision_price") @db.Decimal(10, 2)
+  tier1MinorRevisionPrice                          Decimal?  @map("tier_1_minor_revision_price") @db.Decimal(10, 2)
+  tier1GroundMountPrice                            Decimal?  @map("tier_1_ground_mount_price") @db.Decimal(10, 2)
+  tier1GroundMountMajorRevisionPrice               Decimal?  @map("tier_1_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  tier1GroundMountMinorRevisionPrice               Decimal?  @map("tier_1_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  tier2Operator                                    String?   @map("tier_2_operator") @db.VarChar(255)
+  tier2Units                                       Decimal?  @map("tier_2_units") @db.Decimal(10, 0)
+  tier2Price                                       Decimal?  @map("tier_2_price") @db.Decimal(10, 2)
+  tier2MajorRevisionPrice                          Decimal?  @map("tier_2_major_revision_price") @db.Decimal(10, 2)
+  tier2MinorRevisionPrice                          Decimal?  @map("tier_2_minor_revision_price") @db.Decimal(10, 2)
+  tier2GroundMountPrice                            Decimal?  @map("tier_2_ground_mount_price") @db.Decimal(10, 2)
+  tier2GroundMountMajorRevisionPrice               Decimal?  @map("tier_2_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  tier2GroundMountMinorRevisionPrice               Decimal?  @map("tier_2_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  tier3Operator                                    String?   @map("tier_3_operator") @db.VarChar(255)
+  tier3Units                                       Decimal?  @map("tier_3_units") @db.Decimal(10, 0)
+  tier3Price                                       Decimal?  @map("tier_3_price") @db.Decimal(10, 2)
+  tier3MajorRevisionPrice                          Decimal?  @map("tier_3_major_revision_price") @db.Decimal(10, 2)
+  tier3MinorRevisionPrice                          Decimal?  @map("tier_3_minor_revision_price") @db.Decimal(10, 2)
+  tier3GroundMountPrice                            Decimal?  @map("tier_3_ground_mount_price") @db.Decimal(10, 2)
+  tier3GroundMountMajorRevisionPrice               Decimal?  @map("tier_3_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  tier3GroundMountMinorRevisionPrice               Decimal?  @map("tier_3_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  countDuplicates                                  Decimal?  @map("count_duplicates") @db.Decimal(10, 0)
+  createdAt                                        DateTime? @map("created_at") @db.DateTime(0)
+  updatedAt                                        DateTime? @map("updated_at") @db.DateTime(0)
+  updatedBy                                        String?   @map("updated_by") @db.VarChar(255)
+  serviceBillingCodeNew                            String?   @map("service_billing_code_new") @db.VarChar(255)
+  taskGroupRevisionPrice                           Decimal?  @map("task_group_revision_price") @db.Decimal(10, 2)
+  tier1RelatedOperator                             Decimal?  @map("tier_1_related_operator") @db.Decimal(10, 0)
+  tier2RelatedOperator                             Decimal?  @map("tier_2_related_operator") @db.Decimal(10, 0)
+  tier3RelatedOperator                             Decimal?  @map("tier_3_related_operator") @db.Decimal(10, 0)
+  relatedService                                   Decimal?  @map("related_service") @db.Decimal(10, 0)
+  oldRelatedTieredUnitDescription                  Decimal?  @map("old_related_tiered_unit_description") @db.Decimal(10, 0)
+  clientAccountTieredPricing                       Boolean?  @map("client_account_tiered_pricing")
+  clientAccount                                    String?   @map("client_account") @db.VarChar(255)
+  relatedClientAccount                             Decimal?  @map("related_client_account") @db.Decimal(10, 0)
+  internalAccountAccountName                       String?   @map("internal_account_account_name") @db.VarChar(255)
+  relatedInternalAccount                           Decimal?  @map("related_internal_account") @db.Decimal(10, 0)
+  oldPriceGroupGroupName                           String?   @map("old_price_group_group_name") @db.VarChar(255)
+  relatedPriceGroup                                Decimal?  @map("related_price_group") @db.Decimal(10, 0)
+  propertyType                                     String?   @map("property_type") @db.VarChar(255)
+  relatedPropertyType                              Decimal?  @map("related_property_type") @db.Decimal(10, 0)
+  recordStatus                                     String?   @map("record_status") @db.VarChar(255)
+  relatedRecordStatus                              Decimal?  @map("related_record_status") @db.Decimal(10, 0)
+}
+
+model clientAccounts {
+  id                                           String   @id @map("id") @db.VarChar(255)
+  userId                                       String?  @map("user_id") @db.VarChar(255)
+  firstName                                    String?  @map("first_name") @db.VarChar(255)
+  lastName                                     String?  @map("last_name") @db.VarChar(255)
+  isMultipleContainers                         Int?     @map("is_multiple_containers") @db.TinyInt
+  isRestrictedAccess                           Int?     @map("is_restricted_access") @db.TinyInt
+  fileStorageContainerUrl                      String?  @map("file_storage_container_url") @db.VarChar(255)
+  fileStorageContainerId                       String?  @map("file_storage_container_id") @db.VarChar(255)
+  fileStorageClientAccountFolderUrlFormulaUrl  String?  @map("file_storage_client_account_folder_url_formula_url") @db.VarChar(255)
+  fileStorageClientAccountFolderId             String?  @map("file_storage_client_account_folder_id") @db.VarChar(255)
+  googleDriveClientAccountCommercialFolderUrl  String?  @map("google_drive_client_account_commercial_folder_url") @db.VarChar(255)
+  googleDriveClientAccountCommercialFolderId   String?  @map("google_drive_client_account_commercial_folder_id") @db.VarChar(255)
+  googleDriveClientAccountIndustrialFolderUrl  String?  @map("google_drive_client_account_industrial_folder_url") @db.VarChar(255)
+  googleDriveClientAccountIndustrialFolderId   String?  @map("google_drive_client_account_industrial_folder_id") @db.VarChar(255)
+  googleDriveClientAccountResidentialFolderUrl String?  @map("google_drive_client_account_residential_folder_url") @db.VarChar(255)
+  googleDriveClientAccountResidentialFolderId  String?  @map("google_drive_client_account_residential_folder_id") @db.VarChar(255)
+  triggerCreateGoogleDriveClientAccountFolders String?  @map("trigger_create_google_drive_client_account_folders") @db.VarChar(255)
+  remainingCreditBalance                       Int?     @map("remaining_credit_balance")
+  designNotes                                  String?  @map("design_notes") @db.Text
+  electricalEngineeringNotes                   String?  @map("electrical_engineering_notes") @db.Text
+  structuralEngineeringNotes                   String?  @map("structural_engineering_notes") @db.Text
+  prepaidServicesTotal                         Decimal? @map("prepaid_services_total") @db.Decimal(10, 2)
+  creditsReturnedToClientAsCashTotal           Decimal? @map("credits_returned_to_client_as_cash_total") @db.Decimal(10, 2)
+  creditMemosTotal                             Decimal? @map("credit_memos_total") @db.Decimal(10, 2)
+  totalCreditsAppliedToInvoices                Decimal? @map("total_credits_applied_to_invoices") @db.Decimal(10, 2)
+
+  @@map("client_accounts")
 }

@@ -22,4 +22,36 @@ export class SignUpRequestDto {
   @ApiProperty({ default: 'AE2DE' })
   @IsString()
   readonly code: string
+
+  @ApiProperty({ default: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
+  @IsString()
+  address: string
+
+  @ApiProperty({ default: '857-250-4567' })
+  @IsString()
+  phoneNumber: string
+
+  @ApiProperty({ default: true })
+  @IsString()
+  isActiveWorkResource: boolean
+
+  @ApiProperty({ default: true })
+  @IsString()
+  isCurrentUser: boolean
+
+  @ApiProperty({ default: true })
+  @IsString()
+  isInactiveOrganizationUser: boolean
+
+  @ApiProperty({ default: true })
+  @IsString()
+  revenueShare: boolean
+
+  @ApiProperty({ default: true })
+  @IsString()
+  revisionRevenueShare: boolean
+
+  @ApiProperty({ default: 'CLIENT' })
+  @IsString()
+  type: string
 }

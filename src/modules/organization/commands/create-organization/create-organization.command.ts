@@ -10,6 +10,12 @@ export class CreateOrganizationCommand {
   readonly name: string
   readonly description: string
   readonly organizationType: string
+  readonly isActiveContractor: number | null
+  readonly isActiveWorkResource: number | null
+  readonly revenueShare: number | null
+  readonly revisionRevenueShare: number | null
+  readonly invoiceRecipient: string | null
+  readonly invoiceRecipientEmail: string | null
 
   constructor(props: CreateOrganizationCommand) {
     this.email = props.email
@@ -23,5 +29,11 @@ export class CreateOrganizationCommand {
     this.name = props.name
     this.description = props.description
     this.organizationType = props.organizationType
+    this.isActiveContractor = props.isActiveContractor
+    this.isActiveWorkResource = props.isActiveWorkResource
+    this.revenueShare = props.revenueShare
+    this.revisionRevenueShare = props.revisionRevenueShare
+    this.invoiceRecipient = props.invoiceRecipient
+    this.invoiceRecipientEmail = props.invoiceRecipientEmail
   }
 }

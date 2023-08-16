@@ -22,6 +22,15 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       organizationId: copy.organizationId,
       updatedAt: new Date(),
       createdAt: new Date(),
+      address: copy.address,
+      phoneNumber: copy.phoneNumber,
+      isActiveWorkResource: copy.isActiveWorkResource,
+      isCurrentUser: copy.isCurrentUser,
+      isInactiveOrganizationUser: copy.isInactiveOrganizationUser,
+      revenueShare: copy.revenueShare,
+      revisionRevenueShare: copy.revisionRevenueShare,
+      updatedBy: copy.updatedBy,
+      type: copy.type,
     }
     return record
   }
@@ -33,6 +42,14 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         email: record.email,
         userName: new UserName({ firstName: record.firstName, lastName: record.lastName }),
         organizationId: record.organizationId,
+        address: record.address,
+        phoneNumber: record.phoneNumber,
+        isActiveWorkResource: record.isActiveWorkResource,
+        isCurrentUser: record.isCurrentUser,
+        isInactiveOrganizationUser: record.isInactiveOrganizationUser,
+        revenueShare: record.revenueShare,
+        revisionRevenueShare: record.revisionRevenueShare,
+        type: record.type,
       },
     })
     return entity

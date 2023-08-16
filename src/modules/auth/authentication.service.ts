@@ -98,6 +98,14 @@ export class AuthenticationService {
       email: rest.email,
       userName: new UserName({ firstName: rest.firstName, lastName: rest.lastName }),
       organizationId: organization.id,
+      address: rest.address,
+      phoneNumber: rest.phoneNumber,
+      isActiveWorkResource: rest.isActiveWorkResource,
+      isCurrentUser: rest.isCurrentUser,
+      isInactiveOrganizationUser: rest.isInactiveOrganizationUser,
+      revenueShare: rest.revenueShare,
+      revisionRevenueShare: rest.revisionRevenueShare,
+      type: rest.type,
     })
 
     await this.usersService.insertUser(userEntity, new InputPasswordVO(password))

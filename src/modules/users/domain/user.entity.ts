@@ -15,13 +15,20 @@ export class UserEntity {
 
   static create(create: CreateUserProps): UserEntity {
     const id = v4()
-    const props: UserProps = { ...create }
+    const props: UserProps = {
+      ...create,
+      updatedBy: '',
+    }
     return new UserEntity({ id, props })
   }
 
   constructor({ id, props }: { id: any; props: CreateUserProps }) {
     this.id = id
-    this.props = props
+    const propsCopy: UserProps = {
+      ...props,
+      updatedBy: props.userName.getFullName(),
+    }
+    this.props = propsCopy
   }
 
   getProps(): UserProps & { id: string } {
