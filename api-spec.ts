@@ -43,9 +43,9 @@ export interface SignUpRequestDto {
   /** @default true */
   isInactiveOrganizationUser: boolean
   /** @default true */
-  revenueShare: boolean
+  isRevenueShare: boolean
   /** @default true */
-  revisionRevenueShare: boolean
+  isRevisionRevenueShare: boolean
   /** @default "CLIENT" */
   type: string
 }
@@ -129,12 +129,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-08-16T01:28:30.619Z"
+   * @default "2023-08-16T06:43:48.900Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-08-16T01:28:30.619Z"
+   * @default "2023-08-16T06:43:48.900Z"
    */
   expiryDate: string
 }
@@ -152,10 +152,10 @@ export interface OrganizationResponseDto {
   stateOrRegion: string
   street1: string
   street2: string
-  isActiveContractor: number | null
-  isActiveWorkResource: number | null
-  revenueShare: number | null
-  revisionRevenueShare: number | null
+  isActiveContractor: boolean | null
+  isActiveWorkResource: boolean | null
+  isRevenueShare: boolean | null
+  isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
 }
@@ -186,14 +186,14 @@ export interface CreateOrganizationRequestDto {
    * @pattern /(client|individual|outsourcing)/
    */
   organizationType: string
-  /** @default "chris kim" */
-  isActiveContractor: number | null
-  /** @default "chris kim" */
-  isActiveWorkResource: number | null
-  /** @default "chris kim" */
-  revenueShare: number | null
-  /** @default "chris kim" */
-  revisionRevenueShare: number | null
+  /** @default true */
+  isActiveContractor: boolean | null
+  /** @default true */
+  isActiveWorkResource: boolean | null
+  /** @default true */
+  isRevenueShare: boolean | null
+  /** @default true */
+  isRevisionRevenueShare: boolean | null
   /** @default "chris kim" */
   invoiceRecipient: string | null
   /** @default "chriskim@gmail.com" */
@@ -262,11 +262,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-08-16T01:28:30.652Z" */
+  /** @default "2023-08-16T06:43:48.941Z" */
   createdAt: string | null
-  /** @default "2023-08-16T01:28:30.652Z" */
+  /** @default "2023-08-16T06:43:48.941Z" */
   updatedAt: string | null
-  /** @default "2023-08-16T01:28:30.652Z" */
+  /** @default "2023-08-16T06:43:48.941Z" */
   updatedBy: string | null
   /** @default "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
