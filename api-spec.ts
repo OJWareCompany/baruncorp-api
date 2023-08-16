@@ -32,6 +32,22 @@ export interface SignUpRequestDto {
   password: string
   /** @default "AE2DE" */
   code: string
+  /** @default "176 Morningmist Road, Naugatuck, Connecticut 06770" */
+  address: string
+  /** @default "857-250-4567" */
+  phoneNumber: string
+  /** @default true */
+  isActiveWorkResource: boolean
+  /** @default true */
+  isCurrentUser: boolean
+  /** @default true */
+  isInactiveOrganizationUser: boolean
+  /** @default true */
+  revenueShare: boolean
+  /** @default true */
+  revisionRevenueShare: boolean
+  /** @default "CLIENT" */
+  type: string
 }
 
 export interface AccessTokenResponseDto {
@@ -113,12 +129,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-08-02T02:20:43.236Z"
+   * @default "2023-08-16T01:28:30.619Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-08-02T02:20:43.236Z"
+   * @default "2023-08-16T01:28:30.619Z"
    */
   expiryDate: string
 }
@@ -126,7 +142,7 @@ export interface CreateLicenseRequestDto {
 export interface OrganizationResponseDto {
   id: string
   name: string
-  description: string
+  description: string | null
   email: string
   phoneNumber: string
   organizationType: string
@@ -136,6 +152,12 @@ export interface OrganizationResponseDto {
   stateOrRegion: string
   street1: string
   street2: string
+  isActiveContractor: number | null
+  isActiveWorkResource: number | null
+  revenueShare: number | null
+  revisionRevenueShare: number | null
+  invoiceRecipient: string | null
+  invoiceRecipientEmail: string | null
 }
 
 export interface CreateOrganizationRequestDto {
@@ -158,12 +180,24 @@ export interface CreateOrganizationRequestDto {
   /** @default "OJ Tech" */
   name: string
   /** @default "This is about organization..." */
-  description: string
+  description: string | null
   /**
    * @default "client"
    * @pattern /(client|individual|outsourcing)/
    */
   organizationType: string
+  /** @default "chris kim" */
+  isActiveContractor: number | null
+  /** @default "chris kim" */
+  isActiveWorkResource: number | null
+  /** @default "chris kim" */
+  revenueShare: number | null
+  /** @default "chris kim" */
+  revisionRevenueShare: number | null
+  /** @default "chris kim" */
+  invoiceRecipient: string | null
+  /** @default "chriskim@gmail.com" */
+  invoiceRecipientEmail: string | null
 }
 
 export interface CreateMemberPositionRequestDto {
@@ -228,11 +262,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-08-02T02:20:43.248Z" */
+  /** @default "2023-08-16T01:28:30.652Z" */
   createdAt: string | null
-  /** @default "2023-08-02T02:20:43.249Z" */
+  /** @default "2023-08-16T01:28:30.652Z" */
   updatedAt: string | null
-  /** @default "2023-08-02T02:20:43.249Z" */
+  /** @default "2023-08-16T01:28:30.652Z" */
   updatedBy: string | null
   /** @default "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
@@ -348,20 +382,22 @@ export interface AhjNoteHistoryPaginatedResponseDto {
 }
 
 export interface AddressFromMapBox {
-  /** @default "Apple Valley Airport" */
+  /** @default "3480 Northwest 33rd Court" */
   street1: string
-  /** @default "A 101" */
+  /** @default "" */
   street2: string
-  /** @default "Apple Valley" */
+  /** @default "Lauderdale Lakes" */
   city: string
-  /** @default "California" */
+  /** @default "Florida" */
   state: string
-  /** @default "92307" */
+  /** @default "33309" */
   postalCode: string
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
+  /** @default 20 */
   jwt: number
+  /** @default 40 */
   refresh: number
 }
 
@@ -409,7 +445,7 @@ export interface GeographyControllerGetFindNotesParams {
    * @default 1
    */
   page?: number
-  /** @default "0100460" */
+  /** @default "1239525" */
   geoId?: string
   /** @default "city" */
   fullAhjName?: string
@@ -428,7 +464,7 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
    * @default 1
    */
   page?: number
-  /** @default "0100460" */
+  /** @default "1239525" */
   geoId?: string
 }
 
@@ -600,7 +636,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: SignInRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<TokenResponseDto, any>({
+      this.request<TokenResponseDto, void>({
         path: `/auth/signin-time`,
         method: 'POST',
         query: query,
@@ -860,10 +896,13 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name OrganizationControllerPostCreateOrganization
+     * @name CreateOrganizationHttpControllerPostCreateOrganization
      * @request POST:/organizations
      */
-    organizationControllerPostCreateOrganization: (data: CreateOrganizationRequestDto, params: RequestParams = {}) =>
+    createOrganizationHttpControllerPostCreateOrganization: (
+      data: CreateOrganizationRequestDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/organizations`,
         method: 'POST',
@@ -1051,22 +1090,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @tags geography
-     * @name GeographyControllerDeleteNoteByGeoId
-     * @request DELETE:/geography/{geoId}/notes
-     * @secure
-     */
-    geographyControllerDeleteNoteByGeoId: (geoId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/geography/${geoId}/notes`,
-        method: 'DELETE',
-        secure: true,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @tags geography
      * @name GeographyControllerPutUpdateNote
      * @request PUT:/geography/{geoId}/notes
      * @secure
@@ -1078,6 +1101,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         secure: true,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @tags geography
+     * @name GeographyControllerDeleteNoteByGeoId
+     * @request DELETE:/geography/{geoId}/notes
+     * @secure
+     */
+    geographyControllerDeleteNoteByGeoId: (geoId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/geography/${geoId}/notes`,
+        method: 'DELETE',
+        secure: true,
         ...params,
       }),
 
