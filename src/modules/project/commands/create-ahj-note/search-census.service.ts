@@ -1,20 +1,20 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { PrismaService } from '../database/prisma.service'
-import { AddressFromMapBox } from './infra/census/census.type.dto'
-import { CensusResponseDto } from './infra/census/census.response.dto'
-import { GeographyRepositoryPort } from '../geography/database/geography.repository.port'
-import { GEOGRAPHY_REPOSITORY } from '../geography/geography.di-token'
-import { CensusSearchInput, CensusSearchRequestDto } from './infra/census/census.search.request.dto'
+import { PrismaService } from '../../../database/prisma.service'
+import { AddressFromMapBox } from '../../infra/census/census.type.dto'
+import { CensusResponseDto } from '../../infra/census/census.response.dto'
+import { GeographyRepositoryPort } from '../../../geography/database/geography.repository.port'
+import { GEOGRAPHY_REPOSITORY } from '../../../geography/geography.di-token'
+import { CensusSearchInput, CensusSearchRequestDto } from '../../infra/census/census.search.request.dto'
 
 @Injectable()
-export class ProjectService {
+export class SearchCensusService {
   // prisma Service같은 공통적으로 쓰일수 있는 모듈은 어떻게 관리하는가?
   constructor(
     private readonly prismaService: PrismaService,
     @Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort,
   ) {}
 
-  async createProject(createProjectDto: AddressFromMapBox) {
+  async searchCensusAndCreateNote(createProjectDto: AddressFromMapBox) {
     const { state, postalCode, city, street1, street2 } = createProjectDto
 
     const searchInput = new CensusSearchInput({

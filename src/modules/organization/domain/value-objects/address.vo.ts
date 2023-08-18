@@ -16,7 +16,7 @@ export class Address {
   }
 
   get fullAddress() {
-    return this.fullAddress
+    return this.props.fullAddress
   }
 
   get city() {
