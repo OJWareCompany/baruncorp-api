@@ -24,7 +24,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
     return record
   }
 
-  toDomain({ record, type }: { record: LicenseModel; type: LicenseType }, user: UserEntity): LicenseEntity {
+  toDomain(record: LicenseModel, type: LicenseType, user: UserEntity): LicenseEntity {
     const props: CreateLicenseProps = {
       userId: record.userId,
       userName: user.getProps().userName,
