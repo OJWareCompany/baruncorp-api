@@ -1,9 +1,10 @@
 export class CreateOrganizationCommand {
   readonly email: string
+  readonly fullAddress: string
   readonly street1: string
   readonly street2: string
   readonly city: string
-  readonly stateOrRegion: string
+  readonly state: string
   readonly postalCode: string
   readonly country: string
   readonly phoneNumber: string
@@ -19,10 +20,11 @@ export class CreateOrganizationCommand {
 
   constructor(props: CreateOrganizationCommand) {
     this.email = props.email
+    this.fullAddress = props.fullAddress
     this.street1 = props.street1
     this.street2 = props.street2
     this.city = props.city
-    this.stateOrRegion = props.stateOrRegion
+    this.state = props.state
     this.postalCode = props.postalCode
     this.country = props.country
     this.phoneNumber = props.phoneNumber

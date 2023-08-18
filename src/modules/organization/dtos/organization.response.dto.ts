@@ -8,7 +8,7 @@ export class OrganizationResponseDto {
   city: string
   country: string
   postalCode: string
-  stateOrRegion: string
+  state: string
   street1: string
   street2: string
   isActiveContractor: boolean | null

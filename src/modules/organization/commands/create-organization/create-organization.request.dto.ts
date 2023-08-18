@@ -6,23 +6,27 @@ export class CreateOrganizationRequestDto {
   @IsEmail()
   readonly email: string
 
-  @ApiProperty({ default: 'Apple Valley Airport' })
+  @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
+  @IsString()
+  readonly fullAddress: string
+
+  @ApiProperty({ default: '3480 Northwest 33rd Court' })
   @IsString()
   readonly street1: string
 
-  @ApiProperty({ default: 'A 101' })
+  @ApiProperty({ default: null })
   @IsString()
-  readonly street2: string
+  readonly street2: string | null
 
-  @ApiProperty({ default: 'Apple Valley' })
+  @ApiProperty({ default: 'Lauderdale Lakes' })
   @IsString()
   readonly city: string
 
-  @ApiProperty({ default: 'California' })
+  @ApiProperty({ default: 'Florida' })
   @IsString()
-  readonly stateOrRegion: string
+  readonly state: string
 
-  @ApiProperty({ default: '92307' })
+  @ApiProperty({ default: '33309' })
   @IsString()
   readonly postalCode: string
 

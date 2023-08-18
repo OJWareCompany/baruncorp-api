@@ -34,7 +34,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       city: props.address.city,
       country: props.address.country,
       postalCode: props.address.postalCode,
-      stateOrRegion: props.address.stateOrRegion,
+      stateOrRegion: props.address.state,
       street1: props.address.street1,
       street2: props.address.street2,
       updatedAt: new Date(),
@@ -57,10 +57,11 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       phoneNumber: record.phoneNumber,
       organizationType: record.organizationType,
       address: new Address({
+        fullAddress: `${record.street1}, ${record.city}, ${record.stateOrRegion} ${record.postalCode}`,
         city: record.city,
         country: record.country,
         postalCode: record.postalCode,
-        stateOrRegion: record.stateOrRegion,
+        state: record.stateOrRegion,
         street1: record.street1,
         street2: record.street2,
       }),
@@ -85,7 +86,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.city = entity.getProps().address.city
     response.country = entity.getProps().address.country
     response.postalCode = entity.getProps().address.postalCode
-    response.stateOrRegion = entity.getProps().address.stateOrRegion
+    response.state = entity.getProps().address.state
     response.street1 = entity.getProps().address.street1
     response.street2 = entity.getProps().address.street2
     response.isActiveContractor = entity.getProps().isActiveContractor

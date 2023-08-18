@@ -22,10 +22,11 @@ export class CreateOrganizationService implements ICommandHandler {
       phoneNumber: command.phoneNumber,
       organizationType: command.organizationType,
       address: new Address({
+        fullAddress: command.fullAddress,
         street1: command.street1,
         street2: command.street2,
         city: command.city,
-        stateOrRegion: command.stateOrRegion,
+        state: command.state,
         postalCode: command.postalCode,
         country: command.country,
       }),

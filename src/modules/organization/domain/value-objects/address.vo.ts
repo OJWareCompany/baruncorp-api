@@ -2,9 +2,10 @@ export interface AddressProps {
   city: string
   country: string
   postalCode: string
-  stateOrRegion: string
+  state: string
   street1: string
   street2: string
+  fullAddress: string
 }
 
 export class Address {
@@ -12,6 +13,10 @@ export class Address {
 
   constructor(props: AddressProps) {
     this.props = props
+  }
+
+  get fullAddress() {
+    return this.fullAddress
   }
 
   get city() {
@@ -26,8 +31,8 @@ export class Address {
     return this.props.postalCode
   }
 
-  get stateOrRegion() {
-    return this.props.stateOrRegion
+  get state() {
+    return this.props.state
   }
 
   get street1() {
