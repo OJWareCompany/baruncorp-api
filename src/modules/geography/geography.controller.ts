@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Put, Query, UseGuards } from '@nestjs/common'
 import { GeographyService } from './geography.service'
 import { AHJNotesModel } from './database/geography.repository'
-import { Paginated } from '../../libs/ddd/page.response.dto'
+import { Paginated } from '../../libs/ddd/repository.port'
 import { AhjNoteMapper } from './ahj-note.mapper'
 import { AhjNoteResponseDto } from './dto/ahj-note.response.dto'
 import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'

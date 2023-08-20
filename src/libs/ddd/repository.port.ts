@@ -5,16 +5,22 @@
     in a respective repository.
 */
 
+/**
+ * Repository, Service에서 사용
+ * 여러가지 데이터의 페이지네이션 응답 객체의 포맷을 규격화하고 재사용한다.
+ */
 export class Paginated<T> {
-  readonly count: number
-  readonly limit: number
+  readonly totalCount: number
+  readonly pageSize: number
   readonly page: number
+  readonly totalPage: number
   readonly items: readonly T[]
 
-  constructor(props: Paginated<T>) {
-    this.count = props.count
-    this.limit = props.limit
+  constructor(props: Omit<Paginated<T>, 'totalPage'>) {
+    this.totalCount = props.totalCount
+    this.pageSize = props.pageSize
     this.page = props.page
+    this.totalPage = Math.ceil(props.totalCount / props.pageSize)
     this.items = props.items
   }
 }

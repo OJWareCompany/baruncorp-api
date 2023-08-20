@@ -1,23 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-
-/**
- * Repository, Service에서 사용
- * 여러가지 데이터의 페이지네이션 응답 객체의 포맷을 규격화하고 재사용한다.
- */
-export class Paginated<T> {
-  readonly page: number
-  readonly pageSize: number
-  readonly totalCount: number
-  readonly totalPage: number
-  readonly items: readonly T[]
-
-  constructor(props: Omit<Paginated<T>, 'totalPage'>) {
-    this.pageSize = props.pageSize
-    this.totalCount = props.totalCount
-    this.totalPage = Math.ceil(props.totalCount / props.pageSize)
-    this.items = props.items
-  }
-}
+import { Paginated } from './repository.port'
 
 /**
  * 제네릭에대한 표현의 어려움

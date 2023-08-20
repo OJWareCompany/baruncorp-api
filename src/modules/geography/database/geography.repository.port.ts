@@ -1,5 +1,5 @@
 import { AHJNoteHistoryModel, AHJNotesModel } from './geography.repository'
-import { Paginated } from '../../../libs/ddd/page.response.dto'
+import { Paginated } from '../../../libs/ddd/repository.port'
 import {
   CensusCounties,
   CensusCountySubdivisions,

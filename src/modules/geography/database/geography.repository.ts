@@ -13,7 +13,7 @@ import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
 import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
 import { AHJType } from '../dto/ahj-note.response.dto'
-import { Paginated } from '../../../libs/ddd/page.response.dto'
+import { Paginated } from '../../../libs/ddd/repository.port'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
