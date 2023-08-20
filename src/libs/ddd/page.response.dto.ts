@@ -11,7 +11,7 @@ export class Paginated<T> {
   readonly totalPage: number
   readonly items: readonly T[]
 
-  constructor(props: Omit<PaginatedResponseDto<T>, 'totalPage'>) {
+  constructor(props: Omit<Paginated<T>, 'totalPage'>) {
     this.pageSize = props.pageSize
     this.totalCount = props.totalCount
     this.totalPage = Math.ceil(props.totalCount / props.pageSize)
@@ -39,8 +39,4 @@ export abstract class PaginatedResponseDto<T> extends Paginated<T> {
 
   @ApiProperty({ isArray: true })
   abstract items: readonly T[] // 그대로 사용하지 않고, 상속받는 구현체에서 구현하도록 (Swagger 표현, 혹은 각 아이템마다 특성에 맞는 작업을 위해)
-
-  constructor(props: Omit<PaginatedResponseDto<T>, 'totalPage'>) {
-    super(props)
-  }
 }
