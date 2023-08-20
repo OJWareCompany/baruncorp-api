@@ -29,6 +29,9 @@ export class ProjectMapper implements Mapper<ProjectEntity, orderedProjects, Pro
       updatedAt: new Date(),
       dateCreated: new Date(),
 
+      designOrPeStampPreviouslyDoneOnProjectOutside: 0, // TODO
+      totalOfJobs: 1, // TODO
+
       clientId: props.clientOrganizationId,
       lastModifiedBy: props.updatedBy,
 
