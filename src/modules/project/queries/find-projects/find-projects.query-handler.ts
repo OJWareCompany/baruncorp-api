@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { orderedProjects } from '@prisma/client'
+import { OrderedProjects } from '@prisma/client'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { Paginated } from '../../../../libs/ddd/repository.port'
@@ -29,7 +29,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
    * domain and repository layers completely
    * and execute query directly
    */
-  async execute(query: FindProjectsQuery): Promise<Paginated<orderedProjects>> {
+  async execute(query: FindProjectsQuery): Promise<Paginated<OrderedProjects>> {
     const records = await this.prismaService.orderedProjects.findMany({
       where: {
         ...(query.propertyType && { projectPropertyType: query.propertyType }),

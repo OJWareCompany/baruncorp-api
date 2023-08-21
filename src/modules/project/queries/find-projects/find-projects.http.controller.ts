@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Query } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { QueryBus } from '@nestjs/cqrs'
-import { orderedProjects } from '@prisma/client'
+import { OrderedProjects } from '@prisma/client'
 import { ProjectPaginatedResponseDto } from '../../dtos/project.paginated.response.dto'
 import { PaginatedQueryRequestDto } from '../../../../libs/ddd/paginated-query.request.dto'
 import { FindProjectsQuery } from './find-projects.query-handler'
@@ -9,7 +9,7 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { FindProjectsRequestDto } from './find-projects.request.dto'
 
 @Controller('projects')
-export class FindUsersHttpController {
+export class FindProjectsHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('')
@@ -28,7 +28,7 @@ export class FindUsersHttpController {
       page: queryParams?.page,
     })
 
-    const result: Paginated<orderedProjects> = await this.queryBus.execute(query)
+    const result: Paginated<OrderedProjects> = await this.queryBus.execute(query)
 
     // Whitelisting returned properties
     return new ProjectPaginatedResponseDto({

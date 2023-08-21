@@ -37,6 +37,10 @@ export class CreateProjectService implements ICommandHandler {
       }),
       clientOrganizationId: clientUser.getProps().organizationId,
       updatedBy: command.userId,
+      totalOfJobs: 1,
+      numberOfWetStamp: command.numberOfWetStamp,
+      clientUserId: command.clientUserId,
+      clientUserName: command.clientUserName,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
         stateId: censusResponse.state.geoId,
         countyId: censusResponse.county.geoId,

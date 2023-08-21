@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider     = "mysql"
+  url          = env("DATABASE_URL")
+  relationMode = "prisma"
 }
 
 model OrganizationTypes {
@@ -40,6 +41,7 @@ model Organizations {
   invitationEmailEntity  InvitationEmails[]
   organizationTypeEntity OrganizationTypes  @relation(fields: [organizationType], references: [type])
   users                  Users[]
+  projects               OrderedProjects[]
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
@@ -428,12 +430,12 @@ model contractors {
 }
 
 model employees {
-  userId        String   @map("user_id") @db.VarChar(255)
-  annual_salary Decimal? @db.Decimal(12, 2)
-  id            String   @id @map("id") @db.VarChar(255)
+  userId       String   @map("user_id") @db.VarChar(255)
+  annualSalary Decimal? @map("annual_salary") @db.Decimal(12, 2)
+  id           String   @id @map("id") @db.VarChar(255)
 }
 
-model orderedJobNotes {
+model OrderedJobNotes {
   id              String    @id @map("id") @db.VarChar(255)
   jobId           String?   @map("job_id") @db.VarChar(255)
   content         String?   @db.Text
@@ -446,7 +448,7 @@ model orderedJobNotes {
   @@map("ordered_job_notes")
 }
 
-model orderedJobs {
+model OrderedJobs {
   id                                            String    @id @map("id") @db.VarChar(255)
   jobName                                       String?   @map("job_name") @db.Text
   jobStatus                                     String?   @map("job_status") @db.Text
@@ -515,54 +517,57 @@ model orderedJobs {
   @@map("ordered_jobs")
 }
 
-model orderedProjects {
-  id                                            String    @id @map("id") @db.VarChar(255)
-  projectFolder                                 String?   @map("project_folder") @db.VarChar(255)
-  projectNumber                                 String?   @map("project_number") @db.VarChar(255)
-  propertyAddress                               String?   @map("property_address") @db.VarChar(255)
-  propertyAddressStreet1                        String?   @map("property_address_street1") @db.VarChar(255)
-  propertyAddressStreet2                        String?   @map("property_address_street2") @db.VarChar(255)
-  propertyAddressCity                           String?   @map("property_address_city") @db.VarChar(255)
-  propertyAddressState                          String?   @map("property_address_state") @db.VarChar(255)
-  propertyAddressPostalCode                     String?   @map("property_address_postal_code") @db.VarChar(10)
-  propertyOwnerName                             String?   @map("property_owner_name") @db.VarChar(255)
-  dateCreated                                   DateTime? @map("date_created") @db.DateTime(0)
-  masterLogUpload                               Boolean?  @map("master_log_upload")
-  ahjAutomationComplete                         Boolean?  @map("ahj_automation_complete")
-  updatedAt                                     DateTime? @map("updated_at") @db.DateTime(0)
-  exportId                                      String?   @map("export_id") @db.VarChar(255)
-  googleGeocoder                                String?   @map("google_geocoder") @db.VarChar(255)
-  reTriggerActivateCreateProjectFolderTrigger   Boolean?  @map("re_trigger_activate_create_project_folder_trigger")
-  lastModifiedBy                                String?   @map("last_modified_by") @db.VarChar(255)
-  mailingAddressForWetStamps                    String?   @map("mailing_address_for_wet_stamps") @db.VarChar(255)
-  newBatteryStorageDesign                       Boolean?  @map("new_battery_storage_design")
-  numberOfWetStamps                             Int?      @map("number_of_wet_stamps")
-  numberOfStructuralWetStamps                   Int?      @map("number_of_structural_wet_stamps")
-  numberOfElectricalWetStamps                   Int?      @map("number_of_electrical_wet_stamps")
-  googleDriveClientAccountActiveFolderId        String?   @map("google_drive_client_account_active_folder_id") @db.VarChar(255)
-  sandboxCheckbox                               Boolean?  @map("sandbox_checkbox")
-  ahjAutomationLastRunDate                      DateTime? @map("ahj_automation_last_run_date") @db.DateTime(0)
-  sandboxFormula                                String?   @map("sandbox_formula") @db.VarChar(255)
-  containerId1                                  String?   @map("container_id_1") @db.VarChar(255)
-  newShareDriveStructure                        String?   @map("new_share_drive_structure") @db.VarChar(255)
-  stateId                                       String?   @map("state_id") @db.VarChar(255)
-  countyId                                      String?   @map("county_id") @db.VarChar(255)
-  countySubdivisionsId                          String?   @map("county_subdivisions_id") @db.VarChar(255)
-  placeId                                       String?   @map("place_id") @db.VarChar(255)
-  ahjId                                         String?   @map("ahj_id") @db.VarChar(255)
-  projectPropertyType                           String?   @map("project_property_type") @db.VarChar(255)
-  isGroundMount                                 Boolean?  @map("is_ground_mount")
-  mailingAddressForStructuralWetStamp           String?   @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
-  mailingAddressForElectricalWetStamp           String?   @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
-  clientId                                      String?   @map("client_id") @db.VarChar(255)
-  systemSize                                    Decimal?  @map("system_size") @db.Decimal(10, 2)
-  designOrPeStampPreviouslyDoneOnProjectOutside Int?      @map("design_or_pe_stamp_previously_done_on_project_outside")
-  totalOfJobs                                   Int?      @map("total_of_jobs") @db.UnsignedInt
+model OrderedProjects {
+  id                                            String         @id @map("id") @db.VarChar(255)
+  projectFolder                                 String?        @map("project_folder") @db.VarChar(255)
+  projectNumber                                 String?        @map("project_number") @db.VarChar(255)
+  propertyAddress                               String?        @map("property_address") @db.VarChar(255)
+  propertyAddressStreet1                        String?        @map("property_address_street1") @db.VarChar(255)
+  propertyAddressStreet2                        String?        @map("property_address_street2") @db.VarChar(255)
+  propertyAddressCity                           String?        @map("property_address_city") @db.VarChar(255)
+  propertyAddressState                          String?        @map("property_address_state") @db.VarChar(255)
+  propertyAddressPostalCode                     String?        @map("property_address_postal_code") @db.VarChar(10)
+  propertyOwnerName                             String?        @map("property_owner_name") @db.VarChar(255)
+  dateCreated                                   DateTime?      @map("date_created") @db.DateTime(0)
+  masterLogUpload                               Boolean?       @map("master_log_upload")
+  ahjAutomationComplete                         Boolean?       @map("ahj_automation_complete")
+  updatedAt                                     DateTime?      @map("updated_at") @db.DateTime(0)
+  exportId                                      String?        @map("export_id") @db.VarChar(255)
+  googleGeocoder                                String?        @map("google_geocoder") @db.VarChar(255)
+  reTriggerActivateCreateProjectFolderTrigger   Boolean?       @map("re_trigger_activate_create_project_folder_trigger")
+  lastModifiedBy                                String?        @map("last_modified_by") @db.VarChar(255)
+  mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)
+  newBatteryStorageDesign                       Boolean?       @map("new_battery_storage_design")
+  numberOfWetStamps                             Int?           @map("number_of_wet_stamps")
+  numberOfStructuralWetStamps                   Int?           @map("number_of_structural_wet_stamps")
+  numberOfElectricalWetStamps                   Int?           @map("number_of_electrical_wet_stamps")
+  googleDriveClientAccountActiveFolderId        String?        @map("google_drive_client_account_active_folder_id") @db.VarChar(255)
+  sandboxCheckbox                               Boolean?       @map("sandbox_checkbox")
+  ahjAutomationLastRunDate                      DateTime?      @map("ahj_automation_last_run_date") @db.DateTime(0)
+  sandboxFormula                                String?        @map("sandbox_formula") @db.VarChar(255)
+  containerId1                                  String?        @map("container_id_1") @db.VarChar(255)
+  newShareDriveStructure                        String?        @map("new_share_drive_structure") @db.VarChar(255)
+  stateId                                       String?        @map("state_id") @db.VarChar(255)
+  countyId                                      String?        @map("county_id") @db.VarChar(255)
+  countySubdivisionsId                          String?        @map("county_subdivisions_id") @db.VarChar(255)
+  placeId                                       String?        @map("place_id") @db.VarChar(255)
+  ahjId                                         String?        @map("ahj_id") @db.VarChar(255)
+  projectPropertyType                           String?        @map("project_property_type") @db.VarChar(255)
+  isGroundMount                                 Boolean?       @map("is_ground_mount")
+  mailingAddressForStructuralWetStamp           String?        @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
+  mailingAddressForElectricalWetStamp           String?        @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
+  clientId                                      String?        @map("client_id") @db.VarChar(255)
+  systemSize                                    Decimal?       @map("system_size") @db.Decimal(10, 2)
+  designOrPeStampPreviouslyDoneOnProjectOutside Int?           @map("design_or_pe_stamp_previously_done_on_project_outside")
+  totalOfJobs                                   Int?           @map("total_of_jobs")
+  clientUserId                                  String?        @map("client_user_id") @db.VarChar(255)
+  clientUserName                                String?        @map("client_user_name") @db.VarChar(255)
+  organization                                  Organizations? @relation(fields: [clientId], references: [id])
 
   @@map("ordered_projects")
 }
 
-model orderedTasks {
+model OrderedTasks {
   id                                                               String    @id @map("id") @db.VarChar(255)
   isLocked                                                         Boolean   @map("is_locked")
   taskName                                                         String?   @map("task_name") @db.VarChar(255)
@@ -803,7 +808,7 @@ model pricings {
   relatedRecordStatus                              Decimal?  @map("related_record_status") @db.Decimal(10, 0)
 }
 
-model clientAccounts {
+model ClientAccounts {
   id                                           String   @id @map("id") @db.VarChar(255)
   userId                                       String?  @map("user_id") @db.VarChar(255)
   firstName                                    String?  @map("first_name") @db.VarChar(255)

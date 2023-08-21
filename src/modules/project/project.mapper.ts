@@ -1,6 +1,6 @@
 import { Mapper } from '@src/libs/ddd/mapper.interface'
 import { ProjectEntity } from './domain/project.entity'
-import { Prisma, orderedProjects } from '@prisma/client'
+import { Prisma, OrderedProjects } from '@prisma/client'
 import { ProjectResponseDto } from './dtos/project.response.dto'
 
 /**
@@ -8,8 +8,8 @@ import { ProjectResponseDto } from './dtos/project.response.dto'
  * 변환을 한 곳에 묶어 관리하기 용이하다.
  */
 
-export class ProjectMapper implements Mapper<ProjectEntity, orderedProjects, ProjectResponseDto> {
-  toPersistence(entity: ProjectEntity): orderedProjects {
+export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, ProjectResponseDto> {
+  toPersistence(entity: ProjectEntity): OrderedProjects {
     const props = entity.getProps()
 
     return {
@@ -34,6 +34,9 @@ export class ProjectMapper implements Mapper<ProjectEntity, orderedProjects, Pro
 
       clientId: props.clientOrganizationId,
       lastModifiedBy: props.updatedBy,
+
+      clientUserId: props.clientOrganizationId,
+      clientUserName: props.clientUserName,
 
       stateId: props.projectAssociatedRegulatory.stateId,
       countyId: props.projectAssociatedRegulatory.countyId,

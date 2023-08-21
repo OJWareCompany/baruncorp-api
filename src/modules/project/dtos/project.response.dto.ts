@@ -36,7 +36,7 @@ export class ProjectResponseDto {
   propertyAddress: string
 
   @ApiProperty({ example: 3 })
-  numberOfWetStamp: string | null
+  numberOfWetStamp: number | null
 
   @ApiProperty({ example: 'Residential' })
   propertyType: ProjectPropertyType

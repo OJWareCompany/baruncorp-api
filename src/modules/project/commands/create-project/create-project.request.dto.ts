@@ -45,6 +45,14 @@ export class CreateProjectRequestDto {
   @IsString()
   clientUserId: string
 
+  @ApiProperty({ default: 'Thor' })
+  @IsString()
+  clientUserName: string
+
+  @ApiProperty({ default: 3 })
+  @IsNumber()
+  numberOfWetStamp: number
+
   @ApiProperty({ default: '000152' })
   @IsString()
   projectNumber: string | null

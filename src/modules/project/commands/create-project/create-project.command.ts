@@ -7,7 +7,11 @@ import { ProjectPropertyType } from '../../domain/project.type'
 export class CreateProjectCommand {
   userId: string
 
+  numberOfWetStamp: number
+
   clientUserId: string
+
+  clientUserName: string
 
   projectPropertyType: ProjectPropertyType
 

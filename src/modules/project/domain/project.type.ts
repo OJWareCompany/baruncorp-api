@@ -14,6 +14,10 @@ export interface ProjectProps {
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
+  totalOfJobs: number
+  numberOfWetStamp: number
+  clientUserId: string
+  clientUserName: string
 }
 
 export interface CreateProjectProps {
@@ -27,4 +31,8 @@ export interface CreateProjectProps {
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
+  totalOfJobs: number
+  numberOfWetStamp: number
+  clientUserId: string
+  clientUserName: string
 }
