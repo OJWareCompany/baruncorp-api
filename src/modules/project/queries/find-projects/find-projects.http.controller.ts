@@ -5,8 +5,8 @@ import { orderedProjects } from '@prisma/client'
 import { ProjectPaginatedResponseDto } from '../../dtos/project.paginated.response.dto'
 import { PaginatedQueryRequestDto } from '../../../../libs/ddd/paginated-query.request.dto'
 import { FindProjectsQuery } from './find-projects.query-handler'
-import { FindProjectsQueryRequestDto } from './find-projects.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
+import { FindProjectsRequestDto } from './find-projects.request.dto'
 
 @Controller('projects')
 export class FindUsersHttpController {
@@ -19,7 +19,7 @@ export class FindUsersHttpController {
     type: ProjectPaginatedResponseDto,
   })
   async findUsers(
-    @Query() searchQuery: FindProjectsQueryRequestDto,
+    @Query() searchQuery: FindProjectsRequestDto,
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<ProjectPaginatedResponseDto> {
     const query = new FindProjectsQuery({

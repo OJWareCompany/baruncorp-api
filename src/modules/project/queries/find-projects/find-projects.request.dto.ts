@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsOptional } from 'class-validator'
 
-export class FindProjectsQueryRequestDto {
+export class FindProjectsRequestDto {
   @ApiProperty({ default: 'Residential' })
   @IsOptional()
   readonly propertyType?: string
