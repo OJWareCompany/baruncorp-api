@@ -15,8 +15,10 @@ import { CreateProjectService } from './commands/create-project/create-project.s
 import { PROJECT_REPOSITORY } from './project.di-token'
 import { ProjectRepository } from './database/project.repository'
 import { SearchCensusService } from './commands/create-ahj-note/search-census.service'
-import { FindUsersHttpController } from './queries/find-projects/find-projects.http.controller'
+import { FindProjectsHttpController } from './queries/find-projects/find-projects.http.controller'
 import { FindProjectsQueryHandler } from './queries/find-projects/find-projects.query-handler'
+import { FindProjectDetailHttpController } from './queries/find-project-detail/find-project-detail.http.controller'
+import { FindProjectDetailQueryHandler } from './queries/find-project-detail/find-project-detail.query-handler'
 
 const commandHandlers: Provider[] = [SearchCensusService, CreateProjectService]
 
@@ -26,7 +28,7 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
-const queryHandlers: Provider[] = [FindProjectsQueryHandler]
+const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
 
 // 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
 const mappers: Provider[] = [ProjectMapper, UserMapper, UserRoleMapper, LicenseMapper]
@@ -34,6 +36,11 @@ const mappers: Provider[] = [ProjectMapper, UserMapper, UserRoleMapper, LicenseM
 @Module({
   imports: [CqrsModule, PrismaModule],
   providers: [...commandHandlers, ...queryHandlers, ...repositories, ...mappers],
-  controllers: [SearchCensusHttpController, CreateProjectHttpController, FindUsersHttpController],
+  controllers: [
+    SearchCensusHttpController,
+    CreateProjectHttpController,
+    FindProjectsHttpController,
+    FindProjectDetailHttpController,
+  ],
 })
 export class ProjectModule {}
