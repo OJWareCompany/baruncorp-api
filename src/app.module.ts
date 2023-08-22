@@ -7,9 +7,18 @@ import { OrganizationModule } from './modules/organization/organization.module'
 import { DepartmentModule } from './modules/department/department.module'
 import { GeographyModule } from './modules/geography/geography.module'
 import { ProjectModule } from './modules/project/project.module'
+import { EventEmitterModule } from '@nestjs/event-emitter'
 
 @Module({
-  imports: [AuthenticationModule, UsersModule, OrganizationModule, DepartmentModule, GeographyModule, ProjectModule],
+  imports: [
+    EventEmitterModule.forRoot(),
+    AuthenticationModule,
+    UsersModule,
+    OrganizationModule,
+    DepartmentModule,
+    GeographyModule,
+    ProjectModule,
+  ],
   controllers: [],
   providers: [
     {
