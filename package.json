@@ -37,6 +37,7 @@
     "@nestjs/config": "^2.3.2",
     "@nestjs/core": "^9.0.0",
     "@nestjs/cqrs": "^10.0.3",
+    "@nestjs/event-emitter": "^2.0.2",
     "@nestjs/jwt": "^10.0.3",
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^7.1.2",
