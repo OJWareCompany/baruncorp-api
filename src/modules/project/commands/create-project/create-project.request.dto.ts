@@ -43,11 +43,15 @@ export class CreateProjectRequestDto {
 
   @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
   @IsString()
-  clientUserId: string
+  organizationId: string
 
-  @ApiProperty({ default: 'Thor' })
-  @IsString()
-  clientUserName: string
+  // @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
+  // @IsString()
+  // clientUserId: string
+
+  // @ApiProperty({ default: 'Thor' })
+  // @IsString()
+  // clientUserName: string
 
   @ApiProperty({ default: 3 })
   @IsNumber()

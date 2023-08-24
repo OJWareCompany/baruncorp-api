@@ -9,9 +9,7 @@ export class CreateProjectCommand {
 
   numberOfWetStamp: number
 
-  clientUserId: string
-
-  clientUserName: string
+  organizationId: string
 
   projectPropertyType: ProjectPropertyType
 
