@@ -5,7 +5,7 @@ import { FindProjectDetailQuery } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
 import { ProjectResponseDto } from '../../dtos/project.response.dto'
 import { OrderedProjects } from '@prisma/client'
-import { OrganizationModel } from '@src/modules/organization/database/organization.repository'
+import { OrganizationModel } from '../../../../modules/organization/database/organization.repository'
 
 @Controller('projects')
 export class FindProjectDetailHttpController {
@@ -25,7 +25,6 @@ export class FindProjectDetailHttpController {
       query,
     )
 
-    console.log(result)
     // Whitelisting returned properties
     const response = new ProjectResponseDto()
     response.projectId = result.id

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ProjectPropertyType } from '@src/modules/project/domain/project.type'
+import { ProjectPropertyType } from '../../../modules/project/domain/project.type'
 
 export class ProjectResponseDto {
   @ApiProperty({ example: '07e12e89-6077-4fd1-a029-c50060b57f43' })

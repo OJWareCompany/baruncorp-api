@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '@libs/ddd/mapper.interface'
-import { UserRoleModel } from '@src/modules/organization/database/organization.repository'
+import { UserRoleModel } from '../../modules/organization/database/organization.repository'
 import { UserRole, UserRoles } from './domain/value-objects/user-role.vo'
 
 export class UserRoleResponseDto {

@@ -1,4 +1,4 @@
-import { Mapper } from '@src/libs/ddd/mapper.interface'
+import { Mapper } from '../../libs/ddd/mapper.interface'
 import { ProjectEntity } from './domain/project.entity'
 import { Prisma, OrderedProjects } from '@prisma/client'
 import { ProjectResponseDto } from './dtos/project.response.dto'

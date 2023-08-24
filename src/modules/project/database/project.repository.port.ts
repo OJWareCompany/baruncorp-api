@@ -1,5 +1,5 @@
 import { ProjectEntity } from '../domain/project.entity'
-import { UserEntity } from '@src/modules/users/domain/user.entity'
+import { UserEntity } from '../../../modules/users/domain/user.entity'
 
 export interface ProjectRepositoryPort {
   // 어떤 메서드가 필요하다는 것을 정의해둘수 있음

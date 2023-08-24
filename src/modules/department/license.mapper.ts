@@ -3,9 +3,9 @@ import { Mapper } from '@libs/ddd/mapper.interface'
 import { UserEntity } from '@modules/users/domain/user.entity'
 import { LincenseResponseDto } from '../users/dtos/license.response.dto'
 import { LicenseEntity } from '../users/user-license.entity'
-import { CreateLicenseProps, LicenseProps, LicenseType } from '@src/modules/users/user-license.type'
 import { State } from './domain/value-objects/state.vo'
 import { LicenseModel } from './database/department.repository'
+import { LicenseProps, LicenseType, CreateLicenseProps } from '../users/user-license.type'
 
 @Injectable()
 export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, LincenseResponseDto> {

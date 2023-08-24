@@ -20,7 +20,6 @@ export class ProjectRepository implements ProjectRepositoryPort {
   }
 
   async findClientUserById(id: string): Promise<UserEntity> {
-    console.log(id)
     const user = await this.prismaService.users.findUnique({ where: { id } })
     return user && this.userMapper.toDomain(user)
   }
