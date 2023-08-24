@@ -2,15 +2,11 @@ import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedExceptio
 import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
 import { Request } from 'express'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRepository } from '../users/database/user.repository'
+import { PrismaService } from '../database/prisma.service'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(
-    private readonly jwtService: JwtService,
-    @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
-  ) {}
+  constructor(private readonly jwtService: JwtService, private readonly prismaService: PrismaService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
@@ -25,7 +21,8 @@ export class AuthGuard implements CanActivate {
         secret: jwtConstants.secret,
       })
       // TODO: what data needed
-      const user = await this.userRepository.findOneById(payload.id)
+      const user = await this.prismaService.users.findUnique({ where: { id: payload.id } })
+
       request['user'] = user
     } catch {
       throw new UnauthorizedException('Authentication Issue', '10005')
