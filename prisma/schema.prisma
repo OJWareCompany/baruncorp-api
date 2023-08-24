@@ -453,6 +453,10 @@ model OrderedJobNotes {
 
 model OrderedJobs {
   id                                            String    @id @map("id") @db.VarChar(255)
+  createdAt                                     DateTime? @map("created_at") @db.DateTime(0)
+  receivedAt                                    DateTime? @map("received_at") @db.DateTime(0)
+  dateDue                                       DateTime? @map("date_due") @db.Date
+  dateSentToClient                              DateTime? @map("date_sent_to_client") @db.Date
   jobName                                       String?   @map("job_name") @db.Text
   jobStatus                                     String?   @map("job_status") @db.Text
   otherComments                                 String?   @map("other_comments") @db.Text
@@ -479,9 +483,7 @@ model OrderedJobs {
   clientContactEmailOverride                    String?   @map("client_contact_email_override") @db.VarChar(255)
   commercialJobPrice                            Decimal?  @map("commercial_job_price") @db.Decimal(10, 2)
   completedCancelledDate                        DateTime? @map("completed_cancelled_date") @db.Date
-  createdAt                                     DateTime? @map("created_at") @db.DateTime(0)
   updatedAt                                     DateTime? @map("updated_at") @db.DateTime(0)
-  receivedAt                                    DateTime? @map("received_at") @db.DateTime(0)
   deliverablesLink                              String?   @map("deliverables_link") @db.Text
   deliverablesEmail                             String?   @map("deliverables_email") @db.Text
   electricalPEAndWetStampGlSolargraf            Boolean?  @map("electrical_pe_and_wet_stamp_gl_solargraf")
@@ -514,14 +516,13 @@ model OrderedJobs {
   sixMonthsPrior                                DateTime? @map("six_months_prior") @db.Date
   standardPricing                               Boolean?  @map("standard_pricing")
   structuralOrElectricalPEAndWetStampSelectedGl Boolean?  @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
-  dateDue                                       DateTime? @map("date_due") @db.Date
-  dateSentToClient                              DateTime? @map("date_sent_to_client") @db.Date
 
   @@map("ordered_jobs")
 }
 
 model OrderedProjects {
   id                                            String         @id @map("id") @db.VarChar(255)
+  dateCreated                                   DateTime?      @map("date_created") @db.DateTime(0)
   projectFolder                                 String?        @map("project_folder") @db.VarChar(255)
   projectNumber                                 String?        @map("project_number") @db.VarChar(255)
   propertyAddress                               String?        @map("property_address") @db.VarChar(255)
@@ -531,7 +532,6 @@ model OrderedProjects {
   propertyAddressState                          String?        @map("property_address_state") @db.VarChar(255)
   propertyAddressPostalCode                     String?        @map("property_address_postal_code") @db.VarChar(10)
   propertyOwnerName                             String?        @map("property_owner_name") @db.VarChar(255)
-  dateCreated                                   DateTime?      @map("date_created") @db.DateTime(0)
   masterLogUpload                               Boolean?       @map("master_log_upload")
   ahjAutomationComplete                         Boolean?       @map("ahj_automation_complete")
   updatedAt                                     DateTime?      @map("updated_at") @db.DateTime(0)
@@ -572,16 +572,18 @@ model OrderedProjects {
 
 model OrderedTasks {
   id                                                               String    @id @map("id") @db.VarChar(255)
-  isLocked                                                         Boolean   @map("is_locked")
+  dateCreated                                                      DateTime? @map("date_created") @db.DateTime(0)
+  isLocked                                                         Boolean   @default(false) @map("is_locked")
   taskName                                                         String    @map("task_name") @db.VarChar(255)
   otherServiceDescription                                          String?   @map("other_service_description") @db.Text
   dateAssigned                                                     DateTime? @map("date_assigned") @db.DateTime(0)
   dateCompletedCancelled                                           DateTime? @map("date_completed_cancelled") @db.DateTime(0)
   assignedTo                                                       String?   @map("assigned_to") @db.VarChar(255)
   taskStatus                                                       String    @map("task_status") @db.VarChar(255)
-  isNewTask                                                        Boolean   @map("is_new_task")
+  isNewTask                                                        Boolean   @default(false) @map("is_new_task")
   notes                                                            String?   @map("notes") @db.Text
   designRevisionScope                                              String?   @map("design_revision_scope") @db.VarChar(255)
+  updatedAt                                                        DateTime? @map("updated_at") @db.DateTime(0)
   newStorageDesign                                                 String?   @map("new_storage_design") @db.VarChar(255)
   taskMenuId                                                       String    @map("task_menu_id")
   jobId                                                            String    @map("job_id") @db.VarChar(255)
@@ -622,8 +624,8 @@ model OrderedTasks {
   contactEmail                                                     String?   @map("contact_email") @db.VarChar(255)
   contactEmail2                                                    String?   @map("contact_email_2") @db.VarChar(255)
   contactEmailOverride                                             String?   @map("contact_email_override") @db.VarChar(255)
+  createdAt                                                        DateTime? @map("created_at") @db.DateTime(0)
   contractorUnits                                                  Int?      @map("contractor_units")
-  dateCreated                                                      DateTime? @map("date_created") @db.DateTime(0)
   dateModified                                                     DateTime? @map("date_modified") @db.DateTime(0)
   dateOutsourced                                                   DateTime? @map("date_outsourced") @db.DateTime(0)
   exportId                                                         String?   @map("export_id") @db.VarChar(255)

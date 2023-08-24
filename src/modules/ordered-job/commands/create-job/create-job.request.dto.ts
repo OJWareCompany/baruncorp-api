@@ -37,7 +37,7 @@ class AddressRequestDto {
 
 export class CreateJobRequestDto {
   @ApiProperty({ default: 'chris@barun.com', isArray: true })
-  @IsString()
+  @IsArray()
   deliverablesEmails: string[]
 
   @ApiProperty({ default: '10223' })
