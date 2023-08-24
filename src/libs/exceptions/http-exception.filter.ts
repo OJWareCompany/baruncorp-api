@@ -19,11 +19,16 @@ export class HttpExceptionFilter implements ExceptionFilter {
       json: { text: JSON.stringify({ ...exception }) },
     })
 
+    const message =
+      exception.getResponse && Array.isArray(exception.getResponse)
+        ? [...exception.getResponse()['message']]
+        : exception.getResponse && !Array.isArray(exception.getResponse)
+        ? exception.getResponse()['message']
+        : [exception.message]
+
     response.status(status).json({
       errorCode: Array.isArray(errorCode) ? [...errorCode] : [errorCode],
-      message: Array.isArray(exception.getResponse()['message'])
-        ? [...exception.getResponse()['message']]
-        : [exception.message],
+      message,
       statusCode: status,
       timestamp: new Date().toISOString(),
       path: request.url,
