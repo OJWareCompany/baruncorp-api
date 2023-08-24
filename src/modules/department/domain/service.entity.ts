@@ -9,6 +9,11 @@ export interface ServiceProps {
   internal_only: boolean | null
   man_minutes_residential_new_standard: number | null
   man_minutes_residential_rev_standard: number | null
+  isMemberAssignment: boolean | null
+  isInOrderMenu: boolean | null
+  parentTaskId: string | null
+  updatedAt: Date
+  createdAt: Date
 }
 
 export interface CreateServiceProps {
@@ -20,6 +25,9 @@ export interface CreateServiceProps {
   internal_only: boolean | null
   man_minutes_residential_new_standard: number | null
   man_minutes_residential_rev_standard: number | null
+  isMemberAssignment: boolean | null
+  isInOrderMenu: boolean | null
+  parentTaskId: string | null
 }
 
 export class ServiceEntity {
@@ -28,11 +36,11 @@ export class ServiceEntity {
 
   static create(create: CreateServiceProps) {
     const id = v4()
-    const props: ServiceProps = { ...create }
+    const props: ServiceProps = { ...create, createdAt: new Date(), updatedAt: new Date() }
     return new ServiceEntity({ id, props })
   }
 
-  constructor({ id, props }: { id: string; props: CreateServiceProps }) {
+  constructor({ id, props }: { id: string; props: ServiceProps }) {
     this.id = id
     this.props = props
   }

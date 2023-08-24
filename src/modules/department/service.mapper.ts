@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '@libs/ddd/mapper.interface'
 import { ServiceModel } from './database/department.repository'
-import { ServiceEntity } from './domain/service.entity'
+import { ServiceEntity, ServiceProps } from './domain/service.entity'
 import { ServiceResponseDto } from './dtos/service.response.dto'
 import { Prisma } from '@prisma/client'
 
@@ -21,12 +21,15 @@ export class ServiceMapper implements Mapper<ServiceEntity, ServiceModel, Servic
       internal_only: props.internal_only,
       man_minutes_residential_new_standard: new Prisma.Decimal(props.man_minutes_residential_new_standard),
       man_minutes_residential_rev_standard: new Prisma.Decimal(props.man_minutes_residential_rev_standard),
+      is_member_assignment: props.isMemberAssignment,
+      is_in_order_menu: props.isInOrderMenu,
+      parent_task_id: props.parentTaskId,
     }
     return record
   }
 
   toDomain(record: ServiceModel): ServiceEntity {
-    const props = {
+    const props: ServiceProps = {
       name: record.name,
       description: record.description,
       updatedAt: record.updatedAt,
@@ -37,6 +40,9 @@ export class ServiceMapper implements Mapper<ServiceEntity, ServiceModel, Servic
       internal_only: record.internal_only,
       man_minutes_residential_new_standard: Number(record.man_minutes_residential_new_standard),
       man_minutes_residential_rev_standard: Number(record.man_minutes_residential_rev_standard),
+      isMemberAssignment: record.is_member_assignment,
+      isInOrderMenu: record.is_in_order_menu,
+      parentTaskId: record.parent_task_id,
     }
 
     return new ServiceEntity({ id: record.id, props })
