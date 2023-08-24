@@ -7,8 +7,6 @@ import { ProjectPropertyType } from '../../domain/project.type'
 export class CreateProjectCommand {
   userId: string
 
-  numberOfWetStamp: number
-
   organizationId: string
 
   projectPropertyType: ProjectPropertyType
@@ -27,19 +25,19 @@ export class CreateProjectCommand {
 
   projectNumber: string | null
 
-  isGroundMount: boolean
+  // isGroundMount: boolean
 
-  mailingAddressForWetStamp: {
-    street1: string
-    street2: string | null
-    city: string
-    state: string
-    postalCode: string
-    country: string | null
-    fullAddress: string
-  }
+  // mailingAddressForWetStamp: {
+  //   street1: string
+  //   street2: string | null
+  //   city: string
+  //   state: string
+  //   postalCode: string
+  //   country: string | null
+  //   fullAddress: string
+  // }
 
-  systemSize: number | null
+  // systemSize: number | null
 
   constructor(props: CreateProjectCommand) {
     Object.entries(props).map(([key, value]) => (this[key] = value))

@@ -1,25 +1,25 @@
-import { CreateProjectProps, ProjectProps } from './project.type'
 import { v4 } from 'uuid'
+import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
+import { CreateProjectProps, ProjectProps } from './project.type'
 
-export class ProjectEntity {
-  id: string
-  protected readonly props: ProjectProps
+export class ProjectEntity extends AggregateRoot<ProjectProps> {
+  protected _id: string
 
   static create(create: CreateProjectProps) {
     const id = v4()
-    return new ProjectEntity({ id, props: create })
-  }
-
-  constructor({ id, props }: { id: string; props: CreateProjectProps }) {
-    this.id = id
-    this.props = props
-  }
-
-  getProps(): ProjectProps & { id: string } {
-    const copyProps = {
-      id: this.id,
-      ...this.props,
+    const props: ProjectProps = {
+      ...create,
+      mailingAddressForWetStamp: null,
+      systemSize: null,
+      isGroundMount: null,
+      numberOfWetStamp: null,
+      clientUserId: null,
+      clientUserName: null,
     }
-    return Object.freeze(copyProps)
+    return new ProjectEntity({ id, props })
+  }
+
+  public validate(): void {
+    throw new Error('Method not implemented.')
   }
 }

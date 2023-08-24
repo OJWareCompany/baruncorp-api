@@ -25,20 +25,12 @@ export class CreateProjectService implements ICommandHandler {
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
       projectNumber: command.projectNumber,
-      systemSize: command.systemSize,
-      isGroundMount: command.isGroundMount,
       projectPropertyAddress: new Address({
         ...command.projectPropertyAddress,
-      }),
-      mailingAddressForWetStamp: new Address({
-        ...command.mailingAddressForWetStamp,
       }),
       clientOrganizationId: command.organizationId,
       updatedBy: command.userId,
       totalOfJobs: 1,
-      numberOfWetStamp: command.numberOfWetStamp,
-      clientUserId: null,
-      clientUserName: null,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
         stateId: censusResponse.state.geoId,
         countyId: censusResponse.county.geoId,
