@@ -17,9 +17,7 @@ export class CreateProjectService implements ICommandHandler {
   constructor(@Inject(PROJECT_REPOSITORY) private readonly projectRepository: ProjectRepositoryPort) {}
 
   async execute(command: CreateProjectCommand): Promise<void> {
-    const clientUser = await this.projectRepository.findClientUserById(command.clientUserId)
-
-    await this.validate({ ...command, clientOrganizationId: clientUser.getProps().organizationId })
+    await this.validate({ ...command, clientOrganizationId: command.organizationId })
 
     const censusResponse = await this.searchCensus(command)
 
@@ -35,12 +33,12 @@ export class CreateProjectService implements ICommandHandler {
       mailingAddressForWetStamp: new Address({
         ...command.mailingAddressForWetStamp,
       }),
-      clientOrganizationId: clientUser.getProps().organizationId,
+      clientOrganizationId: command.organizationId,
       updatedBy: command.userId,
       totalOfJobs: 1,
       numberOfWetStamp: command.numberOfWetStamp,
-      clientUserId: command.clientUserId,
-      clientUserName: command.clientUserName,
+      clientUserId: null,
+      clientUserName: null,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
         stateId: censusResponse.state.geoId,
         countyId: censusResponse.county.geoId,

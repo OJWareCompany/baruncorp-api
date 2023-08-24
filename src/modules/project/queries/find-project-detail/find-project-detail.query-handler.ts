@@ -1,7 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrderedProjects } from '@prisma/client'
-import { OrganizationModel } from '@src/modules/organization/database/organization.repository'
+import { OrganizationModel } from '../../../../modules/organization/database/organization.repository'
 
 export class FindProjectDetailQuery {
   readonly id: string
