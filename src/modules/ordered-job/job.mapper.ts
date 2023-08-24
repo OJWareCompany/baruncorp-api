@@ -1,5 +1,5 @@
 import { JobEntity } from './domain/job.entity'
-import { OrderedJobs, Prisma } from '@prisma/client'
+import { OrderedJobs } from '@prisma/client'
 import { JobResponseDto } from './dtos/job.response.dto'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
@@ -16,7 +16,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       clientId: props.clientInfo.clientId,
       clientContact: props.clientInfo.clientContact,
       clientContactEmail: props.clientInfo.clientContactEmail,
-      commercialJobPrice: new Prisma.Decimal(props.commercialJobPrice),
+      commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
       receivedAt: props.receivedAt,

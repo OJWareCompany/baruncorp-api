@@ -36,9 +36,9 @@ class AddressRequestDto {
 }
 
 export class CreateJobRequestDto {
-  @ApiProperty({ default: 'chris@barun.com' })
+  @ApiProperty({ default: 'chris@barun.com', isArray: true })
   @IsString()
-  deliverablesEmail: string
+  deliverablesEmails: string[]
 
   @ApiProperty({ default: '10223' })
   @IsString()
@@ -75,9 +75,9 @@ export class CreateJobRequestDto {
   @IsString()
   otherServiceDescription: string
 
-  @ApiProperty({ default: 3000 })
-  @IsNumber()
-  commercialJobPrice: number | null
+  // @ApiProperty({ default: 3000 })
+  // @IsNumber()
+  // commercialJobPrice: number | null
 
   @ApiProperty({ type: AddressRequestDto })
   @IsObject()

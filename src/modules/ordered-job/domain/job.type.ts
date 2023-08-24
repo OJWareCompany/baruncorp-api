@@ -10,10 +10,12 @@ export interface CreateJobProps {
   projectId: string
   jobName: string
   orderedTasks: OrderedTasksValueObject
-  commercialJobPrice: number
+  systemSize: number
+  mailingAddressForWetStamp: string
   additionalInformationFromClient: string
   clientInfo: ClientInformation
   updatedBy: string
+  // commercialJobPrice: number
 }
 
 export interface JobProps {
@@ -21,9 +23,11 @@ export interface JobProps {
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
   jobName: string
   orderedTasks: OrderedTasksValueObject
-  commercialJobPrice: number
+  systemSize: number
+  mailingAddressForWetStamp: string
   additionalInformationFromClient: string
   clientInfo: ClientInformation
   updatedBy: string
   receivedAt: Date
+  // commercialJobPrice: number
 }

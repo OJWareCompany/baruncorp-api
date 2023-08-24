@@ -14,18 +14,15 @@ export class CreateJobHttpClient {
   @UseGuards(AuthGuard)
   async createJob(@User() user: UserEntity, @Body() dto: CreateJobRequestDto): Promise<void> {
     const command = new CreateJobCommand({
-      deliverablesEmail: dto.deliverablesEmail,
+      deliverablesEmails: dto.deliverablesEmails,
       updatedByUserId: user.id,
       jobNumber: dto.jobNumber,
       clientUserIds: dto.clientUserIds,
-      // clientContactEmail: dto.//,
       additionalInformationFromClient: dto.additionalInformationFromClient,
       systemSize: dto.systemSize,
       projectId: dto.projectId,
-      // organizationId: dto.//,
       taskIds: dto.taskIds,
       otherServiceDescription: dto.otherServiceDescription,
-      commercialJobPrice: dto.commercialJobPrice,
       mailingAddressForWetStamp: dto.mailingAddressForWetStamp,
     })
 
