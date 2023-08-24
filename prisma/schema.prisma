@@ -153,10 +153,13 @@ model Positions {
 model Services {
   id                                   String            @id @default(uuid())
   name                                 String
-  description                          String
+  billing_code                         String?           @db.VarChar(20)
+  is_in_order_menu                     Boolean?
+  is_member_assignment                 Boolean?
+  parent_task_id                       String?
   updatedAt                            DateTime?         @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt                            DateTime?         @default(now()) @map("created_at") @db.DateTime(0)
-  billing_code                         String?           @db.VarChar(20)
+  description                          String?
   state_restricted                     Boolean?
   is_current_user                      Boolean?
   internal_only                        Boolean?
@@ -570,34 +573,37 @@ model OrderedProjects {
 model OrderedTasks {
   id                                                               String    @id @map("id") @db.VarChar(255)
   isLocked                                                         Boolean   @map("is_locked")
-  taskName                                                         String?   @map("task_name") @db.VarChar(255)
+  taskName                                                         String    @map("task_name") @db.VarChar(255)
   otherServiceDescription                                          String?   @map("other_service_description") @db.Text
-  oldTaskRequestNum                                                Int?      @map("old_task_request_num")
   dateAssigned                                                     DateTime? @map("date_assigned") @db.DateTime(0)
   dateCompletedCancelled                                           DateTime? @map("date_completed_cancelled") @db.DateTime(0)
   assignedTo                                                       String?   @map("assigned_to") @db.VarChar(255)
-  taskStatus                                                       String?   @map("task_status") @db.VarChar(255)
+  taskStatus                                                       String    @map("task_status") @db.VarChar(255)
+  isNewTask                                                        Boolean   @map("is_new_task")
+  notes                                                            String?   @map("notes") @db.Text
   designRevisionScope                                              String?   @map("design_revision_scope") @db.VarChar(255)
   newStorageDesign                                                 String?   @map("new_storage_design") @db.VarChar(255)
-  isNewTask                                                        Boolean   @map("is_new_task")
-  notRequired                                                      Boolean   @map("not_required")
-  notes                                                            String?   @map("notes") @db.Text
+  taskMenuId                                                       String    @map("task_menu_id")
+  jobId                                                            String    @map("job_id") @db.VarChar(255)
+  notRequired                                                      Boolean?  @map("not_required")
   monthlyNewServiceIndexNum                                        Int?      @map("monthly_new_service_index_num")
+  oldTaskRequestNum                                                Int?      @map("old_task_request_num")
   lineItems                                                        Int?      @map("line_items")
   lineItemsClosed                                                  Int?      @map("line_items_closed")
   agreedContractorFlatPrice                                        Decimal?  @map("agreed_contractor_flat_price") @db.Decimal(18, 2)
   agreedContractorFlatMajorRevisionPrice                           Decimal?  @map("agreed_contractor_flat_major_revision_price") @db.Decimal(18, 2)
+  projectId                                                        String    @map("project_id") @db.VarChar(255)
   agreedContractorTaskGroupName                                    String?   @map("agreed_contractor_task_group_name") @db.VarChar(255)
   agreedContractorTaskGroupRevisionPrice                           Decimal?  @map("agreed_contractor_task_group_revision_price") @db.Decimal(18, 2)
   agreedContractorUnitPrice                                        Decimal?  @map("agreed_contractor_unit_price") @db.Decimal(18, 2)
   agreedFlatPrice                                                  Decimal?  @map("agreed_flat_price") @db.Decimal(18, 2)
   agreedFlatMajorRevisionPrice                                     Decimal?  @map("agreed_flat_major_revision_price") @db.Decimal(18, 2)
-  agreedRevenueShare                                               Boolean   @map("agreed_revenue_share")
+  agreedRevenueShare                                               Boolean?  @map("agreed_revenue_share")
   agreedRevenueShareConditionA                                     String?   @map("agreed_revenue_share_condition_a") @db.Text
   agreedRevenueShareConditionAPercent                              Decimal?  @map("agreed_revenue_share_condition_a_percent") @db.Decimal(5, 2)
   agreedRevenueShareConditionB                                     String?   @map("agreed_revenue_share_condition_b") @db.Text
   agreedRevenueShareConditionBPercent                              Decimal?  @map("agreed_revenue_share_condition_b_percent") @db.Decimal(5, 2)
-  agreedRevisionRevenueShare                                       Boolean   @map("agreed_revision_revenue_share")
+  agreedRevisionRevenueShare                                       Boolean?  @map("agreed_revision_revenue_share")
   agreedTaskGroupName                                              String?   @map("agreed_task_group_name") @db.VarChar(255)
   agreedTaskGroupRevisionPrice                                     Decimal?  @map("agreed_task_group_revision_price") @db.Decimal(18, 2)
   agreedTier1Price                                                 Decimal?  @map("agreed_tier_1_price") @db.Decimal(18, 2)
@@ -611,7 +617,7 @@ model OrderedTasks {
   agreedTier3Units                                                 Int?      @map("agreed_tier_3_units")
   agreedUnitPrice                                                  Decimal?  @map("agreed_unit_price") @db.Decimal(18, 2)
   assignedToSnapshot                                               String?   @map("assigned_to_snapshot") @db.VarChar(255)
-  calculationTaskAssigneeSummaryContainsTaskAssignee               Boolean   @map("calculation_task_assignee_summary_contains_task_assignee")
+  calculationTaskAssigneeSummaryContainsTaskAssignee               Boolean?  @map("calculation_task_assignee_summary_contains_task_assignee")
   combinedLineItemNums                                             String?   @map("combined_line_item_nums") @db.Text
   contactEmail                                                     String?   @map("contact_email") @db.VarChar(255)
   contactEmail2                                                    String?   @map("contact_email_2") @db.VarChar(255)
@@ -623,8 +629,8 @@ model OrderedTasks {
   exportId                                                         String?   @map("export_id") @db.VarChar(255)
   formulaSandbox                                                   String?   @map("formula_sandbox") @db.VarChar(255)
   hour                                                             Int?      @map("hour")
-  isActiveContractorSnapshot                                       Boolean   @map("is_active_contractor_snapshot")
-  oldIsNewProjectTask                                              Boolean   @map("old_is_new_project_task")
+  isActiveContractorSnapshot                                       Boolean?  @map("is_active_contractor_snapshot")
+  oldIsNewProjectTask                                              Boolean?  @map("old_is_new_project_task")
   totalPvDesignActive                                              Int?      @map("total_pv_design_active")
   totalPvDesignOnHold                                              Int?      @map("total_pv_design_on_hold")
   totalStructuralPeStampActive                                     Int?      @map("total_structural_pe_stamp_active")
@@ -665,11 +671,11 @@ model OrderedTasks {
   oldTierDiscount                                                  Decimal?  @map("old_tier_discount") @db.Decimal(18, 2)
   tieredTaskPrice                                                  Decimal?  @map("tiered_task_price") @db.Decimal(18, 2)
   timeCompleted                                                    DateTime? @map("time_completed") @db.Time(0)
-  triggerLockTask                                                  Boolean   @map("trigger_lock_task")
-  triggerOutsource                                                 Boolean   @map("trigger_outsource")
-  unitPriceTask                                                    Boolean   @map("unit_price_task")
+  triggerLockTask                                                  Boolean?  @map("trigger_lock_task")
+  triggerOutsource                                                 Boolean?  @map("trigger_outsource")
+  unitPriceTask                                                    Boolean?  @map("unit_price_task")
   units                                                            Int?      @map("units")
-  isNewTaskOverride                                                Boolean   @map("is_new_task_override")
+  isNewTaskOverride                                                Boolean?  @map("is_new_task_override")
   agreedTier1GroundMountPrice                                      Decimal?  @map("agreed_tier_1_ground_mount_price") @db.Decimal(18, 2)
   agreedTier1GroundMountMajorRevisionPrice                         Decimal?  @map("agreed_tier_1_ground_mount_major_revision_price") @db.Decimal(18, 2)
   agreedTier2GroundMountPrice                                      Decimal?  @map("agreed_tier_2_ground_mount_price") @db.Decimal(18, 2)
@@ -692,10 +698,10 @@ model OrderedTasks {
   agreedTier3MinorRevisionPrice                                    Decimal?  @map("agreed_tier_3_minor_revision_price") @db.Decimal(18, 2)
   agreedTier3GroundMountMinorRevisionPrice                         Decimal?  @map("agreed_tier_3_ground_mount_minor_revision_price") @db.Decimal(18, 2)
   agreedNewStorageDesignAdditionalPrice                            Decimal?  @map("agreed_new_storage_design_additional_price") @db.Decimal(18, 2)
-  isNewStorageDesignTask                                           Boolean   @map("is_new_storage_design_task")
-  isMajorDesignRevisionTask                                        Boolean   @map("is_major_design_revision_task")
-  isDesignTask                                                     Boolean   @map("is_design_task")
-  isWeekday                                                        Boolean   @map("is_weekday")
+  isNewStorageDesignTask                                           Boolean?  @map("is_new_storage_design_task")
+  isMajorDesignRevisionTask                                        Boolean?  @map("is_major_design_revision_task")
+  isDesignTask                                                     Boolean?  @map("is_design_task")
+  isWeekday                                                        Boolean?  @map("is_weekday")
   estimatedManHours                                                Int?      @map("estimated_man_hours")
   directLaborCosts                                                 Decimal?  @map("direct_labor_costs") @db.Decimal(18, 2)
   invoicedTaskExpenseTotal                                         Decimal?  @map("invoiced_task_expense_total") @db.Decimal(18, 2)
@@ -713,13 +719,13 @@ model OrderedTasks {
   tier1Units                                                       Int?      @map("tier_1_units")
   tier2Units                                                       Int?      @map("tier_2_units")
   tier3Units                                                       Int?      @map("tier_3_units")
-  tieredPricingOverride                                            Boolean   @map("tiered_pricing_override")
-  tieredPricing                                                    Boolean   @map("tiered_pricing")
+  tieredPricingOverride                                            Boolean?  @map("tiered_pricing_override")
+  tieredPricing                                                    Boolean?  @map("tiered_pricing")
   relatedTieredUnitDescriptionOverride                             Int?      @map("related_tiered_unit_description_override")
   relatedTieredUnitDescription                                     Int?      @map("related_tiered_unit_description")
   taskIndex                                                        Int?      @map("task_index")
   ofExistingBatteriesBeforeThisDesign                              Int?      @map("of_existing_batteries_before_this_design")
-  priceOverriddenForMajorTaskPriceFormulaUpdate                    Boolean   @map("price_overridden_for_major_task_price_formula_update")
+  priceOverriddenForMajorTaskPriceFormulaUpdate                    Boolean?  @map("price_overridden_for_major_task_price_formula_update")
   agreedAdditionalOrReplacedStorageDesignAdditionalPrice           Decimal?  @map("agreed_additional_or_replaced_storage_design_additional_price") @db.Decimal(18, 2)
   agreedContractorNewStorageDesignAdditionalPrice                  Decimal?  @map("agreed_contractor_new_storage_design_additional_price") @db.Decimal(18, 2)
   agreedContractorFlatMinorRevisionPrice                           Decimal?  @map("agreed_contractor_flat_minor_revision_price") @db.Decimal(18, 2)
@@ -727,7 +733,7 @@ model OrderedTasks {
   agreedContractorFlatGroundMountMinorRevisionPrice                Decimal?  @map("agreed_contractor_flat_ground_mount_minor_revision_price") @db.Decimal(18, 2)
   agreedContractorFlatGroundMountMajorRevisionPrice                Decimal?  @map("agreed_contractor_flat_ground_mount_major_revision_price") @db.Decimal(18, 2)
   agreedContractorAdditionalOrReplacedStorageDesignAdditionalPrice Decimal?  @map("agreedContractorAdditionalOrReplacedStorageDesignAdditionalPrice") @db.Decimal(18, 2)
-  taskExpenseFormulaFid38Update2021Dec30                           Boolean   @map("task_expense_formula_fid38_update_2021dec30")
+  taskExpenseFormulaFid38Update2021Dec30                           Boolean?  @map("task_expense_formula_fid38_update_2021dec30")
   ofDesignTasksAssigned                                            Int?      @map("of_design_tasks_assigned")
   oldestUnassignedTask                                             Int?      @map("oldest_unassigned_task")
   turnaroundTimeHr                                                 DateTime? @map("turnaround_time_hr") @db.Time(0)
@@ -738,7 +744,7 @@ model OrderedTasks {
   ymdCreated                                                       String?   @map("ymd_created") @db.VarChar(255)
   adminRelatedJob                                                  Int?      @map("admin_related_job")
   auditDateAssignedFix                                             DateTime? @map("audit_date_assigned_fix") @db.DateTime(0)
-  auditJobVendorInvoiceMissing                                     Boolean   @map("audit_job_vendor_invoice_missing")
+  auditJobVendorInvoiceMissing                                     Boolean?  @map("audit_job_vendor_invoice_missing")
   fixD628                                                          String?   @map("fix_d628") @db.Text
   fix8Bdf                                                          String?   @map("fix_8bdf") @db.Text
 
