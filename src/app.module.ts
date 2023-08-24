@@ -8,6 +8,8 @@ import { DepartmentModule } from './modules/department/department.module'
 import { GeographyModule } from './modules/geography/geography.module'
 import { ProjectModule } from './modules/project/project.module'
 import { EventEmitterModule } from '@nestjs/event-emitter'
+import { JobModule } from './modules/ordered-job/job.module'
+import { OrderedTaskModule } from './modules/ordered-task/ordered-task.module'
 
 @Module({
   imports: [
@@ -18,6 +20,8 @@ import { EventEmitterModule } from '@nestjs/event-emitter'
     DepartmentModule,
     GeographyModule,
     ProjectModule,
+    JobModule,
+    OrderedTaskModule,
   ],
   controllers: [],
   providers: [
