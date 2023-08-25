@@ -30,7 +30,6 @@ export class CreateProjectService implements ICommandHandler {
       }),
       clientOrganizationId: command.organizationId,
       updatedBy: command.userId,
-      totalOfJobs: 1,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
         stateId: censusResponse.state.geoId,
         countyId: censusResponse.county.geoId,
@@ -38,6 +37,7 @@ export class CreateProjectService implements ICommandHandler {
         placeId: censusResponse.place.geoId,
       }),
     })
+
     await this.projectRepository.createProject(entity)
   }
 

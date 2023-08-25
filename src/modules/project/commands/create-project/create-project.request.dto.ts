@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsIn, IsNumber, IsObject, IsString } from 'class-validator'
+import { IsIn, IsObject, IsString } from 'class-validator'
 import { ProjectPropertyType } from '../../domain/project.type'
 
 class AddressRequestDto {

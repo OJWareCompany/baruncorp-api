@@ -2,6 +2,8 @@ import { Mapper } from '../../libs/ddd/mapper.interface'
 import { ProjectEntity } from './domain/project.entity'
 import { Prisma, OrderedProjects } from '@prisma/client'
 import { ProjectResponseDto } from './dtos/project.response.dto'
+import { Address } from '../organization/domain/value-objects/address.vo'
+import { ProjectAssociatedRegulatoryBody } from './domain/value-objects/project-associated-regulatory-body.value-object'
 
 /**
  * Entity, DB Record, Response DTO의 변환을 책임지는 클래스.
@@ -22,7 +24,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       propertyAddressState: props.projectPropertyAddress.state,
       propertyAddressPostalCode: props.projectPropertyAddress.postalCode,
       propertyOwnerName: props.projectPropertyOwner,
-      mailingAddressForWetStamps: props.mailingAddressForWetStamp.fullAddress,
+      mailingAddressForWetStamps: props.mailingAddressForWetStamp,
       projectPropertyType: props.projectPropertyType,
       isGroundMount: props.isGroundMount,
       systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
@@ -66,8 +68,41 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
     }
   }
 
-  toDomain(record: any, ...entity: any): ProjectEntity {
-    throw new Error('Method not implemented.')
+  toDomain(record: OrderedProjects, ...entity: any): ProjectEntity {
+    return new ProjectEntity({
+      id: record.id,
+      createdAt: new Date(record.dateCreated),
+      updatedAt: new Date(record.updatedAt),
+      props: {
+        projectPropertyType: record.projectPropertyType === 'Residential' ? 'Residential' : 'Commercial',
+        projectPropertyOwner: record.propertyOwnerName,
+        projectNumber: record.projectNumber,
+        systemSize: Number(record.systemSize),
+        isGroundMount: record.isGroundMount,
+        projectPropertyAddress: new Address({
+          city: record.propertyAddressCity,
+          country: null,
+          postalCode: record.propertyAddressPostalCode,
+          state: record.propertyAddressState,
+          street1: record.propertyAddressStreet1,
+          street2: record.propertyAddressStreet2,
+          fullAddress: record.propertyAddress,
+        }),
+        mailingAddressForWetStamp: record.mailingAddressForWetStamps,
+        clientOrganizationId: record.clientId,
+        projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
+          stateId: record.stateId,
+          countyId: record.countyId,
+          countySubdivisionsId: record.countyId,
+          placeId: record.placeId,
+        }),
+        updatedBy: record.lastModifiedBy,
+        totalOfJobs: record.totalOfJobs,
+        clientUserId: record.clientUserId,
+        clientUserName: record.clientUserName,
+        numberOfWetStamp: null,
+      },
+    })
   }
 
   toResponse(entity: ProjectEntity, ...dtos: any): ProjectResponseDto {

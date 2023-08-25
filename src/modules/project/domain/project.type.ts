@@ -10,7 +10,7 @@ export interface ProjectProps {
   systemSize: number | null
   isGroundMount: boolean
   projectPropertyAddress: Address
-  mailingAddressForWetStamp: Address
+  mailingAddressForWetStamp: string
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
@@ -28,13 +28,13 @@ export interface CreateProjectProps {
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
-  totalOfJobs: number
+  // totalOfJobs: number
   // numberOfWetStamp: number
   // clientUserId: string
   // clientUserName: string
   // systemSize: number | null
   // isGroundMount: boolean
-  // mailingAddressForWetStamp: Address
+  // mailingAddressForWetStamp: string
 }
 
 // mailingAddressForWetStamp: new Address({
