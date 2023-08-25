@@ -5,7 +5,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-created.domain-event'
 import { ORDERED_TASK_REPOSITORY } from '../../ordered-task.di-token'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
-import { v4 } from 'uuid'
+import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
 
 @Injectable()
 export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
@@ -18,34 +18,27 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent): Promise<void> {
     const tasks = await this.loadTasksMemberAssignment([...new Set(event.orderedTaskIds)])
-    // tasks[0].
-
-    const now = new Date()
 
     const entities = tasks.map(async (task) => {
       const oldTask = await this.prismaService.orderedTasks.findFirst({
         where: { taskMenuId: task.id, projectId: event.projectId },
       })
-      return {
-        id: v4(),
+      return OrderedTaskEntity.create({
         isNewTask: oldTask ? false : true,
-        isLocked: false,
-        taskStatus: 'Not Started',
         taskName: task.name,
         taskMenuId: task.id,
         jobId: event.aggregateId,
         projectId: event.projectId,
-        dateCreated: now,
-      }
+      })
     })
 
     const inserts = await Promise.all(entities)
 
     await this.prismaService.orderedTasks.createMany({
-      data: [...inserts],
+      data: inserts.map((task) => ({
+        ...task.getProps(),
+      })),
     })
-    console.log(22)
-    // return this.orderedTaskRepository.insert(orderedTask)
   }
 
   private async loadTasksMemberAssignment(taskId: string | string[]): Promise<Services[]> {
