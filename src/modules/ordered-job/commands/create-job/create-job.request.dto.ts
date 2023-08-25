@@ -1,40 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsNumber, IsObject, IsString } from 'class-validator'
 
-class AddressRequestDto {
-  @ApiProperty({ default: '3480 Northwest 33rd Court' })
-  @IsString()
-  street1: string
-
-  @ApiProperty({ default: null })
-  @IsString()
-  street2: string | null
-
-  @ApiProperty({ default: 'Lauderdale Lakes' })
-  @IsString()
-  city: string
-
-  @ApiProperty({ default: 'Florida' })
-  @IsString()
-  state: string
-
-  @ApiProperty({ default: '33309' })
-  @IsString()
-  postalCode: string
-
-  @ApiProperty({ default: 'United State' })
-  @IsString()
-  country: string | null
-
-  @ApiProperty({ default: 3 })
-  @IsNumber()
-  numberOfWetStamps: number
-
-  @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
-  @IsString()
-  fullAddress: string
-}
-
 export class CreateJobRequestDto {
   @ApiProperty({ default: 'chris@barun.com', isArray: true })
   @IsArray()
@@ -50,7 +16,7 @@ export class CreateJobRequestDto {
 
   @ApiProperty({ default: 'please, check this out.' })
   @IsString()
-  additionalInformationFromClient: string
+  additionalInformationFromClient: string | null
 
   @ApiProperty({ default: 300.1 })
   @IsNumber()
@@ -73,13 +39,13 @@ export class CreateJobRequestDto {
 
   @ApiProperty({ default: 'Go to the gym.' })
   @IsString()
-  otherServiceDescription: string
+  otherServiceDescription: string | null
 
-  // @ApiProperty({ default: 3000 })
-  // @IsNumber()
-  // commercialJobPrice: number | null
+  @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
+  @IsString()
+  mailingAddressForWetStamp: string | null
 
-  @ApiProperty({ type: AddressRequestDto })
-  @IsObject()
-  mailingAddressForWetStamp: AddressRequestDto
+  @ApiProperty({ default: 3 })
+  @IsNumber()
+  numberOfWetStamp: number | null
 }

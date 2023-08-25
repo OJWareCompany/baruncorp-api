@@ -24,6 +24,7 @@ export class CreateJobHttpClient {
       taskIds: dto.taskIds,
       otherServiceDescription: dto.otherServiceDescription,
       mailingAddressForWetStamp: dto.mailingAddressForWetStamp,
+      numberOfWetStamp: dto.numberOfWetStamp,
     })
 
     await this.commandBus.execute(command)

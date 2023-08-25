@@ -20,6 +20,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
       receivedAt: props.receivedAt,
+      projectId: props.projectId,
 
       deliverablesEmail: props.clientInfo.deliverablesEmail,
       updatedBy: props.updatedBy,

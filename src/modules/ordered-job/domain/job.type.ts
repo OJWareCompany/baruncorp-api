@@ -12,10 +12,10 @@ export interface CreateJobProps {
   orderedTasks: OrderedTasksValueObject
   systemSize: number
   mailingAddressForWetStamp: string
+  numberOfWetStamp: number
   additionalInformationFromClient: string
   clientInfo: ClientInformation
   updatedBy: string
-  // commercialJobPrice: number
 }
 
 export interface JobProps {
@@ -25,9 +25,9 @@ export interface JobProps {
   orderedTasks: OrderedTasksValueObject
   systemSize: number
   mailingAddressForWetStamp: string
+  numberOfWetStamp: number
   additionalInformationFromClient: string
   clientInfo: ClientInformation
   updatedBy: string
   receivedAt: Date
-  // commercialJobPrice: number
 }
