@@ -8,6 +8,7 @@ export class OrderedTasksWhenToCreateJob {
 }
 
 export class OrderedTask {
+  id: string
   isNewTask: boolean
   isLocked: boolean
   taskStatus: string
@@ -17,8 +18,10 @@ export class OrderedTask {
   projectId: string
   dateCreated: Date
   assignedTo: string | null
+  assignedUserId: string | null
   description: string | null
   constructor(props: OrderedTask) {
+    this.id = props.id
     this.isNewTask = props.isNewTask
     this.isLocked = props.isLocked
     this.taskStatus = props.taskStatus

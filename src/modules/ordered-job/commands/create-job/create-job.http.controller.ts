@@ -24,6 +24,7 @@ export class CreateJobHttpClient {
       orderedTasks: dto.taskIds,
       mailingAddressForWetStamp: dto.mailingAddressForWetStamp,
       numberOfWetStamp: dto.numberOfWetStamp,
+      projectType: dto.projectType,
     })
 
     await this.commandBus.execute(command)

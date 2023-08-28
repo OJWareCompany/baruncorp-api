@@ -11,7 +11,8 @@ export class CreateJobService implements ICommandHandler {
   constructor(@Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepository) {}
 
   async execute(command: CreateJobCommand): Promise<void> {
-    // TODO Client User 여러명 설정
+    // TODO Project Type 업데이트
+    // TODO Client User 여러명 설정 -> user profile에서 contact emails 필드 추가하기.
     const clientUser = await this.jobRepository.findUser(command.clientUserIds[0])
     const orderer = await this.jobRepository.findUser(command.updatedByUserId)
     const project = await this.jobRepository.findProject(command.projectId)
@@ -32,6 +33,7 @@ export class CreateJobService implements ICommandHandler {
       }),
       updatedBy: orderer.firstName + ' ' + orderer.lastName,
       projectId: command.projectId,
+      projectType: command.projectType,
       jobNumber: command.jobNumber,
     })
 

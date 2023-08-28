@@ -27,7 +27,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       mailingAddressForWetStamp: props.mailingAddressForWetStamp,
       numberOfWetStamp: props.numberOfWetStamp,
       jobNumber: props.jobNumber,
-
+      projectType: props.projectId,
       deliverablesEmail: props.clientInfo.deliverablesEmail,
       updatedBy: props.updatedBy,
 
@@ -95,6 +95,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
   ): JobEntity {
     const orderdTasks = record.orderedTasks.map((task) => {
       return new OrderedTask({
+        id: task.id,
         isNewTask: task.isNewTask,
         isLocked: task.isLocked,
         taskStatus: task.taskStatus,
@@ -104,6 +105,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         projectId: task.projectId,
         dateCreated: task.dateCreated,
         assignedTo: task.assignedTo,
+        assignedUserId: task.assignedUserId,
         description: task.description,
       })
     })
@@ -114,6 +116,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: new Date(record.updatedAt),
       props: {
         projectId: record.projectId,
+        projectType: record.projectType,
         jobStatus: record.jobStatus as JobStatus,
         jobName: record.jobName,
         jobNumber: record.jobNumber,

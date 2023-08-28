@@ -457,6 +457,7 @@ model OrderedJobs {
   receivedAt                                    DateTime?        @map("received_at") @db.DateTime(0)
   dateDue                                       DateTime?        @map("date_due") @db.Date
   jobNumber                                     String?          @map("job_number") @db.VarChar(255)
+  projectType                                   String?          @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?             @map("number_of_wet_stamp") @db.TinyInt
   dateSentToClient                              DateTime?        @map("date_sent_to_client") @db.Date
   jobName                                       String?          @map("job_name") @db.Text
@@ -587,6 +588,7 @@ model OrderedTasks {
   dateAssigned                                                     DateTime?    @map("date_assigned") @db.DateTime(0)
   dateCompletedCancelled                                           DateTime?    @map("date_completed_cancelled") @db.DateTime(0)
   assignedTo                                                       String?      @map("assigned_to") @db.VarChar(255)
+  assignedUserId                                                   String?      @map("assigned_user_id") @db.VarChar(255)
   taskStatus                                                       String       @map("task_status") @db.VarChar(255)
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
   notes                                                            String?      @map("notes") @db.Text
