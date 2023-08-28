@@ -1,8 +1,11 @@
 import { JobEntity } from './domain/job.entity'
-import { OrderedJobs } from '@prisma/client'
+import { OrderedJobs, OrderedTasks, Prisma } from '@prisma/client'
 import { JobResponseDto } from './dtos/job.response.dto'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
+import { JobStatus } from './domain/job.type'
+import { ClientInformation } from './domain/value-objects/client-information.value-object'
+import { OrderedTask } from './domain/value-objects/ordered-task.value-object'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -16,14 +19,18 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       clientId: props.clientInfo.clientId,
       clientContact: props.clientInfo.clientContact,
       clientContactEmail: props.clientInfo.clientContactEmail,
-      commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
       receivedAt: props.receivedAt,
       projectId: props.projectId,
+      systemSize: new Prisma.Decimal(props.systemSize),
+      mailingAddressForWetStamp: props.mailingAddressForWetStamp,
+      numberOfWetStamp: props.numberOfWetStamp,
 
       deliverablesEmail: props.clientInfo.deliverablesEmail,
       updatedBy: props.updatedBy,
+
+      commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
       otherComments: null,
       jobNotesF: null,
@@ -79,11 +86,55 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     }
   }
 
-  toDomain(record: OrderedJobs, ...entity: any): JobEntity {
-    throw new Error('Method not implemented.')
+  toDomain(
+    record: OrderedJobs & {
+      orderedTasks: OrderedTasks[]
+      isCurrentJob?: boolean
+    },
+  ): JobEntity {
+    const orderdTasks = record.orderedTasks.map((task) => {
+      return new OrderedTask({
+        isNewTask: task.isNewTask,
+        isLocked: task.isLocked,
+        taskStatus: task.taskStatus,
+        taskName: task.taskName,
+        taskId: task.taskMenuId,
+        jobId: task.jobId,
+        projectId: task.projectId,
+        dateCreated: task.dateCreated,
+        assignedTo: task.assignedTo,
+        description: task.description,
+      })
+    })
+
+    return new JobEntity({
+      id: record.id,
+      createdAt: new Date(record.createdAt),
+      updatedAt: new Date(record.updatedAt),
+      props: {
+        projectId: record.projectId,
+        jobStatus: record.jobStatus as JobStatus,
+        jobName: record.jobName,
+        orderedTasks: orderdTasks,
+        systemSize: Number(record.systemSize),
+        mailingAddressForWetStamp: record.mailingAddressForWetStamp,
+        numberOfWetStamp: record.numberOfWetStamp,
+        additionalInformationFromClient: record.additionalInformationFromClient,
+        clientInfo: new ClientInformation({
+          clientOrganizationId: record.clientId,
+          clientContact: record.clientContact,
+          clientContactEmail: record.clientContactEmail,
+          deliverablesEmail: record.deliverablesEmail,
+        }),
+        updatedBy: record.updatedBy,
+        receivedAt: record.receivedAt,
+        isCurrentJob: record.isCurrentJob,
+      },
+    })
   }
 
   toResponse(entity: JobEntity, ...dtos: any): JobResponseDto {
-    throw new Error('Method not implemented.')
+    // throw new Error('Method not implemented.')
+    return
   }
 }

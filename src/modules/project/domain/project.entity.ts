@@ -1,7 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateProjectProps, ProjectProps } from './project.type'
-import { Address } from '../../organization/domain/value-objects/address.vo'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string

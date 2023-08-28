@@ -1,6 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsNumber, IsObject, IsString } from 'class-validator'
 
+class CreateOrderedTaskWhenJobIsCreatedRequestDto {
+  @ApiProperty({})
+  @IsString()
+  taskId: string
+
+  @ApiProperty()
+  @IsString()
+  description: string
+}
+
 export class CreateJobRequestDto {
   @ApiProperty({ default: 'chris@barun.com', isArray: true })
   @IsArray()
@@ -28,18 +38,34 @@ export class CreateJobRequestDto {
 
   @ApiProperty({
     default: [
-      'e5d81943-3fef-416d-a85b-addb8be296c0',
-      '9e773832-ad39-401d-b1c2-16d74f9268ea',
-      '99ff64ee-fe47-4235-a026-db197628d077',
-      '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9',
+      {
+        taskId: 'e5d81943-3fef-416d-a85b-addb8be296c0',
+        description: '',
+      },
+      {
+        taskId: '9e773832-ad39-401d-b1c2-16d74f9268ea',
+        description: '',
+      },
+      {
+        taskId: '99ff64ee-fe47-4235-a026-db197628d077',
+        description: '',
+      },
+      {
+        taskId: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9',
+        description: '',
+      },
+      {
+        taskId: '2a2a256b-57a5-46f5-8cfb-1855cc29238a',
+        description: 'This is not on the menu.',
+      },
     ],
   })
   @IsArray()
-  taskIds: string[]
+  taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
 
-  @ApiProperty({ default: 'Go to the gym.' })
-  @IsString()
-  otherServiceDescription: string | null
+  // @ApiProperty({ default: 'Go to the gym.' })
+  // @IsString()
+  // otherServiceDescription: string | null
 
   @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   @IsString()

@@ -1,5 +1,5 @@
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { OrderedTasksValueObject } from './value-objects/ordered-tasks.value-object'
+import { OrderedTask, OrderedTasksWhenToCreateJob } from './value-objects/ordered-task.value-object'
 
 export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
 
@@ -9,7 +9,7 @@ export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' |
 export interface CreateJobProps {
   projectId: string
   jobName: string
-  orderedTasks: OrderedTasksValueObject
+  orderedTasks: OrderedTasksWhenToCreateJob[]
   systemSize: number
   mailingAddressForWetStamp: string
   numberOfWetStamp: number
@@ -22,7 +22,7 @@ export interface JobProps {
   projectId: string
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
   jobName: string
-  orderedTasks: OrderedTasksValueObject
+  orderedTasks: OrderedTask[]
   systemSize: number
   mailingAddressForWetStamp: string
   numberOfWetStamp: number
@@ -30,4 +30,5 @@ export interface JobProps {
   clientInfo: ClientInformation
   updatedBy: string
   receivedAt: Date
+  isCurrentJob?: boolean
 }

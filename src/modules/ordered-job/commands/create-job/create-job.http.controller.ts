@@ -21,8 +21,7 @@ export class CreateJobHttpClient {
       additionalInformationFromClient: dto.additionalInformationFromClient,
       systemSize: dto.systemSize,
       projectId: dto.projectId,
-      taskIds: dto.taskIds,
-      otherServiceDescription: dto.otherServiceDescription,
+      orderedTasks: dto.taskIds,
       mailingAddressForWetStamp: dto.mailingAddressForWetStamp,
       numberOfWetStamp: dto.numberOfWetStamp,
     })
