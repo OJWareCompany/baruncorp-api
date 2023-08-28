@@ -14,6 +14,39 @@ export class ProjectRepository implements ProjectRepositoryPort {
     private readonly userMapper: UserMapper, // TODO: 다른 컨텍스트간 Mapper 공유 가능?
   ) {}
 
+  async findProject(id: string): Promise<ProjectEntity> {
+    const record = await this.prismaService.orderedProjects.findUnique({ where: { id } })
+    return this.projectMapper.toDomain(record)
+  }
+
+  async updateProjectWhenJobIsCreated(entity: ProjectEntity) {
+    const record = this.projectMapper.toPersistence(entity)
+    await this.prismaService.orderedProjects.update({
+      where: { id: record.id },
+      data: {
+        totalOfJobs: record.totalOfJobs,
+        systemSize: record.systemSize,
+        mailingAddressForWetStamps: record.mailingAddressForWetStamps,
+      },
+    })
+  }
+
+  async updateProjectMailingAddress(entity: ProjectEntity): Promise<void> {
+    const record = this.projectMapper.toPersistence(entity)
+    await this.prismaService.orderedProjects.update({
+      where: { id: record.id },
+      data: { mailingAddressForWetStamps: record.mailingAddressForWetStamps },
+    })
+  }
+
+  async updateProjectSystemSize(entity: ProjectEntity): Promise<void> {
+    const record = this.projectMapper.toPersistence(entity)
+    await this.prismaService.orderedProjects.update({
+      where: { id: record.id },
+      data: { systemSize: record.systemSize },
+    })
+  }
+
   async createProject(projectEntity: ProjectEntity): Promise<void> {
     const record = this.projectMapper.toPersistence(projectEntity)
     await this.prismaService.orderedProjects.create({ data: { ...record } })

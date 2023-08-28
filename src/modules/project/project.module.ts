@@ -19,8 +19,11 @@ import { FindProjectsHttpController } from './queries/find-projects/find-project
 import { FindProjectsQueryHandler } from './queries/find-projects/find-projects.query-handler'
 import { FindProjectDetailHttpController } from './queries/find-project-detail/find-project-detail.http.controller'
 import { FindProjectDetailQueryHandler } from './queries/find-project-detail/find-project-detail.query-handler'
+import { UpdateProjectWhenJobIsCreatedEventHandler } from './application/event-handlers/update-project-when-job-is-created.domain-event-handler'
 
 const commandHandlers: Provider[] = [SearchCensusService, CreateProjectService]
+const eventHandlers: Provider[] = [UpdateProjectWhenJobIsCreatedEventHandler]
+const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
 
 const repositories: Provider[] = [
   { provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository },
@@ -28,14 +31,12 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
-const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
-
 // 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
 const mappers: Provider[] = [ProjectMapper, UserMapper, UserRoleMapper, LicenseMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [
     SearchCensusHttpController,
     CreateProjectHttpController,
