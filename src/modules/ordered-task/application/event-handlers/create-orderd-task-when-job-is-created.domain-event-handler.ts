@@ -17,7 +17,9 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
   // Handle a Domain Event by performing changes to other aggregates (inside the same Domain).
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent): Promise<void> {
-    const tasks = await this.loadTasksMemberAssignment([...new Set(event.orderedTaskIds)])
+    const taskIds: string[] = event.orderedTasks.map((task) => task.taskId)
+
+    const tasks = await this.loadTasksMemberAssignment([...new Set(taskIds)])
 
     const entities = tasks.map(async (task) => {
       const oldTask = await this.prismaService.orderedTasks.findFirst({
@@ -27,6 +29,7 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
         isNewTask: oldTask ? false : true,
         taskName: task.name,
         taskMenuId: task.id,
+        description: task.description,
         jobId: event.aggregateId,
         projectId: event.projectId,
       })
