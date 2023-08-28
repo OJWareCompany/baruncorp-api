@@ -9,6 +9,7 @@ export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' |
 export interface CreateJobProps {
   projectId: string
   jobName: string
+  jobNumber: string
   orderedTasks: OrderedTasksWhenToCreateJob[]
   systemSize: number
   mailingAddressForWetStamp: string
@@ -20,6 +21,7 @@ export interface CreateJobProps {
 
 export interface JobProps {
   projectId: string
+  jobNumber: string
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
   jobName: string
   orderedTasks: OrderedTask[]

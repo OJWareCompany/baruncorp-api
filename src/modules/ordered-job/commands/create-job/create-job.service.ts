@@ -32,6 +32,7 @@ export class CreateJobService implements ICommandHandler {
       }),
       updatedBy: orderer.firstName + ' ' + orderer.lastName,
       projectId: command.projectId,
+      jobNumber: command.jobNumber,
     })
 
     await this.jobRepository.insert(job)

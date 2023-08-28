@@ -26,6 +26,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       systemSize: new Prisma.Decimal(props.systemSize),
       mailingAddressForWetStamp: props.mailingAddressForWetStamp,
       numberOfWetStamp: props.numberOfWetStamp,
+      jobNumber: props.jobNumber,
 
       deliverablesEmail: props.clientInfo.deliverablesEmail,
       updatedBy: props.updatedBy,
@@ -115,6 +116,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         projectId: record.projectId,
         jobStatus: record.jobStatus as JobStatus,
         jobName: record.jobName,
+        jobNumber: record.jobNumber,
         orderedTasks: orderdTasks,
         systemSize: Number(record.systemSize),
         mailingAddressForWetStamp: record.mailingAddressForWetStamp,

@@ -8,6 +8,7 @@ export class UpdateJobCommand {
   additionalInformationFromClient: string
   numberOfWetStamp: number
   updatedByUserId: string
+  jobStatus: string
 
   constructor(props: UpdateJobCommand) {
     this.deliverablesEmails = props.deliverablesEmails

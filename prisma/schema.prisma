@@ -456,6 +456,7 @@ model OrderedJobs {
   createdAt                                     DateTime?        @map("created_at") @db.DateTime(0)
   receivedAt                                    DateTime?        @map("received_at") @db.DateTime(0)
   dateDue                                       DateTime?        @map("date_due") @db.Date
+  jobNumber                                     String?          @map("job_number") @db.VarChar(255)
   numberOfWetStamp                              Int?             @map("number_of_wet_stamp") @db.TinyInt
   dateSentToClient                              DateTime?        @map("date_sent_to_client") @db.Date
   jobName                                       String?          @map("job_name") @db.Text

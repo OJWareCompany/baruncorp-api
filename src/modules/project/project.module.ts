@@ -20,9 +20,13 @@ import { FindProjectsQueryHandler } from './queries/find-projects/find-projects.
 import { FindProjectDetailHttpController } from './queries/find-project-detail/find-project-detail.http.controller'
 import { FindProjectDetailQueryHandler } from './queries/find-project-detail/find-project-detail.query-handler'
 import { UpdateProjectWhenJobIsCreatedEventHandler } from './application/event-handlers/update-project-when-job-is-created.domain-event-handler'
+import { UpdateProjectWhenCurrentJobIsUpdatedEventHandler } from './application/event-handlers/update-project-when-current-job-is-updated.domain-event-handler'
 
 const commandHandlers: Provider[] = [SearchCensusService, CreateProjectService]
-const eventHandlers: Provider[] = [UpdateProjectWhenJobIsCreatedEventHandler]
+const eventHandlers: Provider[] = [
+  UpdateProjectWhenJobIsCreatedEventHandler,
+  UpdateProjectWhenCurrentJobIsUpdatedEventHandler,
+]
 const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
 
 const repositories: Provider[] = [

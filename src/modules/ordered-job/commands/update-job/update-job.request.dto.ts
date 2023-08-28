@@ -10,6 +10,10 @@ export class UpdateJobRequestDto {
   @IsString()
   jobNumber: string | null
 
+  @ApiProperty({ default: 'On Hold' })
+  @IsString()
+  jobStatus: string
+
   @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43', isArray: true })
   @IsArray()
   clientUserIds: string[]
@@ -21,10 +25,6 @@ export class UpdateJobRequestDto {
   @ApiProperty({ default: 300.1 })
   @IsNumber()
   systemSize: number | null
-
-  @ApiProperty({ default: 'f35c9fe5-95e2-406d-9d69-a1fe8a97960e' })
-  @IsString()
-  jobId: string
 
   @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   @IsString()

@@ -7,9 +7,11 @@ import { CreateJobService } from './commands/create-job/create-job.service'
 import { JobMapper } from './job.mapper'
 import { PrismaModule } from '../database/prisma.module'
 import { AuthenticationModule } from '../auth/authentication.module'
+import { UpdateJobHttpClient } from './commands/update-job/update-job.http.controller'
+import { UpdateJobService } from './commands/update-job/update-job.service'
 
-const httpControllers = [CreateJobHttpClient]
-const commandHandlers: Provider[] = [CreateJobService]
+const httpControllers = [CreateJobHttpClient, UpdateJobHttpClient]
+const commandHandlers: Provider[] = [CreateJobService, UpdateJobService]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 // const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
 
