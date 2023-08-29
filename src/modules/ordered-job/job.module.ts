@@ -11,13 +11,19 @@ import { UpdateJobHttpClient } from './commands/update-job/update-job.http.contr
 import { UpdateJobService } from './commands/update-job/update-job.service'
 import { FindJobQueryHandler } from './queries/find-job/find-job.query-handler'
 import { FindJobHttpController } from './queries/find-job/find-job.http.controller'
+import { FindJobPaginatedHttpController } from './queries/find-job-paginated/find-job.paginated.http.controller'
+import { FindJobPaginatedQueryHandler } from './queries/find-job-paginated/find-job.paginated.query-handler'
 
-const httpControllers = [CreateJobHttpClient, UpdateJobHttpClient, FindJobHttpController]
+const httpControllers = [
+  CreateJobHttpClient,
+  UpdateJobHttpClient,
+  FindJobHttpController,
+  FindJobPaginatedHttpController,
+]
 const commandHandlers: Provider[] = [CreateJobService, UpdateJobService]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
-const queryHandlers: Provider[] = [FindJobQueryHandler]
+const queryHandlers: Provider[] = [FindJobQueryHandler, FindJobPaginatedQueryHandler]
 
-// 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
 const mappers: Provider[] = [JobMapper]
 
 @Module({
