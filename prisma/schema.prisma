@@ -458,6 +458,7 @@ model OrderedJobs {
   dateDue                                       DateTime?        @map("date_due") @db.Date
   jobNumber                                     String?          @map("job_number") @db.VarChar(255)
   projectType                                   String?          @map("project_type") @db.VarChar(255)
+  mountingType                    String?        @map("mounting_type") @db.VarChar(255)
   numberOfWetStamp                              Int?             @map("number_of_wet_stamp") @db.TinyInt
   dateSentToClient                              DateTime?        @map("date_sent_to_client") @db.Date
   jobName                                       String?          @map("job_name") @db.Text
@@ -530,6 +531,7 @@ model OrderedJobs {
 
 model OrderedProjects {
   id                                            String         @id @map("id") @db.VarChar(255)
+  mountingType                    String?        @map("mounting_type") @db.VarChar(255)
   mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)
   systemSize                                    Decimal?       @map("system_size") @db.Decimal(10, 2)
   dateCreated                                   DateTime?      @map("date_created") @db.DateTime(0)

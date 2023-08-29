@@ -1,4 +1,4 @@
-import { Controller, Get, HttpStatus, Param, Query } from '@nestjs/common'
+import { Controller, Get, HttpStatus, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { JobResponseDto, OrderedTaskResponseFields } from '../../dtos/job.response.dto'
@@ -38,7 +38,7 @@ export class FindJobPaginatedHttpController {
         item.jobName = job.jobName
         item.jobNumber = job.jobNumber
         item.jobStatus = job.jobStatus
-        item.projectType = job.projectType
+        item.projectType = job.mountingType
         item.receivedAt = job.receivedAt.toISOString()
         item.clientInfo = {
           clientOrganizationId: job.clientInfo.clientId,

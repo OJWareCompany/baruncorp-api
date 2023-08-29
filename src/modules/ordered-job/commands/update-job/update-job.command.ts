@@ -9,6 +9,7 @@ export class UpdateJobCommand {
   numberOfWetStamp: number
   updatedByUserId: string
   jobStatus: string
+  mountingType: string
 
   constructor(props: UpdateJobCommand) {
     this.deliverablesEmails = props.deliverablesEmails
@@ -19,5 +20,6 @@ export class UpdateJobCommand {
     this.systemSize = props.systemSize
     this.jobId = props.jobId
     this.mailingAddressForWetStamp = props.mailingAddressForWetStamp
+    this.mountingType = props.mountingType
   }
 }

@@ -116,7 +116,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: new Date(record.updatedAt),
       props: {
         projectId: record.projectId,
-        projectType: record.projectType,
+        mountingType: record.projectType,
         jobStatus: record.jobStatus as JobStatus,
         jobName: record.jobName,
         jobNumber: record.jobNumber,

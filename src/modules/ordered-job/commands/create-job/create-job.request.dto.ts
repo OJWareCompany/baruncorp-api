@@ -38,7 +38,7 @@ export class CreateJobRequestDto {
 
   @ApiProperty({ default: 'Ground Mount' })
   @IsString()
-  projectType: string
+  mountingType: string
 
   @ApiProperty({
     default: [

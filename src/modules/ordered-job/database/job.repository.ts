@@ -23,6 +23,7 @@ export class JobRepository implements JobRepositoryPort {
   async update(entity: JobEntity): Promise<void> {
     const record = this.jobMapper.toPersistence(entity)
     await this.prismaService.orderedJobs.update({ where: { id: record.id }, data: { ...record } })
+    entity.eventForCurrentJobUpdate()
     await entity.publishEvents(this.eventEmitter)
   }
 

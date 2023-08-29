@@ -33,4 +33,8 @@ export class UpdateJobRequestDto {
   @ApiProperty({ default: 3 })
   @IsNumber()
   numberOfWetStamp: number | null
+
+  @ApiProperty({ default: 'Roof Mount' })
+  @IsNumber()
+  mountingType: string
 }

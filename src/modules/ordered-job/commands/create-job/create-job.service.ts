@@ -2,13 +2,13 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { CreateJobCommand } from './create-job.command'
 import { Inject } from '@nestjs/common'
 import { JOB_REPOSITORY } from '../../job.di-token'
-import { JobRepository } from '../../database/job.repository'
 import { JobEntity } from '../../domain/job.entity'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
+import { JobRepositoryPort } from '../../database/job.repository.port'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
-  constructor(@Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepository) {}
+  constructor(@Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort) {}
 
   async execute(command: CreateJobCommand): Promise<void> {
     // TODO Project Type 업데이트
@@ -33,7 +33,7 @@ export class CreateJobService implements ICommandHandler {
       }),
       updatedBy: orderer.firstName + ' ' + orderer.lastName,
       projectId: command.projectId,
-      projectType: command.projectType,
+      mountingType: command.mountingType,
       jobNumber: command.jobNumber,
     })
 

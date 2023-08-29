@@ -4,6 +4,7 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CreateJobProps, JobProps, JobStatus } from './job.type'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
+import { MountingType } from '@src/modules/project/domain/project.type'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -26,6 +27,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         }),
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
+        mountingType: create.mountingType as MountingType,
       }),
     )
     return job
@@ -53,19 +55,16 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   updateJobStatus(status: JobStatus) {
     this.props.jobStatus = status
-    this.eventForCurrentJobUpdate()
     return this
   }
 
   updateSystemSize(systemSize: number): JobEntity {
     this.props.systemSize = systemSize
-    this.eventForCurrentJobUpdate()
     return this
   }
 
   updateMailingAddressWetForStamp(mailingAddressForWetStamp: string): JobEntity {
     this.props.mailingAddressForWetStamp = mailingAddressForWetStamp
-    this.eventForCurrentJobUpdate()
     return this
   }
 
@@ -91,6 +90,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         systemSize: this.props.systemSize,
         mailingAddressForWetStamp: this.props.mailingAddressForWetStamp,
         jobStatus: this.props.jobStatus,
+        mountingType: this.props.mountingType as MountingType,
       }),
     )
   }

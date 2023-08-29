@@ -45,35 +45,11 @@ export class CreateProjectRequestDto {
   @IsString()
   organizationId: string
 
-  // @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
-  // @IsString()
-  // clientUserId: string
-
-  // @ApiProperty({ default: 'Thor' })
-  // @IsString()
-  // clientUserName: string
-
-  // @ApiProperty({ default: 3 })
-  // @IsNumber()
-  // numberOfWetStamp: number
-
   @ApiProperty({ default: '000152' })
   @IsString()
   projectNumber: string | null
 
-  // @ApiProperty({ default: 100.1 })
-  // @IsNumber()
-  // systemSize: number | null
-
-  // @ApiProperty({ default: false })
-  // @IsBoolean()
-  // isGroundMount: boolean
-
   @ApiProperty({ default: AddressRequestDto })
   @IsObject()
   projectPropertyAddress: AddressRequestDto
-
-  // @ApiProperty({ default: AddressRequestDto })
-  // @IsObject()
-  // mailingAddressForWetStamp: AddressRequestDto
 }

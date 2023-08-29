@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateProjectProps, ProjectProps } from './project.type'
+import { CreateProjectProps, MountingType, ProjectProps } from './project.type'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -12,10 +12,10 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
       totalOfJobs: 1,
       mailingAddressForWetStamp: null,
       systemSize: null,
-      isGroundMount: null,
       numberOfWetStamp: null,
       clientUserId: null,
       clientUserName: null,
+      mountingType: null,
     }
     return new ProjectEntity({ id, props })
   }
@@ -32,6 +32,11 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
 
   updateMailingAddressForWetStamp(mailingAddressForWetStamp: string) {
     this.props.mailingAddressForWetStamp = mailingAddressForWetStamp
+    return this
+  }
+
+  updateMountingType(mountingType: MountingType) {
+    this.props.mountingType = mountingType
     return this
   }
 

@@ -1,3 +1,4 @@
+import { MountingType } from '../../../project/domain/project.type'
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 
 /**
@@ -10,6 +11,7 @@ export class JobCreatedDomainEvent extends DomainEvent {
   public readonly orderedTasks: { taskId: string; description: string | null }[]
   public readonly systemSize: number
   public readonly mailingAddressForWetStamp: string
+  public readonly mountingType: MountingType
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {
     super(props)

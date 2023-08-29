@@ -4,6 +4,7 @@ import { Prisma, OrderedProjects } from '@prisma/client'
 import { ProjectResponseDto } from './dtos/project.response.dto'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { ProjectAssociatedRegulatoryBody } from './domain/value-objects/project-associated-regulatory-body.value-object'
+import { MountingType, ProjectPropertyType } from './domain/project.type'
 
 /**
  * Entity, DB Record, Response DTO의 변환을 책임지는 클래스.
@@ -26,10 +27,11 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       propertyOwnerName: props.projectPropertyOwner,
       mailingAddressForWetStamps: props.mailingAddressForWetStamp,
       projectPropertyType: props.projectPropertyType,
-      isGroundMount: props.isGroundMount,
       systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
       updatedAt: new Date(),
       dateCreated: new Date(),
+
+      mounting_type: props.mountingType,
 
       designOrPeStampPreviouslyDoneOnProjectOutside: 0, // TODO
       totalOfJobs: 1, // TODO
@@ -48,6 +50,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
 
       ahjAutomationLastRunDate: null,
 
+      isGroundMount: null, // TODO: REMOVE
       mailingAddressForStructuralWetStamp: null,
       mailingAddressForElectricalWetStamp: null,
       projectFolder: null,
@@ -74,11 +77,10 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       createdAt: new Date(record.dateCreated),
       updatedAt: new Date(record.updatedAt),
       props: {
-        projectPropertyType: record.projectPropertyType === 'Residential' ? 'Residential' : 'Commercial',
+        projectPropertyType: record.projectPropertyType as ProjectPropertyType,
         projectPropertyOwner: record.propertyOwnerName,
         projectNumber: record.projectNumber,
         systemSize: Number(record.systemSize),
-        isGroundMount: record.isGroundMount,
         projectPropertyAddress: new Address({
           city: record.propertyAddressCity,
           country: null,
@@ -101,6 +103,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         clientUserId: record.clientUserId,
         clientUserName: record.clientUserName,
         numberOfWetStamp: null,
+        mountingType: record.mounting_type as MountingType,
       },
     })
   }

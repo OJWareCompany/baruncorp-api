@@ -1,4 +1,4 @@
-import { ProjectPropertyType } from '../../domain/project.type'
+import { MountingType, ProjectPropertyType } from '../../domain/project.type'
 
 /**
  * Service와 Controller 사이의 DTO다.
@@ -24,20 +24,6 @@ export class CreateProjectCommand {
   }
 
   projectNumber: string | null
-
-  // isGroundMount: boolean
-
-  // mailingAddressForWetStamp: {
-  //   street1: string
-  //   street2: string | null
-  //   city: string
-  //   state: string
-  //   postalCode: string
-  //   country: string | null
-  //   fullAddress: string
-  // }
-
-  // systemSize: number | null
 
   constructor(props: CreateProjectCommand) {
     Object.entries(props).map(([key, value]) => (this[key] = value))

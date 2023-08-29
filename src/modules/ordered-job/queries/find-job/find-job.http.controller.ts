@@ -30,7 +30,7 @@ export class FindJobHttpController {
     response.jobName = result.jobName
     response.jobNumber = result.jobNumber
     response.jobStatus = result.jobStatus
-    response.projectType = result.projectType
+    response.projectType = result.mountingType
     response.receivedAt = result.receivedAt.toISOString()
 
     response.orderedTasks = result.orderedTasks.map((task) => {

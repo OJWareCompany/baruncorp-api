@@ -14,7 +14,10 @@ export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
   @OnEvent(CurrentJobUpdatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: CurrentJobUpdatedDomainEvent) {
     const project = await this.projectRepository.findProject(event.projectId)
-    project.updateSystemSize(event.systemSize).updateMailingAddressForWetStamp(event.mailingAddressForWetStamp)
+    project
+      .updateSystemSize(event.systemSize)
+      .updateMailingAddressForWetStamp(event.mailingAddressForWetStamp)
+      .updateMountingType(event.mountingType)
 
     await this.projectRepository.updateProjectWhenJobIsCreated(project)
   }

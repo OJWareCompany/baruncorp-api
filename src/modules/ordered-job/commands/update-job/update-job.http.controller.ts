@@ -29,6 +29,7 @@ export class UpdateJobHttpClient {
       mailingAddressForWetStamp: dto.mailingAddressForWetStamp,
       numberOfWetStamp: dto.numberOfWetStamp,
       jobStatus: dto.jobStatus,
+      mountingType: dto.mountingType,
     })
 
     await this.commandBus.execute(command)

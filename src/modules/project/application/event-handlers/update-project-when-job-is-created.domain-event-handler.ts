@@ -14,6 +14,7 @@ export class UpdateProjectWhenJobIsCreatedEventHandler {
       .increaseJobCount()
       .updateSystemSize(event.systemSize)
       .updateMailingAddressForWetStamp(event.mailingAddressForWetStamp)
+      .updateMountingType(event.mountingType)
 
     await this.projectRepository.updateProjectWhenJobIsCreated(project)
   }
