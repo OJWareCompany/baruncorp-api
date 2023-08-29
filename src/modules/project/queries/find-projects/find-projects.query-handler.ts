@@ -36,13 +36,22 @@ export class FindProjectsQueryHandler implements IQueryHandler {
         ...(query.projectNumber && { projectNumber: query.projectNumber }),
         ...(query.propertyAddress && { propertyAddress: { contains: query.propertyAddress } }),
       },
+      orderBy: { dateCreated: 'desc' },
       take: query.limit,
       skip: query.offset,
     })
 
+    const totalCount = await this.prismaService.orderedProjects.count({
+      where: {
+        ...(query.propertyType && { projectPropertyType: query.propertyType }),
+        ...(query.projectNumber && { projectNumber: query.projectNumber }),
+        ...(query.propertyAddress && { propertyAddress: { contains: query.propertyAddress } }),
+      },
+    })
+
     return new Paginated({
       items: records,
-      totalCount: records.length,
+      totalCount: totalCount,
       pageSize: query.limit,
       page: query.page,
     })
