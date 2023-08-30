@@ -19,23 +19,6 @@ export class CreateOrganizationCommand {
   readonly invoiceRecipientEmail: string | null
 
   constructor(props: CreateOrganizationCommand) {
-    this.email = props.email
-    this.fullAddress = props.fullAddress
-    this.street1 = props.street1
-    this.street2 = props.street2
-    this.city = props.city
-    this.state = props.state
-    this.postalCode = props.postalCode
-    this.country = props.country
-    this.phoneNumber = props.phoneNumber
-    this.name = props.name
-    this.description = props.description
-    this.organizationType = props.organizationType
-    this.isActiveContractor = props.isActiveContractor
-    this.isActiveWorkResource = props.isActiveWorkResource
-    this.isRevenueShare = props.isRevenueShare
-    this.isRevisionRevenueShare = props.isRevisionRevenueShare
-    this.invoiceRecipient = props.invoiceRecipient
-    this.invoiceRecipientEmail = props.invoiceRecipientEmail
+    Object.entries(props).map(([key, value]) => (this[key] = value))
   }
 }

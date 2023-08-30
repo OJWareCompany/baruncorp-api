@@ -57,6 +57,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   updateJobStatus(status: JobStatus) {
     this.props.jobStatus = status
+    console.log(status)
+    console.log('-----')
+    console.log(this)
     return this
   }
 
@@ -81,10 +84,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
    * 업데이트 이벤트 하나로 다 처리해야하는가? 아니면 필드마다 업데이트 이베트를 추가해야하는가?
    */
 
-  eventForCurrentJobUpdate(): void {
-    if (!this.props.isCurrentJob) return
-
-    this.clearEvents()
+  emitUpdateEvent(): void {
     this.addEvent(
       new CurrentJobUpdatedDomainEvent({
         aggregateId: this.id,
@@ -93,6 +93,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         mailingAddressForWetStamp: this.props.mailingAddressForWetStamp,
         jobStatus: this.props.jobStatus,
         mountingType: this.props.mountingType as MountingType,
+        isCurrentJop: this.props.isCurrentJob,
       }),
     )
   }

@@ -13,6 +13,8 @@ export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
   ) {}
   @OnEvent(CurrentJobUpdatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: CurrentJobUpdatedDomainEvent) {
+    if (!event.isCurrentJop) return
+
     const project = await this.projectRepository.findProject(event.projectId)
     project
       .updateSystemSize(event.systemSize)

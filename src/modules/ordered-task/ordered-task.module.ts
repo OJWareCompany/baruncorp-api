@@ -4,8 +4,12 @@ import { ORDERED_TASK_REPOSITORY } from './ordered-task.di-token'
 import { OrderedTaskRepository } from './database/ordered-task.repository'
 import { PrismaModule } from '../database/prisma.module'
 import { OrderedTaskMapper } from './ordered-task.mapper'
+import { UpdateOrderedTaskWhenJobIsUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-task-when-job-is-updated.domain-event-handler'
 
-const eventHandlers: Provider[] = [CreateOrderedTaskWhenJobIsCreatedDomainEventHandler]
+const eventHandlers: Provider[] = [
+  CreateOrderedTaskWhenJobIsCreatedDomainEventHandler,
+  UpdateOrderedTaskWhenJobIsUpdatedDomainEventHandler,
+]
 
 const mappers: Provider[] = [OrderedTaskMapper]
 

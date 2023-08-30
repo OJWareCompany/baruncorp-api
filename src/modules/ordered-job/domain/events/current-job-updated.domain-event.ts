@@ -8,13 +8,10 @@ export class CurrentJobUpdatedDomainEvent extends DomainEvent {
   public readonly projectId: string
   public readonly jobStatus: JobStatus
   public readonly mountingType: MountingType
+  public readonly isCurrentJop: boolean
 
   constructor(props: DomainEventProps<CurrentJobUpdatedDomainEvent>) {
     super(props)
-    this.systemSize = props.systemSize
-    this.mailingAddressForWetStamp = props.mailingAddressForWetStamp
-    this.projectId = props.projectId
-    this.jobStatus = props.jobStatus
-    this.mountingType = props.mountingType
+    Object.entries(props).map(([key, value]) => (this[key] = value))
   }
 }

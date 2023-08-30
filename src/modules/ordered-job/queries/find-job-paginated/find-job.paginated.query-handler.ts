@@ -46,7 +46,6 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       take: query.limit,
       skip: query.offset,
     })
-    console.log(records)
 
     const totalCount = await this.prismaService.orderedJobs.count({
       where: {
