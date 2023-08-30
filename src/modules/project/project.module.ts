@@ -21,8 +21,17 @@ import { FindProjectDetailHttpController } from './queries/find-project-detail/f
 import { FindProjectDetailQueryHandler } from './queries/find-project-detail/find-project-detail.query-handler'
 import { UpdateProjectWhenJobIsCreatedEventHandler } from './application/event-handlers/update-project-when-job-is-created.domain-event-handler'
 import { UpdateProjectWhenCurrentJobIsUpdatedEventHandler } from './application/event-handlers/update-project-when-current-job-is-updated.domain-event-handler'
+import { DeleteProjectService } from './commands/delete-project/delete-project.service'
+import { DeleteProjectHttpController } from './commands/delete-project/delete-project.http.controller'
 
-const commandHandlers: Provider[] = [SearchCensusService, CreateProjectService]
+const httpControllers = [
+  SearchCensusHttpController,
+  CreateProjectHttpController,
+  DeleteProjectHttpController,
+  FindProjectsHttpController,
+  FindProjectDetailHttpController,
+]
+const commandHandlers: Provider[] = [SearchCensusService, CreateProjectService, DeleteProjectService]
 const eventHandlers: Provider[] = [
   UpdateProjectWhenJobIsCreatedEventHandler,
   UpdateProjectWhenCurrentJobIsUpdatedEventHandler,
@@ -41,11 +50,6 @@ const mappers: Provider[] = [ProjectMapper, UserMapper, UserRoleMapper, LicenseM
 @Module({
   imports: [CqrsModule, PrismaModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
-  controllers: [
-    SearchCensusHttpController,
-    CreateProjectHttpController,
-    FindProjectsHttpController,
-    FindProjectDetailHttpController,
-  ],
+  controllers: [...httpControllers],
 })
 export class ProjectModule {}
