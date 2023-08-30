@@ -36,16 +36,22 @@ class ClientInformationFields {
 
 export class JobPaginatedResponseFields {
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
-  jobName: string
+  propertyAddress: string
 
   @ApiProperty({ example: '10223' })
-  jobNumber: string | number
+  jobNumber: string | null
+
+  @ApiProperty({ example: 5 })
+  jobRequestNumber: number
 
   @ApiProperty({ example: 'In Progess' })
   jobStatus: string
 
   @ApiProperty({ example: 'Residential' })
   projectType: string
+
+  @ApiProperty({ example: 'Ground Mount' })
+  mountingType: string
 
   @ApiProperty({ example: OrderedTaskResponseFields, type: OrderedTaskResponseFields, isArray: true })
   orderedTasks: OrderedTaskResponseFields[]

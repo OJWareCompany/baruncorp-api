@@ -31,10 +31,10 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       updatedAt: new Date(),
       dateCreated: new Date(),
 
-      mounting_type: props.mountingType,
+      mountingType: props.mountingType,
 
       designOrPeStampPreviouslyDoneOnProjectOutside: 0, // TODO
-      totalOfJobs: 1, // TODO
+      totalOfJobs: props.totalOfJobs,
 
       clientId: props.clientOrganizationId,
       lastModifiedBy: props.updatedBy,
@@ -103,7 +103,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         clientUserId: record.clientUserId,
         clientUserName: record.clientUserName,
         numberOfWetStamp: null,
-        mountingType: record.mounting_type as MountingType,
+        mountingType: record.mountingType as MountingType,
       },
     })
   }

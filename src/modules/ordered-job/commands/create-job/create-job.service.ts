@@ -19,7 +19,7 @@ export class CreateJobService implements ICommandHandler {
 
     // Entity에는 Record에 저장 될 모든 필드가 있어야한다.
     const job = JobEntity.create({
-      jobName: project.propertyAddress,
+      propertyAddress: project.propertyAddress,
       orderedTasks: command.orderedTasks,
       systemSize: command.systemSize,
       additionalInformationFromClient: command.additionalInformationFromClient,
@@ -35,6 +35,7 @@ export class CreateJobService implements ICommandHandler {
       projectId: command.projectId,
       mountingType: command.mountingType,
       jobNumber: command.jobNumber,
+      totalOfJobs: project.totalOfJobs,
     })
 
     await this.jobRepository.insert(job)

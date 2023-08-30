@@ -15,9 +15,6 @@ export class JobCreatedDomainEvent extends DomainEvent {
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {
     super(props)
-    this.orderedTasks = props.orderedTasks
-    this.projectId = props.projectId // props로 안하면 생성자에서 초기화 안해줬을때 문제 됨
-    this.systemSize = props.systemSize
-    this.mailingAddressForWetStamp = props.mailingAddressForWetStamp
+    Object.entries(props).map(([key, value]) => (this[key] = value))
   }
 }

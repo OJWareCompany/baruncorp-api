@@ -13,7 +13,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     const props = entity.getProps()
     return {
       id: props.id,
-      jobName: props.jobName,
+      propertyAddress: props.propertyAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
       jobStatus: props.jobStatus,
       additionalInformationFromClient: props.additionalInformationFromClient,
       clientId: props.clientInfo.clientId,
@@ -30,6 +30,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       projectType: props.projectId,
       deliverablesEmail: props.clientInfo.deliverablesEmail,
       updatedBy: props.updatedBy,
+      jobRequestNumber: props.jobRequestNumber,
+      mountingType: props.mountingType,
 
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
@@ -116,9 +118,10 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: new Date(record.updatedAt),
       props: {
         projectId: record.projectId,
-        mountingType: record.projectType,
+        mountingType: record.mountingType,
         jobStatus: record.jobStatus as JobStatus,
-        jobName: record.jobName,
+        jobRequestNumber: record.jobRequestNumber,
+        propertyAddress: record.propertyAddress,
         jobNumber: record.jobNumber,
         orderedTasks: orderdTasks,
         systemSize: Number(record.systemSize),

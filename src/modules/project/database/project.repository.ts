@@ -19,6 +19,18 @@ export class ProjectRepository implements ProjectRepositoryPort {
     return this.projectMapper.toDomain(record)
   }
 
+  async update(entity: ProjectEntity): Promise<void> {
+    const record = this.projectMapper.toPersistence(entity)
+    await this.prismaService.orderedProjects.update({
+      where: { id: record.id },
+      data: { ...record },
+    })
+  }
+
+  async countTotalOfJobs(id: string): Promise<number> {
+    return await this.prismaService.orderedJobs.count({ where: { projectId: id } })
+  }
+
   async updateProjectWhenJobIsCreated(entity: ProjectEntity) {
     const record = this.projectMapper.toPersistence(entity)
     await this.prismaService.orderedProjects.update({
@@ -27,6 +39,7 @@ export class ProjectRepository implements ProjectRepositoryPort {
         totalOfJobs: record.totalOfJobs,
         systemSize: record.systemSize,
         mailingAddressForWetStamps: record.mailingAddressForWetStamps,
+        mountingType: record.mountingType,
       },
     })
   }

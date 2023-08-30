@@ -59,6 +59,9 @@ export class JobResponseDto {
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
   mailingAddressForWetStamp: string
 
+  @ApiProperty({ example: 'Ground Mount' })
+  mountingType: string
+
   @ApiProperty({ example: 3 })
   numberOfWetStamp: number
 
@@ -69,10 +72,13 @@ export class JobResponseDto {
   updatedBy: string
 
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
-  jobName: string
+  propertyAddress: string
 
   @ApiProperty({ example: '10223' })
-  jobNumber: string | number
+  jobNumber: string | null
+
+  @ApiProperty({ example: 5 })
+  jobRequestNumber: number | null
 
   @ApiProperty({ example: 'In Progess' })
   jobStatus: string

@@ -9,8 +9,9 @@ export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' |
 export interface CreateJobProps {
   projectId: string
   mountingType: string
-  jobName: string
+  propertyAddress: string
   jobNumber: string
+  totalOfJobs: number
   orderedTasks: OrderedTasksWhenToCreateJob[]
   systemSize: number
   mailingAddressForWetStamp: string
@@ -25,7 +26,8 @@ export interface JobProps {
   mountingType: string
   jobNumber: string
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
-  jobName: string
+  propertyAddress: string
+  jobRequestNumber: number
   orderedTasks: OrderedTask[]
   systemSize: number
   mailingAddressForWetStamp: string

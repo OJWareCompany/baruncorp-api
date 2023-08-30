@@ -10,12 +10,13 @@ export class UpdateProjectWhenJobIsCreatedEventHandler {
   @OnEvent([JobCreatedDomainEvent.name], { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
     const project = await this.projectRepository.findProject(event.projectId)
+    const totalOfJobs = await this.projectRepository.countTotalOfJobs(event.projectId)
+
     project
-      .increaseJobCount()
+      .updateTotalOfJobs(totalOfJobs)
       .updateSystemSize(event.systemSize)
       .updateMailingAddressForWetStamp(event.mailingAddressForWetStamp)
       .updateMountingType(event.mountingType)
-
-    await this.projectRepository.updateProjectWhenJobIsCreated(project)
+    await this.projectRepository.update(project)
   }
 }

@@ -13,6 +13,8 @@ export class JobEntity extends AggregateRoot<JobProps> {
     const id = v4()
     const props: JobProps = {
       ...create,
+      jobRequestNumber: ++create.totalOfJobs,
+      propertyAddress: create.propertyAddress,
       jobStatus: 'Not Started',
       receivedAt: new Date(),
       orderedTasks: [],

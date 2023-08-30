@@ -20,8 +20,8 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     return new ProjectEntity({ id, props })
   }
 
-  increaseJobCount() {
-    this.props.totalOfJobs++
+  updateTotalOfJobs(totalOfJobs: number) {
+    this.props.totalOfJobs = totalOfJobs
     return this
   }
 
