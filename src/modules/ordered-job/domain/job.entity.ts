@@ -57,9 +57,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   updateJobStatus(status: JobStatus) {
     this.props.jobStatus = status
-    console.log(status)
-    console.log('-----')
-    console.log(this)
     return this
   }
 

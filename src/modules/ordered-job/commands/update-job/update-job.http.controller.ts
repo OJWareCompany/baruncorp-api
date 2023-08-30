@@ -8,7 +8,7 @@ import { UpdateJobCommand } from './update-job.command'
 import { UpdateJobParamRequestDto } from './update-job.param.request.dto'
 
 @Controller('jobs')
-export class UpdateJobHttpClient {
+export class UpdateJobHttpController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Patch(':jobId')

@@ -7,7 +7,7 @@ import { CreateJobCommand } from './create-job.command'
 import { AuthGuard } from '../../../auth/authentication.guard'
 
 @Controller('jobs')
-export class CreateJobHttpClient {
+export class CreateJobHttpController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post('')
