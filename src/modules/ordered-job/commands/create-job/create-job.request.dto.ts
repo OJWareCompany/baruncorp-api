@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsNumber, IsObject, IsString } from 'class-validator'
+import { IsArray, IsNumber, IsString } from 'class-validator'
 
 class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})

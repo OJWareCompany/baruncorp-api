@@ -43,7 +43,7 @@ export class FindJobPaginatedHttpController {
         item.projectType = job.mountingType
         item.receivedAt = job.receivedAt.toISOString()
         item.clientInfo = {
-          clientOrganizationId: job.clientInfo.clientId,
+          clientOrganizationId: job.clientInfo.clientOrganizationId,
           clientOrganizationName: job.clientInfo.clientContact, // TODO: project나 조직도 join 해야하나
         }
         item.orderedTasks = job.orderedTasks.map((task) => {

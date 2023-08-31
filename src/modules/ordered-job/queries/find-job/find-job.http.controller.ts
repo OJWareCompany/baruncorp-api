@@ -48,7 +48,7 @@ export class FindJobHttpController {
     })
 
     response.clientInfo = {
-      clientOrganizationId: result.clientInfo.clientId,
+      clientOrganizationId: result.clientInfo.clientOrganizationId,
       clientOrganizationName: result.clientInfo.clientContact,
       clientContactMails: result.clientInfo.clientContactEmail.split(','),
     }
