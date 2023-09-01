@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateProjectProps, MountingType, ProjectProps } from './project.type'
+import { CreateProjectProps, MountingType, ProjectProps, ProjectUpdateProps } from './project.type'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -38,6 +38,17 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
   updateMountingType(mountingType: MountingType) {
     this.props.mountingType = mountingType
     return this
+  }
+
+  update(props: ProjectUpdateProps) {
+    this.props.projectPropertyType = props.projectPropertyType
+    this.props.projectPropertyOwner = props.projectPropertyOwner
+    this.props.projectNumber = props.projectNumber
+    this.props.projectPropertyAddress = props.projectPropertyAddress
+    this.props.projectAssociatedRegulatory = props.projectAssociatedRegulatory
+    this.props.updatedBy = props.updatedBy
+    this.props.clientUserId = props.clientUserId
+    this.props.clientUserName = props.clientUserName
   }
 
   public validate(): void {

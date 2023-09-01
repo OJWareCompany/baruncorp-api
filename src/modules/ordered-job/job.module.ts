@@ -15,6 +15,7 @@ import { FindJobPaginatedHttpController } from './queries/find-job-paginated/fin
 import { FindJobPaginatedQueryHandler } from './queries/find-job-paginated/find-job.paginated.query-handler'
 import { DeleteJobHttpController } from './commands/delete-job/delete-job.http.controller'
 import { DeleteJobService } from './commands/delete-job/delete-job.service'
+import UserMapper from '../users/user.mapper'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -27,7 +28,7 @@ const commandHandlers: Provider[] = [CreateJobService, UpdateJobService, DeleteJ
 const queryHandlers: Provider[] = [FindJobQueryHandler, FindJobPaginatedQueryHandler]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 
-const mappers: Provider[] = [JobMapper]
+const mappers: Provider[] = [JobMapper, UserMapper]
 
 @Module({
   imports: [PrismaModule, CqrsModule, AuthenticationModule],

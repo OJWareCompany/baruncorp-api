@@ -25,6 +25,7 @@ export interface JobProps {
   projectId: string
   mountingType: string
   jobNumber: string
+  jobName: string
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
   propertyAddress: string
   jobRequestNumber: number

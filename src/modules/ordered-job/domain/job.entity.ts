@@ -15,6 +15,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       ...create,
       jobRequestNumber: ++create.totalOfJobs,
       propertyAddress: create.propertyAddress,
+      jobName: create.propertyAddress + ` (Job ${create.jobNumber})`,
       jobStatus: 'Not Started',
       receivedAt: new Date(),
       orderedTasks: [],

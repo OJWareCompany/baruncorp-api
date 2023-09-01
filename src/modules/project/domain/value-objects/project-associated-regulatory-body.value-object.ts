@@ -1,3 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger'
+import { IsString } from 'class-validator'
+
 export interface ProjectAssociatedRegulatoryBodyProps {
   stateId: string
   countyId: string | null
@@ -11,11 +14,25 @@ export interface ProjectAssociatedRegulatoryBodyProps {
  */
 
 export class ProjectAssociatedRegulatoryBody {
-  stateId: string
-  countyId: string | null
-  countySubdivisionsId: string | null
-  placeId: string | null
-  ahjId: string
+  @ApiProperty({ default: '12' })
+  @IsString()
+  readonly stateId: string
+
+  @ApiProperty({ default: '12011' })
+  @IsString()
+  readonly countyId: string | null
+
+  @ApiProperty({ default: '1201191098' })
+  @IsString()
+  readonly countySubdivisionsId: string | null
+
+  @ApiProperty({ default: '1239525' })
+  @IsString()
+  readonly placeId: string | null
+
+  @ApiProperty({ default: '1239525' })
+  @IsString()
+  readonly ahjId: string
 
   constructor(create: Omit<ProjectAssociatedRegulatoryBody, 'ahjId'>) {
     this.stateId = create.stateId

@@ -32,6 +32,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedBy: props.updatedBy,
       jobRequestNumber: props.jobRequestNumber,
       mountingType: props.mountingType,
+      job_name: props.jobName,
 
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
@@ -123,6 +124,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         jobRequestNumber: record.jobRequestNumber,
         propertyAddress: record.propertyAddress,
         jobNumber: record.jobNumber,
+        jobName: record.job_name,
         orderedTasks: orderdTasks,
         systemSize: Number(record.systemSize),
         mailingAddressForWetStamp: record.mailingAddressForWetStamp,

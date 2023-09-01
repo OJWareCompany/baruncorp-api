@@ -6,6 +6,7 @@ import { JwtModule } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
 import { OrganizationModule } from '../organization/organization.module'
 import { PrismaModule } from '../database/prisma.module'
+import UserMapper from '../users/user.mapper'
 
 const { JWT_EXPIRED_TIME } = process.env
 
@@ -20,7 +21,7 @@ const { JWT_EXPIRED_TIME } = process.env
       signOptions: { expiresIn: JWT_EXPIRED_TIME },
     }),
   ],
-  providers: [AuthenticationService],
+  providers: [AuthenticationService, UserMapper],
   controllers: [AuthenticationController],
 })
 export class AuthenticationModule {}

@@ -3,10 +3,15 @@ import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
 import { Request } from 'express'
 import { PrismaService } from '../database/prisma.service'
+import UserMapper from '../users/user.mapper'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService, private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly prismaService: PrismaService,
+    private readonly userMapper: UserMapper,
+  ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
@@ -23,7 +28,7 @@ export class AuthGuard implements CanActivate {
       // TODO: what data needed
       const user = await this.prismaService.users.findUnique({ where: { id: payload.id } })
 
-      request['user'] = user
+      request['user'] = this.userMapper.toDomain(user)
     } catch {
       throw new UnauthorizedException('Authentication Issue', '10005')
     }

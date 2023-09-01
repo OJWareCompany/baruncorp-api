@@ -315,6 +315,8 @@ model Places {
 
 model AHJNotes {
   geoId                         String    @id @map("geo_id") @db.VarChar(20)
+  createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt                     DateTime? @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
   type                          String?   @db.VarChar(20)
   geoIdState                    String    @map("geo_id_state") @db.VarChar(20)
   geoIdCounty                   String?   @map("geo_id_county") @db.VarChar(20)
@@ -357,9 +359,7 @@ model AHJNotes {
   ansiCode                      String?   @map("ansi_code") @db.VarChar(20)
   longName                      String?   @map("long_name") @db.VarChar(300)
   countyCode                    String?   @map("county_code") @db.VarChar(20)
-  createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
   modifiedAt                    DateTime? @default(now()) @map("modified_at") @db.DateTime(0)
-  updatedAt                     DateTime? @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
   updatedBy                     String?   @default("system") @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_notes")
@@ -453,6 +453,7 @@ model OrderedJobNotes {
 
 model OrderedJobs {
   id                                            String           @id @map("id") @db.VarChar(255)
+  job_name                                      String?          @db.VarChar(255)
   jobRequestNumber                              Int?             @map("job_request_number")
   createdAt                                     DateTime?        @map("created_at") @db.DateTime(0)
   receivedAt                                    DateTime?        @map("received_at") @db.DateTime(0)
@@ -584,6 +585,7 @@ model OrderedProjects {
 
 model OrderedTasks {
   id                                                               String       @id @map("id") @db.VarChar(255)
+  taskStatus                                                       String       @map("task_status") @db.VarChar(255)
   dateCreated                                                      DateTime?    @map("date_created") @db.DateTime(0)
   isLocked                                                         Boolean      @default(false) @map("is_locked")
   taskName                                                         String       @map("task_name") @db.VarChar(255)
@@ -592,7 +594,6 @@ model OrderedTasks {
   dateCompletedCancelled                                           DateTime?    @map("date_completed_cancelled") @db.DateTime(0)
   assignedTo                                                       String?      @map("assigned_to") @db.VarChar(255)
   assignedUserId                                                   String?      @map("assigned_user_id") @db.VarChar(255)
-  taskStatus                                                       String       @map("task_status") @db.VarChar(255)
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
   notes                                                            String?      @map("notes") @db.Text
   designRevisionScope                                              String?      @map("design_revision_scope") @db.VarChar(255)

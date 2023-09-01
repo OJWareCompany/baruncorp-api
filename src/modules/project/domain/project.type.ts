@@ -1,6 +1,10 @@
 import { Address } from '../../../modules/organization/domain/value-objects/address.vo'
 import { ProjectAssociatedRegulatoryBody } from './value-objects/project-associated-regulatory-body.value-object'
 
+export enum ProjectPropertyTypeEnum {
+  Residential = 'Residential',
+  Commercial = 'Commercial',
+}
 export type ProjectPropertyType = 'Residential' | 'Commercial'
 export type MountingType = 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
 
@@ -28,6 +32,17 @@ export interface ProjectProps {
   mailingAddressForWetStamp: string
   totalOfJobs: number
   numberOfWetStamp: number
+  clientUserId: string
+  clientUserName: string
+}
+
+export class ProjectUpdateProps {
+  projectPropertyType: ProjectPropertyType
+  projectPropertyOwner: string
+  projectNumber: string | null
+  projectPropertyAddress: Address
+  projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
+  updatedBy: string
   clientUserId: string
   clientUserName: string
 }

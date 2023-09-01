@@ -23,19 +23,30 @@ import { UpdateProjectWhenJobIsCreatedEventHandler } from './application/event-h
 import { UpdateProjectWhenCurrentJobIsUpdatedEventHandler } from './application/event-handlers/update-project-when-current-job-is-updated.domain-event-handler'
 import { DeleteProjectService } from './commands/delete-project/delete-project.service'
 import { DeleteProjectHttpController } from './commands/delete-project/delete-project.http.controller'
+import { UpdateProjectHttpController } from './commands/update-project/update-project.http.controller'
+import { UpdateProjectService } from './commands/update-project/update-project.service'
 
 const httpControllers = [
   SearchCensusHttpController,
   CreateProjectHttpController,
+  UpdateProjectHttpController,
   DeleteProjectHttpController,
   FindProjectsHttpController,
   FindProjectDetailHttpController,
 ]
-const commandHandlers: Provider[] = [SearchCensusService, CreateProjectService, DeleteProjectService]
+
+const commandHandlers: Provider[] = [
+  SearchCensusService,
+  CreateProjectService,
+  UpdateProjectService,
+  DeleteProjectService,
+]
+
 const eventHandlers: Provider[] = [
   UpdateProjectWhenJobIsCreatedEventHandler,
   UpdateProjectWhenCurrentJobIsUpdatedEventHandler,
 ]
+
 const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
 
 const repositories: Provider[] = [
