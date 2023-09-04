@@ -28,6 +28,7 @@ export interface SignUpRequestDto {
   lastName: string
   /** @default "hyomin@ojware.com" */
   email: string
+  deliverablesEmails: (string[] | null)[]
   /** @default "thisistestPass123!" */
   password: string
   /** @default "AE2DE" */
@@ -88,11 +89,13 @@ export interface UserResponseDto {
   firstName: string
   lastName: string
   fullName: string
-  organization: string
-  position: PositionResponseDto
-  services: ServiceResponseDto[]
-  licenses: LincenseResponseDto[]
+  organization: string | null
+  organizationId: string | null
+  position: PositionResponseDto | null
+  services: ServiceResponseDto[] | null
+  licenses: LincenseResponseDto[] | null
   role: string
+  deliverablesEmails: string[] | null
 }
 
 export interface UpdateUserRequestDto {
@@ -129,12 +132,12 @@ export interface CreateLicenseRequestDto {
   priority: number
   /**
    * @format date-time
-   * @default "2023-08-16T06:43:48.900Z"
+   * @default "2023-09-04T07:31:27.217Z"
    */
   issuedDate: string
   /**
    * @format date-time
-   * @default "2023-08-16T06:43:48.900Z"
+   * @default "2023-09-04T07:31:27.217Z"
    */
   expiryDate: string
 }
@@ -149,7 +152,7 @@ export interface OrganizationResponseDto {
   city: string
   country: string
   postalCode: string
-  stateOrRegion: string
+  state: string
   street1: string
   street2: string
   isActiveContractor: boolean | null
@@ -163,15 +166,17 @@ export interface OrganizationResponseDto {
 export interface CreateOrganizationRequestDto {
   /** @default "hyomin@ojware.com" */
   email: string
-  /** @default "Apple Valley Airport" */
+  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  fullAddress: string
+  /** @default "3480 Northwest 33rd Court" */
   street1: string
-  /** @default "A 101" */
-  street2: string
-  /** @default "Apple Valley" */
+  /** @default null */
+  street2: string | null
+  /** @default "Lauderdale Lakes" */
   city: string
-  /** @default "California" */
-  stateOrRegion: string
-  /** @default "92307" */
+  /** @default "Florida" */
+  state: string
+  /** @default "33309" */
   postalCode: string
   /** @default "United States" */
   country: string
@@ -262,11 +267,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-08-16T06:43:48.941Z" */
+  /** @default "2023-09-04T07:31:27.252Z" */
   createdAt: string | null
-  /** @default "2023-08-16T06:43:48.941Z" */
+  /** @default "2023-09-04T07:31:27.252Z" */
   updatedAt: string | null
-  /** @default "2023-08-16T06:43:48.941Z" */
+  /** @default "2023-09-04T07:31:27.252Z" */
   updatedBy: string | null
   /** @default "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
@@ -394,6 +399,257 @@ export interface AddressFromMapBox {
   postalCode: string
 }
 
+export interface AddressRequestDto {
+  /** @default "3480 Northwest 33rd Court" */
+  street1: string
+  /** @default null */
+  street2: string | null
+  /** @default "Lauderdale Lakes" */
+  city: string
+  /** @default "Florida" */
+  state: string
+  /** @default "33309" */
+  postalCode: string
+  /** @default "United State" */
+  country: string | null
+  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  fullAddress: string
+}
+
+export interface CreateProjectRequestDto {
+  /** @default "Residential" */
+  projectPropertyType: 'Residential' | 'Commercial'
+  /** @default "Chris Kim" */
+  projectPropertyOwner: string
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  organizationId: string
+  /** @default "000152" */
+  projectNumber: string | null
+  projectPropertyAddress: AddressRequestDto
+  /** @default [12.1,22.2] */
+  coordinates: number[]
+}
+
+export interface ProjectAssociatedRegulatoryBody {
+  /** @default "12" */
+  stateId: string
+  /** @default "12011" */
+  countyId: string
+  /** @default "1201191098" */
+  countySubdivisionsId: string
+  /** @default "1239525" */
+  placeId: string
+  /** @default "1239525" */
+  ahjId: string
+}
+
+export interface UpdateProjectRequestDto {
+  /** @default "Residential" */
+  projectPropertyType: 'Residential' | 'Commercial'
+  /** @default "Chris Kim" */
+  projectPropertyOwner: string
+  /** @default "50021" */
+  projectNumber: string | null
+  projectPropertyAddress: AddressRequestDto
+  projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  clientUserId: string
+}
+
+export interface ProjectPaginatedResponseFields {
+  /** @example "Residential" */
+  propertyType: string
+  /** @example "https://host.com/projects/path" */
+  projectFolderLink: string | null
+  /** @example null */
+  projectNumber: string | null
+  /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  propertyAddress: string
+  /** @example "Ground Mount" */
+  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
+  /** @example "2023-09-04T07:31:27.262Z" */
+  createdAt: string
+  /** @example 1 */
+  totalOfJobs: number
+  /** @example false */
+  masterLogUpload: boolean
+  /** @example false */
+  designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
+}
+
+export interface ProjectPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: ProjectPaginatedResponseFields[]
+}
+
+export interface ProjectResponseDto {
+  /** @example "07e12e89-6077-4fd1-a029-c50060b57f43" */
+  projectId: string
+  /** @example 201 */
+  systemSize: number | null
+  /** @example true */
+  isGroundMount: boolean
+  /** @example "Kevin Brook" */
+  projectPropertyOwnerName: string
+  /** @example "Ground Mount" */
+  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
+  /** @example "Barun Corp" */
+  clientOrganization: string
+  /** @example "eaefe251-0f1f-49ac-88cb-3582ec76601d" */
+  clientOrganizationId: string
+  /** @example "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  clientUserId: string
+  /** @example "Chris Kim" */
+  clientUserName: string
+  /** @example "https://host.com/projects/path" */
+  projectFolderLink: string | null
+  /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  mailingAddressForWetStamp: string
+  /** @example [11.2,22.1] */
+  coordinates: number[]
+  /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  propertyAddress: string
+  /** @example 3 */
+  numberOfWetStamp: number | null
+  /** @example "Residential" */
+  propertyType: object
+  /** @example null */
+  projectNumber: string | null
+  /** @example "2023-09-04T07:31:27.266Z" */
+  createdAt: string
+  /** @example 1 */
+  totalOfJobs: number
+  /** @example false */
+  masterLogUpload: boolean
+  /** @example false */
+  designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
+  /** @example {} */
+  jobs: object | null
+}
+
+export interface CreateOrderedTaskWhenJobIsCreatedRequestDto {
+  taskId: string
+  description: string
+}
+
+export interface CreateJobRequestDto {
+  deliverablesEmails: (string[] | null)[]
+  /** @default "10223" */
+  jobNumber: string | null
+  clientUserIds: string[][]
+  /** @default "please, check this out." */
+  additionalInformationFromClient: string | null
+  /** @default 300.1 */
+  systemSize: number | null
+  /** @default "39027356-b928-4b8e-b30c-a343a0894766" */
+  projectId: string
+  /** @example "Ground Mount" */
+  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
+  /** @default [{"taskId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"taskId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"taskId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"taskId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"taskId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
+  taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
+  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  mailingAddressForWetStamp: string | null
+  /** @default 3 */
+  numberOfWetStamp: number | null
+}
+
+export interface UpdateJobRequestDto {
+  deliverablesEmails: string[][]
+  /** @default "10223" */
+  jobNumber: string | null
+  /** @default "On Hold" */
+  jobStatus: string
+  clientUserIds: string[][]
+  /** @default "please, check this out." */
+  additionalInformationFromClient: string | null
+  /** @default 300.1 */
+  systemSize: number | null
+  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  mailingAddressForWetStamp: string | null
+  /** @default 3 */
+  numberOfWetStamp: number | null
+  /** @default "Roof Mount" */
+  mountingType: string
+}
+
+export interface MemberResponseFields {
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  userId: string
+  /** @example "Chris Kim" */
+  name: string
+}
+
+export interface OrderedTaskResponseFields {
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  id: string
+  /** @example "Not Started" */
+  taskStatus: string
+  /** @example "PV Design" */
+  taskName: string
+  assigneeName: MemberResponseFields | null
+  /** @example null */
+  description: string | null
+}
+
+export interface ClientInformationFields {
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  clientOrganizationId: string
+  /** @example "Barun Corp" */
+  clientOrganizationName: string
+  /** @example "gyals0386@gmail.com" */
+  contactEmail: string
+  deliverablesEmails: string[][]
+}
+
+export interface JobResponseDto {
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  projectId: string
+  /** @example 300.1 */
+  systemSize: number
+  /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
+  mailingAddressForWetStamp: string
+  /** @example "Ground Mount" */
+  mountingType: string
+  /** @example 3 */
+  numberOfWetStamp: number
+  /** @example "Please check this out." */
+  additionalInformationFromClient: string
+  /** @example "Chris Kim" */
+  updatedBy: string
+  /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
+  propertyAddress: string
+  /** @example "10223" */
+  jobNumber: string | null
+  /** @example 5 */
+  jobRequestNumber: number | null
+  /** @example "In Progess" */
+  jobStatus: string
+  /** @example "Residential" */
+  projectType: string
+  orderedTasks: OrderedTaskResponseFields[]
+  clientInfo: ClientInformationFields
+  /** @example "2023-08-11 09:10:31" */
+  receivedAt: string
+}
+
+export interface CreateOrderedTaskRequestDto {
+  /** @default "" */
+  taskMenuId: string
+  /** @default "" */
+  jobId: string
+  /** @default "" */
+  assignedUserId: string | null
+  /** @default "added task" */
+  description: string | null
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -404,6 +660,8 @@ export interface AuthenticationControllerPostSignInTimeParams {
 export interface UsersControllerGetFindUsersParams {
   /** @default "hyomin@ojware.com" */
   email?: string
+  /** @default "" */
+  organizationId?: string
 }
 
 export interface UsersControllerDeleteRemoveMemberLicenseParams {
@@ -438,11 +696,13 @@ export interface GeographyControllerGetFindNotesParams {
   /**
    * Specifies a limit of returned records
    * @default 20
+   * @example 20
    */
   limit?: number
   /**
    * Page number
    * @default 1
+   * @example 1
    */
   page?: number
   /** @default "1239525" */
@@ -457,15 +717,63 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
   /**
    * Specifies a limit of returned records
    * @default 20
+   * @example 20
    */
   limit?: number
   /**
    * Page number
    * @default 1
+   * @example 1
    */
   page?: number
   /** @default "1239525" */
   geoId?: string
+}
+
+export interface FindProjectsHttpControllerFindUsersParams {
+  /** @default "Residential" */
+  propertyType?: string
+  /** @default null */
+  projectNumber?: string
+  /** @default "3480 Northwest 33rd Court" */
+  propertyAddress?: string
+  /** @default "" */
+  clientId?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindJobPaginatedHttpControllerFindJobParams {
+  /** @default "Residential" */
+  propertyType?: string
+  /** @default null */
+  jobNumber?: string
+  /** @default "3480 Northwest 33rd Court" */
+  jobName?: string
+  /** @default "" */
+  projectId?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
@@ -1158,19 +1466,205 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
-  projects = {
+  searchCensus = {
     /**
      * @description Census에서 행정구역이 매칭되지 않는 주소들이 있음 Census 결과와 상관 없이 프로젝트는 생성되어야함
      *
-     * @name ProjectControllerPostCreateProject
+     * @name SearchCensusHttpControllerPostSearchCensus
+     * @request POST:/search-census
+     */
+    searchCensusHttpControllerPostSearchCensus: (data: AddressFromMapBox, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/search-census`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
+  projects = {
+    /**
+     * No description
+     *
+     * @name CreateProjectHttpControllerPostCreateProejct
      * @request POST:/projects
      */
-    projectControllerPostCreateProject: (data: AddressFromMapBox, params: RequestParams = {}) =>
+    createProjectHttpControllerPostCreateProejct: (data: CreateProjectRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/projects`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindProjectsHttpControllerFindUsers
+     * @summary Find projects
+     * @request GET:/projects
+     */
+    findProjectsHttpControllerFindUsers: (
+      query: FindProjectsHttpControllerFindUsersParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<ProjectPaginatedResponseDto, any>({
+        path: `/projects`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateProjectHttpControllerUpdate
+     * @request PATCH:/projects/{projectId}
+     */
+    updateProjectHttpControllerUpdate: (projectId: string, data: UpdateProjectRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/projects/${projectId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteProjectHttpControllerDelete
+     * @request DELETE:/projects/{projectId}
+     */
+    deleteProjectHttpControllerDelete: (projectId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/projects/${projectId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindProjectDetailHttpControllerFindProjectDetail
+     * @summary Find projects
+     * @request GET:/projects/{projectId}
+     */
+    findProjectDetailHttpControllerFindProjectDetail: (projectId: string, params: RequestParams = {}) =>
+      this.request<ProjectResponseDto, any>({
+        path: `/projects/${projectId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  jobs = {
+    /**
+     * No description
+     *
+     * @name CreateJobHttpControllerCreateJob
+     * @request POST:/jobs
+     */
+    createJobHttpControllerCreateJob: (data: CreateJobRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/jobs`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindJobPaginatedHttpControllerFindJob
+     * @summary Find job
+     * @request GET:/jobs
+     */
+    findJobPaginatedHttpControllerFindJob: (
+      query: FindJobPaginatedHttpControllerFindJobParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<JobResponseDto, any>({
+        path: `/jobs`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateJobHttpControllerUpdateJob
+     * @request PATCH:/jobs/{jobId}
+     */
+    updateJobHttpControllerUpdateJob: (jobId: string, data: UpdateJobRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/jobs/${jobId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteJobHttpControllerDelete
+     * @request DELETE:/jobs/{jobId}
+     */
+    deleteJobHttpControllerDelete: (jobId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/jobs/${jobId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindJobHttpControllerFindJob
+     * @summary Find job
+     * @request GET:/jobs/{jobId}
+     */
+    findJobHttpControllerFindJob: (jobId: string, params: RequestParams = {}) =>
+      this.request<JobResponseDto, any>({
+        path: `/jobs/${jobId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  orderedTasks = {
+    /**
+     * No description
+     *
+     * @name CreateOrderedTaskHttpControllerCreate
+     * @request POST:/ordered-tasks
+     */
+    createOrderedTaskHttpControllerCreate: (data: CreateOrderedTaskRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ordered-tasks`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
+  orderdTasks = {
+    /**
+     * No description
+     *
+     * @name DeleteOrderedTaskHttpControllerDelete
+     * @request DELETE:/orderd-tasks/{orderdTaskId}
+     */
+    deleteOrderedTaskHttpControllerDelete: (orderdTaskId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/orderd-tasks/${orderdTaskId}`,
+        method: 'DELETE',
         ...params,
       }),
   }
