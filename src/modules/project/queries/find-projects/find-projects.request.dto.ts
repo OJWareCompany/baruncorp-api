@@ -13,4 +13,8 @@ export class FindProjectsRequestDto {
   @ApiProperty({ default: '3480 Northwest 33rd Court' })
   @IsOptional()
   readonly propertyAddress?: string
+
+  @ApiProperty({ default: '' })
+  @IsOptional()
+  readonly clientId?: string
 }
