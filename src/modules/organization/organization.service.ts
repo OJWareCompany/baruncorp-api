@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepositoryPort } from './database/organization.repository.port'
@@ -17,8 +18,11 @@ import { OrganizationResponseDto } from './dtos/organization.response.dto'
 @Injectable()
 export class OrganizationService {
   constructor(
+    // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
+    // @ts-ignore
     @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
+    // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
     private readonly organizationMapper: OrganizationMapper,
     private readonly userMapper: UserMapper,

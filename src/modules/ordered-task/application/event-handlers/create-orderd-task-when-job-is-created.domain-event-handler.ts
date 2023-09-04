@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { Prisma, Services } from '@prisma/client'
 import { OnEvent } from '@nestjs/event-emitter'
@@ -11,6 +12,7 @@ import { convertToAssignableTask } from '../../domain/convert-to-assignable-task
 @Injectable()
 export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
   constructor(
+    // @ts-ignore
     @Inject(ORDERED_TASK_REPOSITORY) private readonly orderedTaskRepository: OrderedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}

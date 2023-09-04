@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { PrismaService } from '../../../database/prisma.service'
@@ -8,7 +9,9 @@ import { CurrentJobUpdatedDomainEvent } from '../../../ordered-job/domain/events
 @Injectable()
 export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
   constructor(
+    // @ts-ignore
     @Inject(PROJECT_REPOSITORY) private readonly projectRepository: ProjectRepositoryPort,
+    // @ts-ignore
     @Inject(PROJECT_REPOSITORY) private readonly prismaService: PrismaService,
   ) {}
   @OnEvent(CurrentJobUpdatedDomainEvent.name, { async: true, promisify: true })

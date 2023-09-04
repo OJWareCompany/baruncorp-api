@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
@@ -25,6 +26,7 @@ export class FindJobPaginatedQuery extends PaginatedQueryBase {
 @QueryHandler(FindJobPaginatedQuery)
 export class FindJobPaginatedQueryHandler implements IQueryHandler {
   constructor(
+    // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly jobMapper: JobMapper,

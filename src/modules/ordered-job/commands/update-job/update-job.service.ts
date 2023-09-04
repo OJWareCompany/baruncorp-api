@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
@@ -9,6 +10,7 @@ import { JobStatus } from '../../domain/job.type'
 @CommandHandler(UpdateJobCommand)
 export class UpdateJobService implements ICommandHandler {
   constructor(
+    // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}

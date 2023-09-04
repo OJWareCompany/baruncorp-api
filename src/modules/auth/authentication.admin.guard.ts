@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+
 import {
   CanActivate,
   ExecutionContext,
@@ -17,6 +19,7 @@ import { UserRoles } from '../users/domain/value-objects/user-role.vo'
 export class AdminGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
+    // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
   ) {}
 

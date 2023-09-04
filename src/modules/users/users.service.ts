@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
 import { EmailVO } from './domain/value-objects/email.vo'
@@ -27,9 +28,13 @@ import { FindUserRqeustDto } from './queries/find-user.request.dto'
 @Injectable()
 export class UserService {
   constructor(
+    // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
+    // @ts-ignore
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationEmailRepository: InvitationMailRepositoryPort,
+    // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
+    // @ts-ignore
     @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly userMapper: UserMapper,

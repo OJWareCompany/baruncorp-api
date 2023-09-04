@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ConflictException, Inject } from '@nestjs/common'
 import { OrganizationEntity } from '../../domain/organization.entity'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
@@ -10,7 +11,10 @@ import { Address } from '../../domain/value-objects/address.vo'
 
 @CommandHandler(CreateOrganizationCommand)
 export class CreateOrganizationService implements ICommandHandler {
-  constructor(@Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort) {}
+  constructor(
+    // @ts-ignore
+    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
+  ) {}
 
   async execute(command: CreateOrganizationCommand): Promise<void> {
     const organization = await this.organizationRepository.findOneByName(command.name)

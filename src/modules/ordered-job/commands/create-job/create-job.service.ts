@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { CreateJobCommand } from './create-job.command'
 import { Inject } from '@nestjs/common'
@@ -10,6 +11,7 @@ import { PrismaService } from '../../../database/prisma.service'
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
   constructor(
+    // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}

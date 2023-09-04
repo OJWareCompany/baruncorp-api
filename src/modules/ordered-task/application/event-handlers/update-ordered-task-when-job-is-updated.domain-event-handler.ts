@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { PrismaService } from '../../../database/prisma.service'
@@ -7,6 +8,7 @@ import { CurrentJobUpdatedDomainEvent } from '../../../ordered-job/domain/events
 
 export class UpdateOrderedTaskWhenJobIsUpdatedDomainEventHandler {
   constructor(
+    // @ts-ignore
     @Inject(ORDERED_TASK_REPOSITORY) private readonly orderedTaskRepository: OrderedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNoteHistoryModel, AHJNotesModel } from './database/geography.repository'
@@ -11,7 +12,10 @@ import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto
 
 @Injectable()
 export class GeographyService {
-  constructor(@Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort) {}
+  constructor(
+    // @ts-ignore
+    @Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort,
+  ) {}
 
   async findNotes(
     pageNo: number,

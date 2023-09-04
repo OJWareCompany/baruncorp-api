@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ConflictException, Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { CreateOrderedTaskCommand } from './create-ordered-task.command'
@@ -10,6 +11,7 @@ import { ORDERED_TASK_REPOSITORY } from '../../ordered-task.di-token'
 @CommandHandler(CreateOrderedTaskCommand)
 export class CreateOrderedTaskService implements ICommandHandler {
   constructor(
+    // @ts-ignore
     @Inject(ORDERED_TASK_REPOSITORY) private readonly orderedTaskRepository: OrderedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { OrderedProjects } from '@prisma/client'
@@ -19,6 +20,7 @@ export class FindProjectDetailQuery {
 export class FindProjectDetailQueryHandler implements IQueryHandler {
   constructor(
     private readonly prismaService: PrismaService,
+    // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly jobMapper: JobMapper,
   ) {}

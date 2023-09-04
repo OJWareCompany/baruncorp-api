@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { JOB_REPOSITORY } from '../../job.di-token'
@@ -13,7 +14,10 @@ export class FindJobQuery {
 
 @QueryHandler(FindJobQuery)
 export class FindJobQueryHandler implements IQueryHandler {
-  constructor(@Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort) {}
+  constructor(
+    // @ts-ignore
+    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
+  ) {}
 
   async execute(query: FindJobQuery): Promise<JobProps> {
     const job = await this.jobRepository.findJob(query.jobId)

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { DEPARTMENT_REPOSITORY } from './department.di-token'
 import { DepartmentRepositoryPort } from './database/department.repository.port'
@@ -12,7 +13,9 @@ import { ServiceResponseDto } from './dtos/service.response.dto'
 @Injectable()
 export class DepartmentService {
   constructor(
+    // @ts-ignore
     @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
+    // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
     private readonly positionMapper: PositionMapper,
     private readonly serviceMapper: ServiceMapper,

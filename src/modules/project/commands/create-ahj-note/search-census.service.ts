@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { PrismaService } from '../../../database/prisma.service'
 import { AddressFromMapBox } from '../../infra/census/census.type.dto'
@@ -10,8 +11,9 @@ import { CensusSearchInput, CensusSearchRequestDto } from '../../infra/census/ce
 export class SearchCensusService {
   // prisma Service같은 공통적으로 쓰일수 있는 모듈은 어떻게 관리하는가?
   constructor(
-    private readonly prismaService: PrismaService,
+    // @ts-ignore
     @Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async searchCensusAndCreateNote(createProjectDto: AddressFromMapBox) {
