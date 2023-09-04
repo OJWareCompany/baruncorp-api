@@ -27,8 +27,9 @@ export class UsersController {
   constructor(private readonly userService: UserService) {}
   @Get('')
   async getFindUsers(@Query() dto: FindUserRqeustDto): Promise<UserResponseDto[]> {
-    if (!dto.email) return await this.userService.findUsers()
-    else if (dto.email) return [await this.userService.findOneByEmail(new EmailVO(dto.email))]
+    // if (!dto.email) return await this.userService.findUsers()
+    // else if (dto.email) return [await this.userService.findOneByEmail(new EmailVO(dto.email))]
+    return await this.userService.findManyBy(dto)
   }
 
   /**
