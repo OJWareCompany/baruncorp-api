@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/ddd/page.response.dto'
+import { MountingTypeEnum } from '../domain/project.type'
 
 export class ProjectPaginatedResponseFields {
   @ApiProperty({ example: 'Residential' })
@@ -13,6 +14,9 @@ export class ProjectPaginatedResponseFields {
 
   @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   propertyAddress: string
+
+  @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
+  mountingType: MountingTypeEnum
 
   @ApiProperty({ example: new Date() })
   createdAt: string

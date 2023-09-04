@@ -7,6 +7,7 @@ import { PaginatedQueryRequestDto } from '../../../../libs/ddd/paginated-query.r
 import { FindProjectsQuery } from './find-projects.query-handler'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { FindProjectsRequestDto } from './find-projects.request.dto'
+import { MountingTypeEnum } from '../../domain/project.type'
 
 @Controller('projects')
 export class FindProjectsHttpController {
@@ -42,6 +43,7 @@ export class FindProjectsHttpController {
         totalOfJobs: projects.totalOfJobs,
         masterLogUpload: !!projects.masterLogUpload,
         designOrPEStampPreviouslyDoneOnProjectOutSide: !!projects.designOrPeStampPreviouslyDoneOnProjectOutside,
+        mountingType: projects.mountingType as MountingTypeEnum,
       })),
     })
   }

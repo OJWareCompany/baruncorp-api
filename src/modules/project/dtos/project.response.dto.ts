@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ProjectPropertyType } from '../../../modules/project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyType } from '../../../modules/project/domain/project.type'
 import { JobProps } from '@src/modules/ordered-job/domain/job.type'
 
 export class ProjectResponseDto {
@@ -14,6 +14,9 @@ export class ProjectResponseDto {
 
   @ApiProperty({ example: 'Kevin Brook' })
   projectPropertyOwnerName: string
+
+  @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
+  mountingType: MountingTypeEnum
 
   @ApiProperty({ example: 'Barun Corp' })
   clientOrganization: string

@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { IsArray, IsNumber, IsString } from 'class-validator'
 
 class CreateOrderedTaskWhenJobIsCreatedRequestDto {
@@ -36,9 +37,8 @@ export class CreateJobRequestDto {
   @IsString()
   projectId: string
 
-  @ApiProperty({ default: 'Ground Mount' })
-  @IsString()
-  mountingType: string
+  @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
+  mountingType: MountingTypeEnum
 
   @ApiProperty({
     default: [

@@ -5,6 +5,13 @@ export enum ProjectPropertyTypeEnum {
   Residential = 'Residential',
   Commercial = 'Commercial',
 }
+
+export enum MountingTypeEnum {
+  Roof_Mount = 'Roof Mount',
+  Ground_Mount = 'Ground Mount',
+  RG_Mount = 'Roof Mount & Ground Mount',
+}
+
 export type ProjectPropertyType = 'Residential' | 'Commercial'
 export type MountingType = 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
 
