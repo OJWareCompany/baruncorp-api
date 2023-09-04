@@ -73,6 +73,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.lastName = props.userName.getLastName()
     response.fullName = props.userName.getFullName()
     response.organization = organizationEntity.getProps().name
+    response.organizationId = organizationEntity.getProps().id
     response.services = services
     response.position = position
     response.licenses = licenses

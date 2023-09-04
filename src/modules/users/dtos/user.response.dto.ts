@@ -8,9 +8,10 @@ export class UserResponseDto {
   firstName: string
   lastName: string
   fullName: string
-  organization: string
-  position: PositionResponseDto
-  services: ServiceResponseDto[]
-  licenses: LincenseResponseDto[]
+  organization: string | null
+  organizationId: string | null
+  position: PositionResponseDto | null
+  services: ServiceResponseDto[] | null
+  licenses: LincenseResponseDto[] | null
   role: string
 }
