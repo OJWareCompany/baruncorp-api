@@ -46,6 +46,7 @@ export class FindProjectDetailHttpController {
     response.masterLogUpload = result.masterLogUpload
     response.designOrPEStampPreviouslyDoneOnProjectOutSide = !!result.designOrPeStampPreviouslyDoneOnProjectOutside
     response.jobs = result.jobs
+    response.coordinates = result.coordinates.split(',').map((n) => Number(n)) as any
     return response
   }
 }

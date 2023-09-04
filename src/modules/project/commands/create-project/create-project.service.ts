@@ -28,6 +28,7 @@ export class CreateProjectService implements ICommandHandler {
       projectPropertyAddress: new Address({
         ...command.projectPropertyAddress,
       }),
+      coordinates: command.coordinates,
       clientOrganizationId: command.organizationId,
       updatedBy: command.userId,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({

@@ -102,6 +102,7 @@ model Users {
   revisionRevenueShare       Boolean?                 @map("revision_revenue_share")
   updatedBy                  String?                  @map("updated_by") @db.VarChar(255)
   type                       String?                  @db.VarChar(255)
+  deliverables_emails        String?                  @db.Text
   passwordEntity             Passwords?
   UserElectricalLicenses     UserElectricalLicenses[]
   UserPosition               UserPosition[]
@@ -533,6 +534,7 @@ model OrderedJobs {
 
 model OrderedProjects {
   id                                            String         @id @map("id") @db.VarChar(255)
+  coordinates                                   String?        @db.VarChar(255)
   mountingType                                  String?        @map("mounting_type") @db.VarChar(255)
   mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)
   systemSize                                    Decimal?       @map("system_size") @db.Decimal(10, 2)
@@ -592,7 +594,7 @@ model OrderedTasks {
   description                                                      String?      @db.Text
   dateAssigned                                                     DateTime?    @map("date_assigned") @db.DateTime(0)
   dateCompletedCancelled                                           DateTime?    @map("date_completed_cancelled") @db.DateTime(0)
-  assignee_name                                                    String?      @db.VarChar(255)
+  assigneeName                                                     String?      @map("assignee_name") @db.VarChar(255)
   assignee_user_id                                                 String?      @db.VarChar(255)
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
   notes                                                            String?      @map("notes") @db.Text

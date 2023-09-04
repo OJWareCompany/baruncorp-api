@@ -31,6 +31,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       revisionRevenueShare: copy.isRevisionRevenueShare,
       updatedBy: copy.updatedBy,
       type: copy.type,
+      deliverables_emails: copy.deliverablesEmails.toString(),
     }
     return record
   }
@@ -50,6 +51,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         isRevenueShare: record.revenueShare,
         isRevisionRevenueShare: record.revisionRevenueShare,
         type: record.type,
+        deliverablesEmails: record.deliverables_emails?.split(','),
       },
     })
     return entity
@@ -72,6 +74,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.firstName = props.userName.getFirstName()
     response.lastName = props.userName.getLastName()
     response.fullName = props.userName.getFullName()
+    response.deliverablesEmails = props.deliverablesEmails
     response.organization = organizationEntity.getProps().name
     response.organizationId = organizationEntity.getProps().id
     response.services = services

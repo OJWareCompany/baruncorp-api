@@ -20,6 +20,7 @@ export interface CreateProjectProps {
   projectPropertyOwner: string
   projectNumber: string | null
   projectPropertyAddress: Address
+  coordinates: number[]
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
@@ -30,6 +31,7 @@ export interface ProjectProps {
   projectPropertyOwner: string
   projectNumber: string | null
   projectPropertyAddress: Address
+  coordinates: number[]
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   mountingType: MountingType

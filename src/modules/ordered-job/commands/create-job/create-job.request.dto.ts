@@ -15,7 +15,7 @@ class CreateOrderedTaskWhenJobIsCreatedRequestDto {
 export class CreateJobRequestDto {
   @ApiProperty({ default: 'chris@barun.com', isArray: true })
   @IsArray()
-  deliverablesEmails: string[]
+  deliverablesEmails: string[] | null
 
   @ApiProperty({ default: '10223' })
   @IsString()

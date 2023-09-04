@@ -30,6 +30,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
       updatedAt: new Date(),
       dateCreated: new Date(),
+      coordinates: String(props.coordinates),
 
       mountingType: props.mountingType,
 
@@ -90,6 +91,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
           street2: record.propertyAddressStreet2,
           fullAddress: record.propertyAddress,
         }),
+        coordinates: record.coordinates.split(',').map((n) => Number(n)),
         mailingAddressForWetStamp: record.mailingAddressForWetStamps,
         clientOrganizationId: record.clientId,
         projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({

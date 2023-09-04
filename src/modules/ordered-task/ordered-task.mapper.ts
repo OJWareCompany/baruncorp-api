@@ -18,7 +18,7 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       jobId: props.jobId,
       projectId: props.projectId,
       dateCreated: props.dateCreated,
-      assignee_name: props.assigneeName,
+      assigneeName: props.assigneeName,
       assignee_user_id: props.assigneeUserId,
       description: props.description,
 

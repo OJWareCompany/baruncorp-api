@@ -45,8 +45,11 @@ export class ClientInformationFields {
   @ApiProperty({ example: 'Barun Corp' })
   clientOrganizationName: string
 
+  @ApiProperty({ example: 'gyals0386@gmail.com' })
+  contactEmail: string
+
   @ApiProperty({ example: 'gyals0386@gmail.com', isArray: true })
-  clientContactMails: string[]
+  deliverablesEmails: string[]
 }
 
 export class JobResponseDto {

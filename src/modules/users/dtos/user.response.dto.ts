@@ -14,4 +14,5 @@ export class UserResponseDto {
   services: ServiceResponseDto[] | null
   licenses: LincenseResponseDto[] | null
   role: string
+  deliverablesEmails: string[] | null
 }

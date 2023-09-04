@@ -50,6 +50,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
         totalOfJobs: true,
         masterLogUpload: true,
         designOrPeStampPreviouslyDoneOnProjectOutside: true,
+        coordinates: true,
         organization: {
           select: {
             id: true,
@@ -62,6 +63,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
       },
     })
 
+    // record.coordinates = record.coordinates.split(',').map((n) => Number(n)) as any
     record.jobs = record.jobs.map((job) => {
       const jobEntity = this.jobMapper.toDomain({ ...job })
       return {

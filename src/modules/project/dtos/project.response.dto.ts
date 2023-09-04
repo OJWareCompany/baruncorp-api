@@ -36,6 +36,9 @@ export class ProjectResponseDto {
   @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   mailingAddressForWetStamp: string
 
+  @ApiProperty({ example: [11.2, 22.1] })
+  coordinates: number[]
+
   @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   propertyAddress: string
 

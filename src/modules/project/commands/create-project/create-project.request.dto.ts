@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsIn, IsObject, IsString } from 'class-validator'
+import { IsArray, IsIn, IsObject, IsString } from 'class-validator'
 import { ProjectPropertyType } from '../../domain/project.type'
 
 export class AddressRequestDto {
@@ -52,4 +52,8 @@ export class CreateProjectRequestDto {
   @ApiProperty({ default: AddressRequestDto })
   @IsObject()
   projectPropertyAddress: AddressRequestDto
+
+  @ApiProperty({ default: [12.1, 22.2] })
+  @IsArray()
+  coordinates: number[]
 }

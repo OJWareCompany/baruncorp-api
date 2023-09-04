@@ -4,7 +4,7 @@ export class ClientInformation {
   clientOrganizationId: string
   clientContact: string
   clientContactEmail: string
-  deliverablesEmail: string
+  deliverablesEmail: string[]
 
   constructor(props: ClientInformation) {
     initialize(this, props)

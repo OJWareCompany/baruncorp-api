@@ -16,6 +16,7 @@ export interface UserProps {
   isRevisionRevenueShare: boolean | null
   updatedBy: string | null
   type: string | null
+  deliverablesEmails: string[]
 }
 
 export interface CreateUserProps {
@@ -30,4 +31,5 @@ export interface CreateUserProps {
   isRevenueShare: boolean | null
   isRevisionRevenueShare: boolean | null
   type: string | null
+  deliverablesEmails: string[]
 }
