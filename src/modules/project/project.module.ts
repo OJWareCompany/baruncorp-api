@@ -25,6 +25,9 @@ import { DeleteProjectService } from './commands/delete-project/delete-project.s
 import { DeleteProjectHttpController } from './commands/delete-project/delete-project.http.controller'
 import { UpdateProjectHttpController } from './commands/update-project/update-project.http.controller'
 import { UpdateProjectService } from './commands/update-project/update-project.service'
+import { JobMapper } from '../ordered-job/job.mapper'
+import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
+import { JobRepository } from '../ordered-job/database/job.repository'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -52,11 +55,12 @@ const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQu
 const repositories: Provider[] = [
   { provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository },
   { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
+  { provide: JOB_REPOSITORY, useClass: JobRepository },
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
 // 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
-const mappers: Provider[] = [ProjectMapper, UserMapper, UserRoleMapper, LicenseMapper]
+const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMapper, LicenseMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

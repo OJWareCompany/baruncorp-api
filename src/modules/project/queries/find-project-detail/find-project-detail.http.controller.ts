@@ -4,8 +4,9 @@ import { QueryBus } from '@nestjs/cqrs'
 import { FindProjectDetailQuery } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
 import { ProjectResponseDto } from '../../dtos/project.response.dto'
-import { OrderedProjects } from '@prisma/client'
+import { OrderedJobs, OrderedProjects } from '@prisma/client'
 import { OrganizationModel } from '../../../../modules/organization/database/organization.repository'
+import { JobProps } from '@src/modules/ordered-job/domain/job.type'
 
 @Controller('projects')
 export class FindProjectDetailHttpController {
@@ -21,9 +22,8 @@ export class FindProjectDetailHttpController {
     const query = new FindProjectDetailQuery({
       id: searchQuery.projectId,
     })
-    const result: Partial<OrderedProjects> & { organization: Partial<OrganizationModel> } = await this.queryBus.execute(
-      query,
-    )
+    const result: Partial<OrderedProjects> & { organization: Partial<OrganizationModel> } & { jobs: JobProps } =
+      await this.queryBus.execute(query)
 
     // Whitelisting returned properties
     const response = new ProjectResponseDto()
@@ -45,6 +45,7 @@ export class FindProjectDetailHttpController {
     response.totalOfJobs = result.totalOfJobs
     response.masterLogUpload = result.masterLogUpload
     response.designOrPEStampPreviouslyDoneOnProjectOutSide = !!result.designOrPeStampPreviouslyDoneOnProjectOutside
+    response.jobs = result.jobs
     return response
   }
 }

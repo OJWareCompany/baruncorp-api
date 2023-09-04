@@ -1,7 +1,11 @@
+import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { PrismaService } from '../../../database/prisma.service'
 import { OrderedProjects } from '@prisma/client'
+import { PrismaService } from '../../../database/prisma.service'
 import { OrganizationModel } from '../../../../modules/organization/database/organization.repository'
+import { JobMapper } from '../../../ordered-job/job.mapper'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 
 export class FindProjectDetailQuery {
   readonly id: string
@@ -13,7 +17,12 @@ export class FindProjectDetailQuery {
 
 @QueryHandler(FindProjectDetailQuery)
 export class FindProjectDetailQueryHandler implements IQueryHandler {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
+    private readonly jobMapper: JobMapper,
+  ) {}
+
   /**
    * In read model we don't need to execute
    * any business logic, so we can bypass
@@ -47,8 +56,18 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
             name: true,
           },
         },
+        jobs: {
+          include: { orderedTasks: true },
+        },
       },
     })
+
+    record.jobs = record.jobs.map((job) => {
+      const jobEntity = this.jobMapper.toDomain({ ...job })
+      return {
+        ...jobEntity.getProps(),
+      }
+    }) as any
 
     return record
   }

@@ -1,6 +1,7 @@
 import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
+import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { JOB_REPOSITORY } from '../../job.di-token'
@@ -15,11 +16,11 @@ export class FindJobPaginatedQuery extends PaginatedQueryBase {
 
   readonly jobName?: string
 
+  readonly projectId?: string
+
   constructor(props: PaginatedParams<FindJobPaginatedQuery>) {
     super(props)
-    this.propertyType = props.propertyType
-    this.jobNumber = props.jobNumber
-    this.jobName = props.jobName
+    initialize(this, props)
   }
 }
 
@@ -38,6 +39,7 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
         ...(query.propertyType && { projectType: query.propertyType }),
         ...(query.jobNumber && { jobNumber: query.jobNumber }),
         ...(query.jobName && { jobName: { contains: query.jobName } }),
+        ...(query.projectId && { projectId: { contains: query.projectId } }),
       },
       include: {
         orderedTasks: true,
@@ -52,6 +54,7 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
         ...(query.propertyType && { projectType: query.propertyType }),
         ...(query.jobNumber && { jobNumber: query.jobNumber }),
         ...(query.jobName && { jobName: { contains: query.jobName } }),
+        ...(query.projectId && { projectId: { contains: query.projectId } }),
       },
     })
 

@@ -13,4 +13,8 @@ export class FindJobPaginatedRequestDto {
   @ApiProperty({ default: '3480 Northwest 33rd Court' })
   @IsOptional()
   readonly jobName?: string
+
+  @ApiProperty({ default: '' })
+  @IsOptional()
+  readonly projectId?: string
 }
