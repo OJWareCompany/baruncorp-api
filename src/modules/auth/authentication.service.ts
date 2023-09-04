@@ -96,6 +96,7 @@ export class AuthenticationService {
 
     const userEntity = UserEntity.create({
       email: rest.email,
+      deliverablesEmails: rest.deliverablesEmails,
       userName: new UserName({ firstName: rest.firstName, lastName: rest.lastName }),
       organizationId: organization.id,
       address: rest.address,

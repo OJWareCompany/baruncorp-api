@@ -1,11 +1,11 @@
 import { OrderedTasks } from '@prisma/client'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { OrderedTaskEntity } from './domain/ordered-task.entity'
-import { OrderedTaskResponseDto } from './dtos/ordered-task.response'
+// import { OrderedTaskResponseDto } from './dtos/ordered-task.response'
 import { Injectable } from '@nestjs/common'
 
 @Injectable()
-export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks, OrderedTaskResponseDto> {
+export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks, any> {
   toPersistence(entity: OrderedTaskEntity): OrderedTasks {
     const props = entity.getProps()
     return {
@@ -196,7 +196,7 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
   toDomain(record: OrderedTasks, ...entity: any): OrderedTaskEntity {
     throw new Error('Method not implemented.')
   }
-  toResponse(entity: OrderedTaskEntity, ...dtos: any): OrderedTaskResponseDto {
-    throw new Error('Method not implemented.')
+  toResponse(entity: OrderedTaskEntity, ...dtos: any): any {
+    // throw new Error('Method not implemented.')
   }
 }
