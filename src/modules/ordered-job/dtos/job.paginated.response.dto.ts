@@ -20,7 +20,7 @@ class OrderedTaskResponseFields {
   taskName: string
 
   @ApiProperty({ example: MemberResponseFields, type: MemberResponseFields })
-  assignedTo: MemberResponseFields | null
+  assigneeName: MemberResponseFields | null
 
   @ApiProperty({ example: null })
   description: string | null

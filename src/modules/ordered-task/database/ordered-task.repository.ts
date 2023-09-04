@@ -7,8 +7,9 @@ import { OrderedTaskMapper } from '../ordered-task.mapper'
 @Injectable()
 export class OrderedTaskRepository implements OrderedTaskRepositoryPort {
   constructor(private readonly prismaService: PrismaService, private readonly orderedTaskMapper: OrderedTaskMapper) {}
-  async insert(entity: OrderedTaskEntity): Promise<void> {
-    const record = this.orderedTaskMapper.toPersistence(entity)
-    await this.prismaService.orderedTasks.create({ data: { ...record } })
+  async insert(entity: OrderedTaskEntity | OrderedTaskEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.orderedTaskMapper.toPersistence)
+    await this.prismaService.orderedTasks.createMany({ data: records })
   }
 }

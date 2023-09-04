@@ -51,9 +51,9 @@ export class FindJobPaginatedHttpController {
             id: task.id,
             taskStatus: task.taskStatus,
             taskName: task.taskName,
-            assignedTo: {
-              userId: task.assignedUserId,
-              name: task.assignedTo,
+            assigneeName: {
+              userId: task.assigneeUserId,
+              name: task.assigneeName,
             },
             description: task.description,
           })

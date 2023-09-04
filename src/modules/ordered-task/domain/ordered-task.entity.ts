@@ -7,7 +7,9 @@ interface CreateOrderedTaskProps {
   taskMenuId: string
   jobId: string
   projectId: string
-  description: string
+  assigneeName: string | null
+  assigneeUserId: string | null
+  description: string | null
 }
 
 interface OrderedTaskProps {
@@ -19,7 +21,8 @@ interface OrderedTaskProps {
   jobId: string
   projectId: string
   dateCreated: Date
-  assignedTo: string | null
+  assigneeName: string | null
+  assigneeUserId: string | null
   description: string
 }
 
@@ -32,7 +35,8 @@ export class OrderedTaskEntity extends AggregateRoot<OrderedTaskProps> {
       dateCreated: new Date(),
       taskStatus: 'Not Started',
       isLocked: false,
-      assignedTo: null,
+      assigneeName: null,
+      assigneeUserId: null,
     }
     return new OrderedTaskEntity({ id: v4(), props })
   }

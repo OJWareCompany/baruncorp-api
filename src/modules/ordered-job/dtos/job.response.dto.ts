@@ -24,7 +24,7 @@ export class OrderedTaskResponseFields {
   taskName: string
 
   @ApiProperty({ example: MemberResponseFields, type: MemberResponseFields })
-  assignedTo: MemberResponseFields | null
+  assigneeName: MemberResponseFields | null
 
   @ApiProperty({ example: null })
   description: string | null
@@ -33,7 +33,7 @@ export class OrderedTaskResponseFields {
     this.id = props.id
     this.taskStatus = props.taskStatus
     this.taskName = props.taskName
-    this.assignedTo = props.assignedTo
+    this.assigneeName = props.assigneeName
     this.description = props.description
   }
 }

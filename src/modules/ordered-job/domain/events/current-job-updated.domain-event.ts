@@ -1,4 +1,4 @@
-import { MountingType } from '@src/modules/project/domain/project.type'
+import { MountingType } from '../../../project/domain/project.type'
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { JobStatus } from '../job.type'
 

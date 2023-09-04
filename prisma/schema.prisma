@@ -592,8 +592,8 @@ model OrderedTasks {
   description                                                      String?      @db.Text
   dateAssigned                                                     DateTime?    @map("date_assigned") @db.DateTime(0)
   dateCompletedCancelled                                           DateTime?    @map("date_completed_cancelled") @db.DateTime(0)
-  assignedTo                                                       String?      @map("assigned_to") @db.VarChar(255)
-  assignedUserId                                                   String?      @map("assigned_user_id") @db.VarChar(255)
+  assignee_name                                                    String?      @db.VarChar(255)
+  assignee_user_id                                                 String?      @db.VarChar(255)
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
   notes                                                            String?      @map("notes") @db.Text
   designRevisionScope                                              String?      @map("design_revision_scope") @db.VarChar(255)

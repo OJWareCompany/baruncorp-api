@@ -17,8 +17,8 @@ export class OrderedTask {
   jobId: string
   projectId: string
   dateCreated: Date
-  assignedTo: string | null
-  assignedUserId: string | null
+  assigneeName: string | null
+  assigneeUserId: string | null
   description: string | null
   constructor(props: OrderedTask) {
     this.id = props.id
@@ -30,7 +30,7 @@ export class OrderedTask {
     this.jobId = props.jobId
     this.projectId = props.projectId
     this.dateCreated = props.dateCreated
-    this.assignedTo = props.assignedTo
+    this.assigneeName = props.assigneeName
     this.description = props.description
   }
 }

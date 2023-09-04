@@ -107,8 +107,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         jobId: task.jobId,
         projectId: task.projectId,
         dateCreated: task.dateCreated,
-        assignedTo: task.assignedTo,
-        assignedUserId: task.assignedUserId,
+        assigneeName: task.assignee_name,
+        assigneeUserId: task.assignee_user_id,
         description: task.description,
       })
     })

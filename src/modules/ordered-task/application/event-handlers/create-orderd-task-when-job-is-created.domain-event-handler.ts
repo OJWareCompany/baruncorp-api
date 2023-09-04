@@ -6,6 +6,7 @@ import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-cr
 import { ORDERED_TASK_REPOSITORY } from '../../ordered-task.di-token'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
 import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
+import { convertToAssignableTask } from '../../domain/convert-to-assignable-task'
 
 @Injectable()
 export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
@@ -18,8 +19,8 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent): Promise<void> {
     const taskIds: string[] = event.orderedTasks.map((task) => task.taskId)
-
-    const tasks = await this.loadTasksMemberAssignment([...new Set(taskIds)])
+    const services = await this.prismaService.services.findMany()
+    const tasks = convertToAssignableTask([...new Set(taskIds)], services)
 
     const entities = tasks.map(async (task) => {
       const oldTask = await this.prismaService.orderedTasks.findFirst({
@@ -32,6 +33,8 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
         description: task.description,
         jobId: event.aggregateId,
         projectId: event.projectId,
+        assigneeName: null,
+        assigneeUserId: null,
       })
     })
 
@@ -42,25 +45,5 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
         ...task.getProps(),
       })),
     })
-  }
-
-  private async loadTasksMemberAssignment(taskId: string | string[]): Promise<Services[]> {
-    const result: Services[] = []
-    const condition = (taskId: string) => ({
-      OR: [
-        { is_member_assignment: true, id: taskId }, //
-        { is_member_assignment: true, parent_task_id: taskId },
-      ],
-    })
-
-    const taskIds = Array.isArray(taskId) ? taskId : [taskId]
-    for (const taskId of taskIds) {
-      const task = await this.prismaService.services.findMany({
-        where: condition(taskId) as Prisma.ServicesWhereInput,
-      })
-      result.push(...task)
-    }
-
-    return result
   }
 }
