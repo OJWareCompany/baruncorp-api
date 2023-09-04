@@ -9,10 +9,12 @@ import { CreateOrderedTaskWhenJobIsCreatedDomainEventHandler } from './applicati
 import { UpdateOrderedTaskWhenJobIsUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-task-when-job-is-updated.domain-event-handler'
 import { CreateOrderedTaskHttpController } from './commands/create-ordered-task/create-ordered-task.http.controller'
 import { CreateOrderedTaskService } from './commands/create-ordered-task/create-ordered-task.service'
+import { DeleteOrderedTaskService } from './commands/delete-ordered-task/delete-ordered-task.service'
+import { DeleteOrderedTaskHttpController } from './commands/delete-ordered-task/delete-ordered-task.http.controller'
 
-const httpControllers = [CreateOrderedTaskHttpController]
+const httpControllers = [CreateOrderedTaskHttpController, DeleteOrderedTaskHttpController]
 
-const commandHandlers: Provider[] = [CreateOrderedTaskService]
+const commandHandlers: Provider[] = [CreateOrderedTaskService, DeleteOrderedTaskService]
 
 const eventHandlers: Provider[] = [
   CreateOrderedTaskWhenJobIsCreatedDomainEventHandler,
