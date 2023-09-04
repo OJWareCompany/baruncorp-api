@@ -3,10 +3,10 @@ import { ApiProperty } from '@nestjs/swagger'
 
 class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
-  userId: string
+  userId: string | null
 
   @ApiProperty({ example: 'Chris Kim' })
-  name: string
+  name: string | null
 }
 
 class OrderedTaskResponseFields {
@@ -20,7 +20,7 @@ class OrderedTaskResponseFields {
   taskName: string
 
   @ApiProperty({ example: MemberResponseFields, type: MemberResponseFields })
-  assigneeName: MemberResponseFields | null
+  assigneeName: MemberResponseFields
 
   @ApiProperty({ example: null })
   description: string | null
@@ -37,9 +37,6 @@ class ClientInformationFields {
 export class JobPaginatedResponseFields {
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
   propertyAddress: string
-
-  @ApiProperty({ example: '10223' })
-  jobNumber: string | null
 
   @ApiProperty({ example: 5 })
   jobRequestNumber: number

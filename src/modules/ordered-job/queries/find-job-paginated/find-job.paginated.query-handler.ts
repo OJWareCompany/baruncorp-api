@@ -12,8 +12,6 @@ import { JobMapper } from '../../job.mapper'
 export class FindJobPaginatedQuery extends PaginatedQueryBase {
   readonly propertyType?: string
 
-  readonly jobNumber?: string
-
   readonly jobName?: string
 
   readonly projectId?: string
@@ -37,7 +35,6 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
     const records = await this.prismaService.orderedJobs.findMany({
       where: {
         ...(query.propertyType && { projectType: query.propertyType }),
-        ...(query.jobNumber && { jobNumber: query.jobNumber }),
         ...(query.jobName && { jobName: { contains: query.jobName } }),
         ...(query.projectId && { projectId: { contains: query.projectId } }),
       },
@@ -52,7 +49,6 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
     const totalCount = await this.prismaService.orderedJobs.count({
       where: {
         ...(query.propertyType && { projectType: query.propertyType }),
-        ...(query.jobNumber && { jobNumber: query.jobNumber }),
         ...(query.jobName && { jobName: { contains: query.jobName } }),
         ...(query.projectId && { projectId: { contains: query.projectId } }),
       },

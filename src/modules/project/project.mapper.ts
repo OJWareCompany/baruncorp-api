@@ -37,7 +37,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       designOrPeStampPreviouslyDoneOnProjectOutside: 0, // TODO
       totalOfJobs: props.totalOfJobs,
 
-      clientId: props.clientOrganizationId,
+      clientOrganizationId: props.clientOrganizationId,
       lastModifiedBy: props.updatedBy,
 
       clientUserId: props.clientOrganizationId,
@@ -93,7 +93,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         }),
         coordinates: record.coordinates.split(',').map((n) => Number(n)),
         mailingAddressForWetStamp: record.mailingAddressForWetStamps,
-        clientOrganizationId: record.clientId,
+        clientOrganizationId: record.clientOrganizationId,
         projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
           stateId: record.stateId,
           countyId: record.countyId,

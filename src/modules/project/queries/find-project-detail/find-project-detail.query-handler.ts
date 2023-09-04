@@ -40,7 +40,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
         isGroundMount: true,
         projectPropertyType: true,
         propertyOwnerName: true,
-        clientId: true,
+        clientOrganizationId: true,
         projectFolder: true,
         mailingAddressForWetStamps: true, // Remove
         propertyAddress: true,

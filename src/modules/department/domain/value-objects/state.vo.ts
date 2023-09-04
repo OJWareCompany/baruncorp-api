@@ -1,6 +1,6 @@
 export interface StateProps {
   stateName: string
-  abbreviation?: string
+  abbreviation: string
   geoId?: string
   stateCode?: string
   ansiCode?: string
@@ -9,7 +9,7 @@ export interface StateProps {
 
 export class State implements StateProps {
   readonly stateName: string
-  readonly abbreviation?: string
+  readonly abbreviation: string
   readonly geoId?: string
   readonly stateCode?: string
   readonly ansiCode?: string

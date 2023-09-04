@@ -5,7 +5,6 @@ class OrderedTaskWhenToCreateJob {
 export class CreateJobCommand {
   readonly deliverablesEmails: string[]
   readonly updatedByUserId: string
-  readonly jobNumber: string | null
   readonly clientUserIds: string[]
   readonly additionalInformationFromClient: string
   readonly systemSize: number | null // Job 단위로 청구되며, 가격이 있기에 Size도 Job에 있어야 하지 않을까? (전체 사이즈는 프로젝트 하나라고하더라도..)

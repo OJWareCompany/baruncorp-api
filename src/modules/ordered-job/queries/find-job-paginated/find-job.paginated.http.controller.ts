@@ -38,13 +38,12 @@ export class FindJobPaginatedHttpController {
         item.propertyAddress = job.propertyAddress
         item.jobRequestNumber = job.jobRequestNumber
         item.mountingType = job.mountingType
-        item.jobNumber = job.jobNumber
         item.jobStatus = job.jobStatus
         item.projectType = job.mountingType
         item.receivedAt = job.receivedAt.toISOString()
         item.clientInfo = {
           clientOrganizationId: job.clientInfo.clientOrganizationId,
-          clientOrganizationName: job.clientInfo.clientContact, // TODO: project나 조직도 join 해야하나
+          clientOrganizationName: job.clientInfo.clientOrganizationId, // TODO: project나 조직도 join 해야하나
         }
         item.orderedTasks = job.orderedTasks.map((task) => {
           return new OrderedTaskResponseFields({

@@ -34,7 +34,7 @@ export class ProjectResponseDto {
   projectFolderLink: string | null
 
   @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
-  mailingAddressForWetStamp: string
+  mailingAddressForWetStamp: string | null
 
   @ApiProperty({ example: [11.2, 22.1] })
   coordinates: number[]

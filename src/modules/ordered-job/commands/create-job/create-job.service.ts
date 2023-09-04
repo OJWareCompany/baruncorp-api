@@ -5,15 +5,20 @@ import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobEntity } from '../../domain/job.entity'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobRepositoryPort } from '../../database/job.repository.port'
+import { PrismaService } from '../../../database/prisma.service'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
-  constructor(@Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort) {}
+  constructor(
+    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
+    private readonly prismaService: PrismaService,
+  ) {}
 
   async execute(command: CreateJobCommand): Promise<void> {
     // TODO Project Type 업데이트
     // TODO Client User 여러명 설정 -> user profile에서 contact emails 필드 추가하기.
     const clientUser = await this.jobRepository.findUser(command.clientUserIds[0])
+    const organization = await this.prismaService.organizations.findUnique({ where: { id: clientUser.organizationId } })
     const orderer = await this.jobRepository.findUser(command.updatedByUserId)
     const project = await this.jobRepository.findProject(command.projectId)
 
@@ -26,15 +31,14 @@ export class CreateJobService implements ICommandHandler {
       mailingAddressForWetStamp: command.mailingAddressForWetStamp,
       numberOfWetStamp: command.numberOfWetStamp,
       clientInfo: new ClientInformation({
-        clientOrganizationId: command.clientUserIds[0],
-        clientContact: clientUser.firstName + ' ' + clientUser.lastName,
+        clientOrganizationId: clientUser.organizationId,
+        clientOrganizationName: organization.name,
         clientContactEmail: clientUser.email,
         deliverablesEmail: command.deliverablesEmails,
       }),
       updatedBy: orderer.firstName + ' ' + orderer.lastName,
       projectId: command.projectId,
       mountingType: command.mountingType,
-      jobNumber: command.jobNumber,
       totalOfJobs: project.totalOfJobs,
     })
 

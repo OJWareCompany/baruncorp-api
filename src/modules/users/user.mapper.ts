@@ -51,7 +51,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         isRevenueShare: record.revenueShare,
         isRevisionRevenueShare: record.revisionRevenueShare,
         type: record.type,
-        deliverablesEmails: record.deliverables_emails?.split(','),
+        deliverablesEmails: record.deliverables_emails?.split(',') || [],
       },
     })
     return entity

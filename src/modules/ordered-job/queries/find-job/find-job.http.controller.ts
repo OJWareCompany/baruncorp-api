@@ -29,7 +29,6 @@ export class FindJobHttpController {
     response.updatedBy = result.updatedBy
     response.propertyAddress = result.propertyAddress
     response.mountingType = result.mountingType
-    response.jobNumber = result.jobNumber
     response.jobStatus = result.jobStatus
     response.projectType = result.mountingType
     response.receivedAt = result.receivedAt.toISOString()
@@ -49,7 +48,7 @@ export class FindJobHttpController {
 
     response.clientInfo = {
       clientOrganizationId: result.clientInfo.clientOrganizationId,
-      clientOrganizationName: result.clientInfo.clientContact,
+      clientOrganizationName: result.clientInfo.clientOrganizationName,
       contactEmail: result.clientInfo.clientContactEmail,
       deliverablesEmails: result.clientInfo.deliverablesEmail,
     }

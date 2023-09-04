@@ -27,26 +27,26 @@ export class FindProjectDetailHttpController {
 
     // Whitelisting returned properties
     const response = new ProjectResponseDto()
-    response.projectId = result.id
+    response.projectId = result.id!
     response.systemSize = Number(result.systemSize)
-    response.isGroundMount = result.isGroundMount
-    response.projectPropertyOwnerName = result.propertyOwnerName
-    response.clientOrganization = result.organization.name
-    response.clientOrganizationId = result.organization.id
-    response.clientUserId = result.clientUserId
-    response.clientUserName = result.clientUserName
-    response.projectFolderLink = result.projectFolder
-    response.mailingAddressForWetStamp = result.mailingAddressForWetStamps
-    response.propertyAddress = result.propertyAddress
-    response.numberOfWetStamp = result.numberOfWetStamps
+    response.isGroundMount = !!result.isGroundMount
+    response.projectPropertyOwnerName = result.propertyOwnerName!
+    response.clientOrganization = result.organization.name!
+    response.clientOrganizationId = result.organization.id!
+    response.clientUserId = result.clientUserId!
+    response.clientUserName = result.clientUserName!
+    response.projectFolderLink = result.projectFolder || null
+    response.mailingAddressForWetStamp = result.mailingAddressForWetStamps || null
+    response.propertyAddress = result.propertyAddress!
+    response.numberOfWetStamp = result.numberOfWetStamps!
     response.propertyType = result.projectPropertyType === 'Residential' ? 'Residential' : 'Commercial'
-    response.projectNumber = result.projectNumber
-    response.createdAt = result.dateCreated.toISOString()
-    response.totalOfJobs = result.totalOfJobs
-    response.masterLogUpload = result.masterLogUpload
+    response.projectNumber = result.projectNumber || null
+    response.createdAt = result.dateCreated!.toISOString()!
+    response.totalOfJobs = result.totalOfJobs!
+    response.masterLogUpload = !!result.masterLogUpload
     response.designOrPEStampPreviouslyDoneOnProjectOutSide = !!result.designOrPeStampPreviouslyDoneOnProjectOutside
     response.jobs = result.jobs
-    response.coordinates = result.coordinates.split(',').map((n) => Number(n)) as any
+    response.coordinates = result.coordinates!.split(',').map((n) => Number(n)) as number[]
     return response
   }
 }

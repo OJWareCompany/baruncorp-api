@@ -1,6 +1,5 @@
 export class UpdateJobCommand {
   readonly jobId: string
-  readonly jobNumber: string | null
   readonly systemSize: number | null // Job 단위로 청구되며, 가격이 있기에 Size도 Job에 있어야 하지 않을까? (전체 사이즈는 프로젝트 하나라고하더라도..)
   readonly mailingAddressForWetStamp: string
   readonly deliverablesEmails: string[]

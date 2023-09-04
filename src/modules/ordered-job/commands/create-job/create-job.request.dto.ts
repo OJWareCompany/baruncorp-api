@@ -17,10 +17,6 @@ export class CreateJobRequestDto {
   @IsArray()
   deliverablesEmails: string[] | null
 
-  @ApiProperty({ default: '10223' })
-  @IsString()
-  jobNumber: string | null
-
   @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43', isArray: true })
   @IsArray()
   clientUserIds: string[]

@@ -4,7 +4,7 @@ import { CreateUserProps, UserProps } from './user.types'
 // where should it be 'id'? Entity or Prop?
 // 'id' should be in base entity
 export class UserEntity {
-  readonly id?: string
+  readonly id: string
   protected readonly props: UserProps
   /**
    * readonly email: string

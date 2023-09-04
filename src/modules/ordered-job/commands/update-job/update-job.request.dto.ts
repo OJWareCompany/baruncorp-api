@@ -6,10 +6,6 @@ export class UpdateJobRequestDto {
   @IsArray()
   deliverablesEmails: string[]
 
-  @ApiProperty({ default: '10223' })
-  @IsString()
-  jobNumber: string | null
-
   @ApiProperty({ default: 'On Hold' })
   @IsString()
   jobStatus: string

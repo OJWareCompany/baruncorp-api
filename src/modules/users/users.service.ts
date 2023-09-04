@@ -1,4 +1,4 @@
-import { ConflictException, Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
 import { EmailVO } from './domain/value-objects/email.vo'
 import { InputPasswordVO } from './domain/value-objects/password.vo'
@@ -137,14 +137,24 @@ export class UserService {
       // What if organizationId is provided by parameter?
       const organization = await this.organizationRepository.findOneByName(dto.organizationName)
       if (user) throw new ConflictException('User Already Existed')
-      return await this.invitationEmailRepository.insertOne({
+      await this.invitationEmailRepository.insertOne({
         email: dto.email,
         code: code,
         role: UserRoles.guest,
         organizationId: organization.id,
       })
+      return {
+        email: dto.email,
+        code: code,
+        role: UserRoles.guest,
+        organizationId: organization.id,
+        updatedAt: new Date(),
+        createdAt: new Date(),
+      }
     } catch (error) {
       console.log(error)
+      if ((error.message = 'User Already Existed')) throw new ConflictException(error.message, '10017')
+      else throw new InternalServerErrorException()
     }
   }
 

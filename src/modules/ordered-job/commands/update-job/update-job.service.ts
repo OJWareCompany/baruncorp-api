@@ -16,7 +16,6 @@ export class UpdateJobService implements ICommandHandler {
   async execute(command: UpdateJobCommand): Promise<void> {
     const editor = await this.prismaService.users.findUnique({ where: { id: command.updatedByUserId } })
     const job = await this.jobRepository.findJob(command.jobId)
-    job.updateJobNumber(command.jobNumber)
     job.updateJobStatus(command.jobStatus as JobStatus)
     job.updateSystemSize(command.systemSize)
     job.updateMailingAddressWetForStamp(command.mailingAddressForWetStamp)

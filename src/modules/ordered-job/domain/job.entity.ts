@@ -15,7 +15,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       ...create,
       jobRequestNumber: ++create.totalOfJobs,
       propertyAddress: create.propertyAddress,
-      jobName: create.propertyAddress + ` (Job ${create.jobNumber})`,
+      jobName: create.propertyAddress + ` (Job ${create.totalOfJobs})`,
       jobStatus: 'Not Started',
       receivedAt: new Date(),
       orderedTasks: [],
@@ -38,11 +38,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   updateNumberOfWetStamp(numberOfWetStamp: number) {
     this.props.numberOfWetStamp = numberOfWetStamp
-    return
-  }
-
-  updateJobNumber(jobNumber: string) {
-    this.props.jobNumber = jobNumber
     return
   }
 

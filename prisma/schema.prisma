@@ -10,8 +10,8 @@ datasource db {
 
 model OrganizationTypes {
   type               String          @id
-  updatedAt          DateTime?       @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt          DateTime?       @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt          DateTime        @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt          DateTime        @default(now()) @map("created_at") @db.DateTime(0)
   organizationEntity Organizations[]
 
   @@map("organization_types")
@@ -30,8 +30,8 @@ model Organizations {
   phoneNumber            String?            @map("phone_number")
   postalCode             String?            @map("postal_code")
   stateOrRegion          String?            @map("state_or_region")
-  updatedAt              DateTime?          @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt              DateTime?          @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt              DateTime           @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt              DateTime           @default(now()) @map("created_at") @db.DateTime(0)
   isActiveContractor     Int?               @map("is_active_contractor") @db.TinyInt
   isActiveWorkResource   Int?               @map("is_active_work_resource") @db.TinyInt
   revenueShare           Int?               @map("revenue_share") @db.TinyInt
@@ -49,8 +49,8 @@ model Organizations {
 
 model Roles {
   role                  String             @id
-  updatedAt             DateTime?          @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt             DateTime?          @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt             DateTime           @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt             DateTime           @default(now()) @map("created_at") @db.DateTime(0)
   invitationEmailEntity InvitationEmails[]
   UserRole              UserRole[]
 
@@ -62,8 +62,8 @@ model InvitationEmails {
   email              String
   role               String
   organizationId     String        @map("organization_id")
-  updatedAt          DateTime?     @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt          DateTime?     @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt          DateTime      @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt          DateTime      @default(now()) @map("created_at") @db.DateTime(0)
   organizationEntity Organizations @relation(fields: [organizationId], references: [id])
   rolesEntity        Roles         @relation(fields: [role], references: [role])
 
@@ -74,11 +74,11 @@ model InvitationEmails {
 
 model UserRole {
   role        String
-  userId      String    @map("user_id")
-  updatedAt   DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt   DateTime? @default(now()) @map("created_at") @db.DateTime(0)
-  rolesEntity Roles     @relation(fields: [role], references: [role])
-  userEntity  Users     @relation(fields: [userId], references: [id])
+  userId      String   @map("user_id")
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  rolesEntity Roles    @relation(fields: [role], references: [role])
+  userEntity  Users    @relation(fields: [userId], references: [id])
 
   @@id([userId, role])
   @@index([role], map: "user_role_role_fkey")
@@ -91,8 +91,8 @@ model Users {
   firstName                  String                   @map("first_name")
   lastName                   String                   @map("last_name")
   organizationId             String                   @map("organization_id")
-  updatedAt                  DateTime?                @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt                  DateTime?                @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt                  DateTime                 @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                  DateTime                 @default(now()) @map("created_at") @db.DateTime(0)
   address                    String?                  @db.Text
   phoneNumber                String?                  @map("phone_number") @db.VarChar(20)
   isActiveWorkResource       Boolean?                 @map("is_active_work_resource")
@@ -116,11 +116,11 @@ model Users {
 }
 
 model Passwords {
-  userId    String    @unique @map("user_id")
+  userId    String   @unique @map("user_id")
   password  String
-  updatedAt DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt DateTime? @default(now()) @map("created_at") @db.DateTime(0)
-  user      Users     @relation(fields: [userId], references: [id])
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  user      Users    @relation(fields: [userId], references: [id])
 
   @@map("passwords")
 }
@@ -129,8 +129,8 @@ model Departments {
   id          String      @id @default(uuid())
   name        String
   description String
-  updatedAt   DateTime?   @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt   DateTime?   @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt   DateTime    @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt   DateTime    @default(now()) @map("created_at") @db.DateTime(0)
   Positions   Positions[]
 
   @@map("departments")
@@ -141,8 +141,8 @@ model Positions {
   name             String
   description      String
   departmentId     String            @map("department_id")
-  updatedAt        DateTime?         @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt        DateTime?         @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt        DateTime          @default(now()) @map("created_at") @db.DateTime(0)
   PositionService  PositionService[]
   departmentEntity Departments       @relation(fields: [departmentId], references: [id])
   UserPosition     UserPosition[]
@@ -158,8 +158,8 @@ model Services {
   is_in_order_menu                     Boolean?
   is_member_assignment                 Boolean?
   parent_task_id                       String?
-  updatedAt                            DateTime?         @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt                            DateTime?         @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt                            DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                            DateTime          @default(now()) @map("created_at") @db.DateTime(0)
   description                          String?
   state_restricted                     Boolean?
   is_current_user                      Boolean?
@@ -175,8 +175,8 @@ model Services {
 model PositionService {
   positionId     String    @map("position_id")
   serviceId      String    @map("service_id")
-  updatedAt      DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt      DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.DateTime(0)
   positionEntity Positions @relation(fields: [positionId], references: [id])
   serviceEntity  Services  @relation(fields: [serviceId], references: [id])
 
@@ -186,12 +186,12 @@ model PositionService {
 }
 
 model UserService {
-  userId        String    @map("user_id")
-  serviceId     String    @map("service_id")
-  updatedAt     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
-  serviceEntity Services  @relation(fields: [serviceId], references: [id])
-  userEntity    Users     @relation(fields: [userId], references: [id])
+  userId        String   @map("user_id")
+  serviceId     String   @map("service_id")
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt     DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  serviceEntity Services @relation(fields: [serviceId], references: [id])
+  userEntity    Users    @relation(fields: [userId], references: [id])
 
   @@id([userId, serviceId])
   @@index([serviceId], map: "user_service_service_id_fkey")
@@ -207,8 +207,8 @@ model States {
   stateLongName          String?                  @map("state_long_name")
   lsadCode               String?                  @map("lsad_code") @db.VarChar(20)
   funcStat               String?                  @map("func_stat") @db.VarChar(20)
-  updatedAt              DateTime?                @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt              DateTime?                @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt              DateTime                 @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt              DateTime                 @default(now()) @map("created_at") @db.DateTime(0)
   UserElectricalLicenses UserElectricalLicenses[]
   UserStructuralLicenses UserStructuralLicenses[]
 
@@ -223,8 +223,8 @@ model UserStructuralLicenses {
   priority           Int?
   expiryDate         DateTime? @map("expiry_date")
   issuedDate         DateTime? @map("issue_date")
-  updatedAt          DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt          DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
   stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
   userEntity         Users     @relation(fields: [userId], references: [id])
 
@@ -240,8 +240,8 @@ model UserElectricalLicenses {
   expiryDate         DateTime? @map("expiry_date")
   issuedDate         DateTime? @map("issue_date")
   priority           Int?
-  updatedAt          DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt          DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt          DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
   stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
   userEntity         Users     @relation(fields: [userId], references: [id])
 
@@ -253,8 +253,8 @@ model UserElectricalLicenses {
 model UserPosition {
   userId         String    @map("user_id")
   positionId     String    @map("position_id")
-  updatedAt      DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt      DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.DateTime(0)
   positionEntity Positions @relation(fields: [positionId], references: [id])
   userEntity     Users     @relation(fields: [userId], references: [id])
 
@@ -264,157 +264,157 @@ model UserPosition {
 }
 
 model CountySubdivisions {
-  geoId      String    @id @map("geo_id") @db.VarChar(20)
-  stateCode  String?   @map("state_code") @db.VarChar(20)
-  stateName  String?   @map("state_name") @db.VarChar(200)
-  countyCode String?   @map("county_code") @db.VarChar(20)
-  name       String?   @map("name") @db.VarChar(200)
-  ansiCode   String?   @map("ansi_code") @db.VarChar(20)
-  lsadCode   String?   @map("lsad_code") @db.VarChar(20)
-  funcStat   String?   @map("func_stat") @db.VarChar(20)
-  longName   String?   @map("long_name") @db.VarChar(200)
-  updatedAt  DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt  DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  geoId      String   @id @map("geo_id") @db.VarChar(20)
+  stateCode  String?  @map("state_code") @db.VarChar(20)
+  stateName  String?  @map("state_name") @db.VarChar(200)
+  countyCode String?  @map("county_code") @db.VarChar(20)
+  name       String?  @map("name") @db.VarChar(200)
+  ansiCode   String?  @map("ansi_code") @db.VarChar(20)
+  lsadCode   String?  @map("lsad_code") @db.VarChar(20)
+  funcStat   String?  @map("func_stat") @db.VarChar(20)
+  longName   String?  @map("long_name") @db.VarChar(200)
+  updatedAt  DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt  DateTime @default(now()) @map("created_at") @db.DateTime(0)
 
   @@map("county_subdivisions")
 }
 
 model Counties {
-  geoId          String    @id @map("geo_id") @db.VarChar(20)
-  stateCode      String?   @map("state_code") @db.VarChar(20)
-  stateName      String?   @map("state_name") @db.VarChar(100)
-  countyCode     String?   @map("county_code") @db.VarChar(20)
-  ansiCode       String?   @map("ansi_code") @db.VarChar(20)
-  countyName     String?   @map("county_name") @db.VarChar(100)
-  countyLongName String?   @map("county_long_name") @db.VarChar(100)
-  lsadCode       String?   @map("lsad_code") @db.VarChar(20)
-  funcStat       String?   @map("func_stat") @db.VarChar(20)
-  updatedAt      DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt      DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  geoId          String   @id @map("geo_id") @db.VarChar(20)
+  stateCode      String?  @map("state_code") @db.VarChar(20)
+  stateName      String?  @map("state_name") @db.VarChar(100)
+  countyCode     String?  @map("county_code") @db.VarChar(20)
+  ansiCode       String?  @map("ansi_code") @db.VarChar(20)
+  countyName     String?  @map("county_name") @db.VarChar(100)
+  countyLongName String?  @map("county_long_name") @db.VarChar(100)
+  lsadCode       String?  @map("lsad_code") @db.VarChar(20)
+  funcStat       String?  @map("func_stat") @db.VarChar(20)
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt      DateTime @default(now()) @map("created_at") @db.DateTime(0)
 
   @@map("counties")
 }
 
 model Places {
-  geoId         String    @id @map("geo_id") @db.VarChar(20)
-  stateCode     String?   @map("state_code") @db.VarChar(20)
-  stateName     String?   @map("state_name") @db.VarChar(100)
-  placeC        String?   @map("place_c") @db.VarChar(20)
-  ansiCode      String?   @map("ansi_code") @db.VarChar(20)
-  placeFips     String?   @map("place_fips") @db.VarChar(20)
-  placeName     String?   @map("place_name") @db.VarChar(100)
-  placeType     String?   @map("place_type") @db.VarChar(20)
-  lsadCode      String?   @map("lsad_code") @db.VarChar(20)
-  counties      String?   @map("counties") @db.VarChar(100)
-  funcStat      String?   @map("func_stat") @db.VarChar(20)
-  placeLongName String?   @map("place_long_name") @db.VarChar(200)
-  updatedAt     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
+  geoId         String   @id @map("geo_id") @db.VarChar(20)
+  stateCode     String?  @map("state_code") @db.VarChar(20)
+  stateName     String?  @map("state_name") @db.VarChar(100)
+  placeC        String?  @map("place_c") @db.VarChar(20)
+  ansiCode      String?  @map("ansi_code") @db.VarChar(20)
+  placeFips     String?  @map("place_fips") @db.VarChar(20)
+  placeName     String?  @map("place_name") @db.VarChar(100)
+  placeType     String?  @map("place_type") @db.VarChar(20)
+  lsadCode      String?  @map("lsad_code") @db.VarChar(20)
+  counties      String?  @map("counties") @db.VarChar(100)
+  funcStat      String?  @map("func_stat") @db.VarChar(20)
+  placeLongName String?  @map("place_long_name") @db.VarChar(200)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt     DateTime @default(now()) @map("created_at") @db.DateTime(0)
 
   @@map("places")
 }
 
 model AHJNotes {
-  geoId                         String    @id @map("geo_id") @db.VarChar(20)
-  createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt                     DateTime? @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
-  type                          String?   @db.VarChar(20)
-  geoIdState                    String    @map("geo_id_state") @db.VarChar(20)
-  geoIdCounty                   String?   @map("geo_id_county") @db.VarChar(20)
-  geoIdCountySubdivision        String?   @map("geo_id_county_subdivision") @db.VarChar(20)
-  geoIdPlace                    String?   @map("geo_id_place") @db.VarChar(20)
-  name                          String    @map("name") @db.VarChar(300)
-  fullAhjName                   String    @map("full_ahj_name") @db.VarChar(300)
-  queryState                    String?   @map("query_state") @db.VarChar(20)
-  queryCounty                   String?   @map("query_county") @db.VarChar(200)
-  website                       String?   @map("website") @db.VarChar(242)
-  specificFormRequired          String?   @map("specific_form_required") @db.VarChar(200)
-  buildingCodes                 String?   @map("building_codes") @db.Text
-  generalNotes                  String?   @map("general_notes") @db.Text
-  pvMeterRequired               String?   @map("pv_meter_required") @db.VarChar(200)
-  acDisconnectRequired          String?   @map("ac_disconnect_required") @db.VarChar(200)
-  centerFed120Percent           String?   @map("center_fed_120_percent") @db.VarChar(200)
-  deratedAmpacity               String?   @map("derated_ampacity") @db.VarChar(200)
-  fireSetBack                   String?   @map("fire_set_back") @db.Text
-  utilityNotes                  String?   @map("utility_notes") @db.Text
-  designNotes                   String?   @map("design_notes") @db.Text
-  iebcAccepted                  String?   @map("iebc_accepted") @db.VarChar(300)
-  structuralObservationRequired String?   @map("structural_observation_required") @db.VarChar(20)
-  digitalSignatureType          String?   @map("digital_signature_type") @db.VarChar(300)
-  windUpliftCalculationRequired String?   @map("wind_uplift_calculation_required") @db.VarChar(300)
-  windSpeed                     String?   @map("wind_speed") @db.VarChar(300)
-  windExposure                  String?   @map("wind_exposure") @db.VarChar(300)
-  snowLoadGround                String?   @map("snow_load_ground") @db.VarChar(300)
-  snowLoadFlatRoof              String?   @map("snow_load_flat_roof") @db.VarChar(300)
-  snowLoadSlopedRoof            String?   @map("snow_load_sloped_roof") @db.VarChar(300)
-  wetStampsRequired             String?   @map("wet_stamps_required") @db.VarChar(300)
-  ofWetStamps                   String?   @map("of_wet_stamps") @db.VarChar(300)
-  wetStampSize                  String?   @map("wet_stamp_size") @db.VarChar(300)
-  engineeringNotes              String?   @map("engineering_notes") @db.Text
-  electricalNotes               String?   @map("electrical_notes") @db.Text
-  stateCode                     String?   @map("state_code") @db.VarChar(20)
-  funcStat                      String?   @map("func_stat") @db.VarChar(300)
-  address                       String?   @map("address") @db.VarChar(300)
-  lsadCode                      String?   @map("lsad_code") @db.VarChar(20)
-  usps                          String?   @map("usps") @db.VarChar(20)
-  ansiCode                      String?   @map("ansi_code") @db.VarChar(20)
-  longName                      String?   @map("long_name") @db.VarChar(300)
-  countyCode                    String?   @map("county_code") @db.VarChar(20)
-  modifiedAt                    DateTime? @default(now()) @map("modified_at") @db.DateTime(0)
-  updatedBy                     String?   @default("system") @map("updated_by") @db.VarChar(300)
+  geoId                         String   @id @map("geo_id") @db.VarChar(20)
+  createdAt                     DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt                     DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
+  type                          String?  @db.VarChar(20)
+  geoIdState                    String   @map("geo_id_state") @db.VarChar(20)
+  geoIdCounty                   String?  @map("geo_id_county") @db.VarChar(20)
+  geoIdCountySubdivision        String?  @map("geo_id_county_subdivision") @db.VarChar(20)
+  geoIdPlace                    String?  @map("geo_id_place") @db.VarChar(20)
+  name                          String   @map("name") @db.VarChar(300)
+  fullAhjName                   String   @map("full_ahj_name") @db.VarChar(300)
+  queryState                    String?  @map("query_state") @db.VarChar(20)
+  queryCounty                   String?  @map("query_county") @db.VarChar(200)
+  website                       String?  @map("website") @db.VarChar(242)
+  specificFormRequired          String?  @map("specific_form_required") @db.VarChar(200)
+  buildingCodes                 String?  @map("building_codes") @db.Text
+  generalNotes                  String?  @map("general_notes") @db.Text
+  pvMeterRequired               String?  @map("pv_meter_required") @db.VarChar(200)
+  acDisconnectRequired          String?  @map("ac_disconnect_required") @db.VarChar(200)
+  centerFed120Percent           String?  @map("center_fed_120_percent") @db.VarChar(200)
+  deratedAmpacity               String?  @map("derated_ampacity") @db.VarChar(200)
+  fireSetBack                   String?  @map("fire_set_back") @db.Text
+  utilityNotes                  String?  @map("utility_notes") @db.Text
+  designNotes                   String?  @map("design_notes") @db.Text
+  iebcAccepted                  String?  @map("iebc_accepted") @db.VarChar(300)
+  structuralObservationRequired String?  @map("structural_observation_required") @db.VarChar(20)
+  digitalSignatureType          String?  @map("digital_signature_type") @db.VarChar(300)
+  windUpliftCalculationRequired String?  @map("wind_uplift_calculation_required") @db.VarChar(300)
+  windSpeed                     String?  @map("wind_speed") @db.VarChar(300)
+  windExposure                  String?  @map("wind_exposure") @db.VarChar(300)
+  snowLoadGround                String?  @map("snow_load_ground") @db.VarChar(300)
+  snowLoadFlatRoof              String?  @map("snow_load_flat_roof") @db.VarChar(300)
+  snowLoadSlopedRoof            String?  @map("snow_load_sloped_roof") @db.VarChar(300)
+  wetStampsRequired             String?  @map("wet_stamps_required") @db.VarChar(300)
+  ofWetStamps                   String?  @map("of_wet_stamps") @db.VarChar(300)
+  wetStampSize                  String?  @map("wet_stamp_size") @db.VarChar(300)
+  engineeringNotes              String?  @map("engineering_notes") @db.Text
+  electricalNotes               String?  @map("electrical_notes") @db.Text
+  stateCode                     String?  @map("state_code") @db.VarChar(20)
+  funcStat                      String?  @map("func_stat") @db.VarChar(300)
+  address                       String?  @map("address") @db.VarChar(300)
+  lsadCode                      String?  @map("lsad_code") @db.VarChar(20)
+  usps                          String?  @map("usps") @db.VarChar(20)
+  ansiCode                      String?  @map("ansi_code") @db.VarChar(20)
+  longName                      String?  @map("long_name") @db.VarChar(300)
+  countyCode                    String?  @map("county_code") @db.VarChar(20)
+  modifiedAt                    DateTime @default(now()) @map("modified_at") @db.DateTime(0)
+  updatedBy                     String?  @default("system") @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_notes")
 }
 
 model AHJNoteHistory {
-  id                            Int       @id @default(autoincrement()) @db.UnsignedInt
-  geoId                         String    @map("geo_id") @db.VarChar(20)
-  geoIdState                    String    @map("geo_id_state") @db.VarChar(20)
-  geoIdCounty                   String?   @map("geo_id_county") @db.VarChar(20)
-  geoIdCountySubdivision        String?   @map("geo_id_county_subdivision") @db.VarChar(20)
-  geoIdPlace                    String?   @map("geo_id_place") @db.VarChar(20)
-  name                          String    @map("name") @db.VarChar(300)
-  fullAhjName                   String    @map("full_ahj_name") @db.VarChar(300)
-  queryState                    String?   @map("query_state") @db.VarChar(20)
-  queryCounty                   String?   @map("query_county") @db.VarChar(200)
-  website                       String?   @map("website") @db.VarChar(242)
-  specificFormRequired          String?   @map("specific_form_required") @db.VarChar(200)
-  buildingCodes                 String?   @map("building_codes") @db.Text
-  generalNotes                  String?   @map("general_notes") @db.Text
-  pvMeterRequired               String?   @map("pv_meter_required") @db.VarChar(200)
-  acDisconnectRequired          String?   @map("ac_disconnect_required") @db.VarChar(200)
-  centerFed120Percent           String?   @map("center_fed_120_percent") @db.VarChar(200)
-  deratedAmpacity               String?   @map("derated_ampacity") @db.VarChar(200)
-  fireSetBack                   String?   @map("fire_set_back") @db.Text
-  utilityNotes                  String?   @map("utility_notes") @db.Text
-  designNotes                   String?   @map("design_notes") @db.Text
-  iebcAccepted                  String?   @map("iebc_accepted") @db.VarChar(300)
-  structuralObservationRequired String?   @map("structural_observation_required") @db.VarChar(20)
-  digitalSignatureType          String?   @map("digital_signature_type") @db.VarChar(300)
-  windUpliftCalculationRequired String?   @map("wind_uplift_calculation_required") @db.VarChar(300)
-  windSpeed                     String?   @map("wind_speed") @db.VarChar(300)
-  windExposure                  String?   @map("wind_exposure") @db.VarChar(300)
-  snowLoadGround                String?   @map("snow_load_ground") @db.VarChar(300)
-  snowLoadFlatRoof              String?   @map("snow_load_flat_roof") @db.VarChar(300)
-  snowLoadSlopedRoof            String?   @map("snow_load_sloped_roof") @db.VarChar(300)
-  wetStampsRequired             String?   @map("wet_stamps_required") @db.VarChar(300)
-  ofWetStamps                   String?   @map("of_wet_stamps") @db.VarChar(300)
-  wetStampSize                  String?   @map("wet_stamp_size") @db.VarChar(300)
-  engineeringNotes              String?   @map("engineering_notes") @db.Text
-  electricalNotes               String?   @map("electrical_notes") @db.Text
-  stateCode                     String?   @map("state_code") @db.VarChar(20)
-  funcStat                      String?   @map("func_stat") @db.VarChar(300)
-  address                       String?   @map("address") @db.VarChar(300)
-  lsadCode                      String?   @map("lsad_code") @db.VarChar(20)
-  usps                          String?   @map("usps") @db.VarChar(20)
-  ansiCode                      String?   @map("ansi_code") @db.VarChar(20)
-  type                          String?   @db.VarChar(20)
-  longName                      String?   @map("long_name") @db.VarChar(300)
-  countyCode                    String?   @map("county_code") @db.VarChar(20)
-  createdAt                     DateTime? @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt                     DateTime? @updatedAt @map("updated_at") @db.DateTime(0)
-  modifiedAt                    DateTime? @map("modified_at") @db.DateTime(0)
-  updatedBy                     String?   @map("updated_by") @db.VarChar(300)
+  id                            Int      @id @default(autoincrement()) @db.UnsignedInt
+  geoId                         String   @map("geo_id") @db.VarChar(20)
+  geoIdState                    String   @map("geo_id_state") @db.VarChar(20)
+  geoIdCounty                   String?  @map("geo_id_county") @db.VarChar(20)
+  geoIdCountySubdivision        String?  @map("geo_id_county_subdivision") @db.VarChar(20)
+  geoIdPlace                    String?  @map("geo_id_place") @db.VarChar(20)
+  name                          String   @map("name") @db.VarChar(300)
+  fullAhjName                   String   @map("full_ahj_name") @db.VarChar(300)
+  queryState                    String?  @map("query_state") @db.VarChar(20)
+  queryCounty                   String?  @map("query_county") @db.VarChar(200)
+  website                       String?  @map("website") @db.VarChar(242)
+  specificFormRequired          String?  @map("specific_form_required") @db.VarChar(200)
+  buildingCodes                 String?  @map("building_codes") @db.Text
+  generalNotes                  String?  @map("general_notes") @db.Text
+  pvMeterRequired               String?  @map("pv_meter_required") @db.VarChar(200)
+  acDisconnectRequired          String?  @map("ac_disconnect_required") @db.VarChar(200)
+  centerFed120Percent           String?  @map("center_fed_120_percent") @db.VarChar(200)
+  deratedAmpacity               String?  @map("derated_ampacity") @db.VarChar(200)
+  fireSetBack                   String?  @map("fire_set_back") @db.Text
+  utilityNotes                  String?  @map("utility_notes") @db.Text
+  designNotes                   String?  @map("design_notes") @db.Text
+  iebcAccepted                  String?  @map("iebc_accepted") @db.VarChar(300)
+  structuralObservationRequired String?  @map("structural_observation_required") @db.VarChar(20)
+  digitalSignatureType          String?  @map("digital_signature_type") @db.VarChar(300)
+  windUpliftCalculationRequired String?  @map("wind_uplift_calculation_required") @db.VarChar(300)
+  windSpeed                     String?  @map("wind_speed") @db.VarChar(300)
+  windExposure                  String?  @map("wind_exposure") @db.VarChar(300)
+  snowLoadGround                String?  @map("snow_load_ground") @db.VarChar(300)
+  snowLoadFlatRoof              String?  @map("snow_load_flat_roof") @db.VarChar(300)
+  snowLoadSlopedRoof            String?  @map("snow_load_sloped_roof") @db.VarChar(300)
+  wetStampsRequired             String?  @map("wet_stamps_required") @db.VarChar(300)
+  ofWetStamps                   String?  @map("of_wet_stamps") @db.VarChar(300)
+  wetStampSize                  String?  @map("wet_stamp_size") @db.VarChar(300)
+  engineeringNotes              String?  @map("engineering_notes") @db.Text
+  electricalNotes               String?  @map("electrical_notes") @db.Text
+  stateCode                     String?  @map("state_code") @db.VarChar(20)
+  funcStat                      String?  @map("func_stat") @db.VarChar(300)
+  address                       String?  @map("address") @db.VarChar(300)
+  lsadCode                      String?  @map("lsad_code") @db.VarChar(20)
+  usps                          String?  @map("usps") @db.VarChar(20)
+  ansiCode                      String?  @map("ansi_code") @db.VarChar(20)
+  type                          String?  @db.VarChar(20)
+  longName                      String?  @map("long_name") @db.VarChar(300)
+  countyCode                    String?  @map("county_code") @db.VarChar(20)
+  createdAt                     DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt                     DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  modifiedAt                    DateTime @map("modified_at") @db.DateTime(0)
+  updatedBy                     String?  @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_note_history")
 }
@@ -440,26 +440,25 @@ model employees {
 }
 
 model OrderedJobNotes {
-  id              String    @id @map("id") @db.VarChar(255)
-  jobId           String?   @map("job_id") @db.VarChar(255)
-  content         String?   @db.Text
-  createdAt       DateTime? @map("created_at") @db.DateTime(0)
-  createdBy       String?   @map("created_by") @db.VarChar(255)
-  createdByUserId String?   @map("created_by_user_id") @db.VarChar(255)
-  updatedAt       DateTime? @map("updated_at") @db.DateTime(0)
-  updatedBy       String?   @map("updated_by") @db.VarChar(255)
+  id              String   @id @map("id") @db.VarChar(255)
+  jobId           String?  @map("job_id") @db.VarChar(255)
+  content         String?  @db.Text
+  createdAt       DateTime @map("created_at") @db.DateTime(0)
+  createdBy       String?  @map("created_by") @db.VarChar(255)
+  createdByUserId String?  @map("created_by_user_id") @db.VarChar(255)
+  updatedAt       DateTime @map("updated_at") @db.DateTime(0)
+  updatedBy       String?  @map("updated_by") @db.VarChar(255)
 
   @@map("ordered_job_notes")
 }
 
 model OrderedJobs {
   id                                            String           @id @map("id") @db.VarChar(255)
-  job_name                                      String?          @db.VarChar(255)
+  job_name                                      String           @db.VarChar(255)
   jobRequestNumber                              Int?             @map("job_request_number")
-  createdAt                                     DateTime?        @map("created_at") @db.DateTime(0)
-  receivedAt                                    DateTime?        @map("received_at") @db.DateTime(0)
+  createdAt                                     DateTime         @map("created_at") @db.DateTime(0)
+  receivedAt                                    DateTime         @map("received_at") @db.DateTime(0)
   dateDue                                       DateTime?        @map("date_due") @db.Date
-  jobNumber                                     String?          @map("job_number") @db.VarChar(255)
   mountingType                                  String?          @map("mounting_type") @db.VarChar(255)
   projectType                                   String?          @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?             @map("number_of_wet_stamp") @db.TinyInt
@@ -487,13 +486,12 @@ model OrderedJobs {
   chargeForAnyRevision                          Boolean?         @map("charge_for_any_revision")
   chargeForAnyRevisionOverride                  Boolean?         @map("charge_for_any_revision_override")
   chargeForAnyRevisionSnapshot                  Boolean?         @map("charge_for_any_revision_snapshot")
-  clientId                                      String?          @map("client_id") @db.VarChar(255)
-  clientContact                                 String?          @map("client_contact") @db.VarChar(255)
-  clientContactEmail                            String?          @map("client_contact_email") @db.VarChar(255)
+  clientOrganizationId                          String           @map("client_organization_id") @db.VarChar(255)
+  clientContactEmail                            String           @map("client_contact_email") @db.VarChar(255)
   clientContactEmailOverride                    String?          @map("client_contact_email_override") @db.VarChar(255)
   commercialJobPrice                            Decimal?         @map("commercial_job_price") @db.Decimal(10, 2)
   completedCancelledDate                        DateTime?        @map("completed_cancelled_date") @db.Date
-  updatedAt                                     DateTime?        @map("updated_at") @db.DateTime(0)
+  updatedAt                                     DateTime         @map("updated_at") @db.DateTime(0)
   deliverablesLink                              String?          @map("deliverables_link") @db.Text
   deliverablesEmail                             String?          @map("deliverables_email") @db.Text
   electricalPEAndWetStampGlSolargraf            Boolean?         @map("electrical_pe_and_wet_stamp_gl_solargraf")
@@ -515,7 +513,7 @@ model OrderedJobs {
   isDesignJob                                   Boolean?         @map("is_design_job")
   isLocked                                      Boolean?         @map("is_locked")
   isRevision                                    Boolean?         @map("is_revision")
-  updatedBy                                     String?          @map("updated_by") @db.VarChar(255)
+  updatedBy                                     String           @map("updated_by") @db.VarChar(255)
   maximumMessageDateTime                        DateTime?        @map("maximum_message_date_time") @db.DateTime(0)
   maximumUnixTime                               Decimal?         @map("maximum_unix_time") @db.Decimal(20, 0)
   adminComments                                 String?          @map("admin_comments") @db.Text
@@ -526,6 +524,7 @@ model OrderedJobs {
   sixMonthsPrior                                DateTime?        @map("six_months_prior") @db.Date
   standardPricing                               Boolean?         @map("standard_pricing")
   structuralOrElectricalPEAndWetStampSelectedGl Boolean?         @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
+  client_organization_name                      String           @db.VarChar(255)
   project                                       OrderedProjects? @relation(fields: [projectId], references: [id])
   orderedTasks                                  OrderedTasks[]
 
@@ -538,19 +537,19 @@ model OrderedProjects {
   mountingType                                  String?        @map("mounting_type") @db.VarChar(255)
   mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)
   systemSize                                    Decimal?       @map("system_size") @db.Decimal(10, 2)
-  dateCreated                                   DateTime?      @map("date_created") @db.DateTime(0)
+  dateCreated                                   DateTime       @map("date_created") @db.DateTime(0)
   projectFolder                                 String?        @map("project_folder") @db.VarChar(255)
   projectNumber                                 String?        @map("project_number") @db.VarChar(255)
-  propertyAddress                               String?        @map("property_address") @db.VarChar(255)
+  propertyAddress                               String         @map("property_address") @db.VarChar(255)
   propertyAddressStreet1                        String?        @map("property_address_street1") @db.VarChar(255)
   propertyAddressStreet2                        String?        @map("property_address_street2") @db.VarChar(255)
   propertyAddressCity                           String?        @map("property_address_city") @db.VarChar(255)
   propertyAddressState                          String?        @map("property_address_state") @db.VarChar(255)
   propertyAddressPostalCode                     String?        @map("property_address_postal_code") @db.VarChar(10)
-  propertyOwnerName                             String?        @map("property_owner_name") @db.VarChar(255)
+  propertyOwnerName                             String         @map("property_owner_name") @db.VarChar(255)
   masterLogUpload                               Boolean?       @map("master_log_upload")
   ahjAutomationComplete                         Boolean?       @map("ahj_automation_complete")
-  updatedAt                                     DateTime?      @map("updated_at") @db.DateTime(0)
+  updatedAt                                     DateTime       @map("updated_at") @db.DateTime(0)
   exportId                                      String?        @map("export_id") @db.VarChar(255)
   googleGeocoder                                String?        @map("google_geocoder") @db.VarChar(255)
   reTriggerActivateCreateProjectFolderTrigger   Boolean?       @map("re_trigger_activate_create_project_folder_trigger")
@@ -574,12 +573,12 @@ model OrderedProjects {
   isGroundMount                                 Boolean?       @map("is_ground_mount")
   mailingAddressForStructuralWetStamp           String?        @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
   mailingAddressForElectricalWetStamp           String?        @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
-  clientId                                      String?        @map("client_id") @db.VarChar(255)
+  clientOrganizationId                          String         @map("client_organization_id") @db.VarChar(255)
   designOrPeStampPreviouslyDoneOnProjectOutside Int?           @map("design_or_pe_stamp_previously_done_on_project_outside")
-  totalOfJobs                                   Int?           @map("total_of_jobs")
-  clientUserId                                  String?        @map("client_user_id") @db.VarChar(255)
-  clientUserName                                String?        @map("client_user_name") @db.VarChar(255)
-  organization                                  Organizations? @relation(fields: [clientId], references: [id])
+  totalOfJobs                                   Int            @default(1) @map("total_of_jobs")
+  clientUserId                                  String         @map("client_user_id") @db.VarChar(255)
+  clientUserName                                String         @map("client_user_name") @db.VarChar(255)
+  organization                                  Organizations? @relation(fields: [clientOrganizationId], references: [id])
   jobs                                          OrderedJobs[]
 
   @@map("ordered_projects")
@@ -588,7 +587,7 @@ model OrderedProjects {
 model OrderedTasks {
   id                                                               String       @id @map("id") @db.VarChar(255)
   taskStatus                                                       String       @map("task_status") @db.VarChar(255)
-  dateCreated                                                      DateTime?    @map("date_created") @db.DateTime(0)
+  dateCreated                                                      DateTime     @map("date_created") @db.DateTime(0)
   isLocked                                                         Boolean      @default(false) @map("is_locked")
   taskName                                                         String       @map("task_name") @db.VarChar(255)
   description                                                      String?      @db.Text
@@ -599,7 +598,7 @@ model OrderedTasks {
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
   notes                                                            String?      @map("notes") @db.Text
   designRevisionScope                                              String?      @map("design_revision_scope") @db.VarChar(255)
-  updatedAt                                                        DateTime?    @map("updated_at") @db.DateTime(0)
+  updatedAt                                                        DateTime     @map("updated_at") @db.DateTime(0)
   newStorageDesign                                                 String?      @map("new_storage_design") @db.VarChar(255)
   taskMenuId                                                       String       @map("task_menu_id")
   jobId                                                            String       @map("job_id") @db.VarChar(255)
@@ -640,7 +639,7 @@ model OrderedTasks {
   contactEmail                                                     String?      @map("contact_email") @db.VarChar(255)
   contactEmail2                                                    String?      @map("contact_email_2") @db.VarChar(255)
   contactEmailOverride                                             String?      @map("contact_email_override") @db.VarChar(255)
-  createdAt                                                        DateTime?    @map("created_at") @db.DateTime(0)
+  createdAt                                                        DateTime     @map("created_at") @db.DateTime(0)
   contractorUnits                                                  Int?         @map("contractor_units")
   dateModified                                                     DateTime?    @map("date_modified") @db.DateTime(0)
   dateOutsourced                                                   DateTime?    @map("date_outsourced") @db.DateTime(0)
@@ -771,66 +770,66 @@ model OrderedTasks {
 }
 
 model pricings {
-  id                                               String    @id @map("id") @db.VarChar(255)
-  organizationId                                   String?   @map("organization_id") @db.VarChar(255)
-  serviceId                                        String?   @map("service_id") @db.VarChar(255)
-  organizationName                                 String?   @map("organization_name") @db.VarChar(255)
-  taskName                                         String?   @map("task_name") @db.VarChar(255)
-  flatPrice                                        Decimal?  @map("flat_price") @db.Decimal(10, 2)
-  newStorageDesignAdditionalPrice                  Decimal?  @map("new_storage_design_additional_price") @db.Decimal(10, 2)
-  additionalOrReplacedStorageDesignAdditionalPrice Decimal?  @map("additional_or_replaced_storage_design_additional_price") @db.Decimal(10, 2)
-  flatMajorRevisionPrice                           Decimal?  @map("flat_major_revision_price") @db.Decimal(10, 2)
-  flatMinorRevisionPrice                           Decimal?  @map("flat_minor_revision_price") @db.Decimal(10, 2)
-  flatGroundMountPrice                             Decimal?  @map("flat_ground_mount_price") @db.Decimal(10, 2)
-  flatGroundMountMajorRevisionPrice                Decimal?  @map("flat_ground_mount_major_revision_price") @db.Decimal(10, 2)
-  flatGroundMountMinorRevisionPrice                Decimal?  @map("flat_ground_mount_minor_revision_price") @db.Decimal(10, 2)
-  unitPrice                                        Decimal?  @map("unit_price") @db.Decimal(10, 2)
-  tier1Operator                                    String?   @map("tier_1_operator") @db.VarChar(255)
-  tier1Units                                       Decimal?  @map("tier_1_units") @db.Decimal(10, 0)
-  tier1Price                                       Decimal?  @map("tier_1_price") @db.Decimal(10, 2)
-  tier1MajorRevisionPrice                          Decimal?  @map("tier_1_major_revision_price") @db.Decimal(10, 2)
-  tier1MinorRevisionPrice                          Decimal?  @map("tier_1_minor_revision_price") @db.Decimal(10, 2)
-  tier1GroundMountPrice                            Decimal?  @map("tier_1_ground_mount_price") @db.Decimal(10, 2)
-  tier1GroundMountMajorRevisionPrice               Decimal?  @map("tier_1_ground_mount_major_revision_price") @db.Decimal(10, 2)
-  tier1GroundMountMinorRevisionPrice               Decimal?  @map("tier_1_ground_mount_minor_revision_price") @db.Decimal(10, 2)
-  tier2Operator                                    String?   @map("tier_2_operator") @db.VarChar(255)
-  tier2Units                                       Decimal?  @map("tier_2_units") @db.Decimal(10, 0)
-  tier2Price                                       Decimal?  @map("tier_2_price") @db.Decimal(10, 2)
-  tier2MajorRevisionPrice                          Decimal?  @map("tier_2_major_revision_price") @db.Decimal(10, 2)
-  tier2MinorRevisionPrice                          Decimal?  @map("tier_2_minor_revision_price") @db.Decimal(10, 2)
-  tier2GroundMountPrice                            Decimal?  @map("tier_2_ground_mount_price") @db.Decimal(10, 2)
-  tier2GroundMountMajorRevisionPrice               Decimal?  @map("tier_2_ground_mount_major_revision_price") @db.Decimal(10, 2)
-  tier2GroundMountMinorRevisionPrice               Decimal?  @map("tier_2_ground_mount_minor_revision_price") @db.Decimal(10, 2)
-  tier3Operator                                    String?   @map("tier_3_operator") @db.VarChar(255)
-  tier3Units                                       Decimal?  @map("tier_3_units") @db.Decimal(10, 0)
-  tier3Price                                       Decimal?  @map("tier_3_price") @db.Decimal(10, 2)
-  tier3MajorRevisionPrice                          Decimal?  @map("tier_3_major_revision_price") @db.Decimal(10, 2)
-  tier3MinorRevisionPrice                          Decimal?  @map("tier_3_minor_revision_price") @db.Decimal(10, 2)
-  tier3GroundMountPrice                            Decimal?  @map("tier_3_ground_mount_price") @db.Decimal(10, 2)
-  tier3GroundMountMajorRevisionPrice               Decimal?  @map("tier_3_ground_mount_major_revision_price") @db.Decimal(10, 2)
-  tier3GroundMountMinorRevisionPrice               Decimal?  @map("tier_3_ground_mount_minor_revision_price") @db.Decimal(10, 2)
-  countDuplicates                                  Decimal?  @map("count_duplicates") @db.Decimal(10, 0)
-  createdAt                                        DateTime? @map("created_at") @db.DateTime(0)
-  updatedAt                                        DateTime? @map("updated_at") @db.DateTime(0)
-  updatedBy                                        String?   @map("updated_by") @db.VarChar(255)
-  serviceBillingCodeNew                            String?   @map("service_billing_code_new") @db.VarChar(255)
-  taskGroupRevisionPrice                           Decimal?  @map("task_group_revision_price") @db.Decimal(10, 2)
-  tier1RelatedOperator                             Decimal?  @map("tier_1_related_operator") @db.Decimal(10, 0)
-  tier2RelatedOperator                             Decimal?  @map("tier_2_related_operator") @db.Decimal(10, 0)
-  tier3RelatedOperator                             Decimal?  @map("tier_3_related_operator") @db.Decimal(10, 0)
-  relatedService                                   Decimal?  @map("related_service") @db.Decimal(10, 0)
-  oldRelatedTieredUnitDescription                  Decimal?  @map("old_related_tiered_unit_description") @db.Decimal(10, 0)
-  clientAccountTieredPricing                       Boolean?  @map("client_account_tiered_pricing")
-  clientAccount                                    String?   @map("client_account") @db.VarChar(255)
-  relatedClientAccount                             Decimal?  @map("related_client_account") @db.Decimal(10, 0)
-  internalAccountAccountName                       String?   @map("internal_account_account_name") @db.VarChar(255)
-  relatedInternalAccount                           Decimal?  @map("related_internal_account") @db.Decimal(10, 0)
-  oldPriceGroupGroupName                           String?   @map("old_price_group_group_name") @db.VarChar(255)
-  relatedPriceGroup                                Decimal?  @map("related_price_group") @db.Decimal(10, 0)
-  propertyType                                     String?   @map("property_type") @db.VarChar(255)
-  relatedPropertyType                              Decimal?  @map("related_property_type") @db.Decimal(10, 0)
-  recordStatus                                     String?   @map("record_status") @db.VarChar(255)
-  relatedRecordStatus                              Decimal?  @map("related_record_status") @db.Decimal(10, 0)
+  id                                               String   @id @map("id") @db.VarChar(255)
+  organizationId                                   String?  @map("organization_id") @db.VarChar(255)
+  serviceId                                        String?  @map("service_id") @db.VarChar(255)
+  organizationName                                 String?  @map("organization_name") @db.VarChar(255)
+  taskName                                         String?  @map("task_name") @db.VarChar(255)
+  flatPrice                                        Decimal? @map("flat_price") @db.Decimal(10, 2)
+  newStorageDesignAdditionalPrice                  Decimal? @map("new_storage_design_additional_price") @db.Decimal(10, 2)
+  additionalOrReplacedStorageDesignAdditionalPrice Decimal? @map("additional_or_replaced_storage_design_additional_price") @db.Decimal(10, 2)
+  flatMajorRevisionPrice                           Decimal? @map("flat_major_revision_price") @db.Decimal(10, 2)
+  flatMinorRevisionPrice                           Decimal? @map("flat_minor_revision_price") @db.Decimal(10, 2)
+  flatGroundMountPrice                             Decimal? @map("flat_ground_mount_price") @db.Decimal(10, 2)
+  flatGroundMountMajorRevisionPrice                Decimal? @map("flat_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  flatGroundMountMinorRevisionPrice                Decimal? @map("flat_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  unitPrice                                        Decimal? @map("unit_price") @db.Decimal(10, 2)
+  tier1Operator                                    String?  @map("tier_1_operator") @db.VarChar(255)
+  tier1Units                                       Decimal? @map("tier_1_units") @db.Decimal(10, 0)
+  tier1Price                                       Decimal? @map("tier_1_price") @db.Decimal(10, 2)
+  tier1MajorRevisionPrice                          Decimal? @map("tier_1_major_revision_price") @db.Decimal(10, 2)
+  tier1MinorRevisionPrice                          Decimal? @map("tier_1_minor_revision_price") @db.Decimal(10, 2)
+  tier1GroundMountPrice                            Decimal? @map("tier_1_ground_mount_price") @db.Decimal(10, 2)
+  tier1GroundMountMajorRevisionPrice               Decimal? @map("tier_1_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  tier1GroundMountMinorRevisionPrice               Decimal? @map("tier_1_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  tier2Operator                                    String?  @map("tier_2_operator") @db.VarChar(255)
+  tier2Units                                       Decimal? @map("tier_2_units") @db.Decimal(10, 0)
+  tier2Price                                       Decimal? @map("tier_2_price") @db.Decimal(10, 2)
+  tier2MajorRevisionPrice                          Decimal? @map("tier_2_major_revision_price") @db.Decimal(10, 2)
+  tier2MinorRevisionPrice                          Decimal? @map("tier_2_minor_revision_price") @db.Decimal(10, 2)
+  tier2GroundMountPrice                            Decimal? @map("tier_2_ground_mount_price") @db.Decimal(10, 2)
+  tier2GroundMountMajorRevisionPrice               Decimal? @map("tier_2_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  tier2GroundMountMinorRevisionPrice               Decimal? @map("tier_2_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  tier3Operator                                    String?  @map("tier_3_operator") @db.VarChar(255)
+  tier3Units                                       Decimal? @map("tier_3_units") @db.Decimal(10, 0)
+  tier3Price                                       Decimal? @map("tier_3_price") @db.Decimal(10, 2)
+  tier3MajorRevisionPrice                          Decimal? @map("tier_3_major_revision_price") @db.Decimal(10, 2)
+  tier3MinorRevisionPrice                          Decimal? @map("tier_3_minor_revision_price") @db.Decimal(10, 2)
+  tier3GroundMountPrice                            Decimal? @map("tier_3_ground_mount_price") @db.Decimal(10, 2)
+  tier3GroundMountMajorRevisionPrice               Decimal? @map("tier_3_ground_mount_major_revision_price") @db.Decimal(10, 2)
+  tier3GroundMountMinorRevisionPrice               Decimal? @map("tier_3_ground_mount_minor_revision_price") @db.Decimal(10, 2)
+  countDuplicates                                  Decimal? @map("count_duplicates") @db.Decimal(10, 0)
+  createdAt                                        DateTime @map("created_at") @db.DateTime(0)
+  updatedAt                                        DateTime @map("updated_at") @db.DateTime(0)
+  updatedBy                                        String?  @map("updated_by") @db.VarChar(255)
+  serviceBillingCodeNew                            String?  @map("service_billing_code_new") @db.VarChar(255)
+  taskGroupRevisionPrice                           Decimal? @map("task_group_revision_price") @db.Decimal(10, 2)
+  tier1RelatedOperator                             Decimal? @map("tier_1_related_operator") @db.Decimal(10, 0)
+  tier2RelatedOperator                             Decimal? @map("tier_2_related_operator") @db.Decimal(10, 0)
+  tier3RelatedOperator                             Decimal? @map("tier_3_related_operator") @db.Decimal(10, 0)
+  relatedService                                   Decimal? @map("related_service") @db.Decimal(10, 0)
+  oldRelatedTieredUnitDescription                  Decimal? @map("old_related_tiered_unit_description") @db.Decimal(10, 0)
+  clientAccountTieredPricing                       Boolean? @map("client_account_tiered_pricing")
+  clientAccount                                    String?  @map("client_account") @db.VarChar(255)
+  relatedClientAccount                             Decimal? @map("related_client_account") @db.Decimal(10, 0)
+  internalAccountAccountName                       String?  @map("internal_account_account_name") @db.VarChar(255)
+  relatedInternalAccount                           Decimal? @map("related_internal_account") @db.Decimal(10, 0)
+  oldPriceGroupGroupName                           String?  @map("old_price_group_group_name") @db.VarChar(255)
+  relatedPriceGroup                                Decimal? @map("related_price_group") @db.Decimal(10, 0)
+  propertyType                                     String?  @map("property_type") @db.VarChar(255)
+  relatedPropertyType                              Decimal? @map("related_property_type") @db.Decimal(10, 0)
+  recordStatus                                     String?  @map("record_status") @db.VarChar(255)
+  relatedRecordStatus                              Decimal? @map("related_record_status") @db.Decimal(10, 0)
 }
 
 model ClientAccounts {

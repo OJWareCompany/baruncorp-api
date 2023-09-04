@@ -2,7 +2,7 @@ export interface AddressProps {
   city: string
   country: string
   postalCode: string
-  state: string
+  state: string | null
   street1: string
   street2: string
   fullAddress: string

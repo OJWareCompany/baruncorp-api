@@ -10,13 +10,12 @@ export interface CreateJobProps {
   projectId: string
   mountingType: string
   propertyAddress: string
-  jobNumber: string
   totalOfJobs: number
   orderedTasks: OrderedTasksWhenToCreateJob[]
-  systemSize: number
-  mailingAddressForWetStamp: string
-  numberOfWetStamp: number
-  additionalInformationFromClient: string
+  systemSize: number | null
+  mailingAddressForWetStamp: string | null
+  numberOfWetStamp: number | null
+  additionalInformationFromClient: string | null
   clientInfo: ClientInformation
   updatedBy: string
 }
@@ -24,16 +23,15 @@ export interface CreateJobProps {
 export interface JobProps {
   projectId: string
   mountingType: string
-  jobNumber: string
   jobName: string
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
   propertyAddress: string
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
   systemSize: number
-  mailingAddressForWetStamp: string
-  numberOfWetStamp: number
-  additionalInformationFromClient: string
+  mailingAddressForWetStamp: string | null
+  numberOfWetStamp: number | null
+  additionalInformationFromClient: string | null
   clientInfo: ClientInformation
   updatedBy: string
   receivedAt: Date
