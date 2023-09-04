@@ -18,11 +18,11 @@ export class GeographyService {
   ) {}
 
   async findNotes(
+    searchQuery: FindAhjNotesSearchQueryRequestDto,
     pageNo: number,
     pageSize: number,
-    searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>> {
-    return await this.geographyRepository.findNotes(pageNo, pageSize, searchQuery)
+    return await this.geographyRepository.findNotes(searchQuery, pageNo, pageSize)
   }
 
   async findNoteUpdateHistory(

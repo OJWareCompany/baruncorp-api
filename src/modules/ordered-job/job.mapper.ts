@@ -23,7 +23,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: props.updatedAt,
       receivedAt: props.receivedAt,
       projectId: props.projectId,
-      systemSize: new Prisma.Decimal(props.systemSize),
+      systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
       mailingAddressForWetStamp: props.mailingAddressForWetStamp,
       numberOfWetStamp: props.numberOfWetStamp,
       projectType: props.projectId,
@@ -143,6 +143,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
 
   toResponse(entity: JobEntity, ...dtos: any): JobResponseDto {
     // throw new Error('Method not implemented.')
-    return
+    return new JobResponseDto()
   }
 }

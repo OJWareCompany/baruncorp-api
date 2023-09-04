@@ -361,7 +361,7 @@ model AHJNotes {
   longName                      String?  @map("long_name") @db.VarChar(300)
   countyCode                    String?  @map("county_code") @db.VarChar(20)
   modifiedAt                    DateTime @default(now()) @map("modified_at") @db.DateTime(0)
-  updatedBy                     String?  @default("system") @map("updated_by") @db.VarChar(300)
+  updatedBy                     String   @default("system") @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_notes")
 }
@@ -414,7 +414,7 @@ model AHJNoteHistory {
   createdAt                     DateTime @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt                     DateTime @updatedAt @map("updated_at") @db.DateTime(0)
   modifiedAt                    DateTime @map("modified_at") @db.DateTime(0)
-  updatedBy                     String?  @map("updated_by") @db.VarChar(300)
+  updatedBy                     String   @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_note_history")
 }
@@ -455,20 +455,20 @@ model OrderedJobNotes {
 model OrderedJobs {
   id                                            String           @id @map("id") @db.VarChar(255)
   job_name                                      String           @db.VarChar(255)
-  jobRequestNumber                              Int?             @map("job_request_number")
+  jobRequestNumber                              Int              @map("job_request_number")
   createdAt                                     DateTime         @map("created_at") @db.DateTime(0)
   receivedAt                                    DateTime         @map("received_at") @db.DateTime(0)
   dateDue                                       DateTime?        @map("date_due") @db.Date
-  mountingType                                  String?          @map("mounting_type") @db.VarChar(255)
-  projectType                                   String?          @map("project_type") @db.VarChar(255)
+  mountingType                                  String           @map("mounting_type") @db.VarChar(255)
+  projectType                                   String           @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?             @map("number_of_wet_stamp") @db.TinyInt
   dateSentToClient                              DateTime?        @map("date_sent_to_client") @db.Date
-  propertyAddress                               String?          @map("property_address") @db.Text
+  propertyAddress                               String           @map("property_address") @db.Text
   jobStatus                                     String?          @map("job_status") @db.Text
   systemSize                                    Decimal?         @map("system_size") @db.Decimal(10, 2)
   otherComments                                 String?          @map("other_comments") @db.Text
   mailingAddressForWetStamp                     String?          @map("mailing_address_for_wet_stamp") @db.VarChar(255)
-  projectId                                     String?          @map("project_id") @db.VarChar(255)
+  projectId                                     String           @map("project_id") @db.VarChar(255)
   jobNotesF                                     String?          @map("job_notes_f") @db.Text
   additionalInformationFromClient               String?          @map("additional_information_from_client") @db.Text
   agreedMinimumUnits                            Decimal?         @map("agreed_minimum_units") @db.Decimal(10, 2)

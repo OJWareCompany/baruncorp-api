@@ -14,7 +14,7 @@ export class PaginatedQueryRequestDto {
     description: 'Specifies a limit of returned records',
     required: false,
   })
-  readonly limit?: number = 20
+  readonly limit: number = 20
 
   /**
    * Page number
@@ -23,5 +23,5 @@ export class PaginatedQueryRequestDto {
   @IsInt()
   @Type(() => Number)
   @ApiProperty({ example: 1, description: 'Page number', required: false })
-  readonly page?: number = 1
+  readonly page: number = 1
 }

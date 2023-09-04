@@ -1,6 +1,6 @@
 export class OrderedTasksWhenToCreateJob {
-  taskId?: string
-  description?: string | null
+  taskId: string
+  description: string | null
   constructor(props: OrderedTasksWhenToCreateJob) {
     this.taskId = props.taskId
     this.description = props.description

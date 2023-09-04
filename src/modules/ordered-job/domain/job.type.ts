@@ -28,7 +28,7 @@ export interface JobProps {
   propertyAddress: string
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
-  systemSize: number
+  systemSize: number | null
   mailingAddressForWetStamp: string | null
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null

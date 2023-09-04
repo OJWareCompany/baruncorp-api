@@ -30,9 +30,9 @@ export class GeographyController {
     @Query() searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<AhjNotePaginatedResponseDto> {
     const result: Paginated<Partial<AHJNotesModel>> = await this.geographyService.findNotes(
+      searchQuery,
       paginatedQueryRequestDto.page,
       paginatedQueryRequestDto.limit,
-      searchQuery,
     )
     const items = result.items.map(this.ahjNoteMapper.toListResponse)
     return new AhjNotePaginatedResponseDto({ ...result, items })

@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { Users } from '@prisma/client'
 import { UserRepositoryPort } from './user.repository.port'
 import { PrismaService } from '../../database/prisma.service'
@@ -35,7 +35,8 @@ export class UserRepository implements UserRepositoryPort {
 
   async findOneById(id: string): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({ where: { id } })
-    return user && this.userMapper.toDomain(user)
+    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    return this.userMapper.toDomain(user)
   }
 
   async update(userId: string, userName: UserName): Promise<void> {
@@ -65,10 +66,11 @@ export class UserRepository implements UserRepositoryPort {
 
   async findOneByEmail({ email }: EmailVO): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({ where: { email } })
-    return user && this.userMapper.toDomain(user)
+    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    return this.userMapper.toDomain(user)
   }
 
-  async findUserIdByEmail({ email }: EmailVO): Promise<Pick<UserEntity, 'id'>> {
+  async findUserIdByEmail({ email }: EmailVO): Promise<Pick<UserEntity, 'id'> | null> {
     return await this.prismaService.users.findUnique({
       select: { id: true },
       where: { email },

@@ -12,7 +12,7 @@ export interface UserRepositoryPort {
   findOneById(id: string): Promise<UserEntity>
   findOneByEmail(email: EmailVO): Promise<UserEntity>
   findByOrganizationId(organizationId: string): Promise<UserEntity[]>
-  findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'>>
+  findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'> | null>
   findPasswordByUserId(id: string): Promise<string>
   insertUser(entity: UserEntity, password: InputPasswordVO): Promise<void>
   update(userId: string, props: UserName): Promise<void>

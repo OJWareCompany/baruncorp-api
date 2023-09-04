@@ -9,8 +9,8 @@ import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event
 export class JobCreatedDomainEvent extends DomainEvent {
   public readonly projectId: string
   public readonly orderedTasks: { taskId: string; description: string | null }[]
-  public readonly systemSize: number
-  public readonly mailingAddressForWetStamp: string
+  public readonly systemSize: number | null
+  public readonly mailingAddressForWetStamp: string | null
   public readonly mountingType: MountingType
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {

@@ -26,7 +26,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         aggregateId: id,
         projectId: create.projectId,
         orderedTasks: create.orderedTasks.map((task) => {
-          return { taskId: task.taskId, description: task.description }
+          return { taskId: task.taskId, description: task.description || null }
         }),
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,

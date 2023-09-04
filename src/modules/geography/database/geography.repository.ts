@@ -179,9 +179,9 @@ export class GeographyRepository implements GeographyRepositoryPort {
   }
 
   async findNotes(
+    searchQuery: FindAhjNotesSearchQueryRequestDto,
     pageNo: number,
     pageSize: number,
-    searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>> {
     const offset = (pageNo - 1) * pageSize ?? 0
 

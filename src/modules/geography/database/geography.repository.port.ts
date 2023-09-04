@@ -13,9 +13,9 @@ import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dt
 
 export interface GeographyRepositoryPort {
   findNotes(
+    searchQuery: FindAhjNotesSearchQueryRequestDto,
     pageNo: number,
     pageSize: number,
-    searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>>
   findNoteByGeoId(geoId: string): Promise<AHJNotesModel>
   deleteNoteByGeoId(geoId: string): Promise<void>
