@@ -21,13 +21,15 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       assigneeName: props.assigneeName,
       assigneeUserId: props.assigneeUserId,
       description: props.description,
+      updatedAt: new Date(),
+      createdAt: new Date(),
 
       //#region
       dateAssigned: null,
       dateCompletedCancelled: null,
       notes: null,
       designRevisionScope: null,
-      updatedAt: null,
+
       newStorageDesign: null,
       notRequired: null,
       monthlyNewServiceIndexNum: null,
@@ -65,7 +67,7 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       contactEmail: null,
       contactEmail2: null,
       contactEmailOverride: null,
-      createdAt: null,
+
       contractorUnits: null,
       dateModified: null,
       dateOutsourced: null,
