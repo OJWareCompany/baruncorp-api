@@ -454,7 +454,7 @@ model OrderedJobNotes {
 
 model OrderedJobs {
   id                                            String           @id @map("id") @db.VarChar(255)
-  job_name                                      String           @db.VarChar(255)
+  jobName                                       String           @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int              @map("job_request_number")
   createdAt                                     DateTime         @map("created_at") @db.DateTime(0)
   receivedAt                                    DateTime         @map("received_at") @db.DateTime(0)
