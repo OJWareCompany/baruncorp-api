@@ -499,7 +499,7 @@ export interface ProjectPaginatedResponseFields {
   propertyAddress: string
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
-  /** @example "2023-09-05T06:59:48.845Z" */
+  /** @example "2023-09-05T07:01:25.143Z" */
   createdAt: string
   /** @example 1 */
   totalOfJobs: number
@@ -558,7 +558,7 @@ export interface ProjectResponseDto {
   propertyType: object
   /** @example null */
   projectNumber: string | null
-  /** @example "2023-09-05T06:59:48.851Z" */
+  /** @example "2023-09-05T07:01:25.148Z" */
   createdAt: string
   /** @example 1 */
   totalOfJobs: number
