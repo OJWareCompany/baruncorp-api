@@ -18,7 +18,7 @@ export class ProjectPaginatedResponseFields {
   @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
   mountingType: MountingTypeEnum
 
-  @ApiProperty({ example: new Date() })
+  @ApiProperty({ example: '2023-09-05T07:14:57.270Z' })
   createdAt: string
 
   @ApiProperty({ example: 1 })

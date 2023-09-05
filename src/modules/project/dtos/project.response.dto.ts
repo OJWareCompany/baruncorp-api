@@ -48,7 +48,7 @@ export class ProjectResponseDto {
   @ApiProperty({ example: null })
   projectNumber: string | null
 
-  @ApiProperty({ example: new Date() })
+  @ApiProperty({ example: '2023-09-05T07:14:57.270Z' })
   createdAt: string
 
   @ApiProperty({ example: 1 })
