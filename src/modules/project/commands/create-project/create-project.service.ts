@@ -16,7 +16,7 @@ export class CreateProjectService implements ICommandHandler {
   // TODO: ProjectRepositoryPort = project만 조회하는게 아닌, project 컨텍스트에 필요한 모든 reopsitory 기능을 가지고있어야하는것으로 기억함.
   constructor(@Inject(PROJECT_REPOSITORY) private readonly projectRepository: ProjectRepositoryPort) {}
 
-  async execute(command: CreateProjectCommand): Promise<void> {
+  async execute(command: CreateProjectCommand): Promise<{ projectId: string }> {
     await this.validate({ ...command, clientOrganizationId: command.clientOrganizationId })
 
     const censusResponse = await this.searchCensus(command)
@@ -39,6 +39,9 @@ export class CreateProjectService implements ICommandHandler {
       }),
     })
     await this.projectRepository.createProject(entity)
+    return {
+      projectId: entity.id,
+    }
   }
 
   private async validate(command: CreateProjectCommand & { clientOrganizationId: string }) {

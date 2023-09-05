@@ -16,7 +16,7 @@ export class CreateJobService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async execute(command: CreateJobCommand): Promise<void> {
+  async execute(command: CreateJobCommand): Promise<{ jobId: string }> {
     // TODO Project Type 업데이트
     // TODO Client User 여러명 설정 -> user profile에서 contact emails 필드 추가하기.
     const clientUser = await this.jobRepository.findUser(command.clientUserIds[0])
@@ -45,5 +45,9 @@ export class CreateJobService implements ICommandHandler {
     })
 
     await this.jobRepository.insert(job)
+
+    return {
+      jobId: job.id,
+    }
   }
 }

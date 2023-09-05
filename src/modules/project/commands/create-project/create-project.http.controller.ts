@@ -12,11 +12,14 @@ export class CreateProjectHttpController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async postCreateProejct(@User() user: UserEntity, @Body() dto: CreateProjectRequestDto) {
+  async postCreateProejct(
+    @User() user: UserEntity,
+    @Body() dto: CreateProjectRequestDto,
+  ): Promise<{ projectId: string }> {
     const command = new CreateProjectCommand({
       userId: user.id,
       ...dto,
     })
-    await this.commandBus.execute(command)
+    return await this.commandBus.execute(command)
   }
 }

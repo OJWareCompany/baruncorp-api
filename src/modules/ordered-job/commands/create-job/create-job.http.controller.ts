@@ -12,7 +12,7 @@ export class CreateJobHttpController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async createJob(@User() user: UserEntity, @Body() dto: CreateJobRequestDto): Promise<void> {
+  async createJob(@User() user: UserEntity, @Body() dto: CreateJobRequestDto): Promise<{ jobId: string }> {
     const command = new CreateJobCommand({
       deliverablesEmails: dto.deliverablesEmails,
       updatedByUserId: user.id,
@@ -26,6 +26,6 @@ export class CreateJobHttpController {
       mountingType: dto.mountingType,
     })
 
-    await this.commandBus.execute(command)
+    return await this.commandBus.execute(command)
   }
 }

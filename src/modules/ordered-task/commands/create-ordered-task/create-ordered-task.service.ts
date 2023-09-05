@@ -18,7 +18,7 @@ export class CreateOrderedTaskService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async execute(command: CreateOrderedTaskCommand) {
+  async execute(command: CreateOrderedTaskCommand): Promise<{ orderedTaskId: string }[]> {
     const job = await this.prismaService.orderedJobs.findUnique({
       where: { id: command.jobId },
       include: { orderedTasks: true },
@@ -56,5 +56,9 @@ export class CreateOrderedTaskService implements ICommandHandler {
       })
     })
     await this.orderedTaskRepository.insert(entities)
+
+    return entities.map((entity) => ({
+      orderedTaskId: entity.id,
+    }))
   }
 }

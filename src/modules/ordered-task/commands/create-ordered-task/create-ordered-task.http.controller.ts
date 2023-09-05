@@ -11,8 +11,8 @@ export class CreateOrderedTaskHttpController {
   @Post('')
   @ApiResponse({ status: HttpStatus.OK })
   @UseGuards(AuthGuard)
-  async create(@Body() request: CreateOrderedTaskRequestDto): Promise<void> {
+  async create(@Body() request: CreateOrderedTaskRequestDto): Promise<{ orderedTaskId: string }[]> {
     const command = new CreateOrderedTaskCommand(request)
-    await this.commandBus.execute(command)
+    return await this.commandBus.execute(command)
   }
 }

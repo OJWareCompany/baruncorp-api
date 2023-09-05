@@ -16,7 +16,7 @@ export class CreateOrganizationService implements ICommandHandler {
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
   ) {}
 
-  async execute(command: CreateOrganizationCommand): Promise<void> {
+  async execute(command: CreateOrganizationCommand): Promise<{ organizationId: string }> {
     const organization = await this.organizationRepository.findOneByName(command.name)
     if (organization) throw new ConflictException(`${command.name} is aleady existed.`, '20001')
     const entity = OrganizationEntity.create({
@@ -41,6 +41,11 @@ export class CreateOrganizationService implements ICommandHandler {
       invoiceRecipient: command.invoiceRecipient,
       invoiceRecipientEmail: command.invoiceRecipientEmail,
     })
+
     await this.organizationRepository.insertOrganization(entity)
+
+    return {
+      organizationId: entity.id,
+    }
   }
 }

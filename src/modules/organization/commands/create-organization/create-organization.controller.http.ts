@@ -10,9 +10,8 @@ export class CreateOrganizationHttpController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async postCreateOrganization(@Body() dto: CreateOrganizationRequestDto) {
+  async postCreateOrganization(@Body() dto: CreateOrganizationRequestDto): Promise<{ organizationId: string }> {
     const command = new CreateOrganizationCommand(dto)
-
-    await this.commandBus.execute(command)
+    return await this.commandBus.execute(command)
   }
 }
