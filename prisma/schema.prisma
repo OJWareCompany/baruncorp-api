@@ -441,13 +441,11 @@ model employees {
 
 model OrderedJobNotes {
   id              String   @id @map("id") @db.VarChar(255)
-  jobId           String?  @map("job_id") @db.VarChar(255)
-  content         String?  @db.Text
+  content         String   @db.Text
+  commenterName   String   @map("commneter_name") @db.VarChar(255)
+  commenterUserId String   @map("commenter_user_id") @db.VarChar(255)
+  jobId           String   @map("job_id") @db.VarChar(255)
   createdAt       DateTime @map("created_at") @db.DateTime(0)
-  createdBy       String?  @map("created_by") @db.VarChar(255)
-  createdByUserId String?  @map("created_by_user_id") @db.VarChar(255)
-  updatedAt       DateTime @map("updated_at") @db.DateTime(0)
-  updatedBy       String?  @map("updated_by") @db.VarChar(255)
 
   @@map("ordered_job_notes")
 }

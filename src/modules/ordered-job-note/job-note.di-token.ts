@@ -1,0 +1,1 @@
+export const JOB_NOTE_REPOSITORY = Symbol('JOB_NOTE_REPOSITORY')

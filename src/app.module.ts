@@ -10,6 +10,7 @@ import { ProjectModule } from './modules/project/project.module'
 import { EventEmitterModule } from '@nestjs/event-emitter'
 import { JobModule } from './modules/ordered-job/job.module'
 import { OrderedTaskModule } from './modules/ordered-task/ordered-task.module'
+import { OrderedJobNoteModule } from './modules/ordered-job-note/job-note.module'
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { OrderedTaskModule } from './modules/ordered-task/ordered-task.module'
     ProjectModule,
     JobModule,
     OrderedTaskModule,
+    OrderedJobNoteModule,
   ],
   controllers: [],
   providers: [
