@@ -34,6 +34,7 @@ export class CreateJobRequestDto {
   projectId: string
 
   @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
+  @IsString()
   mountingType: MountingTypeEnum
 
   @ApiProperty({

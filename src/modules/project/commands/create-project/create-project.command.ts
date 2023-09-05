@@ -7,7 +7,7 @@ import { ProjectPropertyType } from '../../domain/project.type'
 export class CreateProjectCommand {
   readonly userId: string
 
-  readonly organizationId: string
+  readonly clientOrganizationId: string
 
   readonly projectPropertyType: ProjectPropertyType
 

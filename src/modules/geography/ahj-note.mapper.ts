@@ -3,9 +3,8 @@ import { AHJNoteHistoryModel, AHJNotesModel } from './database/geography.reposit
 import { AHJType, AhjNoteResponseDto } from './dto/ahj-note.response.dto'
 import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
-import { AhjNoteEntity } from './domain/ahj-job-note.entity'
 
-export class AhjNoteMapper implements Mapper<AhjNoteEntity, AHJNotesModel, AhjNoteResponseDto> {
+export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {
   toPersistence(entity: any): AHJNotesModel {
     throw new Error('Method not implemented.')
   }
@@ -14,7 +13,7 @@ export class AhjNoteMapper implements Mapper<AhjNoteEntity, AHJNotesModel, AhjNo
    * 일관성을 위해서
    * e.g. Request Dto등에서 필드명이 달라질수있음.. (how to disallow extra properties)
    */
-  toDomain(record: AHJNotesModel): AhjNoteEntity {
+  toDomain(record: any, ...entity: any) {
     throw new Error('Method not implemented.')
   }
 
@@ -91,7 +90,7 @@ export class AhjNoteMapper implements Mapper<AhjNoteEntity, AHJNotesModel, AhjNo
     response.name = model.name
     response.fullAhjName = model.fullAhjName
     response.updatedBy = model.updatedBy
-    response.updatedAt = model.updatedAt.toISOString()
+    response.updatedAt = model.updatedAt?.toISOString() || null
     return response
   }
 
@@ -102,7 +101,7 @@ export class AhjNoteMapper implements Mapper<AhjNoteEntity, AHJNotesModel, AhjNo
     response.name = model.name
     response.fullAhjName = model.fullAhjName
     response.updatedBy = model.updatedBy
-    response.updatedAt = model.updatedAt.toISOString()
+    response.updatedAt = model.updatedAt?.toISOString() || null
     return response
   }
 }

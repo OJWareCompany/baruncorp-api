@@ -17,7 +17,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       jobStatus: props.jobStatus,
       additionalInformationFromClient: props.additionalInformationFromClient,
       clientOrganizationId: props.clientInfo.clientOrganizationId,
-      client_organization_name: props.clientInfo.clientOrganizationName,
+      clientOrganizationName: props.clientInfo.clientOrganizationName,
       clientContactEmail: props.clientInfo.clientContactEmail,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
@@ -107,7 +107,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         projectId: task.projectId,
         dateCreated: task.dateCreated,
         assigneeName: task.assigneeName,
-        assigneeUserId: task.assignee_user_id,
+        assigneeUserId: task.assigneeUserId,
         description: task.description,
       })
     })
@@ -130,7 +130,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         additionalInformationFromClient: record.additionalInformationFromClient,
         clientInfo: new ClientInformation({
           clientOrganizationId: record.clientOrganizationId,
-          clientOrganizationName: record.client_organization_name,
+          clientOrganizationName: record.clientOrganizationName,
           clientContactEmail: record.clientContactEmail,
           deliverablesEmail: record.deliverablesEmail?.split(',') || [],
         }),

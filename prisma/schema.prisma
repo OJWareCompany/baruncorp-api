@@ -524,7 +524,7 @@ model OrderedJobs {
   sixMonthsPrior                                DateTime?        @map("six_months_prior") @db.Date
   standardPricing                               Boolean?         @map("standard_pricing")
   structuralOrElectricalPEAndWetStampSelectedGl Boolean?         @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
-  client_organization_name                      String           @db.VarChar(255)
+  clientOrganizationName                        String           @map("client_organization_name") @db.VarChar(255)
   project                                       OrderedProjects? @relation(fields: [projectId], references: [id])
   orderedTasks                                  OrderedTasks[]
 
@@ -576,8 +576,6 @@ model OrderedProjects {
   clientOrganizationId                          String         @map("client_organization_id") @db.VarChar(255)
   designOrPeStampPreviouslyDoneOnProjectOutside Int?           @map("design_or_pe_stamp_previously_done_on_project_outside")
   totalOfJobs                                   Int            @default(1) @map("total_of_jobs")
-  clientUserId                                  String         @map("client_user_id") @db.VarChar(255)
-  clientUserName                                String         @map("client_user_name") @db.VarChar(255)
   organization                                  Organizations? @relation(fields: [clientOrganizationId], references: [id])
   jobs                                          OrderedJobs[]
 
@@ -594,7 +592,7 @@ model OrderedTasks {
   dateAssigned                                                     DateTime?    @map("date_assigned") @db.DateTime(0)
   dateCompletedCancelled                                           DateTime?    @map("date_completed_cancelled") @db.DateTime(0)
   assigneeName                                                     String?      @map("assignee_name") @db.VarChar(255)
-  assignee_user_id                                                 String?      @db.VarChar(255)
+  assigneeUserId                                                   String?      @map("assignee_user_id") @db.VarChar(255)
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
   notes                                                            String?      @map("notes") @db.Text
   designRevisionScope                                              String?      @map("design_revision_scope") @db.VarChar(255)

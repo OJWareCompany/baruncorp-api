@@ -13,8 +13,6 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
       mailingAddressForWetStamp: null,
       systemSize: null,
       numberOfWetStamp: null,
-      clientUserId: null,
-      clientUserName: null,
       mountingType: null,
     }
     return new ProjectEntity({ id, props })
@@ -47,8 +45,8 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     this.props.projectPropertyAddress = props.projectPropertyAddress
     this.props.projectAssociatedRegulatory = props.projectAssociatedRegulatory
     this.props.updatedBy = props.updatedBy
-    this.props.clientUserId = props.clientUserId
-    this.props.clientUserName = props.clientUserName
+    // this.props.clientUserId = props.clientUserId
+    // this.props.clientUserName = props.clientUserName
   }
 
   public validate(): void {

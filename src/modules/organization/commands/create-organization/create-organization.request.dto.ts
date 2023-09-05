@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsString, Matches } from 'class-validator'
+import { IsBoolean, IsEmail, IsString, Matches } from 'class-validator'
 
 export class CreateOrganizationRequestDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
@@ -52,19 +52,19 @@ export class CreateOrganizationRequestDto {
   readonly organizationType: string
 
   @ApiProperty({ default: true })
-  @IsString()
+  @IsBoolean()
   readonly isActiveContractor: boolean | null
 
   @ApiProperty({ default: true })
-  @IsString()
+  @IsBoolean()
   readonly isActiveWorkResource: boolean | null
 
   @ApiProperty({ default: true })
-  @IsString()
+  @IsBoolean()
   readonly isRevenueShare: boolean | null
 
   @ApiProperty({ default: true })
-  @IsString()
+  @IsBoolean()
   readonly isRevisionRevenueShare: boolean | null
 
   @ApiProperty({ default: 'chris kim' })

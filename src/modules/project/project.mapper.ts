@@ -40,8 +40,8 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       clientOrganizationId: props.clientOrganizationId,
       lastModifiedBy: props.updatedBy,
 
-      clientUserId: props.clientOrganizationId,
-      clientUserName: props.clientUserName,
+      // clientUserId: props.clientOrganizationId,
+      // clientUserName: props.clientUserName,
 
       stateId: props.projectAssociatedRegulatory.stateId,
       countyId: props.projectAssociatedRegulatory.countyId,
@@ -102,8 +102,8 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         }),
         updatedBy: record.lastModifiedBy,
         totalOfJobs: record.totalOfJobs,
-        clientUserId: record.clientUserId,
-        clientUserName: record.clientUserName,
+        // clientUserId: record.clientUserId,
+        // clientUserName: record.clientUserName,
         numberOfWetStamp: null,
         mountingType: record.mountingType as MountingType,
       },

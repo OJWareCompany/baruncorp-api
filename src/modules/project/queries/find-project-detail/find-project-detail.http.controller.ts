@@ -33,8 +33,8 @@ export class FindProjectDetailHttpController {
     response.projectPropertyOwnerName = result.propertyOwnerName!
     response.clientOrganization = result.organization.name!
     response.clientOrganizationId = result.organization.id!
-    response.clientUserId = result.clientUserId!
-    response.clientUserName = result.clientUserName!
+    // response.clientUserId = result.clientUserId!
+    // response.clientUserName = result.clientUserName!
     response.projectFolderLink = result.projectFolder || null
     response.mailingAddressForWetStamp = result.mailingAddressForWetStamps || null
     response.propertyAddress = result.propertyAddress!

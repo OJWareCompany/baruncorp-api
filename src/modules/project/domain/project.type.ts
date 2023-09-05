@@ -41,8 +41,6 @@ export interface ProjectProps {
   mailingAddressForWetStamp: string
   totalOfJobs: number
   numberOfWetStamp: number
-  clientUserId: string
-  clientUserName: string
 }
 
 export class ProjectUpdateProps {
