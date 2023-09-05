@@ -28,26 +28,45 @@ export interface SignUpRequestDto {
   lastName: string
   /** @default "hyomin@ojware.com" */
   email: string
-  deliverablesEmails: (string[] | null)[]
+  /** @default "hyomin@ojware.com" */
+  deliverablesEmails: string[]
   /** @default "thisistestPass123!" */
   password: string
   /** @default "AE2DE" */
   code: string
   /** @default "176 Morningmist Road, Naugatuck, Connecticut 06770" */
-  address: string
+  address: string | null
   /** @default "857-250-4567" */
   phoneNumber: string
-  /** @default true */
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
   isActiveWorkResource: boolean
-  /** @default true */
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
   isCurrentUser: boolean
-  /** @default true */
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
   isInactiveOrganizationUser: boolean
-  /** @default true */
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
   isRevenueShare: boolean
-  /** @default true */
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
   isRevisionRevenueShare: boolean
-  /** @default "CLIENT" */
+  /**
+   * 필요한지 확인 필요
+   * @default "CLIENT"
+   */
   type: string
 }
 
@@ -58,7 +77,7 @@ export interface AccessTokenResponseDto {
 export interface PositionResponseDto {
   id: string
   name: string
-  description: string
+  description: string | null
   department: string
 }
 
@@ -68,7 +87,7 @@ export interface ServiceResponseDto {
   /** @default "Structural Calculation" */
   name: string
   /** @default "Structural Calculation is service..." */
-  description: string
+  description: string | null
 }
 
 export interface LincenseResponseDto {
@@ -77,10 +96,7 @@ export interface LincenseResponseDto {
   issuingCountryName: string
   abbreviation: string
   priority: number
-  /** @format date-time */
-  issuedDate: string
-  /** @format date-time */
-  expiryDate: string
+  expiryDate: string | null
 }
 
 export interface UserResponseDto {
@@ -92,10 +108,10 @@ export interface UserResponseDto {
   organization: string | null
   organizationId: string | null
   position: PositionResponseDto | null
-  services: ServiceResponseDto[] | null
-  licenses: LincenseResponseDto[] | null
+  services: ServiceResponseDto[]
+  licenses: LincenseResponseDto[]
   role: string
-  deliverablesEmails: string[] | null
+  deliverablesEmails: string[]
 }
 
 export interface UpdateUserRequestDto {
@@ -130,16 +146,8 @@ export interface CreateLicenseRequestDto {
   abbreviation: string
   /** @default 9 */
   priority: number
-  /**
-   * @format date-time
-   * @default "2023-09-04T07:31:27.217Z"
-   */
-  issuedDate: string
-  /**
-   * @format date-time
-   * @default "2023-09-04T07:31:27.217Z"
-   */
-  expiryDate: string
+  /** @default "2023-09-04T07:31:27.217Z" */
+  expiryDate: string | null
 }
 
 export interface OrganizationResponseDto {
@@ -154,12 +162,18 @@ export interface OrganizationResponseDto {
   postalCode: string
   state: string
   street1: string
-  street2: string
+  street2: string | null
+  /** 필요한지 확인 필요 */
   isActiveContractor: boolean | null
+  /** 필요한지 확인 필요 */
   isActiveWorkResource: boolean | null
+  /** 필요한지 확인 필요 */
   isRevenueShare: boolean | null
+  /** 필요한지 확인 필요 */
   isRevisionRevenueShare: boolean | null
+  /** 필요한지 확인 필요 */
   invoiceRecipient: string | null
+  /** 필요한지 확인 필요 */
   invoiceRecipientEmail: string | null
 }
 
@@ -191,18 +205,36 @@ export interface CreateOrganizationRequestDto {
    * @pattern /(client|individual|outsourcing)/
    */
   organizationType: string
-  /** @default true */
-  isActiveContractor: boolean | null
-  /** @default true */
-  isActiveWorkResource: boolean | null
-  /** @default true */
-  isRevenueShare: boolean | null
-  /** @default true */
-  isRevisionRevenueShare: boolean | null
-  /** @default "chris kim" */
-  invoiceRecipient: string | null
-  /** @default "chriskim@gmail.com" */
-  invoiceRecipientEmail: string | null
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
+  isActiveContractor: boolean
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
+  isActiveWorkResource: boolean
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
+  isRevenueShare: boolean
+  /**
+   * 필요한지 확인 필요
+   * @default true
+   */
+  isRevisionRevenueShare: boolean
+  /**
+   * 필요한지 확인 필요
+   * @default "chris kim"
+   */
+  invoiceRecipient: string
+  /**
+   * 필요한지 확인 필요
+   * @default "chriskim@gmail.com"
+   */
+  invoiceRecipientEmail: string
 }
 
 export interface CreateMemberPositionRequestDto {
@@ -216,15 +248,15 @@ export interface StatesResponseDto {
   /** @default "CALIFORNIA" */
   stateName: string
   /** @default "CA" */
-  abbreviation: string
+  abbreviation: string | null
   /** @default "06" */
   geoId: string
   /** @default "06" */
   stateCode: string
   /** @default "01779778" */
-  ansiCode: string
+  ansiCode: string | null
   /** @default "California" */
-  stateLongName: string
+  stateLongName: string | null
 }
 
 export interface CreateMemberInChargeOfTheServiceRequestDto {
@@ -267,11 +299,11 @@ export interface General {
   name: string
   /** @default "Arroyo Grande city, California" */
   fullAhjName: string
-  /** @default "2023-09-04T07:31:27.252Z" */
+  /** @default "2023-09-04T07:31:27.217Z" */
   createdAt: string | null
-  /** @default "2023-09-04T07:31:27.252Z" */
+  /** @default "2023-09-04T07:31:27.217Z" */
   updatedAt: string | null
-  /** @default "2023-09-04T07:31:27.252Z" */
+  /** @default "2023-09-04T07:31:27.217Z" */
   updatedBy: string | null
   /** @default "COUNTY" */
   type: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
@@ -422,7 +454,7 @@ export interface CreateProjectRequestDto {
   /** @default "Chris Kim" */
   projectPropertyOwner: string
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
-  organizationId: string
+  clientOrganizationId: string
   /** @default "000152" */
   projectNumber: string | null
   projectPropertyAddress: AddressRequestDto
@@ -467,13 +499,19 @@ export interface ProjectPaginatedResponseFields {
   propertyAddress: string
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
-  /** @example "2023-09-04T07:31:27.262Z" */
+  /** @example "2023-09-05T06:59:48.845Z" */
   createdAt: string
   /** @example 1 */
   totalOfJobs: number
-  /** @example false */
+  /**
+   * 필요한지 확인 필요
+   * @example false
+   */
   masterLogUpload: boolean
-  /** @example false */
+  /**
+   * 필요한지 확인 필요
+   * @example false
+   */
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
 }
 
@@ -494,8 +532,6 @@ export interface ProjectResponseDto {
   projectId: string
   /** @example 201 */
   systemSize: number | null
-  /** @example true */
-  isGroundMount: boolean
   /** @example "Kevin Brook" */
   projectPropertyOwnerName: string
   /** @example "Ground Mount" */
@@ -511,7 +547,7 @@ export interface ProjectResponseDto {
   /** @example "https://host.com/projects/path" */
   projectFolderLink: string | null
   /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  mailingAddressForWetStamp: string
+  mailingAddressForWetStamp: string | null
   /** @example [11.2,22.1] */
   coordinates: number[]
   /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
@@ -522,7 +558,7 @@ export interface ProjectResponseDto {
   propertyType: object
   /** @example null */
   projectNumber: string | null
-  /** @example "2023-09-04T07:31:27.266Z" */
+  /** @example "2023-09-05T06:59:48.851Z" */
   createdAt: string
   /** @example 1 */
   totalOfJobs: number
@@ -530,20 +566,20 @@ export interface ProjectResponseDto {
   masterLogUpload: boolean
   /** @example false */
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
-  /** @example {} */
-  jobs: object | null
+  /** @example [] */
+  jobs: object[]
 }
 
 export interface CreateOrderedTaskWhenJobIsCreatedRequestDto {
   taskId: string
-  description: string
+  description: string | null
 }
 
 export interface CreateJobRequestDto {
-  deliverablesEmails: (string[] | null)[]
-  /** @default "10223" */
-  jobNumber: string | null
-  clientUserIds: string[][]
+  /** @default "chris@barun.com" */
+  deliverablesEmails: string[]
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  clientUserIds: string[]
   /** @default "please, check this out." */
   additionalInformationFromClient: string | null
   /** @default 300.1 */
@@ -561,12 +597,12 @@ export interface CreateJobRequestDto {
 }
 
 export interface UpdateJobRequestDto {
-  deliverablesEmails: string[][]
-  /** @default "10223" */
-  jobNumber: string | null
+  /** @default "chris@barun.com" */
+  deliverablesEmails: string[]
   /** @default "On Hold" */
   jobStatus: string
-  clientUserIds: string[][]
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  clientUserIds: string[]
   /** @default "please, check this out." */
   additionalInformationFromClient: string | null
   /** @default 300.1 */
@@ -581,9 +617,9 @@ export interface UpdateJobRequestDto {
 
 export interface MemberResponseFields {
   /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
-  userId: string
+  userId: string | null
   /** @example "Chris Kim" */
-  name: string
+  name: string | null
 }
 
 export interface OrderedTaskResponseFields {
@@ -593,7 +629,7 @@ export interface OrderedTaskResponseFields {
   taskStatus: string
   /** @example "PV Design" */
   taskName: string
-  assigneeName: MemberResponseFields | null
+  assigneeName: MemberResponseFields
   /** @example null */
   description: string | null
 }
@@ -605,28 +641,27 @@ export interface ClientInformationFields {
   clientOrganizationName: string
   /** @example "gyals0386@gmail.com" */
   contactEmail: string
-  deliverablesEmails: string[][]
+  /** @example "gyals0386@gmail.com" */
+  deliverablesEmails: string[]
 }
 
 export interface JobResponseDto {
   /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
   projectId: string
   /** @example 300.1 */
-  systemSize: number
+  systemSize: number | null
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
-  mailingAddressForWetStamp: string
+  mailingAddressForWetStamp: string | null
   /** @example "Ground Mount" */
   mountingType: string
   /** @example 3 */
-  numberOfWetStamp: number
+  numberOfWetStamp: number | null
   /** @example "Please check this out." */
-  additionalInformationFromClient: string
+  additionalInformationFromClient: string | null
   /** @example "Chris Kim" */
   updatedBy: string
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
   propertyAddress: string
-  /** @example "10223" */
-  jobNumber: string | null
   /** @example 5 */
   jobRequestNumber: number | null
   /** @example "In Progess" */
@@ -640,9 +675,9 @@ export interface JobResponseDto {
 }
 
 export interface CreateOrderedTaskRequestDto {
-  /** @default "" */
+  /** @default "e5d81943-3fef-416d-a85b-addb8be296c0" */
   taskMenuId: string
-  /** @default "" */
+  /** @default "f64d7b09-e51c-4dcb-bb8e-810f66e0cacf" */
   jobId: string
   /** @default "" */
   assignedUserId: string | null
@@ -659,9 +694,9 @@ export interface AuthenticationControllerPostSignInTimeParams {
 
 export interface UsersControllerGetFindUsersParams {
   /** @default "hyomin@ojware.com" */
-  email?: string
+  email?: string | null
   /** @default "" */
-  organizationId?: string
+  organizationId?: string | null
 }
 
 export interface UsersControllerDeleteRemoveMemberLicenseParams {
@@ -706,11 +741,11 @@ export interface GeographyControllerGetFindNotesParams {
    */
   page?: number
   /** @default "1239525" */
-  geoId?: string
+  geoId?: string | null
   /** @default "city" */
-  fullAhjName?: string
+  fullAhjName?: string | null
   /** @default "city" */
-  name?: string
+  name?: string | null
 }
 
 export interface GeographyControllerGetFindNoteUpdateHistoryParams {
@@ -727,18 +762,18 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
    */
   page?: number
   /** @default "1239525" */
-  geoId?: string
+  geoId?: string | null
 }
 
 export interface FindProjectsHttpControllerFindUsersParams {
   /** @default "Residential" */
-  propertyType?: string
+  propertyType?: string | null
   /** @default null */
-  projectNumber?: string
+  projectNumber?: string | null
   /** @default "3480 Northwest 33rd Court" */
-  propertyAddress?: string
+  propertyAddress?: string | null
   /** @default "" */
-  clientId?: string
+  clientId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -755,13 +790,11 @@ export interface FindProjectsHttpControllerFindUsersParams {
 
 export interface FindJobPaginatedHttpControllerFindJobParams {
   /** @default "Residential" */
-  propertyType?: string
-  /** @default null */
-  jobNumber?: string
+  propertyType?: string | null
   /** @default "3480 Northwest 33rd Court" */
-  jobName?: string
+  jobName?: string | null
   /** @default "" */
-  projectId?: string
+  projectId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
