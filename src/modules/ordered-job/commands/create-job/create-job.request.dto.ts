@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
-import { IsArray, IsNumber, IsString } from 'class-validator'
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator'
 
 class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
@@ -9,6 +9,7 @@ class CreateOrderedTaskWhenJobIsCreatedRequestDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   description: string | null
 }
 
@@ -23,10 +24,12 @@ export class CreateJobRequestDto {
 
   @ApiProperty({ default: 'please, check this out.' })
   @IsString()
+  @IsOptional()
   additionalInformationFromClient: string | null
 
   @ApiProperty({ default: 300.1 })
   @IsNumber()
+  @IsOptional()
   systemSize: number | null
 
   @ApiProperty({ default: '39027356-b928-4b8e-b30c-a343a0894766' })
@@ -66,9 +69,11 @@ export class CreateJobRequestDto {
 
   @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   @IsString()
+  @IsOptional()
   mailingAddressForWetStamp: string | null
 
   @ApiProperty({ default: 3 })
   @IsNumber()
+  @IsOptional()
   numberOfWetStamp: number | null
 }

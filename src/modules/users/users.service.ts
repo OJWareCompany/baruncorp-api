@@ -173,7 +173,7 @@ export class UserService {
     issuingCountryName: string,
     abbreviation: string,
     priority: number,
-    issuedDate: Date,
+    // issuedDate: Date,
     expiryDate: Date,
   ): Promise<void> {
     const user = await this.userRepository.findOneById(userId)
@@ -193,7 +193,7 @@ export class UserService {
         type,
         stateEntity: new State({ stateName: issuingCountryName, abbreviation }),
         priority,
-        issuedDate,
+        // issuedDate,
         expiryDate,
       }),
     )

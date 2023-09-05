@@ -1,59 +1,62 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsIn, IsObject, IsString } from 'class-validator'
+import { IsArray, IsIn, IsObject, IsOptional, IsString } from 'class-validator'
 import { ProjectPropertyType } from '../../domain/project.type'
 
 export class AddressRequestDto {
   @ApiProperty({ default: '3480 Northwest 33rd Court' })
   @IsString()
-  street1: string
+  readonly street1: string
 
   @ApiProperty({ default: null })
   @IsString()
-  street2: string | null
+  @IsOptional()
+  readonly street2: string | null
 
   @ApiProperty({ default: 'Lauderdale Lakes' })
   @IsString()
-  city: string
+  readonly city: string
 
   @ApiProperty({ default: 'Florida' })
   @IsString()
-  state: string
+  readonly state: string
 
   @ApiProperty({ default: '33309' })
   @IsString()
-  postalCode: string
+  readonly postalCode: string
 
   @ApiProperty({ default: 'United State' })
   @IsString()
-  country: string | null
+  @IsOptional()
+  readonly country: string | null
 
   @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   @IsString()
-  fullAddress: string
+  readonly fullAddress: string
 }
 
 export class CreateProjectRequestDto {
   @ApiProperty({ default: 'Residential' })
   @IsIn(['Residential', 'Commercial'])
-  projectPropertyType: ProjectPropertyType
+  readonly projectPropertyType: ProjectPropertyType
 
   @ApiProperty({ default: 'Chris Kim' })
   @IsString()
-  projectPropertyOwner: string
+  readonly projectPropertyOwner: string
 
   @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
   @IsString()
-  clientOrganizationId: string
+  readonly clientOrganizationId: string
 
   @ApiProperty({ default: '000152' })
   @IsString()
-  projectNumber: string | null
+  @IsOptional()
+  readonly projectNumber: string | null
 
   @ApiProperty({ default: AddressRequestDto })
   @IsObject()
-  projectPropertyAddress: AddressRequestDto
+  readonly projectPropertyAddress: AddressRequestDto
 
   @ApiProperty({ default: [12.1, 22.2] })
   @IsArray()
-  coordinates: number[]
+  readonly coordinates: number[]
 }

@@ -16,7 +16,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
       issuingCountryName: props.stateEntity.stateName,
       abbreviation: props.stateEntity.abbreviation,
       priority: props.priority,
-      issuedDate: props.issuedDate,
+      issuedDate: null,
       expiryDate: props.expiryDate,
       updatedAt: new Date(),
       createdAt: new Date(),
@@ -31,7 +31,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
       stateEntity: new State({ stateName: record.issuingCountryName, abbreviation: record.abbreviation }),
       type,
       priority: record.priority,
-      issuedDate: record.issuedDate,
+      // issuedDate: record.issuedDate,
       expiryDate: record.expiryDate,
     }
 
@@ -47,7 +47,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
       issuingCountryName: copyProps.stateEntity.stateName,
       abbreviation: copyProps.stateEntity.abbreviation,
       priority: copyProps.priority,
-      expiryDate: copyProps.expiryDate,
+      expiryDate: copyProps.expiryDate.toISOString(),
     })
   }
 }

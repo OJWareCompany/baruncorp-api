@@ -14,7 +14,7 @@ export interface LicenseProps {
   type: LicenseType
   stateEntity: State
   priority: number
-  issuedDate: Date
+  // issuedDate: Date
   expiryDate: Date
 }
 
@@ -24,7 +24,7 @@ export interface CreateLicenseProps {
   type: LicenseType
   stateEntity: State
   priority: number
-  issuedDate: Date
+  // issuedDate: Date
   expiryDate: Date
 }
 

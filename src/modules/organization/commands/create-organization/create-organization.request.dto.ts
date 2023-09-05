@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsEmail, IsString, Matches } from 'class-validator'
+import { IsBoolean, IsEmail, IsOptional, IsString, Matches } from 'class-validator'
 
 export class CreateOrganizationRequestDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
@@ -16,6 +16,7 @@ export class CreateOrganizationRequestDto {
 
   @ApiProperty({ default: null })
   @IsString()
+  @IsOptional()
   readonly street2: string | null
 
   @ApiProperty({ default: 'Lauderdale Lakes' })
@@ -44,6 +45,7 @@ export class CreateOrganizationRequestDto {
 
   @ApiProperty({ default: 'This is about organization...' })
   @IsString()
+  @IsOptional()
   readonly description: string | null
 
   @ApiProperty({ default: 'client' })
@@ -51,27 +53,27 @@ export class CreateOrganizationRequestDto {
   @Matches(/(client|individual|outsourcing)/, { message: 'Organization Type Not Found' })
   readonly organizationType: string
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isActiveContractor: boolean | null
+  readonly isActiveContractor: boolean
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isActiveWorkResource: boolean | null
+  readonly isActiveWorkResource: boolean
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isRevenueShare: boolean | null
+  readonly isRevenueShare: boolean
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isRevisionRevenueShare: boolean | null
+  readonly isRevisionRevenueShare: boolean
 
-  @ApiProperty({ default: 'chris kim' })
+  @ApiProperty({ default: 'chris kim', description: '필요한지 확인 필요' })
   @IsString()
-  readonly invoiceRecipient: string | null
+  readonly invoiceRecipient: string
 
-  @ApiProperty({ default: 'chriskim@gmail.com' })
+  @ApiProperty({ default: 'chriskim@gmail.com', description: '필요한지 확인 필요' })
   @IsString()
-  readonly invoiceRecipientEmail: string | null
+  readonly invoiceRecipientEmail: string
 }

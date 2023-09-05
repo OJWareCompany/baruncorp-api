@@ -1,4 +1,4 @@
-import { IsNumber, IsString } from 'class-validator'
+import { IsNumber, IsOptional, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { LicenseType } from '../../user-license.type'
 
@@ -23,11 +23,8 @@ export class CreateLicenseRequestDto {
   @IsNumber()
   readonly priority: number
 
-  @ApiProperty({ default: new Date().toISOString() })
+  @ApiProperty({ default: '2023-09-04T07:31:27.217Z' })
   @IsString()
-  readonly issuedDate: Date
-
-  @ApiProperty({ default: new Date().toISOString() })
-  @IsString()
-  readonly expiryDate: Date
+  @IsOptional()
+  readonly expiryDate: string | null
 }

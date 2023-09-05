@@ -18,7 +18,7 @@ export class LincenseResponseDto {
   priority: number
 
   @ApiProperty()
-  expiryDate: Date | null
+  expiryDate: string | null
 
   constructor(create: LincenseResponseDto) {
     this.userName = create.userName

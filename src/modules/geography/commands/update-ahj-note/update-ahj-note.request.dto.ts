@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsDefined } from 'class-validator'
+import { IsString, IsDefined, IsOptional } from 'class-validator'
 import { Design, ElectricalEngineering, Engineering, SelectOption } from '../../dto/ahj-note.response.dto'
 
 /**
@@ -10,18 +10,22 @@ import { Design, ElectricalEngineering, Engineering, SelectOption } from '../../
 class UpdateAhjGeneral {
   @ApiProperty({ example: 'https://google.com', nullable: true })
   @IsString()
+  @IsOptional()
   website: string | null
 
   @ApiProperty({ enum: SelectOption, example: SelectOption.SeeNotes, nullable: true })
   @IsString()
+  @IsOptional()
   specificFormRequired: string | null
 
   @ApiProperty({ example: 'generalNotes...', nullable: true })
   @IsString()
+  @IsOptional()
   generalNotes: string | null
 
   @ApiProperty({ example: 'buildingCodes...', nullable: true })
   @IsString()
+  @IsOptional()
   buildingCodes: string | null
 }
 
