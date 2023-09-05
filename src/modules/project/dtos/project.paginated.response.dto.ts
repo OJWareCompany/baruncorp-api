@@ -24,10 +24,10 @@ export class ProjectPaginatedResponseFields {
   @ApiProperty({ example: 1 })
   totalOfJobs: number
 
-  @ApiProperty({ example: false })
+  @ApiProperty({ example: false, description: '필요한지 확인 필요' })
   masterLogUpload: boolean
 
-  @ApiProperty({ example: false })
+  @ApiProperty({ example: false, description: '필요한지 확인 필요' })
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
 }
 

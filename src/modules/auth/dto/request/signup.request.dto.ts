@@ -15,9 +15,9 @@ export class SignUpRequestDto {
   @IsEmail()
   readonly email: string
 
-  @ApiProperty({ default: 'hyomin@ojware.com', isArray: true })
+  @ApiProperty({ default: 'hyomin@ojware.com' })
   @IsArray()
-  readonly deliverablesEmails: string[] | null
+  readonly deliverablesEmails: string[]
 
   @ApiProperty({ default: 'thisistestPass123!' })
   @IsStrongPassword(PasswordOption)
@@ -29,33 +29,33 @@ export class SignUpRequestDto {
 
   @ApiProperty({ default: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
   @IsString()
-  address: string
+  readonly address: string | null
 
   @ApiProperty({ default: '857-250-4567' })
   @IsString()
-  phoneNumber: string
+  readonly phoneNumber: string
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsString()
-  isActiveWorkResource: boolean
+  readonly isActiveWorkResource: boolean
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsString()
-  isCurrentUser: boolean
+  readonly isCurrentUser: boolean
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsString()
-  isInactiveOrganizationUser: boolean
+  readonly isInactiveOrganizationUser: boolean
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsString()
-  isRevenueShare: boolean
+  readonly isRevenueShare: boolean
 
-  @ApiProperty({ default: true })
+  @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsString()
-  isRevisionRevenueShare: boolean
+  readonly isRevisionRevenueShare: boolean
 
-  @ApiProperty({ default: 'CLIENT' })
+  @ApiProperty({ default: 'CLIENT', description: '필요한지 확인 필요' })
   @IsString()
-  type: string
+  readonly type: string
 }

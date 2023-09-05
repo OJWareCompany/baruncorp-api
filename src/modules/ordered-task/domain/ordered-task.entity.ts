@@ -35,8 +35,6 @@ export class OrderedTaskEntity extends AggregateRoot<OrderedTaskProps> {
       dateCreated: new Date(),
       taskStatus: 'Not Started',
       isLocked: false,
-      assigneeName: null,
-      assigneeUserId: null,
     }
     return new OrderedTaskEntity({ id: v4(), props })
   }

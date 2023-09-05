@@ -7,6 +7,8 @@ import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
 import { convertToAssignableTask } from '../../domain/convert-to-assignable-task'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
 import { ORDERED_TASK_REPOSITORY } from '../../ordered-task.di-token'
+import { UserEntity } from '@src/modules/users/domain/user.entity'
+import { Users } from '@prisma/client'
 
 @CommandHandler(CreateOrderedTaskCommand)
 export class CreateOrderedTaskService implements ICommandHandler {
@@ -22,8 +24,6 @@ export class CreateOrderedTaskService implements ICommandHandler {
       include: { orderedTasks: true },
     })
 
-    const clientUser = await this.prismaService.users.findUnique({ where: { id: command.assignedUserId } })
-
     const tasks = await this.prismaService.orderedTasks.findMany({
       where: { projectId: job.projectId, taskMenuId: command.taskMenuId },
     })
@@ -38,6 +38,11 @@ export class CreateOrderedTaskService implements ICommandHandler {
       })
     })
 
+    let clientUser: Users
+    if (command.assignedUserId) {
+      clientUser = await this.prismaService.users.findUnique({ where: { id: command.assignedUserId } })
+    }
+
     const entities = assignableTask.map((task) => {
       return OrderedTaskEntity.create({
         isNewTask: !!tasks.length ? false : true,
@@ -45,12 +50,11 @@ export class CreateOrderedTaskService implements ICommandHandler {
         taskMenuId: command.taskMenuId,
         jobId: command.jobId,
         projectId: job.projectId,
-        assigneeName: clientUser.firstName + ' ' + clientUser.lastName,
-        assigneeUserId: clientUser.firstName + ' ' + clientUser.id,
+        assigneeName: clientUser ? clientUser.firstName + ' ' + clientUser.lastName : null,
+        assigneeUserId: clientUser ? clientUser.id : null,
         description: command.description,
       })
     })
-
     await this.orderedTaskRepository.insert(entities)
   }
 }

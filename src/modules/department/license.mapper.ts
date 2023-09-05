@@ -47,7 +47,6 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
       issuingCountryName: copyProps.stateEntity.stateName,
       abbreviation: copyProps.stateEntity.abbreviation,
       priority: copyProps.priority,
-      issuedDate: copyProps.issuedDate,
       expiryDate: copyProps.expiryDate,
     })
   }

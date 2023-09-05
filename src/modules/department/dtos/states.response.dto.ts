@@ -5,7 +5,7 @@ export class StatesResponseDto {
   readonly stateName: string
 
   @ApiProperty({ default: 'CA' })
-  readonly abbreviation: string
+  readonly abbreviation: string | null // DB에 정보 업데이트 필요함
 
   @ApiProperty({ default: '06' })
   readonly geoId: string
@@ -14,10 +14,10 @@ export class StatesResponseDto {
   readonly stateCode: string
 
   @ApiProperty({ default: '01779778' })
-  readonly ansiCode: string
+  readonly ansiCode: string | null // DB에 정보 업데이트 필요함
 
   @ApiProperty({ default: 'California' })
-  readonly stateLongName: string
+  readonly stateLongName: string | null // DB에 정보 업데이트 필요함
 
   constructor(create: StatesResponseDto) {
     this.stateName = create.stateName

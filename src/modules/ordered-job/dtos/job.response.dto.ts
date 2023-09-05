@@ -48,7 +48,7 @@ export class ClientInformationFields {
   @ApiProperty({ example: 'gyals0386@gmail.com' })
   contactEmail: string
 
-  @ApiProperty({ example: 'gyals0386@gmail.com', isArray: true })
+  @ApiProperty({ example: 'gyals0386@gmail.com' })
   deliverablesEmails: string[]
 }
 
@@ -57,19 +57,19 @@ export class JobResponseDto {
   projectId: string
 
   @ApiProperty({ example: 300.1 })
-  systemSize: number
+  systemSize: number | null
 
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
-  mailingAddressForWetStamp: string
+  mailingAddressForWetStamp: string | null
 
   @ApiProperty({ example: 'Ground Mount' })
   mountingType: string
 
   @ApiProperty({ example: 3 })
-  numberOfWetStamp: number
+  numberOfWetStamp: number | null
 
   @ApiProperty({ example: 'Please check this out.' })
-  additionalInformationFromClient: string
+  additionalInformationFromClient: string | null
 
   @ApiProperty({ example: 'Chris Kim' })
   updatedBy: string

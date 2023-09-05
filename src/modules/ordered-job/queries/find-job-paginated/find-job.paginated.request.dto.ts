@@ -4,13 +4,13 @@ import { IsOptional } from 'class-validator'
 export class FindJobPaginatedRequestDto {
   @ApiProperty({ default: 'Residential' })
   @IsOptional()
-  readonly propertyType?: string
+  readonly propertyType?: string | null
 
   @ApiProperty({ default: '3480 Northwest 33rd Court' })
   @IsOptional()
-  readonly jobName?: string
+  readonly jobName?: string | null
 
   @ApiProperty({ default: '' })
   @IsOptional()
-  readonly projectId?: string
+  readonly projectId?: string | null
 }

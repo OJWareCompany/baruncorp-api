@@ -9,15 +9,15 @@ class CreateOrderedTaskWhenJobIsCreatedRequestDto {
 
   @ApiProperty()
   @IsString()
-  description: string
+  description: string | null
 }
 
 export class CreateJobRequestDto {
-  @ApiProperty({ default: 'chris@barun.com', isArray: true })
+  @ApiProperty({ default: 'chris@barun.com' })
   @IsArray()
   deliverablesEmails: string[]
 
-  @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43', isArray: true })
+  @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
   @IsArray()
   clientUserIds: string[]
 
@@ -63,10 +63,6 @@ export class CreateJobRequestDto {
   })
   @IsArray()
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
-
-  // @ApiProperty({ default: 'Go to the gym.' })
-  // @IsString()
-  // otherServiceDescription: string | null
 
   @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   @IsString()

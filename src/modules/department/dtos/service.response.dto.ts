@@ -6,5 +6,5 @@ export class ServiceResponseDto {
   @ApiProperty({ default: 'Structural Calculation' })
   name: string
   @ApiProperty({ default: 'Structural Calculation is service...' })
-  description: string
+  description: string | null
 }

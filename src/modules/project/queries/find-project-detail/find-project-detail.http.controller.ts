@@ -22,14 +22,14 @@ export class FindProjectDetailHttpController {
     const query = new FindProjectDetailQuery({
       id: searchQuery.projectId,
     })
-    const result: Partial<OrderedProjects> & { organization: Partial<OrganizationModel> } & { jobs: JobProps } =
+    const result: Partial<OrderedProjects> & { organization: Partial<OrganizationModel> } & { jobs: JobProps[] } =
       await this.queryBus.execute(query)
 
     // Whitelisting returned properties
     const response = new ProjectResponseDto()
     response.projectId = result.id!
     response.systemSize = Number(result.systemSize)
-    response.isGroundMount = !!result.isGroundMount
+    // response.isGroundMount = !!result.isGroundMount
     response.projectPropertyOwnerName = result.propertyOwnerName!
     response.clientOrganization = result.organization.name!
     response.clientOrganizationId = result.organization.id!

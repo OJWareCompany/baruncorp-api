@@ -1,12 +1,24 @@
 import { plainToInstance } from 'class-transformer'
 import { CensusCounties, CensusCountySubdivisions, CensusPlace, CensusState } from './census.type.dto'
+import { ApiProperty } from '@nestjs/swagger'
 
 export class CensusResponseDto {
+  @ApiProperty()
   state: CensusState
+
+  @ApiProperty()
   county: CensusCounties
-  countySubdivisions: CensusCountySubdivisions
+
+  @ApiProperty()
+  countySubdivisions: CensusCountySubdivisions | null
+
+  @ApiProperty()
   place: CensusPlace
+
+  @ApiProperty()
   address: string
+
+  @ApiProperty()
   zip: string
 
   constructor(response: any) {

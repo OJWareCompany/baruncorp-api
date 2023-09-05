@@ -2,10 +2,19 @@ import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/ddd/page.response.dto'
 
 export class AhjNoteListResponseDto {
+  @ApiProperty()
   geoId: string
+
+  @ApiProperty()
   name: string
+
+  @ApiProperty()
   fullAhjName: string
+
+  @ApiProperty()
   updatedBy: string
+
+  @ApiProperty()
   updatedAt: string
 }
 

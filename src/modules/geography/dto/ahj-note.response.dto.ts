@@ -52,13 +52,13 @@ export class General {
   @ApiProperty({ default: 'Arroyo Grande city, California' })
   fullAhjName: string
 
-  @ApiProperty({ default: new Date().toISOString(), nullable: true })
+  @ApiProperty({ default: '2023-09-04T07:31:27.217Z', nullable: true })
   createdAt: string | null
 
-  @ApiProperty({ default: new Date().toISOString(), nullable: true })
+  @ApiProperty({ default: '2023-09-04T07:31:27.217Z', nullable: true })
   updatedAt: string | null
 
-  @ApiProperty({ default: new Date().toISOString(), nullable: true })
+  @ApiProperty({ default: '2023-09-04T07:31:27.217Z', nullable: true })
   updatedBy: string | null
 
   @ApiProperty({ enum: AHJType, default: AHJType.COUNTY, nullable: true })
@@ -171,8 +171,15 @@ export class Additional {
 }
 
 export class AhjNoteResponseDto {
+  @ApiProperty({ example: General, type: General })
   general: General
+
+  @ApiProperty({ example: Design, type: Design })
   design: Design
+
+  @ApiProperty({ example: Engineering, type: Engineering })
   engineering: Engineering
+
+  @ApiProperty({ example: ElectricalEngineering, type: ElectricalEngineering })
   electricalEngineering: ElectricalEngineering
 }

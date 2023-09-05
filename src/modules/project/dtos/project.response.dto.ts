@@ -9,9 +9,6 @@ export class ProjectResponseDto {
   @ApiProperty({ example: 201.0 })
   systemSize: number | null
 
-  @ApiProperty({ example: true })
-  isGroundMount: boolean
-
   @ApiProperty({ example: 'Kevin Brook' })
   projectPropertyOwnerName: string
 
@@ -63,6 +60,6 @@ export class ProjectResponseDto {
   @ApiProperty({ example: false })
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
 
-  @ApiProperty({ example: {} })
-  jobs: JobProps | null
+  @ApiProperty({ example: [] })
+  jobs: JobProps[]
 }

@@ -4,5 +4,5 @@ import { IsOptional } from 'class-validator'
 export class FindAhjNotesHistorySearchQueryRequestDto {
   @ApiProperty({ default: '1239525' })
   @IsOptional()
-  readonly geoId?: string
+  readonly geoId?: string | null
 }

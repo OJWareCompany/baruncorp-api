@@ -132,7 +132,6 @@ export class UsersController {
           issuingCountryName: license.getProps().stateEntity.stateName,
           abbreviation: license.getProps().stateEntity.abbreviation,
           priority: license.getProps().priority,
-          issuedDate: license.getProps().issuedDate,
           expiryDate: license.getProps().expiryDate,
         }),
     )

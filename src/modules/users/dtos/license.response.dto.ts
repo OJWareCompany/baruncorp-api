@@ -1,20 +1,31 @@
-import { LicenseType } from '@modules/users/user-license.type'
+import { ApiProperty } from '@nestjs/swagger'
+import { LicenseType } from '../../users/user-license.type'
 
 export class LincenseResponseDto {
+  @ApiProperty()
   userName: string
+
+  @ApiProperty()
   type: LicenseType
+
+  @ApiProperty()
   issuingCountryName: string
+
+  @ApiProperty()
   abbreviation: string
+
+  @ApiProperty()
   priority: number
-  issuedDate: Date
-  expiryDate: Date
+
+  @ApiProperty()
+  expiryDate: Date | null
+
   constructor(create: LincenseResponseDto) {
     this.userName = create.userName
     this.type = create.type
     this.issuingCountryName = create.issuingCountryName
     this.abbreviation = create.abbreviation
     this.priority = create.priority
-    this.issuedDate = create.issuedDate
     this.expiryDate = create.expiryDate
   }
 }
