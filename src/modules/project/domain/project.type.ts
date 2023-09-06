@@ -51,6 +51,4 @@ export class ProjectUpdateProps {
   projectPropertyAddress: Address
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
-  clientUserId: string
-  clientUserName: string
 }

@@ -21,7 +21,7 @@ export class UpdateJobHttpController {
     const command = new UpdateJobCommand({
       deliverablesEmails: dto.deliverablesEmails,
       updatedByUserId: user.id,
-      clientUserIds: dto.clientUserIds,
+      clientUserId: dto.clientUserId,
       additionalInformationFromClient: dto.additionalInformationFromClient,
       systemSize: dto.systemSize,
       jobId: param.jobId,

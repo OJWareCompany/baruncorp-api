@@ -46,6 +46,12 @@ export class ClientInformationFields {
   @ApiProperty({ example: 'Barun Corp' })
   clientOrganizationName: string
 
+  @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
+  clientUserId: string
+
+  @ApiProperty({ example: 'Chris Kim' })
+  clientUserName: string
+
   @ApiProperty({ example: 'gyals0386@gmail.com' })
   contactEmail: string
 

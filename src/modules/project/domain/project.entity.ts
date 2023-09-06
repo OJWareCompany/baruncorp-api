@@ -45,8 +45,6 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     this.props.projectPropertyAddress = props.projectPropertyAddress
     this.props.projectAssociatedRegulatory = props.projectAssociatedRegulatory
     this.props.updatedBy = props.updatedBy
-    // this.props.clientUserId = props.clientUserId
-    // this.props.clientUserName = props.clientUserName
   }
 
   public validate(): void {

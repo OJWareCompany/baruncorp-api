@@ -60,12 +60,6 @@ export class ProjectResponseDto {
   @ApiProperty({ example: 'eaefe251-0f1f-49ac-88cb-3582ec76601d' })
   clientOrganizationId: string
 
-  @ApiProperty({ example: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
-  clientUserId: string
-
-  @ApiProperty({ example: 'Chris Kim' })
-  clientUserName: string
-
   @ApiProperty({ example: 'https://host.com/projects/path' })
   projectFolderLink: string | null
 

@@ -44,6 +44,8 @@ export class FindJobPaginatedHttpController {
         item.clientInfo = {
           clientOrganizationId: job.clientInfo.clientOrganizationId,
           clientOrganizationName: job.clientInfo.clientOrganizationId, // TODO: project나 조직도 join 해야하나
+          clientUserName: job.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
+          clientUserId: job.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
         }
         item.orderedTasks = job.orderedTasks.map((task) => {
           return new OrderedTaskResponseFields({

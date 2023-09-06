@@ -49,6 +49,8 @@ export class FindJobHttpController {
     response.clientInfo = {
       clientOrganizationId: result.clientInfo.clientOrganizationId,
       clientOrganizationName: result.clientInfo.clientOrganizationName,
+      clientUserName: result.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
+      clientUserId: result.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
       contactEmail: result.clientInfo.clientContactEmail,
       deliverablesEmails: result.clientInfo.deliverablesEmail,
     }

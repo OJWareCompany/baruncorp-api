@@ -25,10 +25,6 @@ export class UpdateProjectRequestDto {
   @ApiProperty({ default: ProjectAssociatedRegulatoryBody })
   @IsObject()
   readonly projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
-
-  @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
-  @IsString()
-  readonly clientUserId: string
 }
 
 export class UpdateProjectRequestParamDto {

@@ -14,7 +14,6 @@ export class UpdateProjectService implements ICommandHandler {
 
   async execute(command: UpdateProjectCommand): Promise<void> {
     const project = await this.projectRepository.findProject(command.projectId)
-    const clientUser = await this.projectRepository.findClientUserById(command.clientUserId)
 
     project.update({
       projectPropertyType: command.projectPropertyType,
@@ -23,8 +22,6 @@ export class UpdateProjectService implements ICommandHandler {
       projectPropertyAddress: command.projectPropertyAddress,
       projectAssociatedRegulatory: command.projectAssociatedRegulatory,
       updatedBy: command.updatedByUserId,
-      clientUserId: command.clientUserId,
-      clientUserName: clientUser.getProps().userName.getFullName(),
     })
 
     await this.projectRepository.update(project)

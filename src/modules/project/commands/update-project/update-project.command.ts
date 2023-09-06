@@ -11,7 +11,6 @@ export class UpdateProjectCommand {
   projectPropertyAddress: Address
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedByUserId: string
-  clientUserId: string
   constructor(props: UpdateProjectCommand) {
     initialize(this, props)
   }

@@ -12,8 +12,8 @@ export class UpdateJobRequestDto {
   jobStatus: JobStatus
 
   @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
-  @IsArray()
-  clientUserIds: string[]
+  @IsString()
+  clientUserId: string
 
   @ApiProperty({ default: 'please, check this out.' })
   @IsString()

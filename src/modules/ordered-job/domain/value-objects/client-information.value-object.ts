@@ -9,6 +9,12 @@ export class ClientInformation {
   clientOrganizationName: string
 
   @ApiProperty()
+  clientUserId: string
+
+  @ApiProperty()
+  clientUserName: string
+
+  @ApiProperty()
   clientContactEmail: string
 
   @ApiProperty()
