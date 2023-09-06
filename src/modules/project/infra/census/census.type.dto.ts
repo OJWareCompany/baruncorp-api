@@ -1,12 +1,12 @@
 import { Exclude, Expose } from 'class-transformer'
-import { IsArray } from 'class-validator'
+import { IsArray, IsNumber, Length } from 'class-validator'
 import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class AddressFromMapBox {
   @ApiProperty({ default: [12.1, 22.2] })
   @IsArray()
-  readonly coordinates: [number, number]
+  readonly coordinates: number[]
 }
 
 export class CensusState {

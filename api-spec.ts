@@ -420,7 +420,7 @@ export interface AhjNoteHistoryPaginatedResponseDto {
 
 export interface AddressFromMapBox {
   /** @default [12.1,22.2] */
-  coordinates: string[]
+  coordinates: number[]
 }
 
 export interface AddressRequestDto {
@@ -451,7 +451,7 @@ export interface CreateProjectRequestDto {
   projectNumber: string | null
   projectPropertyAddress: AddressRequestDto
   /** @default [12.1,22.2] */
-  coordinates: string[]
+  coordinates: number[]
 }
 
 export interface ProjectAssociatedRegulatoryBody {
@@ -484,7 +484,7 @@ export interface ProjectPaginatedResponseFields {
   /** @example "96d39061-a4d7-4de9-a147-f627467e11d5" */
   projectId: string
   /** @example "Residential" */
-  propertyType: string
+  propertyType: 'Residential' | 'Commercial'
   /** @example "https://host.com/projects/path" */
   projectFolderLink: string | null
   /** @example null */
@@ -548,7 +548,8 @@ export interface Jobs {
   projectId: string
   mountingType: string
   jobName: string
-  jobStatus: object
+  /** @example "In Progress" */
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
   propertyAddress: string
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
@@ -635,8 +636,8 @@ export interface CreateJobRequestDto {
 export interface UpdateJobRequestDto {
   /** @default "chris@barun.com" */
   deliverablesEmails: string[]
-  /** @default "On Hold" */
-  jobStatus: string
+  /** @default "In Progress" */
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
   clientUserIds: string[]
   /** @default "please, check this out." */
@@ -700,8 +701,8 @@ export interface JobResponseDto {
   propertyAddress: string
   /** @example 5 */
   jobRequestNumber: number | null
-  /** @example "In Progess" */
-  jobStatus: string
+  /** @example "In Progress" */
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
   /** @example "Residential" */
   projectType: string
   orderedTasks: OrderedTaskResponseFields[]

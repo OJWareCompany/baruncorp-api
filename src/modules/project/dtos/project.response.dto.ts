@@ -4,7 +4,7 @@ import {
   ProjectPropertyType,
   ProjectPropertyTypeEnum,
 } from '../../../modules/project/domain/project.type'
-import { JobProps, JobStatus } from '../../ordered-job/domain/job.type'
+import { JobProps, JobStatus, JobStatusEnum } from '../../ordered-job/domain/job.type'
 import { ClientInformation } from '../../ordered-job/domain/value-objects/client-information.value-object'
 import { OrderedTask } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
 
@@ -15,7 +15,7 @@ class Jobs implements JobProps {
   mountingType: string
   @ApiProperty()
   jobName: string
-  @ApiProperty()
+  @ApiProperty({ enum: JobStatusEnum, example: JobStatusEnum.In_Progress })
   jobStatus: JobStatus
   @ApiProperty()
   propertyAddress: string

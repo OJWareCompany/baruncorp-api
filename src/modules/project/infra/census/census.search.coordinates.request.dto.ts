@@ -13,7 +13,7 @@ export class CensusSearchCoordinatesService {
   private baseUrl = 'https://geocoding.geo.census.gov'
   private path = '/geocoder/geographies/coordinates'
 
-  async search(coordinates: [number, number]): Promise<CensusResponseDto> {
+  async search(coordinates: number[]): Promise<CensusResponseDto> {
     const query = `?x=${coordinates[0]}&y=${coordinates[1]}&benchmark=4&vintage=4&format=json`
     const searchUrl = `${this.baseUrl}${this.path}${query}`
     const response = await got.get(searchUrl).json()

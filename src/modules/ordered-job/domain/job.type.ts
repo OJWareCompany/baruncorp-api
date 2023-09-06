@@ -1,6 +1,13 @@
 import { ClientInformation } from './value-objects/client-information.value-object'
 import { OrderedTask, OrderedTasksWhenToCreateJob } from './value-objects/ordered-task.value-object'
 
+export enum JobStatusEnum {
+  Not_Started = 'Not Started',
+  In_Progress = 'In Progress',
+  On_Hold = 'On Hold',
+  Complete = 'Complete',
+  Cancel = 'Cancel',
+}
 export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
 
 /**

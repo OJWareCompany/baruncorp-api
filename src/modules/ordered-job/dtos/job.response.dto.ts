@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { JobStatus, JobStatusEnum } from '../domain/job.type'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -80,8 +81,8 @@ export class JobResponseDto {
   @ApiProperty({ example: 5 })
   jobRequestNumber: number | null
 
-  @ApiProperty({ example: 'In Progess' })
-  jobStatus: string
+  @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
+  jobStatus: JobStatus
 
   @ApiProperty({ example: 'Residential' })
   projectType: string

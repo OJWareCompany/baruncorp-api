@@ -1,14 +1,15 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsString, IsNumber, IsOptional } from 'class-validator'
+import { JobStatus, JobStatusEnum } from '../../domain/job.type'
 
 export class UpdateJobRequestDto {
   @ApiProperty({ default: 'chris@barun.com' })
   @IsArray()
   deliverablesEmails: string[]
 
-  @ApiProperty({ default: 'On Hold' })
+  @ApiProperty({ default: JobStatusEnum.In_Progress, enum: JobStatusEnum })
   @IsString()
-  jobStatus: string
+  jobStatus: JobStatus
 
   @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
   @IsArray()
