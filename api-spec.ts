@@ -419,16 +419,8 @@ export interface AhjNoteHistoryPaginatedResponseDto {
 }
 
 export interface AddressFromMapBox {
-  /** @default "3480 Northwest 33rd Court" */
-  street1: string
-  /** @default "" */
-  street2: string
-  /** @default "Lauderdale Lakes" */
-  city: string
-  /** @default "Florida" */
-  state: string
-  /** @default "33309" */
-  postalCode: string
+  /** @default [12.1,22.2] */
+  coordinates: string[]
 }
 
 export interface AddressRequestDto {
@@ -452,14 +444,14 @@ export interface CreateProjectRequestDto {
   /** @default "Residential" */
   projectPropertyType: 'Residential' | 'Commercial'
   /** @default "Chris Kim" */
-  projectPropertyOwner: string
+  projectPropertyOwner: string | null
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
   clientOrganizationId: string
   /** @default "000152" */
   projectNumber: string | null
   projectPropertyAddress: AddressRequestDto
   /** @default [12.1,22.2] */
-  coordinates: number[]
+  coordinates: string[]
 }
 
 export interface ProjectAssociatedRegulatoryBody {
@@ -479,7 +471,7 @@ export interface UpdateProjectRequestDto {
   /** @default "Residential" */
   projectPropertyType: 'Residential' | 'Commercial'
   /** @default "Chris Kim" */
-  projectPropertyOwner: string
+  projectPropertyOwner: string | null
   /** @default "50021" */
   projectNumber: string | null
   projectPropertyAddress: AddressRequestDto
@@ -489,6 +481,8 @@ export interface UpdateProjectRequestDto {
 }
 
 export interface ProjectPaginatedResponseFields {
+  /** @example "96d39061-a4d7-4de9-a147-f627467e11d5" */
+  projectId: string
   /** @example "Residential" */
   propertyType: string
   /** @example "https://host.com/projects/path" */
@@ -527,13 +521,55 @@ export interface ProjectPaginatedResponseDto {
   items: ProjectPaginatedResponseFields[]
 }
 
+export interface OrderedTask {
+  id: string
+  isNewTask: boolean
+  isLocked: boolean
+  taskStatus: string
+  taskName: string
+  taskId: string
+  jobId: string
+  projectId: string
+  /** @format date-time */
+  dateCreated: string
+  assigneeName: string
+  assigneeUserId: string
+  description: string
+}
+
+export interface ClientInformation {
+  clientOrganizationId: string
+  clientOrganizationName: string
+  clientContactEmail: string
+  deliverablesEmail: string[]
+}
+
+export interface Jobs {
+  projectId: string
+  mountingType: string
+  jobName: string
+  jobStatus: object
+  propertyAddress: string
+  jobRequestNumber: number
+  orderedTasks: OrderedTask[]
+  systemSize: number
+  mailingAddressForWetStamp: string
+  numberOfWetStamp: number
+  additionalInformationFromClient: string
+  clientInfo: ClientInformation
+  updatedBy: string
+  /** @format date-time */
+  receivedAt: string
+  isCurrentJob?: boolean
+}
+
 export interface ProjectResponseDto {
   /** @example "07e12e89-6077-4fd1-a029-c50060b57f43" */
   projectId: string
   /** @example 201 */
   systemSize: number | null
   /** @example "Kevin Brook" */
-  projectPropertyOwnerName: string
+  projectPropertyOwnerName: string | null
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
   /** @example "Barun Corp" */
@@ -558,7 +594,7 @@ export interface ProjectResponseDto {
   propertyType: object
   /** @example null */
   projectNumber: string | null
-  /** @example "2023-09-05T07:14:57.274Z" */
+  /** @example "2023-09-05T07:14:57.270Z" */
   createdAt: string
   /** @example 1 */
   totalOfJobs: number
@@ -567,7 +603,7 @@ export interface ProjectResponseDto {
   /** @example false */
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
   /** @example [] */
-  jobs: object[]
+  jobs: Jobs[]
 }
 
 export interface CreateOrderedTaskWhenJobIsCreatedRequestDto {
@@ -683,6 +719,17 @@ export interface CreateOrderedTaskRequestDto {
   assignedUserId: string | null
   /** @default "added task" */
   description: string | null
+}
+
+export interface CreateJobNoteRequestDto {
+  /** @default "what do you think about Jazz?" */
+  content: string
+  /** @default "hs8da-cdef-gh22321ask-xzcm12e3" */
+  jobId: string
+}
+
+export interface FindJobNotesRequestDto {
+  jobId: string
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -1698,6 +1745,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/orderd-tasks/${orderdTaskId}`,
         method: 'DELETE',
+        ...params,
+      }),
+  }
+  orderedJobNotes = {
+    /**
+     * No description
+     *
+     * @name CreateJobNoteHttpControllerCreate
+     * @request POST:/ordered-job-notes
+     */
+    createJobNoteHttpControllerCreate: (data: CreateJobNoteRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ordered-job-notes`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindJobNotesHttpControllerFind
+     * @request GET:/ordered-job-notes
+     */
+    findJobNotesHttpControllerFind: (data: FindJobNotesRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ordered-job-notes`,
+        method: 'GET',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }
