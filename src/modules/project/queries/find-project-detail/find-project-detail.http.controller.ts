@@ -30,7 +30,7 @@ export class FindProjectDetailHttpController {
     response.projectId = result.id!
     response.systemSize = Number(result.systemSize)
     // response.isGroundMount = !!result.isGroundMount
-    response.projectPropertyOwnerName = result.propertyOwnerName!
+    response.projectPropertyOwnerName = result.propertyOwnerName
     response.clientOrganization = result.organization.name!
     response.clientOrganizationId = result.organization.id!
     // response.clientUserId = result.clientUserId!

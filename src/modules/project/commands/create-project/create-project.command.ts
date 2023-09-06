@@ -11,7 +11,7 @@ export class CreateProjectCommand {
 
   readonly projectPropertyType: ProjectPropertyType
 
-  readonly projectPropertyOwner: string
+  readonly projectPropertyOwner: string | null
 
   readonly projectPropertyAddress: {
     readonly street1: string

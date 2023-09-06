@@ -544,7 +544,7 @@ model OrderedProjects {
   propertyAddressCity                           String?        @map("property_address_city") @db.VarChar(255)
   propertyAddressState                          String?        @map("property_address_state") @db.VarChar(255)
   propertyAddressPostalCode                     String?        @map("property_address_postal_code") @db.VarChar(10)
-  propertyOwnerName                             String         @map("property_owner_name") @db.VarChar(255)
+  propertyOwnerName                             String?        @map("property_owner_name") @db.VarChar(255)
   masterLogUpload                               Boolean?       @map("master_log_upload")
   ahjAutomationComplete                         Boolean?       @map("ahj_automation_complete")
   updatedAt                                     DateTime       @map("updated_at") @db.DateTime(0)

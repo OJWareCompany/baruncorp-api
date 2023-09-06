@@ -10,7 +10,7 @@ export class ProjectResponseDto {
   systemSize: number | null
 
   @ApiProperty({ example: 'Kevin Brook' })
-  projectPropertyOwnerName: string
+  projectPropertyOwnerName: string | null
 
   @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
   mountingType: MountingTypeEnum

@@ -17,7 +17,7 @@ export type MountingType = 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground 
 
 export interface CreateProjectProps {
   projectPropertyType: ProjectPropertyType
-  projectPropertyOwner: string
+  projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
   coordinates: number[]
@@ -28,7 +28,7 @@ export interface CreateProjectProps {
 
 export interface ProjectProps {
   projectPropertyType: ProjectPropertyType
-  projectPropertyOwner: string
+  projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
   coordinates: number[]
@@ -45,7 +45,7 @@ export interface ProjectProps {
 
 export class ProjectUpdateProps {
   projectPropertyType: ProjectPropertyType
-  projectPropertyOwner: string
+  projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody

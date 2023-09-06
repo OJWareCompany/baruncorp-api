@@ -41,7 +41,7 @@ export class CreateProjectRequestDto {
 
   @ApiProperty({ default: 'Chris Kim' })
   @IsString()
-  readonly projectPropertyOwner: string
+  readonly projectPropertyOwner: string | null
 
   @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
   @IsString()
