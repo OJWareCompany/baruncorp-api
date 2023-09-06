@@ -150,6 +150,21 @@ export interface CreateLicenseRequestDto {
   expiryDate: string | null
 }
 
+export interface CreateUserRequestDto {
+  /** @default "07e12e89-6077-4fd1-a029-c50060b57f43" */
+  organizationId: string
+  /** @default "Emma" */
+  firstName: string
+  /** @default "Smith" */
+  lastName: string
+  /** @default "hyomin@ojware.com" */
+  email: string
+  /** @default "hyomin@ojware.com" */
+  deliverablesEmails: string[]
+  /** @default "857-250-4567" */
+  phoneNumber: string
+}
+
 export interface OrganizationResponseDto {
   id: string
   name: string
@@ -740,13 +755,6 @@ export interface AuthenticationControllerPostSignInTimeParams {
   refresh: number
 }
 
-export interface UsersControllerGetFindUsersParams {
-  /** @default "hyomin@ojware.com" */
-  email?: string | null
-  /** @default "" */
-  organizationId?: string | null
-}
-
 export interface UsersControllerDeleteRemoveMemberLicenseParams {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
@@ -754,6 +762,13 @@ export interface UsersControllerDeleteRemoveMemberLicenseParams {
   type: 'Electrical' | 'Structural'
   /** @default "FLORIDA" */
   issuingCountryName: string
+}
+
+export interface FindUsersHttpControllerGetFindUsersParams {
+  /** @default "hyomin@ojware.com" */
+  email?: string | null
+  /** @default "" */
+  organizationId?: string | null
 }
 
 export interface OrganizationControllerFindMembersParams {
@@ -1092,21 +1107,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   users = {
     /**
-     * No description
-     *
-     * @name UsersControllerGetFindUsers
-     * @request GET:/users
-     */
-    usersControllerGetFindUsers: (query: UsersControllerGetFindUsersParams, params: RequestParams = {}) =>
-      this.request<UserResponseDto[], any>({
-        path: `/users`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
      * @description is it need a member table? since different between user and member.
      *
      * @name UsersControllerGetUserInfoByUserId
@@ -1264,6 +1264,54 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/users/member-licenses`,
         method: 'DELETE',
         query: query,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreateUserHttpContollerCreateClient
+     * @request POST:/users/clients
+     */
+    createUserHttpContollerCreateClient: (data: CreateUserRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/clients`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreateUserHttpContollerCreateMember
+     * @request POST:/users/members
+     */
+    createUserHttpContollerCreateMember: (data: CreateUserRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/members`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindUsersHttpControllerGetFindUsers
+     * @request GET:/users
+     */
+    findUsersHttpControllerGetFindUsers: (
+      query: FindUsersHttpControllerGetFindUsersParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UserResponseDto[], any>({
+        path: `/users`,
+        method: 'GET',
+        query: query,
+        format: 'json',
         ...params,
       }),
   }
