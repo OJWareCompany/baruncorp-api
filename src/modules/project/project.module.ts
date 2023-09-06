@@ -14,7 +14,7 @@ import { LicenseMapper } from '../department/license.mapper'
 import { CreateProjectService } from './commands/create-project/create-project.service'
 import { PROJECT_REPOSITORY } from './project.di-token'
 import { ProjectRepository } from './database/project.repository'
-import { SearchCensusService } from './commands/create-ahj-note/create-ahj-note.service'
+import { CreateAhjNoteService } from './commands/create-ahj-note/create-ahj-note.service'
 import { FindProjectsHttpController } from './queries/find-projects/find-projects.http.controller'
 import { FindProjectsQueryHandler } from './queries/find-projects/find-projects.query-handler'
 import { FindProjectDetailHttpController } from './queries/find-project-detail/find-project-detail.http.controller'
@@ -42,7 +42,7 @@ const httpControllers = [
 const providers: Provider[] = [CensusSearchCoordinatesService]
 
 const commandHandlers: Provider[] = [
-  SearchCensusService,
+  CreateAhjNoteService,
   CreateProjectService,
   UpdateProjectService,
   DeleteProjectService,

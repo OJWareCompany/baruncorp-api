@@ -1,18 +1,18 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { AddressFromMapBox } from '../../infra/census/census.type.dto'
-import { SearchCensusService } from './create-ahj-note.service'
+import { CreateAhjNoteService } from './create-ahj-note.service'
 
 // TODO: Census 검색결과 반환해야함.
 @Controller('search-census')
 export class SearchCensusHttpController {
-  constructor(private readonly projectService: SearchCensusService) {}
+  constructor(private readonly ahjnoteService: CreateAhjNoteService) {}
   /**
    * Census에서 행정구역이 매칭되지 않는 주소들이 있음
    * Census 결과와 상관 없이 프로젝트는 생성되어야함
    */
   @Post('')
   async postSearchCensus(@Body() createProjectDto: AddressFromMapBox): Promise<void> {
-    return await this.projectService.searchCensusAndCreateNote(createProjectDto)
+    return await this.ahjnoteService.searchCensusAndCreateNote(createProjectDto)
   }
 }
 
