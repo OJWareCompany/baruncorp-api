@@ -13,6 +13,7 @@ export enum MountingTypeEnum {
 }
 
 export type ProjectPropertyType = 'Residential' | 'Commercial'
+
 export type MountingType = 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
 
 export interface CreateProjectProps {

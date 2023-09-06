@@ -7,7 +7,7 @@ import { PaginatedQueryRequestDto } from '../../../../libs/ddd/paginated-query.r
 import { FindProjectsQuery } from './find-projects.query-handler'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { FindProjectsRequestDto } from './find-projects.request.dto'
-import { MountingTypeEnum } from '../../domain/project.type'
+import { MountingTypeEnum, ProjectPropertyType } from '../../domain/project.type'
 
 @Controller('projects')
 export class FindProjectsHttpController {
@@ -36,7 +36,7 @@ export class FindProjectsHttpController {
       ...result,
       items: result.items.map((projects) => ({
         projectId: projects.id,
-        propertyType: projects.projectPropertyType,
+        propertyType: projects.projectPropertyType as ProjectPropertyType,
         projectFolderLink: projects.projectFolder,
         projectNumber: projects.projectNumber,
         propertyAddress: projects.propertyAddress,

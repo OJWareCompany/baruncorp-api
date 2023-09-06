@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { MountingTypeEnum, ProjectPropertyType } from '../../../modules/project/domain/project.type'
+import {
+  MountingTypeEnum,
+  ProjectPropertyType,
+  ProjectPropertyTypeEnum,
+} from '../../../modules/project/domain/project.type'
 import { JobProps, JobStatus } from '../../ordered-job/domain/job.type'
 import { ClientInformation } from '../../ordered-job/domain/value-objects/client-information.value-object'
 import { OrderedTask } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
@@ -77,7 +81,7 @@ export class ProjectResponseDto {
   @ApiProperty({ example: 3 })
   numberOfWetStamp: number | null
 
-  @ApiProperty({ example: 'Residential' })
+  @ApiProperty({ enum: ProjectPropertyTypeEnum, example: 'Residential' })
   propertyType: ProjectPropertyType
 
   @ApiProperty({ example: null })

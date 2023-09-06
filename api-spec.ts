@@ -591,7 +591,7 @@ export interface ProjectResponseDto {
   /** @example 3 */
   numberOfWetStamp: number | null
   /** @example "Residential" */
-  propertyType: object
+  propertyType: 'Residential' | 'Commercial'
   /** @example null */
   projectNumber: string | null
   /** @example "2023-09-05T07:14:57.270Z" */
