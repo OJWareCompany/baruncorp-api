@@ -496,8 +496,6 @@ export interface UpdateProjectRequestDto {
   projectNumber: string | null
   projectPropertyAddress: AddressRequestDto
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
-  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
-  clientUserId: string
 }
 
 export interface ProjectPaginatedResponseFields {
@@ -562,6 +560,8 @@ export interface OrderedTask {
 export interface ClientInformation {
   clientOrganizationId: string
   clientOrganizationName: string
+  clientUserId: string
+  clientUserName: string
   clientContactEmail: string
   deliverablesEmail: string[]
 }
@@ -599,10 +599,6 @@ export interface ProjectResponseDto {
   clientOrganization: string
   /** @example "eaefe251-0f1f-49ac-88cb-3582ec76601d" */
   clientOrganizationId: string
-  /** @example "07ec8e89-6877-4fa1-a029-c58360b57f43" */
-  clientUserId: string
-  /** @example "Chris Kim" */
-  clientUserName: string
   /** @example "https://host.com/projects/path" */
   projectFolderLink: string | null
   /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
@@ -638,7 +634,7 @@ export interface CreateJobRequestDto {
   /** @default "chris@barun.com" */
   deliverablesEmails: string[]
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
-  clientUserIds: string[]
+  clientUserId: string
   /** @default "please, check this out." */
   additionalInformationFromClient: string | null
   /** @default 300.1 */
@@ -661,7 +657,7 @@ export interface UpdateJobRequestDto {
   /** @default "In Progress" */
   jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
-  clientUserIds: string[]
+  clientUserId: string
   /** @default "please, check this out." */
   additionalInformationFromClient: string | null
   /** @default 300.1 */
@@ -698,6 +694,10 @@ export interface ClientInformationFields {
   clientOrganizationId: string
   /** @example "Barun Corp" */
   clientOrganizationName: string
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  clientUserId: string
+  /** @example "Chris Kim" */
+  clientUserName: string
   /** @example "gyals0386@gmail.com" */
   contactEmail: string
   /** @example "gyals0386@gmail.com" */
