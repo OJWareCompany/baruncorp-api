@@ -35,6 +35,7 @@ export class FindProjectsHttpController {
     return new ProjectPaginatedResponseDto({
       ...result,
       items: result.items.map((projects) => ({
+        projectId: projects.id,
         propertyType: projects.projectPropertyType,
         projectFolderLink: projects.projectFolder,
         projectNumber: projects.projectNumber,

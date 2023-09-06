@@ -3,6 +3,9 @@ import { PaginatedResponseDto } from '../../../libs/ddd/page.response.dto'
 import { MountingTypeEnum } from '../domain/project.type'
 
 export class ProjectPaginatedResponseFields {
+  @ApiProperty({ example: '96d39061-a4d7-4de9-a147-f627467e11d5' })
+  projectId: string
+
   @ApiProperty({ example: 'Residential' })
   propertyType: string
 
