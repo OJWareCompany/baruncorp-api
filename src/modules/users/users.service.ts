@@ -23,7 +23,7 @@ import { LicenseEntity } from './user-license.entity'
 import { State } from '../department/domain/value-objects/state.vo'
 import { LicenseType } from './user-license.type'
 import { PrismaService } from '../database/prisma.service'
-import { FindUserRqeustDto } from './queries/find-user.request.dto'
+import { FindUserRqeustDto } from './queries/find-users/find-user.request.dto'
 
 @Injectable()
 export class UserService {
@@ -36,7 +36,6 @@ export class UserService {
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
     // @ts-ignore
     @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
-    private readonly prismaService: PrismaService,
     private readonly userMapper: UserMapper,
     private readonly positionMapper: PositionMapper,
     private readonly licenseMapper: LicenseMapper,
@@ -55,34 +54,6 @@ export class UserService {
     if (!existed) throw new NotFoundException('no roles.', '10012')
     const userRoleEntity = await this.userRepository.findRoleByUserId(userId)
     await this.userRepository.removeRole(userRoleEntity)
-  }
-
-  async findManyBy(query: FindUserRqeustDto) {
-    const records = await this.prismaService.users.findMany({
-      where: {
-        ...(query.email && { email: query.email }),
-        ...(query.organizationId && { organizationId: query.organizationId }),
-      },
-    })
-    const userEntities = records && records.map(this.userMapper.toDomain)
-
-    const result: Promise<UserResponseDto>[] = userEntities.map(async (user) => {
-      const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
-      const organizationEntity = await this.organizationRepository.findOneById(user.getProps().organizationId)
-      const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
-      const serviceEntities = await this.departmentRepository.findServicesByUserId(user.id)
-      const licenseEntities = await this.userRepository.findLicensesByUser(user)
-      return this.userMapper.toResponse(
-        user,
-        userRoleEntity,
-        organizationEntity,
-        this.positionMapper.toResponse(positionEntity),
-        serviceEntities.map(this.serviceMapper.toResponse),
-        licenseEntities.map(this.licenseMapper.toResponse),
-      )
-    })
-
-    return Promise.all(result)
   }
 
   async getRoles(): Promise<UserRoles[]> {

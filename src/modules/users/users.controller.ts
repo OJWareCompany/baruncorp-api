@@ -7,14 +7,12 @@ import { randomBytes } from 'crypto'
 import nodemailer from 'nodemailer'
 import { ConfigModule } from '@nestjs/config'
 import { UserResponseDto } from './dtos/user.response.dto'
-import { EmailVO } from './domain/value-objects/email.vo'
 import { UserName } from './domain/value-objects/user-name.vo'
 import { GiveRoleRequestDto } from './commands/give-role/give-role.request.dto'
 import { UpdateUserRequestDto } from './commands/update-user/update-user.request.dto'
 import { UserRoles } from './domain/value-objects/user-role.vo'
 import { CreateLicenseRequestDto } from '../users/commands/create-user-license/create-license.request.dto'
 import { UserRequestDto } from './user-param.request.dto'
-import { FindUserRqeustDto } from './queries/find-user.request.dto'
 import { DeleteMemberLicenseRequestDto } from './commands/delete-member-license/delete-member-license.request.dto'
 import { LincenseResponseDto } from './dtos/license.response.dto'
 
@@ -25,12 +23,6 @@ const { EMAIL_USER, EMAIL_PASS } = process.env
 @Controller('users')
 export class UsersController {
   constructor(private readonly userService: UserService) {}
-  @Get('')
-  async getFindUsers(@Query() dto: FindUserRqeustDto): Promise<UserResponseDto[]> {
-    // if (!dto.email) return await this.userService.findUsers()
-    // else if (dto.email) return [await this.userService.findOneByEmail(new EmailVO(dto.email))]
-    return await this.userService.findManyBy(dto)
-  }
 
   /**
    * is it need a member table? since different between user and member.

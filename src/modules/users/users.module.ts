@@ -18,9 +18,12 @@ import { OrganizationMapper } from '../organization/organization.mapper'
 import { ServiceMapper } from '../department/service.mapper'
 import { CreateUserHttpContoller } from './commands/create-user/create-user.http.controller'
 import { CreateUserService } from './commands/create-user/create-user.service'
+import { FindUsersHttpController } from './queries/find-users/find-user.http.controller'
+import { FindUserQueryHandler } from './queries/find-users/find-user.query-handler'
 
-const httpControllers = [UsersController, CreateUserHttpContoller]
-const CommandHandlers: Provider[] = [CreateUserService]
+const httpControllers = [UsersController, CreateUserHttpContoller, FindUsersHttpController]
+const commandHandlers: Provider[] = [CreateUserService]
+const queryHandlers: Provider[] = [FindUserQueryHandler]
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
@@ -40,7 +43,7 @@ const mappers: Provider[] = [
 
 @Module({
   imports: [PrismaModule, CqrsModule],
-  providers: [UserService, ...CommandHandlers, ...repositories, ...mappers],
+  providers: [UserService, ...commandHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
   exports: [UserService],
 })
