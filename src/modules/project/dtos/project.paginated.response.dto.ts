@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { PaginatedResponseDto } from '../../../libs/ddd/page.response.dto'
+import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 import { MountingTypeEnum, ProjectPropertyType, ProjectPropertyTypeEnum } from '../domain/project.type'
 
 export class ProjectPaginatedResponseFields {

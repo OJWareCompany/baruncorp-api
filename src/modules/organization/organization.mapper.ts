@@ -41,8 +41,8 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       createdAt: new Date(),
       isActiveContractor: props.isActiveContractor ? 1 : 0,
       isActiveWorkResource: props.isActiveWorkResource ? 1 : 0,
-      revenueShare: props.revenueShare ? 1 : 0,
-      revisionRevenueShare: props.revisionRevenueShare ? 1 : 0,
+      revenueShare: props.isRevenueShare ? 1 : 0,
+      revisionRevenueShare: props.isRevisionRevenueShare ? 1 : 0,
       invoiceRecipient: props.invoiceRecipient,
       invoiceRecipientEmail: props.invoiceRecipientEmail,
     }
@@ -91,8 +91,8 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.street2 = entity.getProps().address.street2
     response.isActiveContractor = entity.getProps().isActiveContractor
     response.isActiveWorkResource = entity.getProps().isActiveWorkResource
-    response.isRevenueShare = entity.getProps().revenueShare
-    response.isRevisionRevenueShare = entity.getProps().revisionRevenueShare
+    response.isRevenueShare = entity.getProps().isRevenueShare
+    response.isRevisionRevenueShare = entity.getProps().isRevisionRevenueShare
     response.invoiceRecipient = entity.getProps().invoiceRecipient
     response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
     return response

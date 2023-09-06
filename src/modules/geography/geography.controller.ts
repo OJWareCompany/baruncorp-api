@@ -16,7 +16,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'
 import { UpdateAhjNoteRequestDto } from './commands/update-ahj-note/update-ahj-note.request.dto'
 import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto'
 import { AhjNoteHistoryParamRequestDto, GeoGraphyParamRequestDto } from './geography.param.request.dto'
-import { PaginatedQueryRequestDto } from '../../libs/ddd/paginated-query.request.dto'
+import { PaginatedQueryRequestDto } from '../../libs/api/paginated-query.request.dto'
 
 @ApiBearerAuth()
 @ApiTags('geography')

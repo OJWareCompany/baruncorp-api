@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Paginated } from './repository.port'
+import { Paginated } from '../ddd/repository.port'
 
 /**
  * 제네릭에대한 표현의 어려움

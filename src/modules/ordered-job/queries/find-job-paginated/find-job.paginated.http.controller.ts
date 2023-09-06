@@ -7,7 +7,7 @@ import { FindJobPaginatedQuery } from './find-job.paginated.query-handler'
 import { FindJobPaginatedRequestDto } from './find-job.paginated.request.dto'
 import { JobPaginatedResponseDto, JobPaginatedResponseFields } from '../../dtos/job.paginated.response.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
-import { PaginatedQueryRequestDto } from '../../../../libs/ddd/paginated-query.request.dto'
+import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 
 @Controller('jobs')
 export class FindJobPaginatedHttpController {

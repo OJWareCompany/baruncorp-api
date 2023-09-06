@@ -7,7 +7,6 @@ import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
 import { convertToAssignableTask } from '../../domain/convert-to-assignable-task'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
 import { ORDERED_TASK_REPOSITORY } from '../../ordered-task.di-token'
-import { UserEntity } from '@src/modules/users/domain/user.entity'
 import { Users } from '@prisma/client'
 
 @CommandHandler(CreateOrderedTaskCommand)
@@ -18,7 +17,7 @@ export class CreateOrderedTaskService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
 
-  async execute(command: CreateOrderedTaskCommand): Promise<{ orderedTaskId: string }[]> {
+  async execute(command: CreateOrderedTaskCommand): Promise<{ ids: string[] }> {
     const job = await this.prismaService.orderedJobs.findUnique({
       where: { id: command.jobId },
       include: { orderedTasks: true },
@@ -57,8 +56,8 @@ export class CreateOrderedTaskService implements ICommandHandler {
     })
     await this.orderedTaskRepository.insert(entities)
 
-    return entities.map((entity) => ({
-      orderedTaskId: entity.id,
-    }))
+    return {
+      ids: entities.map((entity) => entity.id),
+    }
   }
 }

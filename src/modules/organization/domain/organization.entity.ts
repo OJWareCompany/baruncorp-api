@@ -1,8 +1,8 @@
+import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateOrganizationProps, OrganizationProps } from './organization.types'
 import { v4 } from 'uuid'
-export class OrganizationEntity {
-  id: string
-  protected readonly props: OrganizationProps
+export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
+  protected _id: string
 
   static create(create: CreateOrganizationProps) {
     const id = v4()
@@ -12,20 +12,7 @@ export class OrganizationEntity {
     return new OrganizationEntity({ id, props })
   }
 
-  constructor({ id, props }: { id: string; props: CreateOrganizationProps }) {
-    this.id = id
-    this.props = props
-  }
-
-  getProps() {
-    const copyProps = {
-      id: this.id,
-      ...this.props,
-      isActiveContractor: !!this.props.isActiveContractor,
-      isActiveWorkResource: !!this.props.isActiveWorkResource,
-      revenueShare: !!this.props.isRevenueShare,
-      revisionRevenueShare: !!this.props.isRevisionRevenueShare,
-    }
-    return Object.freeze(copyProps)
+  public validate(): void {
+    const result = 1 + 1
   }
 }

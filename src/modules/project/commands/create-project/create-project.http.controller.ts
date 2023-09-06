@@ -5,6 +5,7 @@ import { CreateProjectCommand } from './create-project.command'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
+import { IdResponse } from '../../../../libs/api/id.response.dto'
 
 @Controller('projects')
 export class CreateProjectHttpController {
@@ -12,14 +13,14 @@ export class CreateProjectHttpController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async postCreateProejct(
-    @User() user: UserEntity,
-    @Body() dto: CreateProjectRequestDto,
-  ): Promise<{ projectId: string }> {
+  async postCreateProejct(@User() user: UserEntity, @Body() dto: CreateProjectRequestDto): Promise<IdResponse> {
     const command = new CreateProjectCommand({
       userId: user.id,
       ...dto,
     })
-    return await this.commandBus.execute(command)
+
+    const result = await this.commandBus.execute(command)
+
+    return new IdResponse(result.id)
   }
 }

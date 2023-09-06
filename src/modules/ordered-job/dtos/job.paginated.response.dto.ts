@@ -1,4 +1,4 @@
-import { PaginatedResponseDto } from '../../../libs/ddd/page.response.dto'
+import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
 import { JobStatus, JobStatusEnum } from '../domain/job.type'
 

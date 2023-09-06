@@ -3,6 +3,7 @@ import { CommandBus } from '@nestjs/cqrs'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { CreateOrganizationRequestDto } from './create-organization.request.dto'
 import { CreateOrganizationCommand } from './create-organization.command'
+import { IdResponse } from '../../../../libs/api/id.response.dto'
 
 @Controller('organizations')
 export class CreateOrganizationHttpController {
@@ -10,8 +11,9 @@ export class CreateOrganizationHttpController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async postCreateOrganization(@Body() dto: CreateOrganizationRequestDto): Promise<{ organizationId: string }> {
+  async postCreateOrganization(@Body() dto: CreateOrganizationRequestDto): Promise<IdResponse> {
     const command = new CreateOrganizationCommand(dto)
-    return await this.commandBus.execute(command)
+    const result = await this.commandBus.execute(command)
+    return new IdResponse(result.id)
   }
 }

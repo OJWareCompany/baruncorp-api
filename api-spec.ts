@@ -469,6 +469,11 @@ export interface CreateProjectRequestDto {
   coordinates: number[]
 }
 
+export interface IdResponse {
+  /** @example "2cdc8ab1-6d50-49cc-ba14-54e4ac7ec231" */
+  id: string
+}
+
 export interface ProjectAssociatedRegulatoryBody {
   /** @default "12" */
   stateId: string
@@ -727,7 +732,7 @@ export interface JobResponseDto {
 }
 
 export interface CreateOrderedTaskRequestDto {
-  /** @default "e5d81943-3fef-416d-a85b-addb8be296c0" */
+  /** @default "0904b078-6c8a-4044-9323-4757d6ca8afa" */
   taskMenuId: string
   /** @default "f64d7b09-e51c-4dcb-bb8e-810f66e0cacf" */
   jobId: string
@@ -1619,11 +1624,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/projects
      */
     createProjectHttpControllerPostCreateProejct: (data: CreateProjectRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<IdResponse, any>({
         path: `/projects`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1697,11 +1703,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/jobs
      */
     createJobHttpControllerCreateJob: (data: CreateJobRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<IdResponse, any>({
         path: `/jobs`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 

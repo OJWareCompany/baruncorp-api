@@ -5,6 +5,7 @@ import { UserEntity } from '../../../users/domain/user.entity'
 import { CreateJobRequestDto } from './create-job.request.dto'
 import { CreateJobCommand } from './create-job.command'
 import { AuthGuard } from '../../../auth/authentication.guard'
+import { IdResponse } from '../../../../libs/api/id.response.dto'
 
 @Controller('jobs')
 export class CreateJobHttpController {
@@ -12,7 +13,7 @@ export class CreateJobHttpController {
 
   @Post('')
   @UseGuards(AuthGuard)
-  async createJob(@User() user: UserEntity, @Body() dto: CreateJobRequestDto): Promise<{ jobId: string }> {
+  async createJob(@User() user: UserEntity, @Body() dto: CreateJobRequestDto): Promise<IdResponse> {
     const command = new CreateJobCommand({
       deliverablesEmails: dto.deliverablesEmails,
       updatedByUserId: user.id,
@@ -25,7 +26,7 @@ export class CreateJobHttpController {
       numberOfWetStamp: dto.numberOfWetStamp,
       mountingType: dto.mountingType,
     })
-
-    return await this.commandBus.execute(command)
+    const result = await this.commandBus.execute(command)
+    return new IdResponse(result.id)
   }
 }

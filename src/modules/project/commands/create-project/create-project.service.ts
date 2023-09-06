@@ -18,7 +18,7 @@ export class CreateProjectService implements ICommandHandler {
     private readonly censusSearchCoordinatesService: CensusSearchCoordinatesService,
   ) {}
 
-  async execute(command: CreateProjectCommand): Promise<{ projectId: string }> {
+  async execute(command: CreateProjectCommand): Promise<{ id: string }> {
     await this.validate({ ...command, clientOrganizationId: command.clientOrganizationId })
 
     // const censusResponse = await this.searchCensus(command)
@@ -43,7 +43,7 @@ export class CreateProjectService implements ICommandHandler {
     })
     await this.projectRepository.createProject(entity)
     return {
-      projectId: entity.id,
+      id: entity.id,
     }
   }
 

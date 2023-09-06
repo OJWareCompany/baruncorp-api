@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsOptional, IsString } from 'class-validator'
 
 export class CreateOrderedTaskRequestDto {
-  @ApiProperty({ default: 'e5d81943-3fef-416d-a85b-addb8be296c0' })
+  @ApiProperty({ default: '0904b078-6c8a-4044-9323-4757d6ca8afa' })
   @IsString()
   readonly taskMenuId: string
 

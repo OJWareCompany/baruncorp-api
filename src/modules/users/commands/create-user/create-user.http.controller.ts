@@ -2,6 +2,7 @@ import { CommandBus } from '@nestjs/cqrs'
 import { ApiResponse } from '@nestjs/swagger'
 import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
+import { IdResponse } from '../../../../libs/api/id.response.dto'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../domain/user.entity'
 import { CreateUserCommand } from './create-user.command'
@@ -14,26 +15,30 @@ export class CreateUserHttpContoller {
   @Post('clients')
   @ApiResponse({ status: HttpStatus.CREATED })
   @UseGuards(AuthGuard)
-  async createClient(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<{ userId: string }> {
+  async createClient(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<IdResponse> {
     const command = new CreateUserCommand({
       type: 'client',
       updatedBy: user.getProps().userName.getFullName(),
       ...request,
     })
 
-    return await this.commandBus.execute(command)
+    const result = await this.commandBus.execute(command)
+
+    return new IdResponse(result.id)
   }
 
   @Post('members')
   @ApiResponse({ status: HttpStatus.CREATED })
   @UseGuards(AuthGuard)
-  async createMember(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<{ userId: string }> {
+  async createMember(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<IdResponse> {
     const command = new CreateUserCommand({
       type: 'member',
       updatedBy: user.getProps().userName.getFullName(),
       ...request,
     })
 
-    return await this.commandBus.execute(command)
+    const result = await this.commandBus.execute(command)
+
+    return new IdResponse(result.id)
   }
 }
