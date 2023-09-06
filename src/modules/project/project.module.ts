@@ -1,6 +1,6 @@
 import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
-import { SearchCensusHttpController } from './commands/create-ahj-note/search-census.http.controller'
+import { SearchCensusHttpController } from './commands/create-ahj-note/create-ahj-note.http.controller'
 import { PrismaModule } from '../database/prisma.module'
 import { GEOGRAPHY_REPOSITORY } from '../geography/geography.di-token'
 import { GeographyRepository } from '../geography/database/geography.repository'
@@ -14,7 +14,7 @@ import { LicenseMapper } from '../department/license.mapper'
 import { CreateProjectService } from './commands/create-project/create-project.service'
 import { PROJECT_REPOSITORY } from './project.di-token'
 import { ProjectRepository } from './database/project.repository'
-import { SearchCensusService } from './commands/create-ahj-note/search-census.service'
+import { SearchCensusService } from './commands/create-ahj-note/create-ahj-note.service'
 import { FindProjectsHttpController } from './queries/find-projects/find-projects.http.controller'
 import { FindProjectsQueryHandler } from './queries/find-projects/find-projects.query-handler'
 import { FindProjectDetailHttpController } from './queries/find-project-detail/find-project-detail.http.controller'
@@ -28,6 +28,7 @@ import { UpdateProjectService } from './commands/update-project/update-project.s
 import { JobMapper } from '../ordered-job/job.mapper'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
+import { CensusSearchCoordinatesService } from './infra/census/census.search.coordinates.request.dto'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -37,6 +38,8 @@ const httpControllers = [
   FindProjectsHttpController,
   FindProjectDetailHttpController,
 ]
+
+const providers: Provider[] = [CensusSearchCoordinatesService]
 
 const commandHandlers: Provider[] = [
   SearchCensusService,
@@ -64,7 +67,7 @@ const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMappe
 
 @Module({
   imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...providers],
   controllers: [...httpControllers],
 })
 export class ProjectModule {}

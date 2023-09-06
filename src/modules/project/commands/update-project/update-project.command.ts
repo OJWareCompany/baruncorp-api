@@ -6,7 +6,7 @@ import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/proj
 export class UpdateProjectCommand {
   projectId: string
   projectPropertyType: ProjectPropertyType
-  projectPropertyOwner: string
+  projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody

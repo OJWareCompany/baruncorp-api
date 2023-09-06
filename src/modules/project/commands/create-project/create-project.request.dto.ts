@@ -58,5 +58,5 @@ export class CreateProjectRequestDto {
 
   @ApiProperty({ default: [12.1, 22.2] })
   @IsArray()
-  readonly coordinates: number[]
+  readonly coordinates: [number, number]
 }

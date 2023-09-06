@@ -6,21 +6,24 @@ import { CreateProjectCommand } from './create-project.command'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectEntity } from '../../domain/project.entity'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
-import { CensusSearchInput, CensusSearchRequestDto } from '../../infra/census/census.search.request.dto'
-import { CensusResponseDto } from '../../infra/census/census.response.dto'
+import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
 @CommandHandler(CreateProjectCommand)
 export class CreateProjectService implements ICommandHandler {
   // TODO: ProjectRepositoryPort = project만 조회하는게 아닌, project 컨텍스트에 필요한 모든 reopsitory 기능을 가지고있어야하는것으로 기억함.
-  constructor(@Inject(PROJECT_REPOSITORY) private readonly projectRepository: ProjectRepositoryPort) {}
+  constructor(
+    @Inject(PROJECT_REPOSITORY) private readonly projectRepository: ProjectRepositoryPort,
+    private readonly censusSearchCoordinatesService: CensusSearchCoordinatesService,
+  ) {}
 
   async execute(command: CreateProjectCommand): Promise<{ projectId: string }> {
     await this.validate({ ...command, clientOrganizationId: command.clientOrganizationId })
 
-    const censusResponse = await this.searchCensus(command)
-
+    // const censusResponse = await this.searchCensus(command)
+    const censusResponse = await this.censusSearchCoordinatesService.search(command.coordinates)
+    console.log(censusResponse)
     const entity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
@@ -32,10 +35,10 @@ export class CreateProjectService implements ICommandHandler {
       clientOrganizationId: command.clientOrganizationId,
       updatedBy: command.userId,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
-        stateId: censusResponse.state.geoId,
-        countyId: censusResponse.county.geoId,
-        countySubdivisionsId: censusResponse.countySubdivisions.geoId,
-        placeId: censusResponse.place.geoId,
+        stateId: censusResponse?.state?.geoId,
+        countyId: censusResponse?.county?.geoId,
+        countySubdivisionsId: censusResponse?.countySubdivisions?.geoId,
+        placeId: censusResponse?.place?.geoId,
       }),
     })
     await this.projectRepository.createProject(entity)
@@ -71,18 +74,18 @@ export class CreateProjectService implements ICommandHandler {
     }
   }
 
-  private async searchCensus(command: CreateProjectCommand): Promise<CensusResponseDto> {
-    const {
-      projectPropertyAddress: { state, postalCode, city, street1, street2 },
-    } = command
+  // private async searchCensus(command: CreateProjectCommand): Promise<CensusResponseDto> {
+  //   const {
+  //     projectPropertyAddress: { state, postalCode, city, street1, street2 },
+  //   } = command
 
-    const searchInput = new CensusSearchInput({
-      street: `${street1 || 'none'} ${street2}`,
-      city,
-      state,
-      zipCode: postalCode,
-    })
-    const censusSearch = new CensusSearchRequestDto(searchInput)
-    return await censusSearch.getResponse()
-  }
+  //   const searchInput = new CensusSearchInput({
+  //     street: `${street1 || 'none'} ${street2}`,
+  //     city,
+  //     state,
+  //     zipCode: postalCode,
+  //   })
+  //   const censusSearch = new CensusSearchRequestDto(searchInput)
+  //   return await censusSearch.getResponse()
+  // }
 }

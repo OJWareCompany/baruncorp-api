@@ -25,7 +25,7 @@ export class CreateProjectCommand {
 
   readonly projectNumber: string | null
 
-  readonly coordinates: number[]
+  readonly coordinates: [number, number]
 
   constructor(props: CreateProjectCommand) {
     Object.entries(props).map(([key, value]) => (this[key] = value))

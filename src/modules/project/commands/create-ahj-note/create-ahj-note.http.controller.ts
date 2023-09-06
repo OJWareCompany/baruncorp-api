@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { AddressFromMapBox } from '../../infra/census/census.type.dto'
-import { SearchCensusService } from './search-census.service'
+import { SearchCensusService } from './create-ahj-note.service'
 
 // TODO: Census 검색결과 반환해야함.
 @Controller('search-census')

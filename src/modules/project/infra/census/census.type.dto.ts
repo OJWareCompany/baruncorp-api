@@ -1,28 +1,12 @@
 import { Exclude, Expose } from 'class-transformer'
-import { IsString } from 'class-validator'
+import { IsArray } from 'class-validator'
 import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class AddressFromMapBox {
-  @ApiProperty({ default: '3480 Northwest 33rd Court' })
-  @IsString()
-  street1: string
-
-  @ApiProperty({ default: '' })
-  @IsString()
-  street2: string
-
-  @ApiProperty({ default: 'Lauderdale Lakes' })
-  @IsString()
-  city: string
-
-  @ApiProperty({ default: 'Florida' })
-  @IsString()
-  state: string
-
-  @ApiProperty({ default: '33309' })
-  @IsString()
-  postalCode: string
+  @ApiProperty({ default: [12.1, 22.2] })
+  @IsArray()
+  readonly coordinates: [number, number]
 }
 
 export class CensusState {

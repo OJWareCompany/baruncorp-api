@@ -5,7 +5,7 @@ import { AddressFromMapBox } from '../../infra/census/census.type.dto'
 import { CensusResponseDto } from '../../infra/census/census.response.dto'
 import { GeographyRepositoryPort } from '../../../geography/database/geography.repository.port'
 import { GEOGRAPHY_REPOSITORY } from '../../../geography/geography.di-token'
-import { CensusSearchInput, CensusSearchRequestDto } from '../../infra/census/census.search.request.dto'
+import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
 
 @Injectable()
 export class SearchCensusService {
@@ -13,26 +13,17 @@ export class SearchCensusService {
   constructor(
     // @ts-ignore
     @Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort,
-    private readonly prismaService: PrismaService,
+    private readonly censusSearchCoordinatesService: CensusSearchCoordinatesService,
   ) {}
 
   async searchCensusAndCreateNote(createProjectDto: AddressFromMapBox) {
-    const { state, postalCode, city, street1, street2 } = createProjectDto
-
-    const searchInput = new CensusSearchInput({
-      street: `${street1 || 'none'} ${street2}`,
-      city,
-      state,
-      zipCode: postalCode,
-    })
-    const censusSearch = new CensusSearchRequestDto(searchInput)
-    const censusResponse = await censusSearch.getResponse()
-
+    const { coordinates } = createProjectDto
+    const censusResponse = await this.censusSearchCoordinatesService.search(coordinates)
     await this.generateGeographyAndAhjNotes(censusResponse)
   }
 
   async generateGeographyAndAhjNotes(censusResponseDto: CensusResponseDto) {
-    const { state, county, countySubdivisions, place, address, zip } = censusResponseDto
+    const { state, county, countySubdivisions, place } = censusResponseDto
 
     /**
      * State & Notes
