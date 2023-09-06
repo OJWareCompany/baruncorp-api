@@ -25,26 +25,30 @@ export class FindProjectsHttpController {
   ): Promise<ProjectPaginatedResponseDto> {
     const query = new FindProjectsQuery({
       ...searchQuery,
+      propertyType: searchQuery.propertyType,
+      projectNumber: searchQuery.projectNumber,
+      propertyAddress: searchQuery.propertyAddress,
+      organizationId: searchQuery.organizationId,
       limit: queryParams?.limit,
       page: queryParams?.page,
     })
-
     const result: Paginated<OrderedProjects> = await this.queryBus.execute(query)
 
     // Whitelisting returned properties
     return new ProjectPaginatedResponseDto({
       ...result,
-      items: result.items.map((projects) => ({
-        projectId: projects.id,
-        propertyType: projects.projectPropertyType as ProjectPropertyType,
-        projectFolderLink: projects.projectFolder,
-        projectNumber: projects.projectNumber,
-        propertyAddress: projects.propertyAddress,
-        createdAt: projects.dateCreated.toISOString(),
-        totalOfJobs: projects.totalOfJobs,
-        masterLogUpload: !!projects.masterLogUpload,
-        designOrPEStampPreviouslyDoneOnProjectOutSide: !!projects.designOrPeStampPreviouslyDoneOnProjectOutside,
-        mountingType: projects.mountingType as MountingTypeEnum,
+      items: result.items.map((project) => ({
+        projectId: project.id,
+        organizationId: project.clientOrganizationId,
+        propertyType: project.projectPropertyType as ProjectPropertyType,
+        projectFolderLink: project.projectFolder,
+        projectNumber: project.projectNumber,
+        propertyAddress: project.propertyAddress,
+        createdAt: project.dateCreated.toISOString(),
+        totalOfJobs: project.totalOfJobs,
+        masterLogUpload: !!project.masterLogUpload,
+        designOrPEStampPreviouslyDoneOnProjectOutSide: !!project.designOrPeStampPreviouslyDoneOnProjectOutside,
+        mountingType: project.mountingType as MountingTypeEnum,
       })),
     })
   }

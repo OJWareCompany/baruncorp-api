@@ -6,13 +6,13 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export class FindProjectsQuery extends PaginatedQueryBase {
-  readonly propertyType?: string
+  readonly propertyType: string | null
 
-  readonly projectNumber?: string
+  readonly projectNumber: string | null
 
-  readonly propertyAddress?: string
+  readonly propertyAddress: string | null
 
-  readonly organizationId?: string
+  readonly organizationId: string | null
 
   constructor(props: PaginatedParams<FindProjectsQuery>) {
     super(props)
@@ -36,7 +36,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
         ...(query.propertyType && { projectPropertyType: query.propertyType }),
         ...(query.projectNumber && { projectNumber: query.projectNumber }),
         ...(query.propertyAddress && { propertyAddress: { contains: query.propertyAddress } }),
-        ...(query.organizationId && { clientId: { contains: query.organizationId } }),
+        ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
       },
       orderBy: { dateCreated: 'desc' },
       take: query.limit,
@@ -48,7 +48,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
         ...(query.propertyType && { projectPropertyType: query.propertyType }),
         ...(query.projectNumber && { projectNumber: query.projectNumber }),
         ...(query.propertyAddress && { propertyAddress: { contains: query.propertyAddress } }),
-        ...(query.organizationId && { clientId: { contains: query.organizationId } }),
+        ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
       },
     })
 

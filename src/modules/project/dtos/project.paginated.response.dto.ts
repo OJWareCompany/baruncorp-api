@@ -6,6 +6,9 @@ export class ProjectPaginatedResponseFields {
   @ApiProperty({ example: '96d39061-a4d7-4de9-a147-f627467e11d5' })
   projectId: string
 
+  @ApiProperty({ example: '96d39061-a4d7-4de9-a147-f627467e11d5' })
+  organizationId: string
+
   @ApiProperty({ enum: ProjectPropertyTypeEnum, example: 'Residential' })
   propertyType: ProjectPropertyType
 
