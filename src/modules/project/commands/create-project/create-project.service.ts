@@ -23,7 +23,7 @@ export class CreateProjectService implements ICommandHandler {
 
     // const censusResponse = await this.searchCensus(command)
     const censusResponse = await this.censusSearchCoordinatesService.search(command.coordinates)
-    console.log(censusResponse)
+
     const entity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
@@ -58,7 +58,7 @@ export class CreateProjectService implements ICommandHandler {
       command.projectNumber,
     )
 
-    if (isAlreadyExistedProjectNumber) {
+    if (command.projectNumber && isAlreadyExistedProjectNumber) {
       throw new ConflictException(`Project number ${command.projectNumber} is Already Existed`, '30001')
     }
 
