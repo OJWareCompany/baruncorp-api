@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
-import { Prisma, Services } from '@prisma/client'
 import { OnEvent } from '@nestjs/event-emitter'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-created.domain-event'

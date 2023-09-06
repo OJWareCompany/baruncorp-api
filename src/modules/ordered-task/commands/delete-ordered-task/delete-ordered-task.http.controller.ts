@@ -4,7 +4,7 @@ import { ApiResponse } from '@nestjs/swagger'
 import { DeleteOrderedTaskCommand } from './delete-ordered-task.command'
 import { DeleteOrderedTaskRequestDto } from './delete-ordered-task.request.dto'
 
-@Controller('orderd-tasks')
+@Controller('ordered-tasks')
 export class DeleteOrderedTaskHttpController {
   constructor(private readonly commandBus: CommandBus) {}
 
@@ -12,10 +12,10 @@ export class DeleteOrderedTaskHttpController {
     status: HttpStatus.OK,
     description: 'delete ordered task.',
   })
-  @Delete(':orderdTaskId')
+  @Delete(':orderedTaskId')
   async delete(@Param() request: DeleteOrderedTaskRequestDto) {
     const command = new DeleteOrderedTaskCommand({
-      id: request.orderdTaskId,
+      id: request.orderedTaskId,
     })
     await this.commandBus.execute(command)
   }

@@ -95,7 +95,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       isCurrentJob?: boolean
     },
   ): JobEntity {
-    const orderdTasks = record.orderedTasks.map((task) => {
+    const orderedTasks = record.orderedTasks.map((task) => {
       return new OrderedTask({
         id: task.id,
         isNewTask: task.isNewTask,
@@ -123,7 +123,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         jobRequestNumber: record.jobRequestNumber,
         propertyAddress: record.propertyAddress,
         jobName: record.jobName,
-        orderedTasks: orderdTasks,
+        orderedTasks: orderedTasks,
         systemSize: Number(record.systemSize),
         mailingAddressForWetStamp: record.mailingAddressForWetStamp,
         numberOfWetStamp: record.numberOfWetStamp,

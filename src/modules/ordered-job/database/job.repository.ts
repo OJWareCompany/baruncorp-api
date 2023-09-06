@@ -42,7 +42,6 @@ export class JobRepository implements JobRepositoryPort {
         orderedTasks: true,
       },
     })
-    record.orderedTasks
     const currentJob = await this.prismaService.orderedJobs.findFirst({
       where: { projectId: record.projectId },
       orderBy: { createdAt: 'desc' },

@@ -5,16 +5,22 @@ import { OrderedTaskMapper } from './ordered-task.mapper'
 import { PrismaModule } from '../database/prisma.module'
 import { ORDERED_TASK_REPOSITORY } from './ordered-task.di-token'
 import { OrderedTaskRepository } from './database/ordered-task.repository'
-import { CreateOrderedTaskWhenJobIsCreatedDomainEventHandler } from './application/event-handlers/create-orderd-task-when-job-is-created.domain-event-handler'
+import { CreateOrderedTaskWhenJobIsCreatedDomainEventHandler } from './application/event-handlers/create-ordered-task-when-job-is-created.domain-event-handler'
 import { UpdateOrderedTaskWhenJobIsUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-task-when-job-is-updated.domain-event-handler'
 import { CreateOrderedTaskHttpController } from './commands/create-ordered-task/create-ordered-task.http.controller'
 import { CreateOrderedTaskService } from './commands/create-ordered-task/create-ordered-task.service'
 import { DeleteOrderedTaskService } from './commands/delete-ordered-task/delete-ordered-task.service'
 import { DeleteOrderedTaskHttpController } from './commands/delete-ordered-task/delete-ordered-task.http.controller'
+import { UpdateOrderedTaskHttpController } from './commands/update-ordered-task/update-ordered-task.http.controller'
+import { UpdateOrderedTaskService } from './commands/update-ordered-task/update-ordered-task.service'
 
-const httpControllers = [CreateOrderedTaskHttpController, DeleteOrderedTaskHttpController]
+const httpControllers = [
+  CreateOrderedTaskHttpController,
+  UpdateOrderedTaskHttpController,
+  DeleteOrderedTaskHttpController,
+]
 
-const commandHandlers: Provider[] = [CreateOrderedTaskService, DeleteOrderedTaskService]
+const commandHandlers: Provider[] = [CreateOrderedTaskService, UpdateOrderedTaskService, DeleteOrderedTaskService]
 
 const eventHandlers: Provider[] = [
   CreateOrderedTaskWhenJobIsCreatedDomainEventHandler,
