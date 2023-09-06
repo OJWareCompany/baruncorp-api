@@ -1,3 +1,5 @@
+import { ApiProperty } from '@nestjs/swagger'
+
 export class OrderedTasksWhenToCreateJob {
   taskId: string
   description: string | null
@@ -8,17 +10,29 @@ export class OrderedTasksWhenToCreateJob {
 }
 
 export class OrderedTask {
+  @ApiProperty()
   id: string
+  @ApiProperty()
   isNewTask: boolean
+  @ApiProperty()
   isLocked: boolean
+  @ApiProperty()
   taskStatus: string
+  @ApiProperty()
   taskName: string
+  @ApiProperty()
   taskId: string
+  @ApiProperty()
   jobId: string
+  @ApiProperty()
   projectId: string
+  @ApiProperty()
   dateCreated: Date
+  @ApiProperty()
   assigneeName: string | null
+  @ApiProperty()
   assigneeUserId: string | null
+  @ApiProperty()
   description: string | null
   constructor(props: OrderedTask) {
     this.id = props.id

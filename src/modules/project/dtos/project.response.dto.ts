@@ -1,6 +1,41 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { MountingTypeEnum, ProjectPropertyType } from '../../../modules/project/domain/project.type'
-import { JobProps } from '@src/modules/ordered-job/domain/job.type'
+import { JobProps, JobStatus } from '../../ordered-job/domain/job.type'
+import { ClientInformation } from '../../ordered-job/domain/value-objects/client-information.value-object'
+import { OrderedTask } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
+
+class Jobs implements JobProps {
+  @ApiProperty()
+  projectId: string
+  @ApiProperty()
+  mountingType: string
+  @ApiProperty()
+  jobName: string
+  @ApiProperty()
+  jobStatus: JobStatus
+  @ApiProperty()
+  propertyAddress: string
+  @ApiProperty()
+  jobRequestNumber: number
+  @ApiProperty()
+  orderedTasks: OrderedTask[]
+  @ApiProperty()
+  systemSize: number
+  @ApiProperty()
+  mailingAddressForWetStamp: string
+  @ApiProperty()
+  numberOfWetStamp: number
+  @ApiProperty()
+  additionalInformationFromClient: string
+  @ApiProperty()
+  clientInfo: ClientInformation
+  @ApiProperty()
+  updatedBy: string
+  @ApiProperty()
+  receivedAt: Date
+  @ApiProperty()
+  isCurrentJob?: boolean
+}
 
 export class ProjectResponseDto {
   @ApiProperty({ example: '07e12e89-6077-4fd1-a029-c50060b57f43' })
@@ -61,5 +96,5 @@ export class ProjectResponseDto {
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
 
   @ApiProperty({ example: [] })
-  jobs: JobProps[]
+  jobs: Jobs[]
 }

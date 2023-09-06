@@ -74,11 +74,11 @@ export class ProjectRepository implements ProjectRepositoryPort {
     return !!(await this.prismaService.organizations.findUnique({ where: { id: organizationId } }))
   }
 
-  async isExistedProjectByClientIdAndProjectNumber(clientId: string, projectName: string): Promise<boolean> {
+  async isExistedProjectByClientIdAndProjectNumber(clientId: string, projectNumber: string): Promise<boolean> {
     return !!(await this.prismaService.orderedProjects.findFirst({
       where: {
         clientOrganizationId: clientId,
-        propertyAddress: projectName,
+        projectNumber: projectNumber,
       },
     }))
   }
