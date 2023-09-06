@@ -503,6 +503,8 @@ export interface UpdateProjectRequestDto {
 export interface ProjectPaginatedResponseFields {
   /** @example "96d39061-a4d7-4de9-a147-f627467e11d5" */
   projectId: string
+  /** @example "96d39061-a4d7-4de9-a147-f627467e11d5" */
+  organizationId: string
   /** @example "Residential" */
   propertyType: 'Residential' | 'Commercial'
   /** @example "https://host.com/projects/path" */
@@ -569,7 +571,7 @@ export interface Jobs {
   mountingType: string
   jobName: string
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
   propertyAddress: string
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
@@ -657,7 +659,7 @@ export interface UpdateJobRequestDto {
   /** @default "chris@barun.com" */
   deliverablesEmails: string[]
   /** @default "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
   clientUserIds: string[]
   /** @default "please, check this out." */
@@ -722,7 +724,7 @@ export interface JobResponseDto {
   /** @example 5 */
   jobRequestNumber: number | null
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
   /** @example "Residential" */
   projectType: string
   orderedTasks: OrderedTaskResponseFields[]
@@ -739,6 +741,15 @@ export interface CreateOrderedTaskRequestDto {
   /** @default "" */
   assignedUserId: string | null
   /** @default "added task" */
+  description: string | null
+}
+
+export interface UpdateOrderedTaskRequestDto {
+  isLocked: boolean
+  /** @default "In Progress" */
+  taskStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
+  assigneeUserId: string | null
+  /** @default "dubidubob" */
   description: string | null
 }
 
@@ -835,13 +846,13 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
 
 export interface FindProjectsHttpControllerFindUsersParams {
   /** @default "Residential" */
-  propertyType?: string | null
+  propertyType: string | null
   /** @default null */
-  projectNumber?: string | null
+  projectNumber: string | null
   /** @default "3480 Northwest 33rd Court" */
-  propertyAddress?: string | null
+  propertyAddress: string | null
   /** @default "" */
-  clientId?: string | null
+  organizationId: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1789,17 +1800,35 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         type: ContentType.Json,
         ...params,
       }),
-  }
-  orderdTasks = {
+
+    /**
+     * No description
+     *
+     * @name UpdateOrderedTaskHttpControllerPatch
+     * @request PATCH:/ordered-tasks/{orderedTaskId}
+     */
+    updateOrderedTaskHttpControllerPatch: (
+      orderedTaskId: string,
+      data: UpdateOrderedTaskRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ordered-tasks/${orderedTaskId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
     /**
      * No description
      *
      * @name DeleteOrderedTaskHttpControllerDelete
-     * @request DELETE:/orderd-tasks/{orderdTaskId}
+     * @request DELETE:/ordered-tasks/{orderedTaskId}
      */
-    deleteOrderedTaskHttpControllerDelete: (orderdTaskId: string, params: RequestParams = {}) =>
+    deleteOrderedTaskHttpControllerDelete: (orderedTaskId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/orderd-tasks/${orderdTaskId}`,
+        path: `/ordered-tasks/${orderedTaskId}`,
         method: 'DELETE',
         ...params,
       }),
