@@ -1,3 +1,4 @@
+import { CqrsModule } from '@nestjs/cqrs'
 import { Module, Provider } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
 import { UsersController } from './users.controller'
@@ -15,6 +16,11 @@ import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
 import { DepartmentRepository } from '../department/database/department.repository'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { ServiceMapper } from '../department/service.mapper'
+import { CreateUserHttpContoller } from './commands/create-user/create-user.http.controller'
+import { CreateUserService } from './commands/create-user/create-user.service'
+
+const httpControllers = [UsersController, CreateUserHttpContoller]
+const CommandHandlers: Provider[] = [CreateUserService]
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
@@ -33,9 +39,9 @@ const mappers: Provider[] = [
 ]
 
 @Module({
-  imports: [PrismaModule],
-  providers: [UserService, ...repositories, ...mappers],
-  controllers: [UsersController],
+  imports: [PrismaModule, CqrsModule],
+  providers: [UserService, ...CommandHandlers, ...repositories, ...mappers],
+  controllers: [...httpControllers],
   exports: [UserService],
 })
 export class UsersModule {}

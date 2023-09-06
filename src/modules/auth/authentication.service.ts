@@ -101,11 +101,7 @@ export class AuthenticationService {
       organizationId: organization.id,
       address: rest.address,
       phoneNumber: rest.phoneNumber,
-      isActiveWorkResource: rest.isActiveWorkResource,
-      isCurrentUser: rest.isCurrentUser,
-      isInactiveOrganizationUser: rest.isInactiveOrganizationUser,
-      isRevenueShare: rest.isRevenueShare,
-      isRevisionRevenueShare: rest.isRevisionRevenueShare,
+      updatedBy: 'system',
       type: rest.type,
     })
 

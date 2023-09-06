@@ -1,41 +1,19 @@
 import { v4 } from 'uuid'
+import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateUserProps, UserProps } from './user.types'
 
 // where should it be 'id'? Entity or Prop?
 // 'id' should be in base entity
-export class UserEntity {
-  readonly id: string
-  protected readonly props: UserProps
-  /**
-   * readonly email: string
-   * readonly userName: UserName
-   * readonly password: string
-   * readonly organizationId: string
-   */
+export class UserEntity extends AggregateRoot<UserProps> {
+  protected _id: string
 
   static create(create: CreateUserProps): UserEntity {
     const id = v4()
-    const props: UserProps = {
-      ...create,
-      updatedBy: '',
-    }
+    const props: UserProps = { ...create }
     return new UserEntity({ id, props })
   }
 
-  constructor({ id, props }: { id: any; props: CreateUserProps }) {
-    this.id = id
-    const propsCopy: UserProps = {
-      ...props,
-      updatedBy: props.userName.getFullName(),
-    }
-    this.props = propsCopy
-  }
-
-  getProps(): UserProps & { id: string } {
-    const propsCopy = {
-      id: this.id,
-      ...this.props,
-    }
-    return Object.freeze(propsCopy)
+  public validate(): void {
+    const result = 1 + 1
   }
 }
