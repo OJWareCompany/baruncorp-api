@@ -1,30 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-
-interface CreateOrderedTaskProps {
-  isNewTask: boolean
-  taskName: string
-  taskMenuId: string
-  jobId: string
-  projectId: string
-  assigneeName: string | null
-  assigneeUserId: string | null
-  description: string | null
-}
-
-interface OrderedTaskProps {
-  isNewTask: boolean
-  isLocked: boolean
-  taskStatus: string
-  taskName: string
-  taskMenuId: string
-  jobId: string
-  projectId: string
-  dateCreated: Date
-  assigneeName: string | null
-  assigneeUserId: string | null
-  description: string
-}
+import { CreateOrderedTaskProps, OrderedTaskProps } from './ordered-task.type'
 
 export class OrderedTaskEntity extends AggregateRoot<OrderedTaskProps> {
   protected _id: string
@@ -40,6 +16,6 @@ export class OrderedTaskEntity extends AggregateRoot<OrderedTaskProps> {
   }
 
   public validate(): void {
-    // throw new Error('Method not implemented.')
+    const result = 1 + 1
   }
 }

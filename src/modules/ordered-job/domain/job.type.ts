@@ -5,10 +5,10 @@ export enum JobStatusEnum {
   Not_Started = 'Not Started',
   In_Progress = 'In Progress',
   On_Hold = 'On Hold',
-  Complete = 'Complete',
-  Cancel = 'Cancel',
+  Completed = 'Completed',
+  Canceled = 'Cancel',
 }
-export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Complete' | 'Cancel'
+export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
 
 /**
  * 인자로 받지 않아도 만들수 있는 필드는 제외한다.
