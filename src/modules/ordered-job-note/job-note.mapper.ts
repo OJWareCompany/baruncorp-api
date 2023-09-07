@@ -1,6 +1,6 @@
-import { Mapper } from '@src/libs/ddd/mapper.interface'
-import { JobNoteEntity, JobNoteProps } from './domain/job-note.entity'
 import { OrderedJobNotes } from '@prisma/client'
+import { Mapper } from '../../libs/ddd/mapper.interface'
+import { JobNoteEntity, JobNoteProps } from './domain/job-note.entity'
 import { JobNoteListResponseDto, JobNoteResponseDto } from './dtos/job-note.response.dto'
 
 export class JobNoteMapper implements Mapper<JobNoteEntity, OrderedJobNotes, JobNoteListResponseDto> {

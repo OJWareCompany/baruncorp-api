@@ -16,6 +16,8 @@ import { FindJobPaginatedQueryHandler } from './queries/find-job-paginated/find-
 import { DeleteJobHttpController } from './commands/delete-job/delete-job.http.controller'
 import { DeleteJobService } from './commands/delete-job/delete-job.service'
 import UserMapper from '../users/user.mapper'
+import { FindMyActiveJobPaginatedHttpController } from './queries/find-my-active-jobs/find-my-active-job.paginated.http.controller'
+import { FindMyActiveJobPaginatedQueryHandler } from './queries/find-my-active-jobs/find-my-active-job.paginated.query-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -23,9 +25,14 @@ const httpControllers = [
   DeleteJobHttpController,
   FindJobHttpController,
   FindJobPaginatedHttpController,
+  FindMyActiveJobPaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [CreateJobService, UpdateJobService, DeleteJobService]
-const queryHandlers: Provider[] = [FindJobQueryHandler, FindJobPaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindJobQueryHandler,
+  FindJobPaginatedQueryHandler,
+  FindMyActiveJobPaginatedQueryHandler,
+]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 
 const mappers: Provider[] = [JobMapper, UserMapper]

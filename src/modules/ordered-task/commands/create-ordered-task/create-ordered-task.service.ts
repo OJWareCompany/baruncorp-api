@@ -22,7 +22,7 @@ export class CreateOrderedTaskService implements ICommandHandler {
       where: { id: command.jobId },
       include: { orderedTasks: true },
     })
-
+    console.log(job)
     const tasks = await this.prismaService.orderedTasks.findMany({
       where: { projectId: job.projectId, taskMenuId: command.taskMenuId },
     })

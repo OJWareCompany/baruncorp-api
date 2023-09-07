@@ -1,30 +1,33 @@
-import { Controller, Get, HttpStatus, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
-import { OrderedTaskResponseFields } from '../../dtos/job.response.dto'
-import { JobProps } from '../../domain/job.type'
-import { FindJobPaginatedQuery } from './find-job.paginated.query-handler'
-import { FindJobPaginatedRequestDto } from './find-job.paginated.request.dto'
-import { JobPaginatedResponseDto, JobPaginatedResponseFields } from '../../dtos/job.paginated.response.dto'
+import { Controller, Get, HttpStatus, Query, UseGuards } from '@nestjs/common'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
+import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
+import { UserEntity } from '../../../users/domain/user.entity'
+import { AuthGuard } from '../../../auth/authentication.guard'
+import { JobPaginatedResponseDto, JobPaginatedResponseFields } from '../../dtos/job.paginated.response.dto'
+import { OrderedTaskResponseFields } from '../../dtos/job.response.dto'
+import { JobProps } from '../../domain/job.type'
+import { FindMyActiveJobPaginatedQuery } from './find-my-active-job.paginated.query-handler'
 
-@Controller('jobs')
-export class FindJobPaginatedHttpController {
+@Controller('my-active-jobs')
+export class FindMyActiveJobPaginatedHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get()
-  @ApiOperation({ summary: 'Find job' })
+  @Get('')
+  @ApiOperation({ summary: 'Find My active jobs.' })
   @ApiResponse({
     status: HttpStatus.OK,
     type: JobPaginatedResponseDto,
   })
+  @UseGuards(AuthGuard)
   async findJob(
-    @Query() request: FindJobPaginatedRequestDto,
+    @User() user: UserEntity,
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<JobPaginatedResponseDto> {
-    const query = new FindJobPaginatedQuery({
-      ...request,
+    const query = new FindMyActiveJobPaginatedQuery({
+      userId: user.id,
       page: queryParams.page,
       limit: queryParams.limit,
     })
