@@ -63,11 +63,6 @@ export interface SignUpRequestDto {
    * @default true
    */
   isRevisionRevenueShare: boolean
-  /**
-   * 필요한지 확인 필요
-   * @default "CLIENT"
-   */
-  type: string
 }
 
 export interface AccessTokenResponseDto {
@@ -1287,26 +1282,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name CreateUserHttpContollerCreateClient
-     * @request POST:/users/clients
+     * @request POST:/users
      */
     createUserHttpContollerCreateClient: (data: CreateUserRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/users/clients`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name CreateUserHttpContollerCreateMember
-     * @request POST:/users/members
-     */
-    createUserHttpContollerCreateMember: (data: CreateUserRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/users/members`,
+        path: `/users`,
         method: 'POST',
         body: data,
         type: ContentType.Json,

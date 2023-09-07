@@ -20,7 +20,6 @@ export class CreateJobService implements ICommandHandler {
     // TODO Project Type 업데이트
     // TODO Client User 여러명 설정 -> user profile에서 contact emails 필드 추가하기.
     const clientUser = await this.jobRepository.findUser(command.clientUserId)
-    console.log(clientUser)
     const organization = await this.prismaService.organizations.findUnique({ where: { id: clientUser.organizationId } })
     const orderer = await this.jobRepository.findUser(command.updatedByUserId)
     const project = await this.jobRepository.findProject(command.projectId)

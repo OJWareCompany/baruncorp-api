@@ -35,7 +35,6 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
     query: FindProjectDetailQuery,
   ): Promise<Partial<OrderedProjects> & { organization: Partial<OrganizationModel> }> {
     try {
-      console.log(2)
       const record = await this.prismaService.orderedProjects.findFirstOrThrow({
         where: { id: query.id },
         select: {
