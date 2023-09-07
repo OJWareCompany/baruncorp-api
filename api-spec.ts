@@ -728,6 +728,35 @@ export interface JobResponseDto {
   receivedAt: string
 }
 
+export interface JobPaginatedResponseFields {
+  /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
+  propertyAddress: string
+  /** @example 5 */
+  jobRequestNumber: number
+  /** @example "In Progress" */
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
+  /** @example "Residential" */
+  projectType: string
+  /** @example "Ground Mount" */
+  mountingType: string
+  orderedTasks: OrderedTaskResponseFields[]
+  clientInfo: ClientInformationFields
+  /** @example "2023-08-11 09:10:31" */
+  receivedAt: string
+}
+
+export interface JobPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: JobPaginatedResponseFields[]
+}
+
 export interface CreateOrderedTaskRequestDto {
   /** @default "0904b078-6c8a-4044-9323-4757d6ca8afa" */
   taskMenuId: string
@@ -869,6 +898,21 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   jobName?: string | null
   /** @default "" */
   projectId?: string | null
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindMyActiveJobPaginatedHttpControllerFindJobParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1714,7 +1758,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindJobPaginatedHttpControllerFindJobParams,
       params: RequestParams = {},
     ) =>
-      this.request<JobResponseDto, any>({
+      this.request<JobPaginatedResponseDto, any>({
         path: `/jobs`,
         method: 'GET',
         query: query,
@@ -1761,6 +1805,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<JobResponseDto, any>({
         path: `/jobs/${jobId}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  myActiveJobs = {
+    /**
+     * No description
+     *
+     * @name FindMyActiveJobPaginatedHttpControllerFindJob
+     * @summary Find My active jobs.
+     * @request GET:/my-active-jobs
+     */
+    findMyActiveJobPaginatedHttpControllerFindJob: (
+      query: FindMyActiveJobPaginatedHttpControllerFindJobParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<JobPaginatedResponseDto, any>({
+        path: `/my-active-jobs`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),
