@@ -9,7 +9,8 @@ export class UserEntity extends AggregateRoot<UserProps> {
 
   static create(create: CreateUserProps): UserEntity {
     const id = v4()
-    const props: UserProps = { ...create }
+    const type = create.organizationType === 'administration' ? 'member' : 'client'
+    const props: UserProps = { ...create, type }
     return new UserEntity({ id, props })
   }
 

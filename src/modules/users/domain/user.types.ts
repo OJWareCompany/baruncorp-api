@@ -21,6 +21,6 @@ export interface CreateUserProps {
   address: string | null
   phoneNumber: string | null
   updatedBy: string
-  type: string
+  organizationType: string
   deliverablesEmails: string[]
 }

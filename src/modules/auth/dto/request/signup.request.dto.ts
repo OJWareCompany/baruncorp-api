@@ -55,8 +55,4 @@ export class SignUpRequestDto {
   @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsString()
   readonly isRevisionRevenueShare: boolean
-
-  @ApiProperty({ default: 'CLIENT', description: '필요한지 확인 필요' })
-  @IsString()
-  readonly type: string
 }

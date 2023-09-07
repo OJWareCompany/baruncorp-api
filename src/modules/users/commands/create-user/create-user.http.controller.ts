@@ -12,27 +12,11 @@ import { CreateUserRequestDto } from './create-user.request.dto'
 export class CreateUserHttpContoller {
   constructor(private readonly commandBus: CommandBus) {}
 
-  @Post('clients')
+  @Post()
   @ApiResponse({ status: HttpStatus.CREATED })
   @UseGuards(AuthGuard)
   async createClient(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<IdResponse> {
     const command = new CreateUserCommand({
-      type: 'client',
-      updatedBy: user.getProps().userName.getFullName(),
-      ...request,
-    })
-
-    const result = await this.commandBus.execute(command)
-
-    return new IdResponse(result.id)
-  }
-
-  @Post('members')
-  @ApiResponse({ status: HttpStatus.CREATED })
-  @UseGuards(AuthGuard)
-  async createMember(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<IdResponse> {
-    const command = new CreateUserCommand({
-      type: 'member',
       updatedBy: user.getProps().userName.getFullName(),
       ...request,
     })

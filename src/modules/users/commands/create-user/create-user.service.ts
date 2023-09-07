@@ -27,7 +27,7 @@ export class CreateUserService implements ICommandHandler {
       address: null,
       phoneNumber: command.phoneNumber,
       updatedBy: command.updatedBy,
-      type: command.type,
+      organizationType: organization.organizationType,
       deliverablesEmails: command.deliverablesEmails,
     })
 

@@ -7,7 +7,6 @@ export class CreateUserCommand {
   readonly email: string
   readonly deliverablesEmails: string[]
   readonly phoneNumber: string
-  readonly type: string
   readonly updatedBy: string
 
   constructor(props: CreateUserCommand) {

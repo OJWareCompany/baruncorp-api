@@ -102,7 +102,7 @@ export class AuthenticationService {
       address: rest.address,
       phoneNumber: rest.phoneNumber,
       updatedBy: 'system',
-      type: rest.type,
+      organizationType: organization.getProps().organizationType,
     })
 
     await this.usersService.insertUser(userEntity, new InputPasswordVO(password))
