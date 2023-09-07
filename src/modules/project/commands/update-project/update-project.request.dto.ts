@@ -11,6 +11,7 @@ export class UpdateProjectRequestDto {
 
   @ApiProperty({ default: 'Chris Kim' })
   @IsString()
+  @IsOptional()
   readonly projectPropertyOwner: string | null
 
   @ApiProperty({ default: '50021' })
