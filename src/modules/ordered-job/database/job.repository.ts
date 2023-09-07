@@ -1,5 +1,5 @@
 import { OrderedProjects, OrderedTasks, Users } from '@prisma/client'
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { JobRepositoryPort } from './job.repository.port'
 import { JobMapper } from '../job.mapper'
@@ -35,13 +35,15 @@ export class JobRepository implements JobRepositoryPort {
     return await this.prismaService.orderedProjects.findUnique({ where: { id } })
   }
 
-  async findJob(id: string): Promise<JobEntity> {
+  async findJobOrThrow(id: string): Promise<JobEntity> {
     const record = await this.prismaService.orderedJobs.findUnique({
       where: { id },
       include: {
         orderedTasks: true,
       },
     })
+    if (!record) throw new NotFoundException('No OrderedJob found', '40005')
+
     const currentJob = await this.prismaService.orderedJobs.findFirst({
       where: { projectId: record.projectId },
       orderBy: { createdAt: 'desc' },

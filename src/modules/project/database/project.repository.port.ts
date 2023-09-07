@@ -4,6 +4,7 @@ import { UserEntity } from '../../../modules/users/domain/user.entity'
 export interface ProjectRepositoryPort {
   // 어떤 메서드가 필요하다는 것을 정의해둘수 있음
   findProject(id: string): Promise<ProjectEntity>
+  findProjectOrThrow(id: string): Promise<ProjectEntity>
   countTotalOfJobs(id: string): Promise<number>
   update(entity: ProjectEntity): Promise<void>
   createProject(props: ProjectEntity): Promise<void>

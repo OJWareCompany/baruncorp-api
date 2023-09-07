@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../../../database/prisma.service'
 import { DeleteOrderedTaskCommand } from './delete-ordered-task.command'
 // import { convertToAssignableTask } from '../../domain/convert-to-assignable-task'
@@ -9,6 +9,7 @@ export class DeleteOrderedTaskService implements ICommandHandler {
   constructor(private readonly prismaService: PrismaService) {}
   async execute(command: DeleteOrderedTaskCommand): Promise<any> {
     const task = await this.prismaService.orderedTasks.findUnique({ where: { id: command.id } })
+    if (!task) throw new NotFoundException('Not Task found', '40007')
     // const job = await this.prismaService.orderedTasks.findMany({ where: { jobId: task.jobId } })
 
     // const services = await this.prismaService.services.findMany()

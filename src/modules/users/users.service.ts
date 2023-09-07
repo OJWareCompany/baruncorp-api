@@ -22,8 +22,6 @@ import { CreateUserRoleProps, UserRole, UserRoles } from './domain/value-objects
 import { LicenseEntity } from './user-license.entity'
 import { State } from '../department/domain/value-objects/state.vo'
 import { LicenseType } from './user-license.type'
-import { PrismaService } from '../database/prisma.service'
-import { FindUserRqeustDto } from './queries/find-users/find-user.request.dto'
 
 @Injectable()
 export class UserService {
@@ -79,6 +77,8 @@ export class UserService {
   }
 
   async upadteProfile(userId: string, userName: UserName): Promise<void> {
+    const user = await this.userRepository.findOneById(userId)
+    if (!user) throw new NotFoundException('Not Found User.', '100181')
     await this.userRepository.update(userId, userName)
   }
 

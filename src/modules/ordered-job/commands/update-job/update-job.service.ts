@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
+import { Inject, NotFoundException } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
 import { JOB_REPOSITORY } from '../../job.di-token'
@@ -17,7 +17,7 @@ export class UpdateJobService implements ICommandHandler {
 
   async execute(command: UpdateJobCommand): Promise<void> {
     const editor = await this.prismaService.users.findUnique({ where: { id: command.updatedByUserId } })
-    const job = await this.jobRepository.findJob(command.jobId)
+    const job = await this.jobRepository.findJobOrThrow(command.jobId)
     job.updateJobStatus(command.jobStatus as JobStatus)
     job.updateSystemSize(command.systemSize)
     job.updateMailingAddressWetForStamp(command.mailingAddressForWetStamp)

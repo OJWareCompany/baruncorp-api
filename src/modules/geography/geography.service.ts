@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNoteHistoryModel, AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
@@ -34,18 +34,26 @@ export class GeographyService {
   }
 
   async findNoteByGeoId(geoId: string): Promise<AHJNotesModel> {
-    return await this.geographyRepository.findNoteByGeoId(geoId)
+    const note = await this.geographyRepository.findNoteByGeoId(geoId)
+    if (!note) throw new NotFoundException('Not Ahj Note Found', '70001')
+    return note
   }
 
   async deleteNoteByGeoId(geoId: string): Promise<void> {
+    const note = await this.geographyRepository.findNoteByGeoId(geoId)
+    if (!note) throw new NotFoundException('Not Ahj Note Found', '70001')
     return await this.geographyRepository.deleteNoteByGeoId(geoId)
   }
 
   async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNotesModel> {
-    return await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
+    const note = await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
+    if (!note) throw new NotFoundException('Not Note History Found', '70002')
+    return note
   }
 
   async updateNote(user: UserEntity, geoId: string, dto: UpdateAhjNoteDto): Promise<void> {
+    const note = await this.geographyRepository.findNoteByGeoId(geoId)
+    if (!note) throw new NotFoundException('Not Ahj Note Found', '70001')
     await this.geographyRepository.updateNote(user.getProps().userName.getFullName(), geoId, dto)
   }
 }

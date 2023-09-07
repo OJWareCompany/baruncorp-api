@@ -39,9 +39,15 @@ export class UserRepository implements UserRepositoryPort {
     return this.userMapper.toDomain(user)
   }
 
-  async update(userId: string, userName: UserName): Promise<void> {
+  async findOneByIdOrThrow(id: string): Promise<UserEntity> {
+    const user = await this.prismaService.users.findUnique({ where: { id } })
+    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    return this.userMapper.toDomain(user)
+  }
+
+  async update(id: string, userName: UserName): Promise<void> {
     await this.prismaService.users.update({
-      where: { id: userId },
+      where: { id },
       data: {
         firstName: userName.getFirstName(),
         lastName: userName.getLastName(),
@@ -71,6 +77,8 @@ export class UserRepository implements UserRepositoryPort {
   }
 
   async findUserIdByEmail({ email }: EmailVO): Promise<Pick<UserEntity, 'id'> | null> {
+    const user = await this.prismaService.users.findUnique({ where: { email } })
+    if (!user) throw new NotFoundException('Not Found User.', '10018')
     return await this.prismaService.users.findUnique({
       select: { id: true },
       where: { email },
@@ -87,18 +95,27 @@ export class UserRepository implements UserRepositoryPort {
     return password.password
   }
 
-  async findRoleByUserId(userId: string): Promise<UserRole> {
-    const record = await this.prismaService.userRole.findFirst({ where: { userId } })
+  async findRoleByUserId(id: string): Promise<UserRole> {
+    const user = await this.prismaService.users.findUnique({ where: { id } })
+    if (!user) throw new NotFoundException('Not Found User.', '10018')
+
+    const record = await this.prismaService.userRole.findFirst({ where: { userId: id } })
     return record && this.userRoleMapper.toDomain(record)
   }
 
   async giveRole(prop: UserRole): Promise<void> {
+    const user = await this.prismaService.users.findUnique({ where: { id: prop.getProps().userId } })
+    if (!user) throw new NotFoundException('Not Found User.', '10018')
+
     const record = this.userRoleMapper.toPersistence(prop)
     await this.prismaService.userRole.create({ data: record })
   }
 
   // TODO: how to soft delete
   async removeRole(entity: UserRole): Promise<void> {
+    const user = await this.prismaService.users.findUnique({ where: { id: entity.getProps().userId } })
+    if (!user) throw new NotFoundException('Not Found User.', '10018')
+
     await this.prismaService.userRole.delete({
       where: {
         userId_role: {

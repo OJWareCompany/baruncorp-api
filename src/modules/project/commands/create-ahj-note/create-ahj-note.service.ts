@@ -23,29 +23,29 @@ export class CreateAhjNoteService {
 
   async generateGeographyAndAhjNotes(censusResponseDto: CensusResponseDto) {
     const { state, county, countySubdivisions, place } = censusResponseDto
-
     /**
      * State & Notes
      */
-    await this.geographyRepository.createState(state)
-    await this.geographyRepository.updateStateNote(state)
+    state && (await this.geographyRepository.createState(state))
+    state && (await this.geographyRepository.updateStateNote(state))
 
     /**
      * County & Notes
      */
-    await this.geographyRepository.createCounty(county)
-    await this.geographyRepository.updateCountyNote(county, state)
+    county && (await this.geographyRepository.createCounty(county))
+    county && (await this.geographyRepository.updateCountyNote(county, state))
 
     /**
      * County Subdivisions & Note
      */
-    await this.geographyRepository.createCountySubdivisions(countySubdivisions)
-    await this.geographyRepository.updateCountySubdivisionsNote(countySubdivisions, state, county)
+    countySubdivisions && (await this.geographyRepository.createCountySubdivisions(countySubdivisions))
+    countySubdivisions &&
+      (await this.geographyRepository.updateCountySubdivisionsNote(countySubdivisions, state, county))
 
     /**
      * Place & Note
      */
-    await this.geographyRepository.createPlace(place)
-    await this.geographyRepository.updatePlaceNote(place, state, county, countySubdivisions)
+    place && (await this.geographyRepository.createPlace(place))
+    place && (await this.geographyRepository.updatePlaceNote(place, state, county, countySubdivisions))
   }
 }

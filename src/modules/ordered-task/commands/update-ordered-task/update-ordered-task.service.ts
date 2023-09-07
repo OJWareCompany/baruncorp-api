@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
+import { Inject, NotFoundException } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobStatusEnum } from '../../../ordered-job/domain/job.type'
@@ -20,6 +20,9 @@ export class UpdateOrderedTaskService implements ICommandHandler {
       ? await this.prismaService.users.findUnique({ where: { id: command.assigneeUserId } })
       : null
 
+    const task = await this.prismaService.orderedTasks.findUnique({ where: { id: command.orderedTaskId } })
+    if (!task) throw new NotFoundException('Not Task found', '40007')
+
     await this.prismaService.orderedTasks.update({
       where: { id: command.orderedTaskId },
       data: {
@@ -30,8 +33,6 @@ export class UpdateOrderedTaskService implements ICommandHandler {
         description: command.description,
       },
     })
-
-    const task = await this.prismaService.orderedTasks.findUnique({ where: { id: command.orderedTaskId } })
 
     if ([TaskStatusEnum.On_Hold, TaskStatusEnum.Canceled].includes(command.taskStatus as TaskStatusEnum)) {
       // TODO: 이벤트로 빼기

@@ -20,8 +20,7 @@ export class FindJobQueryHandler implements IQueryHandler {
   ) {}
 
   async execute(query: FindJobQuery): Promise<JobProps> {
-    const job = await this.jobRepository.findJob(query.jobId)
-
+    const job = await this.jobRepository.findJobOrThrow(query.jobId)
     return {
       ...job.getProps(),
     }

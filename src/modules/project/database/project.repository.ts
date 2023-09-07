@@ -1,5 +1,5 @@
 import { ProjectRepositoryPort } from './project.repository.port'
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../../database/prisma.service'
 import { ProjectEntity } from '../domain/project.entity'
 import { UserEntity } from '../../users/domain/user.entity'
@@ -16,6 +16,13 @@ export class ProjectRepository implements ProjectRepositoryPort {
 
   async findProject(id: string): Promise<ProjectEntity> {
     const record = await this.prismaService.orderedProjects.findUnique({ where: { id } })
+    if (!record) return null
+    return this.projectMapper.toDomain(record)
+  }
+
+  async findProjectOrThrow(id: string): Promise<ProjectEntity> {
+    const record = await this.prismaService.orderedProjects.findUnique({ where: { id } })
+    if (!record) throw new NotFoundException('No OrderedProjects found', '30001')
     return this.projectMapper.toDomain(record)
   }
 
