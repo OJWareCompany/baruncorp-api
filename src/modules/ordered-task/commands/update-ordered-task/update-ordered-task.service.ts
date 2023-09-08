@@ -23,12 +23,13 @@ export class UpdateOrderedTaskService implements ICommandHandler {
     const task = await this.orderedTaskRepository.findById(command.orderedTaskId)
     if (!task) throw new NotFoundException('Not Task found', '40007')
 
+    const assigneeName = assignee ? assignee.firstName + ' ' + assignee.lastName : null
+    const assigneeId = assignee ? assignee.id : null
     task
-      .setAssignee(assignee?.id, assignee?.firstName)
+      .setAssignee(assigneeName, assigneeId)
       .setDescription(command.description)
       .setIsLocked(command.isLocked)
       .setStatus(command.taskStatus)
-
     await this.orderedTaskRepository.update(task)
 
     if ([TaskStatusEnum.On_Hold, TaskStatusEnum.Canceled].includes(command.taskStatus as TaskStatusEnum)) {

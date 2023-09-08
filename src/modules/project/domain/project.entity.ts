@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
+import { NewOrderedTasks } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
 import { CreateProjectProps, MountingType, ProjectProps, ProjectUpdateProps } from './project.type'
-import { NewOrderedTasks } from '@src/modules/ordered-job/domain/value-objects/ordered-task.value-object'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string

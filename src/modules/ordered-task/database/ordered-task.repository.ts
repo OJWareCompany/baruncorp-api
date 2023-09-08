@@ -27,7 +27,13 @@ export class OrderedTaskRepository implements OrderedTaskRepositoryPort {
   async update(entity: OrderedTaskEntity | OrderedTaskEntity[]): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.orderedTaskMapper.toPersistence)
-    await this.prismaService.orderedTasks.updateMany({ data: records })
+    records.map(async (record) => {
+      await this.prismaService.orderedTasks.update({
+        where: { id: record.id },
+        data: record,
+      })
+    })
+
     for (const entity of entities) {
       entity.addUpdateEvent()
       await entity.publishEvents(this.eventEmitter)

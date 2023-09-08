@@ -18,6 +18,7 @@ import { DeleteJobService } from './commands/delete-job/delete-job.service'
 import UserMapper from '../users/user.mapper'
 import { FindMyActiveJobPaginatedHttpController } from './queries/find-my-active-jobs/find-my-active-job.paginated.http.controller'
 import { FindMyActiveJobPaginatedQueryHandler } from './queries/find-my-active-jobs/find-my-active-job.paginated.query-handler'
+import { UpdateJobWhenTaskIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-updated.domain-event-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -33,13 +34,14 @@ const queryHandlers: Provider[] = [
   FindJobPaginatedQueryHandler,
   FindMyActiveJobPaginatedQueryHandler,
 ]
+const eventHandlers: Provider[] = [UpdateJobWhenTaskIsUpdatedDomainEventHandler]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 
 const mappers: Provider[] = [JobMapper, UserMapper]
 
 @Module({
   imports: [PrismaModule, CqrsModule, AuthenticationModule],
-  providers: [...commandHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
   exports: [],
 })
