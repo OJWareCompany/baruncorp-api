@@ -64,6 +64,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
         state: record.stateOrRegion,
         street1: record.street1,
         street2: record.street2,
+        coordinates: [],
       }),
       isActiveContractor: !!record.isActiveContractor,
       isActiveWorkResource: !!record.isActiveWorkResource,

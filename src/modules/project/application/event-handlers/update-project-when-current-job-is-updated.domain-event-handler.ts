@@ -20,9 +20,9 @@ export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
 
     const project = await this.projectRepository.findProject(event.projectId)
     project
-      .updateSystemSize(event.systemSize)
-      .updateMailingAddressForWetStamp(event.mailingAddressForWetStamp)
-      .updateMountingType(event.mountingType)
+      .setSystemSize(event.systemSize)
+      .setMailingFullAddressForWetStamp(event.mailingFullAddressForWetStamp)
+      .setMountingType(event.mountingType)
       .updateHasTaskHistory(event.orderedTask)
 
     await this.projectRepository.updateProjectWhenJobIsCreated(project)

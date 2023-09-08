@@ -17,10 +17,10 @@ export class UpdateProjectWhenJobIsCreatedEventHandler {
     const totalOfJobs = await this.projectRepository.countTotalOfJobs(event.projectId)
 
     project
-      .updateTotalOfJobs(totalOfJobs)
-      .updateSystemSize(event.systemSize)
-      .updateMailingAddressForWetStamp(event.mailingAddressForWetStamp)
-      .updateMountingType(event.mountingType)
+      .setTotalOfJobs(totalOfJobs)
+      .setSystemSize(event.systemSize)
+      .setMailingFullAddressForWetStamp(event.mailingAddressForWetStamp.fullAddress)
+      .setMountingType(event.mountingType)
     await this.projectRepository.update(project)
   }
 }

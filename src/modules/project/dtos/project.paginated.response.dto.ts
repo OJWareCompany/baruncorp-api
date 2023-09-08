@@ -19,7 +19,7 @@ export class ProjectPaginatedResponseFields {
   projectNumber: string | null
 
   @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
-  propertyAddress: string
+  propertyFullAddress: string
 
   @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
   mountingType: MountingTypeEnum

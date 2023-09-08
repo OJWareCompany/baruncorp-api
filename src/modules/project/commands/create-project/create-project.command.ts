@@ -21,11 +21,10 @@ export class CreateProjectCommand {
     readonly postalCode: string
     readonly country: string | null
     readonly fullAddress: string
+    readonly coordinates: number[]
   }
 
   readonly projectNumber: string | null
-
-  readonly coordinates: number[]
 
   constructor(props: CreateProjectCommand) {
     Object.entries(props).map(([key, value]) => (this[key] = value))

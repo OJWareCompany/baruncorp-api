@@ -10,7 +10,7 @@ export class FindProjectsQuery extends PaginatedQueryBase {
 
   readonly projectNumber: string | null
 
-  readonly propertyAddress: string | null
+  readonly propertyFullAddress: string | null
 
   readonly organizationId: string | null
 
@@ -35,7 +35,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
       where: {
         ...(query.propertyType && { projectPropertyType: query.propertyType }),
         ...(query.projectNumber && { projectNumber: query.projectNumber }),
-        ...(query.propertyAddress && { propertyAddress: { contains: query.propertyAddress } }),
+        ...(query.propertyFullAddress && { propertyAddress: { contains: query.propertyFullAddress } }),
         ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
       },
       orderBy: { dateCreated: 'desc' },
@@ -47,7 +47,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
       where: {
         ...(query.propertyType && { projectPropertyType: query.propertyType }),
         ...(query.projectNumber && { projectNumber: query.projectNumber }),
-        ...(query.propertyAddress && { propertyAddress: { contains: query.propertyAddress } }),
+        ...(query.propertyFullAddress && { propertyAddress: { contains: query.propertyFullAddress } }),
         ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
       },
     })

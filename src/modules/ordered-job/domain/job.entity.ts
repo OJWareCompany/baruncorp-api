@@ -4,8 +4,9 @@ import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingType } from '../../project/domain/project.type'
 import { TaskStatusEnum } from '../../ordered-task/domain/ordered-task.type'
-import { JobCreatedDomainEvent } from './events/job-created.domain-event'
+import { Address } from '../../organization/domain/value-objects/address.vo'
 import { CreateJobProps, JobProps, JobStatus } from './job.type'
+import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 
 export class JobEntity extends AggregateRoot<JobProps> {
@@ -16,8 +17,8 @@ export class JobEntity extends AggregateRoot<JobProps> {
     const props: JobProps = {
       ...create,
       jobRequestNumber: ++create.totalOfJobs,
-      propertyAddress: create.propertyAddress,
-      jobName: create.propertyAddress + ` (Job ${create.totalOfJobs})`,
+      propertyFullAddress: create.propertyFullAddress,
+      jobName: create.propertyFullAddress + ` (Job ${create.totalOfJobs})`,
       jobStatus: 'Not Started',
       receivedAt: new Date(),
       orderedTasks: [],
@@ -68,7 +69,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  updateMailingAddressWetForStamp(mailingAddressForWetStamp: string): JobEntity {
+  updateMailingAddressWetForStamp(mailingAddressForWetStamp: Address): JobEntity {
     this.props.mailingAddressForWetStamp = mailingAddressForWetStamp
     return this
   }
@@ -107,7 +108,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         aggregateId: this.id,
         projectId: this.props.projectId,
         systemSize: this.props.systemSize,
-        mailingAddressForWetStamp: this.props.mailingAddressForWetStamp,
+        mailingFullAddressForWetStamp: this.props.mailingAddressForWetStamp.fullAddress,
         jobStatus: this.props.jobStatus,
         mountingType: this.props.mountingType as MountingType,
         orderedTask: this.props.orderedTasks,

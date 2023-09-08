@@ -1,12 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { OrderedProjects } from '@prisma/client'
 import { PrismaService } from '../../../database/prisma.service'
-import { OrganizationModel } from '../../../../modules/organization/database/organization.repository'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { JobProps } from '@src/modules/ordered-job/domain/job.type'
 
 export class FindProjectDetailQuery {
   readonly id: string
@@ -31,54 +30,38 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
    * domain and repository layers completely
    * and execute query directly
    */
-  async execute(
-    query: FindProjectDetailQuery,
-  ): Promise<Partial<OrderedProjects> & { organization: Partial<OrganizationModel> }> {
+  async execute(query: FindProjectDetailQuery): Promise<any> {
     try {
       const record = await this.prismaService.orderedProjects.findFirstOrThrow({
         where: { id: query.id },
-        select: {
-          id: true,
-          systemSize: true,
-          isGroundMount: true,
-          projectPropertyType: true,
-          propertyOwnerName: true,
-          clientOrganizationId: true,
-          projectFolder: true,
-          mailingAddressForWetStamps: true, // Remove
-          propertyAddress: true,
-          numberOfWetStamps: true,
-          projectNumber: true,
-          dateCreated: true,
-          totalOfJobs: true,
-          masterLogUpload: true,
-          designOrPeStampPreviouslyDoneOnProjectOutside: true,
-          hasHistoryElectricalPEStamp: true,
-          hasHistoryStructuralPEStamp: true,
-          coordinates: true,
-          organization: {
-            select: {
-              id: true,
-              name: true,
-            },
-          },
+        include: {
+          organization: true,
           jobs: {
-            include: { orderedTasks: true },
+            include: {
+              orderedTasks: true,
+            },
+            orderBy: {
+              createdAt: 'desc',
+            },
           },
         },
       })
 
       if (!record) throw new NotFoundException('No OrderedProjects found', '30001')
 
-      // record.coordinates = record.coordinates.split(',').map((n) => Number(n)) as any
       record.jobs = record.jobs.map((job) => {
-        const jobEntity = this.jobMapper.toDomain({ ...job })
-        return {
-          ...jobEntity.getProps(),
-        }
+        return this.jobMapper.toDomain({ ...job })
       }) as any
 
-      return record
+      const jobHasCurrentMailingAddress: any = record.jobs.find((jobEntity: any) => {
+        const props: JobProps = jobEntity.getProps()
+        return !!props.mailingAddressForWetStamp.coordinates.length
+      })
+
+      return {
+        record,
+        currentMailingAddress: jobHasCurrentMailingAddress?.getProps().mailingAddressForWetStamp,
+      }
     } catch (error) {
       if (error.message === 'No OrderedProjects found') throw new NotFoundException('No OrderedProjects found', '30001')
       else throw error

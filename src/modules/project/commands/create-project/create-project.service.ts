@@ -22,7 +22,7 @@ export class CreateProjectService implements ICommandHandler {
     await this.validate({ ...command, clientOrganizationId: command.clientOrganizationId })
 
     // const censusResponse = await this.searchCensus(command)
-    const censusResponse = await this.censusSearchCoordinatesService.search(command.coordinates)
+    const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
 
     const entity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,
@@ -31,7 +31,6 @@ export class CreateProjectService implements ICommandHandler {
       projectPropertyAddress: new Address({
         ...command.projectPropertyAddress,
       }),
-      coordinates: command.coordinates,
       clientOrganizationId: command.clientOrganizationId,
       updatedBy: command.userId,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({

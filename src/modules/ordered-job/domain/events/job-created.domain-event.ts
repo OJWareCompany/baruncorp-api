@@ -1,5 +1,6 @@
 import { MountingType } from '../../../project/domain/project.type'
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
+import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { NewOrderedTasks } from '../value-objects/ordered-task.value-object'
 
 /**
@@ -11,7 +12,7 @@ export class JobCreatedDomainEvent extends DomainEvent {
   public readonly projectId: string
   public readonly orderedTasks: NewOrderedTasks[]
   public readonly systemSize: number | null
-  public readonly mailingAddressForWetStamp: string | null
+  public readonly mailingAddressForWetStamp: Address | null
   public readonly mountingType: MountingType
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {

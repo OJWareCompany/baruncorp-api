@@ -6,7 +6,7 @@ import { JobStatus } from '../job.type'
 
 export class CurrentJobUpdatedDomainEvent extends DomainEvent {
   public readonly systemSize: number | null
-  public readonly mailingAddressForWetStamp: string | null
+  public readonly mailingFullAddressForWetStamp: string | null
   public readonly projectId: string
   public readonly jobStatus: JobStatus
   public readonly mountingType: MountingType

@@ -11,7 +11,7 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     const props: ProjectProps = {
       ...create,
       totalOfJobs: 1,
-      mailingAddressForWetStamp: null,
+      mailingFullAddressForWetStamp: null,
       systemSize: null,
       numberOfWetStamp: null,
       mountingType: null,
@@ -21,22 +21,22 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     return new ProjectEntity({ id, props })
   }
 
-  updateTotalOfJobs(totalOfJobs: number) {
+  setTotalOfJobs(totalOfJobs: number) {
     this.props.totalOfJobs = totalOfJobs
     return this
   }
 
-  updateSystemSize(systemSize: number) {
+  setSystemSize(systemSize: number) {
     this.props.systemSize = systemSize
     return this
   }
 
-  updateMailingAddressForWetStamp(mailingAddressForWetStamp: string) {
-    this.props.mailingAddressForWetStamp = mailingAddressForWetStamp
+  setMailingFullAddressForWetStamp(mailingFullAddressForWetStamp: string) {
+    this.props.mailingFullAddressForWetStamp = mailingFullAddressForWetStamp
     return this
   }
 
-  updateMountingType(mountingType: MountingType) {
+  setMountingType(mountingType: MountingType) {
     this.props.mountingType = mountingType
     return this
   }

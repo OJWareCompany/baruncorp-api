@@ -1,3 +1,4 @@
+import { Address } from '../../organization/domain/value-objects/address.vo'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import { OrderedTask, NewOrderedTasks } from './value-objects/ordered-task.value-object'
 
@@ -16,11 +17,11 @@ export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' 
 export interface CreateJobProps {
   projectId: string
   mountingType: string
-  propertyAddress: string
+  propertyFullAddress: string
   totalOfJobs: number
   orderedTasks: NewOrderedTasks[]
   systemSize: number | null
-  mailingAddressForWetStamp: string | null
+  mailingAddressForWetStamp: Address | null
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
@@ -33,11 +34,11 @@ export interface JobProps {
   mountingType: string
   jobName: string
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
-  propertyAddress: string
+  propertyFullAddress: string
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
   systemSize: number | null
-  mailingAddressForWetStamp: string | null
+  mailingAddressForWetStamp: Address | null
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation

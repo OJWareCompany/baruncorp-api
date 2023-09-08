@@ -21,7 +21,6 @@ export interface CreateProjectProps {
   projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
-  coordinates: number[]
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
@@ -32,7 +31,6 @@ export interface ProjectProps {
   projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
-  coordinates: number[]
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   mountingType: MountingType
@@ -41,7 +39,7 @@ export interface ProjectProps {
   hasHistoryStructuralPEStamp: boolean
 
   systemSize: number | null
-  mailingAddressForWetStamp: string
+  mailingFullAddressForWetStamp: string | null
   totalOfJobs: number
   numberOfWetStamp: number
 }

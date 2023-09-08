@@ -38,7 +38,7 @@ export class FindMyActiveJobPaginatedHttpController {
       ...result,
       items: result.items.map((job) => {
         const item = new JobPaginatedResponseFields()
-        item.propertyAddress = job.propertyAddress
+        item.propertyFullAddress = job.propertyFullAddress
         item.jobRequestNumber = job.jobRequestNumber
         item.mountingType = job.mountingType
         item.jobStatus = job.jobStatus

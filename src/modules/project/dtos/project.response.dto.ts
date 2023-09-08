@@ -7,6 +7,8 @@ import {
 import { JobProps, JobStatus, JobStatusEnum } from '../../ordered-job/domain/job.type'
 import { ClientInformation } from '../../ordered-job/domain/value-objects/client-information.value-object'
 import { OrderedTask } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
+import { Address } from '../../organization/domain/value-objects/address.vo'
+import { IsOptional } from 'class-validator'
 
 class Jobs implements JobProps {
   @ApiProperty()
@@ -18,7 +20,7 @@ class Jobs implements JobProps {
   @ApiProperty({ enum: JobStatusEnum, example: JobStatusEnum.In_Progress })
   jobStatus: JobStatus
   @ApiProperty()
-  propertyAddress: string
+  propertyFullAddress: string
   @ApiProperty()
   isExpedited: boolean
   @ApiProperty()
@@ -28,7 +30,8 @@ class Jobs implements JobProps {
   @ApiProperty()
   systemSize: number
   @ApiProperty()
-  mailingAddressForWetStamp: string
+  @IsOptional()
+  mailingAddressForWetStamp: Address | null
   @ApiProperty()
   numberOfWetStamp: number
   @ApiProperty()
@@ -65,14 +68,11 @@ export class ProjectResponseDto {
   @ApiProperty({ example: 'https://host.com/projects/path' })
   projectFolderLink: string | null
 
-  @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
-  mailingAddressForWetStamp: string | null
+  @ApiProperty({ example: Address })
+  propertyAddress: Address | null
 
-  @ApiProperty({ example: [11.2, 22.1] })
-  coordinates: number[]
-
-  @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
-  propertyAddress: string
+  @ApiProperty({ example: Address })
+  mailingAddressForWetStamp: Address | null
 
   @ApiProperty({ example: 3 })
   numberOfWetStamp: number | null

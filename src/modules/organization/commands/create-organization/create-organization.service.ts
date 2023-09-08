@@ -33,6 +33,7 @@ export class CreateOrganizationService implements ICommandHandler {
         state: command.state,
         postalCode: command.postalCode,
         country: command.country,
+        coordinates: [],
       }),
       isActiveContractor: command.isActiveContractor,
       isActiveWorkResource: command.isActiveWorkResource,

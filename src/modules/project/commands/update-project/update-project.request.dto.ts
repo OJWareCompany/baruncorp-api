@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsObject, IsOptional, IsString } from 'class-validator'
+import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
-import { AddressRequestDto } from '../create-project/create-project.request.dto'
 
 export class UpdateProjectRequestDto {
   @ApiProperty({ default: ProjectPropertyTypeEnum.Residential, enum: ProjectPropertyTypeEnum })
@@ -19,9 +19,9 @@ export class UpdateProjectRequestDto {
   @IsOptional()
   readonly projectNumber: string | null
 
-  @ApiProperty({ default: AddressRequestDto })
+  @ApiProperty({ default: Address })
   @IsObject()
-  readonly projectPropertyAddress: AddressRequestDto
+  readonly projectPropertyAddress: Address
 
   @ApiProperty({ default: ProjectAssociatedRegulatoryBody })
   @IsObject()

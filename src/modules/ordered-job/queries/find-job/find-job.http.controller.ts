@@ -27,7 +27,7 @@ export class FindJobHttpController {
     response.numberOfWetStamp = result.numberOfWetStamp
     response.additionalInformationFromClient = result.additionalInformationFromClient
     response.updatedBy = result.updatedBy
-    response.propertyAddress = result.propertyAddress
+    response.propertyFullAddress = result.propertyFullAddress
     response.mountingType = result.mountingType
     response.jobStatus = result.jobStatus
     response.projectType = result.mountingType

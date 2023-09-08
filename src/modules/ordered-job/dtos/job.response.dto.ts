@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { JobStatus, JobStatusEnum } from '../domain/job.type'
+import { Address } from '../../organization/domain/value-objects/address.vo'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -66,8 +67,8 @@ export class JobResponseDto {
   @ApiProperty({ example: 300.1 })
   systemSize: number | null
 
-  @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
-  mailingAddressForWetStamp: string | null
+  @ApiProperty({ example: Address })
+  mailingAddressForWetStamp: Address | null
 
   @ApiProperty({ example: 'Ground Mount' })
   mountingType: string
@@ -82,7 +83,7 @@ export class JobResponseDto {
   updatedBy: string
 
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
-  propertyAddress: string
+  propertyFullAddress: string
 
   @ApiProperty({ example: 5 })
   jobRequestNumber: number | null

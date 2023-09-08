@@ -6,6 +6,7 @@ import { Mapper } from '../../libs/ddd/mapper.interface'
 import { JobStatus } from './domain/job.type'
 import { ClientInformation } from './domain/value-objects/client-information.value-object'
 import { OrderedTask } from './domain/value-objects/ordered-task.value-object'
+import { Address } from '../organization/domain/value-objects/address.vo'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -13,7 +14,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     const props = entity.getProps()
     return {
       id: props.id,
-      propertyAddress: props.propertyAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
+      propertyAddress: props.propertyFullAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
       jobStatus: props.jobStatus,
       additionalInformationFromClient: props.additionalInformationFromClient,
       clientOrganizationId: props.clientInfo.clientOrganizationId,
@@ -24,7 +25,13 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       receivedAt: props.receivedAt,
       projectId: props.projectId,
       systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
-      mailingAddressForWetStamp: props.mailingAddressForWetStamp,
+      mailingFullAddressForWetStamp: props.mailingAddressForWetStamp.fullAddress,
+      mailingAdderssState: props.mailingAddressForWetStamp.state,
+      mailingAdderssCity: props.mailingAddressForWetStamp.city,
+      mailingAdderssCoordinates: props.mailingAddressForWetStamp.coordinates.toString(),
+      mailingAdderssStreet1: props.mailingAddressForWetStamp.street1,
+      mailingAdderssStreet2: props.mailingAddressForWetStamp.street2,
+      mailingAdderssPostalCode: props.mailingAddressForWetStamp.postalCode,
       numberOfWetStamp: props.numberOfWetStamp,
       projectType: props.projectId,
       deliverablesEmail: props.clientInfo.deliverablesEmail.toString(),
@@ -124,11 +131,20 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         mountingType: record.mountingType,
         jobStatus: record.jobStatus as JobStatus,
         jobRequestNumber: record.jobRequestNumber,
-        propertyAddress: record.propertyAddress,
+        propertyFullAddress: record.propertyAddress,
         jobName: record.jobName,
         orderedTasks: orderedTasks,
         systemSize: Number(record.systemSize),
-        mailingAddressForWetStamp: record.mailingAddressForWetStamp,
+        mailingAddressForWetStamp: new Address({
+          city: record.mailingAdderssCity,
+          country: null,
+          postalCode: record.mailingAdderssPostalCode,
+          state: record.mailingAdderssState,
+          street1: record.mailingAdderssStreet1,
+          street2: record.mailingAdderssStreet2,
+          fullAddress: record.mailingFullAddressForWetStamp,
+          coordinates: record?.mailingAdderssCoordinates?.split(',').map((n) => Number(n)),
+        }),
         numberOfWetStamp: record.numberOfWetStamp,
         additionalInformationFromClient: record.additionalInformationFromClient,
         clientInfo: new ClientInformation({

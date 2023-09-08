@@ -468,7 +468,7 @@ model OrderedJobs {
   propertyAddress                               String           @map("property_address") @db.Text
   systemSize                                    Decimal?         @map("system_size") @db.Decimal(10, 2)
   otherComments                                 String?          @map("other_comments") @db.Text
-  mailingAddressForWetStamp                     String?          @map("mailing_address_for_wet_stamp") @db.VarChar(255)
+  mailingFullAddressForWetStamp                 String?          @map("mailing_full_address_for_wet_stamp") @db.VarChar(255)
   projectId                                     String           @map("project_id") @db.VarChar(255)
   jobNotesF                                     String?          @map("job_notes_f") @db.Text
   additionalInformationFromClient               String?          @map("additional_information_from_client") @db.Text
@@ -525,7 +525,13 @@ model OrderedJobs {
   sixMonthsPrior                                DateTime?        @map("six_months_prior") @db.Date
   standardPricing                               Boolean?         @map("standard_pricing")
   structuralOrElectricalPEAndWetStampSelectedGl Boolean?         @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
+  mailingAdderssCity                            String?          @map("mailing_adderss_city") @db.VarChar(255)
   clientOrganizationName                        String           @map("client_organization_name") @db.VarChar(255)
+  mailingAdderssState                           String?          @map("mailing_adderss_state") @db.VarChar(255)
+  mailingAdderssCoordinates                     String?          @map("mailing_adderss_coordinates") @db.VarChar(255)
+  mailingAdderssStreet1                         String?          @map("mailing_adderss_street1") @db.VarChar(255)
+  mailingAdderssStreet2                         String?          @map("mailing_adderss_street2") @db.VarChar(255)
+  mailingAdderssPostalCode                      String?          @map("mailing_adderss_postal_code") @db.VarChar(255)
   project                                       OrderedProjects? @relation(fields: [projectId], references: [id])
   orderedTasks                                  OrderedTasks[]
 
@@ -536,14 +542,14 @@ model OrderedProjects {
   id                                            String         @id @map("id") @db.VarChar(255)
   hasHistoryStructuralPEStamp                   Boolean        @default(false) @map("has_history_structural_pe_stamp")
   hasHistoryElectricalPEStamp                   Boolean        @default(false) @map("has_history_electrical_pe_stamp")
-  coordinates                                   String?        @db.VarChar(255)
+  propertyAddressCoordinates                    String?        @map("property_address_coordinates") @db.VarChar(255)
   mountingType                                  String?        @map("mounting_type") @db.VarChar(255)
   mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)
   systemSize                                    Decimal?       @map("system_size") @db.Decimal(10, 2)
   dateCreated                                   DateTime       @map("date_created") @db.DateTime(0)
   projectFolder                                 String?        @map("project_folder") @db.VarChar(255)
   projectNumber                                 String?        @map("project_number") @db.VarChar(255)
-  propertyAddress                               String         @map("property_address") @db.VarChar(255)
+  propertyFullAddress                           String         @map("property_full_address") @db.VarChar(255)
   propertyAddressStreet1                        String?        @map("property_address_street1") @db.VarChar(255)
   propertyAddressStreet2                        String?        @map("property_address_street2") @db.VarChar(255)
   propertyAddressCity                           String?        @map("property_address_city") @db.VarChar(255)

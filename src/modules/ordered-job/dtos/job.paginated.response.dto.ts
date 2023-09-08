@@ -43,7 +43,7 @@ class ClientInformationFields {
 
 export class JobPaginatedResponseFields {
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
-  propertyAddress: string
+  propertyFullAddress: string
 
   @ApiProperty({ example: 5 })
   jobRequestNumber: number
