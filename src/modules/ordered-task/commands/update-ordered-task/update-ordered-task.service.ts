@@ -2,7 +2,6 @@
 import { Inject, NotFoundException } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
-import { JobStatusEnum } from '../../../ordered-job/domain/job.type'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
 import { TaskStatusEnum } from '../../domain/ordered-task.type'
 import { ORDERED_TASK_REPOSITORY } from '../../ordered-task.di-token'
@@ -33,7 +32,7 @@ export class UpdateOrderedTaskService implements ICommandHandler {
     await this.orderedTaskRepository.update(task)
 
     if ([TaskStatusEnum.On_Hold, TaskStatusEnum.Canceled].includes(command.taskStatus as TaskStatusEnum)) {
-      const associatedTasks = await this.orderedTaskRepository.findAssociatedTasks(task)
+      const associatedTasks = await this.orderedTaskRepository.findByJobId(task.getProps().jobId)
       const uncompletedTasks = associatedTasks.filter((task) => !task.isCompleted())
       uncompletedTasks.map((task) => task.setStatus(command.taskStatus))
       await this.orderedTaskRepository.update(uncompletedTasks)

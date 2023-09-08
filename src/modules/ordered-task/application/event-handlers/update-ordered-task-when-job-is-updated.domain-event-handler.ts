@@ -15,14 +15,12 @@ export class UpdateOrderedTaskWhenJobIsUpdatedDomainEventHandler {
   @OnEvent(CurrentJobUpdatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: CurrentJobUpdatedDomainEvent) {
     if (event.jobStatus === 'On Hold') {
+      const associatedTasks = await this.orderedTaskRepository.findByJobId(event.aggregateId)
+
       // 모든 태스크 다 찾아서 on hold? 의미 있나.?
-      await this.prismaService.orderedTasks.updateMany({
-        where: {
-          jobId: event.aggregateId,
-          taskStatus: { not: 'Completed' },
-        },
-        data: { taskStatus: 'On Hold' },
-      })
+      const uncompletedTasks = associatedTasks.filter((task) => !task.isCompleted())
+      uncompletedTasks.map((task) => task.setStatus('On Hold'))
+      await this.orderedTaskRepository.update(uncompletedTasks)
     }
   }
 }

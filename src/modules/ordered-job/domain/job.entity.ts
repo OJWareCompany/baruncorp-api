@@ -3,11 +3,10 @@ import { BadRequestException } from '@nestjs/common'
 import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingType } from '../../project/domain/project.type'
-import { TaskStatus, TaskStatusEnum } from '../../ordered-task/domain/ordered-task.type'
+import { TaskStatusEnum } from '../../ordered-task/domain/ordered-task.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CreateJobProps, JobProps, JobStatus } from './job.type'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
-import { OrderedTask } from './value-objects/ordered-task.value-object'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -53,8 +52,13 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   updateJobStatus(status: JobStatus) {
+    const hasOnHoldTask = this.props.orderedTasks.filter((task) => task.taskStatus === TaskStatusEnum.On_Hold).length
     const isAllTasksCompleted = this.props.orderedTasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
-    if (!isAllTasksCompleted) throw new BadRequestException('There are uncompleted tasks.', '60001')
+    if (status === 'Completed' && !isAllTasksCompleted) {
+      throw new BadRequestException('There are uncompleted tasks.', '60001')
+    } else if (status === 'Completed' && hasOnHoldTask) {
+      throw new BadRequestException('There are holding tasks.', '60002')
+    }
     this.props.jobStatus = status
     return this
   }

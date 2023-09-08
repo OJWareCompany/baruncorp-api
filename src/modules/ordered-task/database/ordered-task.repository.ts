@@ -13,8 +13,8 @@ export class OrderedTaskRepository implements OrderedTaskRepositoryPort {
     protected readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async findAssociatedTasks(entity: OrderedTaskEntity): Promise<OrderedTaskEntity[]> {
-    const records = await this.prismaService.orderedTasks.findMany({ where: { jobId: entity.getProps().jobId } })
+  async findByJobId(jobId: string): Promise<OrderedTaskEntity[]> {
+    const records = await this.prismaService.orderedTasks.findMany({ where: { jobId } })
     return records.map(this.orderedTaskMapper.toDomain)
   }
 
@@ -27,12 +27,14 @@ export class OrderedTaskRepository implements OrderedTaskRepositoryPort {
   async update(entity: OrderedTaskEntity | OrderedTaskEntity[]): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.orderedTaskMapper.toPersistence)
-    records.map(async (record) => {
-      await this.prismaService.orderedTasks.update({
-        where: { id: record.id },
-        data: record,
-      })
-    })
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.orderedTasks.update({
+          where: { id: record.id },
+          data: record,
+        })
+      }),
+    )
 
     for (const entity of entities) {
       entity.addUpdateEvent()
