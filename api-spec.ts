@@ -1416,6 +1416,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: 'json',
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @name FindOrganizationHttpControllerGet
+     * @summary find organization.
+     * @request GET:/organizations/{organizationId}
+     */
+    findOrganizationHttpControllerGet: (organizationId: string, params: RequestParams = {}) =>
+      this.request<OrganizationResponseDto, any>({
+        path: `/organizations/${organizationId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
   }
   departments = {
     /**

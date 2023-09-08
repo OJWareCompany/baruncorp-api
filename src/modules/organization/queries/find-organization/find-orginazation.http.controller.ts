@@ -10,7 +10,7 @@ export class FindOrganizationHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @ApiOperation({ summary: 'find organization.' })
-  @ApiResponse({ status: HttpStatus.OK })
+  @ApiResponse({ status: HttpStatus.OK, type: OrganizationResponseDto })
   @Get(':organizationId')
   async get(@Param() request: FindOrganizationRequestDto): Promise<OrganizationResponseDto> {
     const query = new FindOrganizationQuery(request)
