@@ -568,6 +568,7 @@ export interface Jobs {
   /** @example "In Progress" */
   jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
   propertyAddress: string
+  isExpedited: boolean
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
   systemSize: number
@@ -648,6 +649,8 @@ export interface CreateJobRequestDto {
   mailingAddressForWetStamp: string | null
   /** @default 3 */
   numberOfWetStamp: number | null
+  /** @default false */
+  isExpedited: boolean
 }
 
 export interface UpdateJobRequestDto {
@@ -730,6 +733,8 @@ export interface JobResponseDto {
   clientInfo: ClientInformationFields
   /** @example "2023-08-11 09:10:31" */
   receivedAt: string
+  /** @example true */
+  isExpedited: boolean
 }
 
 export interface JobPaginatedResponseFields {
