@@ -5,7 +5,7 @@ import { User } from '../../libs/decorators/requests/logged-in-user.decorator'
 import { UserResponseDto } from '../users/dtos/user.response.dto'
 import { UserEntity } from '../users/domain/user.entity'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
-import { FindOrganizationRequestDto } from './queries/find-orginazation.request.dto'
+import { FindOrganizationRequestDto } from './queries/find-organization/find-orginazation.request.dto'
 
 @Controller('organizations')
 export class OrganizationController {

@@ -17,6 +17,11 @@ import { ServiceMapper } from '../department/service.mapper'
 import { CreateOrganizationHttpController } from './commands/create-organization/create-organization.controller.http'
 import { CreateOrganizationService } from './commands/create-organization/create-organization.service'
 import { CqrsModule } from '@nestjs/cqrs'
+import { FindOrganizationHttpController } from './queries/find-organization/find-orginazation.http.controller'
+import { FindOrganizationQueryHandler } from './queries/find-organization/find-orginazation.query-handler'
+
+const httpControllers = [FindOrganizationHttpController]
+const queryHandlers: Provider[] = [FindOrganizationQueryHandler]
 
 const repositories: Provider[] = [
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
@@ -37,8 +42,8 @@ const mappers: Provider[] = [
 
 @Module({
   imports: [CqrsModule],
-  providers: [...providers, ...repositories, ...mappers],
-  controllers: [OrganizationController, CreateOrganizationHttpController],
+  providers: [...providers, ...queryHandlers, ...repositories, ...mappers],
+  controllers: [OrganizationController, CreateOrganizationHttpController, ...httpControllers],
   exports: [OrganizationService],
 })
 export class OrganizationModule {}
