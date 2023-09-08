@@ -13,7 +13,7 @@ export class CreateUserHttpContoller {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post()
-  @ApiResponse({ status: HttpStatus.CREATED })
+  @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
   async createClient(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<IdResponse> {
     const command = new CreateUserCommand({

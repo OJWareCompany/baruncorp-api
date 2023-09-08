@@ -160,6 +160,11 @@ export interface CreateUserRequestDto {
   phoneNumber: string
 }
 
+export interface IdResponse {
+  /** @example "2cdc8ab1-6d50-49cc-ba14-54e4ac7ec231" */
+  id: string
+}
+
 export interface OrganizationResponseDto {
   id: string
   name: string
@@ -462,11 +467,6 @@ export interface CreateProjectRequestDto {
   projectPropertyAddress: AddressRequestDto
   /** @default [12.1,22.2] */
   coordinates: number[]
-}
-
-export interface IdResponse {
-  /** @example "2cdc8ab1-6d50-49cc-ba14-54e4ac7ec231" */
-  id: string
 }
 
 export interface ProjectAssociatedRegulatoryBody {
@@ -1329,11 +1329,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/users
      */
     createUserHttpContollerCreateClient: (data: CreateUserRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<IdResponse, any>({
         path: `/users`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1380,11 +1381,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: CreateOrganizationRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<IdResponse, any>({
         path: `/organizations`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1852,11 +1854,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/ordered-tasks
      */
     createOrderedTaskHttpControllerCreate: (data: CreateOrderedTaskRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<IdResponse, any>({
         path: `/ordered-tasks`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 
@@ -1900,11 +1903,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/ordered-job-notes
      */
     createJobNoteHttpControllerCreate: (data: CreateJobNoteRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<IdResponse, any>({
         path: `/ordered-job-notes`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
 

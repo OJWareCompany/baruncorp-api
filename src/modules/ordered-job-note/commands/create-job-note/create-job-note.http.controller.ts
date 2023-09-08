@@ -2,18 +2,18 @@ import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { ApiResponse } from '@nestjs/swagger'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
+import { IdResponse } from '../../../../libs/api/id.response.dto'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { CreateJobNoteCommand } from './create-job-note.command'
 import { CreateJobNoteRequestDto } from './create-job-note.request.dto'
-import { IdResponse } from '../../../../libs/api/id.response.dto'
 
 @Controller('ordered-job-notes')
 export class CreateJobNoteHttpController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @Post()
-  @ApiResponse({ status: HttpStatus.CREATED })
+  @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
   async create(@User() user: UserEntity, @Body() request: CreateJobNoteRequestDto): Promise<IdResponse> {
     const command = new CreateJobNoteCommand({

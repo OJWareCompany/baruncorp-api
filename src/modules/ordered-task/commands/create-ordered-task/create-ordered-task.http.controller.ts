@@ -10,7 +10,7 @@ import { CreateOrderedTaskRequestDto } from './create-ordered-task.request.dto'
 export class CreateOrderedTaskHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('')
-  @ApiResponse({ status: HttpStatus.OK })
+  @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
   async create(@Body() request: CreateOrderedTaskRequestDto): Promise<IdResponse[]> {
     const command = new CreateOrderedTaskCommand(request)
