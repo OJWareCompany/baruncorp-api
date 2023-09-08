@@ -93,6 +93,12 @@ export class ProjectResponseDto {
   @ApiProperty({ example: false })
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
 
+  @ApiProperty({ example: false })
+  hasHistoryElectricalPEStamp: boolean
+
+  @ApiProperty({ example: false })
+  hasHistoryStructuralPEStamp: boolean
+
   @ApiProperty({ example: [] })
   jobs: Jobs[]
 }

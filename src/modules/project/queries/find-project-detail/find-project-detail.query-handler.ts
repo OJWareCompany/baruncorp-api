@@ -53,6 +53,8 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
           totalOfJobs: true,
           masterLogUpload: true,
           designOrPeStampPreviouslyDoneOnProjectOutside: true,
+          hasHistoryElectricalPEStamp: true,
+          hasHistoryStructuralPEStamp: true,
           coordinates: true,
           organization: {
             select: {

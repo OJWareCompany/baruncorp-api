@@ -45,6 +45,8 @@ export class FindProjectDetailHttpController {
     response.totalOfJobs = result.totalOfJobs!
     response.masterLogUpload = !!result.masterLogUpload
     response.designOrPEStampPreviouslyDoneOnProjectOutSide = !!result.designOrPeStampPreviouslyDoneOnProjectOutside
+    response.hasHistoryElectricalPEStamp = !!result.hasHistoryElectricalPEStamp
+    response.hasHistoryStructuralPEStamp = !!result.hasHistoryStructuralPEStamp
     response.jobs = result.jobs
     response.coordinates = result.coordinates!.split(',').map((n) => Number(n)) as number[]
     return response
