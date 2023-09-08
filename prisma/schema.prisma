@@ -533,6 +533,8 @@ model OrderedJobs {
 
 model OrderedProjects {
   id                                            String         @id @map("id") @db.VarChar(255)
+  hasHistoryStructuralPEStamp                   Boolean        @default(false) @map("has_history_structural_pe_stamp")
+  hasHistoryElectricalPEStamp                   Boolean        @default(false) @map("has_history_electrical_pe_stamp")
   coordinates                                   String?        @db.VarChar(255)
   mountingType                                  String?        @map("mounting_type") @db.VarChar(255)
   mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)

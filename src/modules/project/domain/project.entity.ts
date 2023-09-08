@@ -1,6 +1,7 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateProjectProps, MountingType, ProjectProps, ProjectUpdateProps } from './project.type'
+import { NewOrderedTasks } from '@src/modules/ordered-job/domain/value-objects/ordered-task.value-object'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -14,6 +15,8 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
       systemSize: null,
       numberOfWetStamp: null,
       mountingType: null,
+      hasHistoryElectricalPEStamp: false,
+      hasHistoryStructuralPEStamp: false,
     }
     return new ProjectEntity({ id, props })
   }
@@ -35,6 +38,16 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
 
   updateMountingType(mountingType: MountingType) {
     this.props.mountingType = mountingType
+    return this
+  }
+
+  updateHasTaskHistory(orderedTasks: NewOrderedTasks[]) {
+    if (orderedTasks.map((task) => task.taskId).includes('5c29f1ae-d50b-4400-a6fb-b1a2c87126e9')) {
+      this.props.hasHistoryElectricalPEStamp = true
+    }
+    if (orderedTasks.map((task) => task.taskId).includes('99ff64ee-fe47-4235-a026-db197628d077')) {
+      this.props.hasHistoryStructuralPEStamp = true
+    }
     return this
   }
 

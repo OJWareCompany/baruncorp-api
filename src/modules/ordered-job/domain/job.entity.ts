@@ -88,6 +88,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         mailingAddressForWetStamp: this.props.mailingAddressForWetStamp,
         jobStatus: this.props.jobStatus,
         mountingType: this.props.mountingType as MountingType,
+        orderedTask: this.props.orderedTasks,
         isCurrentJop: this.props.isCurrentJob,
       }),
     )

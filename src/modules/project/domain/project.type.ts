@@ -37,6 +37,8 @@ export interface ProjectProps {
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   mountingType: MountingType
   updatedBy: string
+  hasHistoryElectricalPEStamp: boolean
+  hasHistoryStructuralPEStamp: boolean
 
   systemSize: number | null
   mailingAddressForWetStamp: string

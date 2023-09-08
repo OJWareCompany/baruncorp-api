@@ -31,6 +31,8 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       updatedAt: new Date(),
       dateCreated: new Date(),
       coordinates: String(props.coordinates),
+      hasHistoryElectricalPEStamp: entity.getProps().hasHistoryElectricalPEStamp,
+      hasHistoryStructuralPEStamp: entity.getProps().hasHistoryStructuralPEStamp,
 
       mountingType: props.mountingType,
 
@@ -106,6 +108,8 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         // clientUserName: record.clientUserName,
         numberOfWetStamp: null,
         mountingType: record.mountingType as MountingType,
+        hasHistoryElectricalPEStamp: !!record.hasHistoryElectricalPEStamp,
+        hasHistoryStructuralPEStamp: !!record.hasHistoryStructuralPEStamp,
       },
     })
   }

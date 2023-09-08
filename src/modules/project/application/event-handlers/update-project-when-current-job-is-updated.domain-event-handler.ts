@@ -23,6 +23,7 @@ export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
       .updateSystemSize(event.systemSize)
       .updateMailingAddressForWetStamp(event.mailingAddressForWetStamp)
       .updateMountingType(event.mountingType)
+      .updateHasTaskHistory(event.orderedTask)
 
     await this.projectRepository.updateProjectWhenJobIsCreated(project)
   }
