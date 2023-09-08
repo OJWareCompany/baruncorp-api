@@ -20,45 +20,22 @@ export class UpdateOrderedTaskService implements ICommandHandler {
       ? await this.prismaService.users.findUnique({ where: { id: command.assigneeUserId } })
       : null
 
-    const task = await this.prismaService.orderedTasks.findUnique({ where: { id: command.orderedTaskId } })
+    const task = await this.orderedTaskRepository.findById(command.orderedTaskId)
     if (!task) throw new NotFoundException('Not Task found', '40007')
 
-    await this.prismaService.orderedTasks.update({
-      where: { id: command.orderedTaskId },
-      data: {
-        isLocked: command.isLocked,
-        taskStatus: command.taskStatus,
-        ...(assignee && { assigneeUserId: assignee.id }),
-        ...(assignee && { assigneeName: assignee.firstName + ' ' + assignee.lastName }),
-        description: command.description,
-      },
-    })
+    task
+      .setAssignee(assignee?.id, assignee?.firstName)
+      .setDescription(command.description)
+      .setIsLocked(command.isLocked)
+      .setStatus(command.taskStatus)
+
+    await this.orderedTaskRepository.update(task)
 
     if ([TaskStatusEnum.On_Hold, TaskStatusEnum.Canceled].includes(command.taskStatus as TaskStatusEnum)) {
-      // TODO: 이벤트로 빼기
-      await this.prismaService.orderedTasks.updateMany({
-        where: { jobId: task.jobId, taskStatus: { not: TaskStatusEnum.Completed } },
-        data: {
-          taskStatus: command.taskStatus,
-        },
-      })
-
-      // TODO 이벤트로 빼기
-      await this.prismaService.orderedJobs.update({
-        where: { id: task.jobId },
-        data: { jobStatus: JobStatusEnum.On_Hold },
-      })
-    } else if (command.taskStatus === TaskStatusEnum.Completed) {
-      // TODO 이벤트로 빼기
-      const tasks = await this.prismaService.orderedTasks.findMany({ where: { jobId: task.jobId } })
-
-      const isAllCompleted = tasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
-      if (isAllCompleted) {
-        await this.prismaService.orderedJobs.update({
-          where: { id: task.jobId },
-          data: { jobStatus: JobStatusEnum.Completed },
-        })
-      }
+      const associatedTasks = await this.orderedTaskRepository.findAssociatedTasks(task)
+      const uncompletedTasks = associatedTasks.filter((task) => !task.isCompleted())
+      uncompletedTasks.map((task) => task.setStatus(command.taskStatus))
+      await this.orderedTaskRepository.update(uncompletedTasks)
     }
   }
 }

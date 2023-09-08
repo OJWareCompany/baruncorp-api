@@ -1,8 +1,8 @@
+import { Injectable } from '@nestjs/common'
 import { OrderedTasks } from '@prisma/client'
 import { Mapper } from '../../libs/ddd/mapper.interface'
+import { TaskStatus } from '../ordered-task/domain/ordered-task.type'
 import { OrderedTaskEntity } from './domain/ordered-task.entity'
-// import { OrderedTaskResponseDto } from './dtos/ordered-task.response'
-import { Injectable } from '@nestjs/common'
 
 @Injectable()
 export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks, any> {
@@ -195,9 +195,26 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       //#regionend
     }
   }
-  toDomain(record: OrderedTasks, ...entity: any): OrderedTaskEntity {
-    throw new Error('Method not implemented.')
+
+  toDomain(record: OrderedTasks): OrderedTaskEntity {
+    return new OrderedTaskEntity({
+      id: record.id,
+      props: {
+        isNewTask: record.isNewTask,
+        isLocked: record.isLocked,
+        taskStatus: record.taskStatus as TaskStatus,
+        taskName: record.taskName,
+        taskMenuId: record.taskMenuId,
+        jobId: record.jobId,
+        projectId: record.projectId,
+        dateCreated: record.dateCreated,
+        assigneeName: record.assigneeName,
+        assigneeUserId: record.assigneeUserId,
+        description: record.description,
+      },
+    })
   }
+
   toResponse(entity: OrderedTaskEntity, ...dtos: any): any {
     // throw new Error('Method not implemented.')
   }

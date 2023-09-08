@@ -3,10 +3,11 @@ import { BadRequestException } from '@nestjs/common'
 import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingType } from '../../project/domain/project.type'
-import { TaskStatusEnum } from '../../ordered-task/domain/ordered-task.type'
+import { TaskStatus, TaskStatusEnum } from '../../ordered-task/domain/ordered-task.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CreateJobProps, JobProps, JobStatus } from './job.type'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
+import { OrderedTask } from './value-objects/ordered-task.value-object'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -52,8 +53,8 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   updateJobStatus(status: JobStatus) {
-    const isAllTaskCompleted = this.props.orderedTasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
-    if (!isAllTaskCompleted) throw new BadRequestException('There are uncompleted tasks.', '60001')
+    const isAllTasksCompleted = this.props.orderedTasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
+    if (!isAllTasksCompleted) throw new BadRequestException('There are uncompleted tasks.', '60001')
     this.props.jobStatus = status
     return this
   }
@@ -68,6 +69,23 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
+  updateJobStatusByTask(): this {
+    const hasOnHoldTask = this.props.orderedTasks.filter((task) => task.taskStatus === TaskStatusEnum.On_Hold).length
+    const isAllCompleted = this.props.orderedTasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
+
+    this.props.jobStatus = isAllCompleted //
+      ? 'Completed'
+      : hasOnHoldTask
+      ? 'On Hold'
+      : this.props.jobStatus
+
+    return this
+  }
+
+  isOnHold(): boolean {
+    return this.props.jobStatus === 'On Hold'
+  }
+
   /**
    * 모든 필드에 대해서 update method를 만들면
    * 거의 모든 method에서 updated event를 이벤트 리스트에 추가해야한다.
@@ -79,7 +97,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
    * 업데이트 이벤트 하나로 다 처리해야하는가? 아니면 필드마다 업데이트 이베트를 추가해야하는가?
    */
 
-  emitUpdateEvent(): void {
+  addUpdateEvent(): void {
     this.addEvent(
       new CurrentJobUpdatedDomainEvent({
         aggregateId: this.id,
