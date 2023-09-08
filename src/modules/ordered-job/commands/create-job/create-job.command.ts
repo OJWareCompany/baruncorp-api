@@ -1,3 +1,5 @@
+import { initialize } from '../../../../libs/utils/constructor-initializer'
+
 class OrderedTaskWhenToCreateJob {
   taskId: string
   description: string
@@ -13,8 +15,9 @@ export class CreateJobCommand {
   readonly mailingAddressForWetStamp: string | null
   readonly numberOfWetStamp: number | null
   readonly mountingType: string
+  readonly isExpedited: boolean
 
   constructor(props: CreateJobCommand) {
-    Object.entries(props).map(([key, value]) => (this[key] = value))
+    initialize(this, props)
   }
 }

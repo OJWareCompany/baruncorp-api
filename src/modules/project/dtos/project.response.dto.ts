@@ -20,6 +20,8 @@ class Jobs implements JobProps {
   @ApiProperty()
   propertyAddress: string
   @ApiProperty()
+  isExpedited: boolean
+  @ApiProperty()
   jobRequestNumber: number
   @ApiProperty()
   orderedTasks: OrderedTask[]

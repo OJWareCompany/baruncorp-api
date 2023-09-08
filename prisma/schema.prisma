@@ -452,6 +452,7 @@ model OrderedJobNotes {
 
 model OrderedJobs {
   id                                            String           @id @map("id") @db.VarChar(255)
+  isExpedited                                   Boolean          @default(false) @map("is_expedited")
   clientUserId                                  String           @map("client_user_id") @db.VarChar(255)
   clientUserName                                String?          @map("client_user_name") @db.VarChar(255)
   jobStatus                                     String?          @map("job_status") @db.Text

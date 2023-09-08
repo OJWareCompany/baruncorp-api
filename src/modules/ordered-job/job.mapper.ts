@@ -32,6 +32,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       jobRequestNumber: props.jobRequestNumber,
       mountingType: props.mountingType,
       jobName: props.jobName,
+      isExpedited: props.isExpedited,
       clientUserId: props.clientInfo.clientUserId,
       clientUserName: props.clientInfo.clientUserName,
 
@@ -140,6 +141,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         }),
         updatedBy: record.updatedBy,
         receivedAt: record.receivedAt,
+        isExpedited: !!record.isExpedited,
         isCurrentJob: record.isCurrentJob,
       },
     })

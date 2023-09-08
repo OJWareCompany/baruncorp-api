@@ -101,4 +101,7 @@ export class JobResponseDto {
 
   @ApiProperty({ example: '2023-08-11 09:10:31' })
   receivedAt: string
+
+  @ApiProperty({ example: true })
+  isExpedited: boolean
 }

@@ -24,6 +24,7 @@ export interface CreateJobProps {
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
+  isExpedited: boolean
   updatedBy: string
 }
 
@@ -42,5 +43,6 @@ export interface JobProps {
   clientInfo: ClientInformation
   updatedBy: string
   receivedAt: Date
+  isExpedited: boolean
   isCurrentJob?: boolean
 }

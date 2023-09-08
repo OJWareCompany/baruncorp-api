@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
-import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 
 class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
@@ -76,4 +76,8 @@ export class CreateJobRequestDto {
   @IsNumber()
   @IsOptional()
   numberOfWetStamp: number | null
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  isExpedited: boolean
 }

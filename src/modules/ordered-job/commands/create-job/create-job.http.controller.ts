@@ -25,6 +25,7 @@ export class CreateJobHttpController {
       mailingAddressForWetStamp: dto.mailingAddressForWetStamp,
       numberOfWetStamp: dto.numberOfWetStamp,
       mountingType: dto.mountingType,
+      isExpedited: dto.isExpedited,
     })
     const result = await this.commandBus.execute(command)
     return new IdResponse(result.id)
