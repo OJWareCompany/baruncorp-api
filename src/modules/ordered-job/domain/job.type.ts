@@ -1,5 +1,5 @@
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { OrderedTask, OrderedTasksWhenToCreateJob } from './value-objects/ordered-task.value-object'
+import { OrderedTask, NewOrderedTasks } from './value-objects/ordered-task.value-object'
 
 export enum JobStatusEnum {
   Not_Started = 'Not Started',
@@ -18,7 +18,7 @@ export interface CreateJobProps {
   mountingType: string
   propertyAddress: string
   totalOfJobs: number
-  orderedTasks: OrderedTasksWhenToCreateJob[]
+  orderedTasks: NewOrderedTasks[]
   systemSize: number | null
   mailingAddressForWetStamp: string | null
   numberOfWetStamp: number | null

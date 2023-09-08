@@ -31,7 +31,6 @@ export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
 
   async execute(query: FindMyActiveJobPaginatedQuery): Promise<Paginated<JobProps>> {
     // TODO: totalcount때문에 풀스캔하게됨
-    console.log(query, 'asdasdas')
     const myActiveTasks = await this.prismaService.orderedTasks.findMany({
       where: {
         assigneeUserId: query.userId,

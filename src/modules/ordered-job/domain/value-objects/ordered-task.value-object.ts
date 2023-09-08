@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class OrderedTasksWhenToCreateJob {
+export class NewOrderedTasks {
   taskId: string
   description: string | null
-  constructor(props: OrderedTasksWhenToCreateJob) {
+  constructor(props: NewOrderedTasks) {
     this.taskId = props.taskId
     this.description = props.description
   }

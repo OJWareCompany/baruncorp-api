@@ -27,9 +27,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       new JobCreatedDomainEvent({
         aggregateId: id,
         projectId: create.projectId,
-        orderedTasks: create.orderedTasks.map((task) => {
-          return { taskId: task.taskId, description: task.description || null }
-        }),
+        orderedTasks: create.orderedTasks,
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
         mountingType: create.mountingType as MountingType,

@@ -1,10 +1,10 @@
 import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { ApiResponse } from '@nestjs/swagger'
-import { CreateOrderedTaskCommand } from './create-ordered-task.command'
-import { CreateOrderedTaskRequestDto } from './create-ordered-task.request.dto'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { IdResponse } from '../../../../libs/api/id.response.dto'
+import { CreateOrderedTaskCommand } from './create-ordered-task.command'
+import { CreateOrderedTaskRequestDto } from './create-ordered-task.request.dto'
 
 @Controller('ordered-tasks')
 export class CreateOrderedTaskHttpController {

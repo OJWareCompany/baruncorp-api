@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { ConflictException, Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { CreateOrderedTaskCommand } from './create-ordered-task.command'
+import { Users } from '@prisma/client'
 import { PrismaService } from '../../../database/prisma.service'
+import { NewOrderedTasks } from '../../../ordered-job/domain/value-objects/ordered-task.value-object'
 import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
 import { convertToAssignableTask } from '../../domain/convert-to-assignable-task'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
 import { ORDERED_TASK_REPOSITORY } from '../../ordered-task.di-token'
-import { Users } from '@prisma/client'
+import { CreateOrderedTaskCommand } from './create-ordered-task.command'
 
 @CommandHandler(CreateOrderedTaskCommand)
 export class CreateOrderedTaskService implements ICommandHandler {
@@ -22,16 +23,19 @@ export class CreateOrderedTaskService implements ICommandHandler {
       where: { id: command.jobId },
       include: { orderedTasks: true },
     })
-    console.log(job)
+
     const tasks = await this.prismaService.orderedTasks.findMany({
       where: { projectId: job.projectId, taskMenuId: command.taskMenuId },
     })
 
+    const newOrderedTask = new NewOrderedTasks({ taskId: command.taskMenuId, description: command.description })
+
     const services = await this.prismaService.services.findMany()
-    const assignableTask = convertToAssignableTask(command.taskMenuId, services)
+    const assignableTask = convertToAssignableTask(newOrderedTask, services)
 
     assignableTask.map((newTask) => {
       job.orderedTasks.map((existingTask) => {
+        if (newTask.name === 'Other') return
         if (newTask.id === existingTask.taskMenuId)
           throw new ConflictException(`${newTask.name} is already existed.`, '40002')
       })
