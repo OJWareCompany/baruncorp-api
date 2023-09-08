@@ -157,7 +157,7 @@ export interface CreateUserRequestDto {
   /** @default "hyomin@ojware.com" */
   deliverablesEmails: string[]
   /** @default "857-250-4567" */
-  phoneNumber: string
+  phoneNumber: string | null
 }
 
 export interface IdResponse {
@@ -1329,10 +1329,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name CreateUserHttpContollerCreateClient
+     * @name CreateUserHttpContollerCreateUnregisteredUser
      * @request POST:/users
      */
-    createUserHttpContollerCreateClient: (data: CreateUserRequestDto, params: RequestParams = {}) =>
+    createUserHttpContollerCreateUnregisteredUser: (data: CreateUserRequestDto, params: RequestParams = {}) =>
       this.request<IdResponse, any>({
         path: `/users`,
         method: 'POST',
