@@ -616,6 +616,10 @@ export interface ProjectResponseDto {
   masterLogUpload: boolean
   /** @example false */
   designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
+  /** @example false */
+  hasHistoryElectricalPEStamp: boolean
+  /** @example false */
+  hasHistoryStructuralPEStamp: boolean
   /** @example [] */
   jobs: Jobs[]
 }
