@@ -35,7 +35,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
       where: {
         ...(query.propertyType && { projectPropertyType: query.propertyType }),
         ...(query.projectNumber && { projectNumber: query.projectNumber }),
-        ...(query.propertyFullAddress && { propertyAddress: { contains: query.propertyFullAddress } }),
+        ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
         ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
       },
       orderBy: { dateCreated: 'desc' },
@@ -47,7 +47,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
       where: {
         ...(query.propertyType && { projectPropertyType: query.propertyType }),
         ...(query.projectNumber && { projectNumber: query.projectNumber }),
-        ...(query.propertyFullAddress && { propertyAddress: { contains: query.propertyFullAddress } }),
+        ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
         ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
       },
     })
