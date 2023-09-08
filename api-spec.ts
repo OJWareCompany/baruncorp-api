@@ -438,11 +438,11 @@ export interface AddressFromMapBox {
   coordinates: number[]
 }
 
-export interface AddressRequestDto {
+export interface Address {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
   /** @default null */
-  street2: string | null
+  street2: string
   /** @default "Lauderdale Lakes" */
   city: string
   /** @default "Florida" */
@@ -450,9 +450,11 @@ export interface AddressRequestDto {
   /** @default "33309" */
   postalCode: string
   /** @default "United State" */
-  country: string | null
+  country: string
   /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
   fullAddress: string
+  /** @default [12.1,22.2] */
+  coordinates: string[]
 }
 
 export interface CreateProjectRequestDto {
@@ -464,9 +466,7 @@ export interface CreateProjectRequestDto {
   clientOrganizationId: string
   /** @default "000152" */
   projectNumber: string | null
-  projectPropertyAddress: AddressRequestDto
-  /** @default [12.1,22.2] */
-  coordinates: number[]
+  projectPropertyAddress: Address
 }
 
 export interface ProjectAssociatedRegulatoryBody {
@@ -489,7 +489,7 @@ export interface UpdateProjectRequestDto {
   projectPropertyOwner: string | null
   /** @default "50021" */
   projectNumber: string | null
-  projectPropertyAddress: AddressRequestDto
+  projectPropertyAddress: Address
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
 }
 
@@ -505,7 +505,7 @@ export interface ProjectPaginatedResponseFields {
   /** @example null */
   projectNumber: string | null
   /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  propertyAddress: string
+  propertyFullAddress: string
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
   /** @example "2023-09-05T07:14:57.270Z" */
@@ -567,12 +567,12 @@ export interface Jobs {
   jobName: string
   /** @example "In Progress" */
   jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
-  propertyAddress: string
+  propertyFullAddress: string
   isExpedited: boolean
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
   systemSize: number
-  mailingAddressForWetStamp: string
+  mailingAddressForWetStamp: Address | null
   numberOfWetStamp: number
   additionalInformationFromClient: string
   clientInfo: ClientInformation
@@ -597,12 +597,8 @@ export interface ProjectResponseDto {
   clientOrganizationId: string
   /** @example "https://host.com/projects/path" */
   projectFolderLink: string | null
-  /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  mailingAddressForWetStamp: string | null
-  /** @example [11.2,22.1] */
-  coordinates: number[]
-  /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  propertyAddress: string
+  propertyAddress: Address | null
+  mailingAddressForWetStamp: Address | null
   /** @example 3 */
   numberOfWetStamp: number | null
   /** @example "Residential" */
@@ -645,8 +641,7 @@ export interface CreateJobRequestDto {
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
   /** @default [{"taskId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"taskId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"taskId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"taskId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"taskId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
-  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  mailingAddressForWetStamp: string | null
+  mailingAddressForWetStamp: Address | null
   /** @default 3 */
   numberOfWetStamp: number | null
   /** @default false */
@@ -664,8 +659,7 @@ export interface UpdateJobRequestDto {
   additionalInformationFromClient: string | null
   /** @default 300.1 */
   systemSize: number | null
-  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  mailingAddressForWetStamp: string | null
+  mailingAddressForWetStamp: Address | null
   /** @default 3 */
   numberOfWetStamp: number | null
   /** @default "Roof Mount" */
@@ -711,8 +705,7 @@ export interface JobResponseDto {
   projectId: string
   /** @example 300.1 */
   systemSize: number | null
-  /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
-  mailingAddressForWetStamp: string | null
+  mailingAddressForWetStamp: Address | null
   /** @example "Ground Mount" */
   mountingType: string
   /** @example 3 */
@@ -722,7 +715,7 @@ export interface JobResponseDto {
   /** @example "Chris Kim" */
   updatedBy: string
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
-  propertyAddress: string
+  propertyFullAddress: string
   /** @example 5 */
   jobRequestNumber: number | null
   /** @example "In Progress" */
@@ -739,7 +732,7 @@ export interface JobResponseDto {
 
 export interface JobPaginatedResponseFields {
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
-  propertyAddress: string
+  propertyFullAddress: string
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
@@ -883,7 +876,7 @@ export interface FindProjectsHttpControllerFindUsersParams {
   /** @default null */
   projectNumber: string | null
   /** @default "3480 Northwest 33rd Court" */
-  propertyAddress: string | null
+  propertyFullAddress: string | null
   /** @default "" */
   organizationId: string | null
   /**
