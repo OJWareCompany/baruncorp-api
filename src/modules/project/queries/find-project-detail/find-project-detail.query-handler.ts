@@ -55,7 +55,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
 
       const jobHasCurrentMailingAddress: any = record.jobs.find((jobEntity: any) => {
         const props: JobProps = jobEntity.getProps()
-        return !!props.mailingAddressForWetStamp.coordinates.length
+        return !!props.mailingAddressForWetStamp?.coordinates?.length
       })
 
       return {
