@@ -565,6 +565,7 @@ export interface ClientInformation {
 }
 
 export interface Jobs {
+  jobId: string
   projectId: string
   mountingType: string
   jobName: string

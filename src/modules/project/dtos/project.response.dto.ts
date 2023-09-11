@@ -12,6 +12,8 @@ import { IsOptional } from 'class-validator'
 
 class Jobs implements JobProps {
   @ApiProperty()
+  jobId: string
+  @ApiProperty()
   projectId: string
   @ApiProperty()
   mountingType: string

@@ -50,11 +50,10 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
       if (!record) throw new NotFoundException('No OrderedProjects found', '30001')
 
       record.jobs = record.jobs.map((job) => {
-        return this.jobMapper.toDomain({ ...job })
+        return this.jobMapper.toDomain({ ...job }).getProps()
       }) as any
 
-      const jobHasCurrentMailingAddress: any = record.jobs.find((jobEntity: any) => {
-        const props: JobProps = jobEntity.getProps()
+      const jobHasCurrentMailingAddress: any = record.jobs.find((props: any) => {
         return !!props.mailingAddressForWetStamp?.coordinates?.length
       })
 
