@@ -1,4 +1,5 @@
 import { v4 } from 'uuid'
+import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 
 export interface ServiceProps {
   name: string
@@ -30,9 +31,8 @@ export interface CreateServiceProps {
   parentTaskId: string | null
 }
 
-export class ServiceEntity {
-  protected readonly id: string
-  protected readonly props: ServiceProps
+export class ServiceEntity extends AggregateRoot<ServiceProps> {
+  protected _id: string
 
   static create(create: CreateServiceProps) {
     const id = v4()
@@ -40,16 +40,12 @@ export class ServiceEntity {
     return new ServiceEntity({ id, props })
   }
 
-  constructor({ id, props }: { id: string; props: ServiceProps }) {
-    this.id = id
-    this.props = props
+  public validate(): void {
+    const result = 1 + 1
   }
 
-  getProps() {
-    const copyProps = {
-      id: this.id,
-      ...this.props,
-    }
-    return Object.freeze(copyProps)
+  isWetStampTask(): boolean {
+    const name = this.getProps().name
+    return name.includes('Wet Stamp') && name !== 'Wet Stamp'
   }
 }

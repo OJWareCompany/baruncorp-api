@@ -83,6 +83,9 @@ export interface ServiceResponseDto {
   name: string
   /** @default "Structural Calculation is service..." */
   description: string | null
+  /** @default true */
+  isOrderable: boolean
+  childTasks: ServiceResponseDto[]
 }
 
 export interface LincenseResponseDto {

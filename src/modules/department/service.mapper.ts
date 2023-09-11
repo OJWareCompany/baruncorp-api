@@ -54,6 +54,7 @@ export class ServiceMapper implements Mapper<ServiceEntity, ServiceModel, Servic
     response.id = copy.id
     response.name = copy.name
     response.description = copy.description
+    response.isOrderable = !!copy.billing_code
     return response
   }
 }

@@ -38,7 +38,32 @@ export class DepartmentService {
 
   async findAllServices(): Promise<ServiceResponseDto[]> {
     const entities = await this.departmentRepository.findAllServices()
-    return entities.map(this.serviceMapper.toResponse)
+
+    const menuTasks = entities.filter((entity) => !entity.getProps().parentTaskId && !entity.isWetStampTask())
+
+    const menuTaskResponses = menuTasks.map(this.serviceMapper.toResponse)
+    const childTaskMap: Record<string, ServiceResponseDto[]> = {
+      'Wet Stamp': [],
+    }
+
+    entities.map((entity) => {
+      const response = this.serviceMapper.toResponse(entity)
+      const props = entity.getProps()
+      if (entity.isWetStampTask()) {
+        childTaskMap['Wet Stamp'].push(response)
+      } else if (props.parentTaskId) {
+        if (!childTaskMap[props.parentTaskId]) childTaskMap[props.parentTaskId] = []
+        childTaskMap[props.parentTaskId].push(response)
+      }
+    })
+
+    menuTaskResponses.map((response) => {
+      response.childTasks = childTaskMap[response.id] || childTaskMap[response.name] || []
+    })
+
+    console.log(menuTaskResponses)
+
+    return menuTaskResponses
   }
 
   async findAllPositions(): Promise<PositionResponseDto[]> {
