@@ -53,13 +53,15 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
         return this.jobMapper.toDomain({ ...job }).getProps()
       }) as any
 
+      // as JobProps
       const jobHasCurrentMailingAddress: any = record.jobs.find((props: any) => {
         return !!props.mailingAddressForWetStamp?.coordinates?.length
+        // return props.jobStatus === 'Completed' && !!props.mailingAddressForWetStamp?.coordinates?.length
       })
 
       return {
         record,
-        currentMailingAddress: jobHasCurrentMailingAddress?.getProps().mailingAddressForWetStamp,
+        currentMailingAddress: jobHasCurrentMailingAddress?.mailingAddressForWetStamp,
       }
     } catch (error) {
       if (error.message === 'No OrderedProjects found') throw new NotFoundException('No OrderedProjects found', '30001')
