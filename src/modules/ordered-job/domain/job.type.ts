@@ -7,7 +7,7 @@ export enum JobStatusEnum {
   In_Progress = 'In Progress',
   On_Hold = 'On Hold',
   Completed = 'Completed',
-  Canceled = 'Cancel',
+  Canceled = 'Canceled',
 }
 export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
 

@@ -570,7 +570,7 @@ export interface Jobs {
   mountingType: string
   jobName: string
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
   propertyFullAddress: string
   isExpedited: boolean
   jobRequestNumber: number
@@ -656,7 +656,7 @@ export interface UpdateJobRequestDto {
   /** @default "chris@barun.com" */
   deliverablesEmails: string[]
   /** @default "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
   clientUserId: string
   /** @default "please, check this out." */
@@ -723,7 +723,7 @@ export interface JobResponseDto {
   /** @example 5 */
   jobRequestNumber: number | null
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
   /** @example "Residential" */
   projectType: string
   orderedTasks: OrderedTaskResponseFields[]
@@ -740,7 +740,7 @@ export interface JobPaginatedResponseFields {
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Cancel'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
   /** @example "Residential" */
   projectType: string
   /** @example "Ground Mount" */
