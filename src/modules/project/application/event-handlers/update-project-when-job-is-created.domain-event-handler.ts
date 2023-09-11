@@ -19,7 +19,7 @@ export class UpdateProjectWhenJobIsCreatedEventHandler {
     project
       .setTotalOfJobs(totalOfJobs)
       .setSystemSize(event.systemSize)
-      .setMailingFullAddressForWetStamp(event.mailingAddressForWetStamp.fullAddress)
+      .setMailingFullAddressForWetStamp(event.mailingAddressForWetStamp?.fullAddress)
       .setMountingType(event.mountingType)
     await this.projectRepository.update(project)
   }
