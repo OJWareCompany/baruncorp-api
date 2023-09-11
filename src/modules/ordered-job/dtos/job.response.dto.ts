@@ -56,7 +56,7 @@ export class ClientInformationFields {
   @ApiProperty({ example: 'gyals0386@gmail.com' })
   contactEmail: string
 
-  @ApiProperty({ example: 'gyals0386@gmail.com' })
+  @ApiProperty({ example: 'gyals0386@gmail.com', type: String, isArray: true })
   deliverablesEmails: string[]
 }
 

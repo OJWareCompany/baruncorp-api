@@ -4,7 +4,7 @@ import { JobStatus, JobStatusEnum } from '../../domain/job.type'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 
 export class UpdateJobRequestDto {
-  @ApiProperty({ default: 'chris@barun.com' })
+  @ApiProperty({ default: 'chris@barun.com', type: String, isArray: true })
   @IsArray()
   deliverablesEmails: string[]
 

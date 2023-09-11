@@ -454,7 +454,7 @@ export interface Address {
   /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
   fullAddress: string
   /** @default [12.1,22.2] */
-  coordinates: string[]
+  coordinates: number[]
 }
 
 export interface CreateProjectRequestDto {

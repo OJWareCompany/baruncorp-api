@@ -18,7 +18,7 @@ export class CreateUserRequestDto {
   @IsEmail()
   readonly email: string
 
-  @ApiProperty({ default: 'hyomin@ojware.com' })
+  @ApiProperty({ default: 'hyomin@ojware.com', type: String, isArray: true })
   @IsArray()
   readonly deliverablesEmails: string[]
 

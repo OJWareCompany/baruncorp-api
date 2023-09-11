@@ -44,7 +44,7 @@ export class Address {
   @IsString()
   readonly fullAddress: string
 
-  @ApiProperty({ default: [12.1, 22.2] })
+  @ApiProperty({ default: [12.1, 22.2], type: Number, isArray: true })
   @IsArray()
   readonly coordinates: number[]
 
