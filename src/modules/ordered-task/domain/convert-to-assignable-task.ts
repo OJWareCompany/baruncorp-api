@@ -5,19 +5,7 @@ export const convertToAssignableTask = (
   orderTasks: NewOrderedTasks | NewOrderedTasks[],
   services: Services[],
 ): Services[] => {
-  const orderTaskList = Array.isArray(orderTasks) ? orderTasks : [orderTasks]
-
-  const otherTaskId = '2a2a256b-57a5-46f5-8cfb-1855cc29238a'
-  const otherTasks = orderTaskList.filter((task) => task.taskId === otherTaskId) // Other Task
-
-  const menuTaskIdSet = new Set()
-  const menuTask = orderTaskList.map((task) => {
-    if (task.taskId === otherTaskId || menuTaskIdSet.has(task.taskId)) return
-    menuTaskIdSet.add(task.taskId)
-    return new NewOrderedTasks({ taskId: task.taskId, description: task.description as string })
-  })
-
-  const filteredTasks = [...menuTask, ...otherTasks].filter((r) => r)
+  const filteredTasks = filterDuplicatedTask(orderTasks)
 
   // Wet Stamp 관련 로직 작성, Job List 매개변수로 받기
 
@@ -32,4 +20,20 @@ export const convertToAssignableTask = (
   })
 
   return result.flat().filter((r) => r)
+}
+
+const filterDuplicatedTask = (orderTasks: NewOrderedTasks | NewOrderedTasks[]) => {
+  const orderTaskList = Array.isArray(orderTasks) ? orderTasks : [orderTasks]
+
+  const otherTaskId = '2a2a256b-57a5-46f5-8cfb-1855cc29238a'
+  const otherTasks = orderTaskList.filter((task) => task.taskId === otherTaskId) // Other Task
+
+  const menuTaskIdSet = new Set()
+  const menuTask = orderTaskList.map((task) => {
+    if (task.taskId === otherTaskId || menuTaskIdSet.has(task.taskId)) return
+    menuTaskIdSet.add(task.taskId)
+    return new NewOrderedTasks({ taskId: task.taskId, description: task.description as string })
+  })
+
+  return [...menuTask, ...otherTasks].filter((r) => r)
 }
