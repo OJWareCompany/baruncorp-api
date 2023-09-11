@@ -61,8 +61,6 @@ export class DepartmentService {
       response.childTasks = childTaskMap[response.id] || childTaskMap[response.name] || []
     })
 
-    console.log(menuTaskResponses)
-
     return menuTaskResponses
   }
 
