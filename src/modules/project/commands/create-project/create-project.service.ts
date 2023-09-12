@@ -21,7 +21,7 @@ export class CreateProjectService implements ICommandHandler {
   async execute(command: CreateProjectCommand): Promise<{ id: string }> {
     await this.validate({ ...command, clientOrganizationId: command.clientOrganizationId })
 
-    // const censusResponse = await this.searchCensus(command)
+    // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
 
     const entity = ProjectEntity.create({

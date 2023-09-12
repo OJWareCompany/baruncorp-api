@@ -1,3 +1,4 @@
+import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { ProjectPropertyType } from '../../domain/project.type'
 
 /**
@@ -27,6 +28,8 @@ export class CreateProjectCommand {
   readonly projectNumber: string | null
 
   constructor(props: CreateProjectCommand) {
-    Object.entries(props).map(([key, value]) => (this[key] = value))
+    initialize(this, props)
+    this.projectPropertyAddress.coordinates[0] = Number(this.projectPropertyAddress.coordinates[0].toFixed(2))
+    this.projectPropertyAddress.coordinates[1] = Number(this.projectPropertyAddress.coordinates[1].toFixed(2))
   }
 }
