@@ -137,7 +137,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         propertyFullAddress: record.propertyAddress,
         jobName: record.jobName,
         orderedTasks: orderedTasks,
-        systemSize: Number(record.systemSize),
+        systemSize: record.systemSize ? Number(record.systemSize) : null,
         mailingAddressForWetStamp: new Address({
           city: record.mailingAdderssCity,
           country: record.mailingAdderssPostalCountry,

@@ -27,7 +27,7 @@ export class FindProjectDetailHttpController {
     // Whitelisting returned properties
     const response = new ProjectResponseDto()
     response.projectId = result.record.id!
-    response.systemSize = Number(result.record.systemSize)
+    response.systemSize = result.record.systemSize ? Number(result.record.systemSize) : null
     response.projectPropertyOwnerName = result.record.propertyOwnerName
     response.clientOrganization = result.record.organization.name!
     response.clientOrganizationId = result.record.organization.id!
