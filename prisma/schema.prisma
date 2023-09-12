@@ -532,6 +532,7 @@ model OrderedJobs {
   mailingAdderssStreet1                         String?          @map("mailing_adderss_street1") @db.VarChar(255)
   mailingAdderssStreet2                         String?          @map("mailing_adderss_street2") @db.VarChar(255)
   mailingAdderssPostalCode                      String?          @map("mailing_adderss_postal_code") @db.VarChar(255)
+  mailingAdderssPostalCountry                   String?          @map("mailing_adderss_country") @db.VarChar(255)
   project                                       OrderedProjects? @relation(fields: [projectId], references: [id])
   orderedTasks                                  OrderedTasks[]
 
@@ -585,6 +586,7 @@ model OrderedProjects {
   clientOrganizationId                          String         @map("client_organization_id") @db.VarChar(255)
   designOrPeStampPreviouslyDoneOnProjectOutside Int?           @map("design_or_pe_stamp_previously_done_on_project_outside")
   totalOfJobs                                   Int            @default(1) @map("total_of_jobs")
+  propertyAddressCountry                        String?        @map("property_address_country") @db.VarChar(255)
   organization                                  Organizations? @relation(fields: [clientOrganizationId], references: [id])
   jobs                                          OrderedJobs[]
 

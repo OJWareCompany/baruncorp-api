@@ -32,6 +32,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       mailingAdderssStreet1: props.mailingAddressForWetStamp?.street1,
       mailingAdderssStreet2: props.mailingAddressForWetStamp?.street2,
       mailingAdderssPostalCode: props.mailingAddressForWetStamp?.postalCode,
+      mailingAdderssPostalCountry: props.mailingAddressForWetStamp?.country,
       numberOfWetStamp: props.numberOfWetStamp,
       projectType: props.projectId,
       deliverablesEmail: props.clientInfo.deliverablesEmail.toString(),
@@ -138,7 +139,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         systemSize: Number(record.systemSize),
         mailingAddressForWetStamp: new Address({
           city: record.mailingAdderssCity,
-          country: null,
+          country: record.mailingAdderssPostalCountry,
           postalCode: record.mailingAdderssPostalCode,
           state: record.mailingAdderssState,
           street1: record.mailingAdderssStreet1,

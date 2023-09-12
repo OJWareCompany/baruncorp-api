@@ -25,6 +25,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       propertyAddressState: props.projectPropertyAddress.state,
       propertyAddressPostalCode: props.projectPropertyAddress.postalCode,
       propertyAddressCoordinates: String(props.projectPropertyAddress.coordinates),
+      propertyAddressCountry: props.projectPropertyAddress.country,
       propertyOwnerName: props.projectPropertyOwner,
       mailingAddressForWetStamps: props.mailingFullAddressForWetStamp,
       projectPropertyType: props.projectPropertyType,
@@ -86,7 +87,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         systemSize: Number(record.systemSize),
         projectPropertyAddress: new Address({
           city: record.propertyAddressCity,
-          country: null,
+          country: record.propertyAddressCountry,
           postalCode: record.propertyAddressPostalCode,
           state: record.propertyAddressState,
           street1: record.propertyAddressStreet1,

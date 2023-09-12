@@ -46,7 +46,7 @@ export class FindProjectDetailHttpController {
     response.jobs = result.record.jobs
     response.propertyAddress = new Address({
       city: result.record.propertyAddressCity,
-      country: null,
+      country: result.record.propertyAddressCountry,
       postalCode: result.record.propertyAddressPostalCode,
       state: result.record.propertyAddressState,
       street1: result.record.propertyAddressStreet1,
@@ -58,7 +58,7 @@ export class FindProjectDetailHttpController {
       ? null
       : new Address({
           city: result.currentMailingAddress?.city,
-          country: null,
+          country: result.currentMailingAddress?.country,
           postalCode: result.currentMailingAddress?.postalCode,
           state: result.currentMailingAddress?.state,
           street1: result.currentMailingAddress?.street1,
