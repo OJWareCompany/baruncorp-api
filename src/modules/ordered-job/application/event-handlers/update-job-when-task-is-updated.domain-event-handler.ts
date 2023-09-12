@@ -14,7 +14,7 @@ export class UpdateJobWhenTaskIsUpdatedDomainEventHandler {
   async handle(event: OrderedTaskUpdatedDomainEvent) {
     const job = await this.jobRepository.findJobOrThrow(event.jobId)
     if (job.isOnHold() && event.taskStatus === 'On Hold') return // 이벤트 재귀 방지
-    job.updateJobStatusByTask()
+    job.updateJobStatusByTask(event.taskStatus)
     await this.jobRepository.update(job)
   }
 }

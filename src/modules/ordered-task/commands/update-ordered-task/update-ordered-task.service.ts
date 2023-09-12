@@ -32,7 +32,7 @@ export class UpdateOrderedTaskService implements ICommandHandler {
       .setStatus(command.taskStatus)
     await this.orderedTaskRepository.update(task)
 
-    if ([TaskStatusEnum.On_Hold, TaskStatusEnum.Canceled].includes(command.taskStatus as TaskStatusEnum)) {
+    if ([TaskStatusEnum.On_Hold].includes(command.taskStatus as TaskStatusEnum)) {
       const associatedTasks = await this.orderedTaskRepository.findByJobId(task.getProps().jobId)
       const uncompletedTasks = associatedTasks.filter((task) => !task.isCompleted())
       uncompletedTasks.map((task) => task.setStatus(command.taskStatus))

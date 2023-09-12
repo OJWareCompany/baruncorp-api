@@ -74,11 +74,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  updateJobStatusByTask(): this {
+  updateJobStatusByTask(taskStatus: string): this {
     const hasOnHoldTask = this.props.orderedTasks.filter((task) => task.taskStatus === TaskStatusEnum.On_Hold).length
     const isAllCompleted = this.props.orderedTasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
+    const isInProgress = taskStatus === 'In Progress'
 
-    this.props.jobStatus = isAllCompleted //
+    this.props.jobStatus = isInProgress //
+      ? 'In Progress'
+      : isAllCompleted
       ? 'Completed'
       : hasOnHoldTask
       ? 'On Hold'
