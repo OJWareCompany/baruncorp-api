@@ -30,7 +30,7 @@ export class OrderedTask {
   @ApiProperty()
   projectId: string
   @ApiProperty()
-  dateCreated: Date
+  createdAt: Date
   @ApiProperty()
   assigneeName: string | null
   @ApiProperty()

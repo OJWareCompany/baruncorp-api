@@ -1,13 +1,13 @@
 import { Controller, Get, HttpStatus, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
-import { OrderedTaskResponseFields } from '../../dtos/job.response.dto'
+import { Paginated } from '../../../../libs/ddd/repository.port'
+import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
+import { JobPaginatedResponseDto, JobPaginatedResponseFields } from '../../dtos/job.paginated.response.dto'
+import { OrderedTaskPaginatedResponseFields } from '../../dtos/job.paginated.response.dto'
 import { JobProps } from '../../domain/job.type'
 import { FindJobPaginatedQuery } from './find-job.paginated.query-handler'
 import { FindJobPaginatedRequestDto } from './find-job.paginated.request.dto'
-import { JobPaginatedResponseDto, JobPaginatedResponseFields } from '../../dtos/job.paginated.response.dto'
-import { Paginated } from '../../../../libs/ddd/repository.port'
-import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 
 @Controller('jobs')
 export class FindJobPaginatedHttpController {
@@ -48,15 +48,16 @@ export class FindJobPaginatedHttpController {
           clientUserId: job.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
         }
         item.orderedTasks = job.orderedTasks.map((task) => {
-          return new OrderedTaskResponseFields({
+          return new OrderedTaskPaginatedResponseFields({
             id: task.id,
             taskStatus: task.taskStatus,
             taskName: task.taskName,
-            assigneeName: {
+            assignee: {
               userId: task.assigneeUserId,
               name: task.assigneeName,
             },
             description: task.description,
+            createdAt: task.createdAt.toISOString(),
           })
         })
 

@@ -6,8 +6,11 @@ import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.r
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { AuthGuard } from '../../../auth/authentication.guard'
-import { JobPaginatedResponseDto, JobPaginatedResponseFields } from '../../dtos/job.paginated.response.dto'
-import { OrderedTaskResponseFields } from '../../dtos/job.response.dto'
+import {
+  JobPaginatedResponseDto,
+  JobPaginatedResponseFields,
+  OrderedTaskPaginatedResponseFields,
+} from '../../dtos/job.paginated.response.dto'
 import { JobProps } from '../../domain/job.type'
 import { FindMyActiveJobPaginatedQuery } from './find-my-active-job.paginated.query-handler'
 
@@ -51,15 +54,16 @@ export class FindMyActiveJobPaginatedHttpController {
           clientUserId: job.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
         }
         item.orderedTasks = job.orderedTasks.map((task) => {
-          return new OrderedTaskResponseFields({
+          return new OrderedTaskPaginatedResponseFields({
             id: task.id,
             taskStatus: task.taskStatus,
             taskName: task.taskName,
-            assigneeName: {
+            assignee: {
               userId: task.assigneeUserId,
               name: task.assigneeName,
             },
             description: task.description,
+            createdAt: task.createdAt.toISOString(),
           })
         })
 

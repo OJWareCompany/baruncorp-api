@@ -1,8 +1,9 @@
-import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
+import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
+import { initialize } from '../../../libs/utils/constructor-initializer'
 import { JobStatus, JobStatusEnum } from '../domain/job.type'
 
-class MemberResponseFields {
+export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
   userId: string | null
 
@@ -10,7 +11,7 @@ class MemberResponseFields {
   name: string | null
 }
 
-class OrderedTaskResponseFields {
+export class OrderedTaskPaginatedResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
   id: string
 
@@ -21,13 +22,20 @@ class OrderedTaskResponseFields {
   taskName: string
 
   @ApiProperty({ example: MemberResponseFields, type: MemberResponseFields })
-  assigneeName: MemberResponseFields
+  assignee: MemberResponseFields
 
   @ApiProperty({ example: null })
   description: string | null
+
+  @ApiProperty({ example: '2023-08-11 09:10:31' })
+  createdAt: string
+
+  constructor(props: OrderedTaskPaginatedResponseFields) {
+    initialize(this, props)
+  }
 }
 
-class ClientInformationFields {
+export class ClientInformationFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
   clientOrganizationId: string
 
@@ -57,8 +65,8 @@ export class JobPaginatedResponseFields {
   @ApiProperty({ example: 'Ground Mount' })
   mountingType: string
 
-  @ApiProperty({ example: OrderedTaskResponseFields, type: OrderedTaskResponseFields, isArray: true })
-  orderedTasks: OrderedTaskResponseFields[]
+  @ApiProperty({ example: OrderedTaskPaginatedResponseFields, type: OrderedTaskPaginatedResponseFields, isArray: true })
+  orderedTasks: OrderedTaskPaginatedResponseFields[]
 
   @ApiProperty({ example: ClientInformationFields, type: ClientInformationFields })
   clientInfo: ClientInformationFields

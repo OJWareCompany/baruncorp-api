@@ -541,6 +541,7 @@ export interface ProjectPaginatedResponseDto {
 
 export interface OrderedTask {
   id: string
+  invoiceAmount: number
   isNewTask: boolean
   isLocked: boolean
   taskStatus: string
@@ -549,7 +550,7 @@ export interface OrderedTask {
   jobId: string
   projectId: string
   /** @format date-time */
-  dateCreated: string
+  createdAt: string
   assigneeName: string
   assigneeUserId: string
   description: string
@@ -684,9 +685,13 @@ export interface OrderedTaskResponseFields {
   taskStatus: string
   /** @example "PV Design" */
   taskName: string
-  assigneeName: MemberResponseFields
+  invoiceAmount: number
+  isNewTask: boolean
+  isLocked: boolean
+  assignee: MemberResponseFields
   /** @example null */
   description: string | null
+  createdAt: string
 }
 
 export interface ClientInformationFields {
@@ -734,6 +739,20 @@ export interface JobResponseDto {
   isExpedited: boolean
 }
 
+export interface OrderedTaskPaginatedResponseFields {
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  id: string
+  /** @example "Not Started" */
+  taskStatus: string
+  /** @example "PV Design" */
+  taskName: string
+  assignee: MemberResponseFields
+  /** @example null */
+  description: string | null
+  /** @example "2023-08-11 09:10:31" */
+  createdAt: string
+}
+
 export interface JobPaginatedResponseFields {
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
   propertyFullAddress: string
@@ -745,7 +764,7 @@ export interface JobPaginatedResponseFields {
   projectType: string
   /** @example "Ground Mount" */
   mountingType: string
-  orderedTasks: OrderedTaskResponseFields[]
+  orderedTasks: OrderedTaskPaginatedResponseFields[]
   clientInfo: ClientInformationFields
   /** @example "2023-08-11 09:10:31" */
   receivedAt: string
@@ -775,6 +794,7 @@ export interface CreateOrderedTaskRequestDto {
 }
 
 export interface UpdateOrderedTaskRequestDto {
+  invoiceAmount: number
   isLocked: boolean
   /** @default "In Progress" */
   taskStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
