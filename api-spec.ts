@@ -568,6 +568,7 @@ export interface ClientInformation {
 export interface Jobs {
   jobId: string
   projectId: string
+  projectType: string
   mountingType: string
   jobName: string
   /** @example "In Progress" */
