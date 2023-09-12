@@ -30,7 +30,7 @@ export class FindJobHttpController {
     response.propertyFullAddress = result.propertyFullAddress
     response.mountingType = result.mountingType
     response.jobStatus = result.jobStatus
-    response.projectType = result.mountingType
+    response.projectType = result.projectType
     response.receivedAt = result.receivedAt.toISOString()
     response.isExpedited = result.isExpedited
 
