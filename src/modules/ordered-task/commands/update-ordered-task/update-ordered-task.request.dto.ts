@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsInt, IsOptional, IsString } from 'class-validator'
 import { TaskStatus, TaskStatusEnum } from '../../domain/ordered-task.type'
 
 export class UpdateOrderedTaskRequestParam {
@@ -9,6 +9,10 @@ export class UpdateOrderedTaskRequestParam {
 }
 
 export class UpdateOrderedTaskRequestDto {
+  @ApiProperty()
+  @IsInt()
+  invoiceAmount: number
+
   @ApiProperty()
   @IsBoolean()
   isLocked: boolean

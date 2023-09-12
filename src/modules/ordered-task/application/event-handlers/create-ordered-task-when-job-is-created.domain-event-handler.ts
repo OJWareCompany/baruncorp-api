@@ -26,6 +26,7 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
         where: { taskMenuId: task.id, projectId: event.projectId },
       })
       return OrderedTaskEntity.create({
+        invoiceAmount: null,
         isNewTask: oldTask ? false : true,
         taskName: task.name,
         taskMenuId: task.id,

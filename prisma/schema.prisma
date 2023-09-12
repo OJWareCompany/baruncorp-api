@@ -594,6 +594,7 @@ model OrderedProjects {
 model OrderedTasks {
   id                                                               String       @id @map("id") @db.VarChar(255)
   taskStatus                                                       String       @map("task_status") @db.VarChar(255)
+  invoiceAmount                                                    Int?         @map("invoice_amount") @db.UnsignedInt
   dateCreated                                                      DateTime     @map("date_created") @db.DateTime(0)
   isLocked                                                         Boolean      @default(false) @map("is_locked")
   taskName                                                         String       @map("task_name") @db.VarChar(255)

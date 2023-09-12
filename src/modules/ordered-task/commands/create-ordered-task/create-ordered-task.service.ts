@@ -48,6 +48,7 @@ export class CreateOrderedTaskService implements ICommandHandler {
 
     const entities = assignableTask.map((task) => {
       return OrderedTaskEntity.create({
+        invoiceAmount: null, // TODO!
         isNewTask: !!tasks.length ? false : true,
         taskName: task.name,
         taskMenuId: command.taskMenuId,

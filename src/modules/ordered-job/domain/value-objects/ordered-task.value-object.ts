@@ -14,6 +14,8 @@ export class OrderedTask {
   @ApiProperty()
   id: string
   @ApiProperty()
+  invoiceAmount: number
+  @ApiProperty()
   isNewTask: boolean
   @ApiProperty()
   isLocked: boolean

@@ -9,6 +9,7 @@ export enum TaskStatusEnum {
 export type TaskStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
 
 export interface CreateOrderedTaskProps {
+  invoiceAmount: number | null
   isNewTask: boolean
   taskName: string
   taskMenuId: string
@@ -20,6 +21,7 @@ export interface CreateOrderedTaskProps {
 }
 
 export interface OrderedTaskProps {
+  invoiceAmount: number | null
   isNewTask: boolean
   isLocked: boolean
   taskStatus: TaskStatus

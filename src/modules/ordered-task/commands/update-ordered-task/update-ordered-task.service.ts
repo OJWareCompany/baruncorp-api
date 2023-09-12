@@ -25,6 +25,7 @@ export class UpdateOrderedTaskService implements ICommandHandler {
     const assigneeName = assignee ? assignee.firstName + ' ' + assignee.lastName : null
     const assigneeId = assignee ? assignee.id : null
     task
+      .setInvoiceAmount(command.invoiceAmount)
       .setAssignee(assigneeName, assigneeId)
       .setDescription(command.description)
       .setIsLocked(command.isLocked)

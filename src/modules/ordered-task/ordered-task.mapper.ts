@@ -21,6 +21,7 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       assigneeName: props.assigneeName,
       assigneeUserId: props.assigneeUserId,
       description: props.description,
+      invoiceAmount: props.invoiceAmount,
       updatedAt: new Date(),
       createdAt: new Date(),
 
@@ -200,6 +201,7 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
     return new OrderedTaskEntity({
       id: record.id,
       props: {
+        invoiceAmount: record.invoiceAmount,
         isNewTask: record.isNewTask,
         isLocked: record.isLocked,
         taskStatus: record.taskStatus as TaskStatus,

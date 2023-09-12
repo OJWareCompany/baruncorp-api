@@ -108,6 +108,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     const orderedTasks = record.orderedTasks.map((task) => {
       return new OrderedTask({
         id: task.id,
+        invoiceAmount: task.invoiceAmount,
         isNewTask: task.isNewTask,
         isLocked: task.isLocked,
         taskStatus: task.taskStatus,
