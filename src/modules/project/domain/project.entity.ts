@@ -10,7 +10,7 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     const id = v4()
     const props: ProjectProps = {
       ...create,
-      totalOfJobs: 1,
+      totalOfJobs: 0,
       mailingFullAddressForWetStamp: null,
       systemSize: null,
       numberOfWetStamp: null,
