@@ -16,6 +16,8 @@ class Jobs implements JobProps {
   @ApiProperty()
   projectId: string
   @ApiProperty()
+  projectType: string
+  @ApiProperty()
   mountingType: string
   @ApiProperty()
   jobName: string

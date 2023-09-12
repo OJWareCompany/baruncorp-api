@@ -34,7 +34,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       mailingAdderssPostalCode: props.mailingAddressForWetStamp?.postalCode,
       mailingAdderssPostalCountry: props.mailingAddressForWetStamp?.country,
       numberOfWetStamp: props.numberOfWetStamp,
-      projectType: props.projectId,
+      projectType: props.projectType,
       deliverablesEmail: props.clientInfo.deliverablesEmail.toString(),
       updatedBy: props.updatedBy,
       jobRequestNumber: props.jobRequestNumber,
@@ -130,6 +130,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: new Date(record.updatedAt),
       props: {
         projectId: record.projectId,
+        projectType: record.projectType,
         mountingType: record.mountingType,
         jobStatus: record.jobStatus as JobStatus,
         jobRequestNumber: record.jobRequestNumber,

@@ -39,7 +39,7 @@ export class FindJobPaginatedHttpController {
         item.jobRequestNumber = job.jobRequestNumber
         item.mountingType = job.mountingType
         item.jobStatus = job.jobStatus
-        item.projectType = job.mountingType
+        item.projectType = job.projectType
         item.receivedAt = job.receivedAt.toISOString()
         item.clientInfo = {
           clientOrganizationId: job.clientInfo.clientOrganizationId,

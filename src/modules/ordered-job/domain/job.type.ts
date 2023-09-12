@@ -25,6 +25,7 @@ export interface CreateJobProps {
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
+  projectType: string
   isExpedited: boolean
   updatedBy: string
 }
@@ -40,6 +41,7 @@ export interface JobProps {
   systemSize: number | null
   mailingAddressForWetStamp: Address | null
   numberOfWetStamp: number | null
+  projectType: string
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
   updatedBy: string
