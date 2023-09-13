@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Query } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { QueryBus } from '@nestjs/cqrs'
-import { OrderedProjects } from '@prisma/client'
+import { OrderedProjects, Organizations } from '@prisma/client'
 import { ProjectPaginatedResponseDto } from '../../dtos/project.paginated.response.dto'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { FindProjectsQuery } from './find-projects.query-handler'
@@ -32,7 +32,7 @@ export class FindProjectsHttpController {
       limit: queryParams?.limit,
       page: queryParams?.page,
     })
-    const result: Paginated<OrderedProjects> = await this.queryBus.execute(query)
+    const result: Paginated<{ organization: Organizations } & OrderedProjects> = await this.queryBus.execute(query)
 
     // Whitelisting returned properties
     return new ProjectPaginatedResponseDto({
@@ -40,6 +40,8 @@ export class FindProjectsHttpController {
       items: result.items.map((project) => ({
         projectId: project.id,
         organizationId: project.clientOrganizationId,
+        organizationName: project.organization.name,
+        propertyOwnerName: project.propertyOwnerName,
         propertyType: project.projectPropertyType as ProjectPropertyType,
         projectFolderLink: project.projectFolder,
         projectNumber: project.projectNumber,

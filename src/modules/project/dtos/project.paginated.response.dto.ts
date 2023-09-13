@@ -9,6 +9,9 @@ export class ProjectPaginatedResponseFields {
   @ApiProperty({ example: '96d39061-a4d7-4de9-a147-f627467e11d5' })
   organizationId: string
 
+  @ApiProperty({ example: 'Freedom Forever' })
+  organizationName: string
+
   @ApiProperty({ enum: ProjectPropertyTypeEnum, example: 'Residential' })
   propertyType: ProjectPropertyType
 
@@ -20,6 +23,9 @@ export class ProjectPaginatedResponseFields {
 
   @ApiProperty({ example: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   propertyFullAddress: string
+
+  @ApiProperty({ example: 'Smith Kim' })
+  propertyOwnerName: string | null
 
   @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
   mountingType: MountingTypeEnum
