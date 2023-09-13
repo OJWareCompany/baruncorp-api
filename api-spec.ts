@@ -501,6 +501,8 @@ export interface ProjectPaginatedResponseFields {
   projectId: string
   /** @example "96d39061-a4d7-4de9-a147-f627467e11d5" */
   organizationId: string
+  /** @example "Freedom Forever" */
+  organizationName: string
   /** @example "Residential" */
   propertyType: 'Residential' | 'Commercial'
   /** @example "https://host.com/projects/path" */
@@ -509,6 +511,8 @@ export interface ProjectPaginatedResponseFields {
   projectNumber: string | null
   /** @example "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
   propertyFullAddress: string
+  /** @example "Smith Kim" */
+  propertyOwnerName: string | null
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
   /** @example "2023-09-05T07:14:57.270Z" */
