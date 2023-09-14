@@ -717,6 +717,8 @@ export interface ClientInformationFields {
 
 export interface JobResponseDto {
   /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  id: string
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
   projectId: string
   /** @example 300.1 */
   systemSize: number | null
@@ -760,6 +762,8 @@ export interface OrderedTaskPaginatedResponseFields {
 }
 
 export interface JobPaginatedResponseFields {
+  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
+  id: string
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
   propertyFullAddress: string
   /** @example 5 */
