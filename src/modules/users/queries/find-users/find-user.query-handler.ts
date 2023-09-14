@@ -50,7 +50,7 @@ export class FindUserQueryHandler implements IQueryHandler {
         user,
         userRoleEntity,
         organizationEntity,
-        this.positionMapper.toResponse(positionEntity),
+        positionEntity ? this.positionMapper.toResponse(positionEntity) : null,
         serviceEntities.map(this.serviceMapper.toResponse),
         licenseEntities.map(this.licenseMapper.toResponse),
       )
