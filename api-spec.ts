@@ -570,7 +570,7 @@ export interface ClientInformation {
 }
 
 export interface Jobs {
-  jobId: string
+  id: string
   projectId: string
   projectType: string
   mountingType: string

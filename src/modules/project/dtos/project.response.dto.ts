@@ -13,7 +13,7 @@ import { ProjectAssociatedRegulatoryBody } from '../domain/value-objects/project
 
 class Jobs implements JobProps {
   @ApiProperty()
-  jobId: string
+  id: string
   @ApiProperty()
   projectId: string
   @ApiProperty()
