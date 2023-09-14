@@ -13,6 +13,7 @@ import { LicenseModel } from '../../department/database/department.repository'
 import { LicenseEntity } from '../user-license.entity'
 import { LicenseMapper } from '../../department/license.mapper'
 import { LicenseType } from '../user-license.type'
+import { NotFoundUserException } from '../user.error'
 
 export type UserModel = Users
 @Injectable()
@@ -35,13 +36,13 @@ export class UserRepository implements UserRepositoryPort {
 
   async findOneById(id: string): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({ where: { id } })
-    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    if (!user) throw new NotFoundUserException()
     return this.userMapper.toDomain(user)
   }
 
   async findOneByIdOrThrow(id: string): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({ where: { id } })
-    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    if (!user) throw new NotFoundUserException()
     return this.userMapper.toDomain(user)
   }
 
@@ -72,13 +73,13 @@ export class UserRepository implements UserRepositoryPort {
 
   async findOneByEmail({ email }: EmailVO): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({ where: { email } })
-    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    if (!user) throw new NotFoundUserException()
     return this.userMapper.toDomain(user)
   }
 
   async findUserIdByEmail({ email }: EmailVO): Promise<Pick<UserEntity, 'id'> | null> {
     const user = await this.prismaService.users.findUnique({ where: { email } })
-    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    if (!user) throw new NotFoundUserException()
     return await this.prismaService.users.findUnique({
       select: { id: true },
       where: { email },
@@ -97,7 +98,7 @@ export class UserRepository implements UserRepositoryPort {
 
   async findRoleByUserId(id: string): Promise<UserRole> {
     const user = await this.prismaService.users.findUnique({ where: { id } })
-    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    if (!user) throw new NotFoundUserException()
 
     const record = await this.prismaService.userRole.findFirst({ where: { userId: id } })
     return record && this.userRoleMapper.toDomain(record)
@@ -105,7 +106,7 @@ export class UserRepository implements UserRepositoryPort {
 
   async giveRole(prop: UserRole): Promise<void> {
     const user = await this.prismaService.users.findUnique({ where: { id: prop.getProps().userId } })
-    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    if (!user) throw new NotFoundUserException()
 
     const record = this.userRoleMapper.toPersistence(prop)
     await this.prismaService.userRole.create({ data: record })
@@ -114,7 +115,7 @@ export class UserRepository implements UserRepositoryPort {
   // TODO: how to soft delete
   async removeRole(entity: UserRole): Promise<void> {
     const user = await this.prismaService.users.findUnique({ where: { id: entity.getProps().userId } })
-    if (!user) throw new NotFoundException('Not Found User.', '10018')
+    if (!user) throw new NotFoundUserException()
 
     await this.prismaService.userRole.delete({
       where: {

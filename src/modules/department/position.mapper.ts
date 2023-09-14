@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { DepartmentModel, PositionModel } from './database/department.repository'
 import { PositionResponseDto } from './dtos/position.response.dto'
 import { Mapper } from '@libs/ddd/mapper.interface'
-import { PositionEntity, CreatePositionProps } from './domain/position.entity'
+import { PositionEntity, CreatePositionProps, PositionProps } from './domain/position.entity'
 
 @Injectable()
 export class PositionMapper implements Mapper<PositionEntity, PositionModel, PositionResponseDto> {
@@ -21,11 +21,11 @@ export class PositionMapper implements Mapper<PositionEntity, PositionModel, Pos
 
   // TODO: validation white list.. since type can't ensure the field in runtime
   toDomain(record: PositionModel, department: DepartmentModel): PositionEntity {
-    const props: CreatePositionProps = {
-      name: record?.name || null,
-      departmentId: record?.departmentId || null,
-      departmentName: department?.name || null,
-      description: record?.description || null,
+    const props: PositionProps = {
+      name: record.name,
+      departmentId: record.departmentId,
+      departmentName: department.name,
+      description: record.description,
     }
 
     const entity = new PositionEntity({
@@ -36,8 +36,7 @@ export class PositionMapper implements Mapper<PositionEntity, PositionModel, Pos
   }
 
   toResponse(entity: PositionEntity): PositionResponseDto {
-    const props = entity?.getProps()
-    if (!props) return undefined
+    const props = entity.getProps()
     const response = new PositionResponseDto()
     response.id = props.id
     response.name = props.name

@@ -28,7 +28,14 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
     const props: CreateLicenseProps = {
       userId: record.userId,
       userName: user.getProps().userName,
-      stateEntity: new State({ stateName: record.issuingCountryName, abbreviation: record.abbreviation }),
+      stateEntity: new State({
+        stateName: record.issuingCountryName,
+        abbreviation: record.abbreviation,
+        geoId: null,
+        stateCode: null,
+        ansiCode: null,
+        stateLongName: null,
+      }),
       type,
       priority: record.priority,
       // issuedDate: record.issuedDate,

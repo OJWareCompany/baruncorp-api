@@ -6,8 +6,8 @@ export class UpdateJobCommand {
   readonly mailingAddressForWetStamp: Address | null
   readonly deliverablesEmails: string[]
   readonly clientUserId: string
-  readonly additionalInformationFromClient: string
-  readonly numberOfWetStamp: number
+  readonly additionalInformationFromClient: string | null
+  readonly numberOfWetStamp: number | null
   readonly updatedByUserId: string
   readonly jobStatus: string
   readonly mountingType: string

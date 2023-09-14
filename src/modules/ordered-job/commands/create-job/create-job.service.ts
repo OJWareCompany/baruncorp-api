@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { CreateJobCommand } from './create-job.command'
 import { Inject } from '@nestjs/common'
-import { JOB_REPOSITORY } from '../../job.di-token'
-import { JobEntity } from '../../domain/job.entity'
+import { NotFoundOrganization } from '../../../organization/domain/organization.error'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { PrismaService } from '../../../database/prisma.service'
+import { JOB_REPOSITORY } from '../../job.di-token'
+import { JobEntity } from '../../domain/job.entity'
+import { CreateJobCommand } from './create-job.command'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -21,6 +22,7 @@ export class CreateJobService implements ICommandHandler {
     // TODO Client User 여러명 설정 -> user profile에서 contact emails 필드 추가하기.
     const clientUser = await this.jobRepository.findUser(command.clientUserId)
     const organization = await this.prismaService.organizations.findUnique({ where: { id: clientUser.organizationId } })
+    if (!organization) throw new NotFoundOrganization()
     const orderer = await this.jobRepository.findUser(command.updatedByUserId)
     const project = await this.jobRepository.findProject(command.projectId)
 

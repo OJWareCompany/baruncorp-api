@@ -9,6 +9,7 @@ import { ClientInformation } from '../../ordered-job/domain/value-objects/client
 import { OrderedTask } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import { IsOptional } from 'class-validator'
+import { ProjectAssociatedRegulatoryBody } from '../domain/value-objects/project-associated-regulatory-body.value-object'
 
 class Jobs implements JobProps {
   @ApiProperty()
@@ -89,6 +90,9 @@ export class ProjectResponseDto {
 
   @ApiProperty({ example: '2023-09-05T07:14:57.270Z' })
   createdAt: string
+
+  @ApiProperty({ example: ProjectAssociatedRegulatoryBody })
+  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBody | null
 
   @ApiProperty({ example: 1 })
   totalOfJobs: number

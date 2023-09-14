@@ -3,7 +3,7 @@ import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 
-class CreateOrderedTaskWhenJobIsCreatedRequestDto {
+export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
   @IsString()
   taskId: string

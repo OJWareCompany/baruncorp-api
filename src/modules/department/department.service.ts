@@ -69,8 +69,9 @@ export class DepartmentService {
     return entities.map(this.positionMapper.toResponse)
   }
 
-  async findPositionByUserId(userId: string): Promise<PositionResponseDto> {
+  async findPositionByUserId(userId: string): Promise<PositionResponseDto | null> {
     const entity = await this.departmentRepository.findPositionByUserId(userId)
+    if (!entity) return null
     return this.positionMapper.toResponse(entity)
   }
 

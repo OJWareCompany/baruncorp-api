@@ -16,7 +16,7 @@ export interface DepartmentRepositoryPort {
 
   // TODO: Consider to Saperate Position From Department
   findAllPositions(): Promise<PositionEntity[]>
-  findPositionByUserId(userId: string): Promise<PositionEntity>
+  findPositionByUserId(userId: string): Promise<PositionEntity | null>
   appointPosition(userId: string, positionId: string): Promise<void>
   revokePosition(userId: string, positionId: string): Promise<void>
 

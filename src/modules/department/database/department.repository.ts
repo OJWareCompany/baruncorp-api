@@ -106,11 +106,14 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
     })
   }
 
-  async findPositionByUserId(userId: string): Promise<PositionEntity> {
+  async findPositionByUserId(userId: string): Promise<PositionEntity | null> {
     const userPositionEntity = await this.prismaService.userPosition.findFirst({ where: { userId } })
-    const id = userPositionEntity?.positionId
-    if (!id) return undefined
-    const record = await this.prismaService.positions.findFirst({ where: { id }, include: { departmentEntity: true } })
+    if (!userPositionEntity) return null
+    const record = await this.prismaService.positions.findFirst({
+      where: { id: userPositionEntity.positionId },
+      include: { departmentEntity: true },
+    })
+    if (!record) return null
     return this.positionMapper.toDomain(record, record.departmentEntity)
   }
 

@@ -5,6 +5,7 @@ import { ProjectResponseDto } from '../../dtos/project.response.dto'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { FindProjectDetailQuery } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
+import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
 
 @Controller('projects')
 export class FindProjectDetailHttpController {
@@ -66,6 +67,15 @@ export class FindProjectDetailHttpController {
           fullAddress: result.currentMailingAddress?.fullAddress,
           coordinates: result.currentMailingAddress?.coordinates,
         })
+
+    response.projectAssociatedRegulatoryBody = new ProjectAssociatedRegulatoryBody({
+      stateId: result.record?.stateId || null,
+      countyId: result.record?.countyId || null,
+      countySubdivisionsId: result.record?.countySubdivisionsId || null,
+      placeId: result.record?.placeId || null,
+    })
+
+    console.log(response.projectAssociatedRegulatoryBody)
     return response
   }
 }

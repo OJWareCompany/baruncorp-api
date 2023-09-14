@@ -1,10 +1,11 @@
+import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { v4 } from 'uuid'
 
 export interface PositionProps {
   name: string
   departmentId: string
   departmentName: string
-  description: string
+  description: string | null
 }
 
 export interface CreatePositionProps extends PositionProps {
@@ -19,9 +20,8 @@ export interface DeletePositionProps {
   positionId: string
 }
 
-export class PositionEntity {
-  id?: string
-  protected readonly props: PositionProps
+export class PositionEntity extends AggregateRoot<PositionProps> {
+  protected _id: string
 
   static create(create: CreatePositionProps) {
     const id = v4()
@@ -29,16 +29,7 @@ export class PositionEntity {
     return new PositionEntity({ id, props })
   }
 
-  constructor({ id, props }: { id: string; props: CreatePositionProps }) {
-    this.id = id
-    this.props = props
-  }
-
-  getProps(): PositionProps & { id: string } {
-    const propsCopy = {
-      id: this.id,
-      ...this.props,
-    }
-    return Object.freeze(propsCopy)
+  public validate(): void {
+    const result = 1
   }
 }

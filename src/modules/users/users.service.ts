@@ -22,6 +22,7 @@ import { CreateUserRoleProps, UserRole, UserRoles } from './domain/value-objects
 import { LicenseEntity } from './user-license.entity'
 import { State } from '../department/domain/value-objects/state.vo'
 import { LicenseType } from './user-license.type'
+import { NotFoundUserException } from './user.error'
 
 @Injectable()
 export class UserService {
@@ -78,12 +79,14 @@ export class UserService {
 
   async upadteProfile(userId: string, userName: UserName): Promise<void> {
     const user = await this.userRepository.findOneById(userId)
-    if (!user) throw new NotFoundException('Not Found User.', '100181')
+    if (!user) throw new NotFoundUserException()
     await this.userRepository.update(userId, userName)
   }
 
   async findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'>> {
-    return await this.userRepository.findUserIdByEmail(email)
+    const result = await this.userRepository.findUserIdByEmail(email)
+    if (!result) throw new NotFoundUserException()
+    return result
   }
 
   async findPasswordByUserId(id: string): Promise<string> {
@@ -144,7 +147,7 @@ export class UserService {
     abbreviation: string,
     priority: number,
     // issuedDate: Date,
-    expiryDate: Date,
+    expiryDate: Date | null,
   ): Promise<void> {
     const user = await this.userRepository.findOneById(userId)
 
@@ -161,7 +164,14 @@ export class UserService {
         userId,
         userName: user.getProps().userName,
         type,
-        stateEntity: new State({ stateName: issuingCountryName, abbreviation }),
+        stateEntity: new State({
+          stateName: issuingCountryName,
+          abbreviation,
+          geoId: null,
+          stateCode: null,
+          ansiCode: null,
+          stateLongName: null,
+        }),
         priority,
         // issuedDate,
         expiryDate,

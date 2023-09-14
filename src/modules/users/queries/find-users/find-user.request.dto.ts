@@ -5,10 +5,10 @@ export class FindUserRqeustDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
   @IsOptional()
   @IsEmail()
-  readonly email?: string | null
+  readonly email: string | null
 
   @ApiProperty({ default: '' })
   @IsOptional()
   @IsString()
-  readonly organizationId?: string | null
+  readonly organizationId: string | null
 }

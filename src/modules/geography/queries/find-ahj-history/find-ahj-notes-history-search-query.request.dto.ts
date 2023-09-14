@@ -5,5 +5,5 @@ export class FindAhjNotesHistorySearchQueryRequestDto {
   @ApiProperty({ default: '1239525' })
   @IsString()
   @IsOptional()
-  readonly geoId?: string | null
+  readonly geoId: string | null
 }

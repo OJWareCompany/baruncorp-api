@@ -8,10 +8,10 @@ export class StatesResponseDto {
   readonly abbreviation: string | null // DB에 정보 업데이트 필요함
 
   @ApiProperty({ default: '06' })
-  readonly geoId: string
+  readonly geoId: string | null
 
   @ApiProperty({ default: '06' })
-  readonly stateCode: string
+  readonly stateCode: string | null
 
   @ApiProperty({ default: '01779778' })
   readonly ansiCode: string | null // DB에 정보 업데이트 필요함

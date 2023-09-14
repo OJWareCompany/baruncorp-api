@@ -25,14 +25,14 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       receivedAt: props.receivedAt,
       projectId: props.projectId,
       systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
-      mailingFullAddressForWetStamp: props.mailingAddressForWetStamp?.fullAddress,
-      mailingAdderssState: props.mailingAddressForWetStamp?.state,
-      mailingAdderssCity: props.mailingAddressForWetStamp?.city,
-      mailingAdderssCoordinates: props.mailingAddressForWetStamp?.coordinates.toString(),
-      mailingAdderssStreet1: props.mailingAddressForWetStamp?.street1,
-      mailingAdderssStreet2: props.mailingAddressForWetStamp?.street2,
-      mailingAdderssPostalCode: props.mailingAddressForWetStamp?.postalCode,
-      mailingAdderssPostalCountry: props.mailingAddressForWetStamp?.country,
+      mailingFullAddressForWetStamp: props.mailingAddressForWetStamp?.fullAddress || null,
+      mailingAdderssState: props.mailingAddressForWetStamp?.state || null,
+      mailingAdderssCity: props.mailingAddressForWetStamp?.city || null,
+      mailingAdderssCoordinates: props.mailingAddressForWetStamp?.coordinates.toString() || null,
+      mailingAdderssStreet1: props.mailingAddressForWetStamp?.street1 || null,
+      mailingAdderssStreet2: props.mailingAddressForWetStamp?.street2 || null,
+      mailingAdderssPostalCode: props.mailingAddressForWetStamp?.postalCode || null,
+      mailingAdderssPostalCountry: props.mailingAddressForWetStamp?.country || null,
       numberOfWetStamp: props.numberOfWetStamp,
       projectType: props.projectType,
       deliverablesEmail: props.clientInfo.deliverablesEmail.toString(),
@@ -124,6 +124,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       })
     })
 
+    // const hasMailingForWetStamp =
+
     return new JobEntity({
       id: record.id,
       createdAt: new Date(record.createdAt),
@@ -138,16 +140,25 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         jobName: record.jobName,
         orderedTasks: orderedTasks,
         systemSize: record.systemSize ? Number(record.systemSize) : null,
-        mailingAddressForWetStamp: new Address({
-          city: record.mailingAdderssCity,
-          country: record.mailingAdderssPostalCountry,
-          postalCode: record.mailingAdderssPostalCode,
-          state: record.mailingAdderssState,
-          street1: record.mailingAdderssStreet1,
-          street2: record.mailingAdderssStreet2,
-          fullAddress: record.mailingFullAddressForWetStamp,
-          coordinates: record?.mailingAdderssCoordinates?.split(',').map((n) => Number(n)),
-        }),
+        mailingAddressForWetStamp:
+          record.mailingAdderssCity !== null &&
+          record.mailingAdderssPostalCountry !== null &&
+          record.mailingAdderssPostalCode !== null &&
+          record.mailingAdderssState !== null &&
+          record.mailingAdderssStreet1 !== null &&
+          record.mailingFullAddressForWetStamp !== null &&
+          record.mailingAdderssCoordinates !== null
+            ? new Address({
+                city: record.mailingAdderssCity,
+                country: record.mailingAdderssPostalCountry,
+                postalCode: record.mailingAdderssPostalCode,
+                state: record.mailingAdderssState,
+                street1: record.mailingAdderssStreet1,
+                street2: record.mailingAdderssStreet2,
+                fullAddress: record.mailingFullAddressForWetStamp,
+                coordinates: record.mailingAdderssCoordinates.split(',').map((n) => Number(n)),
+              })
+            : null,
         numberOfWetStamp: record.numberOfWetStamp,
         additionalInformationFromClient: record.additionalInformationFromClient,
         clientInfo: new ClientInformation({

@@ -37,12 +37,12 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return job
   }
 
-  updateNumberOfWetStamp(numberOfWetStamp: number) {
+  updateNumberOfWetStamp(numberOfWetStamp: number | null) {
     this.props.numberOfWetStamp = numberOfWetStamp
     return
   }
 
-  updateAdditionalInformationFromClient(additionalInformationFromClient: string) {
+  updateAdditionalInformationFromClient(additionalInformationFromClient: string | null) {
     this.props.additionalInformationFromClient = additionalInformationFromClient
     return
   }
@@ -64,12 +64,12 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  updateSystemSize(systemSize: number): JobEntity {
+  updateSystemSize(systemSize: number | null): JobEntity {
     this.props.systemSize = systemSize
     return this
   }
 
-  updateMailingAddressWetForStamp(mailingAddressForWetStamp: Address): JobEntity {
+  updateMailingAddressWetForStamp(mailingAddressForWetStamp: Address | null): JobEntity {
     this.props.mailingAddressForWetStamp = mailingAddressForWetStamp
     return this
   }

@@ -5,7 +5,6 @@ import { PrismaService } from '../../../database/prisma.service'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { JobProps } from '@src/modules/ordered-job/domain/job.type'
 
 export class FindProjectDetailQuery {
   readonly id: string

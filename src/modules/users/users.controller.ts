@@ -124,7 +124,7 @@ export class UsersController {
           issuingCountryName: license.getProps().stateEntity.stateName,
           abbreviation: license.getProps().stateEntity.abbreviation,
           priority: license.getProps().priority,
-          expiryDate: license.getProps().expiryDate.toISOString(),
+          expiryDate: license.getProps().expiryDate?.toISOString() || null,
         }),
     )
   }
@@ -140,7 +140,7 @@ export class UsersController {
       dto.abbreviation,
       dto.priority,
       // new Date(dto.issuedDate),
-      new Date(dto.expiryDate),
+      dto.expiryDate ? new Date(dto.expiryDate) : null,
     )
   }
 

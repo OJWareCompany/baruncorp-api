@@ -23,7 +23,7 @@ export interface GeographyRepositoryPort {
   findNoteHistory(
     pageNo: number,
     pageSize: number,
-    geoId?: string,
+    geoId: string | null,
   ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>>
 
   findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel>

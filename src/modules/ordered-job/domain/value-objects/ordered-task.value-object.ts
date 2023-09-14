@@ -14,7 +14,7 @@ export class OrderedTask {
   @ApiProperty()
   id: string
   @ApiProperty()
-  invoiceAmount: number
+  invoiceAmount: number | null
   @ApiProperty()
   isNewTask: boolean
   @ApiProperty()

@@ -8,7 +8,7 @@ export interface AddressProps {
   postalCode: string
   state: string | null
   street1: string
-  street2: string
+  street2: string | null
   fullAddress: string
   coordinates: number[]
 }

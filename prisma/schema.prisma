@@ -87,7 +87,7 @@ model UserRole {
 
 model Users {
   id                         String                   @id @default(uuid())
-  type                       String?                  @db.VarChar(255)
+  type                       String                   @db.VarChar(255)
   deliverables_emails        String?                  @db.Text
   email                      String                   @unique
   firstName                  String                   @map("first_name")
@@ -102,7 +102,7 @@ model Users {
   isInactiveOrganizationUser Boolean?                 @map("is_inactive_organization_user")
   revenueShare               Boolean?                 @map("revenue_share")
   revisionRevenueShare       Boolean?                 @map("revision_revenue_share")
-  updatedBy                  String?                  @map("updated_by") @db.VarChar(255)
+  updatedBy                  String                   @map("updated_by") @db.VarChar(255)
   passwordEntity             Passwords?
   UserElectricalLicenses     UserElectricalLicenses[]
   UserPosition               UserPosition[]
@@ -139,7 +139,7 @@ model Departments {
 model Positions {
   id               String            @id @default(uuid())
   name             String
-  description      String
+  description      String?
   departmentId     String            @map("department_id")
   updatedAt        DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt        DateTime          @default(now()) @map("created_at") @db.DateTime(0)
@@ -454,7 +454,7 @@ model OrderedJobs {
   id                                            String           @id @map("id") @db.VarChar(255)
   isExpedited                                   Boolean          @default(false) @map("is_expedited")
   clientUserId                                  String           @map("client_user_id") @db.VarChar(255)
-  clientUserName                                String?          @map("client_user_name") @db.VarChar(255)
+  clientUserName                                String           @map("client_user_name") @db.VarChar(255)
   jobStatus                                     String?          @map("job_status") @db.Text
   jobName                                       String           @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int              @map("job_request_number")
@@ -579,7 +579,7 @@ model OrderedProjects {
   countySubdivisionsId                          String?        @map("county_subdivisions_id") @db.VarChar(255)
   placeId                                       String?        @map("place_id") @db.VarChar(255)
   ahjId                                         String?        @map("ahj_id") @db.VarChar(255)
-  projectPropertyType                           String?        @map("project_property_type") @db.VarChar(255)
+  projectPropertyType                           String         @map("project_property_type") @db.VarChar(255)
   isGroundMount                                 Boolean?       @map("is_ground_mount")
   mailingAddressForStructuralWetStamp           String?        @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
   mailingAddressForElectricalWetStamp           String?        @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)

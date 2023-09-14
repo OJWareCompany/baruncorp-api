@@ -40,10 +40,10 @@ export class DepartmentController {
         new StatesResponseDto({
           stateName: state.stateName,
           abbreviation: state.abbreviation,
-          geoId: state.geoId,
-          stateCode: state.stateCode,
-          ansiCode: state.ansiCode,
-          stateLongName: state.stateLongName,
+          geoId: state.geoId || null,
+          stateCode: state.stateCode || null,
+          ansiCode: state.ansiCode || null,
+          stateLongName: state.stateLongName || null,
         }),
     )
   }

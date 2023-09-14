@@ -150,7 +150,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
   async findNoteHistory(
     pageNo: number,
     pageSize: number,
-    geoId?: string,
+    geoId: string | null,
   ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>> {
     const offset = (pageNo - 1) * pageSize ?? 0
     const where = geoId ? { geoId: geoId } : undefined

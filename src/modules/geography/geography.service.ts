@@ -28,7 +28,7 @@ export class GeographyService {
   async findNoteUpdateHistory(
     pageNo: number,
     pageSize: number,
-    geoId?: string,
+    geoId: string | null,
   ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>> {
     return await this.geographyRepository.findNoteHistory(pageNo, pageSize, geoId)
   }
