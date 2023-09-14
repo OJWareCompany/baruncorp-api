@@ -22,13 +22,13 @@ model Organizations {
   name                   String             @unique
   description            String?
   organizationType       String             @map("organization_type")
-  city                   String?
+  city                   String
   country                String?
-  street1                String?
+  street1                String
   street2                String?
   email                  String?
   phoneNumber            String?            @map("phone_number")
-  postalCode             String?            @map("postal_code")
+  postalCode             String             @map("postal_code")
   stateOrRegion          String?            @map("state_or_region")
   updatedAt              DateTime           @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt              DateTime           @default(now()) @map("created_at") @db.DateTime(0)
@@ -543,7 +543,7 @@ model OrderedProjects {
   id                                            String         @id @map("id") @db.VarChar(255)
   hasHistoryStructuralPEStamp                   Boolean        @default(false) @map("has_history_structural_pe_stamp")
   hasHistoryElectricalPEStamp                   Boolean        @default(false) @map("has_history_electrical_pe_stamp")
-  propertyAddressCoordinates                    String?        @map("property_address_coordinates") @db.VarChar(255)
+  propertyAddressCoordinates                    String         @map("property_address_coordinates") @db.VarChar(255)
   mountingType                                  String?        @map("mounting_type") @db.VarChar(255)
   mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)
   systemSize                                    Decimal?       @map("system_size") @db.Decimal(10, 2)
@@ -551,11 +551,11 @@ model OrderedProjects {
   projectFolder                                 String?        @map("project_folder") @db.VarChar(255)
   projectNumber                                 String?        @map("project_number") @db.VarChar(255)
   propertyFullAddress                           String         @map("property_full_address") @db.VarChar(255)
-  propertyAddressStreet1                        String?        @map("property_address_street1") @db.VarChar(255)
+  propertyAddressStreet1                        String         @map("property_address_street1") @db.VarChar(255)
   propertyAddressStreet2                        String?        @map("property_address_street2") @db.VarChar(255)
-  propertyAddressCity                           String?        @map("property_address_city") @db.VarChar(255)
-  propertyAddressState                          String?        @map("property_address_state") @db.VarChar(255)
-  propertyAddressPostalCode                     String?        @map("property_address_postal_code") @db.VarChar(10)
+  propertyAddressCity                           String         @map("property_address_city") @db.VarChar(255)
+  propertyAddressState                          String         @map("property_address_state") @db.VarChar(255)
+  propertyAddressPostalCode                     String         @map("property_address_postal_code") @db.VarChar(10)
   propertyOwnerName                             String?        @map("property_owner_name") @db.VarChar(255)
   masterLogUpload                               Boolean?       @map("master_log_upload")
   ahjAutomationComplete                         Boolean?       @map("ahj_automation_complete")
@@ -563,7 +563,7 @@ model OrderedProjects {
   exportId                                      String?        @map("export_id") @db.VarChar(255)
   googleGeocoder                                String?        @map("google_geocoder") @db.VarChar(255)
   reTriggerActivateCreateProjectFolderTrigger   Boolean?       @map("re_trigger_activate_create_project_folder_trigger")
-  lastModifiedBy                                String?        @map("last_modified_by") @db.VarChar(255)
+  lastModifiedBy                                String         @map("last_modified_by") @db.VarChar(255)
   newBatteryStorageDesign                       Boolean?       @map("new_battery_storage_design")
   numberOfWetStamps                             Int?           @map("number_of_wet_stamps")
   numberOfStructuralWetStamps                   Int?           @map("number_of_structural_wet_stamps")
@@ -574,7 +574,7 @@ model OrderedProjects {
   sandboxFormula                                String?        @map("sandbox_formula") @db.VarChar(255)
   containerId1                                  String?        @map("container_id_1") @db.VarChar(255)
   newShareDriveStructure                        String?        @map("new_share_drive_structure") @db.VarChar(255)
-  stateId                                       String?        @map("state_id") @db.VarChar(255)
+  stateId                                       String         @map("state_id") @db.VarChar(255)
   countyId                                      String?        @map("county_id") @db.VarChar(255)
   countySubdivisionsId                          String?        @map("county_subdivisions_id") @db.VarChar(255)
   placeId                                       String?        @map("place_id") @db.VarChar(255)

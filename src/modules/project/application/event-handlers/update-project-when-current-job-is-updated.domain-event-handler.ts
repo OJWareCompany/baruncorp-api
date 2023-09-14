@@ -18,7 +18,7 @@ export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
   async handle(event: CurrentJobUpdatedDomainEvent) {
     if (!event.isCurrentJop) return
 
-    const project = await this.projectRepository.findProject(event.projectId)
+    const project = await this.projectRepository.findProjectOrThrow(event.projectId)
     project
       .setSystemSize(event.systemSize)
       .setMailingFullAddressForWetStamp(event.mailingFullAddressForWetStamp)

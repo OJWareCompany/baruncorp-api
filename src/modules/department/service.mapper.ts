@@ -11,7 +11,7 @@ export class ServiceMapper implements Mapper<ServiceEntity, ServiceModel, Servic
     const props = entity.getProps()
     const record: ServiceModel = {
       id: props.id,
-      name: props.description,
+      name: props.name,
       description: props.description,
       updatedAt: new Date(),
       createdAt: new Date(),
@@ -19,8 +19,12 @@ export class ServiceMapper implements Mapper<ServiceEntity, ServiceModel, Servic
       state_restricted: props.state_restricted,
       is_current_user: props.is_current_user,
       internal_only: props.internal_only,
-      man_minutes_residential_new_standard: new Prisma.Decimal(props.man_minutes_residential_new_standard),
-      man_minutes_residential_rev_standard: new Prisma.Decimal(props.man_minutes_residential_rev_standard),
+      man_minutes_residential_new_standard: props.man_minutes_residential_new_standard
+        ? new Prisma.Decimal(props.man_minutes_residential_new_standard)
+        : null,
+      man_minutes_residential_rev_standard: props.man_minutes_residential_rev_standard
+        ? new Prisma.Decimal(props.man_minutes_residential_rev_standard)
+        : null,
       is_member_assignment: props.isMemberAssignment,
       is_in_order_menu: props.isInOrderMenu,
       parent_task_id: props.parentTaskId,

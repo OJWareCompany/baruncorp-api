@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer'
-import { IsArray, IsNumber, Length } from 'class-validator'
+import { IsArray } from 'class-validator'
 import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -51,7 +51,16 @@ export class CensusState {
   abbreviation: string
 
   getNoteInputData() {
-    const copyState = { ...this }
+    const copyState: {
+      ansiCode: string
+      stateName?: string
+      funcStat: string
+      geoId: string
+      lsadCode: string
+      stateLongName?: string
+      stateCode: string
+      abbreviation?: string
+    } = { ...this }
     delete copyState['stateName']
     delete copyState['abbreviation']
     delete copyState['stateLongName']
@@ -108,7 +117,16 @@ export class CensusCounties {
   stateCode: string
   @Exclude()
   getNoteInputData(state: CensusState) {
-    const copyCounty = { ...this }
+    const copyCounty: {
+      ansiCode: string
+      countyName?: string
+      countyCode: string
+      funcStat: string
+      geoId: string
+      lsadCode: string
+      countyLongName?: string
+      stateCode: string
+    } = { ...this }
     delete copyCounty['countyName']
     delete copyCounty['countyLongName']
     return {
@@ -226,8 +244,19 @@ export class CensusPlace {
   @Expose({ name: 'STATE' })
   stateCode: string
 
-  getNoteInputData(state: CensusState, county: CensusCounties, countySubdivisions: CensusCountySubdivisions) {
-    const placeCopy = { ...this }
+  getNoteInputData(state: CensusState, county: CensusCounties, countySubdivisions: CensusCountySubdivisions | null) {
+    const placeCopy: {
+      placeName?: string
+      funcStat: string
+      geoId: string
+      lsadCode: string
+      placeLongName?: string
+      placeFips?: string
+      placeC?: string
+      ansiCode: string
+      stateCode: string
+    } = { ...this }
+
     delete placeCopy['placeName']
     delete placeCopy['placeFips']
     delete placeCopy['placeLongName']
@@ -237,7 +266,7 @@ export class CensusPlace {
       geoId: this.geoId,
       geoIdState: state.geoId,
       geoIdCounty: county.geoId,
-      geoIdCountySubdivision: countySubdivisions.geoId,
+      geoIdCountySubdivision: countySubdivisions?.geoId || null,
       geoIdPlace: this.geoId,
       name: this.placeName,
       fullAhjName: this.placeLongName,

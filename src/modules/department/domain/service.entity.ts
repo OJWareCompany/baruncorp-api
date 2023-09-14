@@ -3,7 +3,7 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 
 export interface ServiceProps {
   name: string
-  description: string
+  description: string | null
   billing_code: string | null
   state_restricted: boolean | null
   is_current_user: boolean | null
@@ -19,7 +19,7 @@ export interface ServiceProps {
 
 export interface CreateServiceProps {
   name: string
-  description: string
+  description: string | null
   billing_code: string | null
   state_restricted: boolean | null
   is_current_user: boolean | null

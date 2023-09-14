@@ -4,7 +4,7 @@ import { IsBoolean, IsEmail, IsOptional, IsString, Matches } from 'class-validat
 export class CreateOrganizationRequestDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
   @IsEmail()
-  readonly email: string
+  readonly email: string | null
 
   @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
   @IsString()
@@ -37,7 +37,7 @@ export class CreateOrganizationRequestDto {
 
   @ApiProperty({ default: '01012341234' })
   @IsString()
-  readonly phoneNumber: string
+  readonly phoneNumber: string | null
 
   @ApiProperty({ default: 'OJ Tech' })
   @IsString()
@@ -55,25 +55,25 @@ export class CreateOrganizationRequestDto {
 
   @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isActiveContractor: boolean
+  readonly isActiveContractor: boolean | null
 
   @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isActiveWorkResource: boolean
+  readonly isActiveWorkResource: boolean | null
 
   @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isRevenueShare: boolean
+  readonly isRevenueShare: boolean | null
 
   @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   @IsBoolean()
-  readonly isRevisionRevenueShare: boolean
+  readonly isRevisionRevenueShare: boolean | null
 
   @ApiProperty({ default: 'chris kim', description: '필요한지 확인 필요' })
   @IsString()
-  readonly invoiceRecipient: string
+  readonly invoiceRecipient: string | null
 
   @ApiProperty({ default: 'chriskim@gmail.com', description: '필요한지 확인 필요' })
   @IsString()
-  readonly invoiceRecipientEmail: string
+  readonly invoiceRecipientEmail: string | null
 }

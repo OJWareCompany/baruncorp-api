@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { BadRequestException, Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
@@ -8,6 +9,7 @@ import { DeleteJobCommand } from './delete-job.command'
 @CommandHandler(DeleteJobCommand)
 export class DeleteJobService implements ICommandHandler {
   constructor(
+    // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}

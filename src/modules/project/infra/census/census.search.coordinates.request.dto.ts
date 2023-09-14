@@ -16,10 +16,10 @@ export class CensusSearchCoordinatesService {
   async search(coordinates: number[]): Promise<CensusResponseDto> {
     const query = `?x=${coordinates[0]}&y=${coordinates[1]}&benchmark=4&vintage=4&format=json`
     const searchUrl = `${this.baseUrl}${this.path}${query}`
-    const response = await got.get(searchUrl).json()
+    const response = (await got.get(searchUrl).json()) as any // TODO: any
     const hasAddressMatches = !!response['result']['geographies']
     const result = response?.['result']?.['geographies']
 
-    return hasAddressMatches ? new CensusResponseDto(result) : undefined
+    return new CensusResponseDto(result)
   }
 }

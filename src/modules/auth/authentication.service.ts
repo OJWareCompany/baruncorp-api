@@ -27,7 +27,7 @@ export class AuthenticationService {
     if (!user) throw new NotFoundException()
 
     const originalPassword = await this.usersService.findPasswordByUserId(user.id)
-    const isVerifiedPassword = await password.compare(originalPassword)
+    const isVerifiedPassword = originalPassword ? await password.compare(originalPassword) : false
 
     if (!isVerifiedPassword) {
       throw new UnauthorizedException('UnauthorizedException', '10022')
@@ -60,7 +60,7 @@ export class AuthenticationService {
     if (!user) throw new NotFoundException()
 
     const originalPassword = await this.usersService.findPasswordByUserId(user.id)
-    const isVerifiedPassword = await password.compare(originalPassword)
+    const isVerifiedPassword = originalPassword ? await password.compare(originalPassword) : false
 
     if (!isVerifiedPassword) {
       throw new UnauthorizedException()

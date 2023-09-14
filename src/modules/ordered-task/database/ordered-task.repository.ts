@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { OrderedTaskRepositoryPort } from './ordered-task.repository.port'
 import { OrderedTaskEntity } from '../domain/ordered-task.entity'
 import { PrismaService } from '../../../modules/database/prisma.service'
@@ -20,7 +20,7 @@ export class OrderedTaskRepository implements OrderedTaskRepositoryPort {
 
   async findById(id: string): Promise<OrderedTaskEntity> {
     const record = await this.prismaService.orderedTasks.findUnique({ where: { id } })
-    if (!record) return null
+    if (!record) throw new NotFoundException('Not Task found', '40007')
     return this.orderedTaskMapper.toDomain(record)
   }
 

@@ -27,7 +27,7 @@ export class OrderedTaskResponseFields {
   taskName: string
 
   @ApiProperty()
-  invoiceAmount: number
+  invoiceAmount: number | null
 
   @ApiProperty()
   isNewTask: boolean

@@ -4,6 +4,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { Users } from '@prisma/client'
 import { PrismaService } from '../../../database/prisma.service'
 import { NewOrderedTasks } from '../../../ordered-job/domain/value-objects/ordered-task.value-object'
+import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
 import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
 import { convertToAssignableTask } from '../../domain/convert-to-assignable-task'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
@@ -24,6 +25,8 @@ export class CreateOrderedTaskService implements ICommandHandler {
       include: { orderedTasks: true },
     })
 
+    if (!job) throw new JobNotFoundException()
+
     const tasks = await this.prismaService.orderedTasks.findMany({
       where: { projectId: job.projectId, taskMenuId: command.taskMenuId },
     })
@@ -41,9 +44,9 @@ export class CreateOrderedTaskService implements ICommandHandler {
       })
     })
 
-    let clientUser: Users
+    let member: Users | null
     if (command.assignedUserId) {
-      clientUser = await this.prismaService.users.findUnique({ where: { id: command.assignedUserId } })
+      member = await this.prismaService.users.findUnique({ where: { id: command.assignedUserId } })
     }
 
     const entities = assignableTask.map((task) => {
@@ -54,8 +57,8 @@ export class CreateOrderedTaskService implements ICommandHandler {
         taskMenuId: command.taskMenuId,
         jobId: command.jobId,
         projectId: job.projectId,
-        assigneeName: clientUser ? clientUser.firstName + ' ' + clientUser.lastName : null,
-        assigneeUserId: clientUser ? clientUser.id : null,
+        assigneeName: member ? member.firstName + ' ' + member.lastName : null,
+        assigneeUserId: member ? member.id : null,
         description: command.description,
       })
     })

@@ -204,7 +204,7 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
         invoiceAmount: record.invoiceAmount,
         isNewTask: record.isNewTask,
         isLocked: record.isLocked,
-        taskStatus: record.taskStatus as TaskStatus,
+        taskStatus: record.taskStatus as TaskStatus, // TODO: any
         taskName: record.taskName,
         taskMenuId: record.taskMenuId,
         jobId: record.jobId,

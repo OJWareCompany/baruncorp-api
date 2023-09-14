@@ -13,7 +13,7 @@ export interface LicenseProps {
   userName: UserName
   type: LicenseType
   stateEntity: State
-  priority: number
+  priority: number | null
   // issuedDate: Date
   expiryDate: Date | null
 }
@@ -23,7 +23,7 @@ export interface CreateLicenseProps {
   userName: UserName
   type: LicenseType
   stateEntity: State
-  priority: number
+  priority: number | null
   // issuedDate: Date
   expiryDate: Date | null
 }

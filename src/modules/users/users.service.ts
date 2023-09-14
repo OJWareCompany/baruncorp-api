@@ -22,7 +22,7 @@ import { CreateUserRoleProps, UserRole, UserRoles } from './domain/value-objects
 import { LicenseEntity } from './user-license.entity'
 import { State } from '../department/domain/value-objects/state.vo'
 import { LicenseType } from './user-license.type'
-import { NotFoundUserException } from './user.error'
+import { UserNotFoundException } from './user.error'
 
 @Injectable()
 export class UserService {
@@ -79,17 +79,17 @@ export class UserService {
 
   async upadteProfile(userId: string, userName: UserName): Promise<void> {
     const user = await this.userRepository.findOneById(userId)
-    if (!user) throw new NotFoundUserException()
+    if (!user) throw new UserNotFoundException()
     await this.userRepository.update(userId, userName)
   }
 
   async findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'>> {
     const result = await this.userRepository.findUserIdByEmail(email)
-    if (!result) throw new NotFoundUserException()
+    if (!result) throw new UserNotFoundException()
     return result
   }
 
-  async findPasswordByUserId(id: string): Promise<string> {
+  async findPasswordByUserId(id: string): Promise<string | null> {
     return await this.userRepository.findPasswordByUserId(id)
   }
 

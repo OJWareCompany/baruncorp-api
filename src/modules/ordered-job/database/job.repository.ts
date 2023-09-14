@@ -5,6 +5,7 @@ import { JobRepositoryPort } from './job.repository.port'
 import { JobMapper } from '../job.mapper'
 import { JobEntity } from '../domain/job.entity'
 import { PrismaService } from '../../../modules/database/prisma.service'
+import { JobNotFoundException } from '../domain/job.error'
 
 @Injectable()
 export class JobRepository implements JobRepositoryPort {
@@ -27,11 +28,11 @@ export class JobRepository implements JobRepositoryPort {
     await entity.publishEvents(this.eventEmitter)
   }
 
-  async findUser(id: string): Promise<Users> {
+  async findUser(id: string): Promise<Users | null> {
     return await this.prismaService.users.findUnique({ where: { id } })
   }
 
-  async findProject(id: string): Promise<OrderedProjects> {
+  async findProject(id: string): Promise<OrderedProjects | null> {
     return await this.prismaService.orderedProjects.findUnique({ where: { id } })
   }
 
@@ -42,7 +43,7 @@ export class JobRepository implements JobRepositoryPort {
         orderedTasks: true,
       },
     })
-    if (!record) throw new NotFoundException('No OrderedJob found', '40005')
+    if (!record) throw new JobNotFoundException()
 
     const currentJob = await this.prismaService.orderedJobs.findFirst({
       where: { projectId: record.projectId },
@@ -50,7 +51,7 @@ export class JobRepository implements JobRepositoryPort {
     })
     return this.jobMapper.toDomain({
       ...record,
-      isCurrentJob: record.id === currentJob.id,
+      isCurrentJob: record.id === currentJob?.id,
     })
   }
 }

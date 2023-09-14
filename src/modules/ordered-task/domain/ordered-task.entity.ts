@@ -30,13 +30,13 @@ export class OrderedTaskEntity extends AggregateRoot<OrderedTaskProps> {
     return this
   }
 
-  setAssignee(assigneeName: string, assigneeUserId: string): this {
+  setAssignee(assigneeName: string | null, assigneeUserId: string | null): this {
     this.props.assigneeName = assigneeName
     this.props.assigneeUserId = assigneeUserId
     return this
   }
 
-  setDescription(description: string): this {
+  setDescription(description: string | null): this {
     this.props.description = description
     return this
   }

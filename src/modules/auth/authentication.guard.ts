@@ -4,6 +4,7 @@ import { jwtConstants } from './constants'
 import { Request } from 'express'
 import { PrismaService } from '../database/prisma.service'
 import UserMapper from '../users/user.mapper'
+import { UserNotFoundException } from '../users/user.error'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -27,7 +28,7 @@ export class AuthGuard implements CanActivate {
       })
       // TODO: what data needed
       const user = await this.prismaService.users.findUnique({ where: { id: payload.id } })
-
+      if (!user) throw new UserNotFoundException()
       request['user'] = this.userMapper.toDomain(user)
     } catch (error) {
       console.log(error)

@@ -15,7 +15,7 @@ export class LincenseResponseDto {
   abbreviation: string
 
   @ApiProperty()
-  priority: number
+  priority: number | null
 
   @ApiProperty()
   expiryDate: string | null

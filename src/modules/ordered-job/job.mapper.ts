@@ -134,7 +134,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         projectId: record.projectId,
         projectType: record.projectType,
         mountingType: record.mountingType,
-        jobStatus: record.jobStatus as JobStatus,
+        jobStatus: record.jobStatus as JobStatus, // TODO: any
         jobRequestNumber: record.jobRequestNumber,
         propertyFullAddress: record.propertyAddress,
         jobName: record.jobName,

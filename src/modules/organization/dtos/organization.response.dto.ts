@@ -11,10 +11,10 @@ export class OrganizationResponseDto {
   description: string | null
 
   @ApiProperty()
-  email: string
+  email: string | null
 
   @ApiProperty()
-  phoneNumber: string
+  phoneNumber: string | null
 
   @ApiProperty()
   organizationType: string
@@ -23,7 +23,7 @@ export class OrganizationResponseDto {
   city: string
 
   @ApiProperty()
-  country: string
+  country: string | null
 
   @ApiProperty()
   postalCode: string

@@ -35,7 +35,7 @@ export class FindJobPaginatedHttpController {
       ...result,
       items: result.items.map((job) => {
         const item = new JobPaginatedResponseFields()
-        item.id = job.id
+        item.id = job.id! // TODO 리팩토링 후 타입 수정
         item.propertyFullAddress = job.propertyFullAddress
         item.jobRequestNumber = job.jobRequestNumber
         item.mountingType = job.mountingType

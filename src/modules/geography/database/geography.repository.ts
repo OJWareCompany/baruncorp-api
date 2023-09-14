@@ -14,6 +14,7 @@ import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated
 import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
 import { AHJType } from '../dto/ahj-note.response.dto'
 import { Paginated } from '../../../libs/ddd/repository.port'
+import { AhjJobNoteNotFoundException } from '../domain/ahj-job-note.error'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -94,7 +95,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     create: CensusPlace,
     state: CensusState,
     county: CensusCounties,
-    subdivision: CensusCountySubdivisions,
+    subdivision: CensusCountySubdivisions | null,
   ): Promise<void> {
     const placeNotes = await this.prismaService.aHJNotes.findFirst({ where: { geoId: create.geoId } })
     if (placeNotes && placeNotes?.type !== AHJType.PLACE) {
@@ -144,7 +145,9 @@ export class GeographyRepository implements GeographyRepositoryPort {
   }
 
   async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistory> {
-    return await this.prismaService.aHJNoteHistory.findUnique({ where: { id: historyId } })
+    const result = await this.prismaService.aHJNoteHistory.findUnique({ where: { id: historyId } })
+    if (!result) throw new NotFoundException()
+    return result
   }
 
   async findNoteHistory(
@@ -216,17 +219,20 @@ export class GeographyRepository implements GeographyRepositoryPort {
   }
 
   async findNoteByGeoId(geoId: string): Promise<AHJNotesModel> {
-    return await this.prismaService.aHJNotes.findUnique({
+    const result = await this.prismaService.aHJNotes.findUnique({
       where: {
         geoId,
       },
     })
+
+    if (!result) throw new AhjJobNoteNotFoundException()
+    return result
   }
 
   // TOFIX
   async updateNote(username: string, geoId: string, update: UpdateAhjNoteDto): Promise<void> {
     const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
-    if (!model) new NotFoundException('Ahj note is not founded.')
+    if (!model) throw new NotFoundException('Ahj note is not founded.')
 
     // convert undefined to null
     // const copy = { ...update }

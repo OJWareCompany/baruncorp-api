@@ -1,15 +1,15 @@
 export class CreateOrganizationCommand {
-  readonly email: string
+  readonly email: string | null
   readonly fullAddress: string
   readonly street1: string
-  readonly street2: string
+  readonly street2: string | null
   readonly city: string
   readonly state: string
   readonly postalCode: string
   readonly country: string
-  readonly phoneNumber: string
+  readonly phoneNumber: string | null
   readonly name: string
-  readonly description: string
+  readonly description: string | null
   readonly organizationType: string
   readonly isActiveContractor: boolean | null
   readonly isActiveWorkResource: boolean | null

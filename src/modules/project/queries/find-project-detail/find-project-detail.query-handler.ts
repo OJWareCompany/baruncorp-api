@@ -5,6 +5,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { ProjectNotFoundException } from '../../domain/project.error'
 
 export class FindProjectDetailQuery {
   readonly id: string
@@ -46,13 +47,13 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
         },
       })
 
-      if (!record) throw new NotFoundException('No OrderedProjects found', '30001')
+      if (!record) throw new ProjectNotFoundException()
 
       record.jobs = record.jobs.map((job) => {
         return this.jobMapper.toDomain({ ...job }).getProps()
-      }) as any
+      }) as any // TODO: any
 
-      // as JobProps
+      // as JobProps // TODO: any
       const jobHasCurrentMailingAddress: any = record.jobs.find((props: any) => {
         return !!props.mailingAddressForWetStamp?.coordinates?.length
         // return props.jobStatus === 'Completed' && !!props.mailingAddressForWetStamp?.coordinates?.length
@@ -63,7 +64,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
         currentMailingAddress: jobHasCurrentMailingAddress?.mailingAddressForWetStamp,
       }
     } catch (error) {
-      if (error.message === 'No OrderedProjects found') throw new NotFoundException('No OrderedProjects found', '30001')
+      if (error.message === 'No OrderedProjects found') throw new ProjectNotFoundException()
       else throw error
     }
   }

@@ -2,7 +2,7 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
-import { NotFoundUserException } from '../../../users/user.error'
+import { UserNotFoundException } from '../../../users/user.error'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { UpdateJobCommand } from './update-job.command'
@@ -18,10 +18,10 @@ export class UpdateJobService implements ICommandHandler {
 
   async execute(command: UpdateJobCommand): Promise<void> {
     const editor = await this.prismaService.users.findUnique({ where: { id: command.updatedByUserId } })
-    if (!editor) throw new NotFoundUserException()
+    if (!editor) throw new UserNotFoundException()
     const updatedByUserName = editor.firstName + ' ' + editor.lastName
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
-    job.updateJobStatus(command.jobStatus as JobStatus)
+    job.updateJobStatus(command.jobStatus as JobStatus) // TODO: any
     job.updateSystemSize(command.systemSize)
     job.updateMailingAddressWetForStamp(command.mailingAddressForWetStamp)
     job.updateNumberOfWetStamp(command.numberOfWetStamp)

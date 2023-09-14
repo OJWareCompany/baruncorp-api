@@ -64,7 +64,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     entity: UserEntity,
     role: UserRole,
     organizationEntity: OrganizationEntity,
-    position: PositionResponseDto,
+    position: PositionResponseDto | null,
     services: ServiceResponseDto[],
     licenses: LincenseResponseDto[],
   ): UserResponseDto {

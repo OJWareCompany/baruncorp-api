@@ -5,6 +5,7 @@ import { ProjectEntity } from '../domain/project.entity'
 import { UserEntity } from '../../users/domain/user.entity'
 import UserMapper from '../../users/user.mapper'
 import { ProjectMapper } from '../project.mapper'
+import { ProjectNotFoundException } from '../domain/project.error'
 
 @Injectable()
 export class ProjectRepository implements ProjectRepositoryPort {
@@ -13,16 +14,19 @@ export class ProjectRepository implements ProjectRepositoryPort {
     private readonly projectMapper: ProjectMapper,
     private readonly userMapper: UserMapper, // TODO: 다른 컨텍스트간 Mapper 공유 가능?
   ) {}
+  findClientUserById(id: string): Promise<UserEntity> {
+    throw new Error('Method not implemented.')
+  }
 
-  async findProject(id: string): Promise<ProjectEntity> {
+  async findProject(id: string): Promise<ProjectEntity | null> {
     const record = await this.prismaService.orderedProjects.findUnique({ where: { id } })
-    if (!record) return null
+    if (!record) return record
     return this.projectMapper.toDomain(record)
   }
 
   async findProjectOrThrow(id: string): Promise<ProjectEntity> {
     const record = await this.prismaService.orderedProjects.findUnique({ where: { id } })
-    if (!record) throw new NotFoundException('No OrderedProjects found', '30001')
+    if (!record) throw new ProjectNotFoundException()
     return this.projectMapper.toDomain(record)
   }
 
@@ -70,11 +74,6 @@ export class ProjectRepository implements ProjectRepositoryPort {
   async createProject(projectEntity: ProjectEntity): Promise<void> {
     const record = this.projectMapper.toPersistence(projectEntity)
     await this.prismaService.orderedProjects.create({ data: { ...record } })
-  }
-
-  async findClientUserById(id: string): Promise<UserEntity> {
-    const user = await this.prismaService.users.findUnique({ where: { id } })
-    return user && this.userMapper.toDomain(user)
   }
 
   async isExistedOrganizationById(organizationId: string): Promise<boolean> {

@@ -48,6 +48,6 @@ export interface GeographyRepositoryPort {
     create: CensusPlace,
     state: CensusState,
     county: CensusCounties,
-    subdivision: CensusCountySubdivisions,
+    subdivision: CensusCountySubdivisions | null,
   ): Promise<void>
 }

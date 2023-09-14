@@ -26,13 +26,13 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     return this
   }
 
-  setSystemSize(systemSize: number) {
+  setSystemSize(systemSize: number | null) {
     if (!systemSize) return this
     this.props.systemSize = systemSize
     return this
   }
 
-  setMailingFullAddressForWetStamp(mailingFullAddressForWetStamp: string) {
+  setMailingFullAddressForWetStamp(mailingFullAddressForWetStamp: string | null) {
     if (!mailingFullAddressForWetStamp) return this
     this.props.mailingFullAddressForWetStamp = mailingFullAddressForWetStamp
     return this

@@ -31,7 +31,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         orderedTasks: create.orderedTasks,
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
-        mountingType: create.mountingType as MountingType,
+        mountingType: create.mountingType as MountingType, // TODO: any
       }),
     )
     return job
@@ -111,11 +111,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
         aggregateId: this.id,
         projectId: this.props.projectId,
         systemSize: this.props.systemSize,
-        mailingFullAddressForWetStamp: this.props.mailingAddressForWetStamp?.fullAddress,
+        mailingFullAddressForWetStamp: this.props.mailingAddressForWetStamp?.fullAddress || null,
         jobStatus: this.props.jobStatus,
-        mountingType: this.props.mountingType as MountingType,
+        mountingType: this.props.mountingType as MountingType, // TODO: any
         orderedTask: this.props.orderedTasks,
-        isCurrentJop: this.props.isCurrentJob,
+        isCurrentJop: this.props?.isCurrentJob || false,
       }),
     )
   }

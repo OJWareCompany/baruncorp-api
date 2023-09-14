@@ -2,9 +2,9 @@ import { Address } from './value-objects/address.vo'
 
 export interface OrganizationProps {
   name: string
-  description: string
-  email: string
-  phoneNumber: string
+  description: string | null
+  email: string | null
+  phoneNumber: string | null
   organizationType: string
   address: Address
   isActiveContractor: boolean | null
@@ -17,9 +17,9 @@ export interface OrganizationProps {
 
 export interface CreateOrganizationProps {
   name: string
-  description: string
-  email: string
-  phoneNumber: string
+  description: string | null
+  email: string | null
+  phoneNumber: string | null
   organizationType: string
   address: Address
   isActiveContractor: boolean | null

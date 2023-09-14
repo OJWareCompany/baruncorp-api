@@ -33,7 +33,7 @@ export interface ProjectProps {
   projectPropertyAddress: Address
   clientOrganizationId: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
-  mountingType: MountingType
+  mountingType: MountingType | null
   updatedBy: string
   hasHistoryElectricalPEStamp: boolean
   hasHistoryStructuralPEStamp: boolean
@@ -41,7 +41,7 @@ export interface ProjectProps {
   systemSize: number | null
   mailingFullAddressForWetStamp: string | null
   totalOfJobs: number
-  numberOfWetStamp: number
+  numberOfWetStamp: number | null
 }
 
 export class ProjectUpdateProps {

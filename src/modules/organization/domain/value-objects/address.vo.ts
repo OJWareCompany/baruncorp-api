@@ -4,7 +4,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export interface AddressProps {
   city: string
-  country: string
+  country: string | null
   postalCode: string
   state: string | null
   street1: string

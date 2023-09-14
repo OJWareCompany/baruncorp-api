@@ -13,13 +13,13 @@ export class UpdateProjectWhenJobIsCreatedEventHandler {
   ) {}
   @OnEvent([JobCreatedDomainEvent.name], { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
-    const project = await this.projectRepository.findProject(event.projectId)
+    const project = await this.projectRepository.findProjectOrThrow(event.projectId)
     const totalOfJobs = await this.projectRepository.countTotalOfJobs(event.projectId)
 
     project
       .setTotalOfJobs(totalOfJobs)
       .setSystemSize(event.systemSize)
-      .setMailingFullAddressForWetStamp(event.mailingAddressForWetStamp?.fullAddress)
+      .setMailingFullAddressForWetStamp(event.mailingAddressForWetStamp?.fullAddress || null)
       .setMountingType(event.mountingType)
     await this.projectRepository.update(project)
   }

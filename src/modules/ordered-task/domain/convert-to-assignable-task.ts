@@ -19,10 +19,10 @@ export const convertToAssignableTask = (
     })
   })
 
-  return result.flat().filter((r) => r)
+  return result.flat().filter((r) => r) as Services[] // TODO: any
 }
 
-const filterDuplicatedTask = (orderTasks: NewOrderedTasks | NewOrderedTasks[]) => {
+const filterDuplicatedTask = (orderTasks: NewOrderedTasks | NewOrderedTasks[]): NewOrderedTasks[] => {
   const orderTaskList = Array.isArray(orderTasks) ? orderTasks : [orderTasks]
 
   const otherTaskId = '2a2a256b-57a5-46f5-8cfb-1855cc29238a'
@@ -32,8 +32,8 @@ const filterDuplicatedTask = (orderTasks: NewOrderedTasks | NewOrderedTasks[]) =
   const menuTask = orderTaskList.map((task) => {
     if (task.taskId === otherTaskId || menuTaskIdSet.has(task.taskId)) return
     menuTaskIdSet.add(task.taskId)
-    return new NewOrderedTasks({ taskId: task.taskId, description: task.description as string })
+    return new NewOrderedTasks({ taskId: task.taskId, description: task.description })
   })
 
-  return [...menuTask, ...otherTasks].filter((r) => r)
+  return [...menuTask, ...otherTasks].filter((r) => r) as NewOrderedTasks[] // TODO: any
 }

@@ -66,7 +66,7 @@ export class GeographyController {
   ): Promise<AhjNoteHistoryResponseDto> {
     return this.ahjNoteMapper.toResponse(
       await this.geographyService.findNoteUpdateHistoryDetail(param.historyId),
-    ) as AhjNoteHistoryResponseDto
+    ) as AhjNoteHistoryResponseDto // TODO: any
   }
 
   @Get('notes/history')

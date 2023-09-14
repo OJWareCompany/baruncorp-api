@@ -33,9 +33,9 @@ export class CensusSearchRequestDto {
     this.searchUrl = `${this.baseUrl}${this.path}${this.query}`
   }
 
-  async getResponse(): Promise<CensusResponseDto> {
-    const response = await got.get(this.searchUrl).json()
+  async getResponse(): Promise<CensusResponseDto | null> {
+    const response = (await got.get(this.searchUrl).json()) as any // TODO: any
     const hasAddressMatches = !!response['result']['addressMatches'][0]
-    return hasAddressMatches ? new CensusResponseDto(response) : undefined
+    return hasAddressMatches ? new CensusResponseDto(response) : null
   }
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { AddressFromMapBox } from '../../infra/census/census.type.dto'
 import { CensusResponseDto } from '../../infra/census/census.response.dto'
 import { GeographyRepositoryPort } from '../../../geography/database/geography.repository.port'
@@ -18,6 +18,7 @@ export class CreateAhjNoteService {
   async searchCensusAndCreateNote(createProjectDto: AddressFromMapBox) {
     const { coordinates } = createProjectDto
     const censusResponse = await this.censusSearchCoordinatesService.search(coordinates)
+    if (!censusResponse) throw new NotFoundException('Not Found Coordinates')
     await this.generateGeographyAndAhjNotes(censusResponse)
   }
 

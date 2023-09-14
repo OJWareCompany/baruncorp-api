@@ -90,7 +90,7 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
     response.name = model.name
     response.fullAhjName = model.fullAhjName
     response.updatedBy = model.updatedBy
-    response.updatedAt = model.updatedAt?.toISOString() || null
+    response.updatedAt = model.updatedAt.toISOString()
     return response
   }
 
@@ -101,7 +101,7 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
     response.name = model.name
     response.fullAhjName = model.fullAhjName
     response.updatedBy = model.updatedBy
-    response.updatedAt = model.updatedAt?.toISOString() || null
+    response.updatedAt = model.updatedAt.toISOString()
     return response
   }
 }

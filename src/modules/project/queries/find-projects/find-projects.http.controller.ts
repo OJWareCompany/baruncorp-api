@@ -42,7 +42,7 @@ export class FindProjectsHttpController {
         organizationId: project.clientOrganizationId,
         organizationName: project.organization.name,
         propertyOwnerName: project.propertyOwnerName,
-        propertyType: project.projectPropertyType as ProjectPropertyType,
+        propertyType: project.projectPropertyType as ProjectPropertyType, // TODO: any
         projectFolderLink: project.projectFolder,
         projectNumber: project.projectNumber,
         propertyFullAddress: project.propertyFullAddress,
@@ -50,7 +50,7 @@ export class FindProjectsHttpController {
         totalOfJobs: project.totalOfJobs,
         masterLogUpload: !!project.masterLogUpload,
         designOrPEStampPreviouslyDoneOnProjectOutSide: !!project.designOrPeStampPreviouslyDoneOnProjectOutside,
-        mountingType: project.mountingType as MountingTypeEnum,
+        mountingType: project.mountingType as MountingTypeEnum, // TODO: any
       })),
     })
   }
