@@ -31,6 +31,7 @@ export interface CreateJobProps {
 }
 
 export interface JobProps {
+  id?: string
   projectId: string
   mountingType: string
   jobName: string

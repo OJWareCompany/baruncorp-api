@@ -33,6 +33,7 @@ export class FindJobHttpController {
     response.projectType = result.projectType
     response.receivedAt = result.receivedAt.toISOString()
     response.isExpedited = result.isExpedited
+    response.id = result.id
 
     response.orderedTasks = result.orderedTasks.map((task) => {
       return new OrderedTaskResponseFields({

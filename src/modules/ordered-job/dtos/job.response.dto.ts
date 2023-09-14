@@ -71,6 +71,9 @@ export class ClientInformationFields {
 
 export class JobResponseDto {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
+  id: string
+
+  @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
   projectId: string
 
   @ApiProperty({ example: 300.1 })
