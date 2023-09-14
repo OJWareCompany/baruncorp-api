@@ -268,9 +268,9 @@ export interface StatesResponseDto {
   /** @default "CA" */
   abbreviation: string | null
   /** @default "06" */
-  geoId: string
+  geoId: string | null
   /** @default "06" */
-  stateCode: string
+  stateCode: string | null
   /** @default "01779778" */
   ansiCode: string | null
   /** @default "California" */
@@ -617,6 +617,7 @@ export interface ProjectResponseDto {
   projectNumber: string | null
   /** @example "2023-09-05T07:14:57.270Z" */
   createdAt: string
+  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBody | null
   /** @example 1 */
   totalOfJobs: number
   /** @example false */
@@ -837,9 +838,21 @@ export interface UsersControllerDeleteRemoveMemberLicenseParams {
 
 export interface FindUsersHttpControllerGetFindUsersParams {
   /** @default "hyomin@ojware.com" */
-  email?: string | null
+  email: string | null
   /** @default "" */
-  organizationId?: string | null
+  organizationId: string | null
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
 }
 
 export interface OrganizationControllerFindMembersParams {
@@ -896,7 +909,7 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
    */
   page?: number
   /** @default "1239525" */
-  geoId?: string | null
+  geoId: string | null
 }
 
 export interface FindProjectsHttpControllerFindUsersParams {
