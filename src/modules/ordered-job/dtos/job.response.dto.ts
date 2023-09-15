@@ -98,7 +98,7 @@ export class JobResponseDto {
   propertyFullAddress: string
 
   @ApiProperty({ example: 5 })
-  jobRequestNumber: number | null
+  jobRequestNumber: number
 
   @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
   jobStatus: JobStatus
