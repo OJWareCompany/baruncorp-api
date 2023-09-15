@@ -437,15 +437,15 @@ export interface AhjNoteHistoryPaginatedResponseDto {
 }
 
 export interface AddressFromMapBox {
-  /** @default [12.1,22.2] */
+  /** @default [-97.87,34] */
   coordinates: number[]
 }
 
-export interface Address {
+export interface AddressResponseDto {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
   /** @default "A101" */
-  street2: object | null
+  street2: string | null
   /** @default "Lauderdale Lakes" */
   city: string
   /** @default "Florida" */
@@ -453,10 +453,10 @@ export interface Address {
   /** @default "33309" */
   postalCode: string
   /** @default "United State" */
-  country: object
+  country: string | null
   /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
   fullAddress: string
-  /** @default [12.1,22.2] */
+  /** @default [-97.87,34] */
   coordinates: number[]
 }
 
@@ -469,18 +469,18 @@ export interface CreateProjectRequestDto {
   clientOrganizationId: string
   /** @default "000152" */
   projectNumber: string | null
-  projectPropertyAddress: Address
+  projectPropertyAddress: AddressResponseDto
 }
 
-export interface ProjectAssociatedRegulatoryBody {
+export interface ProjectAssociatedRegulatoryBodyDto {
   /** @default "12" */
   stateId: string
   /** @default "12011" */
-  countyId: object
+  countyId: string | null
   /** @default "1201191098" */
-  countySubdivisionsId: object
+  countySubdivisionsId: string | null
   /** @default "1239525" */
-  placeId: object
+  placeId: string | null
   /** @default "1239525" */
   ahjId: string
 }
@@ -492,8 +492,8 @@ export interface UpdateProjectRequestDto {
   projectPropertyOwner: string | null
   /** @default "50021" */
   projectNumber: string | null
-  projectPropertyAddress: Address
-  projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
+  projectPropertyAddress: AddressResponseDto
+  projectAssociatedRegulatory: ProjectAssociatedRegulatoryBodyDto
 }
 
 export interface ProjectPaginatedResponseFields {
@@ -588,7 +588,7 @@ export interface JobResponseDto {
   projectId: string
   /** @example 300.1 */
   systemSize: number | null
-  mailingAddressForWetStamp: Address | null
+  mailingAddressForWetStamp: AddressResponseDto | null
   /** @example "Ground Mount" */
   mountingType: string
   /** @example 3 */
@@ -600,7 +600,7 @@ export interface JobResponseDto {
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
   propertyFullAddress: string
   /** @example 5 */
-  jobRequestNumber: number | null
+  jobRequestNumber: number
   /** @example "In Progress" */
   jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
   /** @example "Residential" */
@@ -630,8 +630,8 @@ export interface ProjectResponseDto {
   clientOrganizationId: string
   /** @example "https://host.com/projects/path" */
   projectFolderLink: string | null
-  propertyAddress: Address | null
-  mailingAddressForWetStamp: Address | null
+  propertyAddress: AddressResponseDto
+  mailingAddressForWetStamp: AddressResponseDto | null
   /** @example 3 */
   numberOfWetStamp: number | null
   /** @example "Residential" */
@@ -640,7 +640,7 @@ export interface ProjectResponseDto {
   projectNumber: string | null
   /** @example "2023-09-05T07:14:57.270Z" */
   createdAt: string
-  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBody | null
+  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBodyDto | null
   /** @example 1 */
   totalOfJobs: number
   /** @example false */
@@ -675,7 +675,7 @@ export interface CreateJobRequestDto {
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
   /** @default [{"taskId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"taskId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"taskId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"taskId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"taskId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
-  mailingAddressForWetStamp: Address | null
+  mailingAddressForWetStamp: AddressResponseDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
   /** @default false */
@@ -693,7 +693,7 @@ export interface UpdateJobRequestDto {
   additionalInformationFromClient: string | null
   /** @default 300.1 */
   systemSize: number | null
-  mailingAddressForWetStamp: Address | null
+  mailingAddressForWetStamp: AddressResponseDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
   /** @default "Roof Mount" */

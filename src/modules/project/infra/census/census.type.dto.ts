@@ -4,7 +4,7 @@ import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class AddressFromMapBox {
-  @ApiProperty({ default: [12.1, 22.2] })
+  @ApiProperty({ default: [-97.87, 34] })
   @IsArray()
   readonly coordinates: number[]
 }

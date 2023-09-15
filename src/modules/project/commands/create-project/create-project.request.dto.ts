@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsIn, IsObject, IsOptional, IsString } from 'class-validator'
+import { AddressResponseDto } from '../../../ordered-job/dtos/address.response.dto'
 import { ProjectPropertyType } from '../../domain/project.type'
-import { Address } from '../../../organization/domain/value-objects/address.vo'
 
 export class CreateProjectRequestDto {
   @ApiProperty({ default: 'Residential' })
@@ -22,7 +22,7 @@ export class CreateProjectRequestDto {
   @IsOptional()
   readonly projectNumber: string | null
 
-  @ApiProperty({ default: Address })
+  @ApiProperty({ default: AddressResponseDto })
   @IsObject()
-  readonly projectPropertyAddress: Address
+  readonly projectPropertyAddress: AddressResponseDto
 }

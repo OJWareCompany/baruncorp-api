@@ -1,12 +1,37 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { IsOptional, IsString } from 'class-validator'
 import {
   MountingTypeEnum,
   ProjectPropertyType,
   ProjectPropertyTypeEnum,
 } from '../../../modules/project/domain/project.type'
-import { Address } from '../../organization/domain/value-objects/address.vo'
 import { JobResponseDto } from '../../ordered-job/dtos/job.response.dto'
-import { ProjectAssociatedRegulatoryBody } from '../domain/value-objects/project-associated-regulatory-body.value-object'
+import { AddressResponseDto } from '../../ordered-job/dtos/address.response.dto'
+
+export class ProjectAssociatedRegulatoryBodyDto {
+  @ApiProperty({ default: '12' })
+  @IsString()
+  readonly stateId: string
+
+  @ApiProperty({ default: '12011' })
+  @IsString()
+  @IsOptional()
+  readonly countyId: string | null
+
+  @ApiProperty({ default: '1201191098' })
+  @IsString()
+  @IsOptional()
+  readonly countySubdivisionsId: string | null
+
+  @ApiProperty({ default: '1239525' })
+  @IsString()
+  @IsOptional()
+  readonly placeId: string | null
+
+  @ApiProperty({ default: '1239525' })
+  @IsString()
+  readonly ahjId: string
+}
 
 export class ProjectResponseDto {
   @ApiProperty({ example: '07e12e89-6077-4fd1-a029-c50060b57f43' })
@@ -30,11 +55,11 @@ export class ProjectResponseDto {
   @ApiProperty({ example: 'https://host.com/projects/path' })
   projectFolderLink: string | null
 
-  @ApiProperty({ example: Address })
-  propertyAddress: Address | null
+  @ApiProperty({ example: AddressResponseDto })
+  propertyAddress: AddressResponseDto
 
-  @ApiProperty({ example: Address })
-  mailingAddressForWetStamp: Address | null
+  @ApiProperty({ example: AddressResponseDto })
+  mailingAddressForWetStamp: AddressResponseDto | null
 
   @ApiProperty({ example: 3 })
   numberOfWetStamp: number | null
@@ -48,8 +73,8 @@ export class ProjectResponseDto {
   @ApiProperty({ example: '2023-09-05T07:14:57.270Z' })
   createdAt: string
 
-  @ApiProperty({ example: ProjectAssociatedRegulatoryBody })
-  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBody | null
+  @ApiProperty({ example: ProjectAssociatedRegulatoryBodyDto })
+  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBodyDto | null
 
   @ApiProperty({ example: 1 })
   totalOfJobs: number

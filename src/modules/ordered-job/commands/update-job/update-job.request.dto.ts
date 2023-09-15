@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsString, IsNumber, IsOptional, IsObject } from 'class-validator'
 import { JobStatus, JobStatusEnum } from '../../domain/job.type'
-import { Address } from '../../../organization/domain/value-objects/address.vo'
+import { AddressResponseDto } from '../../dtos/address.response.dto'
 
 export class UpdateJobRequestDto {
   @ApiProperty({ default: 'chris@barun.com', type: String, isArray: true })
@@ -26,10 +26,10 @@ export class UpdateJobRequestDto {
   @IsOptional()
   systemSize: number | null
 
-  @ApiProperty({ default: Address })
+  @ApiProperty({ default: AddressResponseDto })
   @IsObject()
   @IsOptional()
-  mailingAddressForWetStamp: Address | null
+  mailingAddressForWetStamp: AddressResponseDto | null
 
   @ApiProperty({ default: 3 })
   @IsNumber()
