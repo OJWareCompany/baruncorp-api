@@ -76,6 +76,12 @@ export class JobPaginatedResponseFields {
 
   @ApiProperty({ example: '2023-08-11 09:10:31' })
   receivedAt: string
+
+  @ApiProperty({ example: true })
+  isExpedited: boolean
+
+  @ApiProperty({ example: 'Please check this out.' })
+  additionalInformationFromClient: string | null
 }
 
 export class JobPaginatedResponseDto extends PaginatedResponseDto<JobPaginatedResponseFields> {

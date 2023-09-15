@@ -42,9 +42,11 @@ export class FindJobPaginatedHttpController {
         item.jobStatus = job.jobStatus
         item.projectType = job.projectType
         item.receivedAt = job.receivedAt.toISOString()
+        item.isExpedited = job.isExpedited
+        item.additionalInformationFromClient = job.additionalInformationFromClient
         item.clientInfo = {
           clientOrganizationId: job.clientInfo.clientOrganizationId,
-          clientOrganizationName: job.clientInfo.clientOrganizationId, // TODO: project나 조직도 join 해야하나
+          clientOrganizationName: job.clientInfo.clientOrganizationName, // TODO: project나 조직도 join 해야하나
           clientUserName: job.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
           clientUserId: job.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
         }

@@ -11,11 +11,11 @@ import { JobProps } from '../../domain/job.type'
 import { JobMapper } from '../../job.mapper'
 
 export class FindJobPaginatedQuery extends PaginatedQueryBase {
-  readonly propertyType: string | null
+  readonly propertyType?: string | null
 
-  readonly jobName: string | null
+  readonly jobName?: string | null
 
-  readonly projectId: string | null
+  readonly projectId?: string | null
 
   constructor(props: PaginatedParams<FindJobPaginatedQuery>) {
     super(props)

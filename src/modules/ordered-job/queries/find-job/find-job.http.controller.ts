@@ -5,10 +5,11 @@ import { JobResponseDto, OrderedTaskResponseFields } from '../../dtos/job.respon
 import { JobProps } from '../../domain/job.type'
 import { FindJobRequestParamDto } from './find-job.request.param.dto'
 import { FindJobQuery } from './find-job.query-handler'
+import { JobMapper } from '../../job.mapper'
 
 @Controller('jobs')
 export class FindJobHttpController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(private readonly queryBus: QueryBus, private readonly jobMapper: JobMapper) {}
 
   @Get(':jobId')
   @ApiOperation({ summary: 'Find job' })
@@ -18,49 +19,7 @@ export class FindJobHttpController {
   })
   async findJob(@Param() param: FindJobRequestParamDto): Promise<JobResponseDto> {
     const query = new FindJobQuery({ jobId: param.jobId })
-    const result: JobProps = await this.queryBus.execute(query)
-
-    const response = new JobResponseDto()
-    response.projectId = result.projectId
-    response.systemSize = result.systemSize
-    response.mailingAddressForWetStamp = result.mailingAddressForWetStamp
-    response.numberOfWetStamp = result.numberOfWetStamp
-    response.additionalInformationFromClient = result.additionalInformationFromClient
-    response.updatedBy = result.updatedBy
-    response.propertyFullAddress = result.propertyFullAddress
-    response.mountingType = result.mountingType
-    response.jobStatus = result.jobStatus
-    response.projectType = result.projectType
-    response.receivedAt = result.receivedAt.toISOString()
-    response.isExpedited = result.isExpedited
-    response.id = result.id! // 리팩토링 후 타입 수정
-
-    response.orderedTasks = result.orderedTasks.map((task) => {
-      return new OrderedTaskResponseFields({
-        id: task.id,
-        taskStatus: task.taskStatus,
-        taskName: task.taskName,
-        assignee: {
-          userId: task.assigneeUserId,
-          name: task.assigneeName,
-        },
-        description: task.description,
-        invoiceAmount: task.invoiceAmount,
-        isNewTask: task.isNewTask,
-        isLocked: task.isLocked,
-        createdAt: task.createdAt.toISOString(),
-      })
-    })
-
-    response.clientInfo = {
-      clientOrganizationId: result.clientInfo.clientOrganizationId,
-      clientOrganizationName: result.clientInfo.clientOrganizationName,
-      clientUserName: result.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
-      clientUserId: result.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
-      contactEmail: result.clientInfo.clientContactEmail,
-      deliverablesEmails: result.clientInfo.deliverablesEmail,
-    }
-
-    return response
+    const result: JobResponseDto = await this.queryBus.execute(query)
+    return result
   }
 }

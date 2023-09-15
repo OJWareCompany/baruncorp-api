@@ -93,7 +93,7 @@ export interface LincenseResponseDto {
   type: 'Electrical' | 'Structural'
   issuingCountryName: string
   abbreviation: string
-  priority: number
+  priority: number | null
   expiryDate: string | null
 }
 
@@ -172,11 +172,11 @@ export interface OrganizationResponseDto {
   id: string
   name: string
   description: string | null
-  email: string
-  phoneNumber: string
+  email: string | null
+  phoneNumber: string | null
   organizationType: string
   city: string
-  country: string
+  country: string | null
   postalCode: string
   state: string
   street1: string
@@ -197,7 +197,7 @@ export interface OrganizationResponseDto {
 
 export interface CreateOrganizationRequestDto {
   /** @default "hyomin@ojware.com" */
-  email: string
+  email: string | null
   /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
   fullAddress: string
   /** @default "3480 Northwest 33rd Court" */
@@ -213,7 +213,7 @@ export interface CreateOrganizationRequestDto {
   /** @default "United States" */
   country: string
   /** @default "01012341234" */
-  phoneNumber: string
+  phoneNumber: string | null
   /** @default "OJ Tech" */
   name: string
   /** @default "This is about organization..." */
@@ -227,32 +227,32 @@ export interface CreateOrganizationRequestDto {
    * 필요한지 확인 필요
    * @default true
    */
-  isActiveContractor: boolean
+  isActiveContractor: boolean | null
   /**
    * 필요한지 확인 필요
    * @default true
    */
-  isActiveWorkResource: boolean
+  isActiveWorkResource: boolean | null
   /**
    * 필요한지 확인 필요
    * @default true
    */
-  isRevenueShare: boolean
+  isRevenueShare: boolean | null
   /**
    * 필요한지 확인 필요
    * @default true
    */
-  isRevisionRevenueShare: boolean
+  isRevisionRevenueShare: boolean | null
   /**
    * 필요한지 확인 필요
    * @default "chris kim"
    */
-  invoiceRecipient: string
+  invoiceRecipient: string | null
   /**
    * 필요한지 확인 필요
    * @default "chriskim@gmail.com"
    */
-  invoiceRecipientEmail: string
+  invoiceRecipientEmail: string | null
 }
 
 export interface CreateMemberPositionRequestDto {
@@ -444,8 +444,8 @@ export interface AddressFromMapBox {
 export interface Address {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
-  /** @default null */
-  street2: string
+  /** @default "A101" */
+  street2: object | null
   /** @default "Lauderdale Lakes" */
   city: string
   /** @default "Florida" */
@@ -453,7 +453,7 @@ export interface Address {
   /** @default "33309" */
   postalCode: string
   /** @default "United State" */
-  country: string
+  country: object
   /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
   fullAddress: string
   /** @default [12.1,22.2] */
@@ -476,11 +476,11 @@ export interface ProjectAssociatedRegulatoryBody {
   /** @default "12" */
   stateId: string
   /** @default "12011" */
-  countyId: string
+  countyId: object
   /** @default "1201191098" */
-  countySubdivisionsId: string
+  countySubdivisionsId: object
   /** @default "1239525" */
-  placeId: string
+  placeId: object
   /** @default "1239525" */
   ahjId: string
 }
@@ -543,140 +543,6 @@ export interface ProjectPaginatedResponseDto {
   items: ProjectPaginatedResponseFields[]
 }
 
-export interface OrderedTask {
-  id: string
-  invoiceAmount: number
-  isNewTask: boolean
-  isLocked: boolean
-  taskStatus: string
-  taskName: string
-  taskId: string
-  jobId: string
-  projectId: string
-  /** @format date-time */
-  createdAt: string
-  assigneeName: string
-  assigneeUserId: string
-  description: string
-}
-
-export interface ClientInformation {
-  clientOrganizationId: string
-  clientOrganizationName: string
-  clientUserId: string
-  clientUserName: string
-  clientContactEmail: string
-  deliverablesEmail: string[]
-}
-
-export interface Jobs {
-  id: string
-  projectId: string
-  projectType: string
-  mountingType: string
-  jobName: string
-  /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
-  propertyFullAddress: string
-  isExpedited: boolean
-  jobRequestNumber: number
-  orderedTasks: OrderedTask[]
-  systemSize: number
-  mailingAddressForWetStamp: Address | null
-  numberOfWetStamp: number
-  additionalInformationFromClient: string
-  clientInfo: ClientInformation
-  updatedBy: string
-  /** @format date-time */
-  receivedAt: string
-  isCurrentJob?: boolean
-}
-
-export interface ProjectResponseDto {
-  /** @example "07e12e89-6077-4fd1-a029-c50060b57f43" */
-  projectId: string
-  /** @example 201 */
-  systemSize: number | null
-  /** @example "Kevin Brook" */
-  projectPropertyOwnerName: string | null
-  /** @example "Ground Mount" */
-  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
-  /** @example "Barun Corp" */
-  clientOrganization: string
-  /** @example "eaefe251-0f1f-49ac-88cb-3582ec76601d" */
-  clientOrganizationId: string
-  /** @example "https://host.com/projects/path" */
-  projectFolderLink: string | null
-  propertyAddress: Address | null
-  mailingAddressForWetStamp: Address | null
-  /** @example 3 */
-  numberOfWetStamp: number | null
-  /** @example "Residential" */
-  propertyType: 'Residential' | 'Commercial'
-  /** @example null */
-  projectNumber: string | null
-  /** @example "2023-09-05T07:14:57.270Z" */
-  createdAt: string
-  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBody | null
-  /** @example 1 */
-  totalOfJobs: number
-  /** @example false */
-  masterLogUpload: boolean
-  /** @example false */
-  designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
-  /** @example false */
-  hasHistoryElectricalPEStamp: boolean
-  /** @example false */
-  hasHistoryStructuralPEStamp: boolean
-  /** @example [] */
-  jobs: Jobs[]
-}
-
-export interface CreateOrderedTaskWhenJobIsCreatedRequestDto {
-  taskId: string
-  description: string | null
-}
-
-export interface CreateJobRequestDto {
-  /** @default "chris@barun.com" */
-  deliverablesEmails: string[]
-  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
-  clientUserId: string
-  /** @default "please, check this out." */
-  additionalInformationFromClient: string | null
-  /** @default 300.1 */
-  systemSize: number | null
-  /** @default "39027356-b928-4b8e-b30c-a343a0894766" */
-  projectId: string
-  /** @example "Ground Mount" */
-  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
-  /** @default [{"taskId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"taskId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"taskId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"taskId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"taskId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
-  taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
-  mailingAddressForWetStamp: Address | null
-  /** @default 3 */
-  numberOfWetStamp: number | null
-  /** @default false */
-  isExpedited: boolean
-}
-
-export interface UpdateJobRequestDto {
-  /** @default "chris@barun.com" */
-  deliverablesEmails: string[]
-  /** @default "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
-  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
-  clientUserId: string
-  /** @default "please, check this out." */
-  additionalInformationFromClient: string | null
-  /** @default 300.1 */
-  systemSize: number | null
-  mailingAddressForWetStamp: Address | null
-  /** @default 3 */
-  numberOfWetStamp: number | null
-  /** @default "Roof Mount" */
-  mountingType: string
-}
-
 export interface MemberResponseFields {
   /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
   userId: string | null
@@ -691,7 +557,7 @@ export interface OrderedTaskResponseFields {
   taskStatus: string
   /** @example "PV Design" */
   taskName: string
-  invoiceAmount: number
+  invoiceAmount: number | null
   isNewTask: boolean
   isLocked: boolean
   assignee: MemberResponseFields
@@ -745,6 +611,93 @@ export interface JobResponseDto {
   receivedAt: string
   /** @example true */
   isExpedited: boolean
+  jobName: string
+  isCurrentJob?: boolean
+}
+
+export interface ProjectResponseDto {
+  /** @example "07e12e89-6077-4fd1-a029-c50060b57f43" */
+  projectId: string
+  /** @example 201 */
+  systemSize: number | null
+  /** @example "Kevin Brook" */
+  projectPropertyOwnerName: string | null
+  /** @example "Ground Mount" */
+  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
+  /** @example "Barun Corp" */
+  clientOrganization: string
+  /** @example "eaefe251-0f1f-49ac-88cb-3582ec76601d" */
+  clientOrganizationId: string
+  /** @example "https://host.com/projects/path" */
+  projectFolderLink: string | null
+  propertyAddress: Address | null
+  mailingAddressForWetStamp: Address | null
+  /** @example 3 */
+  numberOfWetStamp: number | null
+  /** @example "Residential" */
+  propertyType: 'Residential' | 'Commercial'
+  /** @example null */
+  projectNumber: string | null
+  /** @example "2023-09-05T07:14:57.270Z" */
+  createdAt: string
+  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBody | null
+  /** @example 1 */
+  totalOfJobs: number
+  /** @example false */
+  masterLogUpload: boolean
+  /** @example false */
+  designOrPEStampPreviouslyDoneOnProjectOutSide: boolean
+  /** @example false */
+  hasHistoryElectricalPEStamp: boolean
+  /** @example false */
+  hasHistoryStructuralPEStamp: boolean
+  /** @example [] */
+  jobs: JobResponseDto[]
+}
+
+export interface CreateOrderedTaskWhenJobIsCreatedRequestDto {
+  taskId: string
+  description: string | null
+}
+
+export interface CreateJobRequestDto {
+  /** @default "chris@barun.com" */
+  deliverablesEmails: string[]
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  clientUserId: string
+  /** @default "please, check this out." */
+  additionalInformationFromClient: string | null
+  /** @default 300.1 */
+  systemSize: number | null
+  /** @default "39027356-b928-4b8e-b30c-a343a0894766" */
+  projectId: string
+  /** @example "Ground Mount" */
+  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
+  /** @default [{"taskId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"taskId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"taskId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"taskId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"taskId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
+  taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
+  mailingAddressForWetStamp: Address | null
+  /** @default 3 */
+  numberOfWetStamp: number | null
+  /** @default false */
+  isExpedited: boolean
+}
+
+export interface UpdateJobRequestDto {
+  /** @default "chris@barun.com" */
+  deliverablesEmails: string[]
+  /** @default "In Progress" */
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  clientUserId: string
+  /** @default "please, check this out." */
+  additionalInformationFromClient: string | null
+  /** @default 300.1 */
+  systemSize: number | null
+  mailingAddressForWetStamp: Address | null
+  /** @default 3 */
+  numberOfWetStamp: number | null
+  /** @default "Roof Mount" */
+  mountingType: string
 }
 
 export interface OrderedTaskPaginatedResponseFields {
@@ -778,6 +731,10 @@ export interface JobPaginatedResponseFields {
   clientInfo: ClientInformationFields
   /** @example "2023-08-11 09:10:31" */
   receivedAt: string
+  /** @example true */
+  isExpedited: boolean
+  /** @example "Please check this out." */
+  additionalInformationFromClient: string | null
 }
 
 export interface JobPaginatedResponseDto {
@@ -804,7 +761,7 @@ export interface CreateOrderedTaskRequestDto {
 }
 
 export interface UpdateOrderedTaskRequestDto {
-  invoiceAmount: number
+  invoiceAmount: number | null
   isLocked: boolean
   /** @default "In Progress" */
   taskStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
@@ -842,9 +799,9 @@ export interface UsersControllerDeleteRemoveMemberLicenseParams {
 
 export interface FindUsersHttpControllerGetFindUsersParams {
   /** @default "hyomin@ojware.com" */
-  email: string | null
+  email?: string | null
   /** @default "" */
-  organizationId: string | null
+  organizationId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -918,13 +875,13 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
 
 export interface FindProjectsHttpControllerFindUsersParams {
   /** @default "Residential" */
-  propertyType: string | null
+  propertyType?: string | null
   /** @default null */
-  projectNumber: string | null
+  projectNumber?: string | null
   /** @default "3480 Northwest 33rd Court" */
-  propertyFullAddress: string | null
+  propertyFullAddress?: string | null
   /** @default "" */
-  organizationId: string | null
+  organizationId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20

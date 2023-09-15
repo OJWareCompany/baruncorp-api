@@ -6,13 +6,13 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export class FindProjectsQuery extends PaginatedQueryBase {
-  readonly propertyType: string | null
+  readonly propertyType?: string | null
 
-  readonly projectNumber: string | null
+  readonly projectNumber?: string | null
 
-  readonly propertyFullAddress: string | null
+  readonly propertyFullAddress?: string | null
 
-  readonly organizationId: string | null
+  readonly organizationId?: string | null
 
   constructor(props: PaginatedParams<FindProjectsQuery>) {
     super(props)

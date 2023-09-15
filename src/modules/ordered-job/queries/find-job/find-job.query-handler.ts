@@ -4,6 +4,8 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JobProps } from '../../domain/job.type'
+import { JobMapper } from '../../job.mapper'
+import { JobResponseDto } from '../../dtos/job.response.dto'
 
 export class FindJobQuery {
   readonly jobId: string
@@ -17,12 +19,11 @@ export class FindJobQueryHandler implements IQueryHandler {
   constructor(
     // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
+    private readonly jobMapper: JobMapper,
   ) {}
 
-  async execute(query: FindJobQuery): Promise<JobProps> {
+  async execute(query: FindJobQuery): Promise<JobResponseDto> {
     const job = await this.jobRepository.findJobOrThrow(query.jobId)
-    return {
-      ...job.getProps(),
-    }
+    return this.jobMapper.toResponse(job)
   }
 }
