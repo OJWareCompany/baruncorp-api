@@ -56,6 +56,7 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       },
     })
 
+    // TODO: Refactoring
     const result: JobProps[] = records.map((job) => ({ ...this.jobMapper.toDomain(job).getProps() }))
 
     return new Paginated({

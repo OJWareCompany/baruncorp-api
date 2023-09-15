@@ -62,6 +62,7 @@ export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
 
     const totalCount = await this.prismaService.orderedJobs.count({ where: { id: { in: [...jobIds] } } })
 
+    // TODO: Refactoring
     const result: JobProps[] = myActiveJobs.map((job) => ({ ...this.jobMapper.toDomain(job).getProps() }))
 
     return new Paginated({

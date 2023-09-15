@@ -29,6 +29,8 @@ export class FindJobPaginatedHttpController {
       limit: queryParams.limit,
     })
 
+    // TODO: Refactoring
+
     const result: Paginated<JobProps> = await this.queryBus.execute(query)
 
     return new JobPaginatedResponseDto({
