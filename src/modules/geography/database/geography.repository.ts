@@ -1,6 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { GeographyRepositoryPort } from './geography.repository.port'
-import { AHJNoteHistory, AHJNotes } from '@prisma/client'
+import { AHJNoteHistory, AHJNotes, Prisma } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
 import {
   CensusState,
@@ -188,18 +188,13 @@ export class GeographyRepository implements GeographyRepositoryPort {
   ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>> {
     const offset = (pageNo - 1) * pageSize ?? 0
 
-    /**
-     * 검색 조건 동적으로 추가
-     */
-    const condition = {}
-    Object.entries(searchQuery).map(([key, value]) => {
-      condition[key] = { contains: value }
-    })
+    const whereInput: Prisma.AHJNotesWhereInput = {
+      ...(searchQuery.geoId && { geoId: searchQuery.geoId }),
+      ...(searchQuery.fullAhjName && { fullAhjName: searchQuery.fullAhjName }),
+      ...(searchQuery.name && { name: searchQuery.name }),
+    }
 
-    const count = await this.prismaService.aHJNotes.count({ select: { geoId: true }, where: { ...condition } })
-    const totalCount = count.geoId
-
-    const result = await this.prismaService.aHJNotes.findMany({
+    const result: Pick<AHJNotesModel, keyof AhjNoteListResponseDto>[] = await this.prismaService.aHJNotes.findMany({
       select: {
         geoId: true,
         name: true,
@@ -207,13 +202,16 @@ export class GeographyRepository implements GeographyRepositoryPort {
         updatedBy: true,
         updatedAt: true,
       },
-      where: { ...condition },
+      where: whereInput,
       orderBy: {
         updatedAt: 'desc', // 수정/생성 날짜 데이터가 없음
       },
       skip: offset,
       take: pageSize,
     })
+
+    const count = await this.prismaService.aHJNotes.count({ select: { geoId: true }, where: whereInput })
+    const totalCount = count.geoId
 
     return new Paginated({ page: pageNo, totalCount, pageSize, items: result })
   }

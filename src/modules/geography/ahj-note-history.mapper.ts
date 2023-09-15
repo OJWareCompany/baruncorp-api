@@ -77,7 +77,7 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
     }
   }
 
-  toListResponse(model: AHJNoteHistoryModel): AhjNoteHistoryListResponseDto {
+  toListResponse(model: Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>): AhjNoteHistoryListResponseDto {
     const response = new AhjNoteHistoryListResponseDto()
     response.id = model.id
     response.geoId = model.geoId

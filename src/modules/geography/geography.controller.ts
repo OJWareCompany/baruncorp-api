@@ -6,7 +6,7 @@ import { AhjNoteMapper } from './ahj-note.mapper'
 import { AhjNoteResponseDto } from './dto/ahj-note.response.dto'
 import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
 import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
-import { AhjNotePaginatedResponseDto } from './dto/ahj-note.paginated.response.dto'
+import { AhjNoteListResponseDto, AhjNotePaginatedResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryPaginatedResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { FindAhjNotesHistorySearchQueryRequestDto } from './queries/find-ahj-history/find-ahj-notes-history-search-query.request.dto'
 import { AuthGuard } from '../auth/authentication.guard'
@@ -34,7 +34,7 @@ export class GeographyController {
     @Query() paginatedQueryRequestDto: PaginatedQueryRequestDto,
     @Query() searchQuery: FindAhjNotesSearchQueryRequestDto,
   ): Promise<AhjNotePaginatedResponseDto> {
-    const result: Paginated<Partial<AHJNotesModel>> = await this.geographyService.findNotes(
+    const result: Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>> = await this.geographyService.findNotes(
       searchQuery,
       paginatedQueryRequestDto.page,
       paginatedQueryRequestDto.limit,

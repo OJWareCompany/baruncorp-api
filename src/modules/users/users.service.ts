@@ -133,8 +133,10 @@ export class UserService {
         createdAt: new Date(),
       }
     } catch (error) {
-      if ((error.message = 'User Already Existed')) throw new ConflictException(error.message, '10017')
-      else throw new InternalServerErrorException()
+      if (error instanceof ConflictException) {
+        if ((error.message = 'User Already Existed')) throw new ConflictException(error.message, '10017')
+      }
+      throw new InternalServerErrorException()
     }
   }
 
