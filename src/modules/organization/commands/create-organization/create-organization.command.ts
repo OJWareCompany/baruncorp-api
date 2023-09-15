@@ -1,3 +1,5 @@
+import { initialize } from '../../../../libs/utils/constructor-initializer'
+
 export class CreateOrganizationCommand {
   readonly email: string | null
   readonly fullAddress: string
@@ -19,6 +21,6 @@ export class CreateOrganizationCommand {
   readonly invoiceRecipientEmail: string | null
 
   constructor(props: CreateOrganizationCommand) {
-    Object.entries(props).map(([key, value]) => (this[key] = value))
+    initialize(this, props)
   }
 }

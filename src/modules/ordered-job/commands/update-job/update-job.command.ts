@@ -1,3 +1,4 @@
+import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 
 export class UpdateJobCommand {
@@ -13,6 +14,6 @@ export class UpdateJobCommand {
   readonly mountingType: string
 
   constructor(props: UpdateJobCommand) {
-    Object.entries(props).map(([key, value]) => (this[key] = value))
+    initialize(this, props)
   }
 }

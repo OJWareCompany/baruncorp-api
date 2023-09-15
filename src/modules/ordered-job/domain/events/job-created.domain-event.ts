@@ -1,3 +1,4 @@
+import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { MountingType } from '../../../project/domain/project.type'
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
@@ -17,6 +18,6 @@ export class JobCreatedDomainEvent extends DomainEvent {
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {
     super(props)
-    Object.entries(props).map(([key, value]) => (this[key] = value))
+    initialize(this, props)
   }
 }
