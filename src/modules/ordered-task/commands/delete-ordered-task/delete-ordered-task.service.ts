@@ -7,7 +7,7 @@ import { DeleteOrderedTaskCommand } from './delete-ordered-task.command'
 @CommandHandler(DeleteOrderedTaskCommand)
 export class DeleteOrderedTaskService implements ICommandHandler {
   constructor(private readonly prismaService: PrismaService) {}
-  async execute(command: DeleteOrderedTaskCommand): Promise<any> {
+  async execute(command: DeleteOrderedTaskCommand): Promise<void> {
     const task = await this.prismaService.orderedTasks.findUnique({ where: { id: command.id } })
     if (!task) throw new NotFoundException('Not Task found', '40007')
     // const job = await this.prismaService.orderedTasks.findMany({ where: { jobId: task.jobId } })

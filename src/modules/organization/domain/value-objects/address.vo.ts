@@ -18,7 +18,7 @@ export class Address {
   @IsString()
   readonly street1: string
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: 'A101', nullable: true })
   @IsString()
   @IsOptional()
   readonly street2: string | null

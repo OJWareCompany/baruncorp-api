@@ -3,6 +3,7 @@ import { PrismaService } from '../../database/prisma.service'
 import { CreateInvitationMailProp, InvitationEmailProp } from '../domain/invitationMail.types'
 import { InvitationMailRepositoryPort } from './invitationMail.repository.port'
 import { EmailVO } from '../domain/value-objects/email.vo'
+import { InvitationEmails } from '@prisma/client'
 
 @Injectable()
 export class InvitationMailRepository implements InvitationMailRepositoryPort {
@@ -18,7 +19,7 @@ export class InvitationMailRepository implements InvitationMailRepositoryPort {
     })
   }
 
-  async findOne(code: string, email: EmailVO): Promise<any> {
+  async findOne(code: string, email: EmailVO): Promise<InvitationEmails | null> {
     return await this.prismaService.invitationEmails.findFirst({
       where: {
         code,

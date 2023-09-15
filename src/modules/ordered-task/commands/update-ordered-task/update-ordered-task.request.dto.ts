@@ -11,7 +11,8 @@ export class UpdateOrderedTaskRequestParam {
 export class UpdateOrderedTaskRequestDto {
   @ApiProperty()
   @IsInt()
-  invoiceAmount: number
+  @IsOptional()
+  invoiceAmount: number | null
 
   @ApiProperty()
   @IsBoolean()

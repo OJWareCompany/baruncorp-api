@@ -31,10 +31,15 @@ export class JobEntity extends AggregateRoot<JobProps> {
         orderedTasks: create.orderedTasks,
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
-        mountingType: create.mountingType as MountingType, // TODO: any
+        mountingType: create.mountingType as MountingType, // TODO: status any
       }),
     )
     return job
+  }
+
+  hasCurrentMailingAddress(): boolean {
+    // return props.jobStatus === 'Completed' && !!props.mailingAddressForWetStamp?.coordinates?.length
+    return !!this.getProps().mailingAddressForWetStamp?.coordinates.length
   }
 
   updateNumberOfWetStamp(numberOfWetStamp: number | null) {
@@ -113,7 +118,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         systemSize: this.props.systemSize,
         mailingFullAddressForWetStamp: this.props.mailingAddressForWetStamp?.fullAddress || null,
         jobStatus: this.props.jobStatus,
-        mountingType: this.props.mountingType as MountingType, // TODO: any
+        mountingType: this.props.mountingType as MountingType, // TODO: status any
         orderedTask: this.props.orderedTasks,
         isCurrentJop: this.props?.isCurrentJob || false,
       }),

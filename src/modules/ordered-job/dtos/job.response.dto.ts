@@ -117,4 +117,10 @@ export class JobResponseDto {
 
   @ApiProperty({ example: true })
   isExpedited: boolean
+
+  @ApiProperty()
+  jobName: string
+
+  @ApiProperty()
+  isCurrentJob?: boolean
 }

@@ -4,52 +4,9 @@ import {
   ProjectPropertyType,
   ProjectPropertyTypeEnum,
 } from '../../../modules/project/domain/project.type'
-import { JobProps, JobStatus, JobStatusEnum } from '../../ordered-job/domain/job.type'
-import { ClientInformation } from '../../ordered-job/domain/value-objects/client-information.value-object'
-import { OrderedTask } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
 import { Address } from '../../organization/domain/value-objects/address.vo'
-import { IsOptional } from 'class-validator'
+import { JobResponseDto } from '../../ordered-job/dtos/job.response.dto'
 import { ProjectAssociatedRegulatoryBody } from '../domain/value-objects/project-associated-regulatory-body.value-object'
-
-class Jobs implements JobProps {
-  @ApiProperty()
-  id: string
-  @ApiProperty()
-  projectId: string
-  @ApiProperty()
-  projectType: string
-  @ApiProperty()
-  mountingType: string
-  @ApiProperty()
-  jobName: string
-  @ApiProperty({ enum: JobStatusEnum, example: JobStatusEnum.In_Progress })
-  jobStatus: JobStatus
-  @ApiProperty()
-  propertyFullAddress: string
-  @ApiProperty()
-  isExpedited: boolean
-  @ApiProperty()
-  jobRequestNumber: number
-  @ApiProperty()
-  orderedTasks: OrderedTask[]
-  @ApiProperty()
-  systemSize: number
-  @ApiProperty()
-  @IsOptional()
-  mailingAddressForWetStamp: Address | null
-  @ApiProperty()
-  numberOfWetStamp: number
-  @ApiProperty()
-  additionalInformationFromClient: string
-  @ApiProperty()
-  clientInfo: ClientInformation
-  @ApiProperty()
-  updatedBy: string
-  @ApiProperty()
-  receivedAt: Date
-  @ApiProperty()
-  isCurrentJob?: boolean
-}
 
 export class ProjectResponseDto {
   @ApiProperty({ example: '07e12e89-6077-4fd1-a029-c50060b57f43' })
@@ -110,5 +67,5 @@ export class ProjectResponseDto {
   hasHistoryStructuralPEStamp: boolean
 
   @ApiProperty({ example: [] })
-  jobs: Jobs[]
+  jobs: JobResponseDto[]
 }

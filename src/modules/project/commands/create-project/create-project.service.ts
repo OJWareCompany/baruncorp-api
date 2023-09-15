@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { ConflictException, Inject } from '@nestjs/common'
+import { ConflictException, Inject, NotFoundException } from '@nestjs/common'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { NotFoundOrganization } from '../../../organization/domain/organization.error'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
@@ -26,6 +26,7 @@ export class CreateProjectService implements ICommandHandler {
 
     // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
+    if (!censusResponse.state.geoId) throw new NotFoundException('Wrong coordinates')
 
     const entity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,

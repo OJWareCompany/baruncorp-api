@@ -30,7 +30,7 @@ export class UserService {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
     // @ts-ignore
-    @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationEmailRepository: InvitationMailRepositoryPort,
+    @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationMailRepository: InvitationMailRepositoryPort,
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
     // @ts-ignore
@@ -99,7 +99,7 @@ export class UserService {
   }
 
   async deleteInvitationMail(code: string): Promise<void> {
-    await this.invitationEmailRepository.deleteOne(code)
+    await this.invitationMailRepository.deleteOne(code)
   }
 
   async transaction(...args: any[]): Promise<void> {
@@ -107,7 +107,9 @@ export class UserService {
   }
 
   async findInvitationMail(code: string, email: EmailVO): Promise<InvitationEmailProp> {
-    return await this.invitationEmailRepository.findOne(code, email)
+    const result = await this.invitationMailRepository.findOne(code, email)
+    if (!result) throw new NotFoundException('No Invitation Mail')
+    return result
   }
 
   async sendInvitationMail(dto: CreateInvitationMailRequestDto, code: string): Promise<InvitationEmailProp> {
@@ -116,7 +118,7 @@ export class UserService {
       // What if organizationId is provided by parameter?
       const organization = await this.organizationRepository.findOneByName(dto.organizationName)
       if (user) throw new ConflictException('User Already Existed')
-      await this.invitationEmailRepository.insertOne({
+      await this.invitationMailRepository.insertOne({
         email: dto.email,
         code: code,
         role: UserRoles.guest,
@@ -179,7 +181,7 @@ export class UserService {
     )
   }
 
-  async revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<any> {
+  async revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<void> {
     const user = await this.userRepository.findOneById(userId)
     const existed = await this.userRepository.findLicensesByUser(user)
     const filterd = existed.map((license) => {
@@ -187,6 +189,6 @@ export class UserService {
       return state.stateName === issuingCountryName && license.getProps().type === type
     })
     if (!filterd.includes(true)) throw new NotFoundException('has no a license.', '10016')
-    return await this.userRepository.revokeLicense(userId, type, issuingCountryName)
+    await this.userRepository.revokeLicense(userId, type, issuingCountryName)
   }
 }

@@ -3,6 +3,7 @@ export enum UserRoles {
   manager = 'manager',
   member = 'member',
   guest = 'guest',
+  client = 'client',
 }
 
 export interface UserRoleProps {

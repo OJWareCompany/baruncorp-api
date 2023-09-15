@@ -95,6 +95,7 @@ export class UserRepository implements UserRepositoryPort {
     return password?.password || null
   }
 
+  // TODO: Role 정책 정하기
   async findRoleByUserId(id: string): Promise<UserRole> {
     const user = await this.prismaService.users.findUnique({ where: { id } })
     if (!user) throw new UserNotFoundException()

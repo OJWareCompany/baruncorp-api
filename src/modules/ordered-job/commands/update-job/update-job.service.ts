@@ -21,7 +21,7 @@ export class UpdateJobService implements ICommandHandler {
     if (!editor) throw new UserNotFoundException()
     const updatedByUserName = editor.firstName + ' ' + editor.lastName
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
-    job.updateJobStatus(command.jobStatus as JobStatus) // TODO: any
+    job.updateJobStatus(command.jobStatus as JobStatus) // TODO: status any
     job.updateSystemSize(command.systemSize)
     job.updateMailingAddressWetForStamp(command.mailingAddressForWetStamp)
     job.updateNumberOfWetStamp(command.numberOfWetStamp)

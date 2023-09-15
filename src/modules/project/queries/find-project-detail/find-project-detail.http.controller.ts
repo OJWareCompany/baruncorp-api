@@ -1,15 +1,17 @@
 import { Controller, Get, HttpStatus, Param } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { QueryBus } from '@nestjs/cqrs'
-import { ProjectResponseDto } from '../../dtos/project.response.dto'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
-import { FindProjectDetailQuery } from './find-project-detail.query-handler'
-import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
+import { JobMapper } from '../../../ordered-job/job.mapper'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
+import { ProjectResponseDto } from '../../dtos/project.response.dto'
+import { ProjectPropertyType } from '../../domain/project.type'
+import { FindProjectDetailQuery, FindProjectDetailReturnType } from './find-project-detail.query-handler'
+import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
 
 @Controller('projects')
 export class FindProjectDetailHttpController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(private readonly queryBus: QueryBus, private readonly jobMapper: JobMapper) {}
 
   @Get(':projectId')
   @ApiOperation({ summary: 'Find projects' })
@@ -21,61 +23,66 @@ export class FindProjectDetailHttpController {
     const query = new FindProjectDetailQuery({
       id: searchQuery.projectId,
     })
-    const result: { record: any; currentMailingAddress: Address } =
-      // const result: Partial<OrderedProjects> & { organization: Partial<OrganizationModel> } & { jobs: JobProps[] } =
-      await this.queryBus.execute(query)
 
-    // Whitelisting returned properties
-    const response = new ProjectResponseDto()
-    response.projectId = result.record.id!
-    response.systemSize = result.record.systemSize ? Number(result.record.systemSize) : null
-    response.projectPropertyOwnerName = result.record.propertyOwnerName
-    response.clientOrganization = result.record.organization.name!
-    response.clientOrganizationId = result.record.organization.id!
-    response.projectFolderLink = result.record.projectFolder || null
+    const result: FindProjectDetailReturnType = await this.queryBus.execute(query)
 
-    response.numberOfWetStamp = result.record.numberOfWetStamps!
-    response.propertyType = result.record.projectPropertyType === 'Residential' ? 'Residential' : 'Commercial'
-    response.projectNumber = result.record.projectNumber || null
-    response.createdAt = result.record.dateCreated!.toISOString()!
-    response.totalOfJobs = result.record.totalOfJobs!
-    response.masterLogUpload = !!result.record.masterLogUpload
-    response.designOrPEStampPreviouslyDoneOnProjectOutSide =
-      !!result.record.designOrPeStampPreviouslyDoneOnProjectOutside
-    response.hasHistoryElectricalPEStamp = !!result.record.hasHistoryElectricalPEStamp
-    response.hasHistoryStructuralPEStamp = !!result.record.hasHistoryStructuralPEStamp
-    response.jobs = result.record.jobs
-    response.propertyAddress = new Address({
-      city: result.record.propertyAddressCity,
-      country: result.record.propertyAddressCountry,
-      postalCode: result.record.propertyAddressPostalCode,
-      state: result.record.propertyAddressState,
-      street1: result.record.propertyAddressStreet1,
-      street2: result.record.propertyAddressStreet2,
-      fullAddress: result.record.propertyFullAddress,
-      coordinates: result.record.propertyAddressCoordinates.split(',').map((n) => Number(n)),
-    })
-    response.mailingAddressForWetStamp = !result.currentMailingAddress
-      ? null
-      : new Address({
-          city: result.currentMailingAddress?.city,
-          country: result.currentMailingAddress?.country,
-          postalCode: result.currentMailingAddress?.postalCode,
-          state: result.currentMailingAddress?.state,
-          street1: result.currentMailingAddress?.street1,
-          street2: result.currentMailingAddress?.street2,
-          fullAddress: result.currentMailingAddress?.fullAddress,
-          coordinates: result.currentMailingAddress?.coordinates,
+    const jobEntities = result.jobs.map(this.jobMapper.toDomain)
+    const jobHasCurrentMailingAddress = jobEntities.find((entity) => entity.hasCurrentMailingAddress())
+    const mailingAddressForWetStamp = jobHasCurrentMailingAddress?.getProps().mailingAddressForWetStamp || null
+    const currentMailingAddress: Address | null = mailingAddressForWetStamp
+      ? new Address({
+          city: mailingAddressForWetStamp.city,
+          country: mailingAddressForWetStamp.country,
+          postalCode: mailingAddressForWetStamp.postalCode,
+          state: mailingAddressForWetStamp.state,
+          street1: mailingAddressForWetStamp.street1,
+          street2: mailingAddressForWetStamp.street2,
+          fullAddress: mailingAddressForWetStamp.fullAddress,
+          coordinates: mailingAddressForWetStamp.coordinates,
         })
+      : null
+
+    const jobsResopnse = result.jobs.map(this.jobMapper.toDomain).map(this.jobMapper.toResponse)
+
+    const response = new ProjectResponseDto()
+    response.projectId = result.id
+
+    response.jobs = jobsResopnse
+
+    response.systemSize = result.systemSize ? Number(result.systemSize) : null
+    response.projectPropertyOwnerName = result.propertyOwnerName
+    response.clientOrganization = result.organization?.name || 'unknown'
+    response.clientOrganizationId = result.organization?.id || 'unknown'
+    response.projectFolderLink = result.projectFolder || null
+
+    response.numberOfWetStamp = result.numberOfWetStamps
+    response.propertyType = result.projectPropertyType as ProjectPropertyType // TODO: type
+    response.projectNumber = result.projectNumber || null
+    response.createdAt = result.dateCreated.toISOString()
+    response.totalOfJobs = result.totalOfJobs
+    response.masterLogUpload = !!result.masterLogUpload
+    response.designOrPEStampPreviouslyDoneOnProjectOutSide = !!result.designOrPeStampPreviouslyDoneOnProjectOutside
+    response.hasHistoryElectricalPEStamp = !!result.hasHistoryElectricalPEStamp
+    response.hasHistoryStructuralPEStamp = !!result.hasHistoryStructuralPEStamp
+    response.propertyAddress = new Address({
+      city: result.propertyAddressCity,
+      country: result.propertyAddressCountry,
+      postalCode: result.propertyAddressPostalCode,
+      state: result.propertyAddressState,
+      street1: result.propertyAddressStreet1,
+      street2: result.propertyAddressStreet2,
+      fullAddress: result.propertyFullAddress,
+      coordinates: result.propertyAddressCoordinates.split(',').map((n) => Number(n)),
+    })
+    response.mailingAddressForWetStamp = currentMailingAddress
 
     response.projectAssociatedRegulatoryBody = new ProjectAssociatedRegulatoryBody({
-      stateId: result.record?.stateId || null,
-      countyId: result.record?.countyId || null,
-      countySubdivisionsId: result.record?.countySubdivisionsId || null,
-      placeId: result.record?.placeId || null,
+      stateId: result.stateId,
+      countyId: result.countyId || null,
+      countySubdivisionsId: result.countySubdivisionsId || null,
+      placeId: result.placeId || null,
     })
 
-    console.log(response.projectAssociatedRegulatoryBody)
     return response
   }
 }

@@ -5,6 +5,8 @@ import UserMapper from '../../user.mapper'
 import { UserEntity } from '../../domain/user.entity'
 import { UserName } from '../../domain/value-objects/user-name.vo'
 import { CreateUserCommand } from './create-user.command'
+import { UserRole, UserRoles } from '../../domain/value-objects/user-role.vo'
+import { UserRoleModel } from '@src/modules/organization/database/organization.repository'
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserService implements ICommandHandler {
@@ -33,6 +35,21 @@ export class CreateUserService implements ICommandHandler {
 
     const record = this.userMapper.toPersistence(user)
     await this.prismaService.users.create({ data: { ...record } })
+
+    // Give User Role
+    const role = new UserRole({
+      userId: user.id,
+      role: user.getProps().type === 'member' ? UserRoles.member : 'client' ? UserRoles.client : UserRoles.guest,
+    })
+
+    const roleProps = role.getProps()
+    const roleRecord: UserRoleModel = {
+      ...roleProps,
+      updatedAt: new Date(),
+      createdAt: new Date(),
+    }
+
+    await this.prismaService.userRole.create({ data: roleRecord })
 
     return { id: user.id }
   }

@@ -13,7 +13,7 @@ export class DeleteJobService implements ICommandHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
-  async execute(command: DeleteJobCommand): Promise<any> {
+  async execute(command: DeleteJobCommand): Promise<void> {
     const tasks = await this.prismaService.orderedTasks.findMany({ where: { jobId: command.id } })
     const isCompletedTask = tasks.filter((task) => task.taskStatus === 'Completed')
     if (!!isCompletedTask.length) throw new BadRequestException('Job including completed task can`t delete.', '40001')

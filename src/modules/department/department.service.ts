@@ -81,7 +81,7 @@ export class DepartmentService {
     await this.departmentRepository.appointPosition(userId, positionId)
   }
 
-  async revokePosition(userId: string, positionId: string): Promise<any> {
+  async revokePosition(userId: string, positionId: string): Promise<void> {
     const existed = await this.departmentRepository.findPositionByUserId(userId)
     if (!existed) throw new NotFoundException('has no a position.', '10014')
     await this.departmentRepository.revokePosition(userId, positionId)

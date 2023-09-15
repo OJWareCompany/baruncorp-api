@@ -1,6 +1,6 @@
 import { JobEntity } from './domain/job.entity'
 import { OrderedJobs, OrderedTasks, Prisma } from '@prisma/client'
-import { JobResponseDto } from './dtos/job.response.dto'
+import { JobResponseDto, OrderedTaskResponseFields } from './dtos/job.response.dto'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { JobStatus } from './domain/job.type'
@@ -102,11 +102,11 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
 
   toDomain(
     record: OrderedJobs & {
-      orderedTasks: OrderedTasks[]
+      orderedTasks: OrderedTasks[] | null
       isCurrentJob?: boolean
     },
   ): JobEntity {
-    const orderedTasks = record.orderedTasks.map((task) => {
+    const orderedTasks = record.orderedTasks?.map((task) => {
       return new OrderedTask({
         id: task.id,
         invoiceAmount: task.invoiceAmount,
@@ -134,11 +134,11 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         projectId: record.projectId,
         projectType: record.projectType,
         mountingType: record.mountingType,
-        jobStatus: record.jobStatus as JobStatus, // TODO: any
+        jobStatus: record.jobStatus as JobStatus, // TODO: status any
         jobRequestNumber: record.jobRequestNumber,
         propertyFullAddress: record.propertyAddress,
         jobName: record.jobName,
-        orderedTasks: orderedTasks,
+        orderedTasks: orderedTasks || [],
         systemSize: record.systemSize ? Number(record.systemSize) : null,
         mailingAddressForWetStamp:
           record.mailingAdderssCity !== null &&
@@ -177,8 +177,53 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     })
   }
 
-  toResponse(entity: JobEntity, ...dtos: any): JobResponseDto {
-    // throw new Error('Method not implemented.')
-    return new JobResponseDto()
+  toResponse(entity: JobEntity): JobResponseDto {
+    const props = entity.getProps()
+    const response = new JobResponseDto()
+
+    response.id = props.id
+    response.projectId = props.projectId
+    response.systemSize = props.systemSize
+    response.mailingAddressForWetStamp = props.mailingAddressForWetStamp
+    response.mountingType = props.mountingType
+    response.numberOfWetStamp = props.numberOfWetStamp
+    response.additionalInformationFromClient = props.additionalInformationFromClient
+    response.updatedBy = props.updatedBy
+    response.propertyFullAddress = props.propertyFullAddress
+    response.jobRequestNumber = props.jobRequestNumber
+    response.jobStatus = props.jobStatus
+    response.projectType = props.projectType
+    response.receivedAt = props.receivedAt.toISOString()
+    response.isExpedited = props.isExpedited
+    response.jobName = props.jobName
+    response.isCurrentJob = props.isCurrentJob
+
+    response.orderedTasks = props.orderedTasks.map((task) => {
+      return new OrderedTaskResponseFields({
+        id: task.id,
+        taskStatus: task.taskStatus,
+        taskName: task.taskName,
+        assignee: {
+          userId: task.assigneeUserId,
+          name: task.assigneeName,
+        },
+        description: task.description,
+        invoiceAmount: task.invoiceAmount,
+        isNewTask: task.isNewTask,
+        isLocked: task.isLocked,
+        createdAt: task.createdAt.toISOString(),
+      })
+    })
+
+    response.clientInfo = {
+      clientOrganizationId: props.clientInfo.clientOrganizationId,
+      clientOrganizationName: props.clientInfo.clientOrganizationName,
+      clientUserName: props.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
+      clientUserId: props.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
+      contactEmail: props.clientInfo.clientContactEmail,
+      deliverablesEmails: props.clientInfo.deliverablesEmail,
+    }
+
+    return response
   }
 }

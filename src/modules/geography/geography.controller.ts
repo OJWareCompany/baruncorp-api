@@ -17,12 +17,17 @@ import { UpdateAhjNoteRequestDto } from './commands/update-ahj-note/update-ahj-n
 import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto'
 import { AhjNoteHistoryParamRequestDto, GeoGraphyParamRequestDto } from './geography.param.request.dto'
 import { PaginatedQueryRequestDto } from '../../libs/api/paginated-query.request.dto'
+import { AhjNoteHistoryMapper } from './ahj-note-history.mapper'
 
 @ApiBearerAuth()
 @ApiTags('geography')
 @Controller('geography')
 export class GeographyController {
-  constructor(private readonly geographyService: GeographyService, private readonly ahjNoteMapper: AhjNoteMapper) {}
+  constructor(
+    private readonly geographyService: GeographyService,
+    private readonly ahjNoteMapper: AhjNoteMapper,
+    private readonly ahjNoteHistoryMapper: AhjNoteHistoryMapper,
+  ) {}
 
   @Get('notes')
   async getFindNotes(
@@ -64,9 +69,9 @@ export class GeographyController {
   async getFinNoteUpdateHistoryDetail(
     @Param() param: AhjNoteHistoryParamRequestDto,
   ): Promise<AhjNoteHistoryResponseDto> {
-    return this.ahjNoteMapper.toResponse(
+    return this.ahjNoteHistoryMapper.toResponse(
       await this.geographyService.findNoteUpdateHistoryDetail(param.historyId),
-    ) as AhjNoteHistoryResponseDto // TODO: any
+    )
   }
 
   @Get('notes/history')
@@ -79,7 +84,7 @@ export class GeographyController {
       paginatedQueryRequestDto.limit,
       query.geoId,
     )
-    const items = result.items.map(this.ahjNoteMapper.toHistoryListResponse)
+    const items = result.items.map(this.ahjNoteHistoryMapper.toListResponse)
     return new AhjNoteHistoryPaginatedResponseDto({ ...result, items })
   }
 }

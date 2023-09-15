@@ -45,7 +45,7 @@ export class GeographyService {
     return await this.geographyRepository.deleteNoteByGeoId(geoId)
   }
 
-  async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNotesModel> {
+  async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel> {
     const note = await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
     if (!note) throw new NotFoundException('Not Note History Found', '70002')
     return note

@@ -1,10 +1,11 @@
 import { Mapper } from '@libs/ddd/mapper.interface'
-import { AHJNotesModel } from './database/geography.repository'
-import { AHJType, AhjNoteResponseDto } from './dto/ahj-note.response.dto'
-import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
+import { AHJNoteHistoryModel } from './database/geography.repository'
+import { AHJType } from './dto/ahj-note.response.dto'
+import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
+import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
 
-export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {
-  toPersistence(entity: any): AHJNotesModel {
+export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, AhjNoteHistoryResponseDto> {
+  toPersistence(entity: any): AHJNoteHistoryModel {
     throw new Error('Method not implemented.')
   }
 
@@ -16,13 +17,15 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
     throw new Error('Method not implemented.')
   }
 
-  toResponse(model: AHJNotesModel): AhjNoteResponseDto {
+  toResponse(model: AHJNoteHistoryModel): AhjNoteHistoryResponseDto {
     let type: AHJType = AHJType.STATE
     if (model.geoIdCounty) type = AHJType.COUNTY
     if (model.geoIdCountySubdivision) type = AHJType.COUNTY_SUBDIVISIONS
     if (model.geoIdPlace) type = AHJType.PLACE
 
-    const response = new AhjNoteResponseDto()
+    const response = new AhjNoteHistoryResponseDto()
+    response.id = model.id
+
     response.general = {
       website: model.website,
       specificFormRequired: model.specificFormRequired,
@@ -66,13 +69,17 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       electricalNotes: model.electricalNotes,
     }
 
+    // for history id
+    const id = model['id'] ? { id: model['id'] } : undefined
     return {
+      ...id,
       ...response,
     }
   }
 
-  toListResponse(model: AHJNotesModel): AhjNoteListResponseDto {
-    const response = new AhjNoteListResponseDto()
+  toListResponse(model: AHJNoteHistoryModel): AhjNoteHistoryListResponseDto {
+    const response = new AhjNoteHistoryListResponseDto()
+    response.id = model.id
     response.geoId = model.geoId
     response.name = model.name
     response.fullAhjName = model.fullAhjName

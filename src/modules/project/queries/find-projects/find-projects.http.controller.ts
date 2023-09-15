@@ -32,7 +32,12 @@ export class FindProjectsHttpController {
       limit: queryParams?.limit,
       page: queryParams?.page,
     })
-    const result: Paginated<{ organization: Organizations } & OrderedProjects> = await this.queryBus.execute(query)
+
+    const result: Paginated<
+      {
+        organization: Organizations | null
+      } & OrderedProjects
+    > = await this.queryBus.execute(query)
 
     // Whitelisting returned properties
     return new ProjectPaginatedResponseDto({
@@ -40,9 +45,9 @@ export class FindProjectsHttpController {
       items: result.items.map((project) => ({
         projectId: project.id,
         organizationId: project.clientOrganizationId,
-        organizationName: project.organization.name,
+        organizationName: project?.organization?.name || 'unknown',
         propertyOwnerName: project.propertyOwnerName,
-        propertyType: project.projectPropertyType as ProjectPropertyType, // TODO: any
+        propertyType: project.projectPropertyType as ProjectPropertyType, // TODO: status any
         projectFolderLink: project.projectFolder,
         projectNumber: project.projectNumber,
         propertyFullAddress: project.propertyFullAddress,
@@ -50,7 +55,7 @@ export class FindProjectsHttpController {
         totalOfJobs: project.totalOfJobs,
         masterLogUpload: !!project.masterLogUpload,
         designOrPEStampPreviouslyDoneOnProjectOutSide: !!project.designOrPeStampPreviouslyDoneOnProjectOutside,
-        mountingType: project.mountingType as MountingTypeEnum, // TODO: any
+        mountingType: project.mountingType as MountingTypeEnum, // TODO: status any
       })),
     })
   }

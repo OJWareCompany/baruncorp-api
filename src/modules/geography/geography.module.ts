@@ -11,13 +11,14 @@ import { USER_REPOSITORY } from '../users/user.di-tokens'
 import UserMapper from '../users/user.mapper'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { LicenseMapper } from '../department/license.mapper'
+import { AhjNoteHistoryMapper } from './ahj-note-history.mapper'
 
 const repositories: Provider[] = [
   { provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository },
 
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
-const mappers: Provider[] = [AhjNoteMapper, UserMapper, UserRoleMapper, LicenseMapper]
+const mappers: Provider[] = [AhjNoteMapper, AhjNoteHistoryMapper, UserMapper, UserRoleMapper, LicenseMapper]
 const services: Provider[] = [GeographyService]
 
 @Module({

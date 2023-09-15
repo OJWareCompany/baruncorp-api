@@ -44,14 +44,13 @@ export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
       skip: query.offset,
     })
 
-    const jobIds = new Set()
+    const jobIds = new Set<string>()
     myActiveTasks.map((task) => jobIds.add(task.jobId))
 
     // TODO: totalcount때문에 풀스캔하게됨
-    // TODO: any
-    const records = await this.prismaService.orderedJobs.findMany({
+    const myActiveJobs = await this.prismaService.orderedJobs.findMany({
       where: {
-        id: { in: [...jobIds] as string[] },
+        id: { in: [...jobIds] },
       },
       include: {
         orderedTasks: true,
@@ -61,10 +60,9 @@ export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
       skip: query.offset,
     })
 
-    // TODO: any
-    const totalCount = await this.prismaService.orderedJobs.count({ where: { id: { in: [...jobIds] as string[] } } })
+    const totalCount = await this.prismaService.orderedJobs.count({ where: { id: { in: [...jobIds] } } })
 
-    const result: JobProps[] = records.map((job) => ({ ...this.jobMapper.toDomain(job).getProps() }))
+    const result: JobProps[] = myActiveJobs.map((job) => ({ ...this.jobMapper.toDomain(job).getProps() }))
 
     return new Paginated({
       items: result,
