@@ -1,3 +1,4 @@
+import { ProjectPropertyType, MountingType } from '../../project/domain/project.type'
 import { Address } from './value-objects/address.vo'
 
 export interface OrganizationProps {
@@ -13,6 +14,8 @@ export interface OrganizationProps {
   isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
+  projectPropertyTypeDefaultValue: ProjectPropertyType | null
+  mountingTypeDefaultValue: MountingType | null
 }
 
 export interface CreateOrganizationProps {
@@ -28,4 +31,6 @@ export interface CreateOrganizationProps {
   isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
+  projectPropertyTypeDefaultValue: ProjectPropertyType | null
+  mountingTypeDefaultValue: MountingType | null
 }

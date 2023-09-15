@@ -63,7 +63,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
   toResponse(
     entity: UserEntity,
     role: UserRole,
-    organizationEntity: OrganizationEntity,
+    organizationEntity: OrganizationEntity | null,
     position: PositionResponseDto | null,
     services: ServiceResponseDto[],
     licenses: LincenseResponseDto[],
@@ -76,8 +76,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.lastName = props.userName.getLastName()
     response.fullName = props.userName.getFullName()
     response.deliverablesEmails = props.deliverablesEmails
-    response.organization = organizationEntity.getProps().name
-    response.organizationId = organizationEntity.getProps().id
+    response.organization = organizationEntity?.getProps().name || null
+    response.organizationId = organizationEntity?.getProps().id || null
     response.services = services
     response.position = position
     response.licenses = licenses

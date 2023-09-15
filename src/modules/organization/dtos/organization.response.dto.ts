@@ -37,21 +37,21 @@ export class OrganizationResponseDto {
   @ApiProperty()
   street2: string | null
 
-  @ApiProperty({ description: '필요한지 확인 필요' })
-  isActiveContractor: boolean | null
+  // @ApiProperty({ description: '필요한지 확인 필요' })
+  // isActiveContractor: boolean | null
 
-  @ApiProperty({ description: '필요한지 확인 필요' })
-  isActiveWorkResource: boolean | null
+  // @ApiProperty({ description: '필요한지 확인 필요' })
+  // isActiveWorkResource: boolean | null
 
-  @ApiProperty({ description: '필요한지 확인 필요' })
-  isRevenueShare: boolean | null
+  // @ApiProperty({ description: '필요한지 확인 필요' })
+  // isRevenueShare: boolean | null
 
-  @ApiProperty({ description: '필요한지 확인 필요' })
-  isRevisionRevenueShare: boolean | null
+  // @ApiProperty({ description: '필요한지 확인 필요' })
+  // isRevisionRevenueShare: boolean | null
 
-  @ApiProperty({ description: '필요한지 확인 필요' })
-  invoiceRecipient: string | null
+  // @ApiProperty({ description: '필요한지 확인 필요' })
+  // invoiceRecipient: string | null
 
-  @ApiProperty({ description: '필요한지 확인 필요' })
-  invoiceRecipientEmail: string | null
+  // @ApiProperty({ description: '필요한지 확인 필요' })
+  // invoiceRecipientEmail: string | null
 }

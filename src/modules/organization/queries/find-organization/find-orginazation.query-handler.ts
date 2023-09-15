@@ -6,6 +6,7 @@ import { ORGANIZATION_REPOSITORY } from '../../organization.di-token'
 import { OrganizationRepositoryPort } from '../../database/organization.repository.port'
 import { OrganizationMapper } from '../../organization.mapper'
 import { OrganizationResponseDto } from '../../dtos/organization.response.dto'
+import { NotFoundOrganization } from '../../domain/organization.error'
 
 export class FindOrganizationQuery {
   public readonly organizationId: string
@@ -23,6 +24,7 @@ export class FindOrganizationQueryHandler implements IQueryHandler {
   ) {}
   async execute(query: FindOrganizationQuery): Promise<OrganizationResponseDto> {
     const result = await this.organizationRepository.findOneById(query.organizationId)
+    if (!result) throw new NotFoundOrganization()
     return this.organizationMapper.toResponse(result)
   }
 }

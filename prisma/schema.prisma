@@ -18,30 +18,32 @@ model OrganizationTypes {
 }
 
 model Organizations {
-  id                     String             @id @default(uuid())
-  name                   String             @unique
-  description            String?
-  organizationType       String             @map("organization_type")
-  city                   String
-  country                String?
-  street1                String
-  street2                String?
-  email                  String?
-  phoneNumber            String?            @map("phone_number")
-  postalCode             String             @map("postal_code")
-  stateOrRegion          String?            @map("state_or_region")
-  updatedAt              DateTime           @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt              DateTime           @default(now()) @map("created_at") @db.DateTime(0)
-  isActiveContractor     Int?               @map("is_active_contractor") @db.TinyInt
-  isActiveWorkResource   Int?               @map("is_active_work_resource") @db.TinyInt
-  revenueShare           Int?               @map("revenue_share") @db.TinyInt
-  revisionRevenueShare   Int?               @map("revision_revenue_share") @db.TinyInt
-  invoiceRecipient       String?            @map("invoice_recipient") @db.VarChar(255)
-  invoiceRecipientEmail  String?            @map("invoice_recipient_email") @db.VarChar(255)
-  invitationEmailEntity  InvitationEmails[]
-  organizationTypeEntity OrganizationTypes  @relation(fields: [organizationType], references: [type])
-  users                  Users[]
-  projects               OrderedProjects[]
+  id                              String             @id @default(uuid())
+  name                            String             @unique
+  description                     String?
+  organizationType                String             @map("organization_type")
+  city                            String
+  country                         String?
+  street1                         String
+  street2                         String?
+  email                           String?
+  phoneNumber                     String?            @map("phone_number")
+  postalCode                      String             @map("postal_code")
+  stateOrRegion                   String?            @map("state_or_region")
+  updatedAt                       DateTime           @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                       DateTime           @default(now()) @map("created_at") @db.DateTime(0)
+  isActiveContractor              Int?               @map("is_active_contractor") @db.TinyInt
+  isActiveWorkResource            Int?               @map("is_active_work_resource") @db.TinyInt
+  revenueShare                    Int?               @map("revenue_share") @db.TinyInt
+  revisionRevenueShare            Int?               @map("revision_revenue_share") @db.TinyInt
+  invoiceRecipient                String?            @map("invoice_recipient") @db.VarChar(255)
+  invoiceRecipientEmail           String?            @map("invoice_recipient_email") @db.VarChar(255)
+  projectPropertyTypeDefaultValue String?            @map("project_property_type_default_value") @db.VarChar(255)
+  mountingTypeDefaultValue        String?            @map("mounting_type_default_value") @db.VarChar(255)
+  invitationEmailEntity           InvitationEmails[]
+  organizationTypeEntity          OrganizationTypes  @relation(fields: [organizationType], references: [type])
+  users                           Users[]
+  projects                        OrderedProjects[]
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")

@@ -23,6 +23,7 @@ import { LicenseEntity } from './user-license.entity'
 import { State } from '../department/domain/value-objects/state.vo'
 import { LicenseType } from './user-license.type'
 import { UserNotFoundException } from './user.error'
+import { NotFoundOrganization } from '../organization/domain/organization.error'
 
 @Injectable()
 export class UserService {
@@ -115,9 +116,12 @@ export class UserService {
   async sendInvitationMail(dto: CreateInvitationMailRequestDto, code: string): Promise<InvitationEmailProp> {
     try {
       const user = await this.userRepository.findOneByEmail(new EmailVO(dto.email))
+      if (user) throw new ConflictException('User Already Existed')
+
       // What if organizationId is provided by parameter?
       const organization = await this.organizationRepository.findOneByName(dto.organizationName)
-      if (user) throw new ConflictException('User Already Existed')
+      if (!organization) throw new NotFoundOrganization()
+
       await this.invitationMailRepository.insertOne({
         email: dto.email,
         code: code,

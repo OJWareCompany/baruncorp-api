@@ -35,9 +35,9 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     return records.map(this.organizationMapper.toDomain)
   }
 
-  async findOneByName(name: string): Promise<OrganizationEntity> {
+  async findOneByName(name: string): Promise<OrganizationEntity | null> {
     const record = await this.prismaService.organizations.findFirst({ where: { name: { contains: name } } })
-    if (!record) throw new NotFoundOrganization()
+    if (!record) null
     return record && this.organizationMapper.toDomain(record)
   }
 

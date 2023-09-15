@@ -31,7 +31,7 @@ export class OrganizationService {
     private readonly serviceMapper: ServiceMapper,
   ) {}
 
-  async findOrganizationById(organizationId: string): Promise<OrganizationEntity> {
+  async findOrganizationById(organizationId: string): Promise<OrganizationEntity | null> {
     return await this.organizationRepository.findOneById(organizationId)
   }
 
@@ -62,7 +62,7 @@ export class OrganizationService {
       return this.userMapper.toResponse(
         user,
         userRoleEntity,
-        organization,
+        organization || null,
         positionEntity ? this.positionMapper.toResponse(positionEntity) : null,
         servicesEntity.map(this.serviceMapper.toResponse),
         licenseEntities.map(this.licenseMapper.toResponse),

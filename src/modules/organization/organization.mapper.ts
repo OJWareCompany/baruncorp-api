@@ -6,6 +6,7 @@ import { OrganizationEntity } from './domain/organization.entity'
 import { CreateOrganizationProps } from './domain/organization.types'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
 import { Mapper } from '@libs/ddd/mapper.interface'
+import { MountingType, ProjectPropertyType } from '../project/domain/project.type'
 
 /**
  * 여기서는 왜.. 경로 설정이 되는거지?
@@ -29,6 +30,8 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       name: props.name,
       description: props.description,
       organizationType: props.organizationType,
+      mountingTypeDefaultValue: props.projectPropertyTypeDefaultValue,
+      projectPropertyTypeDefaultValue: props.mountingTypeDefaultValue,
       email: props.email,
       phoneNumber: props.phoneNumber,
       city: props.address.city,
@@ -53,6 +56,8 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     const props: CreateOrganizationProps = {
       name: record.name,
       description: record.description,
+      mountingTypeDefaultValue: record.mountingTypeDefaultValue as MountingType,
+      projectPropertyTypeDefaultValue: record.projectPropertyTypeDefaultValue as ProjectPropertyType,
       email: record.email,
       phoneNumber: record.phoneNumber,
       organizationType: record.organizationType,
@@ -90,12 +95,12 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.state = entity.getProps().address.state
     response.street1 = entity.getProps().address.street1
     response.street2 = entity.getProps().address.street2
-    response.isActiveContractor = entity.getProps().isActiveContractor
-    response.isActiveWorkResource = entity.getProps().isActiveWorkResource
-    response.isRevenueShare = entity.getProps().isRevenueShare
-    response.isRevisionRevenueShare = entity.getProps().isRevisionRevenueShare
-    response.invoiceRecipient = entity.getProps().invoiceRecipient
-    response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
+    // response.isActiveContractor = entity.getProps().isActiveContractor
+    // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
+    // response.isRevenueShare = entity.getProps().isRevenueShare
+    // response.isRevisionRevenueShare = entity.getProps().isRevisionRevenueShare
+    // response.invoiceRecipient = entity.getProps().invoiceRecipient
+    // response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
     return response
   }
 }

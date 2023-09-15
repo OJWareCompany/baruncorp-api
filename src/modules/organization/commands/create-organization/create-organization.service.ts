@@ -6,6 +6,7 @@ import { CreateOrganizationCommand } from './create-organization.command'
 import { ORGANIZATION_REPOSITORY } from '../../organization.di-token'
 import { OrganizationRepositoryPort } from '../../database/organization.repository.port'
 import { Address } from '../../domain/value-objects/address.vo'
+import { MountingType, ProjectPropertyType } from '../../../project/domain/project.type'
 
 // TODO: remove id field!
 
@@ -35,12 +36,14 @@ export class CreateOrganizationService implements ICommandHandler {
         country: command.country,
         coordinates: [],
       }),
-      isActiveContractor: command.isActiveContractor,
-      isActiveWorkResource: command.isActiveWorkResource,
-      isRevenueShare: command.isRevenueShare,
-      isRevisionRevenueShare: command.isRevisionRevenueShare,
-      invoiceRecipient: command.invoiceRecipient,
-      invoiceRecipientEmail: command.invoiceRecipientEmail,
+      projectPropertyTypeDefaultValue: command.projectPropertyTypeDefaultValue as ProjectPropertyType,
+      mountingTypeDefaultValue: command.mountingTypeDefaultValue as MountingType,
+      isActiveContractor: null,
+      isActiveWorkResource: null,
+      isRevenueShare: null,
+      isRevisionRevenueShare: null,
+      invoiceRecipient: null,
+      invoiceRecipientEmail: null,
     })
 
     await this.organizationRepository.insertOrganization(entity)
