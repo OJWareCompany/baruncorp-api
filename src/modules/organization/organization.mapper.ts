@@ -95,6 +95,8 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.state = entity.getProps().address.state
     response.street1 = entity.getProps().address.street1
     response.street2 = entity.getProps().address.street2
+    response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
+    response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare

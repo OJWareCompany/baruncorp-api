@@ -37,6 +37,12 @@ export class OrganizationResponseDto {
   @ApiProperty()
   street2: string | null
 
+  @ApiProperty()
+  projectPropertyTypeDefaultValue: string | null
+
+  @ApiProperty()
+  mountingTypeDefaultValue: string | null
+
   // @ApiProperty({ description: '필요한지 확인 필요' })
   // isActiveContractor: boolean | null
 

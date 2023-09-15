@@ -181,18 +181,8 @@ export interface OrganizationResponseDto {
   state: string
   street1: string
   street2: string | null
-  /** 필요한지 확인 필요 */
-  isActiveContractor: boolean | null
-  /** 필요한지 확인 필요 */
-  isActiveWorkResource: boolean | null
-  /** 필요한지 확인 필요 */
-  isRevenueShare: boolean | null
-  /** 필요한지 확인 필요 */
-  isRevisionRevenueShare: boolean | null
-  /** 필요한지 확인 필요 */
-  invoiceRecipient: string | null
-  /** 필요한지 확인 필요 */
-  invoiceRecipientEmail: string | null
+  projectPropertyTypeDefaultValue: string | null
+  mountingTypeDefaultValue: string | null
 }
 
 export interface CreateOrganizationRequestDto {
@@ -224,35 +214,15 @@ export interface CreateOrganizationRequestDto {
    */
   organizationType: string
   /**
-   * 필요한지 확인 필요
-   * @default true
+   * @default "client"
+   * @pattern /(Commercial|Residential)/
    */
-  isActiveContractor: boolean | null
+  projectPropertyTypeDefaultValue: string | null
   /**
-   * 필요한지 확인 필요
-   * @default true
+   * @default "client"
+   * @pattern /(Roof Mount|Ground Mount|Roof Mount & Ground Mount)/
    */
-  isActiveWorkResource: boolean | null
-  /**
-   * 필요한지 확인 필요
-   * @default true
-   */
-  isRevenueShare: boolean | null
-  /**
-   * 필요한지 확인 필요
-   * @default true
-   */
-  isRevisionRevenueShare: boolean | null
-  /**
-   * 필요한지 확인 필요
-   * @default "chris kim"
-   */
-  invoiceRecipient: string | null
-  /**
-   * 필요한지 확인 필요
-   * @default "chriskim@gmail.com"
-   */
-  invoiceRecipientEmail: string | null
+  mountingTypeDefaultValue: string | null
 }
 
 export interface CreateMemberPositionRequestDto {
