@@ -89,9 +89,12 @@ export class ProjectRepository implements ProjectRepositoryPort {
     }))
   }
 
-  async isExistedByPropertyOwnerAddress(propertyOwnerAddress: string): Promise<boolean> {
+  async isExistedByPropertyOwnerAddress(clientOrganizationId: string, propertyOwnerAddress: string): Promise<boolean> {
     return !!(await this.prismaService.orderedProjects.findFirst({
-      where: { propertyFullAddress: propertyOwnerAddress },
+      where: {
+        clientOrganizationId: clientOrganizationId,
+        propertyFullAddress: propertyOwnerAddress,
+      },
     }))
   }
 }

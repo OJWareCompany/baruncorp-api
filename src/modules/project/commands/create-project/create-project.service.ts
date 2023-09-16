@@ -68,6 +68,7 @@ export class CreateProjectService implements ICommandHandler {
     }
 
     const isAlreadyExistedPropertyAddress = await this.projectRepository.isExistedByPropertyOwnerAddress(
+      command.clientOrganizationId,
       command.projectPropertyAddress.fullAddress,
     )
 

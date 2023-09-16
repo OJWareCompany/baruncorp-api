@@ -12,7 +12,7 @@ export interface ProjectRepositoryPort {
   updateProjectMailingAddress(entity: ProjectEntity): Promise<void>
   updateProjectSystemSize(entity: ProjectEntity): Promise<void>
   isExistedProjectByClientIdAndProjectNumber(clientId: string, projectName: string): Promise<boolean>
-  isExistedByPropertyOwnerAddress(propertyOwnerAddress: string): Promise<boolean>
+  isExistedByPropertyOwnerAddress(clientOrganizationId: string, propertyOwnerAddress: string): Promise<boolean>
   findClientUserById(id: string): Promise<UserEntity>
   isExistedOrganizationById(organizationId: string): Promise<boolean>
 }
