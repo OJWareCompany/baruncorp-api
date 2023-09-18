@@ -25,10 +25,9 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       updatedAt: new Date(),
       createdAt: new Date(),
       assignedAt: null,
+      completedCanceledAt: null,
 
       //#region
-      completedCancelledAt: null,
-
       notes: null,
       designRevisionScope: null,
 

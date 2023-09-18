@@ -603,8 +603,8 @@ model OrderedTasks {
   isLocked                                                         Boolean      @default(false) @map("is_locked")
   taskName                                                         String       @map("task_name") @db.VarChar(255)
   description                                                      String?      @db.Text
-  assignedAt                                                      DateTime?    @db.DateTime(0)
-  completedCancelledAt                                           DateTime?    @db.DateTime(0)
+  assignedAt                                                       DateTime?    @map("assigned_at") @db.DateTime(0)
+  completedCanceledAt                                              DateTime?    @map("completed_canceled_at") @db.DateTime(0)
   assigneeName                                                     String?      @map("assignee_name") @db.VarChar(255)
   assigneeUserId                                                   String?      @map("assignee_user_id") @db.VarChar(255)
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
@@ -872,4 +872,11 @@ model ClientAccounts {
   totalCreditsAppliedToInvoices                Decimal? @map("total_credits_applied_to_invoices") @db.Decimal(10, 2)
 
   @@map("client_accounts")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model tasks {
+  id String @db.VarChar(255)
+
+  @@ignore
 }

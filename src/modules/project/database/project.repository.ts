@@ -1,4 +1,4 @@
-import { ProjectRepositoryPort } from './project.repository.port'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { PrismaService } from '../../database/prisma.service'
 import { ProjectEntity } from '../domain/project.entity'
@@ -6,6 +6,7 @@ import { UserEntity } from '../../users/domain/user.entity'
 import UserMapper from '../../users/user.mapper'
 import { ProjectMapper } from '../project.mapper'
 import { ProjectNotFoundException } from '../domain/project.error'
+import { ProjectRepositoryPort } from './project.repository.port'
 
 @Injectable()
 export class ProjectRepository implements ProjectRepositoryPort {
@@ -13,6 +14,7 @@ export class ProjectRepository implements ProjectRepositoryPort {
     private readonly prismaService: PrismaService,
     private readonly projectMapper: ProjectMapper,
     private readonly userMapper: UserMapper, // TODO: 다른 컨텍스트간 Mapper 공유 가능?
+    protected readonly eventEmitter: EventEmitter2,
   ) {}
   findClientUserById(id: string): Promise<UserEntity> {
     throw new Error('Method not implemented.')
@@ -36,6 +38,7 @@ export class ProjectRepository implements ProjectRepositoryPort {
       where: { id: record.id },
       data: { ...record },
     })
+    await entity.publishEvents(this.eventEmitter)
   }
 
   async countTotalOfJobs(id: string): Promise<number> {

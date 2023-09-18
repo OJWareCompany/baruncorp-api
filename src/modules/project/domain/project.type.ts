@@ -44,11 +44,14 @@ export interface ProjectProps {
   numberOfWetStamp: number | null
 }
 
-export class ProjectUpdateProps {
+export interface UpdateProjectProps {
   projectPropertyType: ProjectPropertyType
   projectPropertyOwner: string | null
   projectNumber: string | null
-  projectPropertyAddress: Address
-  projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
+}
+
+export interface UpdatePropertyAddressProps {
+  projectPropertyAddress: Address
+  projectAssociatedRegulatory: Omit<ProjectAssociatedRegulatoryBody, 'ahjId'>
 }

@@ -21,11 +21,22 @@ export class JobRepository implements JobRepositoryPort {
     await entity.publishEvents(this.eventEmitter)
   }
 
-  async update(entity: JobEntity): Promise<void> {
-    const record = this.jobMapper.toPersistence(entity)
-    await this.prismaService.orderedJobs.update({ where: { id: record.id }, data: { ...record } })
-    entity.addUpdateEvent()
-    await entity.publishEvents(this.eventEmitter)
+  async update(entity: JobEntity | JobEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.jobMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.orderedJobs.update({
+          where: { id: record.id },
+          data: record,
+        })
+      }),
+    )
+
+    for (const entity of entities) {
+      entity.addUpdateEvent()
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async findUser(id: string): Promise<Users | null> {
@@ -53,5 +64,16 @@ export class JobRepository implements JobRepositoryPort {
       ...record,
       isCurrentJob: record.id === currentJob?.id,
     })
+  }
+
+  async findManyJob(projectId: string): Promise<JobEntity[]> {
+    const records = await this.prismaService.orderedJobs.findMany({
+      where: { projectId },
+      include: {
+        orderedTasks: true,
+      },
+    })
+
+    return records.map(this.jobMapper.toDomain)
   }
 }

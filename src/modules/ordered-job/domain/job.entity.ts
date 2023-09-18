@@ -37,6 +37,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return job
   }
 
+  updatePropetyAddress(propertyFullAddress: string) {
+    this.props.propertyFullAddress = propertyFullAddress
+    this.props.jobName = `Job #${this.props.jobRequestNumber} ${propertyFullAddress}`
+  }
+
   hasCurrentMailingAddress(): boolean {
     // return props.jobStatus === 'Completed' && !!props.mailingAddressForWetStamp?.coordinates?.length
     return !!this.getProps().mailingAddressForWetStamp?.coordinates.length

@@ -2,7 +2,7 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConflictException, Inject, NotFoundException } from '@nestjs/common'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
-import { NotFoundOrganization } from '../../../organization/domain/organization.error'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { GEOGRAPHY_REPOSITORY } from '../../../geography/geography.di-token'
 import { GeographyRepositoryPort } from '../../../geography/database/geography.repository.port'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
@@ -60,7 +60,7 @@ export class CreateProjectService implements ICommandHandler {
   private async validate(command: CreateProjectCommand & { clientOrganizationId: string }) {
     const organization = await this.projectRepository.isExistedOrganizationById(command.clientOrganizationId)
     if (!organization) {
-      throw new NotFoundOrganization()
+      throw new OrganizationNotFoundException()
     }
 
     const isAlreadyExistedProjectNumber = command.projectNumber

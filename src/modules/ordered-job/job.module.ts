@@ -19,6 +19,7 @@ import UserMapper from '../users/user.mapper'
 import { FindMyActiveJobPaginatedHttpController } from './queries/find-my-active-jobs/find-my-active-job.paginated.http.controller'
 import { FindMyActiveJobPaginatedQueryHandler } from './queries/find-my-active-jobs/find-my-active-job.paginated.query-handler'
 import { UpdateJobWhenTaskIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-updated.domain-event-handler'
+import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -34,7 +35,10 @@ const queryHandlers: Provider[] = [
   FindJobPaginatedQueryHandler,
   FindMyActiveJobPaginatedQueryHandler,
 ]
-const eventHandlers: Provider[] = [UpdateJobWhenTaskIsUpdatedDomainEventHandler]
+const eventHandlers: Provider[] = [
+  UpdateJobWhenTaskIsUpdatedDomainEventHandler,
+  UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
+]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 
 const mappers: Provider[] = [JobMapper, UserMapper]

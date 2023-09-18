@@ -23,9 +23,9 @@ export class UpdateProjectRequestDto {
   @IsObject()
   readonly projectPropertyAddress: AddressResponseDto
 
-  @ApiProperty({ default: ProjectAssociatedRegulatoryBodyDto })
-  @IsObject()
-  readonly projectAssociatedRegulatory: ProjectAssociatedRegulatoryBodyDto
+  // @ApiProperty({ default: ProjectAssociatedRegulatoryBodyDto })
+  // @IsObject()
+  // readonly projectAssociatedRegulatory: ProjectAssociatedRegulatoryBodyDto
 }
 
 export class UpdateProjectRequestParamDto {

@@ -1,7 +1,16 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { NewOrderedTasks } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
-import { CreateProjectProps, MountingType, ProjectProps, ProjectUpdateProps } from './project.type'
+import { Address } from '../../organization/domain/value-objects/address.vo'
+import {
+  CreateProjectProps,
+  MountingType,
+  ProjectProps,
+  UpdateProjectProps,
+  UpdatePropertyAddressProps,
+} from './project.type'
+import { ProjectAssociatedRegulatoryBody } from './value-objects/project-associated-regulatory-body.value-object'
+import { ProjectPropertyAddressUpdatedDomainEvent } from './events/project-property-address-updated.domain-event'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -53,12 +62,31 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     return this
   }
 
-  update(props: ProjectUpdateProps) {
+  updatePropertyAddress(updatePropertyAddressProps: UpdatePropertyAddressProps) {
+    const { projectPropertyAddress, projectAssociatedRegulatory } = updatePropertyAddressProps
+    this.props.projectPropertyAddress = new Address({
+      ...projectPropertyAddress,
+    })
+
+    this.props.projectAssociatedRegulatory = new ProjectAssociatedRegulatoryBody({
+      stateId: projectAssociatedRegulatory.stateId, // 무조건 결과값 받아온다고 가정
+      countyId: projectAssociatedRegulatory.countyId,
+      countySubdivisionsId: projectAssociatedRegulatory.countySubdivisionsId,
+      placeId: projectAssociatedRegulatory.placeId,
+    })
+    console.log(2)
+    this.addEvent(
+      new ProjectPropertyAddressUpdatedDomainEvent({
+        aggregateId: this.id,
+        projectPropertyAddress: this.props.projectPropertyAddress,
+      }),
+    )
+  }
+
+  update(props: UpdateProjectProps) {
     this.props.projectPropertyType = props.projectPropertyType
     this.props.projectPropertyOwner = props.projectPropertyOwner
     this.props.projectNumber = props.projectNumber
-    this.props.projectPropertyAddress = props.projectPropertyAddress
-    this.props.projectAssociatedRegulatory = props.projectAssociatedRegulatory
     this.props.updatedBy = props.updatedBy
   }
 
