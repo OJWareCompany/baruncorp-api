@@ -610,7 +610,7 @@ export interface ProjectResponseDto {
   projectNumber: string | null
   /** @example "2023-09-05T07:14:57.270Z" */
   createdAt: string
-  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBodyDto | null
+  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBodyDto
   /** @example 1 */
   totalOfJobs: number
   /** @example false */

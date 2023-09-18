@@ -74,7 +74,7 @@ export class ProjectResponseDto {
   createdAt: string
 
   @ApiProperty({ example: ProjectAssociatedRegulatoryBodyDto })
-  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBodyDto | null
+  projectAssociatedRegulatoryBody: ProjectAssociatedRegulatoryBodyDto
 
   @ApiProperty({ example: 1 })
   totalOfJobs: number
