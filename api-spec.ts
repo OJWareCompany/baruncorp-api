@@ -104,8 +104,8 @@ export interface UserResponseDto {
   lastName: string
   fullName: string
   phoneNumber: string | null
-  organization: string | null
-  organizationId: string | null
+  organization: string
+  organizationId: string
   position: PositionResponseDto | null
   services: ServiceResponseDto[]
   licenses: LincenseResponseDto[]
@@ -118,6 +118,10 @@ export interface UpdateUserRequestDto {
   firstName: string
   /** @default "updated Kim" */
   lastName: string
+  /** @default "hyomin@ojware.com" */
+  deliverablesEmails: string[]
+  /** @default "857-250-4567" */
+  phoneNumber: string | null
 }
 
 export interface GiveRoleRequestDto {
@@ -443,19 +447,6 @@ export interface CreateProjectRequestDto {
   projectPropertyAddress: AddressResponseDto
 }
 
-export interface ProjectAssociatedRegulatoryBodyDto {
-  /** @default "12" */
-  stateId: string
-  /** @default "12011" */
-  countyId: string | null
-  /** @default "1201191098" */
-  countySubdivisionsId: string | null
-  /** @default "1239525" */
-  placeId: string | null
-  /** @default "1239525" */
-  ahjId: string
-}
-
 export interface UpdateProjectRequestDto {
   /** @default "Residential" */
   projectPropertyType: 'Residential' | 'Commercial'
@@ -464,7 +455,6 @@ export interface UpdateProjectRequestDto {
   /** @default "50021" */
   projectNumber: string | null
   projectPropertyAddress: AddressResponseDto
-  projectAssociatedRegulatory: ProjectAssociatedRegulatoryBodyDto
 }
 
 export interface ProjectPaginatedResponseFields {
@@ -512,6 +502,19 @@ export interface ProjectPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: ProjectPaginatedResponseFields[]
+}
+
+export interface ProjectAssociatedRegulatoryBodyDto {
+  /** @default "12" */
+  stateId: string
+  /** @default "12011" */
+  countyId: string | null
+  /** @default "1201191098" */
+  countySubdivisionsId: string | null
+  /** @default "1239525" */
+  placeId: string | null
+  /** @default "1239525" */
+  ahjId: string
 }
 
 export interface MemberResponseFields {
