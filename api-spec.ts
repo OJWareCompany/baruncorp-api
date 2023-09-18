@@ -103,6 +103,7 @@ export interface UserResponseDto {
   firstName: string
   lastName: string
   fullName: string
+  phoneNumber: string | null
   organization: string | null
   organizationId: string | null
   position: PositionResponseDto | null

@@ -20,6 +20,9 @@ export class UserResponseDto {
   fullName: string
 
   @ApiProperty()
+  phoneNumber: string | null
+
+  @ApiProperty()
   organization: string | null
 
   @ApiProperty()
