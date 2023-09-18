@@ -24,10 +24,11 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       invoiceAmount: props.invoiceAmount,
       updatedAt: new Date(),
       createdAt: new Date(),
+      assignedAt: null,
 
       //#region
-      dateAssigned: null,
-      dateCompletedCancelled: null,
+      completedCancelledAt: null,
+
       notes: null,
       designRevisionScope: null,
 

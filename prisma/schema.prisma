@@ -603,8 +603,8 @@ model OrderedTasks {
   isLocked                                                         Boolean      @default(false) @map("is_locked")
   taskName                                                         String       @map("task_name") @db.VarChar(255)
   description                                                      String?      @db.Text
-  dateAssigned                                                     DateTime?    @map("date_assigned") @db.DateTime(0)
-  dateCompletedCancelled                                           DateTime?    @map("date_completed_cancelled") @db.DateTime(0)
+  assignedAt                                                      DateTime?    @db.DateTime(0)
+  completedCancelledAt                                           DateTime?    @db.DateTime(0)
   assigneeName                                                     String?      @map("assignee_name") @db.VarChar(255)
   assigneeUserId                                                   String?      @map("assignee_user_id") @db.VarChar(255)
   isNewTask                                                        Boolean      @default(false) @map("is_new_task")
