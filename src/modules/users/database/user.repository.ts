@@ -1,3 +1,4 @@
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Users } from '@prisma/client'
 import { UserRepositoryPort } from './user.repository.port'
@@ -6,7 +7,6 @@ import { EmailVO } from '../domain/value-objects/email.vo'
 import { InputPasswordVO } from '../domain/value-objects/password.vo'
 import UserMapper from '../user.mapper'
 import { UserEntity } from '../domain/user.entity'
-import { UserName } from '../domain/value-objects/user-name.vo'
 import { UserRoleMapper } from '../user-role.mapper'
 import { UserRole } from '../domain/value-objects/user-role.vo'
 import { LicenseModel } from '../../department/database/department.repository'
@@ -23,6 +23,7 @@ export class UserRepository implements UserRepositoryPort {
     private readonly userMapper: UserMapper,
     private readonly userRoleMapper: UserRoleMapper,
     private readonly licenseMapper: LicenseMapper,
+    protected readonly eventEmitter: EventEmitter2,
   ) {}
   async findAll(): Promise<UserEntity[]> {
     const records = await this.prismaService.users.findMany()
@@ -46,14 +47,13 @@ export class UserRepository implements UserRepositoryPort {
     return this.userMapper.toDomain(user)
   }
 
-  async update(id: string, userName: UserName): Promise<void> {
+  async update(entity: UserEntity): Promise<void> {
+    const record = this.userMapper.toPersistence(entity)
     await this.prismaService.users.update({
-      where: { id },
-      data: {
-        firstName: userName.getFirstName(),
-        lastName: userName.getLastName(),
-      },
+      where: { id: record.id },
+      data: { ...record },
     })
+    await entity.publishEvents(this.eventEmitter)
   }
 
   // TODO: Check a transaction

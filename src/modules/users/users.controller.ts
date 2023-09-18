@@ -42,13 +42,18 @@ export class UsersController {
   @Patch('profile/:userId')
   @UseGuards(AuthGuard)
   async patchUpdateUserByUserId(@Param() param: UserRequestDto, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    return await this.userService.upadteProfile(param.userId, new UserName(dto))
+    return await this.userService.upadteProfile(
+      param.userId,
+      new UserName(dto),
+      dto.phoneNumber,
+      dto.deliverablesEmails,
+    )
   }
 
   @Patch('profile')
   @UseGuards(AuthGuard)
   async patchUpdateUser(@User() { id }: { id: string }, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    return await this.userService.upadteProfile(id, new UserName(dto))
+    return await this.userService.upadteProfile(id, new UserName(dto), dto.phoneNumber, dto.deliverablesEmails)
   }
 
   @Get('roles')

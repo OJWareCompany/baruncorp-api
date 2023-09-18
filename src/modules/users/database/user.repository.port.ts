@@ -1,7 +1,6 @@
 import { EmailVO } from '../domain/value-objects/email.vo'
 import { InputPasswordVO } from '../domain/value-objects/password.vo'
 import { UserEntity } from '../domain/user.entity'
-import { UserName } from '../domain/value-objects/user-name.vo'
 import { UserRole } from '../domain/value-objects/user-role.vo'
 import { LicenseEntity } from '../user-license.entity'
 import { LicenseType } from '../user-license.type'
@@ -15,7 +14,7 @@ export interface UserRepositoryPort {
   findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'> | null>
   findPasswordByUserId(id: string): Promise<string | null>
   insertUser(entity: UserEntity, password: InputPasswordVO): Promise<void>
-  update(userId: string, props: UserName): Promise<void>
+  update(entity: UserEntity): Promise<void>
   findRoleByUserId(userId: string): Promise<UserRole>
   giveRole(prop: UserRole): Promise<void>
   removeRole(entity: UserRole): Promise<void>

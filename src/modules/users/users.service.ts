@@ -79,10 +79,21 @@ export class UserService {
     )
   }
 
-  async upadteProfile(userId: string, userName: UserName): Promise<void> {
+  async upadteProfile(
+    userId: string,
+    userName: UserName,
+    phoneNumber: string | null,
+    deliverablesEmails: string[],
+  ): Promise<void> {
     const user = await this.userRepository.findOneById(userId)
     if (!user) throw new UserNotFoundException()
-    await this.userRepository.update(userId, userName)
+
+    user
+      .updateName(userName) //
+      .updatePhoneNumber(phoneNumber)
+      .updateDeliverableEmails(deliverablesEmails)
+
+    await this.userRepository.update(user)
   }
 
   async findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'>> {
