@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepositoryPort } from './database/organization.repository.port'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
@@ -14,6 +14,7 @@ import { OrganizationMapper } from './organization.mapper'
 import { ServiceMapper } from '../department/service.mapper'
 import { OrganizationEntity } from './domain/organization.entity'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
+import { OrganizationNotFoundException } from './domain/organization.error'
 
 @Injectable()
 export class OrganizationService {
@@ -54,6 +55,7 @@ export class OrganizationService {
   async findMembersByOrganizationId(organizationId: string): Promise<UserResponseDto[]> {
     const userEntity = await this.userRepository.findByOrganizationId(organizationId)
     const organization = await this.organizationRepository.findOneById(organizationId)
+    if (!organization) throw new OrganizationNotFoundException()
     const result: Promise<UserResponseDto>[] = userEntity.map(async (user) => {
       const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
       const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
@@ -62,7 +64,7 @@ export class OrganizationService {
       return this.userMapper.toResponse(
         user,
         userRoleEntity,
-        organization || null,
+        organization,
         positionEntity ? this.positionMapper.toResponse(positionEntity) : null,
         servicesEntity.map(this.serviceMapper.toResponse),
         licenseEntities.map(this.licenseMapper.toResponse),

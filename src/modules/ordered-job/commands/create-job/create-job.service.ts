@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { Inject } from '@nestjs/common'
-import { NotFoundOrganization } from '../../../organization/domain/organization.error'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { UserNotFoundException } from '../../../users/user.error'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobRepositoryPort } from '../../database/job.repository.port'
@@ -25,7 +25,7 @@ export class CreateJobService implements ICommandHandler {
     const clientUser = await this.jobRepository.findUser(command.clientUserId)
     if (!clientUser) throw new UserNotFoundException()
     const organization = await this.prismaService.organizations.findUnique({ where: { id: clientUser.organizationId } })
-    if (!organization) throw new NotFoundOrganization()
+    if (!organization) throw new OrganizationNotFoundException()
     const orderer = await this.jobRepository.findUser(command.updatedByUserId)
     if (!orderer) throw new UserNotFoundException()
     const project = await this.jobRepository.findProject(command.projectId)

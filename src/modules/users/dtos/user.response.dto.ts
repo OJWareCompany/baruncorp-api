@@ -23,10 +23,10 @@ export class UserResponseDto {
   phoneNumber: string | null
 
   @ApiProperty()
-  organization: string | null
+  organization: string
 
   @ApiProperty()
-  organizationId: string | null
+  organizationId: string
 
   @ApiProperty()
   position: PositionResponseDto | null

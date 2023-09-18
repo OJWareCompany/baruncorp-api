@@ -23,7 +23,7 @@ import { LicenseEntity } from './user-license.entity'
 import { State } from '../department/domain/value-objects/state.vo'
 import { LicenseType } from './user-license.type'
 import { UserNotFoundException } from './user.error'
-import { NotFoundOrganization } from '../organization/domain/organization.error'
+import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 
 @Injectable()
 export class UserService {
@@ -65,6 +65,7 @@ export class UserService {
     const userEntity = await this.userRepository.findOneById(userId)
     const userRoleEntity = await this.userRepository.findRoleByUserId(userEntity.id)
     const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organizationId)
+    if (!organizationEntity) throw new OrganizationNotFoundException()
     const positionEntity = await this.departmentRepository.findPositionByUserId(userEntity.id)
     const serviceEntities = await this.departmentRepository.findServicesByUserId(userEntity.id)
     const licenseEntities = await this.userRepository.findLicensesByUser(userEntity)
@@ -120,7 +121,7 @@ export class UserService {
 
       // What if organizationId is provided by parameter?
       const organization = await this.organizationRepository.findOneByName(dto.organizationName)
-      if (!organization) throw new NotFoundOrganization()
+      if (!organization) throw new OrganizationNotFoundException()
 
       await this.invitationMailRepository.insertOne({
         email: dto.email,

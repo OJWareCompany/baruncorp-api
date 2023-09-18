@@ -5,7 +5,7 @@ import { Organizations, UserRole } from '@prisma/client'
 import { UserRoleMapper } from '../../users/user-role.mapper'
 import { OrganizationMapper } from '../organization.mapper'
 import { OrganizationEntity } from '../domain/organization.entity'
-import { NotFoundOrganization } from '../domain/organization.error'
+import { OrganizationNotFoundException } from '../domain/organization.error'
 
 // Where should I put member list? Event Storming Helpful Decide
 
@@ -26,7 +26,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
 
   async findOneById(organizationId: string): Promise<OrganizationEntity> {
     const record = await this.prismaService.organizations.findUnique({ where: { id: organizationId } })
-    if (!record) throw new NotFoundOrganization()
+    if (!record) throw new OrganizationNotFoundException()
     return this.organizationMapper.toDomain(record)
   }
 

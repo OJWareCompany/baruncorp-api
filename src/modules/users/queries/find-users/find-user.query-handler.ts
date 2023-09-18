@@ -2,18 +2,19 @@
 import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
-import { UserRepositoryPort } from '../../database/user.repository.port'
-import UserMapper from '../../user.mapper'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { DepartmentRepositoryPort } from '../../../department/database/department.repository.port'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { LicenseMapper } from '../../../department/license.mapper'
 import { PositionMapper } from '../../../department/position.mapper'
 import { ServiceMapper } from '../../../department/service.mapper'
-import { UserResponseDto } from '../../dtos/user.response.dto'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
-import { USER_REPOSITORY } from '../../user.di-tokens'
 import { DEPARTMENT_REPOSITORY } from '../../../department/department.di-token'
+import { UserRepositoryPort } from '../../database/user.repository.port'
+import { UserResponseDto } from '../../dtos/user.response.dto'
+import { USER_REPOSITORY } from '../../user.di-tokens'
 import { FindUsersQuery } from './find-user.query'
+import UserMapper from '../../user.mapper'
 
 @QueryHandler(FindUsersQuery)
 export class FindUserQueryHandler implements IQueryHandler {
@@ -43,6 +44,7 @@ export class FindUserQueryHandler implements IQueryHandler {
     const result: Promise<UserResponseDto>[] = userEntities.map(async (user) => {
       const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
       const organizationEntity = await this.organizationRepository.findOneById(user.getProps().organizationId)
+      if (!organizationEntity) throw new OrganizationNotFoundException()
       const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
       const serviceEntities = await this.departmentRepository.findServicesByUserId(user.id)
       const licenseEntities = await this.userRepository.findLicensesByUser(user)
