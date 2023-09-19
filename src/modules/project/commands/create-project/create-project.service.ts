@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { ConflictException, Inject, NotFoundException } from '@nestjs/common'
+import { Inject, NotFoundException } from '@nestjs/common'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { GEOGRAPHY_REPOSITORY } from '../../../geography/geography.di-token'
 import { GeographyRepositoryPort } from '../../../geography/database/geography.repository.port'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
 import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
+import { ProjectNumberConflicException, ProjectPropertyAddressConflicException } from '../../domain/project.error'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { CensusResponseDto } from '../../infra/census/census.response.dto'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
@@ -71,7 +72,7 @@ export class CreateProjectService implements ICommandHandler {
       : false
 
     if (command.projectNumber && isAlreadyExistedProjectNumber) {
-      throw new ConflictException(`Project number ${command.projectNumber} is Already Existed`, '30002')
+      throw new ProjectNumberConflicException()
     }
 
     const isAlreadyExistedPropertyAddress = await this.projectRepository.isExistedByPropertyOwnerAddress(
@@ -80,10 +81,7 @@ export class CreateProjectService implements ICommandHandler {
     )
 
     if (isAlreadyExistedPropertyAddress) {
-      throw new ConflictException(
-        `Project Property Full Address ${command.projectPropertyAddress.fullAddress} is Already Existed`,
-        '30002',
-      )
+      throw new ProjectPropertyAddressConflicException()
     }
   }
 
