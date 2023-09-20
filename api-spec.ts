@@ -173,31 +173,10 @@ export interface IdResponse {
   id: string
 }
 
-export interface OrganizationResponseDto {
-  id: string
-  name: string
-  description: string | null
-  email: string | null
-  phoneNumber: string | null
-  organizationType: string
-  city: string
-  country: string | null
-  postalCode: string
-  state: string
-  street1: string
-  street2: string | null
-  projectPropertyTypeDefaultValue: string | null
-  mountingTypeDefaultValue: string | null
-}
-
-export interface CreateOrganizationRequestDto {
-  /** @default "hyomin@ojware.com" */
-  email: string | null
-  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  fullAddress: string
+export interface AddressDto {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
-  /** @default null */
+  /** @default "A101" */
   street2: string | null
   /** @default "Lauderdale Lakes" */
   city: string
@@ -205,8 +184,18 @@ export interface CreateOrganizationRequestDto {
   state: string
   /** @default "33309" */
   postalCode: string
-  /** @default "United States" */
-  country: string
+  /** @default "United State" */
+  country: string | null
+  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
+  fullAddress: string
+  /** @default [-97.87,34] */
+  coordinates: number[]
+}
+
+export interface CreateOrganizationRequestDto {
+  /** @default "hyomin@ojware.com" */
+  email: string | null
+  address: AddressDto
   /** @default "01012341234" */
   phoneNumber: string | null
   /** @default "OJ Tech" */
@@ -228,6 +217,30 @@ export interface CreateOrganizationRequestDto {
    * @pattern /(Roof Mount|Ground Mount|Roof Mount & Ground Mount)/
    */
   mountingTypeDefaultValue: string | null
+}
+
+export interface OrganizationResponseDto {
+  id: string
+  name: string
+  description: string | null
+  email: string | null
+  phoneNumber: string | null
+  organizationType: string
+  address: AddressDto
+  projectPropertyTypeDefaultValue: string | null
+  mountingTypeDefaultValue: string | null
+}
+
+export interface OrganizationPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: any[][]
 }
 
 export interface CreateMemberPositionRequestDto {
@@ -416,25 +429,6 @@ export interface AddressFromMapBox {
   coordinates: number[]
 }
 
-export interface AddressResponseDto {
-  /** @default "3480 Northwest 33rd Court" */
-  street1: string
-  /** @default "A101" */
-  street2: string | null
-  /** @default "Lauderdale Lakes" */
-  city: string
-  /** @default "Florida" */
-  state: string
-  /** @default "33309" */
-  postalCode: string
-  /** @default "United State" */
-  country: string | null
-  /** @default "3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309" */
-  fullAddress: string
-  /** @default [-97.87,34] */
-  coordinates: number[]
-}
-
 export interface CreateProjectRequestDto {
   /** @default "Residential" */
   projectPropertyType: 'Residential' | 'Commercial'
@@ -444,7 +438,7 @@ export interface CreateProjectRequestDto {
   clientOrganizationId: string
   /** @default "000152" */
   projectNumber: string | null
-  projectPropertyAddress: AddressResponseDto
+  projectPropertyAddress: AddressDto
 }
 
 export interface UpdateProjectRequestDto {
@@ -454,7 +448,7 @@ export interface UpdateProjectRequestDto {
   projectPropertyOwner: string | null
   /** @default "50021" */
   projectNumber: string | null
-  projectPropertyAddress: AddressResponseDto
+  projectPropertyAddress: AddressDto
 }
 
 export interface ProjectPaginatedResponseFields {
@@ -562,7 +556,7 @@ export interface JobResponseDto {
   projectId: string
   /** @example 300.1 */
   systemSize: number | null
-  mailingAddressForWetStamp: AddressResponseDto | null
+  mailingAddressForWetStamp: AddressDto | null
   /** @example "Ground Mount" */
   mountingType: string
   /** @example 3 */
@@ -604,8 +598,8 @@ export interface ProjectResponseDto {
   clientOrganizationId: string
   /** @example "https://host.com/projects/path" */
   projectFolderLink: string | null
-  propertyAddress: AddressResponseDto
-  mailingAddressForWetStamp: AddressResponseDto | null
+  propertyAddress: AddressDto
+  mailingAddressForWetStamp: AddressDto | null
   /** @example 3 */
   numberOfWetStamp: number | null
   /** @example "Residential" */
@@ -649,7 +643,7 @@ export interface CreateJobRequestDto {
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
   /** @default [{"taskId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"taskId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"taskId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"taskId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"taskId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
-  mailingAddressForWetStamp: AddressResponseDto | null
+  mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
   /** @default false */
@@ -667,7 +661,7 @@ export interface UpdateJobRequestDto {
   additionalInformationFromClient: string | null
   /** @default 300.1 */
   systemSize: number | null
-  mailingAddressForWetStamp: AddressResponseDto | null
+  mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
   /** @default "Roof Mount" */
@@ -793,6 +787,54 @@ export interface FindUsersHttpControllerGetFindUsersParams {
 export interface OrganizationControllerFindMembersParams {
   /** @default "eaefe251-0f1f-49ac-88cb-3582ec76601d" */
   organizationId: string
+}
+
+export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams {
+  fullAddress: string
+  organizationType: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindMemberPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+  organizationId: string
+}
+
+export interface FindMyMemberPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
 }
 
 export interface DepartmentControllerDeleteRevokePositionParams {
@@ -1339,39 +1381,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name OrganizationControllerFindAll
-     * @request GET:/organizations
-     */
-    organizationControllerFindAll: (params: RequestParams = {}) =>
-      this.request<OrganizationResponseDto[], any>({
-        path: `/organizations`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name CreateOrganizationHttpControllerPostCreateOrganization
-     * @request POST:/organizations
-     */
-    createOrganizationHttpControllerPostCreateOrganization: (
-      data: CreateOrganizationRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<IdResponse, any>({
-        path: `/organizations`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @name OrganizationControllerFindMembers
      * @request GET:/organizations/members
      */
@@ -1401,6 +1410,44 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name CreateOrganizationHttpControllerPostCreateOrganization
+     * @request POST:/organizations
+     */
+    createOrganizationHttpControllerPostCreateOrganization: (
+      data: CreateOrganizationRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/organizations`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOrganizationPaginatedHttpControllerGetOrganizationPaginated
+     * @summary Find Oraganization
+     * @request GET:/organizations
+     */
+    findOrganizationPaginatedHttpControllerGetOrganizationPaginated: (
+      query: FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<OrganizationPaginatedResponseDto, any>({
+        path: `/organizations`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name FindOrganizationHttpControllerGet
      * @summary find organization.
      * @request GET:/organizations/{organizationId}
@@ -1409,6 +1456,44 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<OrganizationResponseDto, any>({
         path: `/organizations/${organizationId}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindMemberPaginatedHttpControllerGet
+     * @summary find members.
+     * @request GET:/organizations/{organizationId}/members
+     */
+    findMemberPaginatedHttpControllerGet: (
+      { organizationId, ...query }: FindMemberPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UserResponseDto, any>({
+        path: `/organizations/${organizationId}/members`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindMyMemberPaginatedHttpControllerGet
+     * @summary find members.
+     * @request GET:/organizations/members/my
+     */
+    findMyMemberPaginatedHttpControllerGet: (
+      query: FindMyMemberPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UserResponseDto, any>({
+        path: `/organizations/members/my`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),
