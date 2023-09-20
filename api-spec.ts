@@ -173,6 +173,18 @@ export interface IdResponse {
   id: string
 }
 
+export interface UserPaginatedResopnseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: UserResponseDto[]
+}
+
 export interface AddressDto {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
@@ -1381,7 +1393,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindUsersHttpControllerGetFindUsersParams,
       params: RequestParams = {},
     ) =>
-      this.request<UserResponseDto[], any>({
+      this.request<UserPaginatedResopnseDto, any>({
         path: `/users`,
         method: 'GET',
         query: query,
@@ -1454,7 +1466,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       { organizationId, ...query }: FindMemberPaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
-      this.request<UserResponseDto, any>({
+      this.request<UserPaginatedResopnseDto, any>({
         path: `/organizations/${organizationId}/members`,
         method: 'GET',
         query: query,
@@ -1473,7 +1485,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindMyMemberPaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
-      this.request<UserResponseDto, any>({
+      this.request<UserPaginatedResopnseDto, any>({
         path: `/organizations/members/my`,
         method: 'GET',
         query: query,
