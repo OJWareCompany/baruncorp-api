@@ -50,7 +50,7 @@ export class FindOrganizationPaginatedQueryHandler implements IQueryHandler {
     return new Paginated({
       items: records,
       totalCount: totalCount,
-      page: query.limit,
+      page: query.page,
       pageSize: query.limit,
     })
   }

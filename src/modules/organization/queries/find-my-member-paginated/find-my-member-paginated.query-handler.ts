@@ -73,7 +73,7 @@ export class FindMyMemberPaginatedQueryHandler implements IQueryHandler {
     return new Paginated({
       items: result,
       totalCount: totalCount,
-      page: query.limit,
+      page: query.page,
       pageSize: query.limit,
     })
   }
