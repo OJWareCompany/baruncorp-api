@@ -47,25 +47,4 @@ export class OrganizationService {
    * 어쨋든! 유저의 정보가 담긴 객체 (UserEntity)는 항상 다른 테이블을 join하여서 쓰려고 하는 상황이다.
    * 이때! Aggregate 개념이 필요한 것 같다! (여러가지 Entity의 묶음)
    */
-  async findMembersByOrganizationId(organizationId: string): Promise<UserResponseDto[]> {
-    const userEntity = await this.userRepository.findByOrganizationId(organizationId)
-    const organization = await this.organizationRepository.findOneById(organizationId)
-    if (!organization) throw new OrganizationNotFoundException()
-    const result: Promise<UserResponseDto>[] = userEntity.map(async (user) => {
-      const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
-      const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
-      const servicesEntity = await this.departmentRepository.findServicesByUserId(user.id)
-      const licenseEntities = await this.userRepository.findLicensesByUser(user)
-      return this.userMapper.toResponse(
-        user,
-        userRoleEntity,
-        organization,
-        positionEntity ? this.positionMapper.toResponse(positionEntity) : null,
-        servicesEntity.map(this.serviceMapper.toResponse),
-        licenseEntities.map(this.licenseMapper.toResponse),
-      )
-    })
-
-    return Promise.all(result)
-  }
 }
