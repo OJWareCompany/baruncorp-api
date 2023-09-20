@@ -4,7 +4,6 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { DepartmentRepositoryPort } from '../../../department/database/department.repository.port'
-import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { LicenseMapper } from '../../../department/license.mapper'
 import { PositionMapper } from '../../../department/position.mapper'
 import { ServiceMapper } from '../../../department/service.mapper'
@@ -15,6 +14,7 @@ import { UserResponseDto } from '../../dtos/user.response.dto'
 import { USER_REPOSITORY } from '../../user.di-tokens'
 import { FindUsersQuery } from './find-user.query'
 import UserMapper from '../../user.mapper'
+import { generateUserResponse } from '../../domain/generate-user-response.domain-service'
 
 @QueryHandler(FindUsersQuery)
 export class FindUserQueryHandler implements IQueryHandler {
@@ -41,23 +41,17 @@ export class FindUserQueryHandler implements IQueryHandler {
     })
     const userEntities = records && records.map(this.userMapper.toDomain)
 
-    const result: Promise<UserResponseDto>[] = userEntities.map(async (user) => {
-      const userRoleEntity = await this.userRepository.findRoleByUserId(user.id)
-      const organizationEntity = await this.organizationRepository.findOneById(user.getProps().organizationId)
-      if (!organizationEntity) throw new OrganizationNotFoundException()
-      const positionEntity = await this.departmentRepository.findPositionByUserId(user.id)
-      const serviceEntities = await this.departmentRepository.findServicesByUserId(user.id)
-      const licenseEntities = await this.userRepository.findLicensesByUser(user)
-      return this.userMapper.toResponse(
-        user,
-        userRoleEntity,
-        organizationEntity,
-        positionEntity ? this.positionMapper.toResponse(positionEntity) : null,
-        serviceEntities.map(this.serviceMapper.toResponse),
-        licenseEntities.map(this.licenseMapper.toResponse),
-      )
-    })
+    const result: UserResponseDto[] = await generateUserResponse(
+      userEntities,
+      this.userRepository,
+      this.organizationRepository,
+      this.departmentRepository,
+      this.userMapper,
+      this.positionMapper,
+      this.serviceMapper,
+      this.licenseMapper,
+    )
 
-    return Promise.all(result)
+    return result
   }
 }

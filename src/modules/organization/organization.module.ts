@@ -21,9 +21,24 @@ import { FindOrganizationHttpController } from './queries/find-organization/find
 import { FindOrganizationQueryHandler } from './queries/find-organization/find-orginazation.query-handler'
 import { FindOrganizationPaginatedQueryHandler } from './queries/find-organization-paginated/find-organization-paginated.query-handler'
 import { FindOrganizationPaginatedHttpController } from './queries/find-organization-paginated/find-organization-paginated.http.controller'
+import { FindMemberPaginatedHttpController } from './queries/find-member-paginzated/find-member-paginated.http.controller'
+import { FindMemberPaginatedQueryHandler } from './queries/find-member-paginzated/find-member-paginated.query-handler'
+import { FindMyMemberPaginatedHttpController } from './queries/find-my-member-paginated/find-my-member-paginated.http.controller'
+import { FindMyMemberPaginatedQueryHandler } from './queries/find-my-member-paginated/find-my-member-paginated.query-handler'
 
-const httpControllers = [FindOrganizationHttpController, FindOrganizationPaginatedHttpController]
-const queryHandlers: Provider[] = [FindOrganizationQueryHandler, FindOrganizationPaginatedQueryHandler]
+const httpControllers = [
+  FindOrganizationHttpController,
+  FindOrganizationPaginatedHttpController,
+  FindMemberPaginatedHttpController,
+  FindMyMemberPaginatedHttpController,
+]
+
+const queryHandlers: Provider[] = [
+  FindOrganizationQueryHandler,
+  FindOrganizationPaginatedQueryHandler,
+  FindMemberPaginatedQueryHandler,
+  FindMyMemberPaginatedQueryHandler,
+]
 
 const repositories: Provider[] = [
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
