@@ -6,7 +6,7 @@ import {
   ProjectPropertyTypeEnum,
 } from '../../../modules/project/domain/project.type'
 import { JobResponseDto } from '../../ordered-job/dtos/job.response.dto'
-import { AddressResponseDto } from '../../ordered-job/dtos/address.response.dto'
+import { AddressDto } from '../../ordered-job/dtos/address.dto'
 
 export class ProjectAssociatedRegulatoryBodyDto {
   @ApiProperty({ default: '12' })
@@ -55,11 +55,11 @@ export class ProjectResponseDto {
   @ApiProperty({ example: 'https://host.com/projects/path' })
   projectFolderLink: string | null
 
-  @ApiProperty({ example: AddressResponseDto })
-  propertyAddress: AddressResponseDto
+  @ApiProperty({ example: AddressDto })
+  propertyAddress: AddressDto
 
-  @ApiProperty({ example: AddressResponseDto })
-  mailingAddressForWetStamp: AddressResponseDto | null
+  @ApiProperty({ example: AddressDto })
+  mailingAddressForWetStamp: AddressDto | null
 
   @ApiProperty({ example: 3 })
   numberOfWetStamp: number | null

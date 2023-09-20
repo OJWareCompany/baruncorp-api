@@ -4,16 +4,11 @@ import { AuthGuard } from '../auth/authentication.guard'
 import { User } from '../../libs/decorators/requests/logged-in-user.decorator'
 import { UserResponseDto } from '../users/dtos/user.response.dto'
 import { UserEntity } from '../users/domain/user.entity'
-import { OrganizationResponseDto } from './dtos/organization.response.dto'
 import { FindOrganizationRequestDto } from './queries/find-organization/find-orginazation.request.dto'
 
 @Controller('organizations')
 export class OrganizationController {
   constructor(private readonly organizationService: OrganizationService) {}
-  @Get('')
-  async findAll(): Promise<OrganizationResponseDto[]> {
-    return await this.organizationService.findAll()
-  }
 
   @Get('members')
   async findMembers(@Query() dto: FindOrganizationRequestDto): Promise<UserResponseDto[]> {

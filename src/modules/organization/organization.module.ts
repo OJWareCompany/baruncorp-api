@@ -19,9 +19,11 @@ import { CreateOrganizationService } from './commands/create-organization/create
 import { CqrsModule } from '@nestjs/cqrs'
 import { FindOrganizationHttpController } from './queries/find-organization/find-orginazation.http.controller'
 import { FindOrganizationQueryHandler } from './queries/find-organization/find-orginazation.query-handler'
+import { FindOrganizationPaginatedQueryHandler } from './queries/find-organization-paginated/find-organization-paginated.query-handler'
+import { FindOrganizationPaginatedHttpController } from './queries/find-organization-paginated/find-organization-paginated.http.controller'
 
-const httpControllers = [FindOrganizationHttpController]
-const queryHandlers: Provider[] = [FindOrganizationQueryHandler]
+const httpControllers = [FindOrganizationHttpController, FindOrganizationPaginatedHttpController]
+const queryHandlers: Provider[] = [FindOrganizationQueryHandler, FindOrganizationPaginatedQueryHandler]
 
 const repositories: Provider[] = [
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },

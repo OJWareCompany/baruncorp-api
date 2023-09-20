@@ -1,8 +1,8 @@
-import { Controller, Get, HttpStatus, Param } from '@nestjs/common'
-import { QueryBus } from '@nestjs/cqrs'
+import { Controller, Get, HttpStatus, Param, Query } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
-import { FindOrganizationRequestDto } from './find-orginazation.request.dto'
+import { QueryBus } from '@nestjs/cqrs'
 import { OrganizationResponseDto } from '../../dtos/organization.response.dto'
+import { FindOrganizationRequestDto } from './find-orginazation.request.dto'
 import { FindOrganizationQuery } from './find-orginazation.query-handler'
 
 @Controller('organizations')

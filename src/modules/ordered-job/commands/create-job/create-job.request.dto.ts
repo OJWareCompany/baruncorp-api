@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
-import { AddressResponseDto } from '../../dtos/address.response.dto'
+import { AddressDto } from '../../dtos/address.dto'
 
 export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
@@ -68,10 +68,10 @@ export class CreateJobRequestDto {
   @IsArray()
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
 
-  @ApiProperty({ default: AddressResponseDto })
+  @ApiProperty({ default: AddressDto })
   @IsObject()
   @IsOptional()
-  mailingAddressForWetStamp: AddressResponseDto | null
+  mailingAddressForWetStamp: AddressDto | null
 
   @ApiProperty({ default: 3 })
   @IsNumber()

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { JobStatus, JobStatusEnum } from '../domain/job.type'
-import { AddressResponseDto } from './address.response.dto'
+import { AddressDto } from './address.dto'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -79,8 +79,8 @@ export class JobResponseDto {
   @ApiProperty({ example: 300.1 })
   systemSize: number | null
 
-  @ApiProperty({ example: AddressResponseDto })
-  mailingAddressForWetStamp: AddressResponseDto | null
+  @ApiProperty({ example: AddressDto })
+  mailingAddressForWetStamp: AddressDto | null
 
   @ApiProperty({ example: 'Ground Mount' })
   mountingType: string

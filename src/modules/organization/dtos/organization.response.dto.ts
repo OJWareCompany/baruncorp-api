@@ -1,4 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { IsObject } from 'class-validator'
+import { AddressDto } from '../../ordered-job/dtos/address.dto'
 
 export class OrganizationResponseDto {
   @ApiProperty()
@@ -19,23 +21,9 @@ export class OrganizationResponseDto {
   @ApiProperty()
   organizationType: string
 
-  @ApiProperty()
-  city: string
-
-  @ApiProperty()
-  country: string | null
-
-  @ApiProperty()
-  postalCode: string
-
-  @ApiProperty()
-  state: string
-
-  @ApiProperty()
-  street1: string
-
-  @ApiProperty()
-  street2: string | null
+  @ApiProperty({ default: AddressDto })
+  @IsObject()
+  address: AddressDto
 
   @ApiProperty()
   projectPropertyTypeDefaultValue: string | null

@@ -36,11 +36,6 @@ export class OrganizationService {
     return await this.organizationRepository.findOneById(organizationId)
   }
 
-  async findAll(): Promise<OrganizationResponseDto[]> {
-    const entities = await this.organizationRepository.findAll()
-    return entities.map(this.organizationMapper.toResponse)
-  }
-
   /**
    * TODO: Aggregate 구현하기
    *

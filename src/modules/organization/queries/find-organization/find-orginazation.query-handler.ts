@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, NotFoundException } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { ORGANIZATION_REPOSITORY } from '../../organization.di-token'
@@ -10,6 +10,7 @@ import { OrganizationNotFoundException } from '../../domain/organization.error'
 
 export class FindOrganizationQuery {
   public readonly organizationId: string
+
   constructor(props: FindOrganizationQuery) {
     initialize(this, props)
   }

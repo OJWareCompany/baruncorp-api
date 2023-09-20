@@ -3,7 +3,7 @@ import { IsString, IsOptional, IsArray } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { AddressProps } from '../../organization/domain/value-objects/address.vo'
 
-export class AddressResponseDto {
+export class AddressDto {
   @ApiProperty({ default: '3480 Northwest 33rd Court' })
   @IsString()
   readonly street1: string

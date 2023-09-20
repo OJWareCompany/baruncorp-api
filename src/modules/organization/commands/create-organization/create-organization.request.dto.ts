@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsEmail, IsOptional, IsString, Matches } from 'class-validator'
+import { IsEmail, IsObject, IsOptional, IsString, Matches } from 'class-validator'
+import { AddressDto } from '../../../ordered-job/dtos/address.dto'
 
 export class CreateOrganizationRequestDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
@@ -7,34 +8,9 @@ export class CreateOrganizationRequestDto {
   @IsOptional()
   readonly email: string | null
 
-  @ApiProperty({ default: '3480 Northwest 33rd Court, Lauderdale Lakes, Florida 33309' })
-  @IsString()
-  readonly fullAddress: string
-
-  @ApiProperty({ default: '3480 Northwest 33rd Court' })
-  @IsString()
-  readonly street1: string
-
-  @ApiProperty({ default: null })
-  @IsString()
-  @IsOptional()
-  readonly street2: string | null
-
-  @ApiProperty({ default: 'Lauderdale Lakes' })
-  @IsString()
-  readonly city: string
-
-  @ApiProperty({ default: 'Florida' })
-  @IsString()
-  readonly state: string
-
-  @ApiProperty({ default: '33309' })
-  @IsString()
-  readonly postalCode: string
-
-  @ApiProperty({ default: 'United States' })
-  @IsString()
-  readonly country: string
+  @ApiProperty({ default: AddressDto })
+  @IsObject()
+  readonly address: AddressDto
 
   @ApiProperty({ default: '01012341234' })
   @IsString()

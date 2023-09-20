@@ -7,6 +7,10 @@ import { CreateOrganizationProps } from './domain/organization.types'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
 import { Mapper } from '@libs/ddd/mapper.interface'
 import { MountingType, ProjectPropertyType } from '../project/domain/project.type'
+import {
+  OrganizationPaginatedResponseDto,
+  OrganizationPaginatedResponseFields,
+} from './dtos/organization.paginated.response.dto'
 
 /**
  * 여기서는 왜.. 경로 설정이 되는거지?
@@ -28,6 +32,8 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     const record: OrganizationModel = {
       id: props.id,
       name: props.name,
+      fullAddress: props.address.fullAddress.toString(),
+      addressCoordinates: props.address.coordinates.toString(),
       description: props.description,
       organizationType: props.organizationType,
       mountingTypeDefaultValue: props.projectPropertyTypeDefaultValue,
@@ -62,14 +68,14 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       phoneNumber: record.phoneNumber,
       organizationType: record.organizationType,
       address: new Address({
-        fullAddress: `${record.street1}, ${record.city}, ${record.stateOrRegion} ${record.postalCode}`,
+        fullAddress: record.fullAddress,
+        coordinates: record.addressCoordinates.split(',').map((n) => Number(n)),
+        state: record.stateOrRegion,
         city: record.city,
         country: record.country,
-        postalCode: record.postalCode,
-        state: record.stateOrRegion,
         street1: record.street1,
         street2: record.street2,
-        coordinates: [],
+        postalCode: record.postalCode,
       }),
       isActiveContractor: !!record.isActiveContractor,
       isActiveWorkResource: !!record.isActiveWorkResource,
@@ -89,12 +95,35 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.email = entity.getProps().email
     response.phoneNumber = entity.getProps().phoneNumber
     response.organizationType = entity.getProps().organizationType
-    response.city = entity.getProps().address.city
-    response.country = entity.getProps().address.country
-    response.postalCode = entity.getProps().address.postalCode
-    response.state = entity.getProps().address.state
-    response.street1 = entity.getProps().address.street1
-    response.street2 = entity.getProps().address.street2
+    response.address = new Address({
+      city: entity.getProps().address.city,
+      country: entity.getProps().address.country,
+      postalCode: entity.getProps().address.postalCode,
+      state: entity.getProps().address.state,
+      street1: entity.getProps().address.street1,
+      street2: entity.getProps().address.street2,
+      coordinates: entity.getProps().address.coordinates,
+      fullAddress: entity.getProps().address.fullAddress,
+    })
+
+    response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
+    response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
+    // response.isActiveContractor = entity.getProps().isActiveContractor
+    // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
+    // response.isRevenueShare = entity.getProps().isRevenueShare
+    // response.isRevisionRevenueShare = entity.getProps().isRevisionRevenueShare
+    // response.invoiceRecipient = entity.getProps().invoiceRecipient
+    // response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
+    return response
+  }
+  toPaginatedResponse(entity: OrganizationEntity): OrganizationPaginatedResponseFields {
+    const response = new OrganizationPaginatedResponseFields()
+    response.name = entity.getProps().name
+    response.description = entity.getProps().description
+    response.email = entity.getProps().email
+    response.phoneNumber = entity.getProps().phoneNumber
+    response.organizationType = entity.getProps().organizationType
+    response.fullAddress = entity.getProps().address.fullAddress
     response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
     response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
     // response.isActiveContractor = entity.getProps().isActiveContractor

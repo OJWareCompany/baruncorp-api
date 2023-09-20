@@ -1,12 +1,12 @@
 import { ConflictException, NotFoundException } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import { UserRoleModel } from '../../../organization/database/organization.repository'
 import { PrismaService } from '../../../database/prisma.service'
-import UserMapper from '../../user.mapper'
-import { UserEntity } from '../../domain/user.entity'
-import { UserName } from '../../domain/value-objects/user-name.vo'
-import { CreateUserCommand } from './create-user.command'
 import { UserRole, UserRoles } from '../../domain/value-objects/user-role.vo'
-import { UserRoleModel } from '@src/modules/organization/database/organization.repository'
+import { UserName } from '../../domain/value-objects/user-name.vo'
+import { UserEntity } from '../../domain/user.entity'
+import UserMapper from '../../user.mapper'
+import { CreateUserCommand } from './create-user.command'
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserService implements ICommandHandler {
