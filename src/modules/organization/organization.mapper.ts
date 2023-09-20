@@ -115,6 +115,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
   }
   toPaginatedResponse(entity: OrganizationEntity): OrganizationPaginatedResponseFields {
     const response = new OrganizationPaginatedResponseFields()
+    response.id = entity.getProps().id
     response.name = entity.getProps().name
     response.description = entity.getProps().description
     response.email = entity.getProps().email
