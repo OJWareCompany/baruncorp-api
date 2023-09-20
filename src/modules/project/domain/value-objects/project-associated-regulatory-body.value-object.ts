@@ -39,9 +39,9 @@ export class ProjectAssociatedRegulatoryBody {
 
   constructor(create: Omit<ProjectAssociatedRegulatoryBody, 'ahjId'>) {
     this.stateId = create.stateId
-    this.countyId = create.countyId
-    this.countySubdivisionsId = create.countySubdivisionsId
-    this.placeId = create.placeId
+    this.countyId = create.countyId || null
+    this.countySubdivisionsId = create.countySubdivisionsId || null
+    this.placeId = create.placeId || null
     this.ahjId = create.placeId || create.countySubdivisionsId || create.countyId || create.stateId
   }
 }
