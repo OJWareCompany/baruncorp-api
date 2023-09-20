@@ -47,10 +47,10 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       // clientUserName: props.clientUserName,
 
       stateId: props.projectAssociatedRegulatory.stateId,
-      countyId: props.projectAssociatedRegulatory.countyId,
-      countySubdivisionsId: props.projectAssociatedRegulatory.countySubdivisionsId,
-      placeId: props.projectAssociatedRegulatory.placeId,
-      ahjId: props.projectAssociatedRegulatory.ahjId,
+      countyId: props.projectAssociatedRegulatory.countyId || null, // undefined가 아닌 null이어야한다.
+      countySubdivisionsId: props.projectAssociatedRegulatory.countySubdivisionsId || null,
+      placeId: props.projectAssociatedRegulatory.placeId || null,
+      ahjId: props.projectAssociatedRegulatory.ahjId || null,
 
       ahjAutomationLastRunDate: null,
 

@@ -74,7 +74,6 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
       countySubdivisionsId: projectAssociatedRegulatory.countySubdivisionsId,
       placeId: projectAssociatedRegulatory.placeId,
     })
-    console.log(2)
     this.addEvent(
       new ProjectPropertyAddressUpdatedDomainEvent({
         aggregateId: this.id,

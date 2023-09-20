@@ -29,20 +29,19 @@ export class UpdateProjectService implements ICommandHandler {
     await this.validateProjectNumber(project, command)
     await this.validatePropertyAddress(project, command)
 
-    if (project.getProps().projectPropertyAddress.fullAddress !== command.projectPropertyAddress.fullAddress) {
+    if (project.getProps().projectPropertyAddress.coordinates !== command.projectPropertyAddress.coordinates) {
       const censusResponse = await this.censusSearchCoordinatesService.search(
         command.projectPropertyAddress.coordinates,
       )
       if (!censusResponse.state.geoId) throw new NotFoundException('Wrong coordinates')
       this.generateGeographyAndAhjNotes(censusResponse)
-
       project.updatePropertyAddress({
         projectPropertyAddress: command.projectPropertyAddress,
         projectAssociatedRegulatory: {
           stateId: censusResponse.state.geoId, // 무조건 결과값 받아온다고 가정
-          countyId: censusResponse?.county?.geoId,
+          countyId: censusResponse?.county?.geoId || null,
           countySubdivisionsId: censusResponse?.countySubdivisions?.geoId || null,
-          placeId: censusResponse?.place?.geoId,
+          placeId: censusResponse?.place?.geoId || null,
         },
       })
     }
