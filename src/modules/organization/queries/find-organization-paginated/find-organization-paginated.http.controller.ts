@@ -6,7 +6,7 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { OrganizationPaginatedResponseDto } from '../../dtos/organization.paginated.response.dto'
 import { OrganizationMapper } from '../../organization.mapper'
-import { FindOrganizationPaginatedRequestDto } from './find-organization-paginated.request'
+import { FindOrganizationPaginatedRequestDto } from './find-organization-paginated.request.dto'
 import { FindOrganizationPaginatedQuery } from './find-organization-paginated.query-handler'
 
 @Controller('organizations')

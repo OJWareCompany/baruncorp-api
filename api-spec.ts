@@ -797,8 +797,13 @@ export interface FindUsersHttpControllerGetFindUsersParams {
 }
 
 export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams {
-  fullAddress: string
-  organizationType: string
+  name?: string | null
+  fullAddress?: string | null
+  email?: string | null
+  phoneNumber?: string | null
+  organizationType?: string | null
+  projectPropertyTypeDefaultValue?: string | null
+  mountingTypeDefaultValue?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20

@@ -10,7 +10,7 @@ export class FindOrganizationPaginatedRequestDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  fullAddress?: string
+  fullAddress?: string | null
 
   @ApiProperty()
   @IsString()
@@ -25,7 +25,7 @@ export class FindOrganizationPaginatedRequestDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  organizationType?: string
+  organizationType?: string | null
 
   @ApiProperty()
   @IsString()

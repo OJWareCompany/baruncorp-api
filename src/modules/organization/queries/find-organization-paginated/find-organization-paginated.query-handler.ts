@@ -7,10 +7,10 @@ import { PrismaService } from '../../../database/prisma.service'
 
 export class FindOrganizationPaginatedQuery extends PaginatedQueryBase {
   readonly name?: string | null
-  readonly fullAddress?: string
+  readonly fullAddress?: string | null
   readonly email?: string | null
   readonly phoneNumber?: string | null
-  readonly organizationType?: string
+  readonly organizationType?: string | null
   readonly projectPropertyTypeDefaultValue?: string | null
   readonly mountingTypeDefaultValue?: string | null
 
