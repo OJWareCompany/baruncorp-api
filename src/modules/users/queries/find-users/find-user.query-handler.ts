@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
+import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { DepartmentRepositoryPort } from '../../../department/database/department.repository.port'
@@ -32,13 +34,13 @@ export class FindUserQueryHandler implements IQueryHandler {
     private readonly serviceMapper: ServiceMapper,
   ) {}
 
-  async execute(query: FindUsersQuery): Promise<UserResponseDto[]> {
-    const records = await this.prismaService.users.findMany({
-      where: {
-        ...(query.email && { email: query.email }),
-        ...(query.organizationId && { organizationId: query.organizationId }),
-      },
-    })
+  async execute(query: FindUsersQuery): Promise<Paginated<UserResponseDto>> {
+    const whereInput: Prisma.UsersWhereInput = {
+      ...(query.email && { email: query.email }),
+      ...(query.organizationId && { organizationId: query.organizationId }),
+    }
+
+    const records = await this.prismaService.users.findMany({ where: whereInput })
     const userEntities = records && records.map(this.userMapper.toDomain)
 
     const result: UserResponseDto[] = await generateUserResponse(
@@ -52,6 +54,15 @@ export class FindUserQueryHandler implements IQueryHandler {
       this.licenseMapper,
     )
 
-    return result
+    const totalCount = await this.prismaService.users.count({
+      where: whereInput,
+    })
+
+    return new Paginated({
+      items: result,
+      page: query.page,
+      pageSize: query.limit,
+      totalCount: totalCount,
+    })
   }
 }

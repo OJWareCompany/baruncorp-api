@@ -12,11 +12,11 @@ export class FindUsersHttpController {
   @Get('')
   async getFindUsers(
     @Query() dto: FindUserRqeustDto,
-    @Query() searchQuery: PaginatedQueryRequestDto,
+    @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<UserResponseDto[]> {
     const query = new FindUsersQuery({
-      page: searchQuery.page,
-      limit: searchQuery.limit,
+      page: queryParams.page,
+      limit: queryParams.limit,
       ...dto,
     })
     return await this.queryBus.execute(query)
