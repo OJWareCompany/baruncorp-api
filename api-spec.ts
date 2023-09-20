@@ -784,11 +784,6 @@ export interface FindUsersHttpControllerGetFindUsersParams {
   page?: number
 }
 
-export interface OrganizationControllerFindMembersParams {
-  /** @default "eaefe251-0f1f-49ac-88cb-3582ec76601d" */
-  organizationId: string
-}
-
 export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams {
   fullAddress: string
   organizationType: string
@@ -1378,35 +1373,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
   }
   organizations = {
-    /**
-     * No description
-     *
-     * @name OrganizationControllerFindMembers
-     * @request GET:/organizations/members
-     */
-    organizationControllerFindMembers: (query: OrganizationControllerFindMembersParams, params: RequestParams = {}) =>
-      this.request<UserResponseDto[], any>({
-        path: `/organizations/members`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name OrganizationControllerFindMyMembers
-     * @request GET:/organizations/my/members
-     */
-    organizationControllerFindMyMembers: (params: RequestParams = {}) =>
-      this.request<UserResponseDto[], any>({
-        path: `/organizations/my/members`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
     /**
      * No description
      *
