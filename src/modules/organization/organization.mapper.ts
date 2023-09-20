@@ -7,10 +7,7 @@ import { CreateOrganizationProps } from './domain/organization.types'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
 import { Mapper } from '@libs/ddd/mapper.interface'
 import { MountingType, ProjectPropertyType } from '../project/domain/project.type'
-import {
-  OrganizationPaginatedResponseDto,
-  OrganizationPaginatedResponseFields,
-} from './dtos/organization.paginated.response.dto'
+import { OrganizationPaginatedResponseFields } from './dtos/organization.paginated.response.dto'
 
 /**
  * 여기서는 왜.. 경로 설정이 되는거지?

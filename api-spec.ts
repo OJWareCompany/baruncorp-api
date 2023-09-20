@@ -231,6 +231,18 @@ export interface OrganizationResponseDto {
   mountingTypeDefaultValue: string | null
 }
 
+export interface OrganizationPaginatedResponseFields {
+  id: string
+  fullAddress: string
+  name: string
+  description: string | null
+  email: string | null
+  phoneNumber: string | null
+  organizationType: string
+  projectPropertyTypeDefaultValue: string | null
+  mountingTypeDefaultValue: string | null
+}
+
 export interface OrganizationPaginatedResponseDto {
   /** @default 1 */
   page: number
@@ -240,7 +252,7 @@ export interface OrganizationPaginatedResponseDto {
   totalCount: number
   /** @example 500 */
   totalPage: number
-  items: any[][]
+  items: OrganizationPaginatedResponseFields[]
 }
 
 export interface CreateMemberPositionRequestDto {

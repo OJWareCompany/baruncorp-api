@@ -31,5 +31,6 @@ export class OrganizationPaginatedResponseFields {
 }
 
 export class OrganizationPaginatedResponseDto extends PaginatedResponseDto<OrganizationPaginatedResponseFields> {
+  @ApiProperty({ type: OrganizationPaginatedResponseFields, isArray: true })
   items: readonly OrganizationPaginatedResponseFields[]
 }
