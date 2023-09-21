@@ -84,6 +84,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
+  updateIsExpedited(isExpedited: boolean): JobEntity {
+    this.props.isExpedited = isExpedited
+    return this
+  }
+
   updateMailingAddressWetForStamp(mailingAddressForWetStamp: Address | null): JobEntity {
     this.props.mailingAddressForWetStamp = mailingAddressForWetStamp
     return this

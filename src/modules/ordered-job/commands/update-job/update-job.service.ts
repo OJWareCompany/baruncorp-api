@@ -63,6 +63,7 @@ export class UpdateJobService implements ICommandHandler {
     job.updateMailingAddressWetForStamp(command.mailingAddressForWetStamp)
     job.updateNumberOfWetStamp(command.numberOfWetStamp)
     job.updateAdditionalInformationFromClient(command.additionalInformationFromClient)
+    job.updateIsExpedited(command.isExpedited)
     job.updateUpdatedBy(updatedByUserName)
 
     await this.jobRepository.update(job)

@@ -12,6 +12,7 @@ export class UpdateJobCommand {
   readonly updatedByUserId: string
   readonly jobStatus: string
   readonly mountingType: string
+  readonly isExpedited: boolean
 
   constructor(props: UpdateJobCommand) {
     initialize(this, props)
