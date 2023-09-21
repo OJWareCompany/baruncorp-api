@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsString, IsNumber, IsOptional, IsObject } from 'class-validator'
+import { IsArray, IsString, IsNumber, IsOptional, IsObject, IsBoolean } from 'class-validator'
 import { JobStatus, JobStatusEnum } from '../../domain/job.type'
 import { AddressDto } from '../../dtos/address.dto'
 
@@ -35,6 +35,10 @@ export class UpdateJobRequestDto {
   @IsNumber()
   @IsOptional()
   numberOfWetStamp: number | null
+
+  @ApiProperty({ default: true })
+  @IsBoolean()
+  isExpedited: boolean
 
   @ApiProperty({ default: 'Roof Mount' })
   @IsString()

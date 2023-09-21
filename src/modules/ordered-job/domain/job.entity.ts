@@ -8,6 +8,8 @@ import { Address } from '../../organization/domain/value-objects/address.vo'
 import { CreateJobProps, JobProps, JobStatus } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
+import { ClientInformation } from './value-objects/client-information.value-object'
+import { NumberOfWetStampBadRequestException } from './job.error'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -48,6 +50,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   updateNumberOfWetStamp(numberOfWetStamp: number | null) {
+    if (numberOfWetStamp && numberOfWetStamp > 255) {
+      throw new NumberOfWetStampBadRequestException()
+    }
     this.props.numberOfWetStamp = numberOfWetStamp
     return
   }
@@ -97,6 +102,21 @@ export class JobEntity extends AggregateRoot<JobProps> {
       ? 'On Hold'
       : this.props.jobStatus
 
+    return this
+  }
+
+  updateDeliverablesEmails(deliverablesEmails: string[]): JobEntity {
+    this.props.deliverablesEmails = deliverablesEmails
+    return this
+  }
+
+  updateClientInfo(clientInfo: ClientInformation): JobEntity {
+    this.props.clientInfo = clientInfo
+    return this
+  }
+
+  updateMountingType(mountingType: MountingType): JobEntity {
+    this.props.mountingType = mountingType
     return this
   }
 

@@ -137,6 +137,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         jobStatus: record.jobStatus as JobStatus, // TODO: status any
         jobRequestNumber: record.jobRequestNumber,
         propertyFullAddress: record.propertyAddress,
+        deliverablesEmails: record.deliverablesEmail?.split(',') || [],
         jobName: record.jobName,
         orderedTasks: orderedTasks || [],
         systemSize: record.systemSize ? Number(record.systemSize) : null,

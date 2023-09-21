@@ -39,6 +39,7 @@ export class CreateJobService implements ICommandHandler {
       additionalInformationFromClient: command.additionalInformationFromClient,
       mailingAddressForWetStamp: command.mailingAddressForWetStamp,
       numberOfWetStamp: command.numberOfWetStamp,
+      deliverablesEmails: command.deliverablesEmails,
       clientInfo: new ClientInformation({
         clientOrganizationId: clientUser.organizationId,
         clientOrganizationName: organization.name,

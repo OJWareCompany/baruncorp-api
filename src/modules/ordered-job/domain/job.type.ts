@@ -19,6 +19,7 @@ export interface CreateJobProps {
   mountingType: string
   propertyFullAddress: string
   totalOfJobs: number
+  deliverablesEmails: string[]
   orderedTasks: NewOrderedTasks[]
   systemSize: number | null
   mailingAddressForWetStamp: Address | null
@@ -39,6 +40,7 @@ export interface JobProps {
   propertyFullAddress: string
   jobRequestNumber: number
   orderedTasks: OrderedTask[]
+  deliverablesEmails: string[]
   systemSize: number | null
   mailingAddressForWetStamp: Address | null
   numberOfWetStamp: number | null
