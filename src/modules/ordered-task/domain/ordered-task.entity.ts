@@ -12,7 +12,6 @@ export class OrderedTaskEntity extends AggregateRoot<OrderedTaskProps> {
       ...create,
       dateCreated: new Date(),
       taskStatus: 'Not Started',
-      isLocked: false,
     }
     return new OrderedTaskEntity({ id: v4(), props })
   }
@@ -22,11 +21,6 @@ export class OrderedTaskEntity extends AggregateRoot<OrderedTaskProps> {
       throw new BadRequestException(`Only values greater than or equal to 0 are allowed`, '60003')
     }
     this.props.invoiceAmount = invoiceAmount
-    return this
-  }
-
-  setIsLocked(isLocked: boolean): this {
-    this.props.isLocked = isLocked
     return this
   }
 

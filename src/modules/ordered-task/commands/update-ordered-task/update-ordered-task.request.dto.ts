@@ -14,10 +14,6 @@ export class UpdateOrderedTaskRequestDto {
   @IsOptional()
   invoiceAmount: number | null
 
-  @ApiProperty()
-  @IsBoolean()
-  isLocked: boolean
-
   @ApiProperty({ enum: TaskStatusEnum, default: TaskStatusEnum.In_Progress })
   @IsString()
   taskStatus: TaskStatus

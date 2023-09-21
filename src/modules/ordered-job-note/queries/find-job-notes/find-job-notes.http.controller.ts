@@ -10,7 +10,7 @@ export class FindJobNotesHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('')
-  @ApiResponse({ status: HttpStatus.OK })
+  @ApiResponse({ status: HttpStatus.OK, type: JobNoteListResponseDto })
   async find(@Body() request: FindJobNotesRequestDto): Promise<JobNoteListResponseDto> {
     const query = new FindJobNotesQuery(request)
     return await this.queryBus.execute(query)

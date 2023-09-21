@@ -23,7 +23,6 @@ export interface CreateOrderedTaskProps {
 export interface OrderedTaskProps {
   invoiceAmount: number | null
   isNewTask: boolean
-  isLocked: boolean
   taskStatus: TaskStatus
   taskName: string
   taskMenuId: string

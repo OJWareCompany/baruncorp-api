@@ -11,3 +11,9 @@ export class NumberOfWetStampBadRequestException extends BadRequestException {
     super('Maximum number of wet stamp is 255', '40004')
   }
 }
+
+export class JobCompletedUpdateException extends BadRequestException {
+  constructor() {
+    super("Job Completed Can't Update", '40006')
+  }
+}

@@ -13,6 +13,7 @@ import { DeleteOrderedTaskService } from './commands/delete-ordered-task/delete-
 import { DeleteOrderedTaskHttpController } from './commands/delete-ordered-task/delete-ordered-task.http.controller'
 import { UpdateOrderedTaskHttpController } from './commands/update-ordered-task/update-ordered-task.http.controller'
 import { UpdateOrderedTaskService } from './commands/update-ordered-task/update-ordered-task.service'
+import { JobMapper } from '../ordered-job/job.mapper'
 
 const httpControllers = [
   CreateOrderedTaskHttpController,
@@ -27,7 +28,7 @@ const eventHandlers: Provider[] = [
   UpdateOrderedTaskWhenJobIsUpdatedDomainEventHandler,
 ]
 
-const mappers: Provider[] = [OrderedTaskMapper, UserMapper]
+const mappers: Provider[] = [OrderedTaskMapper, UserMapper, JobMapper]
 
 const repositories: Provider[] = [{ provide: ORDERED_TASK_REPOSITORY, useClass: OrderedTaskRepository }]
 

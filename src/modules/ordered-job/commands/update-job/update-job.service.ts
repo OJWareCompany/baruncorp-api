@@ -12,6 +12,7 @@ import { JobRepositoryPort } from '../../database/job.repository.port'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobStatus } from '../../domain/job.type'
 import { UpdateJobCommand } from './update-job.command'
+import { JobCompletedUpdateException } from '../../domain/job.error'
 
 @CommandHandler(UpdateJobCommand)
 export class UpdateJobService implements ICommandHandler {
@@ -23,6 +24,9 @@ export class UpdateJobService implements ICommandHandler {
   ) {}
 
   async execute(command: UpdateJobCommand): Promise<void> {
+    const job = await this.jobRepository.findJobOrThrow(command.jobId)
+    if (job.isCompleted()) throw new JobCompletedUpdateException()
+
     const editor = await this.prismaService.users.findUnique({ where: { id: command.updatedByUserId } })
     if (!editor) throw new UserNotFoundException()
 
@@ -35,14 +39,13 @@ export class UpdateJobService implements ICommandHandler {
     if (!organization) throw new OrganizationNotFoundException()
     const clientUserEntity = this.userMapper.toDomain(clientUserRecord)
 
-    const updatedByUserName = editor.firstName + ' ' + editor.lastName
-    const job = await this.jobRepository.findJobOrThrow(command.jobId)
-
     const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.getProps().projectId } })
     if (!project) throw new ProjectNotFoundException()
 
     if (clientUserEntity.getProps().organizationId !== project.clientOrganizationId)
       throw new BadRequestException('wrong client')
+
+    const updatedByUserName = editor.firstName + ' ' + editor.lastName
 
     job.updateMountingType(command.mountingType as MountingType)
     job.updateClientInfo(

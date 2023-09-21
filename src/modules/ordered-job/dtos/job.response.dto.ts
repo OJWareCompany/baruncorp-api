@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { JobStatus, JobStatusEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
+import { IsBoolean } from 'class-validator'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -31,9 +32,6 @@ export class OrderedTaskResponseFields {
 
   @ApiProperty()
   isNewTask: boolean
-
-  @ApiProperty()
-  isLocked: boolean
 
   @ApiProperty({ example: MemberResponseFields, type: MemberResponseFields })
   assignee: MemberResponseFields

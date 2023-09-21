@@ -11,7 +11,6 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
     return {
       id: entity.id,
       isNewTask: props.isNewTask,
-      isLocked: props.isLocked,
       taskStatus: props.taskStatus,
       taskName: props.taskName,
       taskMenuId: props.taskMenuId,
@@ -31,6 +30,7 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       notes: null,
       designRevisionScope: null,
 
+      isLocked: false,
       newStorageDesign: null,
       notRequired: null,
       monthlyNewServiceIndexNum: null,
@@ -203,7 +203,6 @@ export class OrderedTaskMapper implements Mapper<OrderedTaskEntity, OrderedTasks
       props: {
         invoiceAmount: record.invoiceAmount,
         isNewTask: record.isNewTask,
-        isLocked: record.isLocked,
         taskStatus: record.taskStatus as TaskStatus, // TODO: status any
         taskName: record.taskName,
         taskMenuId: record.taskMenuId,

@@ -18,8 +18,6 @@ export class OrderedTask {
   @ApiProperty()
   isNewTask: boolean
   @ApiProperty()
-  isLocked: boolean
-  @ApiProperty()
   taskStatus: string
   @ApiProperty()
   taskName: string

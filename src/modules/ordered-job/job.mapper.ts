@@ -111,7 +111,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         id: task.id,
         invoiceAmount: task.invoiceAmount,
         isNewTask: task.isNewTask,
-        isLocked: task.isLocked,
         taskStatus: task.taskStatus,
         taskName: task.taskName,
         taskId: task.taskMenuId,
@@ -211,7 +210,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         description: task.description,
         invoiceAmount: task.invoiceAmount,
         isNewTask: task.isNewTask,
-        isLocked: task.isLocked,
         createdAt: task.createdAt.toISOString(),
       })
     })

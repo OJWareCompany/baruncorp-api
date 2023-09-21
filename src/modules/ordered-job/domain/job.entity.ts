@@ -124,6 +124,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this.props.jobStatus === 'On Hold'
   }
 
+  isCompleted(): boolean {
+    return this.props.jobStatus === 'Completed'
+  }
+
   /**
    * 모든 필드에 대해서 update method를 만들면
    * 거의 모든 method에서 updated event를 이벤트 리스트에 추가해야한다.

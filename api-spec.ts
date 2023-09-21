@@ -551,7 +551,6 @@ export interface OrderedTaskResponseFields {
   taskName: string
   invoiceAmount: number | null
   isNewTask: boolean
-  isLocked: boolean
   assignee: MemberResponseFields
   /** @example null */
   description: string | null
@@ -688,6 +687,8 @@ export interface UpdateJobRequestDto {
   mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
+  /** @default true */
+  isExpedited: boolean
   /** @default "Roof Mount" */
   mountingType: string
 }
@@ -754,7 +755,6 @@ export interface CreateOrderedTaskRequestDto {
 
 export interface UpdateOrderedTaskRequestDto {
   invoiceAmount: number | null
-  isLocked: boolean
   /** @default "In Progress" */
   taskStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
   assigneeUserId: string | null
@@ -771,6 +771,20 @@ export interface CreateJobNoteRequestDto {
 
 export interface FindJobNotesRequestDto {
   jobId: string
+}
+
+export interface JobNoteResponseDto {
+  jobNoteId: string
+  /** @example "what do you think about Jazz?" */
+  content: string
+  jobId: string
+  commenterName: string
+  commenterUserId: string
+  createdAt: string
+}
+
+export interface JobNoteListResponseDto {
+  notes: JobNoteResponseDto
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -1978,11 +1992,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/ordered-job-notes
      */
     findJobNotesHttpControllerFind: (data: FindJobNotesRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<JobNoteListResponseDto, any>({
         path: `/ordered-job-notes`,
         method: 'GET',
         body: data,
         type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }

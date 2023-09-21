@@ -4,7 +4,6 @@ import { TaskStatus } from '../../domain/ordered-task.type'
 export class UpdateOrderedTaskCommand {
   orderedTaskId: string
   invoiceAmount: number | null
-  isLocked: boolean
   taskStatus: TaskStatus
   assigneeUserId: string | null
   description: string | null

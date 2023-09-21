@@ -4,7 +4,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { Users } from '@prisma/client'
 import { PrismaService } from '../../../database/prisma.service'
 import { NewOrderedTasks } from '../../../ordered-job/domain/value-objects/ordered-task.value-object'
-import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
+import { JobCompletedUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
+import { JobMapper } from '../../../ordered-job/job.mapper'
 import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
 import { convertToAssignableTask } from '../../domain/convert-to-assignable-task'
 import { OrderedTaskRepositoryPort } from '../../database/ordered-task.repository.port'
@@ -17,6 +18,7 @@ export class CreateOrderedTaskService implements ICommandHandler {
     // @ts-ignore
     @Inject(ORDERED_TASK_REPOSITORY) private readonly orderedTaskRepository: OrderedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
+    private readonly jobMapper: JobMapper,
   ) {}
 
   async execute(command: CreateOrderedTaskCommand): Promise<{ ids: string[] }> {
@@ -26,6 +28,8 @@ export class CreateOrderedTaskService implements ICommandHandler {
     })
 
     if (!job) throw new JobNotFoundException()
+    const jobEntity = this.jobMapper.toDomain(job)
+    if (jobEntity.isCompleted()) throw new JobCompletedUpdateException()
 
     const tasks = await this.prismaService.orderedTasks.findMany({
       where: { projectId: job.projectId, taskMenuId: command.taskMenuId },
