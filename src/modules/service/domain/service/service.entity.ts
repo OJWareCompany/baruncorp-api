@@ -1,4 +1,4 @@
-import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
+import { AggregateRoot } from '../../../../libs/ddd/aggregate-root.base'
 import { v4 } from 'uuid'
 import { CreateServiceProps, ServiceProps } from './service.type'
 

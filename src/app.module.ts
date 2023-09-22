@@ -11,6 +11,7 @@ import { EventEmitterModule } from '@nestjs/event-emitter'
 import { JobModule } from './modules/ordered-job/job.module'
 import { OrderedTaskModule } from './modules/ordered-task/ordered-task.module'
 import { OrderedJobNoteModule } from './modules/ordered-job-note/job-note.module'
+import { ServiceModule } from './modules/service/service.module'
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { OrderedJobNoteModule } from './modules/ordered-job-note/job-note.module
     JobModule,
     OrderedTaskModule,
     OrderedJobNoteModule,
+    ServiceModule,
   ],
   controllers: [],
   providers: [

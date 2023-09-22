@@ -155,6 +155,31 @@ model Positions {
   @@map("positions")
 }
 
+model Service {
+  id              String            @id @default(uuid()) @db.VarChar(255)
+  name            String            @db.VarChar(255)
+  billingCode     String            @map("billing_code") @db.VarChar(255)
+  basePrice       Decimal           @map("base_price") @db.Decimal(13, 4)
+  orderedServices OrderedServices[]
+
+  @@map("service")
+}
+
+model OrderedServices {
+  id            String          @id @default(uuid()) @db.VarChar(255)
+  serviceId     String          @map("service_id") @db.VarChar(255)
+  jobId         String          @map("job_id") @db.VarChar(255)
+  price         Decimal?        @db.Decimal(13, 4)
+  status        String?         @db.VarChar(255)
+  doneAt        DateTime?       @map("done_at") @db.DateTime(0)
+  orderedAt     DateTime        @default(now()) @map("ordered_at") @db.DateTime(0)
+  job           OrderedJobs     @relation(fields: [jobId], references: [id])
+  service       Service         @relation(fields: [serviceId], references: [id])
+  assignedTasks AssignedTasks[]
+
+  @@map("ordered_services")
+}
+
 model Services {
   id                                   String            @id @default(uuid())
   name                                 String
@@ -455,90 +480,92 @@ model OrderedJobNotes {
 }
 
 model OrderedJobs {
-  id                                            String           @id @map("id") @db.VarChar(255)
-  isExpedited                                   Boolean          @default(false) @map("is_expedited")
-  clientUserId                                  String           @map("client_user_id") @db.VarChar(255)
-  clientUserName                                String           @map("client_user_name") @db.VarChar(255)
-  jobStatus                                     String?          @map("job_status") @db.Text
-  jobName                                       String           @map("job_name") @db.VarChar(255)
-  jobRequestNumber                              Int              @map("job_request_number")
-  createdAt                                     DateTime         @map("created_at") @db.DateTime(0)
-  receivedAt                                    DateTime         @map("received_at") @db.DateTime(0)
-  dateDue                                       DateTime?        @map("date_due") @db.Date
-  mountingType                                  String           @map("mounting_type") @db.VarChar(255)
-  projectType                                   String           @map("project_type") @db.VarChar(255)
-  numberOfWetStamp                              Int?             @map("number_of_wet_stamp") @db.TinyInt
-  dateSentToClient                              DateTime?        @map("date_sent_to_client") @db.Date
-  propertyAddress                               String           @map("property_address") @db.Text
-  systemSize                                    Decimal?         @map("system_size") @db.Decimal(10, 2)
-  otherComments                                 String?          @map("other_comments") @db.Text
-  mailingFullAddressForWetStamp                 String?          @map("mailing_full_address_for_wet_stamp") @db.VarChar(255)
-  projectId                                     String           @map("project_id") @db.VarChar(255)
-  jobNotesF                                     String?          @map("job_notes_f") @db.Text
-  additionalInformationFromClient               String?          @map("additional_information_from_client") @db.Text
-  agreedMinimumUnits                            Decimal?         @map("agreed_minimum_units") @db.Decimal(10, 2)
-  agreedRelatedTieredUnitDescription            Decimal?         @map("agreed_related_tiered_unit_description") @db.Decimal(10, 2)
-  agreedTier1Operator                           String?          @map("agreed_tier_1_operator") @db.VarChar(255)
-  agreedTier1Units                              Decimal?         @map("agreed_tier_1_units") @db.Decimal(10, 2)
-  agreedTier2Operator                           String?          @map("agreed_tier_2_operator") @db.VarChar(255)
-  agreedTier2Units                              Decimal?         @map("agreed_tier_2_units") @db.Decimal(10, 2)
-  agreedTier3Operator                           String?          @map("agreed_tier_3_operator") @db.VarChar(255)
-  agreedTier3Units                              Decimal?         @map("agreed_tier_3_units") @db.Decimal(10, 2)
-  approvedForInvoice                            Boolean?         @map("approved_for_invoice")
-  lineItemIssued                                Decimal?         @map("line_item_issued") @db.Decimal(10, 2)
-  invoiceCancelledJob                           String?          @map("invoice_cancelled_job") @db.Text
-  cancelJob                                     String?          @map("cancel_job") @db.Text
-  chargeForAnyRevision                          Boolean?         @map("charge_for_any_revision")
-  chargeForAnyRevisionOverride                  Boolean?         @map("charge_for_any_revision_override")
-  chargeForAnyRevisionSnapshot                  Boolean?         @map("charge_for_any_revision_snapshot")
-  clientOrganizationId                          String           @map("client_organization_id") @db.VarChar(255)
-  clientContactEmail                            String           @map("client_contact_email") @db.VarChar(255)
-  clientContactEmailOverride                    String?          @map("client_contact_email_override") @db.VarChar(255)
-  commercialJobPrice                            Decimal?         @map("commercial_job_price") @db.Decimal(10, 2)
-  completedCancelledDate                        DateTime?        @map("completed_cancelled_date") @db.Date
-  updatedAt                                     DateTime         @map("updated_at") @db.DateTime(0)
-  deliverablesLink                              String?          @map("deliverables_link") @db.Text
-  deliverablesEmail                             String?          @map("deliverables_email") @db.Text
-  electricalPEAndWetStampGlSolargraf            Boolean?         @map("electrical_pe_and_wet_stamp_gl_solargraf")
-  estimatedDaysToComplete                       Int?             @map("estimated_days_to_complete")
-  estimatedDaysToCompleteOverride               Int?             @map("estimated_days_to_complete_override")
-  everOnHold                                    Boolean?         @map("ever_on_hold")
-  exportId                                      String?          @map("export_id") @db.Text
-  formulaSandbox                                String?          @map("formula_sandbox") @db.VarChar(255)
-  formulaSandboxCountdown                       String?          @map("formula_sandbox_countdown") @db.Text
-  formulaSandboxParcelTracker                   String?          @map("formula_sandbox_parcel_tracker") @db.Text
-  formulaSandbox2                               String?          @map("formula_sandbox_2") @db.Text
-  formulaSandbox3                               String?          @map("formula_sandbox_3") @db.Text
-  formulaSandbox4                               String?          @map("formula_sandbox_4") @db.Text
-  formulaSandbox5                               String?          @map("formula_sandbox_5") @db.Text
-  formulaSandbox6                               String?          @map("formula_sandbox_6") @db.Text
-  googleDriveJobDeliverablesFolderId            String?          @map("google_drive_job_deliverables_folder_id") @db.Text
-  googleDriveJobFolderId                        String?          @map("google_drive_job_folder_id") @db.Text
-  inReview                                      Boolean?         @map("in_review")
-  isDesignJob                                   Boolean?         @map("is_design_job")
-  isLocked                                      Boolean?         @map("is_locked")
-  isRevision                                    Boolean?         @map("is_revision")
-  updatedBy                                     String           @map("updated_by") @db.VarChar(255)
-  maximumMessageDateTime                        DateTime?        @map("maximum_message_date_time") @db.DateTime(0)
-  maximumUnixTime                               Decimal?         @map("maximum_unix_time") @db.Decimal(20, 0)
-  adminComments                                 String?          @map("admin_comments") @db.Text
-  relatedLineItem                               Decimal?         @map("related_line_item") @db.Decimal(10, 2)
-  restrictedAccess                              Boolean?         @map("restricted_access")
-  serviceOrderId                                Int?             @map("service_order_id")
-  showClientStructuralUpgradeMessage            Boolean?         @map("show_client_structural_upgrade_message")
-  sixMonthsPrior                                DateTime?        @map("six_months_prior") @db.Date
-  standardPricing                               Boolean?         @map("standard_pricing")
-  structuralOrElectricalPEAndWetStampSelectedGl Boolean?         @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
-  mailingAdderssCity                            String?          @map("mailing_adderss_city") @db.VarChar(255)
-  clientOrganizationName                        String           @map("client_organization_name") @db.VarChar(255)
-  mailingAdderssState                           String?          @map("mailing_adderss_state") @db.VarChar(255)
-  mailingAdderssCoordinates                     String?          @map("mailing_adderss_coordinates") @db.VarChar(255)
-  mailingAdderssStreet1                         String?          @map("mailing_adderss_street1") @db.VarChar(255)
-  mailingAdderssStreet2                         String?          @map("mailing_adderss_street2") @db.VarChar(255)
-  mailingAdderssPostalCode                      String?          @map("mailing_adderss_postal_code") @db.VarChar(255)
-  mailingAdderssPostalCountry                   String?          @map("mailing_adderss_country") @db.VarChar(255)
-  project                                       OrderedProjects? @relation(fields: [projectId], references: [id])
+  id                                            String            @id @map("id") @db.VarChar(255)
+  isExpedited                                   Boolean           @default(false) @map("is_expedited")
+  clientUserId                                  String            @map("client_user_id") @db.VarChar(255)
+  clientUserName                                String            @map("client_user_name") @db.VarChar(255)
+  jobStatus                                     String?           @map("job_status") @db.Text
+  jobName                                       String            @map("job_name") @db.VarChar(255)
+  jobRequestNumber                              Int               @map("job_request_number")
+  createdAt                                     DateTime          @map("created_at") @db.DateTime(0)
+  receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
+  dateDue                                       DateTime?         @map("date_due") @db.Date
+  mountingType                                  String            @map("mounting_type") @db.VarChar(255)
+  projectType                                   String            @map("project_type") @db.VarChar(255)
+  numberOfWetStamp                              Int?              @map("number_of_wet_stamp") @db.UnsignedTinyInt
+  dateSentToClient                              DateTime?         @map("date_sent_to_client") @db.Date
+  propertyAddress                               String            @map("property_address") @db.Text
+  systemSize                                    Decimal?          @map("system_size") @db.Decimal(10, 2)
+  otherComments                                 String?           @map("other_comments") @db.Text
+  mailingFullAddressForWetStamp                 String?           @map("mailing_full_address_for_wet_stamp") @db.VarChar(255)
+  projectId                                     String            @map("project_id") @db.VarChar(255)
+  jobNotesF                                     String?           @map("job_notes_f") @db.Text
+  additionalInformationFromClient               String?           @map("additional_information_from_client") @db.Text
+  agreedMinimumUnits                            Decimal?          @map("agreed_minimum_units") @db.Decimal(10, 2)
+  agreedRelatedTieredUnitDescription            Decimal?          @map("agreed_related_tiered_unit_description") @db.Decimal(10, 2)
+  agreedTier1Operator                           String?           @map("agreed_tier_1_operator") @db.VarChar(255)
+  agreedTier1Units                              Decimal?          @map("agreed_tier_1_units") @db.Decimal(10, 2)
+  agreedTier2Operator                           String?           @map("agreed_tier_2_operator") @db.VarChar(255)
+  agreedTier2Units                              Decimal?          @map("agreed_tier_2_units") @db.Decimal(10, 2)
+  agreedTier3Operator                           String?           @map("agreed_tier_3_operator") @db.VarChar(255)
+  agreedTier3Units                              Decimal?          @map("agreed_tier_3_units") @db.Decimal(10, 2)
+  approvedForInvoice                            Boolean?          @map("approved_for_invoice")
+  lineItemIssued                                Decimal?          @map("line_item_issued") @db.Decimal(10, 2)
+  invoiceCancelledJob                           String?           @map("invoice_cancelled_job") @db.Text
+  cancelJob                                     String?           @map("cancel_job") @db.Text
+  chargeForAnyRevision                          Boolean?          @map("charge_for_any_revision")
+  chargeForAnyRevisionOverride                  Boolean?          @map("charge_for_any_revision_override")
+  chargeForAnyRevisionSnapshot                  Boolean?          @map("charge_for_any_revision_snapshot")
+  clientOrganizationId                          String            @map("client_organization_id") @db.VarChar(255)
+  clientContactEmail                            String            @map("client_contact_email") @db.VarChar(255)
+  clientContactEmailOverride                    String?           @map("client_contact_email_override") @db.VarChar(255)
+  commercialJobPrice                            Decimal?          @map("commercial_job_price") @db.Decimal(10, 2)
+  completedCancelledDate                        DateTime?         @map("completed_cancelled_date") @db.Date
+  updatedAt                                     DateTime          @map("updated_at") @db.DateTime(0)
+  deliverablesLink                              String?           @map("deliverables_link") @db.Text
+  deliverablesEmail                             String?           @map("deliverables_email") @db.Text
+  electricalPEAndWetStampGlSolargraf            Boolean?          @map("electrical_pe_and_wet_stamp_gl_solargraf")
+  estimatedDaysToComplete                       Int?              @map("estimated_days_to_complete")
+  estimatedDaysToCompleteOverride               Int?              @map("estimated_days_to_complete_override")
+  everOnHold                                    Boolean?          @map("ever_on_hold")
+  exportId                                      String?           @map("export_id") @db.Text
+  formulaSandbox                                String?           @map("formula_sandbox") @db.VarChar(255)
+  formulaSandboxCountdown                       String?           @map("formula_sandbox_countdown") @db.Text
+  formulaSandboxParcelTracker                   String?           @map("formula_sandbox_parcel_tracker") @db.Text
+  formulaSandbox2                               String?           @map("formula_sandbox_2") @db.Text
+  formulaSandbox3                               String?           @map("formula_sandbox_3") @db.Text
+  formulaSandbox4                               String?           @map("formula_sandbox_4") @db.Text
+  formulaSandbox5                               String?           @map("formula_sandbox_5") @db.Text
+  formulaSandbox6                               String?           @map("formula_sandbox_6") @db.Text
+  googleDriveJobDeliverablesFolderId            String?           @map("google_drive_job_deliverables_folder_id") @db.Text
+  googleDriveJobFolderId                        String?           @map("google_drive_job_folder_id") @db.Text
+  inReview                                      Boolean?          @map("in_review")
+  isDesignJob                                   Boolean?          @map("is_design_job")
+  isLocked                                      Boolean?          @map("is_locked")
+  isRevision                                    Boolean?          @map("is_revision")
+  updatedBy                                     String            @map("updated_by") @db.VarChar(255)
+  maximumMessageDateTime                        DateTime?         @map("maximum_message_date_time") @db.DateTime(0)
+  maximumUnixTime                               Decimal?          @map("maximum_unix_time") @db.Decimal(20, 0)
+  adminComments                                 String?           @map("admin_comments") @db.Text
+  relatedLineItem                               Decimal?          @map("related_line_item") @db.Decimal(10, 2)
+  restrictedAccess                              Boolean?          @map("restricted_access")
+  serviceOrderId                                Int?              @map("service_order_id")
+  showClientStructuralUpgradeMessage            Boolean?          @map("show_client_structural_upgrade_message")
+  sixMonthsPrior                                DateTime?         @map("six_months_prior") @db.Date
+  standardPricing                               Boolean?          @map("standard_pricing")
+  structuralOrElectricalPEAndWetStampSelectedGl Boolean?          @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
+  mailingAdderssCity                            String?           @map("mailing_adderss_city") @db.VarChar(255)
+  clientOrganizationName                        String            @map("client_organization_name") @db.VarChar(255)
+  mailingAdderssState                           String?           @map("mailing_adderss_state") @db.VarChar(255)
+  mailingAdderssCoordinates                     String?           @map("mailing_adderss_coordinates") @db.VarChar(255)
+  mailingAdderssStreet1                         String?           @map("mailing_adderss_street1") @db.VarChar(255)
+  mailingAdderssStreet2                         String?           @map("mailing_adderss_street2") @db.VarChar(255)
+  mailingAdderssPostalCode                      String?           @map("mailing_adderss_postal_code") @db.VarChar(255)
+  mailingAdderssPostalCountry                   String?           @map("mailing_adderss_country") @db.VarChar(255)
+  project                                       OrderedProjects?  @relation(fields: [projectId], references: [id])
   orderedTasks                                  OrderedTasks[]
+  orderedServices                               OrderedServices[]
+  assignedTasks                                 AssignedTasks[]
 
   @@map("ordered_jobs")
 }
@@ -876,9 +903,27 @@ model ClientAccounts {
   @@map("client_accounts")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model tasks {
-  id String @db.VarChar(255)
+model Tasks {
+  id            String          @id @map("id") @db.VarChar(255)
+  serviceId     String          @map("service_id") @db.VarChar(255)
+  name          String          @map("name") @db.VarChar(255)
+  assignedTasks AssignedTasks[]
 
-  @@ignore
+  @@map("tasks")
+}
+
+model AssignedTasks {
+  id               String          @id @map("id") @db.VarChar(255)
+  taskId           String          @map("task_id") @db.VarChar(255)
+  orderedServiceId String          @map("ordered_service_id") @db.VarChar(255)
+  jobId            String          @map("job_id") @db.VarChar(255)
+  status           String          @map("status") @db.VarChar(255)
+  assigneeId       String?         @map("assignee_id") @db.VarChar(255)
+  startedAt        DateTime?       @map("started_at") @db.DateTime(0)
+  doneAt           DateTime?       @map("done_at") @db.DateTime(0)
+  task             Tasks           @relation(fields: [taskId], references: [id])
+  orderedService   OrderedServices @relation(fields: [orderedServiceId], references: [id])
+  job              OrderedJobs     @relation(fields: [jobId], references: [id])
+
+  @@map("assigned_tasks")
 }
