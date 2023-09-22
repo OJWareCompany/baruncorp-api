@@ -1,13 +1,14 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { ConflictException, HttpException, Inject } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
+import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
+import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
+import { ServiceBillingCodeConflictException, ServiceNameConflictException } from '../../domain/service/service.error'
 import { ServiceRepositoryPort } from '../../database/service.repository.port'
 import { ServiceEntity } from '../../domain/service/service.entity'
 import { SERVICE_REPOSITORY } from '../../service.di-token'
 import { CreateServiceCommand } from './create-service.command'
-import { Exception } from 'handlebars'
-import { Prisma } from '@prisma/client'
 
 @CommandHandler(CreateServiceCommand)
 export class CreateServiceService implements ICommandHandler {
@@ -28,8 +29,10 @@ export class CreateServiceService implements ICommandHandler {
       return service.id
     } catch (e) {
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code === 'P2002' && e.meta?.target === 'name')
-          throw new ConflictException('Already existed service name.')
+        if (e.code === UNIQUE_CONSTRAINT_FAILED) {
+          if (e.meta?.target === 'name') throw new ServiceNameConflictException()
+          if (e.meta?.target === 'billing_code') throw new ServiceBillingCodeConflictException()
+        }
       }
       throw e
     }
