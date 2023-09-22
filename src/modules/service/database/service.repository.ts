@@ -15,8 +15,24 @@ export class ServiceRepository implements ServiceRepositoryPort {
     await this.prismaService.service.create({ data: record })
   }
 
-  findOne(id: string): Promise<ServiceEntity> {
-    throw new Error('Method not implemented.')
+  async update(entity: ServiceEntity): Promise<void> {
+    const record = this.serviceMapper.toPersistence(entity)
+    await this.prismaService.service.update({
+      where: {
+        id: record.id,
+      },
+      data: record,
+    })
+  }
+
+  async findOne(id: string): Promise<ServiceEntity | null> {
+    const record = await this.prismaService.service.findUnique({
+      where: { id },
+      include: {
+        tasks: true,
+      },
+    })
+    return record ? this.serviceMapper.toDomain(record) : null
   }
 
   find(): Promise<Paginated<ServiceEntity>> {
@@ -26,11 +42,9 @@ export class ServiceRepository implements ServiceRepositoryPort {
   order(entity: OrderedServiceEntity): Promise<void> {
     throw new Error('Method not implemented.')
   }
-
   findOrders(): Promise<Paginated<OrderedServiceEntity>> {
     throw new Error('Method not implemented.')
   }
-
   findOrderDetail(): Promise<OrderedServiceEntity> {
     throw new Error('Method not implemented.')
   }

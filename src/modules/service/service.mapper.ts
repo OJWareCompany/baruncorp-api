@@ -1,4 +1,4 @@
-import { Prisma, Service } from '@prisma/client'
+import { Prisma, Service, Tasks } from '@prisma/client'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { ServiceEntity } from './domain/service/service.entity'
 import { ServiceResponseDto } from './dtos/service.response.dto'
@@ -15,13 +15,14 @@ export class ServiceMapper implements Mapper<ServiceEntity, Service, ServiceResp
     return record
   }
 
-  toDomain(record: Service): ServiceEntity {
+  toDomain(record: Service & { tasks: Tasks[] }): ServiceEntity {
     const entity = new ServiceEntity({
       id: record.id,
       props: {
         name: record.name,
         billingCode: record.billingCode,
         basePrice: Number(record.basePrice),
+        tasks: record.tasks,
       },
     })
     return entity

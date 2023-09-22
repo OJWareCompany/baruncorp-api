@@ -6,9 +6,11 @@ import { SERVICE_REPOSITORY } from './service.di-token'
 import { ServiceRepository } from './database/service.repository'
 import { PrismaModule } from '../database/prisma.module'
 import { ServiceMapper } from './service.mapper'
+import { UpdateServiceService } from './commands/update-service/update-service.service'
+import { UpdateServiceHttpController } from './commands/update-service/update-service.http.controller'
 
-const httpControllers = [CreateServiceHttpController]
-const commandHandlers: Provider[] = [CreateServiceService]
+const httpControllers = [CreateServiceHttpController, UpdateServiceHttpController]
+const commandHandlers: Provider[] = [CreateServiceService, UpdateServiceService]
 const mappers: Provider[] = [ServiceMapper]
 const repositories: Provider[] = [{ provide: SERVICE_REPOSITORY, useClass: ServiceRepository }]
 @Module({
