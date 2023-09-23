@@ -1,7 +1,8 @@
-import { AggregateRoot } from '../../../../libs/ddd/aggregate-root.base'
 import { v4 } from 'uuid'
+import { AggregateRoot } from '../../../../libs/ddd/aggregate-root.base'
+import { Guard } from '../../../../libs/guard'
+import { ServiceBillingCodeUpdateException, ServiceNameUpdateException, StringIsEmptyException } from './service.error'
 import { CreateServiceProps, ServiceProps } from './service.type'
-import { ServiceBillingCodeUpdateException, ServiceNameUpdateException } from './service.error'
 
 export class ServiceEntity extends AggregateRoot<ServiceProps> {
   protected _id: string
@@ -15,6 +16,7 @@ export class ServiceEntity extends AggregateRoot<ServiceProps> {
 
   updateName(name: string): this {
     if (this.props.name === name) return this
+    if (Guard.isEmpty(name)) throw new StringIsEmptyException('name')
     if (this.props.tasks.length) throw new ServiceNameUpdateException()
     this.props.name = name
     return this
@@ -23,6 +25,7 @@ export class ServiceEntity extends AggregateRoot<ServiceProps> {
   updateBillingCode(billingCode: string): this {
     if (this.props.billingCode === billingCode) return this
     if (this.props.tasks.length) throw new ServiceBillingCodeUpdateException()
+    if (Guard.isEmpty(billingCode)) throw new StringIsEmptyException('billing code')
     this.props.billingCode = billingCode
     return this
   }
@@ -33,6 +36,9 @@ export class ServiceEntity extends AggregateRoot<ServiceProps> {
   }
 
   public validate(): void {
-    return
+    Object.entries(this.props).map(([key, value]) => {
+      if (typeof value !== 'string') return
+      if (Guard.isEmpty(value)) throw new StringIsEmptyException(key)
+    })
   }
 }
