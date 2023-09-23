@@ -27,3 +27,9 @@ export class ServiceNameUpdateException extends BadRequestException {
     super('The name of a service with associated tasks cannot be modified.', '40104')
   }
 }
+
+export class ServiceWithAssociatedTasksDeleteException extends BadRequestException {
+  constructor() {
+    super('The service with associated tasks cannot be deleted.', '40105')
+  }
+}

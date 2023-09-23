@@ -1,10 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { PrismaService } from '../../database/prisma.service'
+import { OrderedServiceEntity } from '../domain/ordered-service/ordered-service.entity'
+import { ServiceWithAssociatedTasksDeleteException } from '../domain/service/service.error'
+import { ServiceMapper } from '../service.mapper'
 import { ServiceEntity } from '../domain/service/service.entity'
 import { ServiceRepositoryPort } from './service.repository.port'
-import { OrderedServiceEntity } from '../domain/ordered-service/ordered-service.entity'
-import { ServiceMapper } from '../service.mapper'
 
 @Injectable()
 export class ServiceRepository implements ServiceRepositoryPort {
@@ -23,6 +24,11 @@ export class ServiceRepository implements ServiceRepositoryPort {
       },
       data: record,
     })
+  }
+
+  async delete(entity: ServiceEntity): Promise<void> {
+    if (entity.getProps().tasks.length) throw new ServiceWithAssociatedTasksDeleteException()
+    await this.prismaService.service.delete({ where: { id: entity.id } })
   }
 
   async findOne(id: string): Promise<ServiceEntity | null> {

@@ -8,9 +8,11 @@ import { PrismaModule } from '../database/prisma.module'
 import { ServiceMapper } from './service.mapper'
 import { UpdateServiceService } from './commands/update-service/update-service.service'
 import { UpdateServiceHttpController } from './commands/update-service/update-service.http.controller'
+import { DeleteServiceHttpController } from './commands/delete-service/delete-service.http.controller'
+import { DeleteServiceService } from './commands/delete-service/delete-service.service'
 
-const httpControllers = [CreateServiceHttpController, UpdateServiceHttpController]
-const commandHandlers: Provider[] = [CreateServiceService, UpdateServiceService]
+const httpControllers = [CreateServiceHttpController, UpdateServiceHttpController, DeleteServiceHttpController]
+const commandHandlers: Provider[] = [CreateServiceService, UpdateServiceService, DeleteServiceService]
 const mappers: Provider[] = [ServiceMapper]
 const repositories: Provider[] = [{ provide: SERVICE_REPOSITORY, useClass: ServiceRepository }]
 @Module({
