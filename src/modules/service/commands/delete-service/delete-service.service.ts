@@ -1,13 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Prisma } from '@prisma/client'
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
-import {
-  ServiceBillingCodeConflictException,
-  ServiceNameConflictException,
-  ServiceNotFoundException,
-} from '../../domain/service/service.error'
+import { ServiceNotFoundException } from '../../domain/service/service.error'
 import { ServiceRepositoryPort } from '../../database/service.repository.port'
 import { SERVICE_REPOSITORY } from '../../service.di-token'
 import { DeleteServiceCommand } from './delete-service.command'

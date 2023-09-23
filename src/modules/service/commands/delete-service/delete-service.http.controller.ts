@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param } from '@nestjs/common'
+import { Controller, Delete, Param } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { DeleteServiceRequestDto } from './delete-service.request.dto'
 import { DeleteServiceCommand } from './delete-service.command'
