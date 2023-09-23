@@ -3,7 +3,6 @@ import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JobProps } from '../../domain/job.type'
 import { JobMapper } from '../../job.mapper'
 import { JobResponseDto } from '../../dtos/job.response.dto'
 

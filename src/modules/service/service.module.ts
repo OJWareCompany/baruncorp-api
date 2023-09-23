@@ -10,9 +10,25 @@ import { UpdateServiceService } from './commands/update-service/update-service.s
 import { UpdateServiceHttpController } from './commands/update-service/update-service.http.controller'
 import { DeleteServiceHttpController } from './commands/delete-service/delete-service.http.controller'
 import { DeleteServiceService } from './commands/delete-service/delete-service.service'
+import { FindServiceHttpController } from './queries/find-service/find-service.http.controller'
+import { FindServicePaginatedHttpController } from './queries/find-service-paginated/find-service-paginated.http.controller'
+import { FindServiceQueryHandler } from './queries/find-service/find-service.query-handler'
+import { FindServicePaginatedQueryHandler } from './queries/find-service-paginated/find-service-paginated.query-handler'
 
-const httpControllers = [CreateServiceHttpController, UpdateServiceHttpController, DeleteServiceHttpController]
-const commandHandlers: Provider[] = [CreateServiceService, UpdateServiceService, DeleteServiceService]
+const httpControllers = [
+  CreateServiceHttpController,
+  UpdateServiceHttpController,
+  DeleteServiceHttpController,
+  FindServiceHttpController,
+  FindServicePaginatedHttpController,
+]
+const commandHandlers: Provider[] = [
+  CreateServiceService,
+  UpdateServiceService,
+  DeleteServiceService,
+  FindServiceQueryHandler,
+  FindServicePaginatedQueryHandler,
+]
 const mappers: Provider[] = [ServiceMapper]
 const repositories: Provider[] = [{ provide: SERVICE_REPOSITORY, useClass: ServiceRepository }]
 @Module({
