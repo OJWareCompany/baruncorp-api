@@ -5,10 +5,10 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
 import { ServiceRepositoryPort } from '../../database/service.repository.port'
 import {
-  ServiceBillingCodeConflictException,
-  ServiceNameConflictException,
   ServiceNotFoundException,
-} from '../../domain/service/service.error'
+  ServiceNameConflictException,
+  ServiceBillingCodeConflictException,
+} from '../../domain/service.error'
 import { SERVICE_REPOSITORY } from '../../service.di-token'
 import { UpdateServiceCommand } from './update-service.command'
 

@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
-import { AggregateRoot } from '../../../../libs/ddd/aggregate-root.base'
-import { Guard } from '../../../../libs/guard'
-import { StringIsEmptyException } from '../../../../libs/exceptions/exceptions'
+import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
+import { Guard } from '../../../libs/guard'
+import { StringIsEmptyException } from '../../../libs/exceptions/exceptions'
 import { ServiceBillingCodeUpdateException, ServiceNameUpdateException } from './service.error'
 import { CreateServiceProps, ServiceProps } from './service.type'
 

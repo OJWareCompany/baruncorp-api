@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { PrismaService } from '../../database/prisma.service'
-import { OrderedServiceEntity } from '../domain/ordered-service/ordered-service.entity'
-import { ServiceWithAssociatedTasksDeleteException } from '../domain/service/service.error'
 import { ServiceMapper } from '../service.mapper'
-import { ServiceEntity } from '../domain/service/service.entity'
 import { ServiceRepositoryPort } from './service.repository.port'
+import { ServiceEntity } from '../domain/service.entity'
+import { ServiceWithAssociatedTasksDeleteException } from '../domain/service.error'
 
 @Injectable()
 export class ServiceRepository implements ServiceRepositoryPort {
@@ -42,16 +41,6 @@ export class ServiceRepository implements ServiceRepositoryPort {
   }
 
   find(): Promise<Paginated<ServiceEntity>> {
-    throw new Error('Method not implemented.')
-  }
-
-  order(entity: OrderedServiceEntity): Promise<void> {
-    throw new Error('Method not implemented.')
-  }
-  findOrders(): Promise<Paginated<OrderedServiceEntity>> {
-    throw new Error('Method not implemented.')
-  }
-  findOrderDetail(): Promise<OrderedServiceEntity> {
     throw new Error('Method not implemented.')
   }
 }

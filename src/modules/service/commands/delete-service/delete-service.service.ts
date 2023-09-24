@@ -1,8 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { ServiceNotFoundException } from '../../domain/service/service.error'
 import { ServiceRepositoryPort } from '../../database/service.repository.port'
+import { ServiceNotFoundException } from '../../domain/service.error'
 import { SERVICE_REPOSITORY } from '../../service.di-token'
 import { DeleteServiceCommand } from './delete-service.command'
 

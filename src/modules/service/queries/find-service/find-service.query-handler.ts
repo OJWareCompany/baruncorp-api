@@ -2,7 +2,7 @@ import { Service } from '@prisma/client'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
-import { ServiceNotFoundException } from '../../domain/service/service.error'
+import { ServiceNotFoundException } from '../../domain/service.error'
 
 export class FindServiceQuery {
   readonly serviceId: string

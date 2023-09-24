@@ -1,7 +1,7 @@
 import { Prisma, Service, Tasks } from '@prisma/client'
 import { Mapper } from '../../libs/ddd/mapper.interface'
-import { ServiceEntity } from './domain/service/service.entity'
 import { ServiceResponseDto } from './dtos/service.response.dto'
+import { ServiceEntity } from './domain/service.entity'
 
 export class ServiceMapper implements Mapper<ServiceEntity, Service, ServiceResponseDto> {
   toPersistence(entity: ServiceEntity): Service {
