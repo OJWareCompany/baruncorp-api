@@ -133,3 +133,5 @@ dist
 *.db
 db
 mariadb/data
+
+(example)*
