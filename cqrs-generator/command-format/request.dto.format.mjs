@@ -5,8 +5,9 @@ export function getRequestDtoContent(folderName) {
 import { IsString } from 'class-validator'
 
 export class ${toCamelCase(folderName)}RequestDto {
-  @ApiProperty({default:""})
+  @ApiProperty({ default: '' })
   @IsString()
   readonly id: string
-}`
+}
+`
 }
