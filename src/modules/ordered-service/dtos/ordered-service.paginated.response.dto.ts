@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../../src/libs/api/page.response.dto'
-import { OrderedServiceResponse } from './ordered-service.response.dto'
+import { OrderedServiceResponseDto } from './ordered-service.response.dto'
 
-export class OrderedServicePaginatedResponseDto extends PaginatedResponseDto<OrderedServiceResponse> {
-  @ApiProperty({ type: OrderedServiceResponse, isArray: true })
-  items: readonly OrderedServiceResponse[]
+export class OrderedServicePaginatedResponseDto extends PaginatedResponseDto<OrderedServiceResponseDto> {
+  @ApiProperty({ type: OrderedServiceResponseDto, isArray: true })
+  items: readonly OrderedServiceResponseDto[]
 }
