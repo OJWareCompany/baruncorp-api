@@ -4,5 +4,9 @@ import { IsString } from 'class-validator'
 export class CreateOrderedServiceRequestDto {
   @ApiProperty({ default: '' })
   @IsString()
-  readonly id: string
+  readonly serviceId: string
+
+  @ApiProperty({ default: '' })
+  @IsString()
+  readonly jobId: string
 }

@@ -12,6 +12,7 @@ import { JobModule } from './modules/ordered-job/job.module'
 import { OrderedTaskModule } from './modules/ordered-task/ordered-task.module'
 import { OrderedJobNoteModule } from './modules/ordered-job-note/job-note.module'
 import { ServiceModule } from './modules/service/service.module'
+import { OrderedServiceModule } from './modules/ordered-service/ordered-service.module'
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { ServiceModule } from './modules/service/service.module'
     OrderedTaskModule,
     OrderedJobNoteModule,
     ServiceModule,
+    OrderedServiceModule,
   ],
   controllers: [],
   providers: [

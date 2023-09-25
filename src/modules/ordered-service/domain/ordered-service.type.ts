@@ -10,7 +10,6 @@ export interface CreateOrderedServiceProps {
   serviceId: string
   price: number | null
   jobId: string
-  orderedAt: Date
 }
 
 export interface OrderedServiceProps {
