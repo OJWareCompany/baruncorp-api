@@ -9,9 +9,19 @@ import { OrderedServiceRepository } from './database/ordered-service.repository'
 import { OrderedServiceMapper } from './ordered-service.mapper'
 import { UpdateOrderedServiceHttpController } from './command/update-ordered-service/update-ordered-service.http.controller'
 import { UpdateOrderedServiceService } from './command/update-ordered-service/update-ordered-service.service'
+import { DeleteOrderedServiceHttpController } from './command/delete-ordered-service/delete-ordered-service.http.controller'
+import { DeleteOrderedServiceService } from './command/delete-ordered-service/delete-ordered-service.service'
 
-const httpControllers = [CreateOrderedServiceHttpController, UpdateOrderedServiceHttpController]
-const commandHandlers: Provider[] = [CreateOrderedServiceService, UpdateOrderedServiceService]
+const httpControllers = [
+  CreateOrderedServiceHttpController,
+  UpdateOrderedServiceHttpController,
+  DeleteOrderedServiceHttpController,
+]
+const commandHandlers: Provider[] = [
+  CreateOrderedServiceService,
+  UpdateOrderedServiceService,
+  DeleteOrderedServiceService,
+]
 const eventHandlers: Provider[] = []
 const queryHandlers: Provider[] = []
 const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]

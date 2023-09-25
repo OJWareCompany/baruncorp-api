@@ -4,4 +4,5 @@ export interface OrderedServiceRepositoryPort {
   insert(entity: OrderedServiceEntity): Promise<void>
   findOne(id: string): Promise<OrderedServiceEntity | null>
   update(entity: OrderedServiceEntity): Promise<void>
+  delete(id: string): Promise<void>
 }

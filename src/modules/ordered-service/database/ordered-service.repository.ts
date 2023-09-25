@@ -29,4 +29,8 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     const record = this.orderedServiceMapper.toPersistence(entity)
     await this.prismaService.orderedServices.update({ where: { id: record.id }, data: record })
   }
+
+  async delete(id: string): Promise<void> {
+    await this.prismaService.orderedServices.delete({ where: { id } })
+  }
 }

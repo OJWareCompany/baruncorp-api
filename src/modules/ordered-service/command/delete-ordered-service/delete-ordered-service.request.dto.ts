@@ -4,5 +4,5 @@ import { IsString } from 'class-validator'
 export class DeleteOrderedServiceRequestDto {
   @ApiProperty({ default: '' })
   @IsString()
-  readonly id: string
+  readonly orderedServiceId: string
 }
