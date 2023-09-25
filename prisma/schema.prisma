@@ -171,6 +171,7 @@ model OrderedServices {
   serviceId     String          @map("service_id") @db.VarChar(255)
   jobId         String          @map("job_id") @db.VarChar(255)
   price         Decimal?        @db.Decimal(13, 4)
+  priceOverride Decimal?        @map("price_override") @db.Decimal(13, 4)
   status        String?         @db.VarChar(255)
   doneAt        DateTime?       @map("done_at") @db.DateTime(0)
   orderedAt     DateTime        @default(now()) @map("ordered_at") @db.DateTime(0)

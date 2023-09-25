@@ -9,6 +9,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     const id = v4()
     const props: OrderedServiceProps = {
       ...create,
+      price: null,
+      priceOverride: null,
       status: null,
       doneAt: null,
       orderedAt: new Date(),
