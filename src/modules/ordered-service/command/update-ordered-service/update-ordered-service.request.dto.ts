@@ -1,8 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsNumber, IsString } from 'class-validator'
+
+export class UpdateOrderedServiceParamRequestDto {
+  @ApiProperty()
+  @IsString()
+  readonly orderedServiceId: string
+}
 
 export class UpdateOrderedServiceRequestDto {
   @ApiProperty({ default: '' })
-  @IsString()
-  readonly id: string
+  @IsNumber()
+  readonly priceOverride: number
 }

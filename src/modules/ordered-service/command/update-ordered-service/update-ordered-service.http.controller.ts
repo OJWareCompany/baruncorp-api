@@ -1,20 +1,28 @@
 import { CommandBus } from '@nestjs/cqrs'
-import { Body, Controller, Post, UseGuards } from '@nestjs/common'
+import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { IdResponse } from '../../../../libs/api/id.response.dto'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { UpdateOrderedServiceCommand } from './update-ordered-service.command'
-import { UpdateOrderedServiceRequestDto } from './update-ordered-service.request.dto'
+import {
+  UpdateOrderedServiceParamRequestDto,
+  UpdateOrderedServiceRequestDto,
+} from './update-ordered-service.request.dto'
 
-@Controller('update-ordered-service')
+@Controller('ordered-services')
 export class UpdateOrderedServiceHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Post('')
+  @Patch(':orderedServiceId')
   @UseGuards(AuthGuard)
-  async createJob(@User() user: UserEntity, @Body() request: UpdateOrderedServiceRequestDto): Promise<IdResponse> {
-    const command = new UpdateOrderedServiceCommand(request)
-    const result = await this.commandBus.execute(command)
-    return new IdResponse(result.id)
+  async patch(
+    @User() user: UserEntity,
+    @Param() param: UpdateOrderedServiceParamRequestDto,
+    @Body() request: UpdateOrderedServiceRequestDto,
+  ): Promise<void> {
+    const command = new UpdateOrderedServiceCommand({
+      orderedServiceId: param.orderedServiceId,
+      priceOverride: request.priceOverride,
+    })
+    await this.commandBus.execute(command)
   }
 }

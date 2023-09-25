@@ -5,3 +5,9 @@ export class StringIsEmptyException extends BadRequestException {
     super(`${propName} is empty.`, '40200')
   }
 }
+
+export class NegativeNumberException extends BadRequestException {
+  constructor() {
+    super(`Negative number is invalid.`, '40201')
+  }
+}

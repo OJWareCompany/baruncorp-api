@@ -8,7 +8,7 @@ import { UserEntity } from '../../../users/domain/user.entity'
 import { CreateOrderedServiceCommand } from './create-ordered-service.command'
 import { CreateOrderedServiceRequestDto } from './create-ordered-service.request.dto'
 
-@Controller('create-ordered-service')
+@Controller('ordered-services')
 export class CreateOrderedServiceHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('')
