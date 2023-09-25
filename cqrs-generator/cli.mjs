@@ -11,6 +11,7 @@ import { getServiceContent } from './command-format/service.format.mjs'
 import { getQueryHttpControllerContent } from './query-format/http.controller.format.mjs'
 import { getQueryHandlerContent } from './query-format/query-handler.format.mjs'
 import { getQueryRequestDtoContent } from './query-format/request.dto.format.mjs'
+import { getQueryResponseDtoContent } from './query-format/response.dto.format.mjs'
 
 // 현재 모듈의 파일 경로를 얻기 위한 함수
 const __filename = fileURLToPath(import.meta.url)
@@ -59,20 +60,25 @@ program
 
 program
   .command('query')
-  .argument('<string>', 'folder name')
+  .argument('<string>', 'domain name')
   .action((str, options) => {
-    const folderName = str
-    const folderPath = path.join(__dirname, folderName)
+    const domainName = str
+    const folderName = `find-` + str
+    const folderPath = path.join(__dirname, 'queries', folderName)
+
+    const paginatedFolderName = `find-` + str + `-paginated`
+    const paginatedFolderPath = path.join(__dirname, 'queries', paginatedFolderName)
 
     try {
       // 폴더 생성
       fs.ensureDirSync(folderPath)
+      fs.ensureDirSync(paginatedFolderPath)
       console.log(`Created ${folderName} folder`)
 
       // 각 파일 생성 및 내용 작성
-      createFileWithFormat(folderPath, `${folderName}.http.controller.ts`, getQueryHttpControllerContent(folderName))
-      createFileWithFormat(folderPath, `${folderName}.query-handler.ts`, getQueryHandlerContent(folderName))
-      createFileWithFormat(folderPath, `${folderName}.request.dto.ts`, getQueryRequestDtoContent(folderName))
+      makeQueryFiles(folderPath, folderName, domainName)
+      makePaginatedQueryFiles(paginatedFolderPath, paginatedFolderName, domainName)
+      console.log(2)
     } catch (error) {
       console.error('Error:', error.message)
     }
@@ -90,4 +96,22 @@ function makeCommandFiles(path, folderName, domainName, type) {
   createFileWithFormat(path, `${folderName}.service.ts`, getServiceContent(folderName, domainName, type))
   createFileWithFormat(path, `${folderName}.command.ts`, getCommandContent(folderName, domainName, type))
   createFileWithFormat(path, `${folderName}.request.dto.ts`, getRequestDtoContent(folderName, domainName, type))
+}
+
+function makeQueryFiles(path, folderName, domainName) {
+  createFileWithFormat(path, `${folderName}.http.controller.ts`, getQueryHttpControllerContent(folderName, domainName))
+  createFileWithFormat(path, `${folderName}.query-handler.ts`, getQueryHandlerContent(folderName, domainName))
+  createFileWithFormat(path, `${folderName}.request.dto.ts`, getQueryRequestDtoContent(folderName, domainName))
+  createFileWithFormat(path, `${domainName}.response.dto.ts`, getQueryResponseDtoContent(folderName, domainName))
+}
+
+function makePaginatedQueryFiles(path, folderName, domainName) {
+  const controllerFileName = `${domainName}.paginated.http.controller.ts`
+  const queryHandlerFileName = `${domainName}.paginated.query-handler.ts`
+  const requestDtoFileName = `${domainName}.paginated.request.dto.ts`
+  const responseDtoFileName = `${domainName}.paginated.response.dto.ts`
+  createFileWithFormat(path, controllerFileName, getQueryHttpControllerContent(folderName, domainName))
+  createFileWithFormat(path, queryHandlerFileName, getQueryHandlerContent(folderName, domainName))
+  createFileWithFormat(path, requestDtoFileName, getQueryRequestDtoContent(folderName, domainName))
+  createFileWithFormat(path, responseDtoFileName, getQueryResponseDtoContent(folderName, domainName))
 }

@@ -1,6 +1,6 @@
 import { toCamelCase, toPascalCase } from '../util/string-convertor.mjs'
 
-export function getQueryHttpControllerContent(folderName, domainName) {
+export function getPaginatedQueryHttpControllerContent(folderName, domainName) {
   return `import { Controller, Get, Param } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { ${toPascalCase(domainName)}s } from '@prisma/client'

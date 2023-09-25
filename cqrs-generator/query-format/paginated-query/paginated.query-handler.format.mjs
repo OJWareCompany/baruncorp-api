@@ -1,6 +1,6 @@
 import { toCamelCase, toPascalCase } from '../util/string-convertor.mjs'
 
-export function getQueryHandlerContent(folderName, domainName) {
+export function getPaginatedQueryHandlerContent(folderName, domainName) {
   return `import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
