@@ -5,6 +5,7 @@ export function getHttpControllerContent(folderName) {
 import { Body, Controller, Post, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { IdResponse } from '../../../../libs/api/id.response.dto'
+import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { ${toCamelCase(folderName)}Command } from './${folderName}.command'
@@ -19,8 +20,8 @@ export class ${toCamelCase(folderName)}HttpController {
     folderName,
   )}RequestDto): Promise<IdResponse> {
     const command = new ${toCamelCase(folderName)}Command(request)
-    const result = await this.commandBus.execute(command)
-    return new IdResponse(result.id)
+    const result: AggregateID = await this.commandBus.execute(command)
+    return new IdResponse(result)
   }
 }`
 }
