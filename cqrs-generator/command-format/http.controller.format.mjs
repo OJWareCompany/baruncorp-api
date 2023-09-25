@@ -16,9 +16,7 @@ export class ${toCamelCase(folderName)}HttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('')
   @UseGuards(AuthGuard)
-  async createJob(@User() user: UserEntity, @Body() request: ${toCamelCase(
-    folderName,
-  )}RequestDto): Promise<IdResponse> {
+  async do(@User() user: UserEntity, @Body() request: ${toCamelCase(folderName)}RequestDto): Promise<IdResponse> {
     const command = new ${toCamelCase(folderName)}Command(request)
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)

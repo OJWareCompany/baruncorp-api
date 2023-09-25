@@ -13,7 +13,7 @@ export class CreateOrderedServiceHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('')
   @UseGuards(AuthGuard)
-  async createJob(@User() user: UserEntity, @Body() request: CreateOrderedServiceRequestDto): Promise<IdResponse> {
+  async post(@User() user: UserEntity, @Body() request: CreateOrderedServiceRequestDto): Promise<IdResponse> {
     const command = new CreateOrderedServiceCommand(request)
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)
