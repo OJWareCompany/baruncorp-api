@@ -4,7 +4,7 @@ import { AssignedTasks, OrderedServices, Service, Tasks } from '@prisma/client'
 import { OrderedServiceResponseDto } from '../../dtos/ordered-service.response.dto'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
 import { FindOrderedServiceRequestDto } from './find-ordered-service.request.dto'
-import { FindOrderedServiceQuery } from './find-ordered-service.query-handler'
+import { FindOrderedServiceQuery, FindOrderedServiceQueryReturnType } from './find-ordered-service.query-handler'
 
 @Controller('ordered-services')
 export class FindOrderedServiceHttpController {
@@ -14,10 +14,7 @@ export class FindOrderedServiceHttpController {
   async get(@Param() request: FindOrderedServiceRequestDto): Promise<OrderedServiceResponseDto> {
     const command = new FindOrderedServiceQuery(request)
 
-    const result: OrderedServices & {
-      assignedTasks: AssignedTasks[]
-      service: Service & { tasks: Tasks[] }
-    } = await this.queryBus.execute(command)
+    const result: FindOrderedServiceQueryReturnType = await this.queryBus.execute(command)
 
     return new OrderedServiceResponseDto({
       id: result.id,
