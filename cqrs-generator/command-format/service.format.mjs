@@ -1,17 +1,23 @@
-import { toCamelCase } from '../util/toCamelCase.mjs'
+import { toPascalCase, toScreamingSnakeCase } from '../util/string-convertor.mjs'
 
-export function getServiceContent(folderName) {
-  return `import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+export function getServiceContent(folderName, domainName) {
+  return `/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Inject } from '@nestjs/common'
+import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { PrismaService } from '../../../database/prisma.service'
-import { ${toCamelCase(folderName)}Command } from './${folderName}.command'
+import { ${toScreamingSnakeCase(domainName)}_REPOSITORY } from '../../${domainName}.di-token'
+import { ${toPascalCase(folderName)}Command } from './${folderName}.command'
 
-@CommandHandler(${toCamelCase(folderName)}Command)
-export class ${toCamelCase(folderName)}Service implements ICommandHandler {
-  constructor( //
+@CommandHandler(${toPascalCase(folderName)}Command)
+export class ${toPascalCase(folderName)}Service implements ICommandHandler {
+  constructor(
+    // @ts-ignore
+    // @Inject(${toScreamingSnakeCase(domainName)}_REPOSITORY)
+    // private readonly ${toPascalCase(domainName)}Repo: ${toPascalCase(domainName)}RepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
-  async execute(command: ${toCamelCase(folderName)}Command): Promise<AggregateID> {
+  async execute(command: ${toPascalCase(folderName)}Command): Promise<AggregateID> {
     // const entity = Entity.create()
     return ''
   }

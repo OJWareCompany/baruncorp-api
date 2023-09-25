@@ -1,10 +1,10 @@
-import { toCamelCase } from '../util/toCamelCase.mjs'
+import { toPascalCase } from '../util/string-convertor.mjs'
 
 export function getQueryRequestDtoContent(folderName) {
   return `import { ApiProperty } from '@nestjs/swagger'
   import { IsString } from 'class-validator'
   
-  export class ${toCamelCase(folderName)}RequestDto {
+  export class ${toPascalCase(folderName)}RequestDto {
     @ApiProperty({default:""})
     @IsString()
     readonly id: string

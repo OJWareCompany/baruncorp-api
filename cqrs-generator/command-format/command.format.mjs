@@ -1,11 +1,11 @@
-import { toCamelCase } from '../util/toCamelCase.mjs'
+import { toPascalCase, toCamelCase } from '../util/string-convertor.mjs'
 
-export function getCommandContent(folderName) {
+export function getCommandContent(folderName, domainName) {
   return `import { initialize } from '../../../../libs/utils/constructor-initializer'
 
-export class ${toCamelCase(folderName)}Command {
-  readonly id: string
-  constructor(props: ${toCamelCase(folderName)}Command) {
+export class ${toPascalCase(folderName)}Command {
+  readonly ${toCamelCase(domainName)}Id: string
+  constructor(props: ${toPascalCase(folderName)}Command) {
     initialize(this, props)
   }
 }

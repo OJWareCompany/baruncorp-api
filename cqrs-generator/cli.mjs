@@ -26,21 +26,32 @@ program //
 
 program
   .command('command')
-  .argument('<string>', 'folder name')
+  .argument('<string>', 'domain name')
   .action((str, options) => {
-    const folderName = str
-    const folderPath = path.join(__dirname, folderName)
+    const domainName = str
+    const createPath = path.join(__dirname, 'commands', `create-${domainName}`)
+    const updatePath = path.join(__dirname, 'commands', `update-${domainName}`)
+    const deletePath = path.join(__dirname, 'commands', `delete-${domainName}`)
+
+    const createFolderName = `create-${domainName}`
+    const updateFolderName = `update-${domainName}`
+    const deleteFolderName = `delete-${domainName}`
 
     try {
       // 폴더 생성
-      fs.ensureDirSync(folderPath)
-      console.log(`Created ${folderName} folder`)
+      fs.ensureDirSync(createPath)
+      fs.ensureDirSync(updatePath)
+      fs.ensureDirSync(deletePath)
+      console.log(`Created ${domainName} folder`)
 
-      // 각 파일 생성 및 내용 작성
-      createFileWithFormat(folderPath, `${folderName}.http.controller.ts`, getHttpControllerContent(folderName))
-      createFileWithFormat(folderPath, `${folderName}.service.ts`, getServiceContent(folderName))
-      createFileWithFormat(folderPath, `${folderName}.command.ts`, getCommandContent(folderName))
-      createFileWithFormat(folderPath, `${folderName}.request.dto.ts`, getRequestDtoContent(folderName))
+      // create
+      makeCommandFiles(createPath, createFolderName, domainName, 'POST')
+
+      // update
+      makeCommandFiles(updatePath, updateFolderName, domainName, 'PATCH')
+
+      // delete
+      makeCommandFiles(deletePath, deleteFolderName, domainName, 'DELETE')
     } catch (error) {
       console.error('Error:', error.message)
     }
@@ -72,4 +83,11 @@ program.parse()
 // 명령어 라인 인자가 없는 경우 도움말 표시
 if (process.argv.length <= 2) {
   program.help()
+}
+
+function makeCommandFiles(path, folderName, domainName, type) {
+  createFileWithFormat(path, `${folderName}.http.controller.ts`, getHttpControllerContent(folderName, domainName, type))
+  createFileWithFormat(path, `${folderName}.service.ts`, getServiceContent(folderName, domainName, type))
+  createFileWithFormat(path, `${folderName}.command.ts`, getCommandContent(folderName, domainName, type))
+  createFileWithFormat(path, `${folderName}.request.dto.ts`, getRequestDtoContent(folderName, domainName, type))
 }
