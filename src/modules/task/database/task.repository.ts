@@ -4,6 +4,7 @@ import { TaskMapper } from '../task.mapper'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { TaskEntity } from '../domain/task.entity'
 import { TaskRepositoryPort } from './task.repository.port'
+import { Tasks } from '@prisma/client'
 
 @Injectable()
 export class TaskRepository implements TaskRepositoryPort {
@@ -19,8 +20,8 @@ export class TaskRepository implements TaskRepositoryPort {
     await this.prismaService.tasks.update({ where: { id: entity.id }, data: record })
   }
 
-  delete(entity: TaskEntity): Promise<void> {
-    throw new Error('Method not implemented.')
+  async delete(id: string): Promise<void> {
+    await this.prismaService.$executeRaw<Tasks>`DELETE FROM tasks WHERE id = ${id}`
   }
 
   async findOne(id: string): Promise<TaskEntity | null> {

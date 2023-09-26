@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
 
-export class DeleteTaskRequestDto {
+export class DeleteTaskParamRequestDto {
   @ApiProperty({ default: '' })
   @IsString()
   readonly taskId: string
