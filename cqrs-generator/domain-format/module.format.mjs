@@ -6,7 +6,7 @@ export function getModuleFormat(folderName, domainName) {
 
   return `import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
-import { PrismaModule } from '../../../src/modules/database/prisma.module'
+import { PrismaModule } from '../database/prisma.module'
 import { Create${pascalDomainName}HttpController } from './commands/create-${domainName}/create-${domainName}.http.controller'
 import { Update${pascalDomainName}HttpController } from './commands/update-${domainName}/update-${domainName}.http.controller'
 import { Delete${pascalDomainName}HttpController } from './commands/delete-${domainName}/delete-${domainName}.http.controller'
