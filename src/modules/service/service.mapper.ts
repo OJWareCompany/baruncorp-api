@@ -35,6 +35,7 @@ export class ServiceMapper implements Mapper<ServiceEntity, Service, ServiceResp
       name: props.name,
       billingCode: props.billingCode,
       basePrice: props.basePrice,
+      relatedTasks: props.tasks,
     })
     return response
   }

@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { Service } from '@prisma/client'
+import { Service, Tasks } from '@prisma/client'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { ServicePaginatedResponseDto } from '../../dtos/service.paginated.response.dto'
@@ -17,7 +17,7 @@ export class FindServicePaginatedHttpController {
       limit: queryParams.limit,
     })
 
-    const result: Paginated<Service> = await this.queryBus.execute(command)
+    const result: Paginated<Service & { tasks: Tasks[] }> = await this.queryBus.execute(command)
 
     return new ServicePaginatedResponseDto({
       ...result,
@@ -26,6 +26,7 @@ export class FindServicePaginatedHttpController {
         name: item.name,
         billingCode: item.billingCode,
         basePrice: Number(item.basePrice),
+        relatedTasks: item.tasks,
       })),
     })
   }

@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { Service } from '@prisma/client'
+import { Service, Tasks } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { Paginated } from '../../../../libs/ddd/repository.port'
@@ -16,8 +16,9 @@ export class FindServicePaginatedQuery extends PaginatedQueryBase {
 export class FindServicePaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindServicePaginatedQuery): Promise<Paginated<Service>> {
+  async execute(query: FindServicePaginatedQuery): Promise<Paginated<Service & { tasks: Tasks[] }>> {
     const result = await this.prismaService.service.findMany({
+      include: { tasks: true },
       skip: query.offset,
       take: query.limit,
     })
