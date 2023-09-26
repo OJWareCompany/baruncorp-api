@@ -1,4 +1,4 @@
-import { toCamelCase, toPascalCase } from '../util/string-convertor.mjs'
+import { toCamelCase, toPascalCase } from '../../util/string-convertor.mjs'
 
 export function getPaginatedQueryHttpControllerContent(folderName, domainName) {
   return `import { Controller, Get, Param } from '@nestjs/common'
@@ -12,7 +12,7 @@ import { ${toPascalCase(folderName)}Query } from './${folderName}.query-handler'
 export class ${toPascalCase(folderName)}HttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get(':${toCamelCase(domainName)}Id')
+  @Get('')
   async get(@Param() request: ${toPascalCase(folderName)}RequestDto): Promise<${toPascalCase(domainName)}ResponseDto> {
     const command = new ${toPascalCase(folderName)}Query(request)
 
@@ -21,6 +21,5 @@ export class ${toPascalCase(folderName)}HttpController {
     return new ${toPascalCase(domainName)}ResponseDto()
   }
 }
-
 `
 }

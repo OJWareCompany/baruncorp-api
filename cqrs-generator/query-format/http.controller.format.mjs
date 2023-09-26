@@ -21,6 +21,5 @@ export class ${toPascalCase(folderName)}HttpController {
     return new ${toPascalCase(domainName)}ResponseDto()
   }
 }
-
 `
 }

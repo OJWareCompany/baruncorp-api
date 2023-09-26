@@ -5,7 +5,10 @@ export function getQueryResponseDtoContent(folderName, domainName) {
 import { IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 
-export class ${toPascalCase(domainName)}ResponseDto {
+/**
+ * Remove interface after select fields
+ */
+export class ${toPascalCase(domainName)}ResponseDto implements ${toPascalCase(domainName)}s {
   @ApiProperty({ default: '' })
   @IsString()
   readonly id: string
@@ -14,6 +17,5 @@ export class ${toPascalCase(domainName)}ResponseDto {
     initialize(this, props)
   }
 }
-
 `
 }

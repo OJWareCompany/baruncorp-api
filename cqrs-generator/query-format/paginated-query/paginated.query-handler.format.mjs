@@ -1,4 +1,4 @@
-import { toCamelCase, toPascalCase } from '../util/string-convertor.mjs'
+import { toCamelCase, toPascalCase } from '../../util/string-convertor.mjs'
 
 export function getPaginatedQueryHandlerContent(folderName, domainName) {
   return `import { NotFoundException } from '@nestjs/common'
@@ -25,6 +25,5 @@ export class ${toPascalCase(folderName)}QueryHandler implements IQueryHandler {
     return result
   }
 }
-
 `
 }

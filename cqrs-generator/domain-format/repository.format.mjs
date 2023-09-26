@@ -7,10 +7,9 @@ export function getRepositoryFormat(folderName, domainName) {
   return `import { Injectable } from '@nestjs/common'
 import { Injectable } from '@nestjs/common'
 import { ${toPascalCase(domainName)}s } from '@prisma/client'
-import { AggregateID } from '../../../libs/ddd/entity.base'
 import { PrismaService } from '../../database/prisma.service'
 import { ${toPascalCase(domainName)}Mapper } from '../${domainName}.mapper'
-import { ${entity} } from '../domain/book-store.entity'
+import { ${entity} } from '../domain/${folderName}.entity'
 import {${toPascalCase(domainName)}RepositoryPort } from './${domainName}.repository.port'
 
 @Injectable()
@@ -21,7 +20,7 @@ export class ${toPascalCase(domainName)}Repository implements ${toPascalCase(dom
   ) {
   }
 
-  async insert(entity: ${entity}): Promise<AggregateID> {
+  async insert(entity: ${entity}): Promise<void> {
     const record = this.${mapper}.toPersistence(entity)
     await this.prismaService.${toCamelCase(domainName)}s.create({ data: record })
   }
@@ -38,7 +37,7 @@ export class ${toPascalCase(domainName)}Repository implements ${toPascalCase(dom
   }
 
   async findOne(id: string): Promise<${entity} | null> {
-    await this.prismaService.${toCamelCase(domainName)}s.findUnique({ where: { id } })
+    const record = await this.prismaService.${toCamelCase(domainName)}s.findUnique({ where: { id } })
     return record ? this.${mapper}.toDomain(record) : null
   }
 }

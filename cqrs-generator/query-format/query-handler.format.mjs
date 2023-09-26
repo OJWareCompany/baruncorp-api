@@ -26,6 +26,5 @@ export class ${toPascalCase(folderName)}QueryHandler implements IQueryHandler {
     return result
   }
 }
-
 `
 }

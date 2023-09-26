@@ -11,6 +11,11 @@ import { Mapper } from '../../libs/ddd/mapper.interface'
 import { ${responseDto} } from './dtos/${domainName}.response.dto'
 import { ${entity} } from './domain/${domainName}.entity'
 
+
+class Fields implements ${toPascalCase(domainName)}s {
+
+}
+
 @Injectable()
 export class ${entityMapper} implements Mapper<${entity}, ${toPascalCase(domainName)}s, ${responseDto}> {
   toPersistence(entity: ${entity}): ${toPascalCase(domainName)}s {
@@ -38,6 +43,5 @@ export class ${entityMapper} implements Mapper<${entity}, ${toPascalCase(domainN
     return response
   }
 }
-
 `
 }

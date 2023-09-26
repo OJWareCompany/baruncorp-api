@@ -22,6 +22,7 @@ import { getRepositoryFormat } from './domain-format/repository.format.mjs'
 import { getRepositoryPortFormat } from './domain-format/repository.port.format.mjs'
 import { getEntityFormat } from './domain-format/entity.format.mjs'
 import { getEntityTypeFormat } from './domain-format/entity.type.format.mjs'
+import { getPaginatedQueryResponseDtoContent } from './query-format/paginated-query/paginated.response.dto.format.mjs'
 
 // 현재 모듈의 파일 경로를 얻기 위한 함수
 const __filename = fileURLToPath(import.meta.url)
@@ -185,7 +186,11 @@ program
         getQueryResponseDtoContent(folderName, domainName),
       )
       const responseDtoFileName = `${domainName}.paginated.response.dto.ts`
-      createFileWithFormat(dtosFolderPath, responseDtoFileName, getQueryResponseDtoContent(folderName, domainName))
+      createFileWithFormat(
+        dtosFolderPath,
+        responseDtoFileName,
+        getPaginatedQueryResponseDtoContent(folderName, domainName),
+      )
     } catch (error) {
       console.error('Error:', error.message)
     }

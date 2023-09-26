@@ -22,6 +22,5 @@ export class ${entity} extends AggregateRoot<${props}> {
     return
   }
 }
-
 `
 }

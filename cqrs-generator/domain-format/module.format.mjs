@@ -45,6 +45,5 @@ const mappers: Provider[] = [${pascalDomainName}Mapper]
   controllers: [...httpControllers],
 })
 export class ${toPascalCase(domainName)}Module {}
-
 `
 }

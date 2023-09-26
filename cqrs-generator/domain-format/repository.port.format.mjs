@@ -9,10 +9,9 @@ import { ${entity} } from '../domain/${domainName}.entity'
 export interface ${toPascalCase(domainName)}RepositoryPort {
   insert(entity: ${entity}): Promise<void>
   update(entity: ${entity}): Promise<void>
-  delete(entity: ${entity}): Promise<void>
+  delete(id: string): Promise<void>
   findOne(id: string): Promise<${entity} | null>
   find(): Promise<Paginated<${entity}>>
 }
-
 `
 }
