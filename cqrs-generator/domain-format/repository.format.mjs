@@ -5,7 +5,6 @@ export function getRepositoryFormat(folderName, domainName) {
   const repo = `${toCamelCase(domainName)}Repo`
   const mapper = `${toCamelCase(domainName)}Mapper`
   return `import { Injectable } from '@nestjs/common'
-import { Injectable } from '@nestjs/common'
 import { ${toPascalCase(domainName)}s } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
 import { ${toPascalCase(domainName)}Mapper } from '../${domainName}.mapper'

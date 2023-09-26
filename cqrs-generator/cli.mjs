@@ -22,7 +22,11 @@ import { getRepositoryFormat } from './domain-format/repository.format.mjs'
 import { getRepositoryPortFormat } from './domain-format/repository.port.format.mjs'
 import { getEntityFormat } from './domain-format/entity.format.mjs'
 import { getEntityTypeFormat } from './domain-format/entity.type.format.mjs'
+import { getDomainErrorFormat } from './domain-format/entity.error.mjs'
+import { getPaginatedQueryHttpControllerContent } from './query-format/paginated-query/paginated.http.controller.format.mjs'
+import { getPaginatedQueryHandlerContent } from './query-format/paginated-query/paginated.query-handler.format.mjs'
 import { getPaginatedQueryResponseDtoContent } from './query-format/paginated-query/paginated.response.dto.format.mjs'
+import { getPaginatedQueryRequestDtoContent } from './query-format/paginated-query/paginated.request.dto.format.mjs'
 
 // 현재 모듈의 파일 경로를 얻기 위한 함수
 const __filename = fileURLToPath(import.meta.url)
@@ -153,6 +157,12 @@ program
       createFileWithFormat(domainFolderPath, `${domainName}.entity.ts`, getEntityFormat(domainFolderPath, domainName))
       createFileWithFormat(domainFolderPath, `${domainName}.type.ts`, getEntityTypeFormat(domainFolderPath, domainName))
       createFileWithFormat(
+        domainFolderPath,
+        `${domainName}.error.ts`,
+        getDomainErrorFormat(domainFolderPath, domainName),
+      )
+
+      createFileWithFormat(
         databaseFolderPath,
         `${domainName}.repository.ts`,
         getRepositoryFormat(databaseFolderPath, domainName),
@@ -226,10 +236,10 @@ function makeQueryFiles(path, folderName, domainName) {
 }
 
 function makePaginatedQueryFiles(path, folderName, domainName) {
-  const controllerFileName = `${domainName}.paginated.http.controller.ts`
-  const queryHandlerFileName = `${domainName}.paginated.query-handler.ts`
-  const requestDtoFileName = `${domainName}.paginated.request.dto.ts`
-  createFileWithFormat(path, controllerFileName, getQueryHttpControllerContent(folderName, domainName))
-  createFileWithFormat(path, queryHandlerFileName, getQueryHandlerContent(folderName, domainName))
-  createFileWithFormat(path, requestDtoFileName, getQueryRequestDtoContent(folderName, domainName))
+  const controllerFileName = `${folderName}.paginated.http.controller.ts`
+  const queryHandlerFileName = `${folderName}.paginated.query-handler.ts`
+  const requestDtoFileName = `${folderName}.paginated.request.dto.ts`
+  createFileWithFormat(path, controllerFileName, getPaginatedQueryHttpControllerContent(folderName, domainName))
+  createFileWithFormat(path, queryHandlerFileName, getPaginatedQueryHandlerContent(folderName, domainName))
+  createFileWithFormat(path, requestDtoFileName, getPaginatedQueryRequestDtoContent(folderName, domainName))
 }

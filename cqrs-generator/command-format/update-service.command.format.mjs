@@ -15,7 +15,7 @@ export class ${toPascalCase(folderName)}Service implements ICommandHandler {
   constructor(
     // @ts-ignore
     @Inject(${toScreamingSnakeCase(domainName)}_REPOSITORY)
-    private readonly ${toCamelCase(domainName)}Repo: ${toCamelCase(domainName)}RepositoryPort,
+    private readonly ${toCamelCase(domainName)}Repo: ${toPascalCase(domainName)}RepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: ${toPascalCase(folderName)}Command): Promise<void> {
