@@ -114,6 +114,7 @@ model Users {
   UserService                UserService[]
   UserStructuralLicenses     UserStructuralLicenses[]
   organizationEntity         Organizations            @relation(fields: [organizationId], references: [id])
+  assignedTasks              AssignedTasks[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -927,6 +928,7 @@ model AssignedTasks {
   task             Tasks           @relation(fields: [taskId], references: [id])
   orderedService   OrderedServices @relation(fields: [orderedServiceId], references: [id])
   job              OrderedJobs     @relation(fields: [jobId], references: [id])
+  user             Users?          @relation(fields: [assigneeId], references: [id])
 
   @@map("assigned_tasks")
 }
