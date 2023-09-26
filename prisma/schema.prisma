@@ -176,6 +176,7 @@ model OrderedServices {
   status        String?         @db.VarChar(255)
   doneAt        DateTime?       @map("done_at") @db.DateTime(0)
   orderedAt     DateTime        @default(now()) @map("ordered_at") @db.DateTime(0)
+  description   String?         @db.Text
   job           OrderedJobs     @relation(fields: [jobId], references: [id])
   service       Service         @relation(fields: [serviceId], references: [id])
   assignedTasks AssignedTasks[]

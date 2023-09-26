@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { AssignedTasks, Users } from '@prisma/client'
+import { AssignedTasks, OrderedServices, Users } from '@prisma/client'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { FindAssignedTaskPaginatedRequestDto } from './find-assigned-task.paginated.request.dto'
@@ -23,7 +23,8 @@ export class FindAssignedTaskPaginatedHttpController {
       ...queryParams,
     })
 
-    const result: Paginated<AssignedTasks & { user: Users | null }> = await this.queryBus.execute(command)
+    const result: Paginated<AssignedTasks & { user: Users | null; orderedService: OrderedServices }> =
+      await this.queryBus.execute(command)
 
     return new AssignedTaskPaginatedResponseDto({
       ...queryParams,
@@ -34,6 +35,7 @@ export class FindAssignedTaskPaginatedHttpController {
         orderedServiceId: item.orderedServiceId,
         jobId: item.jobId,
         status: item.status,
+        description: item.orderedService.description,
         assigneeId: item.assigneeId,
         assigneeName: item.user ? item.user.firstName + item.user.lastName : null,
         startedAt: item.startedAt,

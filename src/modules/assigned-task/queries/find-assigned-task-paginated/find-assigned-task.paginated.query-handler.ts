@@ -1,6 +1,6 @@
 import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { AssignedTasks, Users } from '@prisma/client'
+import { AssignedTasks, OrderedServices, Users } from '@prisma/client'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
@@ -18,14 +18,15 @@ export class FindAssignedTaskPaginatedQuery extends PaginatedQueryBase {
 export class FindAssignedTaskPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindAssignedTaskPaginatedQuery): Promise<Paginated<AssignedTasks & { user: Users | null }>> {
+  async execute(
+    query: FindAssignedTaskPaginatedQuery,
+  ): Promise<Paginated<AssignedTasks & { user: Users | null; orderedService: OrderedServices }>> {
     const result = await this.prismaService.assignedTasks.findMany({
       where: { jobId: query.jobId },
-      include: { user: true },
+      include: { user: true, orderedService: true },
       skip: query.offset,
       take: query.limit,
     })
-    console.log(query.jobId)
     if (!result) throw new NotFoundException()
     const totalCount = await this.prismaService.assignedTasks.count({ where: { id: query.jobId } })
     return new Paginated({

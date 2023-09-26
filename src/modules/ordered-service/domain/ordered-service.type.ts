@@ -9,13 +9,12 @@ export enum OrderedServiceStatusEnum {
 export interface CreateOrderedServiceProps {
   serviceId: string
   jobId: string
+  description: string | null
 }
 
-export interface OrderedServiceProps {
-  serviceId: string
+export interface OrderedServiceProps extends CreateOrderedServiceProps {
   price: number | null
   priceOverride: number | null
-  jobId: string
   orderedAt: Date
   status: OrderedServiceStatus
   doneAt: Date | null

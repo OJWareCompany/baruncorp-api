@@ -22,6 +22,7 @@ export class UpdateOrderedServiceHttpController {
     const command = new UpdateOrderedServiceCommand({
       orderedServiceId: param.orderedServiceId,
       priceOverride: request.priceOverride,
+      description: request.description,
     })
     await this.commandBus.execute(command)
   }

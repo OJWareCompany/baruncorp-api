@@ -28,6 +28,11 @@ export class AssignedTaskResponseDto implements AssignedTasks {
   @ApiProperty()
   @IsString()
   @IsOptional()
+  readonly description: string | null
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
   readonly assigneeId: string | null
 
   @ApiProperty()

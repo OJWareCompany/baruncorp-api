@@ -36,6 +36,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
     const orderedService = OrderedServiceEntity.create({
       serviceId: command.serviceId,
       jobId: command.jobId,
+      description: command.description,
     })
 
     await this.orderedServiceRepo.insert(orderedService)

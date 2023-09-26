@@ -19,6 +19,7 @@ export class UpdateOrderedServiceService implements ICommandHandler {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
     orderedService.setPriceOverride(command.priceOverride)
+    orderedService.setDescription(command.description)
     await this.orderedServiceRepo.update(orderedService)
   }
 }

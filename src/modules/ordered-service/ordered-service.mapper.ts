@@ -13,6 +13,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       id: props.id,
       serviceId: props.serviceId,
       jobId: props.jobId,
+      description: props.description,
       price: props.price ? new Prisma.Decimal(props.price) : null,
       priceOverride: props.priceOverride ? new Prisma.Decimal(props.priceOverride) : null,
       status: props.status,
@@ -27,6 +28,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       props: {
         serviceId: record.serviceId,
         jobId: record.jobId,
+        description: record.description,
         price: Number(record.price),
         priceOverride: Number(record.priceOverride),
         orderedAt: record.orderedAt,
