@@ -4,16 +4,22 @@ import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 import { OrderedServiceMapper } from '../ordered-service.mapper'
 import { OrderedServiceRepositoryPort } from './ordered-service.repository.port'
 import { OrderedServiceNotFoundException } from '../domain/ordered-service.error'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 
 @Injectable()
 export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly orderedServiceMapper: OrderedServiceMapper,
+    protected readonly eventEmitter: EventEmitter2,
   ) {}
-  async insert(entity: OrderedServiceEntity): Promise<void> {
-    const record = this.orderedServiceMapper.toPersistence(entity)
-    await this.prismaService.orderedServices.create({ data: record })
+  async insert(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.orderedServiceMapper.toPersistence)
+    await this.prismaService.orderedServices.createMany({ data: records })
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async findOne(id: string): Promise<OrderedServiceEntity | null> {

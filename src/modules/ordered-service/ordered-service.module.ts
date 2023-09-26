@@ -13,6 +13,7 @@ import { DeleteOrderedServiceHttpController } from './command/delete-ordered-ser
 import { DeleteOrderedServiceService } from './command/delete-ordered-service/delete-ordered-service.service'
 import { FindOrderedServiceHttpController } from './queries/find-ordered-service/find-ordered-service.http.controller'
 import { FindOrderedServiceQueryHandler } from './queries/find-ordered-service/find-ordered-service.query-handler'
+import { CreateOrderedServiceWhenJobIsCreatedEventHandler } from './application/event-handlers/create-ordered-service-when-job-is-created.domain-event-handler'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -26,7 +27,7 @@ const commandHandlers: Provider[] = [
   DeleteOrderedServiceService,
 ]
 const queryHandlers: Provider[] = [FindOrderedServiceQueryHandler]
-const eventHandlers: Provider[] = []
+const eventHandlers: Provider[] = [CreateOrderedServiceWhenJobIsCreatedEventHandler]
 const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]
 const mappers: Provider[] = [OrderedServiceMapper, UserMapper]
 
