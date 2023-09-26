@@ -9,6 +9,11 @@ export function toCamelCase(inputString) {
     .replace(/-(.)/g, (_, char) => char.toUpperCase())
 }
 
+export function toUnderBar(inputString) {
+  return inputString //
+    .replace(/(-)/g, (_, char) => '_')
+}
+
 export function toScreamingSnakeCase(inputString) {
   return inputString //
     .replace(/-(.)/g, (_, char) => '_' + char.toUpperCase())

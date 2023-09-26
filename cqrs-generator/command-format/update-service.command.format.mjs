@@ -5,7 +5,7 @@ export function getUpdateCommand(folderName, domainName) {
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
-import { ${toCamelCase(domainName)}RepositoryPort } from '../../database/${domainName}.repository.port'
+import { ${toPascalCase(domainName)}RepositoryPort } from '../../database/${domainName}.repository.port'
 import { ${toPascalCase(domainName)}NotFoundException } from '../../domain/${domainName}.error'
 import { ${toScreamingSnakeCase(domainName)}_REPOSITORY } from '../../${domainName}.di-token'
 import { ${toPascalCase(folderName)}Command } from './${folderName}.command'

@@ -1,4 +1,4 @@
-import { toCamelCase, toPascalCase, toScreamingSnakeCase } from '../util/string-convertor.mjs'
+import { toCamelCase, toPascalCase, toUnderBar } from '../util/string-convertor.mjs'
 
 export function getRepositoryFormat(folderName, domainName) {
   const entity = `${toPascalCase(domainName)}Entity`
@@ -20,6 +20,22 @@ export class ${toPascalCase(domainName)}Repository implements ${toPascalCase(dom
       const record = this.${mapper}.toPersistance(entity)
       await this.prismaService.${toCamelCase(domainName)}s.create({ data: record })
     }
+  }
+
+  async update(entity: ${entity}): Promise<void> {
+    const record = this.${mapper}.toPersistence(entity)
+    await this.prismaService.${toCamelCase(domainName)}s.update({ where: { id: entity.id }, data: record })
+  }
+
+  async delete(id: string): Promise<void> {
+    await this.prismaService.$executeRaw<${toPascalCase(domainName)}>\`DELETE FROM ${toUnderBar(
+    domainName,
+  )} WHERE id = \${id}\`
+  }
+
+  async findOne(id: string): Promise<${entity} | null> {
+    await this.prismaService.${toCamelCase(domainName)}s.findUnique({ where: { id } })
+    return record ? this.${mapper}.toDomain(record) : null
   }
 }
 `
