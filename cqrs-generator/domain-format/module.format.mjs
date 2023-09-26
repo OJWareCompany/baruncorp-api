@@ -1,0 +1,23 @@
+import { toPascalCase } from '../util/string-convertor.mjs'
+
+export function getModuleFormat(folderName, domainName) {
+  return `import { Module, Provider } from '@nestjs/common'
+import { CqrsModule } from '@nestjs/cqrs'
+import { PrismaModule } from '../../../src/modules/database/prisma.module'
+
+const httpControllers = [] as any
+const commandHandlers: Provider[] = []
+const queryHandlers: Provider[] = []
+const repositories: Provider[] = []
+const eventHandlers: Provider[] = []
+const mappers: Provider[] = []
+
+@Module({
+  imports: [CqrsModule, PrismaModule],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  controllers: [...httpControllers],
+})
+export class ${toPascalCase(domainName)}Module {}
+
+`
+}

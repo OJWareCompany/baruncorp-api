@@ -12,6 +12,13 @@ import { getQueryHttpControllerContent } from './query-format/http.controller.fo
 import { getQueryHandlerContent } from './query-format/query-handler.format.mjs'
 import { getQueryRequestDtoContent } from './query-format/request.dto.format.mjs'
 import { getQueryResponseDtoContent } from './query-format/response.dto.format.mjs'
+import { getMapperFormat } from './domain-format/mapper.format.mjs'
+import { getModuleFormat } from './domain-format/module.format.mjs'
+import { getDITokenFormat } from './domain-format/di-token.format.mjs'
+import { getRepositoryFormat } from './domain-format/database.format.mjs'
+import { getRepositoryPortFormat } from './domain-format/database.port.format.mjs'
+import { getEntityFormat } from './domain-format/entity.format.mjs'
+import { getEntityTypeFormat } from './domain-format/entity.type.format.mjs'
 
 // 현재 모듈의 파일 경로를 얻기 위한 함수
 const __filename = fileURLToPath(import.meta.url)
@@ -73,12 +80,115 @@ program
       // 폴더 생성
       fs.ensureDirSync(folderPath)
       fs.ensureDirSync(paginatedFolderPath)
+
       console.log(`Created ${folderName} folder`)
 
       // 각 파일 생성 및 내용 작성
       makeQueryFiles(folderPath, folderName, domainName)
       makePaginatedQueryFiles(paginatedFolderPath, paginatedFolderName, domainName)
-      console.log(2)
+    } catch (error) {
+      console.error('Error:', error.message)
+    }
+  })
+
+program
+  .command('init')
+  .argument('<string>', 'domain name')
+  .action((str, options) => {
+    const domainName = str
+    const domainRootFolderPath = path.join(__dirname, domainName)
+    const commandFolderPath = path.join(__dirname, domainName, 'commands')
+    const databaseFolderPath = path.join(__dirname, domainName, 'database')
+    const domainFolderPath = path.join(__dirname, domainName, 'domain')
+    const dtosFolderPath = path.join(__dirname, domainName, 'dtos')
+    const queriesFolderPath = path.join(__dirname, domainName, 'queries')
+
+    // Commands
+    const createPath = path.join(__dirname, domainName, 'commands', `create-${domainName}`)
+    const updatePath = path.join(__dirname, domainName, 'commands', `update-${domainName}`)
+    const deletePath = path.join(__dirname, domainName, 'commands', `delete-${domainName}`)
+    const createFolderName = `create-${domainName}`
+    const updateFolderName = `update-${domainName}`
+    const deleteFolderName = `delete-${domainName}`
+
+    // Queries
+    const folderName = `find-` + str
+    const queryFolderPath = path.join(__dirname, domainName, 'queries', folderName)
+    const paginatedFolderName = `find-` + str + `-paginated`
+    const paginatedFolderPath = path.join(__dirname, domainName, 'queries', paginatedFolderName)
+
+    try {
+      // 폴더 생성
+      fs.ensureDirSync(domainRootFolderPath)
+      fs.ensureDirSync(commandFolderPath)
+      fs.ensureDirSync(databaseFolderPath)
+      fs.ensureDirSync(domainFolderPath)
+      fs.ensureDirSync(dtosFolderPath)
+      fs.ensureDirSync(queriesFolderPath)
+      console.log(`Created ${domainName} folder`)
+
+      // 각 파일 생성 및 내용 작성
+      createFileWithFormat(
+        domainRootFolderPath,
+        `${domainName}.mapper.ts`,
+        getMapperFormat(domainRootFolderPath, domainName),
+      )
+      createFileWithFormat(
+        domainRootFolderPath,
+        `${domainName}.module.ts`,
+        getModuleFormat(domainRootFolderPath, domainName),
+      )
+      createFileWithFormat(
+        domainRootFolderPath,
+        `${domainName}.di-token.ts`,
+        getDITokenFormat(domainRootFolderPath, domainName),
+      )
+
+      createFileWithFormat(
+        domainFolderPath,
+        `${domainName}.entity.ts`,
+        getRepositoryFormat(domainFolderPath, domainName),
+      )
+      createFileWithFormat(
+        domainFolderPath,
+        `${domainName}.type.ts`,
+        getRepositoryPortFormat(domainFolderPath, domainName),
+      )
+      createFileWithFormat(
+        databaseFolderPath,
+        `${domainName}.database.ts`,
+        getEntityFormat(databaseFolderPath, domainName),
+      )
+      createFileWithFormat(
+        databaseFolderPath,
+        `${domainName}.database.port.ts`,
+        getEntityTypeFormat(databaseFolderPath, domainName),
+      )
+
+      // Commands
+      fs.ensureDirSync(createPath)
+      fs.ensureDirSync(updatePath)
+      fs.ensureDirSync(deletePath)
+      console.log(`Created ${domainName} folder`)
+      makeCommandFiles(createPath, createFolderName, domainName, 'POST')
+      makeCommandFiles(updatePath, updateFolderName, domainName, 'PATCH')
+      makeCommandFiles(deletePath, deleteFolderName, domainName, 'DELETE')
+
+      // Queries
+      fs.ensureDirSync(queryFolderPath)
+      fs.ensureDirSync(paginatedFolderPath)
+      console.log(`Created ${folderName} folder`)
+      makeQueryFiles(queryFolderPath, folderName, domainName)
+      makePaginatedQueryFiles(paginatedFolderPath, paginatedFolderName, domainName)
+
+      // Dtos
+      createFileWithFormat(
+        dtosFolderPath,
+        `${domainName}.response.dto.ts`,
+        getQueryResponseDtoContent(folderName, domainName),
+      )
+      const responseDtoFileName = `${domainName}.paginated.response.dto.ts`
+      createFileWithFormat(dtosFolderPath, responseDtoFileName, getQueryResponseDtoContent(folderName, domainName))
     } catch (error) {
       console.error('Error:', error.message)
     }
@@ -102,16 +212,13 @@ function makeQueryFiles(path, folderName, domainName) {
   createFileWithFormat(path, `${folderName}.http.controller.ts`, getQueryHttpControllerContent(folderName, domainName))
   createFileWithFormat(path, `${folderName}.query-handler.ts`, getQueryHandlerContent(folderName, domainName))
   createFileWithFormat(path, `${folderName}.request.dto.ts`, getQueryRequestDtoContent(folderName, domainName))
-  createFileWithFormat(path, `${domainName}.response.dto.ts`, getQueryResponseDtoContent(folderName, domainName))
 }
 
 function makePaginatedQueryFiles(path, folderName, domainName) {
   const controllerFileName = `${domainName}.paginated.http.controller.ts`
   const queryHandlerFileName = `${domainName}.paginated.query-handler.ts`
   const requestDtoFileName = `${domainName}.paginated.request.dto.ts`
-  const responseDtoFileName = `${domainName}.paginated.response.dto.ts`
   createFileWithFormat(path, controllerFileName, getQueryHttpControllerContent(folderName, domainName))
   createFileWithFormat(path, queryHandlerFileName, getQueryHandlerContent(folderName, domainName))
   createFileWithFormat(path, requestDtoFileName, getQueryRequestDtoContent(folderName, domainName))
-  createFileWithFormat(path, responseDtoFileName, getQueryResponseDtoContent(folderName, domainName))
 }
