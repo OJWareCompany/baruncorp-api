@@ -19,7 +19,7 @@ export class ${toPascalCase(folderName)}Service implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: ${toPascalCase(folderName)}Command): Promise<void> {
-    const entity = await this.${toCamelCase(domainName)}Repo.findOne(command.${toPascalCase(domainName)}Id)
+    const entity = await this.${toCamelCase(domainName)}Repo.findOne(command.${toCamelCase(domainName)}Id)
     if (!entity) throw new ${toPascalCase(domainName)}NotFoundException()
     await this.${toCamelCase(domainName)}Repo.update(entity)
   }

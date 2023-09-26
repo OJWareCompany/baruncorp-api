@@ -9,6 +9,8 @@ import { getHttpControllerContent } from './command-format/http.controller.forma
 import { getRequestDtoContent } from './command-format/request.dto.format.mjs'
 import { getServiceContent } from './command-format/service.format.mjs'
 import { getUpdateCommand } from './command-format/update.command.format.mjs'
+import { getRequestParamDtoContent } from './command-format/request.param.dto.format.mjs'
+import { getUpdateHttpControllerContent } from './command-format/update-http.controller.format.mjs'
 import { getQueryHttpControllerContent } from './query-format/http.controller.format.mjs'
 import { getQueryHandlerContent } from './query-format/query-handler.format.mjs'
 import { getQueryRequestDtoContent } from './query-format/request.dto.format.mjs'
@@ -195,14 +197,19 @@ if (process.argv.length <= 2) {
 }
 
 function makeCommandFiles(path, folderName, domainName, type) {
-  createFileWithFormat(path, `${folderName}.http.controller.ts`, getHttpControllerContent(folderName, domainName, type))
+  const controller = `${folderName}.http.controller.ts`
+  const service = `${folderName}.service.ts`
+
   if (type === 'PATCH' || type === 'DELETE') {
-    createFileWithFormat(path, `${folderName}.service.ts`, getUpdateCommand(folderName, domainName, type))
+    createFileWithFormat(path, controller, getUpdateHttpControllerContent(folderName, domainName, type))
+    createFileWithFormat(path, service, getUpdateCommand(folderName, domainName, type))
+    createFileWithFormat(path, `${folderName}.request.dto.ts`, getRequestParamDtoContent(folderName, domainName, type))
   } else {
-    createFileWithFormat(path, `${folderName}.service.ts`, getServiceContent(folderName, domainName, type))
+    createFileWithFormat(path, controller, getHttpControllerContent(folderName, domainName, type))
+    createFileWithFormat(path, service, getServiceContent(folderName, domainName, type))
+    createFileWithFormat(path, `${folderName}.request.dto.ts`, getRequestDtoContent(folderName, domainName, type))
   }
   createFileWithFormat(path, `${folderName}.command.ts`, getCommandContent(folderName, domainName, type))
-  createFileWithFormat(path, `${folderName}.request.dto.ts`, getRequestDtoContent(folderName, domainName, type))
 }
 
 function makeQueryFiles(path, folderName, domainName) {
