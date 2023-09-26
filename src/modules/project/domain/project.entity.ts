@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { NewOrderedTasks } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
+import { NewOrderedServices } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import {
   CreateProjectProps,
@@ -52,11 +52,11 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     return this
   }
 
-  updateHasTaskHistory(orderedTasks: NewOrderedTasks[]) {
-    if (orderedTasks.map((task) => task.taskId).includes('5c29f1ae-d50b-4400-a6fb-b1a2c87126e9')) {
+  updateHasTaskHistory(orderedTasks: NewOrderedServices[]) {
+    if (orderedTasks.map((task) => task.serviceId).includes('5c29f1ae-d50b-4400-a6fb-b1a2c87126e9')) {
       this.props.hasHistoryElectricalPEStamp = true
     }
-    if (orderedTasks.map((task) => task.taskId).includes('99ff64ee-fe47-4235-a026-db197628d077')) {
+    if (orderedTasks.map((task) => task.serviceId).includes('99ff64ee-fe47-4235-a026-db197628d077')) {
       this.props.hasHistoryStructuralPEStamp = true
     }
     return this

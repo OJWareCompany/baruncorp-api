@@ -6,7 +6,7 @@ import { AddressDto } from '../../dtos/address.dto'
 export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
   @IsString()
-  taskId: string
+  serviceId: string
 
   @ApiProperty()
   @IsString()
@@ -44,23 +44,23 @@ export class CreateJobRequestDto {
   @ApiProperty({
     default: [
       {
-        taskId: 'e5d81943-3fef-416d-a85b-addb8be296c0',
+        serviceId: 'e5d81943-3fef-416d-a85b-addb8be296c0',
         description: '',
       },
       {
-        taskId: '9e773832-ad39-401d-b1c2-16d74f9268ea',
+        serviceId: '9e773832-ad39-401d-b1c2-16d74f9268ea',
         description: '',
       },
       {
-        taskId: '99ff64ee-fe47-4235-a026-db197628d077',
+        serviceId: '99ff64ee-fe47-4235-a026-db197628d077',
         description: '',
       },
       {
-        taskId: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9',
+        serviceId: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9',
         description: '',
       },
       {
-        taskId: '2a2a256b-57a5-46f5-8cfb-1855cc29238a',
+        serviceId: '2a2a256b-57a5-46f5-8cfb-1855cc29238a',
         description: 'This is not on the menu.',
       },
     ],

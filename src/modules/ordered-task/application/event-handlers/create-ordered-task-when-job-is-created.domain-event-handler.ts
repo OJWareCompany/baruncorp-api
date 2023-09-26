@@ -20,7 +20,7 @@ export class CreateOrderedTaskWhenJobIsCreatedDomainEventHandler {
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent): Promise<void> {
     const services = await this.prismaService.services.findMany()
-    const tasks = convertToAssignableTask(event.orderedTasks, services)
+    const tasks = convertToAssignableTask(event.services, services)
     const entities = tasks.map(async (task) => {
       const oldTask = await this.prismaService.orderedTasks.findFirst({
         where: { taskMenuId: task.id, projectId: event.projectId },

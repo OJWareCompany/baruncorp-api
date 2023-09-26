@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
-export class NewOrderedTasks {
-  taskId: string
+export class NewOrderedServices {
+  serviceId: string
   description: string | null
-  constructor(props: NewOrderedTasks) {
-    this.taskId = props.taskId
+  constructor(props: NewOrderedServices) {
+    this.serviceId = props.serviceId
     this.description = props.description
   }
 }
@@ -22,7 +22,7 @@ export class OrderedTask {
   @ApiProperty()
   taskName: string
   @ApiProperty()
-  taskId: string
+  serviceId: string
   @ApiProperty()
   jobId: string
   @ApiProperty()

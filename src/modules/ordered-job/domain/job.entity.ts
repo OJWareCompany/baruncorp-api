@@ -30,7 +30,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       new JobCreatedDomainEvent({
         aggregateId: id,
         projectId: create.projectId,
-        orderedTasks: create.orderedTasks,
+        services: create.orderedServices,
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
         mountingType: create.mountingType as MountingType, // TODO: status any

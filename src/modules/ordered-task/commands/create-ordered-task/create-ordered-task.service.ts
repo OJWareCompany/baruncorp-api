@@ -3,7 +3,7 @@ import { ConflictException, Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { Users } from '@prisma/client'
 import { PrismaService } from '../../../database/prisma.service'
-import { NewOrderedTasks } from '../../../ordered-job/domain/value-objects/ordered-task.value-object'
+import { NewOrderedServices } from '../../../ordered-job/domain/value-objects/ordered-task.value-object'
 import { JobCompletedUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { OrderedTaskEntity } from '../../domain/ordered-task.entity'
@@ -35,7 +35,7 @@ export class CreateOrderedTaskService implements ICommandHandler {
       where: { projectId: job.projectId, taskMenuId: command.taskMenuId },
     })
 
-    const newOrderedTask = new NewOrderedTasks({ taskId: command.taskMenuId, description: command.description })
+    const newOrderedTask = new NewOrderedServices({ serviceId: command.taskMenuId, description: command.description })
 
     const services = await this.prismaService.services.findMany()
     const assignableTask = convertToAssignableTask(newOrderedTask, services)
