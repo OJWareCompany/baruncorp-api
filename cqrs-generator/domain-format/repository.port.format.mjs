@@ -6,7 +6,7 @@ export function getRepositoryPortFormat(folderName, domainName) {
   return `import { Paginated } from '../../../libs/ddd/repository.port'
 import { ${entity} } from '../domain/${domainName}.entity'
 
-export interface ${entity}RepositoryPort {
+export interface ${toPascalCase(domainName)}RepositoryPort {
   insert(entity: ${entity}): Promise<void>
   update(entity: ${entity}): Promise<void>
   delete(entity: ${entity}): Promise<void>

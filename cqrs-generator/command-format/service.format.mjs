@@ -7,18 +7,21 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { ${toScreamingSnakeCase(domainName)}_REPOSITORY } from '../../${domainName}.di-token'
+import { ${toPascalCase(domainName)}Entity } from '../../domain/${domainName}.entity'
 import { ${toPascalCase(folderName)}Command } from './${folderName}.command'
 
 @CommandHandler(${toPascalCase(folderName)}Command)
 export class ${toPascalCase(folderName)}Service implements ICommandHandler {
   constructor(
     // @ts-ignore
-    // @Inject(${toScreamingSnakeCase(domainName)}_REPOSITORY)
-    // private readonly ${toPascalCase(domainName)}Repo: ${toPascalCase(domainName)}RepositoryPort,
+    @Inject(${toScreamingSnakeCase(domainName)}_REPOSITORY)
+    private readonly ${toPascalCase(domainName)}Repo: ${toPascalCase(domainName)}RepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: ${toPascalCase(folderName)}Command): Promise<AggregateID> {
-    // const entity = Entity.create()
+    const entity = ${toPascalCase(domainName)}Entity.create({
+      ...command,
+    })
     return ''
   }
 }

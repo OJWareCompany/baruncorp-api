@@ -15,8 +15,8 @@ import { getQueryResponseDtoContent } from './query-format/response.dto.format.m
 import { getMapperFormat } from './domain-format/mapper.format.mjs'
 import { getModuleFormat } from './domain-format/module.format.mjs'
 import { getDITokenFormat } from './domain-format/di-token.format.mjs'
-import { getRepositoryFormat } from './domain-format/database.format.mjs'
-import { getRepositoryPortFormat } from './domain-format/database.port.format.mjs'
+import { getRepositoryFormat } from './domain-format/repository.format.mjs'
+import { getRepositoryPortFormat } from './domain-format/repository.port.format.mjs'
 import { getEntityFormat } from './domain-format/entity.format.mjs'
 import { getEntityTypeFormat } from './domain-format/entity.type.format.mjs'
 
@@ -144,25 +144,17 @@ program
         getDITokenFormat(domainRootFolderPath, domainName),
       )
 
+      createFileWithFormat(domainFolderPath, `${domainName}.entity.ts`, getEntityFormat(domainFolderPath, domainName))
+      createFileWithFormat(domainFolderPath, `${domainName}.type.ts`, getEntityTypeFormat(domainFolderPath, domainName))
       createFileWithFormat(
-        domainFolderPath,
-        `${domainName}.entity.ts`,
-        getRepositoryFormat(domainFolderPath, domainName),
-      )
-      createFileWithFormat(
-        domainFolderPath,
-        `${domainName}.type.ts`,
-        getRepositoryPortFormat(domainFolderPath, domainName),
+        databaseFolderPath,
+        `${domainName}.repository.ts`,
+        getRepositoryFormat(databaseFolderPath, domainName),
       )
       createFileWithFormat(
         databaseFolderPath,
-        `${domainName}.database.ts`,
-        getEntityFormat(databaseFolderPath, domainName),
-      )
-      createFileWithFormat(
-        databaseFolderPath,
-        `${domainName}.database.port.ts`,
-        getEntityTypeFormat(databaseFolderPath, domainName),
+        `${domainName}.repository.port.ts`,
+        getRepositoryPortFormat(databaseFolderPath, domainName),
       )
 
       // Commands
@@ -180,7 +172,7 @@ program
       console.log(`Created ${folderName} folder`)
       makeQueryFiles(queryFolderPath, folderName, domainName)
       makePaginatedQueryFiles(paginatedFolderPath, paginatedFolderName, domainName)
-
+      console.log(domainName)
       // Dtos
       createFileWithFormat(
         dtosFolderPath,

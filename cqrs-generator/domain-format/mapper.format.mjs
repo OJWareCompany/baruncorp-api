@@ -2,16 +2,18 @@ import { toPascalCase } from '../util/string-convertor.mjs'
 
 export function getMapperFormat(folderName, domainName) {
   const entity = `${toPascalCase(domainName)}Entity`
-  const responseDto = `${entity}ResponseDto`
-  const entityMapper = `${entity}Mapper`
+  const responseDto = `${toPascalCase(domainName)}ResponseDto`
+  const entityMapper = `${toPascalCase(domainName)}Mapper`
 
-  return `import { ${toPascalCase(domainName)} } from '@prisma/client'
+  return `import { ${toPascalCase(domainName)}s } from '@prisma/client'
+import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { ${responseDto} } from './dtos/${domainName}.response.dto'
 import { ${entity} } from './domain/${domainName}.entity'
 
-export class ${entityMapper} implements Mapper<${entity}, ${toPascalCase(domainName)}, ${responseDto}> {
-  toPersistence(entity: ${entity}): ${toPascalCase(domainName)} {
+@Injectable()
+export class ${entityMapper} implements Mapper<${entity}, ${toPascalCase(domainName)}s, ${responseDto}> {
+  toPersistence(entity: ${entity}): ${toPascalCase(domainName)}s {
     const props = entity.getProps()
     const record: ${toPascalCase(domainName)} = {
       id: props.id,
