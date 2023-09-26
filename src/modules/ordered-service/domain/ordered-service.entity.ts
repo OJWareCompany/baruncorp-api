@@ -1,9 +1,8 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateOrderedServiceProps, OrderedServiceProps } from './ordered-service.type'
-import { NegativeNumberException, StringIsEmptyException } from '../../../libs/exceptions/exceptions'
-import { Guard } from '../../../libs/guard'
-import { validateObjectEmptyStringFields } from '../../../libs/utils/validate-object-empty-string-fields'
+import { NegativeNumberException } from '../../../libs/exceptions/exceptions'
+import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -19,7 +18,16 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       orderedAt: new Date(),
       assignedTasks: [],
     }
-    return new OrderedServiceEntity({ id, props })
+    const entity = new OrderedServiceEntity({ id, props })
+    entity.addEvent(
+      new OrderedServiceCreatedDomainEvent({
+        aggregateId: entity.id,
+        serviceId: props.serviceId,
+        jobId: props.jobId,
+        orderedAt: props.orderedAt,
+      }),
+    )
+    return entity
   }
 
   setPriceOverride(priceOverride: number | null): this {

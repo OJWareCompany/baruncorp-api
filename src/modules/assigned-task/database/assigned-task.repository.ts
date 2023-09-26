@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { AssignedTasks } from '@prisma/client'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { PrismaService } from '../../database/prisma.service'
 import { AssignedTaskMapper } from '../assigned-task.mapper'
 import { AssignedTaskRepositoryPort } from './assigned-task.repository.port'
@@ -8,15 +9,23 @@ import { AssignedTaskEntity } from '../domain/assigned-task.entity'
 
 @Injectable()
 export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
-  constructor(private readonly prismaService: PrismaService, private readonly assignedTaskMapper: AssignedTaskMapper) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly assignedTaskMapper: AssignedTaskMapper,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   find(): Promise<Paginated<AssignedTaskEntity>> {
     throw new Error('Method not implemented.')
   }
 
-  async insert(entity: AssignedTaskEntity): Promise<void> {
-    const record = this.assignedTaskMapper.toPersistence(entity)
-    await this.prismaService.assignedTasks.create({ data: record })
+  async insert(entity: AssignedTaskEntity | AssignedTaskEntity): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.assignedTaskMapper.toPersistence)
+    await this.prismaService.assignedTasks.createMany({ data: records })
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async update(entity: AssignedTaskEntity): Promise<void> {
