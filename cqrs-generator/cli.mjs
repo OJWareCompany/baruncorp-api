@@ -8,6 +8,7 @@ import { getCommandContent } from './command-format/command.format.mjs'
 import { getHttpControllerContent } from './command-format/http.controller.format.mjs'
 import { getRequestDtoContent } from './command-format/request.dto.format.mjs'
 import { getServiceContent } from './command-format/service.format.mjs'
+import { getUpdateCommand } from './command-format/update.command.format.mjs'
 import { getQueryHttpControllerContent } from './query-format/http.controller.format.mjs'
 import { getQueryHandlerContent } from './query-format/query-handler.format.mjs'
 import { getQueryRequestDtoContent } from './query-format/request.dto.format.mjs'
@@ -195,7 +196,11 @@ if (process.argv.length <= 2) {
 
 function makeCommandFiles(path, folderName, domainName, type) {
   createFileWithFormat(path, `${folderName}.http.controller.ts`, getHttpControllerContent(folderName, domainName, type))
-  createFileWithFormat(path, `${folderName}.service.ts`, getServiceContent(folderName, domainName, type))
+  if (type === 'PATCH' || type === 'DELETE') {
+    createFileWithFormat(path, `${folderName}.service.ts`, getUpdateCommand(folderName, domainName, type))
+  } else {
+    createFileWithFormat(path, `${folderName}.service.ts`, getServiceContent(folderName, domainName, type))
+  }
   createFileWithFormat(path, `${folderName}.command.ts`, getCommandContent(folderName, domainName, type))
   createFileWithFormat(path, `${folderName}.request.dto.ts`, getRequestDtoContent(folderName, domainName, type))
 }
