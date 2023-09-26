@@ -1,5 +1,5 @@
 import { v4 } from 'uuid'
-import { AggregateRoot } from '../../../../src/libs/ddd/aggregate-root.base'
+import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateOrderedServiceProps, OrderedServiceProps } from './ordered-service.type'
 import { NegativeNumberException } from '../../../libs/exceptions/exceptions'
 

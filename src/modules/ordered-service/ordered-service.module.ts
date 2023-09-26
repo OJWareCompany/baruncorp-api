@@ -1,6 +1,6 @@
 import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
-import { PrismaModule } from '../../../src/modules/database/prisma.module'
+import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
 import { CreateOrderedServiceHttpController } from './command/create-ordered-service/create-ordered-service.http.controller'
 import { CreateOrderedServiceService } from './command/create-ordered-service/create-ordered-service.service'
