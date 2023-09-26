@@ -14,15 +14,20 @@ export class TaskRepository implements TaskRepositoryPort {
     await this.prismaService.tasks.create({ data: record })
   }
 
-  update(entity: TaskEntity): Promise<void> {
-    throw new Error('Method not implemented.')
+  async update(entity: TaskEntity): Promise<void> {
+    const record = this.taskMapper.toPersistence(entity)
+    await this.prismaService.tasks.update({ where: { id: entity.id }, data: record })
   }
+
   delete(entity: TaskEntity): Promise<void> {
     throw new Error('Method not implemented.')
   }
-  findOne(id: string): Promise<TaskEntity | null> {
-    throw new Error('Method not implemented.')
+
+  async findOne(id: string): Promise<TaskEntity | null> {
+    const record = await this.prismaService.tasks.findUnique({ where: { id } })
+    return record ? this.taskMapper.toDomain(record) : null
   }
+
   find(): Promise<Paginated<TaskEntity>> {
     throw new Error('Method not implemented.')
   }

@@ -1,6 +1,8 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateTaskProps, TaskProps } from './task.type'
+import { Guard } from '../../../libs/guard'
+import { StringIsEmptyException } from '../../../libs/exceptions/exceptions'
 
 export class TaskEntity extends AggregateRoot<TaskProps> {
   protected _id: string
@@ -11,7 +13,16 @@ export class TaskEntity extends AggregateRoot<TaskProps> {
     return new TaskEntity({ id, props })
   }
 
+  setName(name: string): this {
+    if (Guard.isEmpty(name)) throw new StringIsEmptyException('name')
+    this.props.name = name
+    return this
+  }
+
   public validate(): void {
-    return
+    Object.entries(this.props).map(([key, value]) => {
+      if (typeof value !== 'string') return
+      if (Guard.isEmpty(value)) throw new StringIsEmptyException(key)
+    })
   }
 }
