@@ -99,26 +99,28 @@ program
   .argument('<string>', 'domain name')
   .action((str, options) => {
     const domainName = str
-    const domainRootFolderPath = path.join(__dirname, domainName)
-    const commandFolderPath = path.join(__dirname, domainName, 'commands')
-    const databaseFolderPath = path.join(__dirname, domainName, 'database')
-    const domainFolderPath = path.join(__dirname, domainName, 'domain')
-    const dtosFolderPath = path.join(__dirname, domainName, 'dtos')
-    const queriesFolderPath = path.join(__dirname, domainName, 'queries')
+    const rootFolder = path.join(__dirname, '../src/modules')
+
+    const domainRootFolderPath = path.join(rootFolder, domainName)
+    const commandFolderPath = path.join(rootFolder, domainName, 'commands')
+    const databaseFolderPath = path.join(rootFolder, domainName, 'database')
+    const domainFolderPath = path.join(rootFolder, domainName, 'domain')
+    const dtosFolderPath = path.join(rootFolder, domainName, 'dtos')
+    const queriesFolderPath = path.join(rootFolder, domainName, 'queries')
 
     // Commands
-    const createPath = path.join(__dirname, domainName, 'commands', `create-${domainName}`)
-    const updatePath = path.join(__dirname, domainName, 'commands', `update-${domainName}`)
-    const deletePath = path.join(__dirname, domainName, 'commands', `delete-${domainName}`)
+    const createPath = path.join(rootFolder, domainName, 'commands', `create-${domainName}`)
+    const updatePath = path.join(rootFolder, domainName, 'commands', `update-${domainName}`)
+    const deletePath = path.join(rootFolder, domainName, 'commands', `delete-${domainName}`)
     const createFolderName = `create-${domainName}`
     const updateFolderName = `update-${domainName}`
     const deleteFolderName = `delete-${domainName}`
 
     // Queries
     const folderName = `find-` + str
-    const queryFolderPath = path.join(__dirname, domainName, 'queries', folderName)
+    const queryFolderPath = path.join(rootFolder, domainName, 'queries', folderName)
     const paginatedFolderName = `find-` + str + `-paginated`
-    const paginatedFolderPath = path.join(__dirname, domainName, 'queries', paginatedFolderName)
+    const paginatedFolderPath = path.join(rootFolder, domainName, 'queries', paginatedFolderName)
 
     try {
       // 폴더 생성

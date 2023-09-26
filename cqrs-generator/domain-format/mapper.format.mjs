@@ -15,13 +15,13 @@ import { ${entity} } from './domain/${domainName}.entity'
 export class ${entityMapper} implements Mapper<${entity}, ${toPascalCase(domainName)}s, ${responseDto}> {
   toPersistence(entity: ${entity}): ${toPascalCase(domainName)}s {
     const props = entity.getProps()
-    const record: ${toPascalCase(domainName)} = {
+    const record: ${toPascalCase(domainName)}s = {
       id: props.id,
     }
     return record
   }
 
-  toDomain(record: ${toPascalCase(domainName)}): ${entity} {
+  toDomain(record: ${toPascalCase(domainName)}s): ${entity} {
     const entity = new ${entity}({
       id: record.id,
       props: {

@@ -6,8 +6,11 @@ export function getRepositoryFormat(folderName, domainName) {
   const mapper = `${toCamelCase(domainName)}Mapper`
   return `import { Injectable } from '@nestjs/common'
 import { Injectable } from '@nestjs/common'
+import { ${toPascalCase(domainName)}s } from '@prisma/client'
+import { AggregateID } from '../../../libs/ddd/entity.base'
 import { PrismaService } from '../../database/prisma.service'
 import { ${toPascalCase(domainName)}Mapper } from '../${domainName}.mapper'
+import { ${entity} } from '../domain/book-store.entity'
 import {${toPascalCase(domainName)}RepositoryPort } from './${domainName}.repository.port'
 
 @Injectable()
@@ -16,10 +19,11 @@ export class ${toPascalCase(domainName)}Repository implements ${toPascalCase(dom
     private readonly prismaService: PrismaService,
     private readonly ${mapper}: ${toPascalCase(domainName)}Mapper,
   ) {
-    insert(entity: ${entity}): Promise<AggregateID> {
-      const record = this.${mapper}.toPersistance(entity)
-      await this.prismaService.${toCamelCase(domainName)}s.create({ data: record })
-    }
+  }
+
+  async insert(entity: ${entity}): Promise<AggregateID> {
+    const record = this.${mapper}.toPersistence(entity)
+    await this.prismaService.${toCamelCase(domainName)}s.create({ data: record })
   }
 
   async update(entity: ${entity}): Promise<void> {
@@ -28,7 +32,7 @@ export class ${toPascalCase(domainName)}Repository implements ${toPascalCase(dom
   }
 
   async delete(id: string): Promise<void> {
-    await this.prismaService.$executeRaw<${toPascalCase(domainName)}>\`DELETE FROM ${toUnderBar(
+    await this.prismaService.$executeRaw<${toPascalCase(domainName)}s>\`DELETE FROM ${toUnderBar(
     domainName,
   )} WHERE id = \${id}\`
   }
