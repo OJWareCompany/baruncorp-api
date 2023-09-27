@@ -15,6 +15,7 @@ import { CreateLicenseRequestDto } from '../users/commands/create-user-license/c
 import { UserRequestDto } from './user-param.request.dto'
 import { DeleteMemberLicenseRequestDto } from './commands/delete-member-license/delete-member-license.request.dto'
 import { LincenseResponseDto } from './dtos/license.response.dto'
+import { InvitationEmailProp } from './domain/invitationMail.types'
 
 ConfigModule.forRoot()
 
@@ -80,7 +81,7 @@ export class UsersController {
 
   @Post('invitations')
   @UseGuards(AuthGuard)
-  async postSendInvitationMail(@Body() dto: CreateInvitationMailRequestDto) {
+  async postSendInvitationMail(@Body() dto: CreateInvitationMailRequestDto): Promise<InvitationEmailProp> {
     // TODO: to VO
     const code = randomBytes(10).toString('hex').toUpperCase().slice(0, 6)
 

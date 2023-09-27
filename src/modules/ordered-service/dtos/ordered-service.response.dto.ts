@@ -39,7 +39,7 @@ export class OrderedServiceResponseDto {
   @ApiProperty({ nullable: true })
   doneAt: string | null
 
-  @ApiProperty({ isArray: true })
+  @ApiProperty()
   assignedTasks: OrderedServiceAssignedTaskResopnse[]
 
   constructor(props: OrderedServiceResponseDto) {

@@ -4,7 +4,7 @@ import { Tasks } from '@prisma/client'
 import { TaskResponseDto } from '../../dtos/task.response.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { TaskPaginatedResponseDto } from '../../dtos/task.paginated.response.dto'
-import { FindTaskPaginatedRequestDto } from './task.paginated.request.dto'
+// import { FindTaskPaginatedRequestDto } from './task.paginated.request.dto'
 import { FindTaskPaginatedQuery } from './task.paginated.query-handler'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 
@@ -14,12 +14,12 @@ export class FindTaskPaginatedHttpController {
 
   @Get('')
   async get(
-    @Body() request: FindTaskPaginatedRequestDto,
+    // @Body() request: FindTaskPaginatedRequestDto,
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<TaskPaginatedResponseDto> {
     const command = new FindTaskPaginatedQuery({
       ...queryParams,
-      ...request,
+      // ...request,
     })
 
     const result: Paginated<Tasks> = await this.queryBus.execute(command)
