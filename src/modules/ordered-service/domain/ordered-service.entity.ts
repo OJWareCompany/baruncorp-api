@@ -64,6 +64,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     this.addEvent(
       new OrderedServiceCompletedDomainEvent({
         aggregateId: this.id,
+        jobId: this.props.jobId,
       }),
     )
     return this

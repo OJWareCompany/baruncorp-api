@@ -31,18 +31,21 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   }
 
   cancel(): this {
+    if (this.props.status === 'Completed') return this
     this.props.status = 'Canceled'
     this.props.doneAt = new Date()
     return this
   }
 
   hold(): this {
+    if (this.props.status === 'Completed') return this
     this.props.status = 'On Hold'
     this.props.doneAt = new Date()
     return this
   }
 
   reopen(): this {
+    if (this.props.status === 'Completed') return this
     this.props.status = 'Not Started'
     this.props.doneAt = null
     return this

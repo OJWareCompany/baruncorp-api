@@ -10,6 +10,9 @@ import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import { JobCompletedUpdateException, NumberOfWetStampBadRequestException } from './job.error'
+import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
+import { JobHeldDomainEvent } from './events/job-held.domain-event'
+import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -39,9 +42,39 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return job
   }
 
-  start() {
+  start(): this {
     if (this.isCompleted()) throw new JobCompletedUpdateException()
     this.props.jobStatus = 'In Progress'
+    return this
+  }
+
+  complete(): this {
+    this.props.jobStatus = 'Completed'
+    this.addEvent(
+      new JobCompletedDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  cancel(): this {
+    this.props.jobStatus = 'Canceled'
+    this.addEvent(
+      new JobCanceledDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  hold(): this {
+    this.props.jobStatus = 'On Hold'
+    this.addEvent(
+      new JobHeldDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
     return this
   }
 
@@ -56,9 +89,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   updateNumberOfWetStamp(numberOfWetStamp: number | null) {
-    if (numberOfWetStamp && numberOfWetStamp > 255) {
-      throw new NumberOfWetStampBadRequestException()
-    }
     this.props.numberOfWetStamp = numberOfWetStamp
     return
   }

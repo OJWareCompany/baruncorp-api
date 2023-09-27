@@ -16,6 +16,7 @@ import { CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler } from
 import { ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler } from './application/event-handlers/reopen-assigned-task-when-ordered-service-is-reactivated.domain-event-handler'
 import { CompleteAssignedTaskHttpController } from './commands/complete-assigned-task/complete-assigned-task.http.controller'
 import { CompleteAssignedTaskService } from './commands/complete-assigned-task/complete-assigned-task.service'
+import { HoldAssignedTaskWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-assigned-task-when-job-is-held.domain-event-handler'
 
 const httpControllers = [
   UpdateAssignedTaskHttpController,
@@ -35,6 +36,7 @@ const eventHandlers: Provider[] = [
   CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler,
   CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler,
   ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler,
+  HoldAssignedTaskWhenJobIsHeldDomainEventHandler,
 ]
 const mappers: Provider[] = [AssignedTaskMapper, UserMapper]
 

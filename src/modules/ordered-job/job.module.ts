@@ -20,7 +20,12 @@ import { FindMyActiveJobPaginatedHttpController } from './queries/find-my-active
 import { FindMyActiveJobPaginatedQueryHandler } from './queries/find-my-active-jobs/find-my-active-job.paginated.query-handler'
 import { UpdateJobWhenTaskIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-updated.domain-event-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
-import { StartJobStatusWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-job-when-task-is-assigned.domain-event-handler'
+import { StartJobWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-job-when-task-is-assigned.domain-event-handler'
+import { CompleteJobWhenServiceIsCompletedDomainEventHandler } from './application/event-handlers/complete-job-when-service-is-completed.domain-event-handler'
+import { CancelJobHttpController } from './commands/cancel-job/cancel-job.http.controller'
+import { CancelJobService } from './commands/cancel-job/cancel-job.service'
+import { HoldJobHttpController } from './commands/hold-job/hold-job.http.controller'
+import { HoldJobService } from './commands/hold-job/hold-job.service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -29,8 +34,16 @@ const httpControllers = [
   FindJobHttpController,
   FindJobPaginatedHttpController,
   FindMyActiveJobPaginatedHttpController,
+  CancelJobHttpController,
+  HoldJobHttpController,
 ]
-const commandHandlers: Provider[] = [CreateJobService, UpdateJobService, DeleteJobService]
+const commandHandlers: Provider[] = [
+  CreateJobService,
+  UpdateJobService,
+  DeleteJobService,
+  CancelJobService,
+  HoldJobService,
+]
 const queryHandlers: Provider[] = [
   FindJobQueryHandler,
   FindJobPaginatedQueryHandler,
@@ -39,7 +52,8 @@ const queryHandlers: Provider[] = [
 const eventHandlers: Provider[] = [
   UpdateJobWhenTaskIsUpdatedDomainEventHandler,
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
-  StartJobStatusWhenTaskIsAssignedDomainEventHandler,
+  StartJobWhenTaskIsAssignedDomainEventHandler,
+  CompleteJobWhenServiceIsCompletedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 
