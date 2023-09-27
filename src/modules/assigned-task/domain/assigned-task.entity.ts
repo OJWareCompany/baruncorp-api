@@ -28,6 +28,18 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
+  hold(): this {
+    this.props.status = 'On Hold'
+    this.props.doneAt = new Date()
+    return this
+  }
+
+  reopen(): this {
+    this.props.status = 'Not Started'
+    this.props.doneAt = null
+    return this
+  }
+
   setAssigneeId(assigneeId: string): this {
     this.props.assigneeId = assigneeId
     if (assigneeId) {

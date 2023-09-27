@@ -3,6 +3,10 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateOrderedServiceProps, OrderedServiceProps } from './ordered-service.type'
 import { NegativeNumberException } from '../../../libs/exceptions/exceptions'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
+import { OrderedServiceAlreadyCompletedException } from './ordered-service.error'
+import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
+import { OrderedServiceReactivatedDomainEvent } from './events/ordered-service-reactivated.domain-event'
+import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -13,7 +17,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       ...create,
       price: null,
       priceOverride: null,
-      status: null,
+      status: 'Pending',
       doneAt: null,
       orderedAt: new Date(),
       assignedTasks: [],
@@ -28,6 +32,41 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       }),
     )
     return entity
+  }
+
+  cancel(): this {
+    if (this.props.status === 'Completed') throw new OrderedServiceAlreadyCompletedException()
+    this.props.status = 'Canceled'
+    this.props.doneAt = new Date()
+    this.addEvent(
+      new OrderedServiceCanceledDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  reactivate(): this {
+    if (this.props.status === 'Completed') throw new OrderedServiceAlreadyCompletedException()
+    this.props.status = 'Pending'
+    this.props.doneAt = null
+    this.addEvent(
+      new OrderedServiceReactivatedDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  complete(): this {
+    this.props.status = 'Completed'
+    this.props.doneAt = new Date()
+    this.addEvent(
+      new OrderedServiceCompletedDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
   }
 
   setPriceOverride(priceOverride: number | null): this {

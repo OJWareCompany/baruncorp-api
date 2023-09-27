@@ -14,17 +14,25 @@ import { DeleteOrderedServiceService } from './command/delete-ordered-service/de
 import { FindOrderedServiceHttpController } from './queries/find-ordered-service/find-ordered-service.http.controller'
 import { FindOrderedServiceQueryHandler } from './queries/find-ordered-service/find-ordered-service.query-handler'
 import { CreateOrderedServiceWhenJobIsCreatedEventHandler } from './application/event-handlers/create-ordered-service-when-job-is-created.domain-event-handler'
+import { CancelOrderedServiceHttpController } from './command/cancel-ordered-service/cancel-ordered-service.http.controller'
+import { CancelOrderedServiceService } from './command/cancel-ordered-service/cancel-ordered-service.service'
+import { ReactivateOrderedServiceHttpController } from './command/reactivate-ordered-service/reactivate-ordered-service.http.controller'
+import { ReactivateOrderedServiceService } from './command/reactivate-ordered-service/reactivate-ordered-service.service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
   UpdateOrderedServiceHttpController,
   DeleteOrderedServiceHttpController,
   FindOrderedServiceHttpController,
+  CancelOrderedServiceHttpController,
+  ReactivateOrderedServiceHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateOrderedServiceService,
   UpdateOrderedServiceService,
   DeleteOrderedServiceService,
+  CancelOrderedServiceService,
+  ReactivateOrderedServiceService,
 ]
 const queryHandlers: Provider[] = [FindOrderedServiceQueryHandler]
 const eventHandlers: Provider[] = [CreateOrderedServiceWhenJobIsCreatedEventHandler]

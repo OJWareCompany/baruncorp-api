@@ -2,9 +2,9 @@ import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export class OrderedServiceCreatedDomainEvent extends DomainEvent {
-  jobId: string
-  serviceId: string
-  orderedAt: Date
+  readonly jobId: string
+  readonly serviceId: string
+  readonly orderedAt: Date
   constructor(props: DomainEventProps<OrderedServiceCreatedDomainEvent>) {
     super(props)
     initialize(this, props)

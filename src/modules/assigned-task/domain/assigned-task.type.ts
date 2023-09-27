@@ -4,7 +4,7 @@ export enum AssignedTaskStatusEnum {
   Not_Started = 'Not Started',
   In_Progress = 'In Progress',
   On_Hold = 'On Hold',
-  Canceld = 'Canceld',
+  Canceled = 'Canceled',
   Completed = 'Completed',
 }
 

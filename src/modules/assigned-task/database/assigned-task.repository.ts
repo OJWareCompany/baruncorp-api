@@ -19,7 +19,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     throw new Error('Method not implemented.')
   }
 
-  async insert(entity: AssignedTaskEntity | AssignedTaskEntity): Promise<void> {
+  async insert(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.assignedTaskMapper.toPersistence)
     await this.prismaService.assignedTasks.createMany({ data: records })
@@ -28,9 +28,18 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     }
   }
 
-  async update(entity: AssignedTaskEntity): Promise<void> {
-    const record = this.assignedTaskMapper.toPersistence(entity)
-    await this.prismaService.assignedTasks.update({ where: { id: entity.id }, data: record })
+  async update(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.assignedTaskMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.assignedTasks.update({ where: { id: record.id }, data: record })
+      }),
+    )
+
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async delete(id: string): Promise<void> {

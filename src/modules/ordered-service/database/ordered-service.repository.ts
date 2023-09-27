@@ -31,9 +31,18 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     return this.orderedServiceMapper.toDomain(record)
   }
 
-  async update(entity: OrderedServiceEntity): Promise<void> {
-    const record = this.orderedServiceMapper.toPersistence(entity)
-    await this.prismaService.orderedServices.update({ where: { id: record.id }, data: record })
+  async update(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.orderedServiceMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.orderedServices.update({ where: { id: record.id }, data: record })
+      }),
+    )
+
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async delete(id: string): Promise<void> {

@@ -8,7 +8,7 @@ import { OrderedServiceCreatedDomainEvent } from '../../../ordered-service/domai
 import { AssignedTaskEntity } from '../../domain/assigned-task.entity'
 
 @Injectable()
-export class CreateAssignedTasksWhenOrderedServiceIsCreatedEventHandler {
+export class CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,

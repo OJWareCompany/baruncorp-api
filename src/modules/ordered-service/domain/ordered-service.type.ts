@@ -1,7 +1,8 @@
 import { AssignedTasks } from '@prisma/client'
 
-export type OrderedServiceStatus = 'Completed' | 'Canceled' | null
+export type OrderedServiceStatus = 'Pending' | 'Completed' | 'Canceled'
 export enum OrderedServiceStatusEnum {
+  Pending = 'Pending',
   Completed = 'Completed',
   Canceled = 'Canceled',
 }

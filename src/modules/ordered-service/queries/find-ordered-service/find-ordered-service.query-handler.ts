@@ -2,7 +2,6 @@ import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { AssignedTasks, OrderedServices, Service, Tasks } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { ServiceNotFoundException } from '../../../service/domain/service.error'
 import { PrismaService } from '../../../database/prisma.service'
 
 export class FindOrderedServiceQuery {

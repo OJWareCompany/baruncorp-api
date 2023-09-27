@@ -11,7 +11,9 @@ import { FindAssignedTaskPaginatedQueryHandler } from './queries/find-assigned-t
 import { ASSIGNED_TASK_REPOSITORY } from './assigned-task.di-token'
 import { AssignedTaskRepository } from './database/assigned-task.repository'
 import { AssignedTaskMapper } from './assigned-task.mapper'
-import { CreateAssignedTasksWhenOrderedServiceIsCreatedEventHandler } from './application/event-handlers/create-assigned-task-when-ordered-service-is-created.domain-event-handler'
+import { CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler } from './application/event-handlers/create-assigned-task-when-ordered-service-is-created.domain-event-handler'
+import { CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled.domain-event-handler'
+import { ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler } from './application/event-handlers/reopen-assigned-task-when-ordered-service-is-reactivated.domain-event-handler'
 
 const httpControllers = [
   UpdateAssignedTaskHttpController,
@@ -26,7 +28,11 @@ const repositories: Provider[] = [
     useClass: AssignedTaskRepository,
   },
 ]
-const eventHandlers: Provider[] = [CreateAssignedTasksWhenOrderedServiceIsCreatedEventHandler]
+const eventHandlers: Provider[] = [
+  CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler,
+  CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler,
+  ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler,
+]
 const mappers: Provider[] = [AssignedTaskMapper, UserMapper]
 
 @Module({
