@@ -1,6 +1,7 @@
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { OrderedTask, NewOrderedServices } from './value-objects/ordered-task.value-object'
+import { OrderedServiceValueObject } from './value-objects/ordered-service.value-object'
+import { AssignedTask, NewOrderedServices } from './value-objects/ordered-task.value-object'
 
 export enum JobStatusEnum {
   Not_Started = 'Not Started',
@@ -39,7 +40,8 @@ export interface JobProps {
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
   propertyFullAddress: string
   jobRequestNumber: number
-  orderedTasks: OrderedTask[]
+  assignedTasks: AssignedTask[]
+  orderedServices: OrderedServiceValueObject[]
   deliverablesEmails: string[]
   systemSize: number | null
   mailingAddressForWetStamp: Address | null

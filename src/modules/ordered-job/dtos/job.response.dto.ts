@@ -2,7 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { JobStatus, JobStatusEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
-import { IsBoolean } from 'class-validator'
+import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
+import { IsOptional } from 'class-validator'
+import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -17,32 +19,82 @@ export class MemberResponseFields {
   }
 }
 
-export class OrderedTaskResponseFields {
-  @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
-  id: string
-
-  @ApiProperty({ example: 'Not Started' })
-  taskStatus: string
-
-  @ApiProperty({ example: 'PV Design' })
-  taskName: string
+export class OrderedServiceResponseFields {
+  @ApiProperty()
+  serviceId: string
 
   @ApiProperty()
-  invoiceAmount: number | null
+  serviceName: string
 
   @ApiProperty()
-  isNewTask: boolean
+  jobId: string
 
-  @ApiProperty({ example: MemberResponseFields, type: MemberResponseFields })
-  assignee: MemberResponseFields
-
-  @ApiProperty({ example: null })
+  @ApiProperty()
+  @IsOptional()
   description: string | null
 
   @ApiProperty()
-  createdAt: string
+  @IsOptional()
+  price: number | null
 
-  constructor(props: OrderedTaskResponseFields) {
+  @ApiProperty()
+  @IsOptional()
+  priceOverride: number | null
+
+  @ApiProperty({ example: OrderedServiceStatusEnum.Pending, enum: OrderedServiceStatusEnum })
+  status: string
+
+  @ApiProperty()
+  orderedAt: string
+
+  @ApiProperty()
+  @IsOptional()
+  doneAt: string | null
+
+  constructor(props: OrderedServiceResponseFields) {
+    initialize(this, props)
+  }
+}
+
+export class AssignedTaskResponseFields {
+  @ApiProperty()
+  assignTaskId: string
+
+  @ApiProperty({ example: AssignedTaskStatusEnum.Not_Started, enum: AssignedTaskStatusEnum })
+  status: string
+
+  @ApiProperty()
+  taskName: string
+
+  @ApiProperty()
+  taskId: string
+
+  @ApiProperty()
+  orderedServiceId: string
+
+  @ApiProperty()
+  jobId: string
+
+  @ApiProperty()
+  @IsOptional()
+  startedAt: string | null
+
+  @ApiProperty()
+  assigneeName: string | null
+
+  @ApiProperty()
+  @IsOptional()
+  assigneeId: string | null
+
+  @ApiProperty()
+  @IsOptional()
+  doneAt: string | null
+
+  @ApiProperty()
+  @IsOptional()
+  description: string | null
+
+  constructor(props: AssignedTaskResponseFields) {
     initialize(this, props)
   }
 }
@@ -104,8 +156,11 @@ export class JobResponseDto {
   @ApiProperty({ example: 'Residential' })
   projectType: string
 
-  @ApiProperty({ example: OrderedTaskResponseFields, type: OrderedTaskResponseFields, isArray: true })
-  orderedTasks: OrderedTaskResponseFields[]
+  @ApiProperty({ example: AssignedTaskResponseFields, type: AssignedTaskResponseFields, isArray: true })
+  assignedTasks: AssignedTaskResponseFields[]
+
+  @ApiProperty({ example: OrderedServiceResponseFields, type: OrderedServiceResponseFields, isArray: true })
+  orderedServices: OrderedServiceResponseFields[]
 
   @ApiProperty({ example: ClientInformationFields, type: ClientInformationFields })
   clientInfo: ClientInformationFields

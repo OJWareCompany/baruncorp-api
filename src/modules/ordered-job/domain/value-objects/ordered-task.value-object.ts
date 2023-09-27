@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
+import { AssignedTaskStatus } from '../../../assigned-task/domain/assigned-task.type'
+import { IsOptional } from 'class-validator'
 
 export class NewOrderedServices {
   serviceId: string
@@ -10,45 +12,51 @@ export class NewOrderedServices {
   }
 }
 
-export class OrderedTask {
+export class AssignedTask {
   @ApiProperty()
-  id: string
+  assignTaskId: string
+
   @ApiProperty()
-  invoiceAmount: number | null
-  @ApiProperty()
-  isNewTask: boolean
-  @ApiProperty()
-  taskStatus: string
+  status: AssignedTaskStatus
+
   @ApiProperty()
   taskName: string
+
   @ApiProperty()
-  serviceId: string
+  taskId: string
+
+  @ApiProperty()
+  orderedServiceId: string
+
   @ApiProperty()
   jobId: string
+
   @ApiProperty()
-  projectId: string
-  @ApiProperty()
-  createdAt: Date
+  @IsOptional()
+  startedAt: Date | null
+
   @ApiProperty()
   assigneeName: string | null
+
   @ApiProperty()
-  assigneeUserId: string | null
+  @IsOptional()
+  assigneeId: string | null
+
   @ApiProperty()
+  @IsOptional()
+  doneAt: Date | null
+
+  @ApiProperty()
+  @IsOptional()
   description: string | null
-  constructor(props: OrderedTask) {
+
+  // @ApiProperty()
+  // projectId: string
+
+  // @ApiProperty()
+  // isNewTask: boolean
+
+  constructor(props: AssignedTask) {
     initialize(this, props)
   }
 }
-
-// interface OrderedTaskProps {
-//   isNewTask?: boolean
-//   isLocked?: boolean
-//   taskStatus?: string
-//   taskName?: string
-//   taskId?: string
-//   jobId?: string
-//   projectId?: string
-//   dateCreated?: Date
-//   assignedTo?: string | null
-//   description?: string | null
-// }

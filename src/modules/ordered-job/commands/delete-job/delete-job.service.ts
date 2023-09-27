@@ -5,6 +5,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { DeleteJobCommand } from './delete-job.command'
+import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
 
 @CommandHandler(DeleteJobCommand)
 export class DeleteJobService implements ICommandHandler {
@@ -14,13 +15,15 @@ export class DeleteJobService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: DeleteJobCommand): Promise<void> {
-    const tasks = await this.prismaService.orderedTasks.findMany({ where: { jobId: command.id } })
-    const isCompletedTask = tasks.filter((task) => task.taskStatus === 'Completed')
-    if (!!isCompletedTask.length) throw new BadRequestException('Job including completed task can`t delete.', '40001')
+    const assignedTasks = await this.prismaService.assignedTasks.findMany({ where: { jobId: command.id } })
+    const isCompletedTask = assignedTasks.filter((service) => service.status === AssignedTaskStatusEnum.Completed)
+    if (!!isCompletedTask.length)
+      throw new BadRequestException('Job including completed task can`t be deleted.', '40001')
 
     await this.jobRepository.findJobOrThrow(command.id)
     // TODO: job history 만들기
-    await this.prismaService.orderedTasks.deleteMany({ where: { jobId: command.id } })
+    await this.prismaService.orderedServices.deleteMany({ where: { jobId: command.id } })
+    await this.prismaService.assignedTasks.deleteMany({ where: { jobId: command.id } })
     await this.prismaService.orderedJobs.delete({ where: { id: command.id } })
   }
 }

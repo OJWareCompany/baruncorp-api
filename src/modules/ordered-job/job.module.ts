@@ -18,7 +18,6 @@ import { DeleteJobService } from './commands/delete-job/delete-job.service'
 import UserMapper from '../users/user.mapper'
 import { FindMyActiveJobPaginatedHttpController } from './queries/find-my-active-jobs/find-my-active-job.paginated.http.controller'
 import { FindMyActiveJobPaginatedQueryHandler } from './queries/find-my-active-jobs/find-my-active-job.paginated.query-handler'
-import { UpdateJobWhenTaskIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-updated.domain-event-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
 import { StartJobWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-job-when-task-is-assigned.domain-event-handler'
 import { CompleteJobWhenServiceIsCompletedDomainEventHandler } from './application/event-handlers/complete-job-when-service-is-completed.domain-event-handler'
@@ -50,7 +49,6 @@ const queryHandlers: Provider[] = [
   FindMyActiveJobPaginatedQueryHandler,
 ]
 const eventHandlers: Provider[] = [
-  UpdateJobWhenTaskIsUpdatedDomainEventHandler,
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
   StartJobWhenTaskIsAssignedDomainEventHandler,
   CompleteJobWhenServiceIsCompletedDomainEventHandler,

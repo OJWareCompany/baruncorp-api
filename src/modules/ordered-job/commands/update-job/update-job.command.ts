@@ -10,7 +10,6 @@ export class UpdateJobCommand {
   readonly additionalInformationFromClient: string | null
   readonly numberOfWetStamp: number | null
   readonly updatedByUserId: string
-  readonly jobStatus: string
   readonly mountingType: string
   readonly isExpedited: boolean
 

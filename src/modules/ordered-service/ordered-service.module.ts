@@ -24,7 +24,7 @@ import { CancelOrderedServiceWhenJobIsCanceledDomainEventHandler } from './appli
 const httpControllers = [
   CreateOrderedServiceHttpController,
   UpdateOrderedServiceHttpController,
-  DeleteOrderedServiceHttpController,
+  // DeleteOrderedServiceHttpController,
   FindOrderedServiceHttpController,
   CancelOrderedServiceHttpController,
   ReactivateOrderedServiceHttpController,
@@ -32,7 +32,7 @@ const httpControllers = [
 const commandHandlers: Provider[] = [
   CreateOrderedServiceService,
   UpdateOrderedServiceService,
-  DeleteOrderedServiceService,
+  // DeleteOrderedServiceService,
   CancelOrderedServiceService,
   ReactivateOrderedServiceService,
 ]

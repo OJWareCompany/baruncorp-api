@@ -1,7 +1,7 @@
 import { Controller, Get, HttpStatus, Param } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
-import { JobResponseDto, OrderedTaskResponseFields } from '../../dtos/job.response.dto'
+import { JobResponseDto, AssignedTaskResponseFields } from '../../dtos/job.response.dto'
 import { JobProps } from '../../domain/job.type'
 import { FindJobRequestParamDto } from './find-job.request.param.dto'
 import { FindJobQuery } from './find-job.query-handler'

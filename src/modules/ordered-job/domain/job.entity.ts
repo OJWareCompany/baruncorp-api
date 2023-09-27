@@ -3,16 +3,16 @@ import { BadRequestException } from '@nestjs/common'
 import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingType } from '../../project/domain/project.type'
-import { TaskStatusEnum } from '../../ordered-task/domain/ordered-task.type'
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import { CreateJobProps, JobProps, JobStatus } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { JobCompletedUpdateException, NumberOfWetStampBadRequestException } from './job.error'
+import { JobCompletedUpdateException } from './job.error'
 import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
+import { NewOrderedServices } from './value-objects/ordered-task.value-object'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -26,7 +26,8 @@ export class JobEntity extends AggregateRoot<JobProps> {
       jobName: `Job #${create.totalOfJobs} ` + create.propertyFullAddress,
       jobStatus: 'Not Started',
       receivedAt: new Date(),
-      orderedTasks: [],
+      assignedTasks: [],
+      orderedServices: [],
     }
     const job = new JobEntity({ id, props })
     job.addEvent(
@@ -103,18 +104,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return
   }
 
-  updateJobStatus(status: JobStatus) {
-    const hasOnHoldTask = this.props.orderedTasks.filter((task) => task.taskStatus === TaskStatusEnum.On_Hold).length
-    const isAllTasksCompleted = this.props.orderedTasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
-    if (status === 'Completed' && !isAllTasksCompleted) {
-      throw new BadRequestException('There are uncompleted tasks.', '60001')
-    } else if (status === 'Completed' && hasOnHoldTask) {
-      throw new BadRequestException('There are holding tasks.', '60002')
-    }
-    this.props.jobStatus = status
-    return this
-  }
-
   updateSystemSize(systemSize: number | null): JobEntity {
     this.props.systemSize = systemSize
     return this
@@ -127,22 +116,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   updateMailingAddressWetForStamp(mailingAddressForWetStamp: Address | null): JobEntity {
     this.props.mailingAddressForWetStamp = mailingAddressForWetStamp
-    return this
-  }
-
-  updateJobStatusByTask(taskStatus: string): this {
-    const hasOnHoldTask = this.props.orderedTasks.filter((task) => task.taskStatus === TaskStatusEnum.On_Hold).length
-    const isAllCompleted = this.props.orderedTasks.every((task) => task.taskStatus === TaskStatusEnum.Completed)
-    const isInProgress = taskStatus === 'In Progress'
-
-    this.props.jobStatus = isInProgress //
-      ? 'In Progress'
-      : isAllCompleted
-      ? 'Completed'
-      : hasOnHoldTask
-      ? 'On Hold'
-      : this.props.jobStatus
-
     return this
   }
 
@@ -189,7 +162,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
         mailingFullAddressForWetStamp: this.props.mailingAddressForWetStamp?.fullAddress || null,
         jobStatus: this.props.jobStatus,
         mountingType: this.props.mountingType as MountingType, // TODO: status any
-        orderedTask: this.props.orderedTasks,
+        // assignedTasks: this.props.assignedTasks.map(task => {
+        //   return new NewOrderedServices({
+        //     serviceId: task.
+        //   })
+        // }),
         isCurrentJop: this.props?.isCurrentJob || false,
       }),
     )

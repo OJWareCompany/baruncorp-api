@@ -1,5 +1,5 @@
-import { OrderedProjects, OrderedTasks, Users } from '@prisma/client'
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { AssignedTasks, OrderedJobs, OrderedProjects, OrderedServices, Service, Tasks, Users } from '@prisma/client'
+import { Injectable } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { JobRepositoryPort } from './job.repository.port'
 import { JobMapper } from '../job.mapper'
@@ -48,10 +48,27 @@ export class JobRepository implements JobRepositoryPort {
   }
 
   async findJobOrThrow(id: string): Promise<JobEntity> {
-    const record = await this.prismaService.orderedJobs.findUnique({
+    const record:
+      | (OrderedJobs & {
+          orderedServices: (OrderedServices & {
+            service: Service
+            assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
+          })[]
+        })
+      | null = await this.prismaService.orderedJobs.findUnique({
       where: { id },
       include: {
-        orderedTasks: true,
+        orderedServices: {
+          include: {
+            service: true,
+            assignedTasks: {
+              include: {
+                task: true,
+                user: true,
+              },
+            },
+          },
+        },
       },
     })
     if (!record) throw new JobNotFoundException()
@@ -60,6 +77,7 @@ export class JobRepository implements JobRepositoryPort {
       where: { projectId: record.projectId },
       orderBy: { createdAt: 'desc' },
     })
+
     return this.jobMapper.toDomain({
       ...record,
       isCurrentJob: record.id === currentJob?.id,
@@ -67,10 +85,26 @@ export class JobRepository implements JobRepositoryPort {
   }
 
   async findManyJob(projectId: string): Promise<JobEntity[]> {
-    const records = await this.prismaService.orderedJobs.findMany({
-      where: { projectId },
+    const records:
+      | (OrderedJobs & {
+          orderedServices: (OrderedServices & {
+            service: Service
+            assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
+          })[]
+        })[] = await this.prismaService.orderedJobs.findMany({
+      where: { projectId: projectId },
       include: {
-        orderedTasks: true,
+        orderedServices: {
+          include: {
+            service: true,
+            assignedTasks: {
+              include: {
+                task: true,
+                user: true,
+              },
+            },
+          },
+        },
       },
     })
 

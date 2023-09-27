@@ -10,7 +10,6 @@ import UserMapper from '../../../users/user.mapper'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
-import { JobStatus } from '../../domain/job.type'
 import { UpdateJobCommand } from './update-job.command'
 import { JobCompletedUpdateException } from '../../domain/job.error'
 
@@ -58,7 +57,6 @@ export class UpdateJobService implements ICommandHandler {
         deliverablesEmail: command.deliverablesEmails,
       }),
     )
-    job.updateJobStatus(command.jobStatus as JobStatus) // TODO: status any
     job.updateSystemSize(command.systemSize)
     job.updateMailingAddressWetForStamp(command.mailingAddressForWetStamp)
     job.updateNumberOfWetStamp(command.numberOfWetStamp)

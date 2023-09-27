@@ -1,12 +1,15 @@
 import { JobEntity } from './domain/job.entity'
-import { OrderedJobs, OrderedTasks, Prisma } from '@prisma/client'
-import { JobResponseDto, OrderedTaskResponseFields } from './dtos/job.response.dto'
+import { AssignedTasks, OrderedJobs, OrderedServices, Prisma, Service, Tasks, Users } from '@prisma/client'
+import { JobResponseDto, AssignedTaskResponseFields, OrderedServiceResponseFields } from './dtos/job.response.dto'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { JobStatus } from './domain/job.type'
 import { ClientInformation } from './domain/value-objects/client-information.value-object'
-import { OrderedTask } from './domain/value-objects/ordered-task.value-object'
+import { AssignedTask } from './domain/value-objects/ordered-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
+import { AssignedTaskStatus } from '../assigned-task/domain/assigned-task.type'
+import { OrderedServiceValueObject } from './domain/value-objects/ordered-service.value-object'
+import { OrderedServiceStatus } from '../ordered-service/domain/ordered-service.type'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -102,28 +105,50 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
 
   toDomain(
     record: OrderedJobs & {
-      orderedTasks: OrderedTasks[] | null
+      orderedServices: (OrderedServices & {
+        service: Service
+        assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
+      })[]
       isCurrentJob?: boolean
     },
   ): JobEntity {
-    const orderedTasks = record.orderedTasks?.map((task) => {
-      return new OrderedTask({
-        id: task.id,
-        invoiceAmount: task.invoiceAmount,
-        isNewTask: task.isNewTask,
-        taskStatus: task.taskStatus,
-        taskName: task.taskName,
-        serviceId: task.taskMenuId,
-        jobId: task.jobId,
-        projectId: task.projectId,
-        createdAt: task.dateCreated,
-        assigneeName: task.assigneeName,
-        assigneeUserId: task.assigneeUserId,
-        description: task.description,
+    const assignedTasks: AssignedTask[] = []
+    record.orderedServices.map((orderedService) => {
+      orderedService.assignedTasks.map((assignedTask) => {
+        assignedTasks.push(
+          new AssignedTask({
+            assignTaskId: assignedTask.id,
+            status: assignedTask.status as AssignedTaskStatus,
+            taskName: assignedTask.task?.name || 'unknwon (error)',
+            taskId: assignedTask.taskId,
+            orderedServiceId: assignedTask.orderedServiceId,
+            jobId: assignedTask.jobId,
+            startedAt: assignedTask.startedAt,
+            assigneeName: assignedTask.user ? assignedTask.user.firstName + assignedTask.user.lastName : null,
+            assigneeId: assignedTask.assigneeId,
+            doneAt: assignedTask.doneAt,
+            description: orderedService.description,
+          }),
+        )
       })
     })
 
-    // const hasMailingForWetStamp =
+    const orderedServices: OrderedServiceValueObject[] = []
+    record.orderedServices.map((orderedService) => {
+      orderedServices.push(
+        new OrderedServiceValueObject({
+          serviceId: orderedService.serviceId,
+          serviceName: orderedService.service?.name || 'unknown (error)',
+          jobId: orderedService.jobId,
+          description: orderedService.description,
+          price: Number(orderedService.price),
+          priceOverride: Number(orderedService.priceOverride),
+          orderedAt: orderedService.orderedAt,
+          status: orderedService.status as OrderedServiceStatus,
+          doneAt: orderedService.doneAt,
+        }),
+      )
+    })
 
     return new JobEntity({
       id: record.id,
@@ -138,7 +163,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         propertyFullAddress: record.propertyAddress,
         deliverablesEmails: record.deliverablesEmail?.split(',') || [],
         jobName: record.jobName,
-        orderedTasks: orderedTasks || [],
+        assignedTasks: assignedTasks || [],
+        orderedServices: orderedServices,
         systemSize: record.systemSize ? Number(record.systemSize) : null,
         mailingAddressForWetStamp:
           record.mailingAdderssCity !== null &&
@@ -198,19 +224,33 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     response.jobName = props.jobName
     response.isCurrentJob = props.isCurrentJob
 
-    response.orderedTasks = props.orderedTasks.map((task) => {
-      return new OrderedTaskResponseFields({
-        id: task.id,
-        taskStatus: task.taskStatus,
+    response.assignedTasks = props.assignedTasks.map((task) => {
+      return new AssignedTaskResponseFields({
+        assignTaskId: task.assignTaskId,
+        status: task.status,
         taskName: task.taskName,
-        assignee: {
-          userId: task.assigneeUserId,
-          name: task.assigneeName,
-        },
+        taskId: task.taskId,
+        orderedServiceId: task.orderedServiceId,
+        jobId: task.jobId,
+        startedAt: task.startedAt?.toISOString() || null,
+        assigneeName: task.assigneeName,
+        assigneeId: task.assigneeId,
+        doneAt: task.doneAt?.toISOString() || null,
         description: task.description,
-        invoiceAmount: task.invoiceAmount,
-        isNewTask: task.isNewTask,
-        createdAt: task.createdAt.toISOString(),
+      })
+    })
+
+    response.orderedServices = props.orderedServices.map((service) => {
+      return new OrderedServiceResponseFields({
+        serviceId: service.serviceId,
+        serviceName: service.serviceName,
+        jobId: service.jobId,
+        description: service.description,
+        price: Number(service.price),
+        priceOverride: Number(service.priceOverride),
+        status: service.status,
+        orderedAt: service.orderedAt.toISOString(),
+        doneAt: service.doneAt?.toISOString() || null,
       })
     })
 

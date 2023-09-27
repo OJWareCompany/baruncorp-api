@@ -7,8 +7,8 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JobProps } from '../../domain/job.type'
 import { JobMapper } from '../../job.mapper'
+import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users } from '@prisma/client'
 
 export class FindJobPaginatedQuery extends PaginatedQueryBase {
   readonly propertyType?: string | null
@@ -32,16 +32,40 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
     private readonly jobMapper: JobMapper,
   ) {}
 
-  async execute(query: FindJobPaginatedQuery): Promise<Paginated<JobProps>> {
+  async execute(query: FindJobPaginatedQuery): Promise<
+    Paginated<
+      OrderedJobs & {
+        orderedServices: (OrderedServices & {
+          service: Service
+          assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
+        })[]
+      }
+    >
+  > {
     // TODO: totalcount때문에 풀스캔하게됨
-    const records = await this.prismaService.orderedJobs.findMany({
+    const records: (OrderedJobs & {
+      orderedServices: (OrderedServices & {
+        service: Service
+        assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
+      })[]
+    })[] = await this.prismaService.orderedJobs.findMany({
       where: {
         ...(query.propertyType && { projectType: query.propertyType }),
         ...(query.jobName && { jobName: { contains: query.jobName } }),
         ...(query.projectId && { projectId: { contains: query.projectId } }),
       },
       include: {
-        orderedTasks: true,
+        orderedServices: {
+          include: {
+            service: true,
+            assignedTasks: {
+              include: {
+                task: true,
+                user: true,
+              },
+            },
+          },
+        },
       },
       orderBy: { createdAt: 'desc' },
       take: query.limit,
@@ -56,11 +80,8 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       },
     })
 
-    // TODO: Refactoring
-    const result: JobProps[] = records.map((job) => ({ ...this.jobMapper.toDomain(job).getProps() }))
-
     return new Paginated({
-      items: result,
+      items: records,
       totalCount: totalCount,
       pageSize: query.limit,
       page: query.page,

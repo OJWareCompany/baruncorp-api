@@ -6,7 +6,16 @@ import { JobMapper } from '../../../ordered-job/job.mapper'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { ProjectNotFoundException } from '../../domain/project.error'
-import { OrderedJobs, OrderedProjects, OrderedTasks, Organizations } from '@prisma/client'
+import {
+  AssignedTasks,
+  OrderedJobs,
+  OrderedProjects,
+  OrderedServices,
+  Organizations,
+  Service,
+  Tasks,
+  Users,
+} from '@prisma/client'
 
 export class FindProjectDetailQuery {
   readonly id: string
@@ -17,9 +26,13 @@ export class FindProjectDetailQuery {
 }
 
 export type FindProjectDetailReturnType = OrderedProjects & { organization: Organizations | null } & {
-  jobs: (OrderedJobs & { orderedTasks: OrderedTasks[] })[]
+  jobs: (OrderedJobs & {
+    orderedServices: (OrderedServices & {
+      service: Service
+      assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
+    })[]
+  })[]
 }
-
 @QueryHandler(FindProjectDetailQuery)
 export class FindProjectDetailQueryHandler implements IQueryHandler {
   constructor(
@@ -37,20 +50,31 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
    */
 
   async execute(query: FindProjectDetailQuery): Promise<FindProjectDetailReturnType> {
-    const record: FindProjectDetailReturnType = await this.prismaService.orderedProjects.findFirstOrThrow({
+    const record: FindProjectDetailReturnType = (await this.prismaService.orderedProjects.findFirstOrThrow({
       where: { id: query.id },
       include: {
         organization: true,
         jobs: {
           include: {
-            orderedTasks: true,
+            orderedServices: {
+              include: {
+                // service: true,
+                // assignedTasks: true,
+                assignedTasks: {
+                  include: {
+                    // task: true,
+                    user: true,
+                  },
+                },
+              },
+            },
           },
           orderBy: {
             createdAt: 'desc',
           },
         },
       },
-    })
+    })) as FindProjectDetailReturnType
     if (!record) throw new ProjectNotFoundException()
     return record
   }

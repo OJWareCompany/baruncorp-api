@@ -5,6 +5,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { CurrentJobUpdatedDomainEvent } from '../../../ordered-job/domain/events/current-job-updated.domain-event'
+import { NewOrderedServices } from '../../../ordered-job/domain/value-objects/ordered-task.value-object'
 
 @Injectable()
 export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
@@ -18,12 +19,15 @@ export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
   async handle(event: CurrentJobUpdatedDomainEvent) {
     if (!event.isCurrentJop) return
 
+    // const newOrderedServices = event.assignedTasks.map((tasks) => {
+    //   return new NewOrderedServices({ serviceId: tasks.ser, description: tasks.ser })
+    // })
     const project = await this.projectRepository.findProjectOrThrow(event.projectId)
     project
       .setSystemSize(event.systemSize)
       .setMailingFullAddressForWetStamp(event.mailingFullAddressForWetStamp)
       .setMountingType(event.mountingType)
-      .updateHasTaskHistory(event.orderedTask)
+    // .updateHasTaskHistory(event.assignedTasks)
 
     await this.projectRepository.updateProjectWhenJobIsCreated(project)
   }

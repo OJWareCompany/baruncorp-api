@@ -9,7 +9,6 @@ import { GeographyModule } from './modules/geography/geography.module'
 import { ProjectModule } from './modules/project/project.module'
 import { EventEmitterModule } from '@nestjs/event-emitter'
 import { JobModule } from './modules/ordered-job/job.module'
-import { OrderedTaskModule } from './modules/ordered-task/ordered-task.module'
 import { OrderedJobNoteModule } from './modules/ordered-job-note/job-note.module'
 import { ServiceModule } from './modules/service/service.module'
 import { OrderedServiceModule } from './modules/ordered-service/ordered-service.module'
@@ -26,7 +25,6 @@ import { AssignedTaskModule } from './modules/assigned-task/assigned-task.module
     GeographyModule,
     ProjectModule,
     JobModule,
-    OrderedTaskModule,
     OrderedJobNoteModule,
     ServiceModule,
     OrderedServiceModule,
