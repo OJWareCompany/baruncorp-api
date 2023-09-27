@@ -14,13 +14,16 @@ import { AssignedTaskMapper } from './assigned-task.mapper'
 import { CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler } from './application/event-handlers/create-assigned-task-when-ordered-service-is-created.domain-event-handler'
 import { CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled.domain-event-handler'
 import { ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler } from './application/event-handlers/reopen-assigned-task-when-ordered-service-is-reactivated.domain-event-handler'
+import { CompleteAssignedTaskHttpController } from './commands/complete-assigned-task/complete-assigned-task.http.controller'
+import { CompleteAssignedTaskService } from './commands/complete-assigned-task/complete-assigned-task.service'
 
 const httpControllers = [
   UpdateAssignedTaskHttpController,
   FindAssignedTaskHttpController,
   FindAssignedTaskPaginatedHttpController,
+  CompleteAssignedTaskHttpController,
 ]
-const commandHandlers: Provider[] = [UpdateAssignedTaskService]
+const commandHandlers: Provider[] = [UpdateAssignedTaskService, CompleteAssignedTaskService]
 const queryHandlers: Provider[] = [FindAssignedTaskQueryHandler, FindAssignedTaskPaginatedQueryHandler]
 const repositories: Provider[] = [
   {

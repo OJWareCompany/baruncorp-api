@@ -9,7 +9,7 @@ import { CreateJobProps, JobProps, JobStatus } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { NumberOfWetStampBadRequestException } from './job.error'
+import { JobCompletedUpdateException, NumberOfWetStampBadRequestException } from './job.error'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -37,6 +37,12 @@ export class JobEntity extends AggregateRoot<JobProps> {
       }),
     )
     return job
+  }
+
+  start() {
+    if (this.isCompleted()) throw new JobCompletedUpdateException()
+    this.props.jobStatus = 'In Progress'
+    return this
   }
 
   updatePropetyAddress(propertyFullAddress: string) {

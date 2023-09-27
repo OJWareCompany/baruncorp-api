@@ -20,6 +20,7 @@ import { FindMyActiveJobPaginatedHttpController } from './queries/find-my-active
 import { FindMyActiveJobPaginatedQueryHandler } from './queries/find-my-active-jobs/find-my-active-job.paginated.query-handler'
 import { UpdateJobWhenTaskIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-updated.domain-event-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
+import { StartJobStatusWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-job-when-task-is-assigned.domain-event-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -38,6 +39,7 @@ const queryHandlers: Provider[] = [
 const eventHandlers: Provider[] = [
   UpdateJobWhenTaskIsUpdatedDomainEventHandler,
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
+  StartJobStatusWhenTaskIsAssignedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 

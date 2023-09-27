@@ -18,6 +18,7 @@ import { CancelOrderedServiceHttpController } from './command/cancel-ordered-ser
 import { CancelOrderedServiceService } from './command/cancel-ordered-service/cancel-ordered-service.service'
 import { ReactivateOrderedServiceHttpController } from './command/reactivate-ordered-service/reactivate-ordered-service.http.controller'
 import { ReactivateOrderedServiceService } from './command/reactivate-ordered-service/reactivate-ordered-service.service'
+import { CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/complete-ordered-service-when-task-is-completed.domain-event-handler'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -35,7 +36,10 @@ const commandHandlers: Provider[] = [
   ReactivateOrderedServiceService,
 ]
 const queryHandlers: Provider[] = [FindOrderedServiceQueryHandler]
-const eventHandlers: Provider[] = [CreateOrderedServiceWhenJobIsCreatedEventHandler]
+const eventHandlers: Provider[] = [
+  CreateOrderedServiceWhenJobIsCreatedEventHandler,
+  CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler,
+]
 const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]
 const mappers: Provider[] = [OrderedServiceMapper, UserMapper]
 
