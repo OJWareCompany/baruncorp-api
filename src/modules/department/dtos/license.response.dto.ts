@@ -7,7 +7,7 @@ export class LincenseResponseDto {
   readonly type: string
 
   @ApiProperty()
-  readonly userName: string
+  readonly ownerName: string
 
   @ApiProperty()
   readonly issuingCountryName: string

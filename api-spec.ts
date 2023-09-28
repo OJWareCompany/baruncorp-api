@@ -69,24 +69,29 @@ export interface AccessTokenResponseDto {
   accessToken: string
 }
 
-export interface PositionResponseDto {
+export interface UserPositionResponseDto {
   id: string
   name: string
-  description: string | null
-  department: string
 }
 
-export interface ServiceResponseDto {
+export interface RelatedTaskResponseDto {
+  /** @default "" */
+  id: string
+  /** @default "" */
+  name: string
+}
+
+export interface UserServiceResponseDto {
   id: string
   name: string
   billingCode: string
   basePrice: number
-  relatedTasks: TaskResponseDto[]
+  relatedTasks: RelatedTaskResponseDto[]
 }
 
 export interface LincenseResponseDto {
-  userName: string
   type: 'Electrical' | 'Structural'
+  ownerName: string
   issuingCountryName: string
   abbreviation: string
   priority: number | null
@@ -102,8 +107,8 @@ export interface UserResponseDto {
   phoneNumber: string | null
   organization: string
   organizationId: string
-  position: PositionResponseDto | null
-  services: ServiceResponseDto[]
+  position: UserPositionResponseDto | null
+  services: UserServiceResponseDto[]
   licenses: LincenseResponseDto[]
   role: string
   deliverablesEmails: string[]
@@ -123,8 +128,6 @@ export interface UpdateUserRequestDto {
 export interface GiveRoleRequestDto {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
-  /** @default "member" */
-  lol: string
 }
 
 export interface CreateInvitationMailRequestDto {
@@ -132,21 +135,6 @@ export interface CreateInvitationMailRequestDto {
   organizationName: string
   /** @default "hyomin@ojware.com" */
   email: string
-}
-
-export interface CreateLicenseRequestDto {
-  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
-  userId: string
-  /** @default "Electrical" */
-  type: 'Electrical' | 'Structural'
-  /** @default "FLORIDA" */
-  issuingCountryName: string
-  /** @default "FL" */
-  abbreviation: string
-  /** @default 9 */
-  priority: number
-  /** @default "2023-09-04T07:31:27.217Z" */
-  expiryDate: string | null
 }
 
 export interface CreateUserRequestDto {
@@ -263,11 +251,11 @@ export interface OrganizationPaginatedResponseDto {
   items: OrganizationPaginatedResponseFields[]
 }
 
-export interface CreateMemberPositionRequestDto {
-  /** @default "3696b9c7-916d-4812-871e-976c03a06d7e" */
-  positionId: string
-  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
-  userId: string
+export interface PositionResponseDto {
+  id: string
+  name: string
+  description: string | null
+  department: string
 }
 
 export interface StatesResponseDto {
@@ -283,13 +271,6 @@ export interface StatesResponseDto {
   ansiCode: string | null
   /** @default "California" */
   stateLongName: string | null
-}
-
-export interface CreateMemberInChargeOfTheServiceRequestDto {
-  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
-  userId: string
-  /** @default "a061c441-be8c-4bcc-9bcc-2460a01d5a16" */
-  serviceId: string
 }
 
 export interface AhjNoteListResponseDto {
@@ -538,7 +519,6 @@ export interface AssignedTaskResponseFields {
   taskName: string
   taskId: string
   orderedServiceId: string
-  jobId: string
   startedAt: string | null
   assigneeName: string | null
   assigneeId: string | null
@@ -547,9 +527,9 @@ export interface AssignedTaskResponseFields {
 }
 
 export interface OrderedServiceResponseFields {
+  orderedServiceId: string
   serviceId: string
   serviceName: string
-  jobId: string
   description: string | null
   price: number | null
   priceOverride: number | null
@@ -663,7 +643,7 @@ export interface CreateJobRequestDto {
   additionalInformationFromClient: string | null
   /** @default 300.1 */
   systemSize: number | null
-  /** @default "39027356-b928-4b8e-b30c-a343a0894766" */
+  /** @default "561f7c64-fe49-40a4-8399-d5d24725f9cd" */
   projectId: string
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
@@ -782,6 +762,14 @@ export interface TaskResponseDto {
   name: string
 }
 
+export interface ServiceResponseDto {
+  id: string
+  name: string
+  billingCode: string
+  basePrice: number
+  relatedTasks: TaskResponseDto[]
+}
+
 export interface ServicePaginatedResponseDto {
   /** @default 1 */
   page: number
@@ -895,15 +883,6 @@ export interface AuthenticationControllerPostSignInTimeParams {
   refresh: number
 }
 
-export interface UsersControllerDeleteRemoveMemberLicenseParams {
-  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
-  userId: string
-  /** @default "Electrical" */
-  type: 'Electrical' | 'Structural'
-  /** @default "FLORIDA" */
-  issuingCountryName: string
-}
-
 export interface FindUsersHttpControllerGetFindUsersParams {
   /** @default "hyomin@ojware.com" */
   email?: string | null
@@ -974,20 +953,6 @@ export interface FindMyMemberPaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
-}
-
-export interface DepartmentControllerDeleteRevokePositionParams {
-  /** @default "3696b9c7-916d-4812-871e-976c03a06d7e" */
-  positionId: string
-  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
-  userId: string
-}
-
-export interface DepartmentControllerDeleteTerminateServiceMemberIsInChargeOfParams {
-  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
-  userId: string
-  /** @default "a061c441-be8c-4bcc-9bcc-2460a01d5a16" */
-  serviceId: string
 }
 
 export interface GeographyControllerGetFindNotesParams {
@@ -1443,27 +1408,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name UsersControllerPostGiveRole
-     * @request POST:/users/gived-roles
+     * @request POST:/users/make/admin
      */
     usersControllerPostGiveRole: (data: GiveRoleRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/users/gived-roles`,
+        path: `/users/make/admin`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UsersControllerDeleteRemoveRole
-     * @request DELETE:/users/gived-roles/{userId}
-     */
-    usersControllerDeleteRemoveRole: (userId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/users/gived-roles/${userId}`,
-        method: 'DELETE',
         ...params,
       }),
 
@@ -1480,52 +1432,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: 'json',
-        ...params,
-      }),
-
-    /**
-     * @description 등록된 모든 라이센스 조회 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
-     *
-     * @name UsersControllerGetFindAllLicenses
-     * @request GET:/users/member-licenses
-     */
-    usersControllerGetFindAllLicenses: (params: RequestParams = {}) =>
-      this.request<LincenseResponseDto[], any>({
-        path: `/users/member-licenses`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UsersControllerPostRegisterMemberLicense
-     * @request POST:/users/member-licenses
-     */
-    usersControllerPostRegisterMemberLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/users/member-licenses`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * @description // 추후 개선 사항 -> member-licenses/:licenseId
-     *
-     * @name UsersControllerDeleteRemoveMemberLicense
-     * @request DELETE:/users/member-licenses
-     */
-    usersControllerDeleteRemoveMemberLicense: (
-      query: UsersControllerDeleteRemoveMemberLicenseParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/users/member-licenses`,
-        method: 'DELETE',
-        query: query,
         ...params,
       }),
 
@@ -1673,38 +1579,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DepartmentControllerPostAppointPosition
-     * @request POST:/departments/member-positions
-     */
-    departmentControllerPostAppointPosition: (data: CreateMemberPositionRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/departments/member-positions`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DepartmentControllerDeleteRevokePosition
-     * @request DELETE:/departments/member-positions
-     */
-    departmentControllerDeleteRevokePosition: (
-      query: DepartmentControllerDeleteRevokePositionParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/departments/member-positions`,
-        method: 'DELETE',
-        query: query,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @name DepartmentControllerGetFindAllStates
      * @request GET:/departments/states
      */
@@ -1713,55 +1587,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/departments/states`,
         method: 'GET',
         format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DepartmentControllerGetFindAllServices
-     * @request GET:/departments/services
-     */
-    departmentControllerGetFindAllServices: (params: RequestParams = {}) =>
-      this.request<ServiceResponseDto[], any>({
-        path: `/departments/services`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DepartmentControllerPostPutMemberInChageOfTheService
-     * @request POST:/departments/member-services
-     */
-    departmentControllerPostPutMemberInChageOfTheService: (
-      data: CreateMemberInChargeOfTheServiceRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/departments/member-services`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DepartmentControllerDeleteTerminateServiceMemberIsInChargeOf
-     * @request DELETE:/departments/member-services
-     */
-    departmentControllerDeleteTerminateServiceMemberIsInChargeOf: (
-      query: DepartmentControllerDeleteTerminateServiceMemberIsInChargeOfParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/departments/member-services`,
-        method: 'DELETE',
-        query: query,
         ...params,
       }),
   }

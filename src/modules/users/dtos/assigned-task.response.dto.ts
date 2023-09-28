@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class TaskResponseDto {
+export class RelatedTaskResponseDto {
   @ApiProperty({ default: '' })
   readonly id: string
 

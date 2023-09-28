@@ -49,7 +49,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
     const copyProps = entity.getProps()
 
     return new LincenseResponseDto({
-      userName: copyProps.userName.getFullName(),
+      ownerName: copyProps.userName.getFullName(),
       type: copyProps.type,
       issuingCountryName: copyProps.stateEntity.stateName,
       abbreviation: copyProps.stateEntity.abbreviation,
