@@ -1,13 +1,10 @@
 import { Body, Controller, Delete, Get, Post, Query, UseGuards } from '@nestjs/common'
 import { DepartmentService } from './department.service'
 import { PositionResponseDto } from './dtos/position.response.dto'
-import { CreateMemberInChargeOfTheServiceRequestDto } from './commands/create-member-in-charge-of-the-service/create-member-in-charge-of-the-service.request.dto'
 import { AuthGuard } from '../auth/authentication.guard'
 import { CreateMemberPositionRequestDto } from './commands/craete-member-position/create-user-position.request.dto'
 import { DeleteMemberPositionRequestDto } from './commands/delete-member-position/delete-member-position.request.dto'
-import { DeleteMemberInChargeOfTheServiceRequestDto } from './commands/delete-member-in-charge-of-the-service/delete-member-in-charge-of-the-service.request.dto'
 import { StatesResponseDto } from './dtos/states.response.dto'
-import { ServiceResponseDto } from './dtos/service.response.dto'
 
 @Controller('departments')
 export class DepartmentController {
@@ -46,25 +43,5 @@ export class DepartmentController {
           stateLongName: state.stateLongName || null,
         }),
     )
-  }
-
-  @Get('services')
-  async getFindAllServices(): Promise<ServiceResponseDto[]> {
-    return await this.departmentService.findAllServices()
-  }
-
-  // TODO: create api doesn't retrieve? how handel conflict error?
-  @Post('member-services')
-  @UseGuards(AuthGuard)
-  async postPutMemberInChageOfTheService(@Body() dto: CreateMemberInChargeOfTheServiceRequestDto): Promise<void> {
-    return this.departmentService.putMemberInChageOfTheService(dto.userId, dto.serviceId)
-  }
-
-  @Delete('member-services')
-  @UseGuards(AuthGuard)
-  async deleteTerminateServiceMemberIsInChargeOf(
-    @Query() query: DeleteMemberInChargeOfTheServiceRequestDto,
-  ): Promise<void> {
-    return this.departmentService.terminateServiceMemberIsInChargeOf(query.userId, query.serviceId)
   }
 }

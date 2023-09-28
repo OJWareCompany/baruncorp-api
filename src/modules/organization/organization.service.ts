@@ -1,20 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepositoryPort } from './database/organization.repository.port'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserResponseDto } from '../users/dtos/user.response.dto'
-import UserMapper from '../users/user.mapper'
-import { PositionMapper } from '../department/position.mapper'
-import { LicenseMapper } from '../department/license.mapper'
 import { DepartmentRepositoryPort } from '../department/database/department.repository.port'
 import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
-import { OrganizationMapper } from './organization.mapper'
-import { ServiceMapper } from '../department/service.mapper'
 import { OrganizationEntity } from './domain/organization.entity'
-import { OrganizationResponseDto } from './dtos/organization.response.dto'
-import { OrganizationNotFoundException } from './domain/organization.error'
 
 @Injectable()
 export class OrganizationService {
@@ -25,11 +17,6 @@ export class OrganizationService {
     @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
-    private readonly organizationMapper: OrganizationMapper,
-    private readonly userMapper: UserMapper,
-    private readonly positionMapper: PositionMapper,
-    private readonly licenseMapper: LicenseMapper,
-    private readonly serviceMapper: ServiceMapper,
   ) {}
 
   async findOrganizationById(organizationId: string): Promise<OrganizationEntity | null> {

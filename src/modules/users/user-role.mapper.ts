@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '@libs/ddd/mapper.interface'
 import { UserRoleModel } from '../../modules/organization/database/organization.repository'
-import { UserRole, UserRoles } from './domain/value-objects/user-role.vo'
+import { UserRole, UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 
 export class UserRoleResponseDto {
   userId: string
@@ -11,7 +11,7 @@ export class UserRoleResponseDto {
 @Injectable()
 export class UserRoleMapper implements Mapper<UserRole, UserRoleModel, UserRoleResponseDto> {
   toPersistence(entity: UserRole): UserRoleModel {
-    const copy = entity.getProps()
+    const copy = entity.unpack()
     const record: UserRoleModel = {
       ...copy,
       updatedAt: new Date(),
@@ -21,17 +21,17 @@ export class UserRoleMapper implements Mapper<UserRole, UserRoleModel, UserRoleR
   }
 
   toDomain(record: UserRoleModel): UserRole {
-    let role: UserRoles = UserRoles.guest
-    if (record.role === 'domain') role = UserRoles.admin
-    else if (record.role === 'manager') role = UserRoles.manager
-    else if (record.role === 'member') role = UserRoles.member
-    return new UserRole({ userId: record.userId, role })
+    let role: UserRoleNameEnum = UserRoleNameEnum.guest
+    if (record.roleName === 'domain') role = UserRoleNameEnum.admin
+    else if (record.roleName === 'manager') role = UserRoleNameEnum.manager
+    else if (record.roleName === 'member') role = UserRoleNameEnum.member
+    return new UserRole({ userId: record.userId, roleName: role })
   }
 
   toResponse(entity: UserRole, ...dtos: any): UserRoleResponseDto {
     const response = new UserRoleResponseDto()
-    response.userId = entity.getProps().userId
-    response.role = entity.getProps().role
+    response.userId = entity.userId
+    response.role = entity.name
     return response
   }
 }

@@ -15,7 +15,6 @@ import { PositionMapper } from '../department/position.mapper'
 import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
 import { DepartmentRepository } from '../department/database/department.repository'
 import { OrganizationMapper } from '../organization/organization.mapper'
-import { ServiceMapper } from '../department/service.mapper'
 import { CreateUserHttpContoller } from './commands/create-user/create-user.http.controller'
 import { CreateUserService } from './commands/create-user/create-user.service'
 import { FindUsersHttpController } from './queries/find-users/find-user.http.controller'
@@ -32,14 +31,7 @@ const repositories: Provider[] = [
   { provide: DEPARTMENT_REPOSITORY, useClass: DepartmentRepository },
 ]
 
-const mappers: Provider[] = [
-  UserMapper,
-  PositionMapper,
-  LicenseMapper,
-  UserRoleMapper,
-  OrganizationMapper,
-  ServiceMapper,
-]
+const mappers: Provider[] = [UserMapper, PositionMapper, LicenseMapper, UserRoleMapper, OrganizationMapper]
 
 @Module({
   imports: [PrismaModule, CqrsModule],

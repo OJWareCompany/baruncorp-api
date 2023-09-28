@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '@libs/ddd/mapper.interface'
 import { UserEntity } from '@modules/users/domain/user.entity'
-import { LincenseResponseDto } from '../users/dtos/license.response.dto'
 import { LicenseEntity } from '../users/user-license.entity'
 import { State } from './domain/value-objects/state.vo'
 import { LicenseModel } from './database/department.repository'
 import { LicenseProps, LicenseType, CreateLicenseProps } from '../users/user-license.type'
+import { LincenseResponseDto } from './dtos/license.response.dto'
 
 @Injectable()
 export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, LincenseResponseDto> {
@@ -42,7 +42,7 @@ export class LicenseMapper implements Mapper<LicenseEntity, LicenseModel, Lincen
       expiryDate: record.expiryDate,
     }
 
-    return new LicenseEntity({ ...props })
+    return new LicenseEntity({ id: '', props })
   }
 
   toResponse(entity: LicenseEntity): LincenseResponseDto {

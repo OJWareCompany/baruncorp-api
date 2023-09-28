@@ -1,7 +1,7 @@
-import { LincenseResponseDto } from './license.response.dto'
-import { PositionResponseDto } from '../../department/dtos/position.response.dto'
-import { ServiceResponseDto } from '../../department/dtos/service.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
+import { LincenseResponseDto } from './license.response.dto'
+import { ServiceResponseDto } from './service.response.dto'
+import { PositionResponseDto } from './position.response.dto'
 
 export class UserResponseDto {
   @ApiProperty()

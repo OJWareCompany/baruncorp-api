@@ -9,8 +9,9 @@ import { OrganizationService } from '../organization/organization.service'
 import { TokenResponseDto } from './dto/response/token.response.dto'
 import { UserName } from '../users/domain/value-objects/user-name.vo'
 import { UserEntity } from '../users/domain/user.entity'
-import { UserRoles } from '../users/domain/value-objects/user-role.vo'
 import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
+import { Phone } from '../users/domain/value-objects/phone-number.value-object'
+import { Organization } from '../users/domain/value-objects/organization.value-object'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
@@ -98,20 +99,16 @@ export class AuthenticationService {
       email: rest.email,
       deliverablesEmails: rest.deliverablesEmails,
       userName: new UserName({ firstName: rest.firstName, lastName: rest.lastName }),
-      organizationId: organization.id,
-      address: rest.address,
-      phoneNumber: rest.phoneNumber,
+      organization: new Organization({
+        id: organization.id,
+        name: organization.getProps().name,
+        organizationType: organization.getProps().organizationType,
+      }),
+      phone: rest.phoneNumber ? new Phone({ number: rest.phoneNumber }) : null,
       updatedBy: 'system',
-      organizationType: organization.getProps().organizationType,
     })
 
     await this.usersService.insertUser(userEntity, new InputPasswordVO(password))
-
-    // Give User Role
-    await this.usersService.giveRole({
-      userId: userEntity.id,
-      role: UserRoles.guest,
-    })
 
     await this.usersService.deleteInvitationMail(code)
   }

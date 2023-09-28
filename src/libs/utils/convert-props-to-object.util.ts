@@ -16,6 +16,11 @@ function isEntity(obj: unknown): obj is Entity<unknown> {
 }
 
 function convertToPlainObject(item: any): any {
+  if (item === null) {
+    console.log('null', item)
+    return null // item이 null인 경우 null을 반환
+  }
+
   if (ValueObject.isValueObject(item)) {
     return item.unpack()
   }
@@ -35,6 +40,10 @@ export function convertPropsToObject(props: any): any {
 
   // eslint-disable-next-line guard-for-in
   for (const prop in propsCopy) {
+    if (propsCopy[prop] === null) {
+      // prop이 null인 경우 null을 그대로 유지
+      continue
+    }
     if (Array.isArray(propsCopy[prop])) {
       propsCopy[prop] = (propsCopy[prop] as Array<unknown>).map((item) => {
         return convertToPlainObject(item)

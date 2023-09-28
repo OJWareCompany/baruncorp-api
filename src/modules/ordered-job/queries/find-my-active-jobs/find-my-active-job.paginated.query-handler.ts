@@ -56,7 +56,7 @@ export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
 
     const jobIds = new Set<string>()
     myActiveTasks.map((task) => jobIds.add(task.jobId))
-    console.log(jobIds)
+
     // TODO: totalcount때문에 풀스캔하게됨
     const myActiveJobs = await this.prismaService.orderedJobs.findMany({
       where: {

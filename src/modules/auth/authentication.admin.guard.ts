@@ -13,7 +13,7 @@ import { jwtConstants } from './constants'
 import { Request } from 'express'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
-import { UserRoles } from '../users/domain/value-objects/user-role.vo'
+import { UserRoleNameEnum } from '../users/domain/value-objects/user-role.vo'
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -37,8 +37,7 @@ export class AdminGuard implements CanActivate {
       })
       // TODO: what data needed
       const user = await this.userRepository.findOneById(payload.id)
-      const role = await this.userRepository.findRoleByUserId(user.id)
-      if (role.getProps().role !== UserRoles.admin) throw new Error()
+      if (user.role !== UserRoleNameEnum.admin) throw new Error()
 
       request['user'] = user
     } catch {

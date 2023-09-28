@@ -1,32 +1,28 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LicenseType } from '../../users/user-license.type'
+import { initialize } from '../../../libs/utils/constructor-initializer'
 
 export class LincenseResponseDto {
-  @ApiProperty()
-  userName: string
+  @ApiProperty({ enum: LicenseType })
+  readonly type: string
 
   @ApiProperty()
-  type: LicenseType
+  readonly ownerName: string
 
   @ApiProperty()
-  issuingCountryName: string
+  readonly issuingCountryName: string
 
   @ApiProperty()
-  abbreviation: string
+  readonly abbreviation: string
 
   @ApiProperty()
-  priority: number | null
+  readonly priority: number | null
 
   @ApiProperty()
-  expiryDate: string | null
+  readonly expiryDate: string | null
 
   constructor(create: LincenseResponseDto) {
-    this.userName = create.userName
-    this.type = create.type
-    this.issuingCountryName = create.issuingCountryName
-    this.abbreviation = create.abbreviation
-    this.priority = create.priority
-    this.expiryDate = create.expiryDate
+    initialize(this, create)
   }
 }
 

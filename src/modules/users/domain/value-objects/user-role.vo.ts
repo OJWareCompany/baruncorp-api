@@ -1,4 +1,6 @@
-export enum UserRoles {
+import { ValueObject } from '../../../../libs/ddd/value-object.base'
+
+export enum UserRoleNameEnum {
   admin = 'admin',
   manager = 'manager',
   member = 'member',
@@ -6,25 +8,23 @@ export enum UserRoles {
   client = 'client',
 }
 
-export interface UserRoleProps {
-  userId: string
-  role: UserRoles
-}
-
 export interface CreateUserRoleProps {
   userId: string
-  role: UserRoles
+  roleName: UserRoleNameEnum
 }
 
-export class UserRole {
-  protected readonly props: UserRoleProps
+export type UserRoleProps = CreateUserRoleProps
 
-  constructor(props: CreateUserRoleProps) {
-    this.props = props
+export class UserRole extends ValueObject<UserRoleProps> {
+  get userId(): string {
+    return this.props.userId
   }
 
-  getProps() {
-    const copy = { ...this.props }
-    return Object.freeze(copy)
+  get name(): UserRoleNameEnum {
+    return this.props.roleName
+  }
+
+  protected validate(props: CreateUserRoleProps): void {
+    return
   }
 }

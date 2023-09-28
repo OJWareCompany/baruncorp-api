@@ -78,7 +78,7 @@ export class FindJobPaginatedHttpController {
                 orderedServiceId: assignedTask.orderedServiceId,
                 jobId: assignedTask.jobId,
                 startedAt: assignedTask.startedAt?.toISOString() || null,
-                assigneeName: assignedTask.user ? assignedTask.user.firstName + '' + assignedTask.user.lastName : null,
+                assigneeName: assignedTask.user ? assignedTask.user.firstName + ' ' + assignedTask.user.lastName : null,
                 assigneeId: assignedTask.assigneeId,
                 doneAt: assignedTask.doneAt?.toISOString() || null,
                 description: orderedService.description,

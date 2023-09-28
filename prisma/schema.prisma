@@ -9,10 +9,10 @@ datasource db {
 }
 
 model OrganizationTypes {
-  type               String          @id
-  updatedAt          DateTime        @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt          DateTime        @default(now()) @map("created_at") @db.DateTime(0)
-  organizationEntity Organizations[]
+  type         String          @id
+  updatedAt    DateTime        @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt    DateTime        @default(now()) @map("created_at") @db.DateTime(0)
+  organization Organizations[]
 
   @@map("organization_types")
 }
@@ -56,7 +56,7 @@ model Roles {
   updatedAt             DateTime           @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt             DateTime           @default(now()) @map("created_at") @db.DateTime(0)
   invitationEmailEntity InvitationEmails[]
-  UserRole              UserRole[]
+  userRole              UserRole[]
 
   @@map("roles")
 }
@@ -77,15 +77,15 @@ model InvitationEmails {
 }
 
 model UserRole {
-  role        String
-  userId      String   @map("user_id")
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  rolesEntity Roles    @relation(fields: [role], references: [role])
-  userEntity  Users    @relation(fields: [userId], references: [id])
+  roleName  String   @map("role_name")
+  userId    String   @unique(map: "user_id") @map("user_id")
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  role      Roles    @relation(fields: [roleName], references: [role])
+  user      Users    @relation(fields: [userId], references: [id])
 
-  @@id([userId, role])
-  @@index([role], map: "user_role_role_fkey")
+  @@id([userId, roleName])
+  @@index([roleName], map: "user_role_role_fkey")
   @@map("user_role")
 }
 
@@ -108,12 +108,12 @@ model Users {
   revisionRevenueShare       Boolean?                 @map("revision_revenue_share")
   updatedBy                  String                   @map("updated_by") @db.VarChar(255)
   passwordEntity             Passwords?
-  UserElectricalLicenses     UserElectricalLicenses[]
-  UserPosition               UserPosition[]
-  userRoleEntity             UserRole[]
-  UserService                UserService[]
-  UserStructuralLicenses     UserStructuralLicenses[]
-  organizationEntity         Organizations            @relation(fields: [organizationId], references: [id])
+  userRole                   UserRole?
+  userPosition               UserPosition?
+  userServices               UserService[]
+  userStructuralLicenses     UserStructuralLicenses[]
+  userElectricalLicenses     UserElectricalLicenses[]
+  organization               Organizations            @relation(fields: [organizationId], references: [id])
   assignedTasks              AssignedTasks[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
@@ -163,6 +163,8 @@ model Service {
   basePrice       Decimal           @map("base_price") @db.Decimal(13, 4)
   orderedServices OrderedServices[]
   tasks           Tasks[]
+  positionService PositionService[]
+  userService     UserService[]
 
   @@map("service")
 }
@@ -184,34 +186,13 @@ model OrderedServices {
   @@map("ordered_services")
 }
 
-model Services {
-  id                                   String            @id @default(uuid())
-  name                                 String
-  billing_code                         String?           @db.VarChar(20)
-  is_in_order_menu                     Boolean?
-  is_member_assignment                 Boolean?
-  parent_task_id                       String?
-  updatedAt                            DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt                            DateTime          @default(now()) @map("created_at") @db.DateTime(0)
-  description                          String?
-  state_restricted                     Boolean?
-  is_current_user                      Boolean?
-  internal_only                        Boolean?
-  man_minutes_residential_new_standard Decimal?          @db.Decimal(10, 2)
-  man_minutes_residential_rev_standard Decimal?          @db.Decimal(10, 2)
-  PositionService                      PositionService[]
-  UserService                          UserService[]
-
-  @@map("services")
-}
-
 model PositionService {
-  positionId     String    @map("position_id")
-  serviceId      String    @map("service_id")
-  updatedAt      DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt      DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  positionEntity Positions @relation(fields: [positionId], references: [id])
-  serviceEntity  Services  @relation(fields: [serviceId], references: [id])
+  positionId String    @map("position_id")
+  serviceId  String    @map("service_id")
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.DateTime(0)
+  position   Positions @relation(fields: [positionId], references: [id])
+  service    Service   @relation(fields: [serviceId], references: [id])
 
   @@id([positionId, serviceId])
   @@index([serviceId], map: "position_service_service_id_fkey")
@@ -219,15 +200,14 @@ model PositionService {
 }
 
 model UserService {
-  userId        String   @map("user_id")
-  serviceId     String   @map("service_id")
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt     DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  serviceEntity Services @relation(fields: [serviceId], references: [id])
-  userEntity    Users    @relation(fields: [userId], references: [id])
+  userId    String   @map("user_id")
+  serviceId String   @map("service_id")
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  service   Service  @relation(fields: [serviceId], references: [id])
+  user      Users    @relation(fields: [userId], references: [id])
 
   @@id([userId, serviceId])
-  @@index([serviceId], map: "user_service_service_id_fkey")
   @@map("user_service")
 }
 
@@ -258,8 +238,8 @@ model UserStructuralLicenses {
   issuedDate         DateTime? @map("issue_date")
   updatedAt          DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
-  userEntity         Users     @relation(fields: [userId], references: [id])
+  state              States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
+  user               Users     @relation(fields: [userId], references: [id])
 
   @@id([userId, issuingCountryName])
   @@index([issuingCountryName, abbreviation], map: "user_structural_licenses_issuing_country_name_abbreviation_fkey")
@@ -275,8 +255,8 @@ model UserElectricalLicenses {
   priority           Int?
   updatedAt          DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  stateEntity        States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
-  userEntity         Users     @relation(fields: [userId], references: [id])
+  state              States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
+  user               Users     @relation(fields: [userId], references: [id])
 
   @@id([userId, issuingCountryName])
   @@index([issuingCountryName, abbreviation], map: "user_electrical_licenses_issuing_country_name_abbreviation_fkey")
@@ -284,12 +264,12 @@ model UserElectricalLicenses {
 }
 
 model UserPosition {
-  userId         String    @map("user_id")
-  positionId     String    @map("position_id")
-  updatedAt      DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt      DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  positionEntity Positions @relation(fields: [positionId], references: [id])
-  userEntity     Users     @relation(fields: [userId], references: [id])
+  userId     String    @unique(map: "user_id") @map("user_id")
+  positionId String    @map("position_id")
+  updatedAt  DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt  DateTime  @default(now()) @map("created_at") @db.DateTime(0)
+  position   Positions @relation(fields: [positionId], references: [id])
+  user       Users     @relation(fields: [userId], references: [id])
 
   @@id([userId, positionId])
   @@index([positionId], map: "user_position_position_id_fkey")
@@ -626,7 +606,6 @@ model OrderedProjects {
 
   @@map("ordered_projects")
 }
-
 
 model pricings {
   id                                               String   @id @map("id") @db.VarChar(255)

@@ -108,7 +108,6 @@ export abstract class Entity<EntityProps> {
    */
   public toObject(): unknown {
     const plainProps = convertPropsToObject(this.props)
-
     const result = {
       id: this._id,
       createdAt: this._createdAt,

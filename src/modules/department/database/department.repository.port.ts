@@ -7,7 +7,6 @@
 
 import { DepartmentEntity } from '../domain/department.entity'
 import { PositionEntity } from '../domain/position.entity'
-import { ServiceEntity } from '../domain/service.entity'
 import { State } from '../domain/value-objects/state.vo'
 
 export interface DepartmentRepositoryPort {
@@ -22,9 +21,6 @@ export interface DepartmentRepositoryPort {
 
   findAllStates(): Promise<State[]>
 
-  findAllServices(): Promise<ServiceEntity[]>
-  findServicesByUserId(userId: string): Promise<ServiceEntity[]>
-  findServicesByPositionId(positionId: string): Promise<ServiceEntity[]>
   putMemberInChargeOfService(userId: string, serviceId: string): Promise<void>
   terminateServiceMemberIsInChargeOf(userId: string, serviceId: string): Promise<void>
 }

@@ -10,14 +10,13 @@ import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import UserMapper from '../users/user.mapper'
 import { UserRoleMapper } from '../users/user-role.mapper'
-import { ServiceMapper } from './service.mapper'
 
 const repositories: Provider[] = [
   { provide: DEPARTMENT_REPOSITORY, useClass: DepartmentRepository },
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
-const mappers: Provider[] = [UserMapper, LicenseMapper, PositionMapper, UserRoleMapper, ServiceMapper]
+const mappers: Provider[] = [UserMapper, LicenseMapper, PositionMapper, UserRoleMapper]
 
 @Module({
   imports: [PrismaModule],

@@ -10,7 +10,6 @@ import { UserRepository } from '../users/database/user.repository'
 import UserMapper from '../users/user.mapper'
 import { ProjectMapper } from './project.mapper'
 import { UserRoleMapper } from '../users/user-role.mapper'
-import { LicenseMapper } from '../department/license.mapper'
 import { CreateProjectService } from './commands/create-project/create-project.service'
 import { PROJECT_REPOSITORY } from './project.di-token'
 import { ProjectRepository } from './database/project.repository'
@@ -63,7 +62,7 @@ const repositories: Provider[] = [
 ]
 
 // 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
-const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMapper, LicenseMapper]
+const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

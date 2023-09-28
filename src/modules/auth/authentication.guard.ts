@@ -1,4 +1,4 @@
-import { CanActivate, ExecutionContext, Inject, Injectable, UnauthorizedException } from '@nestjs/common'
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from './constants'
 import { Request } from 'express'
@@ -27,7 +27,17 @@ export class AuthGuard implements CanActivate {
         secret: jwtConstants.secret,
       })
       // TODO: what data needed
-      const user = await this.prismaService.users.findUnique({ where: { id: payload.id } })
+      const user = await this.prismaService.users.findUnique({
+        where: { id: payload.id },
+        include: {
+          organization: true,
+          userRole: { include: { role: true } },
+          userPosition: { include: { position: true } },
+          userServices: { include: { service: { include: { tasks: true } } } },
+          userElectricalLicenses: { include: { state: true } },
+          userStructuralLicenses: { include: { state: true } },
+        },
+      })
       if (!user) throw new UserNotFoundException()
       request['user'] = this.userMapper.toDomain(user)
     } catch (error) {

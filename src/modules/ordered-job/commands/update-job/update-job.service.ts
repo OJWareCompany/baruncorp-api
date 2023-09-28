@@ -6,7 +6,6 @@ import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { MountingType } from '../../../project/domain/project.type'
 import { PrismaService } from '../../../database/prisma.service'
 import { UserNotFoundException } from '../../../users/user.error'
-import UserMapper from '../../../users/user.mapper'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
@@ -19,7 +18,6 @@ export class UpdateJobService implements ICommandHandler {
     // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly prismaService: PrismaService,
-    private readonly userMapper: UserMapper,
   ) {}
 
   async execute(command: UpdateJobCommand): Promise<void> {
@@ -36,13 +34,11 @@ export class UpdateJobService implements ICommandHandler {
       where: { id: clientUserRecord.organizationId },
     })
     if (!organization) throw new OrganizationNotFoundException()
-    const clientUserEntity = this.userMapper.toDomain(clientUserRecord)
 
     const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.getProps().projectId } })
     if (!project) throw new ProjectNotFoundException()
 
-    if (clientUserEntity.getProps().organizationId !== project.clientOrganizationId)
-      throw new BadRequestException('wrong client')
+    if (clientUserRecord.organizationId !== project.clientOrganizationId) throw new BadRequestException('wrong client')
 
     const updatedByUserName = editor.firstName + ' ' + editor.lastName
 
@@ -51,9 +47,9 @@ export class UpdateJobService implements ICommandHandler {
       new ClientInformation({
         clientOrganizationId: organization.id,
         clientOrganizationName: organization.name,
-        clientUserId: clientUserEntity.id,
-        clientUserName: clientUserEntity.getProps().userName.getFullName(),
-        clientContactEmail: clientUserEntity.getProps().email,
+        clientUserId: clientUserRecord.id,
+        clientUserName: clientUserRecord.firstName + ' ' + clientUserRecord.lastName,
+        clientContactEmail: clientUserRecord.email,
         deliverablesEmail: command.deliverablesEmails,
       }),
     )

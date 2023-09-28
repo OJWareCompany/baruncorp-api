@@ -13,16 +13,8 @@ import { UserResponseDto } from './dtos/user.response.dto'
 import { UserEntity } from './domain/user.entity'
 import UserMapper from './user.mapper'
 import { UserName } from './domain/value-objects/user-name.vo'
-import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
-import { DepartmentRepositoryPort } from '../department/database/department.repository.port'
-import { PositionMapper } from '../department/position.mapper'
-import { LicenseMapper } from '../department/license.mapper'
-import { ServiceMapper } from '../department/service.mapper'
-import { CreateUserRoleProps, UserRole, UserRoles } from './domain/value-objects/user-role.vo'
-import { LicenseEntity } from './user-license.entity'
-import { State } from '../department/domain/value-objects/state.vo'
-import { LicenseType } from './user-license.type'
-import { UserNotFoundException } from './user.error'
+import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
+import { OnlyMemberCanBeAdminException, UserNotFoundException } from './user.error'
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 
 @Injectable()
@@ -34,49 +26,30 @@ export class UserService {
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationMailRepository: InvitationMailRepositoryPort,
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
-    // @ts-ignore
-    @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
     private readonly userMapper: UserMapper,
-    private readonly positionMapper: PositionMapper,
-    private readonly licenseMapper: LicenseMapper,
-    private readonly serviceMapper: ServiceMapper,
   ) {}
 
-  async giveRole(create: CreateUserRoleProps): Promise<void> {
-    const role = new UserRole(create)
-    const existed = await this.userRepository.findRoleByUserId(create.userId)
-    if (existed) throw new ConflictException('already has roles.', '10011')
-    await this.userRepository.giveRole(role)
+  async makeAdmin(userId: string) {
+    // TODO: Consider an Aggregate Pattern
+    const user = await this.userRepository.findOneById(userId)
+    const organizationEntity = await this.organizationRepository.findOneById(user.getProps().organization.id)
+    if (!organizationEntity || organizationEntity?.getProps().organizationType !== 'Administration') {
+      throw new OnlyMemberCanBeAdminException()
+    }
+    user.makeAdmin()
+    await this.userRepository.update(user)
   }
 
-  async removeRole(userId: string): Promise<void> {
-    const existed = await this.userRepository.findRoleByUserId(userId)
-    if (!existed) throw new NotFoundException('no roles.', '10012')
-    const userRoleEntity = await this.userRepository.findRoleByUserId(userId)
-    await this.userRepository.removeRole(userRoleEntity)
-  }
-
-  async getRoles(): Promise<UserRoles[]> {
-    return [UserRoles.guest, UserRoles.member]
+  async getRoles(): Promise<UserRoleNameEnum[]> {
+    return [UserRoleNameEnum.guest, UserRoleNameEnum.member]
   }
 
   async getUserProfile(userId: string): Promise<UserResponseDto> {
     // TODO: Consider an Aggregate Pattern
     const userEntity = await this.userRepository.findOneById(userId)
-    const userRoleEntity = await this.userRepository.findRoleByUserId(userEntity.id)
-    const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organizationId)
+    const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organization.id)
     if (!organizationEntity) throw new OrganizationNotFoundException()
-    const positionEntity = await this.departmentRepository.findPositionByUserId(userEntity.id)
-    const serviceEntities = await this.departmentRepository.findServicesByUserId(userEntity.id)
-    const licenseEntities = await this.userRepository.findLicensesByUser(userEntity)
-    return this.userMapper.toResponse(
-      userEntity,
-      userRoleEntity,
-      organizationEntity,
-      positionEntity ? this.positionMapper.toResponse(positionEntity) : null,
-      serviceEntities.map(this.serviceMapper.toResponse),
-      licenseEntities.map(this.licenseMapper.toResponse),
-    )
+    return this.userMapper.toResponse(userEntity)
   }
 
   async upadteProfile(
@@ -137,13 +110,13 @@ export class UserService {
       await this.invitationMailRepository.insertOne({
         email: dto.email,
         code: code,
-        role: UserRoles.guest,
+        role: UserRoleNameEnum.guest,
         organizationId: organization.id,
       })
       return {
         email: dto.email,
         code: code,
-        role: UserRoles.guest,
+        role: UserRoleNameEnum.guest,
         organizationId: organization.id,
         updatedAt: new Date(),
         createdAt: new Date(),
@@ -156,57 +129,56 @@ export class UserService {
     }
   }
 
-  async findAllLicenses(): Promise<LicenseEntity[]> {
-    return await this.userRepository.findAllLicenses()
-  }
+  // async findAllLicenses(): Promise<LicenseEntity[]> {
+  //   return await this.userRepository.findAllLicenses()
+  // }
 
-  async registerLicense(
-    userId: string,
-    type: LicenseType,
-    issuingCountryName: string,
-    abbreviation: string,
-    priority: number,
-    // issuedDate: Date,
-    expiryDate: Date | null,
-  ): Promise<void> {
-    const user = await this.userRepository.findOneById(userId)
+  // async registerLicense(
+  //   userId: string,
+  //   type: LicenseType,
+  //   issuingCountryName: string,
+  //   abbreviation: string,
+  //   priority: number,
+  //   expiryDate: Date | null,
+  // ): Promise<void> {
+  //   const user = await this.userRepository.findOneById(userId)
 
-    const existed = await this.userRepository.findLicensesByUser(user)
-    const filterd = existed.map((license) => {
-      const state = license.getProps().stateEntity
-      return state.abbreviation === abbreviation && license.getProps().type === type
-    })
+  //   const existed = await this.userRepository.findLicensesByUser(user)
+  //   const filterd = existed.map((license) => {
+  //     const state = license.getProps().stateEntity
+  //     return state.abbreviation === abbreviation && license.getProps().type === type
+  //   })
 
-    if (filterd.includes(true)) throw new ConflictException('already has a license.', '10015')
+  //   if (filterd.includes(true)) throw new ConflictException('already has a license.', '10015')
 
-    await this.userRepository.registerLicense(
-      new LicenseEntity({
-        userId,
-        userName: user.getProps().userName,
-        type,
-        stateEntity: new State({
-          stateName: issuingCountryName,
-          abbreviation,
-          geoId: null,
-          stateCode: null,
-          ansiCode: null,
-          stateLongName: null,
-        }),
-        priority,
-        // issuedDate,
-        expiryDate,
-      }),
-    )
-  }
+  //   await this.userRepository.registerLicense(
+  //     new LicenseEntity({
+  //       userId,
+  //       userName: user.getProps().userName,
+  //       type,
+  //       stateEntity: new State({
+  //         stateName: issuingCountryName,
+  //         abbreviation,
+  //         geoId: null,
+  //         stateCode: null,
+  //         ansiCode: null,
+  //         stateLongName: null,
+  //       }),
+  //       priority,
+  //       // issuedDate,
+  //       expiryDate,
+  //     }),
+  //   )
+  // }
 
-  async revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<void> {
-    const user = await this.userRepository.findOneById(userId)
-    const existed = await this.userRepository.findLicensesByUser(user)
-    const filterd = existed.map((license) => {
-      const state = license.getProps().stateEntity
-      return state.stateName === issuingCountryName && license.getProps().type === type
-    })
-    if (!filterd.includes(true)) throw new NotFoundException('has no a license.', '10016')
-    await this.userRepository.revokeLicense(userId, type, issuingCountryName)
-  }
+  // async revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<void> {
+  //   const user = await this.userRepository.findOneById(userId)
+  //   const existed = await this.userRepository.findLicensesByUser(user)
+  //   const filterd = existed.map((license) => {
+  //     const state = license.getProps().stateEntity
+  //     return state.stateName === issuingCountryName && license.getProps().type === type
+  //   })
+  //   if (!filterd.includes(true)) throw new NotFoundException('has no a license.', '10016')
+  //   await this.userRepository.revokeLicense(userId, type, issuingCountryName)
+  // }
 }

@@ -12,7 +12,6 @@ import { JobCompletedUpdateException } from './job.error'
 import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
-import { NewOrderedServices } from './value-objects/ordered-task.value-object'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID

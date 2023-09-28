@@ -1,4 +1,4 @@
-import { ConflictException, NotFoundException } from '@nestjs/common'
+import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common'
 
 export class UserNotFoundException extends NotFoundException {
   constructor() {
@@ -9,5 +9,11 @@ export class UserNotFoundException extends NotFoundException {
 export class UserConflictException extends ConflictException {
   constructor() {
     super('User Already Existed', '10017')
+  }
+}
+
+export class OnlyMemberCanBeAdminException extends BadRequestException {
+  constructor() {
+    super('User Already Existed', '10100')
   }
 }

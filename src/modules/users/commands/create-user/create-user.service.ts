@@ -2,11 +2,13 @@ import { ConflictException, NotFoundException } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UserRoleModel } from '../../../organization/database/organization.repository'
 import { PrismaService } from '../../../database/prisma.service'
-import { UserRole, UserRoles } from '../../domain/value-objects/user-role.vo'
+import { UserRole, UserRoleNameEnum } from '../../domain/value-objects/user-role.vo'
 import { UserName } from '../../domain/value-objects/user-name.vo'
 import { UserEntity } from '../../domain/user.entity'
 import UserMapper from '../../user.mapper'
 import { CreateUserCommand } from './create-user.command'
+import { Phone } from '../../domain/value-objects/phone-number.value-object'
+import { Organization } from '../../domain/value-objects/organization.value-object'
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserService implements ICommandHandler {
@@ -25,11 +27,13 @@ export class CreateUserService implements ICommandHandler {
         firstName: command.firstName,
         lastName: command.lastName,
       }),
-      organizationId: command.organizationId,
-      address: null,
-      phoneNumber: command.phoneNumber,
+      organization: new Organization({
+        id: organization.id,
+        name: organization.name,
+        organizationType: organization.organizationType,
+      }),
+      phone: command.phoneNumber ? new Phone({ number: command.phoneNumber }) : null,
       updatedBy: command.updatedBy,
-      organizationType: organization.organizationType,
       deliverablesEmails: command.deliverablesEmails,
     })
 
@@ -39,12 +43,17 @@ export class CreateUserService implements ICommandHandler {
     // Give User Role
     const role = new UserRole({
       userId: user.id,
-      role: user.getProps().type === 'member' ? UserRoles.member : 'client' ? UserRoles.client : UserRoles.guest,
+      roleName:
+        user.getProps().type === 'member'
+          ? UserRoleNameEnum.member
+          : 'client'
+          ? UserRoleNameEnum.client
+          : UserRoleNameEnum.guest,
     })
 
-    const roleProps = role.getProps()
     const roleRecord: UserRoleModel = {
-      ...roleProps,
+      userId: role.userId,
+      roleName: role.name,
       updatedAt: new Date(),
       createdAt: new Date(),
     }
