@@ -58,11 +58,10 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
           include: {
             orderedServices: {
               include: {
-                // service: true,
-                // assignedTasks: true,
+                service: true,
                 assignedTasks: {
                   include: {
-                    // task: true,
+                    task: true,
                     user: true,
                   },
                 },

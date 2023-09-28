@@ -1,7 +1,7 @@
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { MountingType } from '../../../project/domain/project.type'
-import { NewOrderedServices } from '../value-objects/ordered-task.value-object'
+import { NewOrderedServices } from '../value-objects/assigned-task.value-object'
 import { JobStatus } from '../job.type'
 
 export class CurrentJobUpdatedDomainEvent extends DomainEvent {

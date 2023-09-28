@@ -33,7 +33,7 @@ export class CreateJobRequestDto {
   @IsOptional()
   systemSize: number | null
 
-  @ApiProperty({ default: '39027356-b928-4b8e-b30c-a343a0894766' })
+  @ApiProperty({ default: '561f7c64-fe49-40a4-8399-d5d24725f9cd' })
   @IsString()
   projectId: string
 

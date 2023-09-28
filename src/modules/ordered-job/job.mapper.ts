@@ -1,14 +1,14 @@
 import { JobEntity } from './domain/job.entity'
 import { AssignedTasks, OrderedJobs, OrderedServices, Prisma, Service, Tasks, Users } from '@prisma/client'
-import { JobResponseDto, AssignedTaskResponseFields, OrderedServiceResponseFields } from './dtos/job.response.dto'
+import { JobResponseDto } from './dtos/job.response.dto'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { JobStatus } from './domain/job.type'
 import { ClientInformation } from './domain/value-objects/client-information.value-object'
-import { AssignedTask } from './domain/value-objects/ordered-task.value-object'
+import { AssignedTask } from './domain/value-objects/assigned-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { AssignedTaskStatus } from '../assigned-task/domain/assigned-task.type'
-import { OrderedServiceValueObject } from './domain/value-objects/ordered-service.value-object'
+import { OrderedService } from './domain/value-objects/ordered-service.value-object'
 import { OrderedServiceStatus } from '../ordered-service/domain/ordered-service.type'
 
 @Injectable()
@@ -119,7 +119,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
           new AssignedTask({
             assignTaskId: assignedTask.id,
             status: assignedTask.status as AssignedTaskStatus,
-            taskName: assignedTask.task?.name || 'unknwon (error)',
+            taskName: assignedTask.task.name,
             taskId: assignedTask.taskId,
             orderedServiceId: assignedTask.orderedServiceId,
             jobId: assignedTask.jobId,
@@ -133,12 +133,13 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       })
     })
 
-    const orderedServices: OrderedServiceValueObject[] = []
+    const orderedServices: OrderedService[] = []
     record.orderedServices.map((orderedService) => {
       orderedServices.push(
-        new OrderedServiceValueObject({
+        new OrderedService({
+          orderedServiceId: orderedService.id,
           serviceId: orderedService.serviceId,
-          serviceName: orderedService.service?.name || 'unknown (error)',
+          serviceName: orderedService.service.name,
           jobId: orderedService.jobId,
           description: orderedService.description,
           price: Number(orderedService.price),
@@ -224,35 +225,19 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     response.jobName = props.jobName
     response.isCurrentJob = props.isCurrentJob
 
-    response.assignedTasks = props.assignedTasks.map((task) => {
-      return new AssignedTaskResponseFields({
-        assignTaskId: task.assignTaskId,
-        status: task.status,
-        taskName: task.taskName,
-        taskId: task.taskId,
-        orderedServiceId: task.orderedServiceId,
-        jobId: task.jobId,
-        startedAt: task.startedAt?.toISOString() || null,
-        assigneeName: task.assigneeName,
-        assigneeId: task.assigneeId,
-        doneAt: task.doneAt?.toISOString() || null,
-        description: task.description,
-      })
-    })
+    response.assignedTasks = props.assignedTasks.map((assignedTask) => ({
+      ...assignedTask.unpack(),
+      startedAt: assignedTask.startedAt?.toISOString() || null,
+      doneAt: assignedTask.doneAt?.toISOString() || null,
+    }))
 
-    response.orderedServices = props.orderedServices.map((service) => {
-      return new OrderedServiceResponseFields({
-        serviceId: service.serviceId,
-        serviceName: service.serviceName,
-        jobId: service.jobId,
-        description: service.description,
-        price: Number(service.price),
-        priceOverride: Number(service.priceOverride),
-        status: service.status,
-        orderedAt: service.orderedAt.toISOString(),
-        doneAt: service.doneAt?.toISOString() || null,
-      })
-    })
+    response.orderedServices = props.orderedServices.map((service) => ({
+      ...service.unpack(),
+      price: Number(service.price),
+      priceOverride: Number(service.priceOverride),
+      orderedAt: service.orderedAt.toISOString(),
+      doneAt: service.doneAt?.toISOString() || null,
+    }))
 
     response.clientInfo = {
       clientOrganizationId: props.clientInfo.clientOrganizationId,

@@ -1,7 +1,7 @@
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { OrderedServiceValueObject } from './value-objects/ordered-service.value-object'
-import { AssignedTask, NewOrderedServices } from './value-objects/ordered-task.value-object'
+import { OrderedService } from './value-objects/ordered-service.value-object'
+import { AssignedTask, NewOrderedServices } from './value-objects/assigned-task.value-object'
 
 export enum JobStatusEnum {
   Not_Started = 'Not Started',
@@ -41,7 +41,7 @@ export interface JobProps {
   propertyFullAddress: string
   jobRequestNumber: number
   assignedTasks: AssignedTask[]
-  orderedServices: OrderedServiceValueObject[]
+  orderedServices: OrderedService[]
   deliverablesEmails: string[]
   systemSize: number | null
   mailingAddressForWetStamp: Address | null

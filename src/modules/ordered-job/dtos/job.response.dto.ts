@@ -21,13 +21,13 @@ export class MemberResponseFields {
 
 export class OrderedServiceResponseFields {
   @ApiProperty()
+  orderedServiceId: string
+
+  @ApiProperty()
   serviceId: string
 
   @ApiProperty()
   serviceName: string
-
-  @ApiProperty()
-  jobId: string
 
   @ApiProperty()
   @IsOptional()
@@ -71,9 +71,6 @@ export class AssignedTaskResponseFields {
 
   @ApiProperty()
   orderedServiceId: string
-
-  @ApiProperty()
-  jobId: string
 
   @ApiProperty()
   @IsOptional()

@@ -5,7 +5,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { CurrentJobUpdatedDomainEvent } from '../../../ordered-job/domain/events/current-job-updated.domain-event'
-import { NewOrderedServices } from '../../../ordered-job/domain/value-objects/ordered-task.value-object'
+import { NewOrderedServices } from '../../../ordered-job/domain/value-objects/assigned-task.value-object'
 
 @Injectable()
 export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {

@@ -14,19 +14,19 @@ export class DepartmentController {
     return await this.departmentService.findAllPositions()
   }
 
-  // can use manager
-  @Post('member-positions')
-  @UseGuards(AuthGuard)
-  async postAppointPosition(@Body() dto: CreateMemberPositionRequestDto): Promise<void> {
-    return await this.departmentService.appointPosition(dto.userId, dto.positionId)
-  }
+  // // can use manager
+  // @Post('member-positions')
+  // @UseGuards(AuthGuard)
+  // async postAppointPosition(@Body() dto: CreateMemberPositionRequestDto): Promise<void> {
+  //   return await this.departmentService.appointPosition(dto.userId, dto.positionId)
+  // }
 
-  // can use only manager
-  @Delete('member-positions')
-  @UseGuards(AuthGuard)
-  async deleteRevokePosition(@Query() param: DeleteMemberPositionRequestDto): Promise<void> {
-    return await this.departmentService.revokePosition(param.userId, param.positionId)
-  }
+  // // can use only manager
+  // @Delete('member-positions')
+  // @UseGuards(AuthGuard)
+  // async deleteRevokePosition(@Query() param: DeleteMemberPositionRequestDto): Promise<void> {
+  //   return await this.departmentService.revokePosition(param.userId, param.positionId)
+  // }
 
   // when select states that issue a license
   @Get('states')

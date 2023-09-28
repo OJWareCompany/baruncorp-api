@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { NewOrderedServices } from '../../ordered-job/domain/value-objects/ordered-task.value-object'
+import { NewOrderedServices } from '../../ordered-job/domain/value-objects/assigned-task.value-object'
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import {
   CreateProjectProps,
