@@ -204,12 +204,12 @@ export interface CreateOrganizationRequestDto {
    */
   organizationType: string
   /**
-   * @default "client"
+   * @default "Commercial"
    * @pattern /(Commercial|Residential)/
    */
   projectPropertyTypeDefaultValue: string | null
   /**
-   * @default "client"
+   * @default "Roof Mount"
    * @pattern /(Roof Mount|Ground Mount|Roof Mount & Ground Mount)/
    */
   mountingTypeDefaultValue: string | null
@@ -717,10 +717,6 @@ export interface CreateJobNoteRequestDto {
   jobId: string
 }
 
-export interface FindJobNotesRequestDto {
-  jobId: string
-}
-
 export interface JobNoteResponseDto {
   jobNoteId: string
   /** @example "what do you think about Jazz?" */
@@ -732,7 +728,7 @@ export interface JobNoteResponseDto {
 }
 
 export interface JobNoteListResponseDto {
-  notes: JobNoteResponseDto
+  notes: JobNoteResponseDto[]
 }
 
 export interface CreateServiceRequestDto {
@@ -1939,14 +1935,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindJobNotesHttpControllerFind
-     * @request GET:/ordered-job-notes
+     * @request GET:/ordered-job-notes/{jobId}
      */
-    findJobNotesHttpControllerFind: (data: FindJobNotesRequestDto, params: RequestParams = {}) =>
+    findJobNotesHttpControllerFind: (jobId: string, params: RequestParams = {}) =>
       this.request<JobNoteListResponseDto, any>({
-        path: `/ordered-job-notes`,
+        path: `/ordered-job-notes/${jobId}`,
         method: 'GET',
-        body: data,
-        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
