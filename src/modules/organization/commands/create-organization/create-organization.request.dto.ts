@@ -31,13 +31,13 @@ export class CreateOrganizationRequestDto {
   @Matches(/(client|individual|outsourcing)/, { message: 'Organization Type Not Found' })
   readonly organizationType: string
 
-  @ApiProperty({ default: 'client' })
+  @ApiProperty({ default: 'Commercial' })
   @IsString()
   @Matches(/(Commercial|Residential)/, { message: 'Project Type Not Found' })
   @IsOptional()
   readonly projectPropertyTypeDefaultValue: string | null
 
-  @ApiProperty({ default: 'client' })
+  @ApiProperty({ default: 'Roof Mount' })
   @IsString()
   @Matches(/(Roof Mount|Ground Mount|Roof Mount & Ground Mount)/, { message: 'Mounting Type Not Found' })
   @IsOptional()

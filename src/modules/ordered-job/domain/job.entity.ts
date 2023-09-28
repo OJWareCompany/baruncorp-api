@@ -49,6 +49,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   complete(): this {
+    if (!this.isAllTaskCompleted()) return this
     this.props.jobStatus = 'Completed'
     this.addEvent(
       new JobCompletedDomainEvent({
@@ -56,6 +57,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
       }),
     )
     return this
+  }
+
+  isAllTaskCompleted(): boolean {
+    return this.props.assignedTasks.every((task) => task.status === 'Completed')
   }
 
   cancel(): this {

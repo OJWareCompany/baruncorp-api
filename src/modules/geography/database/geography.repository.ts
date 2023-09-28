@@ -12,9 +12,10 @@ import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/fin
 import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
 import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
-import { AHJType } from '../dto/ahj-note.response.dto'
+import { AHJType, Design, General } from '../dto/ahj-note.response.dto'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { AhjJobNoteNotFoundException } from '../domain/ahj-job-note.error'
+import { AhjNoteEntity } from '../domain/ahj-job-note.entity'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -231,12 +232,6 @@ export class GeographyRepository implements GeographyRepositoryPort {
   async updateNote(username: string, geoId: string, update: UpdateAhjNoteDto): Promise<void> {
     const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
     if (!model) throw new NotFoundException('Ahj note is not founded.')
-
-    // convert undefined to null
-    // const copy = { ...update }
-    // Object.entries(copy).forEach(([key, value]) => {
-    //   if (!value) copy[key] = null
-    // })
 
     await this.prismaService.aHJNotes.update({ data: { ...update, updatedBy: username }, where: { geoId } })
     await this.prismaService.aHJNoteHistory.create({ data: { ...model, updatedBy: username } })

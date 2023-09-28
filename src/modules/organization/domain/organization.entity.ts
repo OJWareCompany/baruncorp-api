@@ -13,6 +13,6 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
   }
 
   public validate(): void {
-    const result = 1 + 1
+    return
   }
 }

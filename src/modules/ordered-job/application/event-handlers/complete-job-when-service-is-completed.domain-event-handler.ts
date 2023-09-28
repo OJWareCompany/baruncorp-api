@@ -13,6 +13,7 @@ export class CompleteJobWhenServiceIsCompletedDomainEventHandler {
   @OnEvent(OrderedServiceCompletedDomainEvent.name, { async: true, promisify: true })
   async handle(event: OrderedServiceCompletedDomainEvent) {
     const job = await this.jobRepository.findJobOrThrow(event.jobId)
+    if (!job.isAllTaskCompleted()) return
     job.complete()
     await this.jobRepository.update(job)
   }

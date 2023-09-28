@@ -21,6 +21,6 @@ export class JobNoteResponseDto {
 }
 
 export class JobNoteListResponseDto {
-  @ApiProperty({ type: JobNoteResponseDto })
+  @ApiProperty({ type: JobNoteResponseDto, isArray: true })
   notes: JobNoteResponseDto[]
 }

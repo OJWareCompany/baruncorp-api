@@ -465,6 +465,7 @@ model OrderedJobNotes {
 
 model OrderedJobs {
   id                                            String            @id @map("id") @db.VarChar(255)
+  projectId                                     String            @map("project_id") @db.VarChar(255)
   isExpedited                                   Boolean           @default(false) @map("is_expedited")
   clientUserId                                  String            @map("client_user_id") @db.VarChar(255)
   clientUserName                                String            @map("client_user_name") @db.VarChar(255)
@@ -482,7 +483,6 @@ model OrderedJobs {
   systemSize                                    Decimal?          @map("system_size") @db.Decimal(10, 2)
   otherComments                                 String?           @map("other_comments") @db.Text
   mailingFullAddressForWetStamp                 String?           @map("mailing_full_address_for_wet_stamp") @db.VarChar(255)
-  projectId                                     String            @map("project_id") @db.VarChar(255)
   jobNotesF                                     String?           @map("job_notes_f") @db.Text
   additionalInformationFromClient               String?           @map("additional_information_from_client") @db.Text
   agreedMinimumUnits                            Decimal?          @map("agreed_minimum_units") @db.Decimal(10, 2)
