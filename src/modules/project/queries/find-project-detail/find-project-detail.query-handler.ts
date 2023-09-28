@@ -50,7 +50,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
    */
 
   async execute(query: FindProjectDetailQuery): Promise<FindProjectDetailReturnType> {
-    const record: FindProjectDetailReturnType = (await this.prismaService.orderedProjects.findFirstOrThrow({
+    const record: FindProjectDetailReturnType | null = await this.prismaService.orderedProjects.findUnique({
       where: { id: query.id },
       include: {
         organization: true,
@@ -73,7 +73,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
           },
         },
       },
-    })) as FindProjectDetailReturnType
+    })
     if (!record) throw new ProjectNotFoundException()
     return record
   }
