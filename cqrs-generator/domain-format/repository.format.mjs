@@ -32,7 +32,7 @@ export class ${toPascalCase(domainName)}Repository implements ${toPascalCase(dom
   async delete(id: string): Promise<void> {
     await this.prismaService.$executeRaw<${toPascalCase(domainName)}s>\`DELETE FROM ${toUnderBar(
     domainName,
-  )} WHERE id = \${id}\`
+  )}s WHERE id = \${id}\`
   }
 
   async findOne(id: string): Promise<${entity} | null> {
