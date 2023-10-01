@@ -25,6 +25,8 @@ import { CancelJobHttpController } from './commands/cancel-job/cancel-job.http.c
 import { CancelJobService } from './commands/cancel-job/cancel-job.service'
 import { HoldJobHttpController } from './commands/hold-job/hold-job.http.controller'
 import { HoldJobService } from './commands/hold-job/hold-job.service'
+import { FindJobToInvoiceHttpController } from './queries/find-job-to-invoice/find-job-to-invoice.http.controller'
+import { FindJobToInvoiceQueryHandler } from './queries/find-job-to-invoice/find-job-to-invoice.query-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -35,6 +37,7 @@ const httpControllers = [
   FindMyActiveJobPaginatedHttpController,
   CancelJobHttpController,
   HoldJobHttpController,
+  FindJobToInvoiceHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateJobService,
@@ -47,6 +50,7 @@ const queryHandlers: Provider[] = [
   FindJobQueryHandler,
   FindJobPaginatedQueryHandler,
   FindMyActiveJobPaginatedQueryHandler,
+  FindJobToInvoiceQueryHandler,
 ]
 const eventHandlers: Provider[] = [
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
