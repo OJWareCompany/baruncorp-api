@@ -5,9 +5,10 @@ export function getPaginatedQueryHttpControllerContent(folderName, domainName) {
 import { QueryBus } from '@nestjs/cqrs'
 import { ${toPascalCase(domainName)}s } from '@prisma/client'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
+import { Paginated } from '../../../../libs/ddd/repository.port'
 import { ${toPascalCase(domainName)}PaginatedResponseDto } from '../../dtos/${domainName}.paginated.response.dto'
-import { ${toPascalCase(folderName)}RequestDto } from './${domainName}.paginated.request.dto'
-import { ${toPascalCase(folderName)}Query } from './${domainName}.paginated.query-handler'
+import { ${toPascalCase(folderName)}RequestDto } from './find-${domainName}.paginated.request.dto'
+import { ${toPascalCase(folderName)}Query } from './find-${domainName}.paginated.query-handler'
 
 @Controller('${domainName}s')
 export class ${toPascalCase(folderName)}HttpController {

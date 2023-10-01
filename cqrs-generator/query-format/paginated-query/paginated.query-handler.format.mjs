@@ -35,7 +35,7 @@ export class ${toPascalCase(folderName)}QueryHandler implements IQueryHandler {
       page: query.page,
       pageSize: query.limit,
       totalCount: totalCount,
-      items: result
+      items: result,
     })
   }
 }
