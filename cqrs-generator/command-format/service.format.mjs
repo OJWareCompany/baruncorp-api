@@ -1,4 +1,4 @@
-import { toPascalCase, toScreamingSnakeCase } from '../util/string-convertor.mjs'
+import { toCamelCase, toPascalCase, toScreamingSnakeCase } from '../util/string-convertor.mjs'
 
 export function getServiceContent(folderName, domainName) {
   return `/* eslint-disable @typescript-eslint/ban-ts-comment */
@@ -15,14 +15,15 @@ export class ${toPascalCase(folderName)}Service implements ICommandHandler {
   constructor(
     // @ts-ignore
     @Inject(${toScreamingSnakeCase(domainName)}_REPOSITORY)
-    private readonly ${toPascalCase(domainName)}Repo: ${toPascalCase(domainName)}RepositoryPort,
+    private readonly ${toCamelCase(domainName)}Repo: ${toPascalCase(domainName)}RepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: ${toPascalCase(folderName)}Command): Promise<AggregateID> {
     const entity = ${toPascalCase(domainName)}Entity.create({
       ...command,
     })
-    return ''
+    await this.${toCamelCase(domainName)}Repo.insert(entity)
+    return entity.id
   }
 }
 `

@@ -12,6 +12,7 @@ import { PrismaService } from '../../../database/prisma.service'
 export class ${toPascalCase(folderName)}Query extends PaginatedQueryBase {
   readonly ${toCamelCase(domainName)}Id: string
   constructor(props: PaginatedParams<${toPascalCase(folderName)}Query>) {
+    super(props)
     initialize(this, props)
   }
 }
@@ -21,13 +22,13 @@ export class ${toPascalCase(folderName)}QueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: ${toPascalCase(folderName)}Query): Promise<Paginated<${toPascalCase(domainName)}s>> {
-    const result = await this.prismaService.${toCamelCase(domainName)}.findMany({
+    const result = await this.prismaService.${toCamelCase(domainName)}s.findMany({
       where: { id: query.${toCamelCase(domainName)}Id },
       skip: query.offset,
       take: query.limit,
     })
     if (!result) throw new NotFoundException()
-    const totalCount = await this.prismaService.${toCamelCase(domainName)}.count({
+    const totalCount = await this.prismaService.${toCamelCase(domainName)}s.count({
       where: { id: query.${toCamelCase(domainName)}Id },
     })
     return new Paginated({

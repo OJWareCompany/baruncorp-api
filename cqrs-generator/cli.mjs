@@ -236,9 +236,9 @@ function makeQueryFiles(path, folderName, domainName) {
 }
 
 function makePaginatedQueryFiles(path, folderName, domainName) {
-  const controllerFileName = `${folderName}.paginated.http.controller.ts`
-  const queryHandlerFileName = `${folderName}.paginated.query-handler.ts`
-  const requestDtoFileName = `${folderName}.paginated.request.dto.ts`
+  const controllerFileName = `find-${domainName}.paginated.http.controller.ts`
+  const queryHandlerFileName = `find-${domainName}.paginated.query-handler.ts`
+  const requestDtoFileName = `find-${domainName}.paginated.request.dto.ts`
   createFileWithFormat(path, controllerFileName, getPaginatedQueryHttpControllerContent(folderName, domainName))
   createFileWithFormat(path, queryHandlerFileName, getPaginatedQueryHandlerContent(folderName, domainName))
   createFileWithFormat(path, requestDtoFileName, getPaginatedQueryRequestDtoContent(folderName, domainName))
