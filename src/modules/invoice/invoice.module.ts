@@ -16,6 +16,11 @@ import { FindInvoicePaginatedHttpController } from './queries/find-invoice-pagin
 import { FindInvoicePaginatedQueryHandler } from './queries/find-invoice-paginated/find-invoice.paginated.query-handler'
 import UserMapper from '../users/user.mapper'
 import { JobMapper } from '../ordered-job/job.mapper'
+import {
+  FindClientToInvoiceQuery,
+  FindClientToInvoiceQueryHandler,
+} from './queries/find-client-to-invoice/find-client-to-invoice.query-handler'
+import { FindClientToInvoiceHttpController } from './queries/find-client-to-invoice/find-client-to-invoice.http.controller'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -23,9 +28,14 @@ const httpControllers = [
   DeleteInvoiceHttpController,
   FindInvoiceHttpController,
   FindInvoicePaginatedHttpController,
+  FindClientToInvoiceHttpController,
 ]
 const commandHandlers: Provider[] = [CreateInvoiceService, UpdateInvoiceService, DeleteInvoiceService]
-const queryHandlers: Provider[] = [FindInvoiceQueryHandler, FindInvoicePaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindInvoiceQueryHandler,
+  FindInvoicePaginatedQueryHandler,
+  FindClientToInvoiceQueryHandler,
+]
 const repositories: Provider[] = [
   {
     provide: INVOICE_REPOSITORY,

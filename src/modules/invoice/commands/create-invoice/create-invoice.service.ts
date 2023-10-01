@@ -11,6 +11,7 @@ import { JobStatusEnum } from '../../../ordered-job/domain/job.type'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
+import { OrderedJobs } from '@prisma/client'
 
 @CommandHandler(CreateInvoiceCommand)
 export class CreateInvoiceService implements ICommandHandler {
