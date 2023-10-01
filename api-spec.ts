@@ -137,6 +137,21 @@ export interface CreateInvitationMailRequestDto {
   email: string
 }
 
+export interface CreateLicenseRequestDto {
+  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
+  userId: string
+  /** @default "Electrical" */
+  type: 'Electrical' | 'Structural'
+  /** @default "FLORIDA" */
+  issuingCountryName: string
+  /** @default "FL" */
+  abbreviation: string
+  /** @default 9 */
+  priority: number
+  /** @default "2023-09-04T07:31:27.217Z" */
+  expiryDate: string | null
+}
+
 export interface CreateUserRequestDto {
   /** @default "07e12e89-6077-4fd1-a029-c50060b57f43" */
   organizationId: string
@@ -710,6 +725,30 @@ export interface JobPaginatedResponseDto {
   items: JobPaginatedResponseFields[]
 }
 
+export interface InvoiceClientOrganization {
+  id: string
+  name: string
+}
+
+export interface LineItem {
+  /** @example 5 */
+  jobRequestNumber: number
+  description: string
+  /** @format date-time */
+  dateSentToClient: string
+  mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
+  totalJobPriceOverride: number | null
+  clientOrganization: InvoiceClientOrganization
+  containsRevisionTask: boolean
+  propertyType: 'Residential' | 'Commercial'
+  state: string
+  billingCodes: string[]
+  taskSizeForRevision: 'Major' | 'Minor'
+  pricingType: 'Standard' | 'Tiered'
+  price: number
+  taskSubtotal: number
+}
+
 export interface CreateJobNoteRequestDto {
   /** @default "what do you think about Jazz?" */
   content: string
@@ -870,6 +909,105 @@ export interface AssignedTaskPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: AssignedTaskResponseDto[]
+}
+
+export interface CreateInvoiceRequestDto {
+  /**
+   * @format date-time
+   * @default "2023-10-01T05:14:33.599Z"
+   */
+  invoiceDate: string
+  terms: 21 | 30
+  notesToClient: string | null
+  clientOrganizationId: string
+  /**
+   * @format date-time
+   * @default "2023-02"
+   */
+  serviceMonth: string
+}
+
+export interface UpdateInvoiceRequestDto {
+  /** @format date-time */
+  invoiceDate: string
+  terms: 21 | 30
+  notesToClient: string | null
+}
+
+export interface InvoiceResponseDto {
+  id: string
+  status: 'Unissued' | 'Issued' | 'Paid'
+  invoiceDate: string
+  terms: 21 | 30
+  dueDate: string
+  notesToClient: string | null
+  createdAt: string
+  updatedAt: string
+  servicePeriodDate: string
+  subtotal: number
+  discount: number | null
+  total: number
+  clientOrganization: InvoiceClientOrganization
+  lineItems: LineItem[]
+}
+
+export interface InvoicePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: InvoiceResponseDto[]
+}
+
+export interface ClientToInvoice {
+  id: string
+  name: string
+  date: string[]
+}
+
+export interface ClientToInvoiceResponseDto {
+  clientToInvoices: ClientToInvoice[]
+}
+
+export interface CreatePaymentRequestDto {
+  invoiceId: string
+  /** @default 100 */
+  amount: number
+  paymentMethod: 'Credit' | 'Direct'
+  notes: string | null
+}
+
+export interface CancelPaymentRequestDto {
+  /** @default "" */
+  id: string
+}
+
+export interface PaymentResponseDto {
+  id: string
+  invoiceId: string
+  amount: number
+  paymentMethod: 'Credit' | 'Direct'
+  paymentDate: string
+  notes: string | null
+  canceledAt: string | null
+  organizationName: string
+  organizationId: string
+}
+
+export interface PaymentPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: PaymentResponseDto[]
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -1048,6 +1186,16 @@ export interface FindMyActiveJobPaginatedHttpControllerFindJobParams {
   page?: number
 }
 
+export interface FindJobToInvoiceHttpControllerFindJobParams {
+  /** @default "asda" */
+  clientOrganizationId: string
+  /**
+   * @format date-time
+   * @default "2023-06"
+   */
+  serviceMonth: string
+}
+
 export interface FindServicePaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
@@ -1081,6 +1229,36 @@ export interface FindTaskPaginatedHttpControllerGetParams {
 export interface FindAssignedTaskPaginatedHttpControllerGetParams {
   /** @default "" */
   jobId: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindInvoicePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindPaymentPaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1428,6 +1606,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * @description 등록된 모든 라이센스 조회 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
+     *
+     * @name UsersControllerPostRegisterMemberLicense
+     * @request POST:/users/member-licenses
+     */
+    usersControllerPostRegisterMemberLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/member-licenses`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 
@@ -1914,6 +2107,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
+  jobsToInvoice = {
+    /**
+     * No description
+     *
+     * @name FindJobToInvoiceHttpControllerFindJob
+     * @request GET:/jobs-to-invoice
+     */
+    findJobToInvoiceHttpControllerFindJob: (
+      query: FindJobToInvoiceHttpControllerFindJobParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<LineItem[], any>({
+        path: `/jobs-to-invoice`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
   orderedJobNotes = {
     /**
      * No description
@@ -2234,6 +2446,162 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/assigned-tasks/complete/${assignedTaskId}`,
         method: 'PATCH',
+        ...params,
+      }),
+  }
+  invoices = {
+    /**
+     * No description
+     *
+     * @name CreateInvoiceHttpControllerPost
+     * @request POST:/invoices
+     */
+    createInvoiceHttpControllerPost: (data: CreateInvoiceRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/invoices`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindInvoicePaginatedHttpControllerGet
+     * @request GET:/invoices
+     */
+    findInvoicePaginatedHttpControllerGet: (
+      query: FindInvoicePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<InvoicePaginatedResponseDto, any>({
+        path: `/invoices`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateInvoiceHttpControllerPatch
+     * @request PATCH:/invoices/{invoiceId}
+     */
+    updateInvoiceHttpControllerPatch: (invoiceId: string, data: UpdateInvoiceRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invoices/${invoiceId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteInvoiceHttpControllerDelete
+     * @request DELETE:/invoices/{invoiceId}
+     */
+    deleteInvoiceHttpControllerDelete: (invoiceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invoices/${invoiceId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindInvoiceHttpControllerGet
+     * @request GET:/invoices/{invoiceId}
+     */
+    findInvoiceHttpControllerGet: (invoiceId: string, params: RequestParams = {}) =>
+      this.request<InvoiceResponseDto, any>({
+        path: `/invoices/${invoiceId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  invoicesClients = {
+    /**
+     * No description
+     *
+     * @name FindClientToInvoiceHttpControllerGet
+     * @request GET:/invoices-clients
+     */
+    findClientToInvoiceHttpControllerGet: (params: RequestParams = {}) =>
+      this.request<ClientToInvoiceResponseDto, any>({
+        path: `/invoices-clients`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  payments = {
+    /**
+     * No description
+     *
+     * @name CreatePaymentHttpControllerPost
+     * @request POST:/payments
+     */
+    createPaymentHttpControllerPost: (data: CreatePaymentRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/payments`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPaymentPaginatedHttpControllerGet
+     * @request GET:/payments
+     */
+    findPaymentPaginatedHttpControllerGet: (
+      query: FindPaymentPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<PaymentPaginatedResponseDto, any>({
+        path: `/payments`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CancelPaymentHttpControllerPatch
+     * @request PATCH:/payments/{paymentId}
+     */
+    cancelPaymentHttpControllerPatch: (paymentId: string, data: CancelPaymentRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/payments/${paymentId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPaymentHttpControllerGet
+     * @request GET:/payments/{paymentId}
+     */
+    findPaymentHttpControllerGet: (paymentId: string, params: RequestParams = {}) =>
+      this.request<PaymentResponseDto, any>({
+        path: `/payments/${paymentId}`,
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   }

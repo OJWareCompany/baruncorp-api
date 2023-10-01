@@ -5,7 +5,15 @@ import { InvoiceStatusEnum, InvoiceTermsEnum } from '../domain/invoice.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 type TaskSize = 'Major' | 'Minor'
+enum TaskSizeEnum {
+  Major = 'Major',
+  Minor = 'Minor',
+}
 type PricingType = 'Standard' | 'Tiered'
+enum PricingTypeEnum {
+  Standard = 'Standard',
+  Tiered = 'Tiered',
+}
 
 export class InvoiceClientOrganization {
   @ApiProperty()
@@ -49,10 +57,10 @@ export class LineItem {
   @ApiProperty()
   readonly billingCodes: string[]
 
-  @ApiProperty()
+  @ApiProperty({ enum: TaskSizeEnum })
   readonly taskSizeForRevision: TaskSize
 
-  @ApiProperty()
+  @ApiProperty({ enum: PricingTypeEnum })
   readonly pricingType: PricingType
 
   @ApiProperty()
