@@ -7,6 +7,7 @@ export function getModuleFormat(folderName, domainName) {
   return `import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
+import UserMapper from '../users/user.mapper'
 import { Create${pascalDomainName}HttpController } from './commands/create-${domainName}/create-${domainName}.http.controller'
 import { Update${pascalDomainName}HttpController } from './commands/update-${domainName}/update-${domainName}.http.controller'
 import { Delete${pascalDomainName}HttpController } from './commands/delete-${domainName}/delete-${domainName}.http.controller'
@@ -37,7 +38,7 @@ const repositories: Provider[] = [
   },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [${pascalDomainName}Mapper]
+const mappers: Provider[] = [${pascalDomainName}Mapper, UserMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],
