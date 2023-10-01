@@ -23,14 +23,11 @@ export class ${toPascalCase(folderName)}QueryHandler implements IQueryHandler {
 
   async execute(query: ${toPascalCase(folderName)}Query): Promise<Paginated<${toPascalCase(domainName)}s>> {
     const result = await this.prismaService.${toCamelCase(domainName)}s.findMany({
-      where: { id: query.${toCamelCase(domainName)}Id },
       skip: query.offset,
       take: query.limit,
     })
     if (!result) throw new NotFoundException()
-    const totalCount = await this.prismaService.${toCamelCase(domainName)}s.count({
-      where: { id: query.${toCamelCase(domainName)}Id },
-    })
+    const totalCount = await this.prismaService.${toCamelCase(domainName)}s.count()
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
