@@ -77,4 +77,9 @@ export class FindInvoiceHttpController {
  * state
  * taskSizeForRevision
  * pricingType
+ *
+ * Payment invoice 청구금 이상 지불 방지
+ * invoice 청구금 모두 지불시 invoice 상태 paid로 변경
+ *
+ *
  */

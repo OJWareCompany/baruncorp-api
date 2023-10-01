@@ -15,6 +15,7 @@ import { OrderedServiceModule } from './modules/ordered-service/ordered-service.
 import { TaskModule } from './modules/task/task.module'
 import { AssignedTaskModule } from './modules/assigned-task/assigned-task.module'
 import { InvoiceModule } from './modules/invoice/invoice.module'
+import { PaymentModule } from './modules/payment/payment.module'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { InvoiceModule } from './modules/invoice/invoice.module'
     TaskModule,
     AssignedTaskModule,
     InvoiceModule,
+    PaymentModule,
   ],
   controllers: [],
   providers: [

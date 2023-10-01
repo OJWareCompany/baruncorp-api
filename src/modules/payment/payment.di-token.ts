@@ -1,0 +1,1 @@
+export const PAYMENT_REPOSITORY = Symbol('PAYMENT_RPOSITORY')
