@@ -7,6 +7,10 @@ import { INVOICE_REPOSITORY } from '../../invoice.di-token'
 import { InvoiceEntity } from '../../domain/invoice.entity'
 import { CreateInvoiceCommand } from './create-invoice.command'
 import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
+import { JobStatusEnum } from '../../../ordered-job/domain/job.type'
+import { endOfMonth, startOfMonth } from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
+import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
 
 @CommandHandler(CreateInvoiceCommand)
 export class CreateInvoiceService implements ICommandHandler {
@@ -21,6 +25,30 @@ export class CreateInvoiceService implements ICommandHandler {
       ...command,
     })
     await this.invoiceRepo.insert(entity)
+
+    const jobs = await this.prismaService.orderedJobs.findMany({
+      where: {
+        clientOrganizationId: command.clientOrganizationId,
+        createdAt: {
+          gte: zonedTimeToUtc(startOfMonth(command.serviceMonth), 'Etc/UTC'),
+          lte: zonedTimeToUtc(endOfMonth(command.serviceMonth), 'Etc/UTC'),
+        },
+        jobStatus: JobStatusEnum.Completed,
+        invoice: null,
+      },
+    })
+
+    if (!jobs.length) throw new JobNotFoundException()
+
+    await Promise.all(
+      jobs.map(async (job) => {
+        await this.prismaService.orderedJobs.update({
+          where: { id: job.id },
+          data: { invoiceId: entity.id },
+        })
+      }),
+    )
+
     return entity.id
   }
 }

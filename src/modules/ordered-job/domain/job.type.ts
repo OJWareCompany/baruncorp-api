@@ -14,6 +14,7 @@ export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' 
 
 /**
  * 인자로 받지 않아도 만들수 있는 필드는 제외한다.
+ * JobProps에 포함되지 않는 필드나 변형된 필드 제거할것
  */
 export interface CreateJobProps {
   projectId: string
@@ -27,30 +28,20 @@ export interface CreateJobProps {
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
-  projectType: string
+  projectType: string // Type이나 Enum으로 수정하기
   isExpedited: boolean
   updatedBy: string
 }
 
-export interface JobProps {
+export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
   id?: string
-  projectId: string
-  mountingType: string
+  invoiceId: string | null
   jobName: string
   jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
-  propertyFullAddress: string
   jobRequestNumber: number
   assignedTasks: AssignedTask[]
   orderedServices: OrderedService[]
-  deliverablesEmails: string[]
-  systemSize: number | null
-  mailingAddressForWetStamp: Address | null
-  numberOfWetStamp: number | null
-  projectType: string
-  additionalInformationFromClient: string | null
-  clientInfo: ClientInformation
-  updatedBy: string
   receivedAt: Date
-  isExpedited: boolean
   isCurrentJob?: boolean
+  // project?: OrderedProjects | null
 }

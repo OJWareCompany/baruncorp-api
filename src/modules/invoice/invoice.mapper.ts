@@ -58,9 +58,10 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
       discount: 1,
       total: 1,
       clientOrganization: {
-        id: '',
+        id: entity.getProps().clientOrganizationId,
         name: '',
       },
+      lineItems: [],
     })
     return response
   }

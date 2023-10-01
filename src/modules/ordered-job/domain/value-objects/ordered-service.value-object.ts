@@ -1,9 +1,10 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
-import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { OrderedServiceStatus } from '../../../ordered-service/domain/ordered-service.type'
 
 export interface OrderedServiceProps {
   orderedServiceId: string
+  billingCode: string
+  basePrice: number
   serviceId: string
   serviceName: string
   jobId: string
@@ -18,6 +19,14 @@ export interface OrderedServiceProps {
 export class OrderedService extends ValueObject<OrderedServiceProps> {
   get orderedServiceId(): string {
     return this.props.orderedServiceId
+  }
+
+  get basePrice(): number {
+    return this.props.basePrice
+  }
+
+  get billingCode(): string {
+    return this.props.billingCode
   }
 
   get serviceId(): string {

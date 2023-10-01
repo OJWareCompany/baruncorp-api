@@ -46,6 +46,7 @@ model Organizations {
   organizationTypeEntity          OrganizationTypes  @relation(fields: [organizationType], references: [type])
   users                           Users[]
   projects                        OrderedProjects[]
+  invoices                        Invoices[]
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
@@ -464,6 +465,7 @@ model OrderedJobNotes {
 }
 
 model OrderedJobs {
+  invoiceId                                     String?           @map("invoice_id") @db.VarChar(255)
   id                                            String            @id @map("id") @db.VarChar(255)
   projectId                                     String            @map("project_id") @db.VarChar(255)
   isExpedited                                   Boolean           @default(false) @map("is_expedited")
@@ -549,6 +551,7 @@ model OrderedJobs {
   project                                       OrderedProjects?  @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
+  invoice                                       Invoices?         @relation(fields: [invoiceId], references: [id])
 
   @@map("ordered_jobs")
 }
@@ -752,6 +755,8 @@ model Invoices {
   updatedAt            DateTime       @default(now()) @map("updatedAt") @db.Timestamp(0)
   clientOrganizationId String         @map("client_organization_id") @db.VarChar(255)
   serviceMonth         DateTime       @map("service_month") @db.Date
+  organization         Organizations  @relation(fields: [clientOrganizationId], references: [id])
+  jobs                  OrderedJobs[]
 
   @@index([clientOrganizationId], map: "client_organization_id")
   @@map("invoices")

@@ -15,6 +15,7 @@ import { InvoiceMapper } from './invoice.mapper'
 import { FindInvoicePaginatedHttpController } from './queries/find-invoice-paginated/find-invoice.paginated.http.controller'
 import { FindInvoicePaginatedQueryHandler } from './queries/find-invoice-paginated/find-invoice.paginated.query-handler'
 import UserMapper from '../users/user.mapper'
+import { JobMapper } from '../ordered-job/job.mapper'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -32,7 +33,7 @@ const repositories: Provider[] = [
   },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [InvoiceMapper, UserMapper]
+const mappers: Provider[] = [InvoiceMapper, UserMapper, JobMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

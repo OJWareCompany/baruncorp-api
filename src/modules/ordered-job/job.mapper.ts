@@ -17,6 +17,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     const props = entity.getProps()
     return {
       id: props.id,
+      invoiceId: props.invoiceId,
       propertyAddress: props.propertyFullAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
       jobStatus: props.jobStatus,
       additionalInformationFromClient: props.additionalInformationFromClient,
@@ -137,6 +138,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     record.orderedServices.map((orderedService) => {
       orderedServices.push(
         new OrderedService({
+          billingCode: orderedService.service.billingCode,
+          basePrice: Number(orderedService.service.basePrice),
           orderedServiceId: orderedService.id,
           serviceId: orderedService.serviceId,
           serviceName: orderedService.service.name,
@@ -157,6 +160,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: new Date(record.updatedAt),
       props: {
         projectId: record.projectId,
+        invoiceId: record.invoiceId,
         projectType: record.projectType,
         mountingType: record.mountingType,
         jobStatus: record.jobStatus as JobStatus, // TODO: status any

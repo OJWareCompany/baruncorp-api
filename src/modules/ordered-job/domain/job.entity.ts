@@ -20,6 +20,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     const id = v4()
     const props: JobProps = {
       ...create,
+      invoiceId: null,
       jobRequestNumber: ++create.totalOfJobs,
       propertyFullAddress: create.propertyFullAddress,
       jobName: `Job #${create.totalOfJobs} ` + create.propertyFullAddress,
@@ -40,6 +41,28 @@ export class JobEntity extends AggregateRoot<JobProps> {
       }),
     )
     return job
+  }
+
+  get subtotal(): number {
+    return this.props.orderedServices.reduce((pre, cur) => {
+      const price = cur.price ?? 0
+      return pre + price
+    }, 0)
+  }
+
+  get total(): number {
+    return this.props.orderedServices.reduce((pre, cur) => {
+      const price = (cur.priceOverride || cur.price) ?? 0
+      return pre + price
+    }, 0)
+  }
+
+  get discountAmount(): number {
+    return this.subtotal - this.total
+  }
+
+  get billingCodes(): string[] {
+    return this.props.orderedServices.map((orderedService) => orderedService.billingCode)
   }
 
   start(): this {
