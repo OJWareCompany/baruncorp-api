@@ -5,7 +5,7 @@ import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.r
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaymentPaginatedResponseDto } from '../../dtos/payment.paginated.response.dto'
 import { FindPaymentPaginatedRequestDto } from './find-payment.paginated.request.dto'
-import { FindPaymentPaginatedQuery } from './find-payment.paginated.query-handler'
+import { FindPaymentPaginatedQuery, FindPaymentPaginatedReturnType } from './find-payment.paginated.query-handler'
 import { PaymentMethodEnum } from '../../domain/payment.type'
 
 @Controller('payments')
@@ -22,7 +22,7 @@ export class FindPaymentPaginatedHttpController {
       ...queryParams,
     })
 
-    const result: Paginated<Payments> = await this.queryBus.execute(command)
+    const result: Paginated<FindPaymentPaginatedReturnType> = await this.queryBus.execute(command)
 
     return new PaymentPaginatedResponseDto({
       ...queryParams,
@@ -35,6 +35,8 @@ export class FindPaymentPaginatedHttpController {
         paymentDate: item.paymentDate.toISOString(),
         notes: item.notes,
         canceledAt: item.canceledAt?.toISOString() || null,
+        organizationId: item.invoice.organization.id,
+        organizationName: item.invoice.organization.name,
       })),
     })
   }

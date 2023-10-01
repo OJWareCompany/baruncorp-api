@@ -31,6 +31,12 @@ export class PaymentResponseDto {
   @ApiProperty()
   readonly canceledAt: string | null
 
+  @ApiProperty()
+  readonly organizationName: string
+
+  @ApiProperty()
+  readonly organizationId: string
+
   constructor(props: PaymentResponseDto) {
     initialize(this, props)
   }

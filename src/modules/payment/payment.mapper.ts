@@ -46,6 +46,8 @@ export class PaymentMapper implements Mapper<PaymentEntity, Payments, PaymentRes
       paymentDate: props.paymentDate.toISOString(),
       notes: props.notes,
       canceledAt: props.canceledAt?.toISOString() || null,
+      organizationId: 'TEMP props.invoice.organization.id',
+      organizationName: 'TEMP props.invoice.organization.name',
     })
     return response
   }

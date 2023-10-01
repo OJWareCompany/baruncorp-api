@@ -5,6 +5,7 @@ import { PaymentResponseDto } from '../../dtos/payment.response.dto'
 import { FindPaymentRequestDto } from './find-payment.request.dto'
 import { FindPaymentQuery } from './find-payment.query-handler'
 import { PaymentMethodEnum } from '../../domain/payment.type'
+import { FindPaymentPaginatedReturnType } from '../find-payment-paginated/find-payment.paginated.query-handler'
 
 @Controller('payments')
 export class FindPaymentHttpController {
@@ -14,7 +15,7 @@ export class FindPaymentHttpController {
   async get(@Param() request: FindPaymentRequestDto): Promise<PaymentResponseDto> {
     const command = new FindPaymentQuery(request)
 
-    const result: Payments = await this.queryBus.execute(command)
+    const result: FindPaymentPaginatedReturnType = await this.queryBus.execute(command)
 
     return new PaymentResponseDto({
       id: result.id,
@@ -24,6 +25,8 @@ export class FindPaymentHttpController {
       paymentDate: result.paymentDate.toISOString(),
       notes: result.notes,
       canceledAt: result.canceledAt?.toISOString() || null,
+      organizationId: result.invoice.organization.id,
+      organizationName: result.invoice.organization.name,
     })
   }
 }

@@ -757,6 +757,7 @@ model Invoices {
   serviceMonth         DateTime       @map("service_month") @db.Date
   organization         Organizations  @relation(fields: [clientOrganizationId], references: [id])
   jobs                 OrderedJobs[]
+  payments             Payments[]
 
   @@index([clientOrganizationId], map: "client_organization_id")
   @@map("invoices")
@@ -770,6 +771,7 @@ model Payments {
   paymentDate   DateTime              @default(now()) @map("payment_date") @db.Timestamp(0)
   notes         String?               @map("notes") @db.Text
   canceledAt    DateTime?             @map("canceled_at") @db.DateTime(0)
+  invoice       Invoices              @relation(fields: [invoiceId], references: [id])
 
   @@index([invoiceId], map: "invoice_id")
   @@map("payments")
