@@ -1,0 +1,1 @@
+export const INVOICE_REPOSITORY = Symbol('INVOICE_RPOSITORY')

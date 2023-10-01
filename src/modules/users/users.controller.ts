@@ -126,19 +126,20 @@ export class UsersController {
   // }
 
   // TODO: create api doesn't retrieve? how handel conflict error?
-  // @Post('member-licenses')
-  // @UseGuards(AuthGuard)
-  // async postRegisterMemberLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
-  //   return await this.userService.registerLicense(
-  //     dto.userId,
-  //     dto.type,
-  //     dto.issuingCountryName,
-  //     dto.abbreviation,
-  //     dto.priority,
-  //     // new Date(dto.issuedDate),
-  //     dto.expiryDate ? new Date(dto.expiryDate) : null,
-  //   )
-  // }
+  @Post('member-licenses')
+  @UseGuards(AuthGuard)
+  async postRegisterMemberLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
+    console.log(dto)
+    // return await this.userService.registerLicense(
+    //   dto.userId,
+    //   dto.type,
+    //   dto.issuingCountryName,
+    //   dto.abbreviation,
+    //   dto.priority,
+    //   // new Date(dto.issuedDate),
+    //   dto.expiryDate ? new Date(dto.expiryDate) : null,
+    // )
+  }
 
   /**
    * // 추후 개선 사항 -> member-licenses/:licenseId

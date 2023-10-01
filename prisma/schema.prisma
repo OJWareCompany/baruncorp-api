@@ -748,9 +748,10 @@ model Invoices {
   terms                Int            @default(30) @map("terms") @db.UnsignedTinyInt
   dueDate              DateTime?      @map("due_date") @db.Date
   notesToClient        String?        @map("notes_to_client") @db.Text
-  createdAt            DateTime?      @default(now()) @map("createdAt") @db.Timestamp(0)
-  updatedAt            DateTime?      @default(now()) @map("updatedAt") @db.Timestamp(0)
+  createdAt            DateTime       @default(now()) @map("createdAt") @db.Timestamp(0)
+  updatedAt            DateTime       @default(now()) @map("updatedAt") @db.Timestamp(0)
   clientOrganizationId String         @map("client_organization_id") @db.VarChar(255)
+  serviceMonth         DateTime       @map("service_month") @db.Date
 
   @@index([clientOrganizationId], map: "client_organization_id")
   @@map("invoices")
