@@ -34,6 +34,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
     if (!job) throw new JobNotFoundException()
 
     const orderedService = OrderedServiceEntity.create({
+      price: Number(serviceMenu.basePrice),
       serviceId: command.serviceId,
       jobId: command.jobId,
       description: command.description,

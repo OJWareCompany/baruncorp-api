@@ -6,6 +6,7 @@ import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-cr
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
+import { ServiceNotFoundException } from '../../../service/domain/service.error'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -20,13 +21,18 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
    */
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
-    const orderedServiceEntities = event.services.map((service) => {
-      return OrderedServiceEntity.create({
-        serviceId: service.serviceId,
-        description: service.description,
-        jobId: event.aggregateId,
-      })
-    })
+    const orderedServiceEntities = await Promise.all(
+      event.services.map(async (orderedService) => {
+        const service = await this.prismaService.service.findUnique({ where: { id: orderedService.serviceId } })
+        if (!service) throw new ServiceNotFoundException()
+        return OrderedServiceEntity.create({
+          price: Number(service.basePrice),
+          serviceId: orderedService.serviceId,
+          description: orderedService.description,
+          jobId: event.aggregateId,
+        })
+      }),
+    )
     await this.orderedServiceRepo.insert(orderedServiceEntities)
   }
 }
