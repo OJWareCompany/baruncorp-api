@@ -934,6 +934,15 @@ export interface UpdateInvoiceRequestDto {
   notesToClient: string | null
 }
 
+export interface InvoicePayments {
+  invoiceId: string
+  amount: number
+  paymentMethod: 'Credit' | 'Direct'
+  notes: string | null
+  paymentDate: string
+  canceledAt: string | null
+}
+
 export interface InvoiceResponseDto {
   id: string
   status: 'Unissued' | 'Issued' | 'Paid'
@@ -949,6 +958,8 @@ export interface InvoiceResponseDto {
   total: number
   clientOrganization: InvoiceClientOrganization
   lineItems: LineItem[]
+  payments: InvoicePayments[]
+  totalOfPayment: number
 }
 
 export interface InvoicePaginatedResponseDto {
@@ -971,6 +982,10 @@ export interface ClientToInvoice {
 
 export interface ClientToInvoiceResponseDto {
   clientToInvoices: ClientToInvoice[]
+}
+
+export interface IssueInvoiceRequestDto {
+  file: string | null
 }
 
 export interface CreatePaymentRequestDto {
@@ -2523,6 +2538,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/invoices/${invoiceId}`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name IssueInvoiceHttpControllerPatch
+     * @request PATCH:/invoices/{invoiceId}/issue
+     */
+    issueInvoiceHttpControllerPatch: (invoiceId: string, data: IssueInvoiceRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invoices/${invoiceId}/issue`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }
