@@ -23,6 +23,7 @@ import {
 import { FindClientToInvoiceHttpController } from './queries/find-client-to-invoice/find-client-to-invoice.http.controller'
 import { IssueInvoiceHttpController } from './commands/issue-invoice/issue-invoice.http.controller'
 import { IssueInvoiceService } from './commands/issue-invoice/issue-invoice.service'
+import { PayInvoiceWhenPaymentIsCreatedEventHandler } from './application/event-handlers/pay-invoice-when-payment-is-created.domain-event-handler'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -50,7 +51,7 @@ const repositories: Provider[] = [
     useClass: InvoiceRepository,
   },
 ]
-const eventHandlers: Provider[] = []
+const eventHandlers: Provider[] = [PayInvoiceWhenPaymentIsCreatedEventHandler]
 const mappers: Provider[] = [InvoiceMapper, UserMapper, JobMapper]
 
 @Module({

@@ -31,7 +31,7 @@ export class IssueInvoiceService implements ICommandHandler {
     const invoice = await this.prismaService.invoices.findUnique({
       where: { id: command.invoiceId },
     })
-    if (!invoice) throw new NotFoundException()
+    if (!invoice) throw new InvoiceNotFoundException()
 
     const jobs = await this.prismaService.orderedJobs.findMany({
       where: { invoiceId: invoice.id },

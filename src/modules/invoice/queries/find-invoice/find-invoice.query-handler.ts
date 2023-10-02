@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { Invoices, Organizations } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
@@ -8,6 +7,7 @@ import { JobEntity } from '../../../ordered-job/domain/job.entity'
 import { InvoiceResponseDto, LineItem } from '../../dtos/invoice.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
+import { InvoiceNotFoundException } from '../../domain/invoice.error'
 
 export class FindInvoiceQuery {
   readonly invoiceId: string
@@ -25,7 +25,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
     const invoice = await this.prismaService.invoices.findUnique({
       where: { id: query.invoiceId },
     })
-    if (!invoice) throw new NotFoundException()
+    if (!invoice) throw new InvoiceNotFoundException()
 
     const jobs = await this.prismaService.orderedJobs.findMany({
       where: { invoiceId: invoice.id },
@@ -38,7 +38,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       },
     })
 
-    const payments = await this.prismaService.payments.findMany({ where: { invoiceId: invoice.id } })
+    const payments = await this.prismaService.payments.findMany({ where: { invoiceId: invoice.id, canceledAt: null } })
 
     let subtotal = 0
     jobs.map((job) => {
