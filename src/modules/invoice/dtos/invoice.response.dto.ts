@@ -3,6 +3,7 @@ import { IsString, IsOptional, IsNumber } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { InvoiceStatusEnum, InvoiceTermsEnum } from '../domain/invoice.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { PaymentMethodEnum } from '../../payment/domain/payment.type'
 
 type TaskSize = 'Major' | 'Minor'
 enum TaskSizeEnum {
@@ -13,6 +14,27 @@ type PricingType = 'Standard' | 'Tiered'
 enum PricingTypeEnum {
   Standard = 'Standard',
   Tiered = 'Tiered',
+}
+
+export class InvoicePayments {
+  @ApiProperty()
+  invoiceId: string
+
+  @ApiProperty()
+  amount: number
+
+  @ApiProperty({ enum: PaymentMethodEnum })
+  paymentMethod: PaymentMethodEnum
+
+  @ApiProperty()
+  notes: string | null
+
+  @ApiProperty()
+  paymentDate: string
+
+  @ApiProperty()
+  @IsOptional()
+  canceledAt: string | null
 }
 
 export class InvoiceClientOrganization {
@@ -125,6 +147,13 @@ export class InvoiceResponseDto {
 
   @ApiProperty({ type: LineItem, isArray: true })
   readonly lineItems: LineItem[]
+
+  @ApiProperty({ type: InvoicePayments, isArray: true })
+  readonly payments: InvoicePayments[]
+
+  @ApiProperty()
+  @IsNumber()
+  readonly totalOfPayment: number
 
   constructor(props: InvoiceResponseDto) {
     initialize(this, props)

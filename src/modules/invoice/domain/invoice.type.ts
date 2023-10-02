@@ -1,3 +1,5 @@
+import { PaymentVO } from './value-objects/payment.value-object'
+
 export type InvoiceStatus = 'Unissued' | 'Issued' | 'Paid'
 export type InvoiceTerms = 21 | 30
 
@@ -23,4 +25,5 @@ export interface CreateInvoiceProps {
 export interface InvoiceProps extends CreateInvoiceProps {
   status: InvoiceStatusEnum
   dueDate: Date
+  payments: PaymentVO[]
 }

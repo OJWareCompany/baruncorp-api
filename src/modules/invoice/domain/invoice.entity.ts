@@ -12,6 +12,7 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
       ...create,
       dueDate: addDays(create.invoiceDate, create.terms),
       status: InvoiceStatusEnum.Unissued,
+      payments: [],
     }
     return new InvoiceEntity({ id, props })
   }

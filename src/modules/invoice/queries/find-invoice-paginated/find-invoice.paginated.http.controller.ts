@@ -75,6 +75,8 @@ export class FindInvoicePaginatedHttpController {
           price: job.total,
           taskSubtotal: job.subtotal,
         })),
+        payments: [],
+        totalOfPayment: 0,
       })),
     })
   }

@@ -37,6 +37,7 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
         notesToClient: record.notesToClient,
         clientOrganizationId: record.clientOrganizationId,
         serviceMonth: record.serviceMonth,
+        payments: [], //records.payments,
       },
     })
     return entity
@@ -62,6 +63,8 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
         name: '',
       },
       lineItems: [],
+      payments: [],
+      totalOfPayment: 0,
     })
     return response
   }
