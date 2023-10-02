@@ -1,12 +1,45 @@
 version: '3'
 services:
-  api:
+  nginx:
+    image: nginx:alpine
+    restart: always
+    ports:
+        - '80:80'
+        - '443:443'
+    volumes:
+        - ./myweb:/usr/share/nginx/html
+        - ./certbot-etc:/etc/letsencrypt
+        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+          #- ./nginx/proxy.conf:/etc/nginx/proxy.conf
+        #- ./nginx/templates:/etc/nginx/templates
+    #env_file:
+        #- ./.env
+        #- ./config/.nginx.env
+
+  api_prod:
     build:
-      context: ./
+      context: ./baruncorp-api/
       dockerfile: Dockerfile
     tty: true
     restart: always
-    ports:
-      - "${APP_PORT}:${APP_PORT}"
+    command:
+      - bash
+      - -c
+      - |
+          pnpm run start:prod
     env_file:
-      - ./.env
+      - ./baruncorp-api/.env
+
+  api_dev:
+    build:
+      context: ./baruncorp-api-dev/
+      dockerfile: Dockerfile
+    tty: true
+    restart: always
+    command:
+      - bash
+      - -c
+      - |
+          pnpm run start:prod
+    env_file:
+      - ./baruncorp-api-dev/.env
