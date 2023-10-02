@@ -21,6 +21,8 @@ import {
   FindClientToInvoiceQueryHandler,
 } from './queries/find-client-to-invoice/find-client-to-invoice.query-handler'
 import { FindClientToInvoiceHttpController } from './queries/find-client-to-invoice/find-client-to-invoice.http.controller'
+import { IssueInvoiceHttpController } from './commands/issue-invoice/issue-invoice.http.controller'
+import { IssueInvoiceService } from './commands/issue-invoice/issue-invoice.service'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -29,8 +31,14 @@ const httpControllers = [
   FindInvoiceHttpController,
   FindInvoicePaginatedHttpController,
   FindClientToInvoiceHttpController,
+  IssueInvoiceHttpController,
 ]
-const commandHandlers: Provider[] = [CreateInvoiceService, UpdateInvoiceService, DeleteInvoiceService]
+const commandHandlers: Provider[] = [
+  CreateInvoiceService,
+  UpdateInvoiceService,
+  DeleteInvoiceService,
+  IssueInvoiceService,
+]
 const queryHandlers: Provider[] = [
   FindInvoiceQueryHandler,
   FindInvoicePaginatedQueryHandler,

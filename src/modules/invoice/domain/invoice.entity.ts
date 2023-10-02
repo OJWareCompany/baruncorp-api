@@ -17,6 +17,11 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     return new InvoiceEntity({ id, props })
   }
 
+  issue(): this {
+    this.props.status = InvoiceStatusEnum.Issued
+    return this
+  }
+
   setInvoiceDate(invoiceDate: Date) {
     this.props.invoiceDate = invoiceDate
     this.props.dueDate = addDays(invoiceDate, this.props.terms)

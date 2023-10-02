@@ -76,9 +76,9 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
         taskSubtotal: subtotal,
 
         totalJobPriceOverride: null, // TODO: job필드 추가?
-        containsRevisionTask: false, // TODO: 이전 잡에서 같은 태스크 있으면 리비전인데 이걸 매번 반복문 돌아야하나?
+        containsRevisionTask: false, // TODO: 이전 잡에서 같은 태스크 있으면 리비전인데 이걸 매번 반복문 돌아야하나? -> 이건 그냥 필드 추가 하자.
         state: 'California (Mock)', // TODO: 프로젝트에서 state id로 조인
-        taskSizeForRevision: 'Minor', // TODO: 태스크에서 상태 수정 필요
+        taskSizeForRevision: 'Minor', // TODO: 태스크 상태 find
         pricingType: 'Standard', // TODO: 조직별 할인 작업 들어가야 할 수 있음
       }
     })

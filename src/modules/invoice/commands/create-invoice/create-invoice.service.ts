@@ -25,7 +25,6 @@ export class CreateInvoiceService implements ICommandHandler {
     const entity = InvoiceEntity.create({
       ...command,
     })
-    await this.invoiceRepo.insert(entity)
 
     const jobs = await this.prismaService.orderedJobs.findMany({
       where: {
@@ -40,6 +39,8 @@ export class CreateInvoiceService implements ICommandHandler {
     })
 
     if (!jobs.length) throw new JobNotFoundException()
+
+    await this.invoiceRepo.insert(entity)
 
     await Promise.all(
       jobs.map(async (job) => {
