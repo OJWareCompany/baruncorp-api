@@ -711,6 +711,7 @@ export interface JobPaginatedResponseFields {
   isExpedited: boolean
   /** @example "Please check this out." */
   additionalInformationFromClient: string | null
+  jobName: string
 }
 
 export interface JobPaginatedResponseDto {
@@ -737,13 +738,12 @@ export interface LineItem {
   /** @format date-time */
   dateSentToClient: string
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
-  totalJobPriceOverride: number | null
   clientOrganization: InvoiceClientOrganization
   containsRevisionTask: boolean
   propertyType: 'Residential' | 'Commercial'
   state: string
   billingCodes: string[]
-  taskSizeForRevision: 'Major' | 'Minor'
+  taskSizeForRevision: 'Major' | 'Minor' | null
   pricingType: 'Standard' | 'Tiered'
   price: number
   taskSubtotal: number
@@ -829,6 +829,8 @@ export interface CreateOrderedServiceRequestDto {
 export interface UpdateOrderedServiceRequestDto {
   /** @default "" */
   priceOverride: number
+  /** @default null */
+  sizeForRevision: 'Major' | 'Minor' | null
   /** @default "" */
   description: string | null
 }
@@ -935,6 +937,8 @@ export interface UpdateInvoiceRequestDto {
 }
 
 export interface InvoicePayments {
+  id: string
+  paymentName: string
   invoiceId: string
   amount: number
   paymentMethod: 'Credit' | 'Direct'
@@ -945,6 +949,7 @@ export interface InvoicePayments {
 
 export interface InvoiceResponseDto {
   id: string
+  invoiceName: string
   status: 'Unissued' | 'Issued' | 'Paid'
   invoiceDate: string
   terms: 21 | 30
@@ -994,11 +999,6 @@ export interface CreatePaymentRequestDto {
   amount: number
   paymentMethod: 'Credit' | 'Direct'
   notes: string | null
-}
-
-export interface CancelPaymentRequestDto {
-  /** @default "" */
-  id: string
 }
 
 export interface PaymentResponseDto {
@@ -2612,12 +2612,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name CancelPaymentHttpControllerPatch
      * @request PATCH:/payments/{paymentId}
      */
-    cancelPaymentHttpControllerPatch: (paymentId: string, data: CancelPaymentRequestDto, params: RequestParams = {}) =>
+    cancelPaymentHttpControllerPatch: (paymentId: string, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/payments/${paymentId}`,
         method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
         ...params,
       }),
 

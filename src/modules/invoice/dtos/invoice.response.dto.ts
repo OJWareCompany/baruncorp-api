@@ -21,6 +21,9 @@ export class InvoicePayments {
   id: string
 
   @ApiProperty()
+  paymentName: string
+
+  @ApiProperty()
   invoiceId: string
 
   @ApiProperty()
@@ -104,6 +107,9 @@ export class InvoiceResponseDto {
   @ApiProperty()
   @IsString()
   readonly id: string
+
+  @ApiProperty()
+  readonly invoiceName: string
 
   @ApiProperty({ enum: InvoiceStatusEnum })
   readonly status: string

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDate, IsEnum, IsString } from 'class-validator'
+import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
 import { Type } from 'class-transformer'
 import { InvoiceTermsEnum } from '../../domain/invoice.type'
 
@@ -15,6 +15,7 @@ export class CreateInvoiceRequestDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
   readonly notesToClient: string | null
 
   @ApiProperty()

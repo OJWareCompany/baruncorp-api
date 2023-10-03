@@ -12,6 +12,12 @@ export class NumberOfWetStampBadRequestException extends BadRequestException {
   }
 }
 
+export class SystemSizeBadRequestException extends BadRequestException {
+  constructor() {
+    super('Maximum System size is 99999999', '40007')
+  }
+}
+
 export class JobCompletedUpdateException extends BadRequestException {
   constructor() {
     super("Job Completed Can't Update", '40006')

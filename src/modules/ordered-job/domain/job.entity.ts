@@ -7,7 +7,11 @@ import { CreateJobProps, JobProps } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { JobCompletedUpdateException } from './job.error'
+import {
+  JobCompletedUpdateException,
+  NumberOfWetStampBadRequestException,
+  SystemSizeBadRequestException,
+} from './job.error'
 import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
@@ -117,6 +121,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   updateNumberOfWetStamp(numberOfWetStamp: number | null) {
+    if (numberOfWetStamp && numberOfWetStamp > 255) throw new NumberOfWetStampBadRequestException()
     this.props.numberOfWetStamp = numberOfWetStamp
     return
   }
@@ -132,6 +137,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   updateSystemSize(systemSize: number | null): JobEntity {
+    if (systemSize && 99999999 < systemSize) throw new SystemSizeBadRequestException()
     this.props.systemSize = systemSize
     return this
   }

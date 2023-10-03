@@ -37,7 +37,7 @@ export class FindAssignedTaskPaginatedHttpController {
         status: item.status,
         description: item.orderedService.description,
         assigneeId: item.assigneeId,
-        assigneeName: item.user ? item.user.firstName + item.user.lastName : null,
+        assigneeName: item.user ? item.user.firstName + ' ' + item.user.lastName : null,
         startedAt: item.startedAt,
         doneAt: item.doneAt,
       })),

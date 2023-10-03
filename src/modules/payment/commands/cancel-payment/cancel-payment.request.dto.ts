@@ -6,9 +6,3 @@ export class CancelPaymentParamRequestDto {
   @IsString()
   readonly paymentId: string
 }
-
-export class CancelPaymentRequestDto {
-  @ApiProperty({ default: '' })
-  @IsString()
-  readonly id: string
-}

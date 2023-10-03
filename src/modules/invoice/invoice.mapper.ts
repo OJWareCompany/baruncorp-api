@@ -65,6 +65,7 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
       lineItems: [],
       payments: [],
       totalOfPayment: 0,
+      invoiceName: '',
     })
     return response
   }

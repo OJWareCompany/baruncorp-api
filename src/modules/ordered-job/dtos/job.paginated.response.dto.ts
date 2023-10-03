@@ -61,6 +61,9 @@ export class JobPaginatedResponseFields {
 
   @ApiProperty({ example: 'Please check this out.' })
   additionalInformationFromClient: string | null
+
+  @ApiProperty()
+  jobName: string
 }
 
 export class JobPaginatedResponseDto extends PaginatedResponseDto<JobPaginatedResponseFields> {
