@@ -1,10 +1,9 @@
 import { v4 } from 'uuid'
-import { BadRequestException } from '@nestjs/common'
 import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { MountingType } from '../../project/domain/project.type'
+import { MountingType, ProjectPropertyType } from '../../project/domain/project.type'
 import { Address } from '../../organization/domain/value-objects/address.vo'
-import { CreateJobProps, JobProps, JobStatus } from './job.type'
+import { CreateJobProps, JobProps } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
@@ -38,6 +37,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
         mountingType: create.mountingType as MountingType, // TODO: status any
+        projectType: create.projectType as ProjectPropertyType,
       }),
     )
     return job

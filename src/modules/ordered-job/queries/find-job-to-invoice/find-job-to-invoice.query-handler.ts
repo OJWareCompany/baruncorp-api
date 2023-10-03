@@ -35,6 +35,17 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
   ) {}
 
   async execute(query: FindJobToInvoiceQuery): Promise<LineItem[]> {
+    // // 입력받은 값을 UTC로 변환한다, Postman에서 한국 시간을 보내고(헤더에 명시), TimezoneOffset을 사용하여 UTC로 변환.
+    // console.log(query.serviceMonth, '?') // 2023-05-31T14:00:00.000Z, PostMan Input: 2023-05-31 23:00:00
+    // console.log(query.serviceMonth.getTimezoneOffset())
+
+    // // 혹은.. UTC로 표현해주는 것
+    // console.log(startOfMonth(query.serviceMonth)) // 입력받은 날짜를 로컬존으로 인식하여 한번 더 시간이 UTC로 변환됨 (중복해서 변환됨)?
+    // console.log(startOfMonth(query.serviceMonth).getTimezoneOffset())
+
+    // console.log(zonedTimeToUtc(startOfMonth(query.serviceMonth), 'Etc/UTC'))
+    // console.log(zonedTimeToUtc(endOfMonth(query.serviceMonth), 'Etc/UTC'))
+
     const records = await this.prismaService.orderedJobs.findMany({
       include: {
         orderedServices: {
@@ -61,8 +72,6 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
     })
 
     const jobs = records.map(this.jobMapper.toDomain)
-
-    console.log(jobs)
 
     return jobs.map((job) => ({
       jobRequestNumber: job.getProps().jobRequestNumber,

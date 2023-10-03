@@ -11,7 +11,6 @@ import { JobStatusEnum } from '../../../ordered-job/domain/job.type'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
-import { OrderedJobs } from '@prisma/client'
 
 @CommandHandler(CreateInvoiceCommand)
 export class CreateInvoiceService implements ICommandHandler {
@@ -31,7 +30,7 @@ export class CreateInvoiceService implements ICommandHandler {
         clientOrganizationId: command.clientOrganizationId,
         createdAt: {
           gte: zonedTimeToUtc(startOfMonth(command.serviceMonth), 'Etc/UTC'),
-          lte: zonedTimeToUtc(endOfMonth(command.serviceMonth), 'Etc/UTC'),
+          lte: zonedTimeToUtc(endOfMonth(command.serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
         },
         jobStatus: JobStatusEnum.Completed,
         invoice: null,
