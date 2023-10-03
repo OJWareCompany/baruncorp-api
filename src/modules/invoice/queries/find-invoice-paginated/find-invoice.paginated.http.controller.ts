@@ -19,7 +19,7 @@ export class FindInvoicePaginatedHttpController {
     const command = new FindInvoicePaginatedQuery({
       ...queryParams,
     })
-
+    console.log(22)
     const result: FindInvoidPaginatedReturnType = await this.queryBus.execute(command)
 
     return new InvoicePaginatedResponseDto({

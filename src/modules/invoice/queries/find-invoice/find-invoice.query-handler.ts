@@ -4,10 +4,11 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { JobEntity } from '../../../ordered-job/domain/job.entity'
-import { InvoiceResponseDto, LineItem } from '../../dtos/invoice.response.dto'
+import { InvoiceResponseDto, LineItem, TaskSizeEnum } from '../../dtos/invoice.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
+import { OrderedServiceSizeForRevisionEnum } from '../../../ordered-service/domain/ordered-service.type'
 
 export class FindInvoiceQuery {
   readonly invoiceId: string
@@ -54,34 +55,60 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
 
     const discountAmount = subtotal - total
 
-    const lineItems: LineItem[] = jobs.map((job) => {
-      let subtotal = 0
-      job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.price ?? 0)))
-      let total = 0
-      job.orderedServices.map(
-        (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),
-      )
-      return {
-        jobRequestNumber: job.jobRequestNumber,
-        description: job.jobName,
-        dateSentToClient: job.updatedAt,
-        mountingType: job.mountingType as MountingTypeEnum,
-        clientOrganization: {
-          id: job.clientOrganizationId,
-          name: job.clientOrganizationName,
-        },
-        propertyType: job.projectType as ProjectPropertyTypeEnum,
-        billingCodes: job.orderedServices.map((orderedService) => orderedService.service.billingCode),
-        price: total,
-        taskSubtotal: subtotal,
+    // TODO: 조회에서 단순 조회가 아닌 계산 로직이 생긴다. 이게 맞나
+    const lineItems: LineItem[] = await Promise.all(
+      jobs.map(async (job) => {
+        let subtotal = 0
+        job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.price ?? 0)))
+        let total = 0
+        job.orderedServices.map(
+          (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),
+        )
 
-        totalJobPriceOverride: null, // TODO: job필드 추가?
-        containsRevisionTask: false, // TODO: 이전 잡에서 같은 태스크 있으면 리비전인데 이걸 매번 반복문 돌아야하나? -> 이건 그냥 필드 추가 하자.
-        state: 'California (Mock)', // TODO: 프로젝트에서 state id로 조인
-        taskSizeForRevision: 'Minor', // TODO: 태스크 상태 find
-        pricingType: 'Standard', // TODO: 조직별 할인 작업 들어가야 할 수 있음
-      }
-    })
+        const isContainsRevisionTask = job.orderedServices.find((orderedService) => orderedService.isRevision)
+
+        const sizeForRevision = job.orderedServices.find(
+          (orderedService) =>
+            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
+        )
+          ? TaskSizeEnum.Major
+          : job.orderedServices.find(
+              (orderedService) =>
+                orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
+            )
+          ? TaskSizeEnum.Minor
+          : null
+
+        const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.projectId } })
+
+        let stateName = 'unknown'
+        if (project?.stateId) {
+          const ahjnote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: project.stateId } })
+          stateName = ahjnote?.name || 'unknown'
+        }
+
+        return {
+          jobRequestNumber: job.jobRequestNumber,
+          description: job.jobName,
+          dateSentToClient: job.updatedAt,
+          mountingType: job.mountingType as MountingTypeEnum,
+          clientOrganization: {
+            id: job.clientOrganizationId,
+            name: job.clientOrganizationName,
+          },
+          propertyType: job.projectType as ProjectPropertyTypeEnum,
+          billingCodes: job.orderedServices.map((orderedService) => orderedService.service.billingCode),
+          price: total,
+          taskSubtotal: subtotal,
+
+          // totalJobPriceOverride: null, // TODO: job필드 추가? -> X Job의 Service 가격을 수정하는 방식으로.
+          state: stateName,
+          containsRevisionTask: !!isContainsRevisionTask,
+          taskSizeForRevision: sizeForRevision,
+          pricingType: 'Standard', // TODO: 조직별 할인 작업 들어가야 할 수 있음
+        }
+      }),
+    )
 
     return {
       id: invoice.id,

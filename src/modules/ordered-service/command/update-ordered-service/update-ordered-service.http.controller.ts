@@ -23,6 +23,7 @@ export class UpdateOrderedServiceHttpController {
       orderedServiceId: param.orderedServiceId,
       priceOverride: request.priceOverride,
       description: request.description,
+      sizeForRevision: request.sizeForRevision,
     })
     await this.commandBus.execute(command)
   }

@@ -29,7 +29,15 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
           if (!service) throw new ServiceNotFoundException()
           basePrice = Number(service.basePrice)
         }
+
+        const preOrderedServices = await this.prismaService.orderedServices.findMany({
+          where: { projectId: event.projectId, serviceId: orderedService.serviceId },
+        })
+
         return OrderedServiceEntity.create({
+          projectId: event.projectId,
+          isRevision: !!preOrderedServices.length,
+          sizeForRevision: null,
           price: basePrice,
           serviceId: orderedService.serviceId,
           description: orderedService.description,

@@ -33,7 +33,14 @@ export class CreateOrderedServiceService implements ICommandHandler {
     const job = await this.prismaService.orderedJobs.findUnique({ where: { id: command.jobId } })
     if (!job) throw new JobNotFoundException()
 
+    const preOrderedServices = await this.prismaService.orderedServices.findMany({
+      where: { projectId: job.projectId, serviceId: command.serviceId },
+    })
+
     const orderedService = OrderedServiceEntity.create({
+      projectId: job.projectId,
+      isRevision: !!preOrderedServices.length,
+      sizeForRevision: null,
       price: Number(serviceMenu.basePrice),
       serviceId: command.serviceId,
       jobId: command.jobId,

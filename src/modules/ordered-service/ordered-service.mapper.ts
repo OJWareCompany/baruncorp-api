@@ -3,7 +3,11 @@ import { AssignedTasks, OrderedServices, Prisma } from '@prisma/client'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { OrderedServiceEntity } from './domain/ordered-service.entity'
 import { OrderedServiceResponseDto } from './dtos/ordered-service.response.dto'
-import { OrderedServiceStatus } from './domain/ordered-service.type'
+import {
+  OrderedServiceSizeForRevision,
+  OrderedServiceSizeForRevisionEnum,
+  OrderedServiceStatus,
+} from './domain/ordered-service.type'
 
 @Injectable()
 export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, OrderedServices, OrderedServiceResponseDto> {
@@ -12,6 +16,9 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
     return {
       id: props.id,
       serviceId: props.serviceId,
+      isRevision: props.isRevision,
+      sizeForRevision: props.sizeForRevision,
+      projectId: props.projectId,
       jobId: props.jobId,
       description: props.description,
       price: props.price ? new Prisma.Decimal(props.price) : null,
@@ -27,7 +34,12 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       id: record.id,
       props: {
         serviceId: record.serviceId,
+        projectId: record.projectId,
         jobId: record.jobId,
+        isRevision: record.isRevision,
+        sizeForRevision: record.sizeForRevision
+          ? OrderedServiceSizeForRevisionEnum[record.sizeForRevision as OrderedServiceSizeForRevision]
+          : null,
         description: record.description,
         price: Number(record.price),
         priceOverride: Number(record.priceOverride),

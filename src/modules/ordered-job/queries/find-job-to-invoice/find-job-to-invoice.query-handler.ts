@@ -9,13 +9,14 @@ import { JobStatusEnum } from '../../domain/job.type'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobMapper } from '../../job.mapper'
 import { PrismaService } from '../../../database/prisma.service'
-import { LineItem } from '../../../invoice/dtos/invoice.response.dto'
+import { LineItem, TaskSizeEnum } from '../../../invoice/dtos/invoice.response.dto'
 import {
   MountingType,
   MountingTypeEnum,
   ProjectPropertyType,
   ProjectPropertyTypeEnum,
 } from '../../../project/domain/project.type'
+import { OrderedServiceSizeForRevisionEnum } from '../../../ordered-service/domain/ordered-service.type'
 
 export class FindJobToInvoiceQuery {
   readonly clientOrganizationId: string
@@ -46,7 +47,7 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
     // console.log(zonedTimeToUtc(startOfMonth(query.serviceMonth), 'Etc/UTC'))
     // console.log(zonedTimeToUtc(endOfMonth(query.serviceMonth), 'Etc/UTC'))
 
-    const records = await this.prismaService.orderedJobs.findMany({
+    const jobs = await this.prismaService.orderedJobs.findMany({
       include: {
         orderedServices: {
           include: {
@@ -71,34 +72,65 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
       },
     })
 
-    const jobs = records.map(this.jobMapper.toDomain)
+    let subtotal = 0
+    jobs.map((job) => {
+      job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.price ?? 0)))
+    })
 
-    return jobs.map((job) => ({
-      jobRequestNumber: job.getProps().jobRequestNumber,
-      description: job.getProps().jobName,
-      dateSentToClient: job.getProps().updatedAt,
-      mountingType:
-        (job.getProps().mountingType as MountingType) === 'Ground Mount'
-          ? MountingTypeEnum.Ground_Mount
-          : (job.getProps().mountingType as MountingType) === 'Roof Mount'
-          ? MountingTypeEnum.Roof_Mount
-          : MountingTypeEnum.RG_Mount,
-      totalJobPriceOverride: null, // TODO: job필드 추가?
-      clientOrganization: {
-        id: job.getProps().clientInfo.clientOrganizationId,
-        name: job.getProps().clientInfo.clientOrganizationName,
-      },
-      containsRevisionTask: false, // TODO
-      propertyType:
-        (job.getProps().projectType as ProjectPropertyType) === 'Commercial'
-          ? ProjectPropertyTypeEnum.Commercial
-          : ProjectPropertyTypeEnum.Residential,
-      state: 'California (Mock)', // TODO
-      billingCodes: job.billingCodes,
-      taskSizeForRevision: 'Minor', // TODO
-      pricingType: 'Standard', // TODO
-      price: job.total,
-      taskSubtotal: job.subtotal,
-    }))
+    let total = 0
+    jobs.map((job) => {
+      job.orderedServices.map(
+        (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),
+      )
+    })
+
+    // const jobs = records.map(this.jobMapper.toDomain)
+
+    return await Promise.all(
+      jobs.map(async (job) => {
+        const isContainsRevisionTask = job.orderedServices.find((orderedService) => orderedService.isRevision)
+
+        const sizeForRevision = job.orderedServices.find(
+          (orderedService) =>
+            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
+        )
+          ? TaskSizeEnum.Major
+          : job.orderedServices.find(
+              (orderedService) =>
+                orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
+            )
+          ? TaskSizeEnum.Minor
+          : null
+
+        const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.projectId } })
+        let stateName = 'unknown'
+        if (project?.stateId) {
+          console.log(project.stateId)
+          const ahjnote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: project.stateId } })
+          stateName = ahjnote?.name || 'unknown'
+        }
+
+        return {
+          jobRequestNumber: job.jobRequestNumber,
+          description: job.jobName,
+          dateSentToClient: job.updatedAt,
+          mountingType: job.mountingType as MountingTypeEnum,
+          clientOrganization: {
+            id: job.clientOrganizationId,
+            name: job.clientOrganizationName,
+          },
+          propertyType: job.projectType as ProjectPropertyTypeEnum,
+          billingCodes: job.orderedServices.map((orderedService) => orderedService.service.billingCode),
+          price: total,
+          taskSubtotal: subtotal,
+
+          // totalJobPriceOverride: null, // TODO: job필드 추가? -> X Job의 Service 가격을 수정하는 방식으로.
+          state: stateName,
+          containsRevisionTask: !!isContainsRevisionTask,
+          taskSizeForRevision: sizeForRevision,
+          pricingType: 'Standard', // TODO: 조직별 할인 작업 들어가야 할 수 있음
+        }
+      }),
+    )
   }
 }

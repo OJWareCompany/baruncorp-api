@@ -5,18 +5,21 @@ import { InvoiceStatusEnum, InvoiceTermsEnum } from '../domain/invoice.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { PaymentMethodEnum } from '../../payment/domain/payment.type'
 
-type TaskSize = 'Major' | 'Minor'
-enum TaskSizeEnum {
+export type TaskSize = 'Major' | 'Minor'
+export enum TaskSizeEnum {
   Major = 'Major',
   Minor = 'Minor',
 }
-type PricingType = 'Standard' | 'Tiered'
-enum PricingTypeEnum {
+export type PricingType = 'Standard' | 'Tiered'
+export enum PricingTypeEnum {
   Standard = 'Standard',
   Tiered = 'Tiered',
 }
 
 export class InvoicePayments {
+  @ApiProperty()
+  id: string
+
   @ApiProperty()
   invoiceId: string
 
@@ -60,9 +63,9 @@ export class LineItem {
   @ApiProperty({ enum: MountingTypeEnum })
   readonly mountingType: MountingTypeEnum // 인보이스 요구사항 확인 필요
 
-  @ApiProperty()
-  @IsOptional()
-  readonly totalJobPriceOverride: number | null
+  // @ApiProperty()
+  // @IsOptional()
+  // readonly totalJobPriceOverride: number | null
 
   @ApiProperty({ type: InvoiceClientOrganization })
   readonly clientOrganization: InvoiceClientOrganization
@@ -79,8 +82,9 @@ export class LineItem {
   @ApiProperty()
   readonly billingCodes: string[]
 
-  @ApiProperty({ enum: TaskSizeEnum })
-  readonly taskSizeForRevision: TaskSize
+  @ApiProperty({ enum: TaskSizeEnum, nullable: true })
+  @IsOptional()
+  readonly taskSizeForRevision: TaskSize | null
 
   @ApiProperty({ enum: PricingTypeEnum })
   readonly pricingType: PricingType

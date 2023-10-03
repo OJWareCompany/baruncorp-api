@@ -6,6 +6,7 @@ import { UpdateOrderedServiceCommand } from './update-ordered-service.command'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
+import { ProjectNotFoundException } from '../../../project/domain/project.error'
 
 @CommandHandler(UpdateOrderedServiceCommand)
 export class UpdateOrderedServiceService implements ICommandHandler {
@@ -18,8 +19,15 @@ export class UpdateOrderedServiceService implements ICommandHandler {
   async execute(command: UpdateOrderedServiceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
+
+    const project = await this.prismaService.orderedProjects.findUnique({
+      where: { id: orderedService.getProps().projectId },
+    })
+    if (!project) throw new ProjectNotFoundException()
+
     orderedService.setPriceOverride(command.priceOverride)
     orderedService.setDescription(command.description)
+    orderedService.setTaskSizeForRevision(command.sizeForRevision)
     await this.orderedServiceRepo.update(orderedService)
   }
 }

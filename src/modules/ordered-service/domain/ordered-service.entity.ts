@@ -1,6 +1,10 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateOrderedServiceProps, OrderedServiceProps } from './ordered-service.type'
+import {
+  CreateOrderedServiceProps,
+  OrderedServiceProps,
+  OrderedServiceSizeForRevisionEnum,
+} from './ordered-service.type'
 import { NegativeNumberException } from '../../../libs/exceptions/exceptions'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import { OrderedServiceAlreadyCompletedException } from './ordered-service.error'
@@ -66,6 +70,11 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
         jobId: this.props.jobId,
       }),
     )
+    return this
+  }
+
+  setTaskSizeForRevision(sizeForRevision: OrderedServiceSizeForRevisionEnum | null): this {
+    this.props.sizeForRevision = this.props.isRevision ? sizeForRevision : null
     return this
   }
 
