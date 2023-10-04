@@ -81,7 +81,7 @@ export class IssueInvoiceService implements ICommandHandler {
       discount: $${subtotal - total}
       total: $${total}
       `,
-      attachments: command.files,
+      attachments: command.attachments,
     }
 
     transporter.sendMail(mailOptions, function (error, info) {

@@ -996,8 +996,17 @@ export interface ClientToInvoiceResponseDto {
   clientToInvoices: ClientToInvoice[]
 }
 
+export interface Attachments {
+  filename?: string
+  content?: string
+  path?: string
+  contentType?: string
+  encoding?: string
+  raw?: string
+}
+
 export interface IssueInvoiceRequestDto {
-  files: string[]
+  attachments: Attachments[]
 }
 
 export interface CreatePaymentRequestDto {
