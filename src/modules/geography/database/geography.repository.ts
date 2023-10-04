@@ -173,7 +173,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
       },
       where: { ...where },
       orderBy: {
-        id: 'desc',
+        createdAt: 'desc',
       },
       skip: offset,
       take: pageSize,

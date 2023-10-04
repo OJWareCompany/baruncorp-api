@@ -1,6 +1,5 @@
 import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { Payments } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
 import { FindPaymentPaginatedReturnType } from '../find-payment-paginated/find-payment.paginated.query-handler'

@@ -9,8 +9,6 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/doma
 import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
 import { OrderedServiceSizeForRevisionEnum } from '../../../ordered-service/domain/ordered-service.type'
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
-import { format } from 'date-fns'
 import { formatDate, formatDateWithTime } from '../../../../libs/utils/formatDate'
 
 export class FindInvoiceQuery {
@@ -40,13 +38,24 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
           },
         },
       },
+      orderBy: {
+        createdAt: 'desc',
+      },
     })
 
     const organization = await this.prismaService.organizations.findUnique({
       where: { id: jobs[0].clientOrganizationId },
     })
 
-    const payments = await this.prismaService.payments.findMany({ where: { invoiceId: invoice.id, canceledAt: null } })
+    const payments = await this.prismaService.payments.findMany({
+      where: { invoiceId: invoice.id, canceledAt: null },
+      orderBy: { paymentDate: 'desc' },
+    })
+
+    const paymentsWithCanceled = await this.prismaService.payments.findMany({
+      where: { invoiceId: invoice.id },
+      orderBy: { paymentDate: 'desc' },
+    })
 
     let subtotal = 0
     jobs.map((job) => {
@@ -138,7 +147,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
         name: jobs[0].clientOrganizationName,
       },
       lineItems: lineItems,
-      payments: payments.map((payment) => ({
+      payments: paymentsWithCanceled.map((payment) => ({
         ...payment,
         paymentName: organization
           ? organization.name + ' ' + formatDateWithTime(payment.paymentDate)

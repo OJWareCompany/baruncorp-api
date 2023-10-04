@@ -2,7 +2,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobMapper } from '../../../ordered-job/job.mapper'
-import { ClientToInvoice, ClientToInvoiceResponseDto } from '../../dtos/client-to-invoice.response.dto'
+import { ClientToInvoiceResponseDto } from '../../dtos/client-to-invoice.response.dto'
 
 export class FindClientToInvoiceQuery {
   constructor(props: FindClientToInvoiceQuery) {
@@ -15,12 +15,14 @@ export class FindClientToInvoiceQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService, private readonly jobMapper: JobMapper) {}
 
   async execute(query: FindClientToInvoiceQuery): Promise<any> {
+    // AND created_at < DATE_FORMAT(CURDATE(), '%Y-%m-01')
     const jobs = (await this.prismaService.$queryRaw`
     SELECT id, client_organization_id, created_at
     FROM ordered_jobs
     WHERE job_status = 'Completed'
     AND invoice_id IS NULL
-    group by client_organization_id, DATE_FORMAT(created_at, '%Y-%m');
+    GROUP BY client_organization_id, DATE_FORMAT(created_at, '%Y-%m')
+    ORDER BY created_at DESC;
     `) as {
       id: string
       client_organization_id: string
@@ -29,6 +31,7 @@ export class FindClientToInvoiceQueryHandler implements IQueryHandler {
 
     const jobs2 = await this.prismaService.orderedJobs.findMany({
       where: { id: { in: jobs.map((job) => job.id) } },
+      orderBy: { createdAt: 'desc' },
     })
 
     const result: ClientToInvoiceResponseDto = {

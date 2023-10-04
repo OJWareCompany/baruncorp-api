@@ -27,6 +27,7 @@ export class FindPaymentPaginatedQueryHandler implements IQueryHandler {
           },
         },
       },
+      orderBy: { paymentDate: 'desc' },
       skip: query.offset,
       take: query.limit,
     })
