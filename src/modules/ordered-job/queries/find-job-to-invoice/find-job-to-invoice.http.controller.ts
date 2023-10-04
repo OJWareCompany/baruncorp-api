@@ -4,15 +4,16 @@ import { FindJobToInvoiceRequestParamDto } from './find-job-to-invoice.request.p
 import { FindJobToInvoiceQuery } from './find-job-to-invoice.query-handler'
 import { JobMapper } from '../../job.mapper'
 import { LineItem } from '../../../invoice/dtos/invoice.response.dto'
+import { JobToInvoiceResponseDto } from '../../dtos/job-to-invoice.response.dto'
 
 @Controller('jobs-to-invoice')
 export class FindJobToInvoiceHttpController {
   constructor(private readonly queryBus: QueryBus, private readonly jobMapper: JobMapper) {}
 
   @Get('')
-  async findJob(@Query() request: FindJobToInvoiceRequestParamDto): Promise<LineItem[]> {
+  async findJob(@Query() request: FindJobToInvoiceRequestParamDto): Promise<JobToInvoiceResponseDto> {
     const query = new FindJobToInvoiceQuery({ ...request })
-    const result: LineItem[] = await this.queryBus.execute(query)
+    const result: JobToInvoiceResponseDto = await this.queryBus.execute(query)
     return result
   }
 }

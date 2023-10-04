@@ -749,6 +749,13 @@ export interface LineItem {
   taskSubtotal: number
 }
 
+export interface JobToInvoiceResponseDto {
+  items: LineItem[]
+  subtotal: number
+  discount: number
+  total: number
+}
+
 export interface CreateJobNoteRequestDto {
   /** @default "what do you think about Jazz?" */
   content: string
@@ -2133,7 +2140,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindJobToInvoiceHttpControllerFindJobParams,
       params: RequestParams = {},
     ) =>
-      this.request<LineItem[], any>({
+      this.request<JobToInvoiceResponseDto, any>({
         path: `/jobs-to-invoice`,
         method: 'GET',
         query: query,
