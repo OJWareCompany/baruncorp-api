@@ -1,4 +1,4 @@
-import { ProjectPropertyType, MountingType } from '../../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { Address } from './value-objects/address.vo'
 
 export interface OrganizationProps {
@@ -14,8 +14,8 @@ export interface OrganizationProps {
   isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
-  projectPropertyTypeDefaultValue: ProjectPropertyType | null
-  mountingTypeDefaultValue: MountingType | null
+  projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
+  mountingTypeDefaultValue: MountingTypeEnum | null
 }
 
 export interface CreateOrganizationProps {
@@ -31,6 +31,6 @@ export interface CreateOrganizationProps {
   isRevisionRevenueShare: boolean | null
   invoiceRecipient: string | null
   invoiceRecipientEmail: string | null
-  projectPropertyTypeDefaultValue: ProjectPropertyType | null
-  mountingTypeDefaultValue: MountingType | null
+  projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
+  mountingTypeDefaultValue: MountingTypeEnum | null
 }

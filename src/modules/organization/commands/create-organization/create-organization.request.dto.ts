@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsObject, IsOptional, IsString, Matches } from 'class-validator'
+import { IsEmail, IsEnum, IsObject, IsOptional, IsString, Matches } from 'class-validator'
 import { AddressDto } from '../../../ordered-job/dtos/address.dto'
+import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 
 export class CreateOrganizationRequestDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
@@ -32,16 +33,14 @@ export class CreateOrganizationRequestDto {
   readonly organizationType: string
 
   @ApiProperty({ default: 'Commercial' })
-  @IsString()
-  @Matches(/(Commercial|Residential)/, { message: 'Project Type Not Found' })
+  @IsEnum(ProjectPropertyTypeEnum)
   @IsOptional()
-  readonly projectPropertyTypeDefaultValue: string | null
+  readonly projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
 
   @ApiProperty({ default: 'Roof Mount' })
-  @IsString()
-  @Matches(/(Roof Mount|Ground Mount|Roof Mount & Ground Mount)/, { message: 'Mounting Type Not Found' })
+  @IsEnum(MountingTypeEnum)
   @IsOptional()
-  readonly mountingTypeDefaultValue: string | null
+  readonly mountingTypeDefaultValue: MountingTypeEnum | null
 
   // @ApiProperty({ default: true, description: '필요한지 확인 필요' })
   // @IsBoolean()

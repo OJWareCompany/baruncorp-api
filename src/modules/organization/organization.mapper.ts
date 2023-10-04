@@ -6,7 +6,12 @@ import { OrganizationEntity } from './domain/organization.entity'
 import { CreateOrganizationProps } from './domain/organization.types'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
 import { Mapper } from '@libs/ddd/mapper.interface'
-import { MountingType, ProjectPropertyType } from '../project/domain/project.type'
+import {
+  MountingType,
+  MountingTypeEnum,
+  ProjectPropertyType,
+  ProjectPropertyTypeEnum,
+} from '../project/domain/project.type'
 import { OrganizationPaginatedResponseFields } from './dtos/organization.paginated.response.dto'
 
 /**
@@ -59,8 +64,12 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     const props: CreateOrganizationProps = {
       name: record.name,
       description: record.description,
-      mountingTypeDefaultValue: record.mountingTypeDefaultValue as MountingType,
-      projectPropertyTypeDefaultValue: record.projectPropertyTypeDefaultValue as ProjectPropertyType,
+      mountingTypeDefaultValue: record.mountingTypeDefaultValue
+        ? (record.mountingTypeDefaultValue as MountingTypeEnum)
+        : null,
+      projectPropertyTypeDefaultValue: record.projectPropertyTypeDefaultValue
+        ? (record.projectPropertyTypeDefaultValue as ProjectPropertyTypeEnum)
+        : null,
       email: record.email,
       phoneNumber: record.phoneNumber,
       organizationType: record.organizationType,

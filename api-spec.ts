@@ -203,33 +203,6 @@ export interface AddressDto {
   coordinates: number[]
 }
 
-export interface CreateOrganizationRequestDto {
-  /** @default "hyomin@ojware.com" */
-  email: string | null
-  address: AddressDto
-  /** @default "01012341234" */
-  phoneNumber: string | null
-  /** @default "OJ Tech" */
-  name: string
-  /** @default "This is about organization..." */
-  description: string | null
-  /**
-   * @default "client"
-   * @pattern /(client|individual|outsourcing)/
-   */
-  organizationType: string
-  /**
-   * @default "Commercial"
-   * @pattern /(Commercial|Residential)/
-   */
-  projectPropertyTypeDefaultValue: string | null
-  /**
-   * @default "Roof Mount"
-   * @pattern /(Roof Mount|Ground Mount|Roof Mount & Ground Mount)/
-   */
-  mountingTypeDefaultValue: string | null
-}
-
 export interface OrganizationResponseDto {
   id: string
   name: string
@@ -264,6 +237,41 @@ export interface OrganizationPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: OrganizationPaginatedResponseFields[]
+}
+
+export interface CreateOrganizationRequestDto {
+  /** @default "hyomin@ojware.com" */
+  email: string | null
+  address: AddressDto
+  /** @default "01012341234" */
+  phoneNumber: string | null
+  /** @default "OJ Tech" */
+  name: string
+  /** @default "This is about organization..." */
+  description: string | null
+  /**
+   * @default "client"
+   * @pattern /(client|individual|outsourcing)/
+   */
+  organizationType: string
+  /** @default "Commercial" */
+  projectPropertyTypeDefaultValue: 'Residential' | 'Commercial' | null
+  /** @default "Roof Mount" */
+  mountingTypeDefaultValue: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount' | null
+}
+
+export interface UpdateOrganizationRequestDto {
+  /** @default "hyomin@ojware.com" */
+  email: string | null
+  address: AddressDto
+  /** @default "01012341234" */
+  phoneNumber: string | null
+  /** @default "This is about organization..." */
+  description: string | null
+  /** @default "Commercial" */
+  projectPropertyTypeDefaultValue: 'Residential' | 'Commercial' | null
+  /** @default "Roof Mount" */
+  mountingTypeDefaultValue: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount' | null
 }
 
 export interface PositionResponseDto {
@@ -1693,19 +1701,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name CreateOrganizationHttpControllerPostCreateOrganization
-     * @request POST:/organizations
+     * @name FindOrganizationHttpControllerGet
+     * @summary find organization.
+     * @request GET:/organizations/{organizationId}
      */
-    createOrganizationHttpControllerPostCreateOrganization: (
-      data: CreateOrganizationRequestDto,
+    findOrganizationHttpControllerGet: (organizationId: string, params: RequestParams = {}) =>
+      this.request<OrganizationResponseDto, any>({
+        path: `/organizations/${organizationId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateOrganizationHttpControllerPatch
+     * @request PATCH:/organizations/{organizationId}
+     */
+    updateOrganizationHttpControllerPatch: (
+      organizationId: string,
+      data: UpdateOrganizationRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<IdResponse, any>({
-        path: `/organizations`,
-        method: 'POST',
+      this.request<void, any>({
+        path: `/organizations/${organizationId}`,
+        method: 'PATCH',
         body: data,
         type: ContentType.Json,
-        format: 'json',
         ...params,
       }),
 
@@ -1731,14 +1754,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name FindOrganizationHttpControllerGet
-     * @summary find organization.
-     * @request GET:/organizations/{organizationId}
+     * @name CreateOrganizationHttpControllerPostCreateOrganization
+     * @request POST:/organizations
      */
-    findOrganizationHttpControllerGet: (organizationId: string, params: RequestParams = {}) =>
-      this.request<OrganizationResponseDto, any>({
-        path: `/organizations/${organizationId}`,
-        method: 'GET',
+    createOrganizationHttpControllerPostCreateOrganization: (
+      data: CreateOrganizationRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/organizations`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

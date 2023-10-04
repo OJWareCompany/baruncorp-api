@@ -10,4 +10,5 @@ export interface OrganizationRepositoryPort {
   findOneByName(name: string): Promise<OrganizationEntity | null>
   findAll(): Promise<OrganizationEntity[]>
   insertOrganization(props: OrganizationEntity): Promise<void>
+  update(entity: OrganizationEntity): Promise<void>
 }

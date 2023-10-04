@@ -19,6 +19,12 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     private readonly userRoleMapper: UserRoleMapper,
     private readonly organizationMapper: OrganizationMapper,
   ) {}
+
+  async update(entity: OrganizationEntity): Promise<void> {
+    const record = this.organizationMapper.toPaginatedResponse(entity)
+    await this.prismaService.organizations.update({ where: { id: record.id }, data: record })
+  }
+
   async findAll(): Promise<OrganizationEntity[]> {
     const records = await this.prismaService.organizations.findMany()
     return records.map(this.organizationMapper.toDomain)

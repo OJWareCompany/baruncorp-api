@@ -10,7 +10,6 @@ import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationService } from './organization.service'
-import { OrganizationController } from './organization.controller'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepository } from './database/organization.repository'
 import { OrganizationMapper } from './organization.mapper'
@@ -24,12 +23,16 @@ import { FindMemberPaginatedHttpController } from './queries/find-member-paginza
 import { FindMemberPaginatedQueryHandler } from './queries/find-member-paginzated/find-member-paginated.query-handler'
 import { FindMyMemberPaginatedHttpController } from './queries/find-my-member-paginated/find-my-member-paginated.http.controller'
 import { FindMyMemberPaginatedQueryHandler } from './queries/find-my-member-paginated/find-my-member-paginated.query-handler'
+import { UpdateOrganizationHttpController } from './commands/update-organization/update-organization.controller.http'
+import { UpdateOrganizationService } from './commands/update-organization/update-organization.service'
 
 const httpControllers = [
   FindOrganizationHttpController,
   FindOrganizationPaginatedHttpController,
   FindMemberPaginatedHttpController,
   FindMyMemberPaginatedHttpController,
+  CreateOrganizationHttpController,
+  UpdateOrganizationHttpController,
 ]
 
 const queryHandlers: Provider[] = [
@@ -45,14 +48,14 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
-const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService]
+const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService, UpdateOrganizationService]
 
 const mappers: Provider[] = [UserMapper, PositionMapper, UserRoleMapper, OrganizationMapper, LicenseMapper]
 
 @Module({
   imports: [CqrsModule],
   providers: [...providers, ...queryHandlers, ...repositories, ...mappers],
-  controllers: [OrganizationController, CreateOrganizationHttpController, ...httpControllers],
+  controllers: [...httpControllers],
   exports: [OrganizationService],
 })
 export class OrganizationModule {}

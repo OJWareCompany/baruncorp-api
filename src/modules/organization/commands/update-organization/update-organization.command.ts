@@ -1,12 +1,11 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
-export class CreateOrganizationCommand {
+export class UpdateOrganizationCommand {
+  readonly organizationId: string
   readonly email: string | null
   readonly phoneNumber: string | null
-  readonly name: string
   readonly description: string | null
-  readonly organizationType: string
   readonly address: {
     readonly street1: string
     readonly street2: string | null
@@ -17,16 +16,10 @@ export class CreateOrganizationCommand {
     readonly fullAddress: string
     readonly coordinates: number[]
   }
-  // readonly isActiveContractor: boolean | null
-  // readonly isActiveWorkResource: boolean | null
-  // readonly isRevenueShare: boolean | null
-  // readonly isRevisionRevenueShare: boolean | null
-  // readonly invoiceRecipient: string | null
-  // readonly invoiceRecipientEmail: string | null
   readonly projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
 
-  constructor(props: CreateOrganizationCommand) {
+  constructor(props: UpdateOrganizationCommand) {
     initialize(this, props)
   }
 }
