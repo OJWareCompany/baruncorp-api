@@ -16,6 +16,7 @@ import { UserName } from './domain/value-objects/user-name.vo'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 import { OnlyMemberCanBeAdminException, UserNotFoundException } from './user.error'
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
+import { PrismaService } from '../database/prisma.service'
 
 @Injectable()
 export class UserService {
@@ -26,6 +27,7 @@ export class UserService {
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationMailRepository: InvitationMailRepositoryPort,
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
+    private readonly prismaService: PrismaService,
     private readonly userMapper: UserMapper,
   ) {}
 
@@ -47,6 +49,7 @@ export class UserService {
   async getUserProfile(userId: string): Promise<UserResponseDto> {
     // TODO: Consider an Aggregate Pattern
     const userEntity = await this.userRepository.findOneById(userId)
+    console.log(2)
     const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organization.id)
     if (!organizationEntity) throw new OrganizationNotFoundException()
     return this.userMapper.toResponse(userEntity)
@@ -100,7 +103,9 @@ export class UserService {
 
   async sendInvitationMail(dto: CreateInvitationMailRequestDto, code: string): Promise<InvitationEmailProp> {
     try {
-      const user = await this.userRepository.findOneByEmail(new EmailVO(dto.email))
+      const user = await this.prismaService.users.findUnique({
+        where: { email: dto.email },
+      })
       if (user) throw new ConflictException('User Already Existed')
 
       // What if organizationId is provided by parameter?

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsArray, IsOptional, IsString } from 'class-validator'
 
 export class IssueInvoiceParamRequestDto {
   @ApiProperty({ default: '' })
@@ -9,7 +9,6 @@ export class IssueInvoiceParamRequestDto {
 
 export class IssueInvoiceRequestDto {
   @ApiProperty()
-  @IsString()
-  @IsOptional()
-  readonly file: string | null
+  @IsArray()
+  readonly files: []
 }

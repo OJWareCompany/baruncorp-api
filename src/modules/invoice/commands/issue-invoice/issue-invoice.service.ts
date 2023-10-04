@@ -8,6 +8,7 @@ import { INVOICE_REPOSITORY } from '../../invoice.di-token'
 import { IssueInvoiceCommand } from './issue-invoice.command'
 import { ConfigModule } from '@nestjs/config'
 import nodemailer from 'nodemailer'
+import { formatDate } from '../../../../libs/utils/formatDate'
 
 ConfigModule.forRoot()
 
@@ -61,7 +62,8 @@ export class IssueInvoiceService implements ICommandHandler {
     })
 
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      // host: 'smtp.gmail.com',
+      host: 'wsmtp.ecounterp.com',
       port: 587,
       secure: false, // upgrade later with STARTTLS
       auth: {
@@ -73,12 +75,13 @@ export class IssueInvoiceService implements ICommandHandler {
     const mailOptions = {
       from: EMAIL_USER,
       to: organization?.email || 'bs_khm@naver.com',
-      subject: 'BarunCorp Invitation Email',
+      subject: `BarunCorp ${formatDate(invoice.serviceMonth)} Invoice mail`,
       text: `
       subtotal: $${subtotal}
       discount: $${subtotal - total}
       total: $${total}
       `,
+      attachments: command.files,
     }
 
     transporter.sendMail(mailOptions, function (error, info) {

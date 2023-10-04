@@ -121,19 +121,9 @@ export class UserRepository implements UserRepositoryPort {
     })
   }
 
-  async findOneByEmail({ email }: EmailVO): Promise<UserEntity> {
-    const user = await this.prismaService.users.findUnique({
-      where: { email },
-      include: UserRepository.userQueryIncludeInput,
-    })
-    if (!user) throw new UserNotFoundException()
-    return this.userMapper.toDomain(user)
-  }
-
   async findUserIdByEmail({ email }: EmailVO): Promise<Pick<UserEntity, 'id'> | null> {
     const user = await this.prismaService.users.findUnique({
       where: { email },
-      include: UserRepository.userQueryIncludeInput,
     })
     if (!user) throw new UserNotFoundException()
     return await this.prismaService.users.findUnique({

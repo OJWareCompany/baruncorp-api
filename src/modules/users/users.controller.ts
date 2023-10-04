@@ -78,7 +78,8 @@ export class UsersController {
     const result = await this.userService.sendInvitationMail(dto, code)
 
     const transporter = nodemailer.createTransport({
-      host: 'smtp.gmail.com',
+      // host: 'smtp.gmail.com',
+      host: 'wsmtp.ecounterp.com',
       port: 587,
       secure: false, // upgrade later with STARTTLS
       auth: {

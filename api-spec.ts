@@ -990,7 +990,7 @@ export interface ClientToInvoiceResponseDto {
 }
 
 export interface IssueInvoiceRequestDto {
-  file: string | null
+  files: string[]
 }
 
 export interface CreatePaymentRequestDto {

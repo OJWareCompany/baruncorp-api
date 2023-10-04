@@ -6,7 +6,6 @@ import { LicenseEntity } from '../user-license.entity'
 export interface UserRepositoryPort {
   // TODO: generate uuidVO
   findOneById(id: string): Promise<UserEntity>
-  findOneByEmail(email: EmailVO): Promise<UserEntity>
   findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'> | null>
   findPasswordByUserId(id: string): Promise<string | null>
   insertUser(entity: UserEntity, password: InputPasswordVO): Promise<void>
