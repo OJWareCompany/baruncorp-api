@@ -12,10 +12,13 @@ import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/fin
 import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
 import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
-import { AHJType, Design, General } from '../dto/ahj-note.response.dto'
+import { AHJType } from '../dto/ahj-note.response.dto'
 import { Paginated } from '../../../libs/ddd/repository.port'
-import { AhjJobNoteNotFoundException } from '../domain/ahj-job-note.error'
-import { AhjNoteEntity } from '../domain/ahj-job-note.entity'
+import {
+  AhjJobNoteNotFoundException,
+  AhjNoteHistoryNotFoundException,
+  AhjNoteNotFoundException,
+} from '../domain/ahj-job-note.error'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -147,7 +150,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
 
   async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistory> {
     const result = await this.prismaService.aHJNoteHistory.findUnique({ where: { id: historyId } })
-    if (!result) throw new NotFoundException()
+    if (!result) throw new AhjNoteHistoryNotFoundException()
     return result
   }
 
@@ -231,7 +234,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
   // TOFIX
   async updateNote(username: string, geoId: string, update: UpdateAhjNoteDto): Promise<void> {
     const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
-    if (!model) throw new NotFoundException('Ahj note is not founded.')
+    if (!model) throw new AhjNoteNotFoundException()
 
     await this.prismaService.aHJNotes.update({ data: { ...update, updatedBy: username }, where: { geoId } })
     await this.prismaService.aHJNoteHistory.create({ data: { ...model, updatedBy: username } })

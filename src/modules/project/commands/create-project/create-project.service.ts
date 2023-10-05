@@ -7,7 +7,11 @@ import { GEOGRAPHY_REPOSITORY } from '../../../geography/geography.di-token'
 import { GeographyRepositoryPort } from '../../../geography/database/geography.repository.port'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
 import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
-import { ProjectNumberConflicException, ProjectPropertyAddressConflicException } from '../../domain/project.error'
+import {
+  CoordinatesNotFoundException,
+  ProjectNumberConflicException,
+  ProjectPropertyAddressConflicException,
+} from '../../domain/project.error'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { CensusResponseDto } from '../../infra/census/census.response.dto'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
@@ -32,7 +36,7 @@ export class CreateProjectService implements ICommandHandler {
 
     // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
-    if (!censusResponse.state.geoId) throw new NotFoundException('Wrong coordinates')
+    if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
     await this.generateGeographyAndAhjNotes(censusResponse)
 
     const entity = ProjectEntity.create({

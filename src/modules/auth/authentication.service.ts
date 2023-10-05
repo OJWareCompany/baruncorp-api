@@ -12,6 +12,9 @@ import { UserEntity } from '../users/domain/user.entity'
 import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
 import { Phone } from '../users/domain/value-objects/phone-number.value-object'
 import { Organization } from '../users/domain/value-objects/organization.value-object'
+import { OrganizationNotFoundException } from '../organization/domain/organization.error'
+import { InvitationNotFoundException, UserNotFoundException } from '../users/user.error'
+import { LoginException } from './auth.error'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
@@ -25,13 +28,13 @@ export class AuthenticationService {
 
   async signIn(email: EmailVO, password: InputPasswordVO, response: Response): Promise<TokenResponseDto> {
     const user = await this.usersService.findUserIdByEmail(email)
-    if (!user) throw new NotFoundException()
+    if (!user) throw new UserNotFoundException()
 
     const originalPassword = await this.usersService.findPasswordByUserId(user.id)
     const isVerifiedPassword = originalPassword ? await password.compare(originalPassword) : false
 
     if (!isVerifiedPassword) {
-      throw new UnauthorizedException('UnauthorizedException', '10022')
+      throw new LoginException()
     }
 
     // TODO: create a class to generate the payload
@@ -58,13 +61,13 @@ export class AuthenticationService {
     time: { jwt: number; refresh: number },
   ): Promise<TokenResponseDto> {
     const user = await this.usersService.findUserIdByEmail(email)
-    if (!user) throw new NotFoundException()
+    if (!user) throw new UserNotFoundException()
 
     const originalPassword = await this.usersService.findPasswordByUserId(user.id)
     const isVerifiedPassword = originalPassword ? await password.compare(originalPassword) : false
 
     if (!isVerifiedPassword) {
-      throw new UnauthorizedException()
+      throw new LoginException()
     }
 
     const payload = { id: user.id }
@@ -90,10 +93,10 @@ export class AuthenticationService {
     const { code, password, ...rest } = signUpReq
 
     const invitationMail = await this.usersService.findInvitationMail(code, new EmailVO(signUpReq.email))
-    if (!invitationMail) throw new NotFoundException('Invitation Not Found')
+    if (!invitationMail) throw new InvitationNotFoundException()
 
     const organization = await this.organizationService.findOrganizationById(invitationMail.organizationId)
-    if (!organization) throw new NotFoundException('Organization Not Found')
+    if (!organization) throw new OrganizationNotFoundException()
 
     const userEntity = UserEntity.create({
       email: rest.email,

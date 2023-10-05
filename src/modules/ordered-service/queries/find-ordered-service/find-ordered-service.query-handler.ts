@@ -3,6 +3,7 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { AssignedTasks, OrderedServices, Service, Tasks } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
+import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
 
 export class FindOrderedServiceQuery {
   readonly orderedServiceId: string
@@ -26,7 +27,7 @@ export class FindOrderedServiceQueryHandler implements IQueryHandler {
       include: { assignedTasks: true, service: { include: { tasks: true } } },
     })
 
-    if (!result) throw new NotFoundException()
+    if (!result) throw new OrderedServiceNotFoundException()
 
     return result
   }

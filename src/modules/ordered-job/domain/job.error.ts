@@ -23,3 +23,8 @@ export class JobCompletedUpdateException extends BadRequestException {
     super("Job Completed Can't Update", '40006')
   }
 }
+export class JobIncludingCompletedTaskDeleteException extends BadRequestException {
+  constructor() {
+    super('Job including completed task can`t be deleted.', '40001')
+  }
+}

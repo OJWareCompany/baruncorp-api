@@ -17,3 +17,9 @@ export class OnlyMemberCanBeAdminException extends BadRequestException {
     super('User Already Existed', '10100')
   }
 }
+
+export class InvitationNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not invitation found.', '10110')
+  }
+}

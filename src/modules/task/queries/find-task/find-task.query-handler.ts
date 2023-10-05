@@ -1,8 +1,8 @@
-import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { Tasks } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
+import { TaskNotFoundException } from '../../domain/task.error'
 
 export class FindTaskQuery {
   readonly taskId: string
@@ -17,7 +17,7 @@ export class FindTaskQueryHandler implements IQueryHandler {
 
   async execute(query: FindTaskQuery): Promise<Tasks> {
     const result = await this.prismaService.tasks.findUnique({ where: { id: query.taskId } })
-    if (!result) throw new NotFoundException()
+    if (!result) throw new TaskNotFoundException()
     return result
   }
 }

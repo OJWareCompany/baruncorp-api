@@ -5,6 +5,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
+import { PaymentNotFoundException } from '../../domain/payment.error'
 
 export class FindPaymentPaginatedQuery extends PaginatedQueryBase {
   constructor(props: PaginatedParams<FindPaymentPaginatedQuery>) {
@@ -31,7 +32,7 @@ export class FindPaymentPaginatedQueryHandler implements IQueryHandler {
       skip: query.offset,
       take: query.limit,
     })
-    if (!result) throw new NotFoundException()
+    if (!result) throw new PaymentNotFoundException()
     const totalCount = await this.prismaService.payments.count()
 
     return new Paginated({

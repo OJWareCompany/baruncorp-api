@@ -1,8 +1,8 @@
-import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { AssignedTasks, OrderedServices, Users } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
+import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 
 export class FindAssignedTaskQuery {
   readonly assignedTaskId: string
@@ -22,7 +22,7 @@ export class FindAssignedTaskQueryHandler implements IQueryHandler {
       where: { id: query.assignedTaskId },
       include: { user: true, orderedService: true },
     })
-    if (!result) throw new NotFoundException()
+    if (!result) throw new AssignedTaskNotFoundException()
     return result
   }
 }

@@ -9,6 +9,7 @@ import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { UserEntity } from '../users/domain/user.entity'
 import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto'
+import { AhjNoteHistoryNotFoundException, AhjNoteNotFoundException } from './domain/ahj-job-note.error'
 
 @Injectable()
 export class GeographyService {
@@ -35,25 +36,25 @@ export class GeographyService {
 
   async findNoteByGeoId(geoId: string): Promise<AHJNotesModel> {
     const note = await this.geographyRepository.findNoteByGeoId(geoId)
-    if (!note) throw new NotFoundException('Not Ahj Note Found', '70001')
+    if (!note) throw new AhjNoteNotFoundException()
     return note
   }
 
   async deleteNoteByGeoId(geoId: string): Promise<void> {
     const note = await this.geographyRepository.findNoteByGeoId(geoId)
-    if (!note) throw new NotFoundException('Not Ahj Note Found', '70001')
+    if (!note) throw new AhjNoteNotFoundException()
     return await this.geographyRepository.deleteNoteByGeoId(geoId)
   }
 
   async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel> {
     const note = await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
-    if (!note) throw new NotFoundException('Not Note History Found', '70002')
+    if (!note) throw new AhjNoteHistoryNotFoundException()
     return note
   }
 
   async updateNote(user: UserEntity, geoId: string, dto: UpdateAhjNoteDto): Promise<void> {
     const note = await this.geographyRepository.findNoteByGeoId(geoId)
-    if (!note) throw new NotFoundException('Not Ahj Note Found', '70001')
+    if (!note) throw new AhjNoteNotFoundException()
     await this.geographyRepository.updateNote(user.getProps().userName.getFullName(), geoId, dto)
   }
 }

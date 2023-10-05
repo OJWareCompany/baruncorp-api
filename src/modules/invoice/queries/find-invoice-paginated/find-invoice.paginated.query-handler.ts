@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { Invoices, Organizations } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
@@ -7,6 +6,7 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { PrismaService } from '../../../database/prisma.service'
 import { JobEntity } from '../../../ordered-job/domain/job.entity'
 import { JobMapper } from '../../../ordered-job/job.mapper'
+import { InvoiceNotFoundException } from '../../domain/invoice.error'
 
 export class FindInvoicePaginatedQuery extends PaginatedQueryBase {
   constructor(props: PaginatedParams<FindInvoicePaginatedQuery>) {
@@ -44,7 +44,7 @@ export class FindInvoicePaginatedQueryHandler implements IQueryHandler {
       take: query.limit,
     })
 
-    if (!invoices) throw new NotFoundException()
+    if (!invoices) throw new InvoiceNotFoundException()
 
     const totalCount = await this.prismaService.invoices.count({})
 

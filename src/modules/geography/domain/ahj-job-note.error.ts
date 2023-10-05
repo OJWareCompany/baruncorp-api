@@ -11,3 +11,15 @@ export class AhjJobNoteHistoryNotFoundException extends NotFoundException {
     super('Not ahj job note found.', '50002')
   }
 }
+
+export class AhjNoteNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not ahj note found.', '70001')
+  }
+}
+
+export class AhjNoteHistoryNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not ahj note found.', '70002')
+  }
+}

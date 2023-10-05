@@ -1,4 +1,3 @@
-import { ConflictException, NotFoundException } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UserRoleModel } from '../../../organization/database/organization.repository'
 import { PrismaService } from '../../../database/prisma.service'
@@ -9,6 +8,8 @@ import UserMapper from '../../user.mapper'
 import { CreateUserCommand } from './create-user.command'
 import { Phone } from '../../domain/value-objects/phone-number.value-object'
 import { Organization } from '../../domain/value-objects/organization.value-object'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
+import { UserConflictException } from '../../user.error'
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserService implements ICommandHandler {
@@ -16,10 +17,10 @@ export class CreateUserService implements ICommandHandler {
 
   async execute(command: CreateUserCommand): Promise<{ id: string }> {
     const isExisted = await this.prismaService.users.findUnique({ where: { email: command.email } })
-    if (isExisted) throw new ConflictException('User Already Existed', '10017')
+    if (isExisted) throw new UserConflictException()
 
     const organization = await this.prismaService.organizations.findUnique({ where: { id: command.organizationId } })
-    if (!organization) throw new NotFoundException('No Organization', '10019')
+    if (!organization) throw new OrganizationNotFoundException()
 
     const user = UserEntity.create({
       email: command.email,

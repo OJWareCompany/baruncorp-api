@@ -14,7 +14,12 @@ import { UserEntity } from './domain/user.entity'
 import UserMapper from './user.mapper'
 import { UserName } from './domain/value-objects/user-name.vo'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
-import { OnlyMemberCanBeAdminException, UserNotFoundException } from './user.error'
+import {
+  InvitationNotFoundException,
+  OnlyMemberCanBeAdminException,
+  UserConflictException,
+  UserNotFoundException,
+} from './user.error'
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 import { PrismaService } from '../database/prisma.service'
 
@@ -97,7 +102,7 @@ export class UserService {
 
   async findInvitationMail(code: string, email: EmailVO): Promise<InvitationEmailProp> {
     const result = await this.invitationMailRepository.findOne(code, email)
-    if (!result) throw new NotFoundException('No Invitation Mail')
+    if (!result) throw new InvitationNotFoundException()
     return result
   }
 
@@ -106,7 +111,7 @@ export class UserService {
       const user = await this.prismaService.users.findUnique({
         where: { email: dto.email },
       })
-      if (user) throw new ConflictException('User Already Existed')
+      if (user) throw new UserConflictException()
 
       // What if organizationId is provided by parameter?
       const organization = await this.organizationRepository.findOneByName(dto.organizationName)
@@ -128,7 +133,7 @@ export class UserService {
       }
     } catch (error) {
       if (error instanceof ConflictException) {
-        if ((error.message = 'User Already Existed')) throw new ConflictException(error.message, '10017')
+        throw error
       }
       throw new InternalServerErrorException()
     }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { BadRequestException, Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
+import { OrganizationNotFoundException, WrongClientException } from '../../../organization/domain/organization.error'
 import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { MountingType } from '../../../project/domain/project.type'
 import { PrismaService } from '../../../database/prisma.service'
@@ -38,7 +38,7 @@ export class UpdateJobService implements ICommandHandler {
     const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.getProps().projectId } })
     if (!project) throw new ProjectNotFoundException()
 
-    if (clientUserRecord.organizationId !== project.clientOrganizationId) throw new BadRequestException('wrong client')
+    if (clientUserRecord.organizationId !== project.clientOrganizationId) throw new WrongClientException()
 
     const updatedByUserName = editor.firstName + ' ' + editor.lastName
 

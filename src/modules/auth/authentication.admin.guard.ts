@@ -14,6 +14,7 @@ import { Request } from 'express'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import { UserRoleNameEnum } from '../users/domain/value-objects/user-role.vo'
+import { AdminOnlyException, ProperAuthForbiddenException, TokenNotFoundException } from './auth.error'
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -28,7 +29,7 @@ export class AdminGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request) ?? this.extractTokenFromCookie(request)
 
     if (!token) {
-      throw new UnauthorizedException()
+      throw new TokenNotFoundException()
     }
 
     try {
@@ -37,11 +38,11 @@ export class AdminGuard implements CanActivate {
       })
       // TODO: what data needed
       const user = await this.userRepository.findOneById(payload.id)
-      if (user.role !== UserRoleNameEnum.admin) throw new Error()
+      if (user.role !== UserRoleNameEnum.admin) throw new AdminOnlyException()
 
       request['user'] = user
     } catch {
-      throw new ForbiddenException('does not have proper authorization.', '10010')
+      throw new ProperAuthForbiddenException()
     }
     return true
   }

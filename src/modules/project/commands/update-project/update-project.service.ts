@@ -10,7 +10,11 @@ import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectEntity } from '../../domain/project.entity'
 import { UpdateProjectCommand } from './update-project.command'
 import { CensusResponseDto } from '../../infra/census/census.response.dto'
-import { ProjectNumberConflicException, ProjectPropertyAddressConflicException } from '../../domain/project.error'
+import {
+  CoordinatesNotFoundException,
+  ProjectNumberConflicException,
+  ProjectPropertyAddressConflicException,
+} from '../../domain/project.error'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -33,7 +37,7 @@ export class UpdateProjectService implements ICommandHandler {
       const censusResponse = await this.censusSearchCoordinatesService.search(
         command.projectPropertyAddress.coordinates,
       )
-      if (!censusResponse.state.geoId) throw new NotFoundException('Wrong coordinates')
+      if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
       this.generateGeographyAndAhjNotes(censusResponse)
       project.updatePropertyAddress({
         projectPropertyAddress: command.projectPropertyAddress,
