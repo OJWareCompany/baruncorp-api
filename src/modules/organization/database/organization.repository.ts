@@ -21,7 +21,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
   ) {}
 
   async update(entity: OrganizationEntity): Promise<void> {
-    const record = this.organizationMapper.toPaginatedResponse(entity)
+    const record = this.organizationMapper.toPersistence(entity)
     await this.prismaService.organizations.update({ where: { id: record.id }, data: record })
   }
 

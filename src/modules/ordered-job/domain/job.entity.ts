@@ -206,6 +206,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   public validate(): void {
-    // throw new Error('Method not implemented.')
+    if (this.props.systemSize && this.props.systemSize > 99999999) {
+      throw new SystemSizeBadRequestException()
+    }
+    if (this.props.numberOfWetStamp && this.props.numberOfWetStamp > 255) {
+      throw new NumberOfWetStampBadRequestException()
+    }
   }
 }

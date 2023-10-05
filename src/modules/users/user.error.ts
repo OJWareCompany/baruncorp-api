@@ -23,3 +23,9 @@ export class InvitationNotFoundException extends NotFoundException {
     super('Not invitation found.', '10110')
   }
 }
+
+export class PhoneNumberFormatException extends BadRequestException {
+  constructor() {
+    super('Invalid phone number format', '10111')
+  }
+}

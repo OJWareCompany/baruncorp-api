@@ -40,6 +40,7 @@ export class FindInvoicePaginatedQueryHandler implements IQueryHandler {
           },
         },
       },
+      orderBy: { createdAt: 'desc' },
       skip: query.offset,
       take: query.limit,
     })

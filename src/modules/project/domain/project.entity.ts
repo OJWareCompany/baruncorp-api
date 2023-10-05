@@ -11,6 +11,7 @@ import {
 } from './project.type'
 import { ProjectAssociatedRegulatoryBody } from './value-objects/project-associated-regulatory-body.value-object'
 import { ProjectPropertyAddressUpdatedDomainEvent } from './events/project-property-address-updated.domain-event'
+import { SystemSizeBadRequestException } from '../../ordered-job/domain/job.error'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -37,6 +38,7 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
 
   setSystemSize(systemSize: number | null) {
     if (!systemSize) return this
+    if (systemSize && 99999999 < systemSize) throw new SystemSizeBadRequestException()
     this.props.systemSize = systemSize
     return this
   }

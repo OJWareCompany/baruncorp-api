@@ -4,6 +4,7 @@ import { CreateUserProps, UserProps } from './user.types'
 import { UserName } from './value-objects/user-name.vo'
 import { Phone } from './value-objects/phone-number.value-object'
 import { UserRoleNameEnum } from './value-objects/user-role.vo'
+import { PhoneNumberFormatException } from '../user.error'
 
 // where should it be 'id'? Entity or Prop?
 // 'id' should be in base entity
@@ -62,6 +63,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
   }
 
   updatePhoneNumber(phoneNumber: string | null): this {
+    if (phoneNumber && phoneNumber.length > 20) throw new PhoneNumberFormatException()
     this.props.phone = phoneNumber ? new Phone({ number: phoneNumber }) : null
     return this
   }
@@ -72,6 +74,8 @@ export class UserEntity extends AggregateRoot<UserProps> {
   }
 
   public validate(): void {
-    const result = 1 + 1
+    if (this.props.phone && this.props.phone.number && this.props.phone.number.length > 20) {
+      throw new PhoneNumberFormatException()
+    }
   }
 }
