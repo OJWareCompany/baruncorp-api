@@ -119,7 +119,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
 
           // totalJobPriceOverride: null, // TODO: job필드 추가? -> X Job의 Service 가격을 수정하는 방식으로.
           state: stateName,
-          containsRevisionTask: !!isContainsRevisionTask,
+          isContainsRevisionTask: !!isContainsRevisionTask,
           taskSizeForRevision: sizeForRevision,
           pricingType: 'Standard', // TODO: 조직별 할인 작업 들어가야 할 수 있음
         }

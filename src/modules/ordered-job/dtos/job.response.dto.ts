@@ -5,6 +5,8 @@ import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { IsOptional } from 'class-validator'
 import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
+import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { TaskSize, TaskSizeEnum } from '../../invoice/dtos/invoice.response.dto'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -126,6 +128,19 @@ export class JobResponseDto {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
   projectId: string
 
+  @ApiProperty()
+  isContainsRevisionTask: boolean
+
+  @ApiProperty({ enum: ProjectPropertyTypeEnum })
+  propertyType: ProjectPropertyTypeEnum
+
+  @ApiProperty()
+  billingCodes: string[]
+
+  @ApiProperty({ enum: TaskSizeEnum, nullable: true })
+  @IsOptional()
+  taskSizeForRevision: TaskSize | null
+
   @ApiProperty({ example: 300.1 })
   systemSize: number | null
 
@@ -176,4 +191,8 @@ export class JobResponseDto {
 
   @ApiProperty()
   isCurrentJob?: boolean
+
+  constructor(props: JobResponseDto) {
+    initialize(this, props)
+  }
 }

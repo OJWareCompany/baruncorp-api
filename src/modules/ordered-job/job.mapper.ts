@@ -9,7 +9,9 @@ import { AssignedTask } from './domain/value-objects/assigned-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { AssignedTaskStatus } from '../assigned-task/domain/assigned-task.type'
 import { OrderedService } from './domain/value-objects/ordered-service.value-object'
-import { OrderedServiceStatus } from '../ordered-service/domain/ordered-service.type'
+import { OrderedServiceSizeForRevisionEnum, OrderedServiceStatus } from '../ordered-service/domain/ordered-service.type'
+import { ProjectPropertyType, ProjectPropertyTypeEnum } from '../project/domain/project.type'
+import { TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -134,10 +136,28 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       })
     })
 
+    const sizeForRevision = record.orderedServices.find(
+      (orderedService) =>
+        orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
+    )
+      ? TaskSizeEnum.Major
+      : record.orderedServices.find(
+          (orderedService) =>
+            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
+        )
+      ? TaskSizeEnum.Minor
+      : null
+
     const orderedServices: OrderedService[] = []
     record.orderedServices.map((orderedService) => {
       orderedServices.push(
         new OrderedService({
+          sizeForRevision:
+            sizeForRevision === TaskSizeEnum.Major
+              ? OrderedServiceSizeForRevisionEnum.Major
+              : sizeForRevision === TaskSizeEnum.Minor
+              ? OrderedServiceSizeForRevisionEnum.Minor
+              : null,
           isRevision: orderedService.isRevision,
           billingCode: orderedService.service.billingCode,
           basePrice: Number(orderedService.service.basePrice),
@@ -147,7 +167,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
           jobId: orderedService.jobId,
           description: orderedService.description,
           price: Number(orderedService.price),
-          priceOverride: Number(orderedService.priceOverride),
+          priceOverride: orderedService.priceOverride ? Number(orderedService.priceOverride) : null,
           orderedAt: orderedService.orderedAt,
           status: orderedService.status as OrderedServiceStatus,
           doneAt: orderedService.doneAt,
@@ -211,47 +231,66 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
 
   toResponse(entity: JobEntity): JobResponseDto {
     const props = entity.getProps()
-    const response = new JobResponseDto()
 
-    response.id = props.id
-    response.projectId = props.projectId
-    response.systemSize = props.systemSize
-    response.mailingAddressForWetStamp = props.mailingAddressForWetStamp
-    response.mountingType = props.mountingType
-    response.numberOfWetStamp = props.numberOfWetStamp
-    response.additionalInformationFromClient = props.additionalInformationFromClient
-    response.updatedBy = props.updatedBy
-    response.propertyFullAddress = props.propertyFullAddress
-    response.jobRequestNumber = props.jobRequestNumber
-    response.jobStatus = props.jobStatus
-    response.projectType = props.projectType
-    response.receivedAt = props.receivedAt.toISOString()
-    response.isExpedited = props.isExpedited
-    response.jobName = props.jobName
-    response.isCurrentJob = props.isCurrentJob
+    const sizeForRevision = props.orderedServices.find(
+      (orderedService) =>
+        orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
+    )
+      ? TaskSizeEnum.Major
+      : props.orderedServices.find(
+          (orderedService) =>
+            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
+        )
+      ? TaskSizeEnum.Minor
+      : null
 
-    response.assignedTasks = props.assignedTasks.map((assignedTask) => ({
-      ...assignedTask.unpack(),
-      startedAt: assignedTask.startedAt?.toISOString() || null,
-      doneAt: assignedTask.doneAt?.toISOString() || null,
-    }))
+    const isContainsRevisionTask = props.orderedServices.find((orderedService) => orderedService.isRevision)
+    console.log(props.orderedServices)
 
-    response.orderedServices = props.orderedServices.map((service) => ({
-      ...service.unpack(),
-      price: Number(service.price),
-      priceOverride: Number(service.priceOverride),
-      orderedAt: service.orderedAt.toISOString(),
-      doneAt: service.doneAt?.toISOString() || null,
-    }))
+    const response = new JobResponseDto({
+      id: props.id,
+      isContainsRevisionTask: !!isContainsRevisionTask,
+      billingCodes: props.orderedServices.map((orderedService) => orderedService.billingCode),
+      propertyType: ProjectPropertyTypeEnum[props.projectType as ProjectPropertyType],
+      taskSizeForRevision: sizeForRevision,
+      projectId: props.projectId,
+      systemSize: props.systemSize,
+      mailingAddressForWetStamp: props.mailingAddressForWetStamp,
+      mountingType: props.mountingType,
+      numberOfWetStamp: props.numberOfWetStamp,
+      additionalInformationFromClient: props.additionalInformationFromClient,
+      updatedBy: props.updatedBy,
+      propertyFullAddress: props.propertyFullAddress,
+      jobRequestNumber: props.jobRequestNumber,
+      jobStatus: props.jobStatus,
+      projectType: props.projectType,
+      receivedAt: props.receivedAt.toISOString(),
+      isExpedited: props.isExpedited,
+      jobName: props.jobName,
+      isCurrentJob: props.isCurrentJob,
+      assignedTasks: props.assignedTasks.map((assignedTask) => ({
+        ...assignedTask.unpack(),
+        startedAt: assignedTask.startedAt?.toISOString() || null,
+        doneAt: assignedTask.doneAt?.toISOString() || null,
+      })),
 
-    response.clientInfo = {
-      clientOrganizationId: props.clientInfo.clientOrganizationId,
-      clientOrganizationName: props.clientInfo.clientOrganizationName,
-      clientUserName: props.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
-      clientUserId: props.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
-      contactEmail: props.clientInfo.clientContactEmail,
-      deliverablesEmails: props.clientInfo.deliverablesEmail,
-    }
+      orderedServices: props.orderedServices.map((service) => ({
+        ...service.unpack(),
+        price: Number(service.price),
+        priceOverride: service.priceOverride ? Number(service.priceOverride) : null,
+        orderedAt: service.orderedAt.toISOString(),
+        doneAt: service.doneAt?.toISOString() || null,
+      })),
+
+      clientInfo: {
+        clientOrganizationId: props.clientInfo.clientOrganizationId,
+        clientOrganizationName: props.clientInfo.clientOrganizationName,
+        clientUserName: props.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
+        clientUserId: props.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
+        contactEmail: props.clientInfo.clientContactEmail,
+        deliverablesEmails: props.clientInfo.deliverablesEmail,
+      },
+    })
 
     return response
   }

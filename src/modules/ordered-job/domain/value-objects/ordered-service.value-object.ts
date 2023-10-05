@@ -1,5 +1,8 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
-import { OrderedServiceStatus } from '../../../ordered-service/domain/ordered-service.type'
+import {
+  OrderedServiceSizeForRevisionEnum,
+  OrderedServiceStatus,
+} from '../../../ordered-service/domain/ordered-service.type'
 
 export interface OrderedServiceProps {
   orderedServiceId: string
@@ -13,11 +16,16 @@ export interface OrderedServiceProps {
   priceOverride: number | null
   orderedAt: Date
   status: OrderedServiceStatus
+  sizeForRevision: OrderedServiceSizeForRevisionEnum | null
   doneAt: Date | null
   isRevision: boolean
 }
 
 export class OrderedService extends ValueObject<OrderedServiceProps> {
+  get sizeForRevision(): OrderedServiceSizeForRevisionEnum | null {
+    return this.props.sizeForRevision
+  }
+
   get isRevision(): boolean {
     return this.props.isRevision
   }

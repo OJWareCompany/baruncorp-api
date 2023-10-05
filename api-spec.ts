@@ -558,6 +558,10 @@ export interface JobResponseDto {
   id: string
   /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
   projectId: string
+  isContainsRevisionTask: boolean
+  propertyType: 'Residential' | 'Commercial'
+  billingCodes: string[]
+  taskSizeForRevision: 'Major' | 'Minor' | null
   /** @example 300.1 */
   systemSize: number | null
   mailingAddressForWetStamp: AddressDto | null
@@ -723,7 +727,7 @@ export interface LineItem {
   dateSentToClient: string
   mountingType: 'Roof Mount' | 'Ground Mount' | 'Roof Mount & Ground Mount'
   clientOrganization: InvoiceClientOrganization
-  containsRevisionTask: boolean
+  isContainsRevisionTask: boolean
   propertyType: 'Residential' | 'Commercial'
   state: string
   billingCodes: string[]

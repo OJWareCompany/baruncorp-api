@@ -74,7 +74,7 @@ export class LineItem {
   readonly clientOrganization: InvoiceClientOrganization
 
   @ApiProperty()
-  readonly containsRevisionTask: boolean
+  readonly isContainsRevisionTask: boolean
 
   @ApiProperty({ enum: ProjectPropertyTypeEnum })
   readonly propertyType: ProjectPropertyTypeEnum

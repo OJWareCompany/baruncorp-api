@@ -42,7 +42,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
           : null,
         description: record.description,
         price: Number(record.price),
-        priceOverride: Number(record.priceOverride),
+        priceOverride: record.priceOverride ? Number(record.priceOverride) : null,
         orderedAt: record.orderedAt,
         doneAt: record.doneAt,
         status: record.status as OrderedServiceStatus,

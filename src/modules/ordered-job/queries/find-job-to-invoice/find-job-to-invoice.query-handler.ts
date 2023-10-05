@@ -9,13 +9,8 @@ import { JobStatusEnum } from '../../domain/job.type'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobMapper } from '../../job.mapper'
 import { PrismaService } from '../../../database/prisma.service'
-import { LineItem, TaskSizeEnum } from '../../../invoice/dtos/invoice.response.dto'
-import {
-  MountingType,
-  MountingTypeEnum,
-  ProjectPropertyType,
-  ProjectPropertyTypeEnum,
-} from '../../../project/domain/project.type'
+import { TaskSizeEnum } from '../../../invoice/dtos/invoice.response.dto'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { OrderedServiceSizeForRevisionEnum } from '../../../ordered-service/domain/ordered-service.type'
 import { JobToInvoiceResponseDto } from '../../dtos/job-to-invoice.response.dto'
 
@@ -136,7 +131,7 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
 
             // totalJobPriceOverride: null, // TODO: job필드 추가? -> X Job의 Service 가격을 수정하는 방식으로.
             state: stateName,
-            containsRevisionTask: !!isContainsRevisionTask,
+            isContainsRevisionTask: !!isContainsRevisionTask,
             taskSizeForRevision: sizeForRevision,
             pricingType: 'Standard', // TODO: 조직별 할인 작업 들어가야 할 수 있음
           }

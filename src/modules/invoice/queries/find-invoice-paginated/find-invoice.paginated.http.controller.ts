@@ -63,7 +63,7 @@ export class FindInvoicePaginatedHttpController {
             id: job.getProps().clientInfo.clientOrganizationId,
             name: job.getProps().clientInfo.clientOrganizationName,
           },
-          containsRevisionTask: false, // TODO
+          isContainsRevisionTask: false, // TODO
           propertyType:
             (job.getProps().projectType as ProjectPropertyType) === 'Commercial'
               ? ProjectPropertyTypeEnum.Commercial
