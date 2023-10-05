@@ -511,7 +511,7 @@ model OrderedJobs {
   clientContactEmailOverride                    String?           @map("client_contact_email_override") @db.VarChar(255)
   commercialJobPrice                            Decimal?          @map("commercial_job_price") @db.Decimal(10, 2)
   completedCancelledDate                        DateTime?         @map("completed_cancelled_date") @db.Date
-  updatedAt                                     DateTime          @map("updated_at") @db.DateTime(0)
+  updatedAt                                     DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
   deliverablesLink                              String?           @map("deliverables_link") @db.Text
   deliverablesEmail                             String?           @map("deliverables_email") @db.Text
   electricalPEAndWetStampGlSolargraf            Boolean?          @map("electrical_pe_and_wet_stamp_gl_solargraf")
@@ -579,7 +579,7 @@ model OrderedProjects {
   propertyOwnerName                             String?        @map("property_owner_name") @db.VarChar(255)
   masterLogUpload                               Boolean?       @map("master_log_upload")
   ahjAutomationComplete                         Boolean?       @map("ahj_automation_complete")
-  updatedAt                                     DateTime       @map("updated_at") @db.DateTime(0)
+  updatedAt                                     DateTime       @updatedAt @map("updated_at") @db.DateTime(0)
   exportId                                      String?        @map("export_id") @db.VarChar(255)
   googleGeocoder                                String?        @map("google_geocoder") @db.VarChar(255)
   reTriggerActivateCreateProjectFolderTrigger   Boolean?       @map("re_trigger_activate_create_project_folder_trigger")
@@ -654,7 +654,7 @@ model pricings {
   tier3GroundMountMinorRevisionPrice               Decimal? @map("tier_3_ground_mount_minor_revision_price") @db.Decimal(10, 2)
   countDuplicates                                  Decimal? @map("count_duplicates") @db.Decimal(10, 0)
   createdAt                                        DateTime @map("created_at") @db.DateTime(0)
-  updatedAt                                        DateTime @map("updated_at") @db.DateTime(0)
+  updatedAt                                        DateTime @updatedAt @map("updated_at") @db.DateTime(0)
   updatedBy                                        String?  @map("updated_by") @db.VarChar(255)
   serviceBillingCodeNew                            String?  @map("service_billing_code_new") @db.VarChar(255)
   taskGroupRevisionPrice                           Decimal? @map("task_group_revision_price") @db.Decimal(10, 2)
@@ -755,7 +755,7 @@ model Invoices {
   dueDate              DateTime?      @map("due_date") @db.Date
   notesToClient        String?        @map("notes_to_client") @db.Text
   createdAt            DateTime       @default(now()) @map("createdAt") @db.Timestamp(0)
-  updatedAt            DateTime       @default(now()) @map("updatedAt") @db.Timestamp(0)
+  updatedAt            DateTime       @updatedAt @default(now()) @map("updatedAt") @db.Timestamp(0)
   clientOrganizationId String         @map("client_organization_id") @db.VarChar(255)
   serviceMonth         DateTime       @map("service_month") @db.Date
   organization         Organizations  @relation(fields: [clientOrganizationId], references: [id])
