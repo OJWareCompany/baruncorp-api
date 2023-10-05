@@ -40,6 +40,9 @@ export class OrderedServiceResponseDto {
   doneAt: string | null
 
   @ApiProperty()
+  isRevision: boolean
+
+  @ApiProperty()
   assignedTasks: OrderedServiceAssignedTaskResopnse[]
 
   constructor(props: OrderedServiceResponseDto) {

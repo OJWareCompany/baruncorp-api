@@ -38,31 +38,6 @@ export interface SignUpRequestDto {
   address: string | null
   /** @default "857-250-4567" */
   phoneNumber: string
-  /**
-   * 필요한지 확인 필요
-   * @default true
-   */
-  isActiveWorkResource: boolean
-  /**
-   * 필요한지 확인 필요
-   * @default true
-   */
-  isCurrentUser: boolean
-  /**
-   * 필요한지 확인 필요
-   * @default true
-   */
-  isInactiveOrganizationUser: boolean
-  /**
-   * 필요한지 확인 필요
-   * @default true
-   */
-  isRevenueShare: boolean
-  /**
-   * 필요한지 확인 필요
-   * @default true
-   */
-  isRevisionRevenueShare: boolean
 }
 
 export interface AccessTokenResponseDto {
@@ -553,6 +528,7 @@ export interface OrderedServiceResponseFields {
   orderedServiceId: string
   serviceId: string
   serviceName: string
+  isRevision: boolean
   description: string | null
   price: number | null
   priceOverride: number | null
@@ -868,6 +844,7 @@ export interface OrderedServiceResponseDto {
   status: 'Pending' | 'Completed' | 'Canceled' | null
   orderedAt: string | null
   doneAt: string | null
+  isRevision: boolean
   assignedTasks: OrderedServiceAssignedTaskResopnse[]
 }
 

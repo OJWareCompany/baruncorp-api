@@ -27,6 +27,7 @@ export class PaymentRepository implements PaymentRepositoryPort {
   async update(entity: PaymentEntity): Promise<void> {
     const record = this.paymentMapper.toPersistence(entity)
     await this.prismaService.payments.update({ where: { id: entity.id }, data: record })
+    await entity.publishEvents(this.eventEmitter)
   }
 
   async delete(id: string): Promise<void> {

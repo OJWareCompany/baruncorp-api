@@ -137,7 +137,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   updateSystemSize(systemSize: number | null): JobEntity {
-    if (systemSize && 99999999 < systemSize) throw new SystemSizeBadRequestException()
+    if (systemSize && 99999999.99999999 < systemSize) throw new SystemSizeBadRequestException()
     this.props.systemSize = systemSize
     return this
   }
@@ -206,7 +206,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   public validate(): void {
-    if (this.props.systemSize && this.props.systemSize > 99999999) {
+    if (this.props.systemSize && this.props.systemSize > 99999999.99999999) {
       throw new SystemSizeBadRequestException()
     }
     if (this.props.numberOfWetStamp && this.props.numberOfWetStamp > 255) {

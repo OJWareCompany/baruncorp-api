@@ -16,14 +16,12 @@ import { FindInvoicePaginatedHttpController } from './queries/find-invoice-pagin
 import { FindInvoicePaginatedQueryHandler } from './queries/find-invoice-paginated/find-invoice.paginated.query-handler'
 import UserMapper from '../users/user.mapper'
 import { JobMapper } from '../ordered-job/job.mapper'
-import {
-  FindClientToInvoiceQuery,
-  FindClientToInvoiceQueryHandler,
-} from './queries/find-client-to-invoice/find-client-to-invoice.query-handler'
+import { FindClientToInvoiceQueryHandler } from './queries/find-client-to-invoice/find-client-to-invoice.query-handler'
 import { FindClientToInvoiceHttpController } from './queries/find-client-to-invoice/find-client-to-invoice.http.controller'
 import { IssueInvoiceHttpController } from './commands/issue-invoice/issue-invoice.http.controller'
 import { IssueInvoiceService } from './commands/issue-invoice/issue-invoice.service'
 import { PayInvoiceWhenPaymentIsCreatedEventHandler } from './application/event-handlers/pay-invoice-when-payment-is-created.domain-event-handler'
+import { UpdatedInvoiceWhenPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-payment-is-canceled.domain-event-handler'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -51,7 +49,10 @@ const repositories: Provider[] = [
     useClass: InvoiceRepository,
   },
 ]
-const eventHandlers: Provider[] = [PayInvoiceWhenPaymentIsCreatedEventHandler]
+const eventHandlers: Provider[] = [
+  PayInvoiceWhenPaymentIsCreatedEventHandler,
+  UpdatedInvoiceWhenPaymentIsCanceledEventHandler,
+]
 const mappers: Provider[] = [InvoiceMapper, UserMapper, JobMapper]
 
 @Module({

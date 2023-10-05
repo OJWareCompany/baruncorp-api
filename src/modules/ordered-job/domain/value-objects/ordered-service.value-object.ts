@@ -14,9 +14,14 @@ export interface OrderedServiceProps {
   orderedAt: Date
   status: OrderedServiceStatus
   doneAt: Date | null
+  isRevision: boolean
 }
 
 export class OrderedService extends ValueObject<OrderedServiceProps> {
+  get isRevision(): boolean {
+    return this.props.isRevision
+  }
+
   get orderedServiceId(): string {
     return this.props.orderedServiceId
   }

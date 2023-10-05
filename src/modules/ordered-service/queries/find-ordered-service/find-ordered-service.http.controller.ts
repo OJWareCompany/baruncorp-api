@@ -18,6 +18,7 @@ export class FindOrderedServiceHttpController {
 
     return new OrderedServiceResponseDto({
       id: result.id,
+      isRevision: result.isRevision,
       serviceId: result.serviceId,
       price: Number(result.price),
       jobId: result.jobId,

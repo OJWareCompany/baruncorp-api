@@ -2,6 +2,7 @@ import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreatePaymentProps, PaymentProps } from './payment.type'
 import { PaymentCreatedDomainEvent } from './events/payment-created.domain-event'
+import { PaymentCanceledDomainEvent } from './events/payment-canceled.domain-event'
 
 export class PaymentEntity extends AggregateRoot<PaymentProps> {
   protected _id: string
@@ -26,6 +27,12 @@ export class PaymentEntity extends AggregateRoot<PaymentProps> {
 
   cancel(): this {
     this.props.canceledAt = new Date()
+    this.addEvent(
+      new PaymentCanceledDomainEvent({
+        aggregateId: this.id,
+        invoiceId: this.props.invoiceId,
+      }),
+    )
     return this
   }
 

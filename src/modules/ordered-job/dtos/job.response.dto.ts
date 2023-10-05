@@ -30,6 +30,9 @@ export class OrderedServiceResponseFields {
   serviceName: string
 
   @ApiProperty()
+  isRevision: boolean
+
+  @ApiProperty()
   @IsOptional()
   description: string | null
 

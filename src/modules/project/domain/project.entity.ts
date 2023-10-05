@@ -38,7 +38,7 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
 
   setSystemSize(systemSize: number | null) {
     if (!systemSize) return this
-    if (systemSize && 99999999 < systemSize) throw new SystemSizeBadRequestException()
+    if (systemSize && 99999999.99999999 < systemSize) throw new SystemSizeBadRequestException()
     this.props.systemSize = systemSize
     return this
   }

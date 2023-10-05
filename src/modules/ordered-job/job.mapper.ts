@@ -138,6 +138,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     record.orderedServices.map((orderedService) => {
       orderedServices.push(
         new OrderedService({
+          isRevision: orderedService.isRevision,
           billingCode: orderedService.service.billingCode,
           basePrice: Number(orderedService.service.basePrice),
           orderedServiceId: orderedService.id,

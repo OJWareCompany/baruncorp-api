@@ -8,7 +8,7 @@ import { PAYMENT_REPOSITORY } from '../../payment.di-token'
 import { PaymentEntity } from '../../domain/payment.entity'
 import { CreatePaymentCommand } from './create-payment.command'
 import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
-import { PaymentOverException } from '../../domain/payment.error'
+import { PaymentOverException, UnissuedInvoicePayException, ZeroPaymentException } from '../../domain/payment.error'
 
 @CommandHandler(CreatePaymentCommand)
 export class CreatePaymentService implements ICommandHandler {
@@ -23,10 +23,13 @@ export class CreatePaymentService implements ICommandHandler {
       ...command,
     })
 
-    //
+    if (command.amount <= 0) throw new ZeroPaymentException()
 
     const invoice = await this.prismaService.invoices.findUnique({ where: { id: command.invoiceId } })
     if (!invoice) throw new InvoiceNotFoundException()
+    if (invoice.status === 'Unissued') {
+      throw new UnissuedInvoicePayException()
+    }
 
     const jobs = await this.prismaService.orderedJobs.findMany({
       where: { invoiceId: invoice.id },
