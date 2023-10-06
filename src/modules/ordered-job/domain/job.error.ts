@@ -28,3 +28,9 @@ export class JobIncludingCompletedTaskDeleteException extends BadRequestExceptio
     super('Job including completed task can`t be deleted.', '40001')
   }
 }
+
+export class IssuedJobUpdateException extends BadRequestException {
+  constructor() {
+    super('Job can not be updated after invoice is issued.', '40002')
+  }
+}

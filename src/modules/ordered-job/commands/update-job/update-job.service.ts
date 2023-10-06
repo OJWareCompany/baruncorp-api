@@ -10,7 +10,8 @@ import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { UpdateJobCommand } from './update-job.command'
-import { JobCompletedUpdateException } from '../../domain/job.error'
+import { IssuedJobUpdateException, JobCompletedUpdateException } from '../../domain/job.error'
+import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
 
 @CommandHandler(UpdateJobCommand)
 export class UpdateJobService implements ICommandHandler {
@@ -23,6 +24,15 @@ export class UpdateJobService implements ICommandHandler {
   async execute(command: UpdateJobCommand): Promise<void> {
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
     if (job.isCompleted()) throw new JobCompletedUpdateException()
+
+    const invoiceId = job.getProps().invoiceId
+
+    // TODO: REFACTOR
+    if (invoiceId !== null) {
+      const invoice = await this.prismaService.invoices.findUnique({ where: { id: invoiceId } })
+      if (!invoice) throw new InvoiceNotFoundException()
+      if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
+    }
 
     const editor = await this.prismaService.users.findUnique({ where: { id: command.updatedByUserId } })
     if (!editor) throw new UserNotFoundException()

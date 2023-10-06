@@ -4,11 +4,12 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
+import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
 import { ServiceNotFoundException } from '../../../service/domain/service.error'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { CreateOrderedServiceCommand } from './create-ordered-service.command'
+import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -32,6 +33,15 @@ export class CreateOrderedServiceService implements ICommandHandler {
     if (!serviceMenu) throw new ServiceNotFoundException()
     const job = await this.prismaService.orderedJobs.findUnique({ where: { id: command.jobId } })
     if (!job) throw new JobNotFoundException()
+
+    const invoiceId = job.invoiceId
+
+    // TODO: REFACTOR
+    if (invoiceId !== null) {
+      const invoice = await this.prismaService.invoices.findUnique({ where: { id: invoiceId } })
+      if (!invoice) throw new InvoiceNotFoundException()
+      if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
+    }
 
     const preOrderedServices = await this.prismaService.orderedServices.findMany({
       where: { projectId: job.projectId, serviceId: command.serviceId },
