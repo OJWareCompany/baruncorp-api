@@ -245,7 +245,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       : null
 
     const isContainsRevisionTask = props.orderedServices.find((orderedService) => orderedService.isRevision)
-    console.log(props.orderedServices)
 
     const response = new JobResponseDto({
       id: props.id,

@@ -3,6 +3,7 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateAssignedTaskProps, AssignedTaskProps, AssignedTaskStatus } from './assigned-task.type'
 import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned.domain-event'
 import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
+import { AssignedTaskReopenedDomainEvent } from './events/assigned-task-reopened.domain-event'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -38,7 +39,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   }
 
   hold(): this {
-    if (this.props.status === 'Completed') return this
+    if (this.props.status === 'Completed' || this.props.status === 'Canceled') return this
     this.props.status = 'On Hold'
     this.props.doneAt = new Date()
     return this
@@ -48,6 +49,13 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     if (this.props.status === 'Completed') return this
     this.props.status = 'Not Started'
     this.props.doneAt = null
+    this.props.assigneeId = null
+    this.addEvent(
+      new AssignedTaskReopenedDomainEvent({
+        aggregateId: this.id,
+        jobId: this.props.jobId,
+      }),
+    )
     return this
   }
 

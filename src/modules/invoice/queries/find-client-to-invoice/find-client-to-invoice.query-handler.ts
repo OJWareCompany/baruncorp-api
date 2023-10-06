@@ -56,7 +56,6 @@ export class FindClientToInvoiceQueryHandler implements IQueryHandler {
       }
     })
 
-    console.log(result)
     return result
   }
 }

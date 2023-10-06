@@ -69,6 +69,12 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this.props.orderedServices.map((orderedService) => orderedService.billingCode)
   }
 
+  notStart(): this {
+    if (this.isCompleted()) throw new JobCompletedUpdateException()
+    this.props.jobStatus = 'Not Started'
+    return this
+  }
+
   start(): this {
     if (this.isCompleted()) throw new JobCompletedUpdateException()
     this.props.jobStatus = 'In Progress'

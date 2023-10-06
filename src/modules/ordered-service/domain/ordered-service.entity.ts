@@ -38,7 +38,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   cancel(): this {
-    if (this.props.status === 'Completed') throw new OrderedServiceAlreadyCompletedException()
+    if (this.props.status === 'Completed') return this
     this.props.status = 'Canceled'
     this.props.doneAt = new Date()
     this.addEvent(

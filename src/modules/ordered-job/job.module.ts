@@ -27,6 +27,7 @@ import { HoldJobHttpController } from './commands/hold-job/hold-job.http.control
 import { HoldJobService } from './commands/hold-job/hold-job.service'
 import { FindJobToInvoiceHttpController } from './queries/find-job-to-invoice/find-job-to-invoice.http.controller'
 import { FindJobToInvoiceQueryHandler } from './queries/find-job-to-invoice/find-job-to-invoice.query-handler'
+import { UpdateJobWhenTaskIsReopenedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-reopended.domain-event-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -56,6 +57,7 @@ const eventHandlers: Provider[] = [
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
   StartJobWhenTaskIsAssignedDomainEventHandler,
   CompleteJobWhenServiceIsCompletedDomainEventHandler,
+  UpdateJobWhenTaskIsReopenedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 
