@@ -75,7 +75,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
     const lineItems: LineItem[] = await Promise.all(
       jobs.map(async (job) => {
         let subtotal = 0
-        job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.price ?? 0)))
+        job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.service.basePrice ?? 0)))
         let total = 0
         job.orderedServices.map(
           (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),

@@ -24,11 +24,11 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     const orderedServiceEntities = await Promise.all(
       event.services.map(async (orderedService) => {
         let basePrice = null
-        if (event.projectType === 'Residential') {
-          const service = await this.prismaService.service.findUnique({ where: { id: orderedService.serviceId } })
-          if (!service) throw new ServiceNotFoundException()
-          basePrice = Number(service.basePrice)
-        }
+        // if (event.projectType === 'Residential') {
+        const service = await this.prismaService.service.findUnique({ where: { id: orderedService.serviceId } })
+        if (!service) throw new ServiceNotFoundException()
+        basePrice = Number(service.basePrice)
+        // }
 
         const preOrderedServices = await this.prismaService.orderedServices.findMany({
           where: { projectId: event.projectId, serviceId: orderedService.serviceId },

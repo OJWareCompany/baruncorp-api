@@ -21,7 +21,6 @@ export class UpdateJobWhenTaskIsReopenedDomainEventHandler {
     } else {
       job.notStart()
     }
-    console.log(hasCompletedService, '?')
     await this.jobRepository.update(job)
   }
 }

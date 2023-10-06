@@ -91,7 +91,6 @@ export class CreateProjectService implements ICommandHandler {
 
   async generateGeographyAndAhjNotes(censusResponseDto: CensusResponseDto) {
     const { state, county, countySubdivisions, place } = censusResponseDto
-    console.log(state, '222')
     /**
      * State & Notes
      */

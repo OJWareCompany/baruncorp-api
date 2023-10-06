@@ -130,7 +130,6 @@ export class UsersController {
   @Post('member-licenses')
   @UseGuards(AuthGuard)
   async postRegisterMemberLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
-    console.log(dto)
     // return await this.userService.registerLicense(
     //   dto.userId,
     //   dto.type,

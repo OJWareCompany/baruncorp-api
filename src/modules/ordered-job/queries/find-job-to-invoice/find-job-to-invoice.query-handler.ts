@@ -108,7 +108,7 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
           }
 
           let subtotal = 0
-          job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.price ?? 0)))
+          job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.service.basePrice ?? 0)))
 
           let total = 0
           job.orderedServices.map(

@@ -51,7 +51,7 @@ export class IssueInvoiceService implements ICommandHandler {
 
     let subtotal = 0
     jobs.map((job) => {
-      job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.price ?? 0)))
+      job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.service.basePrice ?? 0)))
     })
 
     let total = 0

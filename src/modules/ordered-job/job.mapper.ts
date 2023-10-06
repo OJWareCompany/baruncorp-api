@@ -293,7 +293,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     })
 
     props.orderedServices.map((service) => {
-      console.log(service.price)
       return {
         ...service.unpack(),
         sizeForRevision: service.sizeForRevision,
