@@ -9,7 +9,11 @@ import { AssignedTask } from './domain/value-objects/assigned-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { AssignedTaskStatus } from '../assigned-task/domain/assigned-task.type'
 import { OrderedService } from './domain/value-objects/ordered-service.value-object'
-import { OrderedServiceSizeForRevisionEnum, OrderedServiceStatus } from '../ordered-service/domain/ordered-service.type'
+import {
+  OrderedServiceSizeForRevision,
+  OrderedServiceSizeForRevisionEnum,
+  OrderedServiceStatus,
+} from '../ordered-service/domain/ordered-service.type'
 import { ProjectPropertyType, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
 
@@ -152,12 +156,9 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     record.orderedServices.map((orderedService) => {
       orderedServices.push(
         new OrderedService({
-          sizeForRevision:
-            sizeForRevision === TaskSizeEnum.Major
-              ? OrderedServiceSizeForRevisionEnum.Major
-              : sizeForRevision === TaskSizeEnum.Minor
-              ? OrderedServiceSizeForRevisionEnum.Minor
-              : null,
+          sizeForRevision: orderedService.sizeForRevision
+            ? OrderedServiceSizeForRevisionEnum[orderedService.sizeForRevision as OrderedServiceSizeForRevision]
+            : null,
           isRevision: orderedService.isRevision,
           billingCode: orderedService.service.billingCode,
           basePrice: Number(orderedService.service.basePrice),

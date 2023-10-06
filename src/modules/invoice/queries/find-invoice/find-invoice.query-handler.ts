@@ -148,16 +148,21 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
         name: jobs[0].clientOrganizationName,
       },
       lineItems: lineItems,
-      payments: paymentsWithCanceled.map((payment) => ({
-        ...payment,
-        paymentName: organization
-          ? organization.name + ' ' + formatDateWithTime(payment.paymentDate)
-          : formatDateWithTime(payment.paymentDate),
-        amount: Number(payment.amount),
-        paymentMethod: PaymentMethodEnum[payment.paymentMethod],
-        paymentDate: payment.paymentDate.toISOString(),
-        canceledAt: payment.canceledAt?.toISOString() || null,
-      })),
+      payments: paymentsWithCanceled.map((payment) => {
+        // const user = await this.prismaService.users.findUnique({ where: { id: payment.createdBy } })
+        return {
+          ...payment,
+          paymentName: organization
+            ? organization.name + ' ' + formatDateWithTime(payment.paymentDate)
+            : formatDateWithTime(payment.paymentDate),
+          amount: Number(payment.amount),
+          paymentMethod: PaymentMethodEnum[payment.paymentMethod],
+          paymentDate: payment.paymentDate.toISOString(),
+          canceledAt: payment.canceledAt?.toISOString() || null,
+          createdByUserId: payment.createdBy,
+          createdByUserName: payment.createdBy,
+        }
+      }),
       totalOfPayment: payments.reduce((pre, cur) => pre + Number(cur.amount), 0),
     }
   }

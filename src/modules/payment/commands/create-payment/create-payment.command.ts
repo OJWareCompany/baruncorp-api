@@ -6,6 +6,7 @@ export class CreatePaymentCommand {
   readonly amount: number
   readonly paymentMethod: PaymentMethodEnum
   readonly notes: string | null
+  readonly createdBy: string
   constructor(props: CreatePaymentCommand) {
     initialize(this, props)
   }

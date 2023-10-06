@@ -93,7 +93,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   isAllTaskCompleted(): boolean {
-    return this.props.assignedTasks.every((task) => task.status === 'Completed')
+    return !this.props.assignedTasks.filter((task) => {
+      return task.status === 'In Progress' || task.status === 'On Hold' || task.status === 'Not Started'
+    }).length
   }
 
   cancel(): this {

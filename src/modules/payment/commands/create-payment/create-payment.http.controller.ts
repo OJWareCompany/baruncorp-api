@@ -14,7 +14,10 @@ export class CreatePaymentHttpController {
   @Post('')
   @UseGuards(AuthGuard)
   async post(@User() user: UserEntity, @Body() request: CreatePaymentRequestDto): Promise<IdResponse> {
-    const command = new CreatePaymentCommand(request)
+    const command = new CreatePaymentCommand({
+      ...request,
+      createdBy: user.id,
+    })
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)
   }

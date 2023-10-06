@@ -1,8 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { $Enums, Payments } from '@prisma/client'
-import { Decimal } from '@prisma/client/runtime/library'
 import { PaymentMethodEnum } from '../domain/payment.type'
 
 /**

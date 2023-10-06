@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { BadRequestException, Inject } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { OrganizationNotFoundException, WrongClientException } from '../../../organization/domain/organization.error'
 import { ProjectNotFoundException } from '../../../project/domain/project.error'

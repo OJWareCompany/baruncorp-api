@@ -9,6 +9,7 @@ export interface CreatePaymentProps {
   amount: number
   paymentMethod: PaymentMethodEnum
   notes: string | null
+  createdBy: string
 }
 
 export interface PaymentProps extends CreatePaymentProps {

@@ -17,6 +17,7 @@ export class PaymentMapper implements Mapper<PaymentEntity, Payments, PaymentRes
       paymentDate: props.paymentDate,
       notes: props.notes,
       canceledAt: props.canceledAt,
+      createdBy: props.createdBy,
     }
     return record
   }
@@ -31,6 +32,7 @@ export class PaymentMapper implements Mapper<PaymentEntity, Payments, PaymentRes
         paymentDate: record.paymentDate,
         notes: record.notes,
         canceledAt: record.canceledAt,
+        createdBy: record.id,
       },
     })
     return entity
