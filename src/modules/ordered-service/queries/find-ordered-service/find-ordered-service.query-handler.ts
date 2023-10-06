@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { AssignedTasks, OrderedServices, Service, Tasks } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'

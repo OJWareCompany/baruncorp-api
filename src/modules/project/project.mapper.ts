@@ -84,7 +84,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         projectPropertyType: record.projectPropertyType as ProjectPropertyType, // TODO: status any
         projectPropertyOwner: record.propertyOwnerName,
         projectNumber: record.projectNumber,
-        systemSize: record.systemSize ? Number(record.systemSize) : null,
+        systemSize: record.systemSize === null ? null : Number(record.systemSize),
         projectPropertyAddress: new Address({
           city: record.propertyAddressCity,
           country: record.propertyAddressCountry,

@@ -527,6 +527,7 @@ export interface AssignedTaskResponseFields {
 export interface OrderedServiceResponseFields {
   orderedServiceId: string
   serviceId: string
+  sizeForRevision: 'Major' | 'Minor' | null
   serviceName: string
   isRevision: boolean
   description: string | null
@@ -720,6 +721,7 @@ export interface InvoiceClientOrganization {
 }
 
 export interface LineItem {
+  jobId: string
   /** @example 5 */
   jobRequestNumber: number
   description: string
@@ -843,6 +845,7 @@ export interface OrderedServiceResponseDto {
   id: string
   serviceId: string
   price: number | null
+  priceOrverride: number | null
   jobId: string
   /** @default "Completed" */
   status: 'Pending' | 'Completed' | 'Canceled' | null

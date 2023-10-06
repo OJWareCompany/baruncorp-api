@@ -27,6 +27,9 @@ export class OrderedServiceResponseDto {
   @ApiProperty({ type: Number, nullable: true })
   price: number | null
 
+  @ApiProperty({ type: Number, nullable: true })
+  priceOrverride: number | null
+
   @ApiProperty()
   jobId: string
 

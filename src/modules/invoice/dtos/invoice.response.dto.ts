@@ -54,6 +54,9 @@ export class InvoiceClientOrganization {
 }
 
 export class LineItem {
+  @ApiProperty()
+  readonly jobId: string
+
   @ApiProperty({ example: 5 })
   readonly jobRequestNumber: number
 

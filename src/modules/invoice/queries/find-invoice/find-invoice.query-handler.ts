@@ -104,6 +104,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
         }
 
         return {
+          jobId: job.id,
           jobRequestNumber: job.jobRequestNumber,
           description: job.jobName,
           dateSentToClient: job.updatedAt,

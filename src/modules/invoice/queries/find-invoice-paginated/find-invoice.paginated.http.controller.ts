@@ -49,6 +49,7 @@ export class FindInvoicePaginatedHttpController {
           name: invoice.organization.name,
         },
         lineItems: invoice.jobs.map((job) => ({
+          jobId: job.id,
           jobRequestNumber: job.getProps().jobRequestNumber,
           description: job.getProps().jobName,
           dateSentToClient: job.getProps().updatedAt,

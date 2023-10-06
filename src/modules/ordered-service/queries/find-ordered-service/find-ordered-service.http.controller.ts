@@ -15,12 +15,12 @@ export class FindOrderedServiceHttpController {
     const command = new FindOrderedServiceQuery(request)
 
     const result: FindOrderedServiceQueryReturnType = await this.queryBus.execute(command)
-
     return new OrderedServiceResponseDto({
       id: result.id,
       isRevision: result.isRevision,
       serviceId: result.serviceId,
-      price: Number(result.price),
+      price: result.price === null ? null : Number(result.price),
+      priceOrverride: result.priceOverride === null ? null : Number(result.priceOverride),
       jobId: result.jobId,
       status: result.status as OrderedServiceStatusEnum,
       orderedAt: result.orderedAt.toISOString(),

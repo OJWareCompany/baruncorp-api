@@ -4,7 +4,10 @@ import { JobStatus, JobStatusEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { IsOptional } from 'class-validator'
-import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
+import {
+  OrderedServiceSizeForRevisionEnum,
+  OrderedServiceStatusEnum,
+} from '../../ordered-service/domain/ordered-service.type'
 import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { TaskSize, TaskSizeEnum } from '../../invoice/dtos/invoice.response.dto'
 
@@ -27,6 +30,9 @@ export class OrderedServiceResponseFields {
 
   @ApiProperty()
   serviceId: string
+
+  @ApiProperty({ enum: OrderedServiceSizeForRevisionEnum, nullable: true })
+  sizeForRevision: OrderedServiceSizeForRevisionEnum | null
 
   @ApiProperty()
   serviceName: string

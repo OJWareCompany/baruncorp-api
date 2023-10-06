@@ -166,8 +166,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
           serviceName: orderedService.service.name,
           jobId: orderedService.jobId,
           description: orderedService.description,
-          price: Number(orderedService.price),
-          priceOverride: orderedService.priceOverride ? Number(orderedService.priceOverride) : null,
+          price: orderedService.price === null ? null : Number(orderedService.price),
+          priceOverride: orderedService.priceOverride === null ? null : Number(orderedService.priceOverride),
           orderedAt: orderedService.orderedAt,
           status: orderedService.status as OrderedServiceStatus,
           doneAt: orderedService.doneAt,
@@ -191,7 +191,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         jobName: record.jobName,
         assignedTasks: assignedTasks || [],
         orderedServices: orderedServices,
-        systemSize: record.systemSize ? Number(record.systemSize) : null,
+        systemSize: record.systemSize === null ? null : Number(record.systemSize),
         mailingAddressForWetStamp:
           record.mailingAdderssCity !== null &&
           record.mailingAdderssPostalCountry !== null &&
@@ -275,8 +275,9 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
 
       orderedServices: props.orderedServices.map((service) => ({
         ...service.unpack(),
-        price: Number(service.price),
-        priceOverride: service.priceOverride ? Number(service.priceOverride) : null,
+        sizeForRevision: service.sizeForRevision,
+        price: service.price === null ? null : Number(service.price),
+        priceOverride: service.priceOverride === null ? null : Number(service.priceOverride),
         orderedAt: service.orderedAt.toISOString(),
         doneAt: service.doneAt?.toISOString() || null,
       })),
@@ -289,6 +290,18 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         contactEmail: props.clientInfo.clientContactEmail,
         deliverablesEmails: props.clientInfo.deliverablesEmail,
       },
+    })
+
+    props.orderedServices.map((service) => {
+      console.log(service.price)
+      return {
+        ...service.unpack(),
+        sizeForRevision: service.sizeForRevision,
+        price: service.price === null ? null : Number(service.price),
+        priceOverride: service.priceOverride === null ? null : Number(service.priceOverride),
+        orderedAt: service.orderedAt.toISOString(),
+        doneAt: service.doneAt?.toISOString() || null,
+      }
     })
 
     return response
