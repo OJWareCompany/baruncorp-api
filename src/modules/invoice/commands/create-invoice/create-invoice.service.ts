@@ -11,6 +11,7 @@ import { JobStatusEnum } from '../../../ordered-job/domain/job.type'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
+import { NullPriceExistsException } from '../../domain/invoice.error'
 
 @CommandHandler(CreateInvoiceCommand)
 export class CreateInvoiceService implements ICommandHandler {
@@ -38,6 +39,14 @@ export class CreateInvoiceService implements ICommandHandler {
     })
 
     if (!jobs.length) throw new JobNotFoundException()
+
+    const orderedServices = await this.prismaService.orderedServices.findMany({
+      where: { jobId: { in: jobs.map((job) => job.id) } },
+    })
+
+    orderedServices.map((orderedService) => {
+      if (orderedService.price === null && orderedService.priceOverride === null) throw new NullPriceExistsException()
+    })
 
     await this.invoiceRepo.insert(entity)
 
