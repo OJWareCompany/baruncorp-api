@@ -33,6 +33,7 @@
     ]
   },
   "dependencies": {
+    "@nanogiants/nestjs-swagger-api-exception-decorator": "^1.6.11",
     "@nestjs-modules/mailer": "^1.9.1",
     "@nestjs/common": "^10.2.2",
     "@nestjs/config": "^3.0.0",
