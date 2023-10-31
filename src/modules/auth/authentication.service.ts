@@ -15,6 +15,7 @@ import { Organization } from '../users/domain/value-objects/organization.value-o
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 import { InvitationNotFoundException, UserNotFoundException } from '../users/user.error'
 import { LoginException } from './auth.error'
+import { SignUpTestRequestDto } from './dto/request/signup-test.request.dto'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
@@ -114,6 +115,29 @@ export class AuthenticationService {
     await this.usersService.insertUser(userEntity, new InputPasswordVO(password))
 
     await this.usersService.deleteInvitationMail(code)
+  }
+
+  async testMemberSignup(signUpReq: SignUpTestRequestDto) {
+    // TODO: Validate Code in DTO
+    const { email, name } = signUpReq
+
+    const organization = await this.organizationService.findOrganizationById('asda')
+    if (!organization) throw new OrganizationNotFoundException()
+
+    const userEntity = UserEntity.create({
+      email: email,
+      deliverablesEmails: [email],
+      userName: new UserName({ firstName: name.split(' ')[0], lastName: name.split(' ')[1] }),
+      organization: new Organization({
+        id: organization.id,
+        name: organization.getProps().name,
+        organizationType: organization.getProps().organizationType,
+      }),
+      phone: null,
+      updatedBy: 'system',
+    })
+
+    await this.usersService.insertUser(userEntity, new InputPasswordVO('Test123123!@#'))
   }
 
   async refreshAccessToken(id: string, response: Response): Promise<AccessTokenResponseDto> {

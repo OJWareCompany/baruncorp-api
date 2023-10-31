@@ -23,6 +23,7 @@ import { User } from '../../libs/decorators/requests/logged-in-user.decorator'
 import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
 import { ApiResponse } from '@nestjs/swagger'
 import { SignInTimeRequestDto } from './dto/request/sign-in-time.request.dto'
+import { SignUpTestRequestDto } from './dto/request/signup-test.request.dto'
 
 @Controller('auth')
 export class AuthenticationController {
@@ -70,6 +71,12 @@ export class AuthenticationController {
   @Post('signup')
   async postSignUp(@Body() signUpDto: SignUpRequestDto) {
     return await this.authService.signUp(signUpDto)
+  }
+
+  @HttpCode(HttpStatus.OK)
+  @Post('signup-test')
+  async postSignUpTest(@Body() signUpDto: SignUpTestRequestDto) {
+    return await this.authService.testMemberSignup(signUpDto)
   }
 
   @HttpCode(HttpStatus.OK)
