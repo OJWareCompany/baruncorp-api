@@ -10,19 +10,23 @@ import { ServiceWithAssociatedTasksDeleteException } from '../domain/service.err
 export class ServiceRepository implements ServiceRepositoryPort {
   constructor(private readonly prismaService: PrismaService, private readonly serviceMapper: ServiceMapper) {}
 
+  // TODO: Tier 각 요소 검증하기
   async insert(entity: ServiceEntity): Promise<void> {
     const record = this.serviceMapper.toPersistence(entity)
-    await this.prismaService.service.create({ data: record })
+    await this.prismaService.service.create({ data: record.service })
+    await this.prismaService.commercialStandardPricingTiers.createMany({ data: record.commercialStandardPricingTiers })
   }
 
   async update(entity: ServiceEntity): Promise<void> {
     const record = this.serviceMapper.toPersistence(entity)
     await this.prismaService.service.update({
       where: {
-        id: record.id,
+        id: record.service.id,
       },
-      data: record,
+      data: record.service,
     })
+    await this.prismaService.commercialStandardPricingTiers.deleteMany({ where: { serviceId: entity.id } })
+    await this.prismaService.commercialStandardPricingTiers.createMany({ data: record.commercialStandardPricingTiers })
   }
 
   async delete(entity: ServiceEntity): Promise<void> {
@@ -35,9 +39,16 @@ export class ServiceRepository implements ServiceRepositoryPort {
       where: { id },
       include: {
         tasks: true,
+        commercialStandardPricingTiers: true,
       },
     })
-    return record ? this.serviceMapper.toDomain(record) : null
+    return record
+      ? this.serviceMapper.toDomain({
+          service: record,
+          commercialStandardPricingTiers: record.commercialStandardPricingTiers,
+          tasks: record.tasks,
+        })
+      : null
   }
 
   find(): Promise<Paginated<ServiceEntity>> {

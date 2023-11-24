@@ -69,3 +69,10 @@ book store라는 도메인으로 cqrs 패턴 포맷의 모듈 생성
 ```
 pnpm cqrs:generate init book-store
 ```
+
+# Domain documents
+
+### Price vs GM Price
+
+GM은 Ground Mount를 의미한다, 프로젝트의 설치 타입에는 Roof Mount, Ground Mount, 또는 두가지를 혼용하는 경우가 있는데
+Grount Mount 유형의 경우 비용을 더 많이 받기때문에 GM Price라는 가격 필드가 따로 있다.

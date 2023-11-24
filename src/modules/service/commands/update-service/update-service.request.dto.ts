@@ -1,5 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsNumber, IsString } from 'class-validator'
+import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import { ServicePricingTypeEnum } from '../../domain/service.type'
+import { StandardPricingRequestDtoFields } from '../create-service/create-service.request.dto'
 
 export class UpdateServiceRequestDtoParam {
   @ApiProperty()
@@ -12,11 +14,20 @@ export class UpdateServiceRequestDto {
   @IsString()
   readonly name: string
 
-  @ApiProperty({ default: 'PV' })
+  @ApiProperty({ default: '' })
   @IsString()
   readonly billingCode: string
 
-  @ApiProperty({ default: 100.2 })
+  @ApiProperty({ enum: ServicePricingTypeEnum, default: ServicePricingTypeEnum.standard })
+  @IsEnum(ServicePricingTypeEnum)
+  readonly type: ServicePricingTypeEnum
+
+  @ApiProperty({ type: StandardPricingRequestDtoFields, default: StandardPricingRequestDtoFields, nullable: true })
+  @IsOptional()
+  readonly standardPricing: StandardPricingRequestDtoFields | null
+
+  @ApiProperty({ default: null })
   @IsNumber()
-  readonly basePrice: number
+  @IsOptional()
+  readonly fixedPrice: number | null
 }

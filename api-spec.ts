@@ -40,6 +40,13 @@ export interface SignUpRequestDto {
   phoneNumber: string
 }
 
+export interface SignUpTestRequestDto {
+  /** @default "Emma" */
+  name: string
+  /** @default "hyomin@ojware.com" */
+  email: string
+}
+
 export interface AccessTokenResponseDto {
   accessToken: string
 }
@@ -776,6 +783,10 @@ export interface CreateServiceRequestDto {
   basePrice: number
 }
 
+export type SystemSizeBadRequestException = object
+
+export type JobCompletedUpdateException = object
+
 export interface UpdateServiceRequestDto {
   /** @default "PV Design" */
   name: string
@@ -1505,6 +1516,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name AuthenticationControllerPostSignUpTest
+     * @request POST:/auth/signup-test
+     */
+    authenticationControllerPostSignUpTest: (data: SignUpTestRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/auth/signup-test`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name AuthenticationControllerGetMe
      * @request GET:/auth/me
      */
@@ -1623,7 +1649,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/users/invitations
      */
     usersControllerPostSendInvitationMail: (data: CreateInvitationMailRequestDto, params: RequestParams = {}) =>
-      this.request<object, any>({
+      this.request<SystemSizeBadRequestException, any>({
         path: `/users/invitations`,
         method: 'POST',
         body: data,
@@ -2207,7 +2233,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/services
      */
     createServiceHttpControllerPostCreateService: (data: CreateServiceRequestDto, params: RequestParams = {}) =>
-      this.request<IdResponse, any>({
+      this.request<IdResponse, SystemSizeBadRequestException | JobCompletedUpdateException>({
         path: `/services`,
         method: 'POST',
         body: data,

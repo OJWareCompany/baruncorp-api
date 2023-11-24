@@ -3,14 +3,18 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { Guard } from '../../../libs/guard'
 import { StringIsEmptyException } from '../../../libs/exceptions/exceptions'
 import { ServiceBillingCodeUpdateException, ServiceNameUpdateException } from './service.error'
-import { CreateServiceProps, ServiceProps } from './service.type'
+import { CreateServiceProps, ServicePricingTypeEnum, ServiceProps } from './service.type'
+import { Pricing } from './value-objects/pricing.value-object'
 
 export class ServiceEntity extends AggregateRoot<ServiceProps> {
   protected _id: string
 
   static create(create: CreateServiceProps) {
     const id = v4()
-    const props: ServiceProps = { ...create, tasks: [] }
+    const props: ServiceProps = {
+      ...create,
+      tasks: [],
+    }
     const entity = new ServiceEntity({ id, props })
     return entity
   }
@@ -31,8 +35,8 @@ export class ServiceEntity extends AggregateRoot<ServiceProps> {
     return this
   }
 
-  updateBasePrice(basePrice: number): this {
-    this.props.basePrice = basePrice
+  updatePricing(pricing: Pricing): this {
+    this.props.pricing = pricing
     return this
   }
 

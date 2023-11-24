@@ -158,14 +158,21 @@ model Positions {
 }
 
 model Service {
-  id              String            @id @default(uuid()) @db.VarChar(255)
-  name            String            @unique(map: "name") @db.VarChar(255)
-  billingCode     String            @unique(map: "billing_code") @map("billing_code") @db.VarChar(255)
-  basePrice       Decimal           @map("base_price") @db.Decimal(13, 4)
-  orderedServices OrderedServices[]
-  tasks           Tasks[]
-  positionService PositionService[]
-  userService     UserService[]
+  id                               String                           @id @default(uuid()) @db.VarChar(255)
+  name                             String                           @unique(map: "name") @db.VarChar(255)
+  billingCode                      String                           @unique(map: "billing_code") @map("billing_code") @db.VarChar(255)
+  basePrice                        Decimal?                         @map("base_price") @db.Decimal(13, 4)
+  gmPrice                          Decimal?                         @map("gm_price") @db.Decimal(13, 4)
+  revisionPrice                    Decimal?                         @map("revision_price") @db.Decimal(13, 4)
+  revisionGmPrice                  Decimal?                         @map("revision_gm_price") @db.Decimal(13, 4)
+  fixedPrice                       Decimal?                         @map("fixed_price") @db.Decimal(13, 4)
+  commercialRevisionCostPerUnit    Decimal?                         @map("commercial_revision_cost_per_unit") @db.Decimal(13, 4)
+  commercialRevisionMinutesPerUnit Int?                             @default(1) @map("commercial_revision_minutes_per_unit") @db.UnsignedInt
+  orderedServices                  OrderedServices[]
+  tasks                            Tasks[]
+  positionService                  PositionService[]
+  commercialStandardPricingTiers       CommercialStandardPricingTiers[]
+  userService                      UserService[]
 
   @@map("service")
 }
@@ -779,6 +786,70 @@ model Payments {
 
   @@index([invoiceId], map: "invoice_id")
   @@map("payments")
+}
+
+model CustomCommercialPricings {
+  serviceId        String  @map("service_id") @db.VarChar(255)
+  serviceName      String  @map("service_name") @db.VarChar(255)
+  organizationId   String  @map("organization_id") @db.VarChar(255)
+  organizationName String  @map("organization_name") @db.VarChar(255)
+  startingPoint    Decimal @map("starting_point") @db.Decimal(13, 4)
+  finishingPoint   Decimal @map("finishing_point") @db.Decimal(13, 4)
+  price            Decimal @db.Decimal(13, 4)
+  gmPrice          Decimal @map("gm_price") @db.Decimal(13, 4)
+
+  @@id([serviceId, organizationId])
+  @@map("custom_commercial_pricings")
+}
+
+model CustomFixedPricings {
+  serviceId        String  @map("service_id") @db.VarChar(255)
+  serviceName      String  @map("service_name") @db.VarChar(255)
+  organizationId   String  @map("organization_id") @db.VarChar(255)
+  organizationName String  @map("organization_name") @db.VarChar(255)
+  price            Decimal @db.Decimal(13, 4)
+
+  @@id([serviceId, organizationId])
+  @@map("custom_fixed_pricings")
+}
+
+model CustomResidentialPricings {
+  serviceId        String  @map("service_id") @db.VarChar(200)
+  serviceName      String  @map("service_name") @db.VarChar(200)
+  organizationId   String  @map("organization_id") @db.VarChar(255)
+  organizationName String  @map("organization_name") @db.VarChar(255)
+  startingPoint    Int     @map("starting_point") @db.UnsignedInt
+  finishingPoint   Int     @map("finishing_point") @db.UnsignedInt
+  price            Decimal @db.Decimal(13, 4)
+  gmPrice          Decimal @map("gm_price") @db.Decimal(13, 4)
+
+  @@id([serviceId, organizationId])
+  @@map("custom_residential_pricings")
+}
+
+model CustomResidentialRevisionPrice {
+  serviceId        String  @map("service_id") @db.VarChar(255)
+  serviceName      String  @map("service_name") @db.VarChar(255)
+  organizationId   String  @map("organization_id") @db.VarChar(255)
+  organizationName String  @map("organization_name") @db.VarChar(255)
+  price            Decimal @db.Decimal(13, 4)
+  gmPrice          Decimal @map("gm_price") @db.Decimal(13, 4)
+
+  @@id([serviceId, organizationName])
+  @@map("custom_residential_revision_price")
+}
+
+model CommercialStandardPricingTiers {
+  serviceId      String  @map("service_id") @db.VarChar(255)
+  serviceName    String  @map("service_name") @db.VarChar(255)
+  startingPoint  Decimal @map("starting_point") @db.Decimal(13, 4)
+  finishingPoint Decimal @map("finishing_point") @db.Decimal(13, 4)
+  price          Decimal @db.Decimal(13, 4)
+  gmPrice        Decimal @map("gm_price") @db.Decimal(13, 4)
+  service        Service @relation(fields: [serviceId], references: [id])
+
+  @@id([serviceId, startingPoint])
+  @@map("commercial_standard_pricing_tiers")
 }
 
 enum InvoicesStatus {

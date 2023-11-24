@@ -1,26 +1,25 @@
-import { Controller, Get, Param } from '@nestjs/common'
-import { QueryBus } from '@nestjs/cqrs'
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Controller, Get, Inject, Param } from '@nestjs/common'
 import { FindServiceRequestDto } from './find-service.request.dto'
-import { FindServiceQuery } from './find-service.query-handler'
 import { ServiceResponseDto } from '../../dtos/service.response.dto'
-import { Service, Tasks } from '@prisma/client'
+import { SERVICE_REPOSITORY } from '../../service.di-token'
+import { ServiceRepositoryPort } from '../../database/service.repository.port'
+import { ServiceMapper } from '../../service.mapper'
+import { ServiceNotFoundException } from '../../domain/service.error'
 
 @Controller('services')
 export class FindServiceHttpController {
-  constructor(private readonly queryBus: QueryBus) {}
+  constructor(
+    // @ts-ignore
+    @Inject(SERVICE_REPOSITORY)
+    private readonly serviceRepo: ServiceRepositoryPort,
+    private readonly mapper: ServiceMapper,
+  ) {}
 
   @Get(':serviceId')
   async get(@Param() request: FindServiceRequestDto): Promise<ServiceResponseDto> {
-    const command = new FindServiceQuery(request)
-
-    const result: Service & { tasks: Tasks[] } = await this.queryBus.execute(command)
-
-    return new ServiceResponseDto({
-      id: result.id,
-      name: result.name,
-      billingCode: result.billingCode,
-      basePrice: Number(result.basePrice),
-      relatedTasks: result.tasks,
-    })
+    const entity = await this.serviceRepo.findOne(request.serviceId)
+    if (!entity) throw new ServiceNotFoundException()
+    return this.mapper.toResponse(entity)
   }
 }
