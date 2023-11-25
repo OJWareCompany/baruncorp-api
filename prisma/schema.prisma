@@ -171,7 +171,7 @@ model Service {
   orderedServices                  OrderedServices[]
   tasks                            Tasks[]
   positionService                  PositionService[]
-  commercialStandardPricingTiers       CommercialStandardPricingTiers[]
+  commercialStandardPricingTiers   CommercialStandardPricingTiers[]
   userService                      UserService[]
 
   @@map("service")
@@ -827,7 +827,7 @@ model CustomResidentialPricings {
   @@map("custom_residential_pricings")
 }
 
-model CustomResidentialRevisionPrice {
+model CustomResidentialRevisionPricings {
   serviceId        String  @map("service_id") @db.VarChar(255)
   serviceName      String  @map("service_name") @db.VarChar(255)
   organizationId   String  @map("organization_id") @db.VarChar(255)
@@ -836,7 +836,7 @@ model CustomResidentialRevisionPrice {
   gmPrice          Decimal @map("gm_price") @db.Decimal(13, 4)
 
   @@id([serviceId, organizationName])
-  @@map("custom_residential_revision_price")
+  @@map("custom_residential_revision_pricings")
 }
 
 model CommercialStandardPricingTiers {
