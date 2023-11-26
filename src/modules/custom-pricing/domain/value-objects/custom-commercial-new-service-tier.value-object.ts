@@ -1,13 +1,13 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
 
-interface CommercialStandardPricingTierProps {
+interface CustomCommercialNewServicePricingTierProps {
   startingPoint: number
   finishingPoint: number
   price: number
   gmPrice: number
 }
 
-export class CommercialStandardPricingTier extends ValueObject<CommercialStandardPricingTierProps> {
+export class CustomCommercialNewServicePricingTier extends ValueObject<CustomCommercialNewServicePricingTierProps> {
   get startingPoint(): number {
     return this.props.startingPoint
   }
@@ -20,7 +20,11 @@ export class CommercialStandardPricingTier extends ValueObject<CommercialStandar
     return this.props.price
   }
 
-  protected validate(props: CommercialStandardPricingTierProps): void {
+  get gmPrice(): number {
+    return this.props.gmPrice
+  }
+
+  protected validate(props: CustomCommercialNewServicePricingTierProps): void {
     return
   }
 }

@@ -54,7 +54,6 @@ export class UserService {
   async getUserProfile(userId: string): Promise<UserResponseDto> {
     // TODO: Consider an Aggregate Pattern
     const userEntity = await this.userRepository.findOneById(userId)
-    console.log(2)
     const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organization.id)
     if (!organizationEntity) throw new OrganizationNotFoundException()
     return this.userMapper.toResponse(userEntity)

@@ -8,7 +8,6 @@ import { CommercialStandardPricingTier } from './domain/value-objects/commercial
 import { CommercialStandardPricing } from './domain/value-objects/commercial-standard-pricing.value-object'
 import { CommercialRevisionStandardPricing } from './domain/value-objects/commercial-revision-standard-pricing.value-object'
 import { ServicePricingTypeEnum } from './domain/service.type'
-import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
 import { FixedPrice } from './domain/value-objects/fixed-price.value-object'
 import { StandardPricing } from './domain/value-objects/standard-pricing.value-object'
 
@@ -91,6 +90,7 @@ export class ServiceMapper
         startingPoint: Number(tier.startingPoint),
         finishingPoint: Number(tier.finishingPoint),
         price: Number(tier.price),
+        gmPrice: 0,
       })
     })
 

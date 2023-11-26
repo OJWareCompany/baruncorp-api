@@ -47,6 +47,7 @@ export class UpdateServiceService implements ICommandHandler {
         startingPoint: Number(tier.startingPoint),
         finishingPoint: Number(tier.finishingPoint),
         price: Number(tier.price),
+        gmPrice: 0,
       })
     })
 
