@@ -48,7 +48,45 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
 
   async update(entity: CustomPricingEntity): Promise<void> {
     const record = this.customPricingMapper.toPersistence(entity)
-    await this.prismaService.customPricings.update({ where: { id: entity.id }, data: record })
+    await this.prismaService.customPricings.update({ where: { id: entity.id }, data: record.customPricings })
+
+    const props = entity.getProps()
+
+    // Delete Pricings
+    await this.prismaService.customFixedPricings.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+    })
+    await this.prismaService.customCommercialPricingTiers.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+    })
+    await this.prismaService.customResidentialPricingTiers.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+    })
+    await this.prismaService.customResidentialRevisionPricings.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+    })
+
+    // custom Fixed Pricings
+    if (record.customFixedPricings) {
+      await this.prismaService.customFixedPricings.create({ data: record.customFixedPricings })
+    }
+
+    // custom Commercial Pricings
+    if (record.customCommercialPricings.length) {
+      await this.prismaService.customCommercialPricingTiers.createMany({ data: record.customCommercialPricings })
+    }
+
+    // custom Residential Pricings
+    if (record.customResidentialPricings.length) {
+      await this.prismaService.customResidentialPricingTiers.createMany({ data: record.customResidentialPricings })
+    }
+
+    // custom Residential Revision Pricings
+    if (record.customResidentialRevisionPricings) {
+      await this.prismaService.customResidentialRevisionPricings.create({
+        data: record.customResidentialRevisionPricings,
+      })
+    }
   }
 
   async delete(id: string): Promise<void> {

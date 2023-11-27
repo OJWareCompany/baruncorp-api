@@ -18,6 +18,19 @@ export class UpdateCustomPricingService implements ICommandHandler {
   async execute(command: UpdateCustomPricingCommand): Promise<void> {
     const entity = await this.customPricingRepo.findOne(command.customPricingId)
     if (!entity) throw new CustomPricingNotFoundException()
+
+    const residentialRevisionPricing =
+      command.residentialRevisionPrice && command.residentialRevisionGmPrice
+        ? {
+            price: command.residentialRevisionGmPrice,
+            gmPrice: command.residentialRevisionGmPrice,
+          }
+        : null
+
+    entity.setResidentialNewServiceTiers(command.residentialNewServiceTiers)
+    entity.setResidentialRevisionPricing(residentialRevisionPricing)
+    entity.setCommercialNewServiceTiers(command.commercialNewServiceTiers)
+    entity.setFixedPrice(command.fixedPrice)
     await this.customPricingRepo.update(entity)
   }
 }
