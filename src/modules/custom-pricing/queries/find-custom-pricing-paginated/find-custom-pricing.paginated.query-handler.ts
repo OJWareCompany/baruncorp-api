@@ -1,4 +1,3 @@
-import { NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { CustomPricings } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
@@ -23,7 +22,6 @@ export class FindCustomPricingPaginatedQueryHandler implements IQueryHandler {
       skip: query.offset,
       take: query.limit,
     })
-    if (!result) throw new NotFoundException()
     const totalCount = await this.prismaService.customPricings.count()
     return new Paginated({
       page: query.page,

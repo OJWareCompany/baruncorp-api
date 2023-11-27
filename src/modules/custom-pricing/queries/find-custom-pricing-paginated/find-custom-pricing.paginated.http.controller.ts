@@ -26,17 +26,7 @@ export class FindCustomPricingPaginatedHttpController {
     return new CustomPricingPaginatedResponseDto({
       ...queryParams,
       ...result,
-      items: result.items.map((item) => ({
-        id: item.id,
-        organizationId: '',
-        organizationName: '',
-        serviceId: '',
-        serviceName: '',
-        hasResidentialNewServiceTier: true,
-        hasResidentialRevisionPricing: true,
-        hasCommercialNewServiceTier: true,
-        hasFixedPricing: true,
-      })),
+      items: result.items,
     })
   }
 }
