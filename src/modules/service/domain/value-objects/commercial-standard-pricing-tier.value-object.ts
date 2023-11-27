@@ -20,6 +20,10 @@ export class CommercialStandardPricingTier extends ValueObject<CommercialStandar
     return this.props.price
   }
 
+  get gmPrice(): number {
+    return this.props.price
+  }
+
   protected validate(props: CommercialStandardPricingTierProps): void {
     return
   }

@@ -14,6 +14,10 @@ export class CommercialTier {
   @ApiProperty({ default: 10 })
   @IsNumber()
   price: number
+
+  @ApiProperty({ default: 10 })
+  @IsNumber()
+  gmPrice: number
 }
 
 export class StandardPricingRequestDtoFields {
