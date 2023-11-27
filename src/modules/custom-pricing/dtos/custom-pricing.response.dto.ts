@@ -1,25 +1,83 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import { CustomPricingType } from '../commands/create-custom-pricing/create-custom-pricing.command'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { CustomPricings } from '@prisma/client'
 
-/**
- * Remove interface after select fields
- */
+export class Tier {
+  @ApiProperty({ default: 0.01 })
+  @IsNumber()
+  startingPoint: number
+
+  @ApiProperty({ default: 100 })
+  @IsNumber()
+  finishingPoint: number | null
+
+  @ApiProperty({ default: 10 })
+  @IsNumber()
+  price: number
+
+  @ApiProperty({ default: 10 })
+  @IsNumber()
+  gmPrice: number
+}
+
 export class CustomPricingResponseDto {
   @ApiProperty({ default: '' })
   @IsString()
-  readonly id: string
+  readonly customPricingId: string
+
+  @ApiProperty({ default: '' })
+  @IsString()
+  readonly serviceId: string
+
+  @ApiProperty({ default: '' })
+  @IsString()
+  readonly organizationId: string
+
+  @ApiProperty({ enum: CustomPricingType, default: CustomPricingType.custom_standard })
+  @IsEnum(CustomPricingType)
+  readonly customPricingType: CustomPricingType
+
+  @ApiProperty({
+    default: [
+      { startingPoint: 1, finishingPoint: 100, price: 10, gmPrice: 12.01 },
+      { startingPoint: 101, finishingPoint: 200, price: 10, gmPrice: 12.01 },
+      { startingPoint: 201, finishingPoint: null, price: 10, gmPrice: 12.01 },
+    ],
+    type: Tier,
+    isArray: true,
+  })
+  @IsArray()
+  readonly residentialNewServiceTiers: Tier[]
+
+  @ApiProperty({ default: 10 })
+  @IsNumber()
+  @IsOptional()
+  readonly residentialRevisionPrice: number | null
+
+  @ApiProperty({ default: 10 })
+  @IsNumber()
+  @IsOptional()
+  readonly residentialRevisionGmPrice: number | null
+
+  @ApiProperty({
+    default: [
+      { startingPoint: 0.01, finishingPoint: 100, price: 10, gmPrice: 12.01 },
+      { startingPoint: 100.01, finishingPoint: 200, price: 10, gmPrice: 12.01 },
+      { startingPoint: 200.01, finishingPoint: null, price: 10, gmPrice: 12.01 },
+    ],
+    type: Tier,
+    isArray: true,
+  })
+  @IsArray()
+  readonly commercialNewServiceTiers: Tier[]
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  readonly fixedPrice: number | null
 
   constructor(props: CustomPricingResponseDto) {
     initialize(this, props)
   }
-  organizationId: string
-  organizationName: string
-  serviceId: string
-  serviceName: string
-  hasResidentialNewServiceTier: boolean
-  hasResidentialRevisionPricing: boolean
-  hasCommercialNewServiceTier: boolean
-  hasFixedPricing: boolean
 }

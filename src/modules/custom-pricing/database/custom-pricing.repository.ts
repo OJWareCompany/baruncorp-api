@@ -54,16 +54,16 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
 
     // Delete Pricings
     await this.prismaService.customFixedPricings.deleteMany({
-      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
     })
     await this.prismaService.customCommercialPricingTiers.deleteMany({
-      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
     })
     await this.prismaService.customResidentialPricingTiers.deleteMany({
-      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
     })
     await this.prismaService.customResidentialRevisionPricings.deleteMany({
-      where: { serviceId: props.serviceId, organizationId: props.oragnizationId },
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
     })
 
     // custom Fixed Pricings
@@ -89,8 +89,27 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
     }
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prismaService.$executeRaw<CustomPricings>`DELETE FROM custom_pricings WHERE id = ${id}`
+  async delete(entity: CustomPricingEntity): Promise<void> {
+    const record = this.customPricingMapper.toPersistence(entity)
+    await this.prismaService.customPricings.update({ where: { id: entity.id }, data: record.customPricings })
+
+    const props = entity.getProps()
+
+    // Delete Pricings
+    await this.prismaService.customFixedPricings.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
+    })
+    await this.prismaService.customCommercialPricingTiers.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
+    })
+    await this.prismaService.customResidentialPricingTiers.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
+    })
+    await this.prismaService.customResidentialRevisionPricings.deleteMany({
+      where: { serviceId: props.serviceId, organizationId: props.organizationId },
+    })
+
+    await this.prismaService.$executeRaw<CustomPricings>`DELETE FROM custom_pricings WHERE id = ${entity.id}`
   }
 
   async findOne(id: string): Promise<CustomPricingEntity | null> {

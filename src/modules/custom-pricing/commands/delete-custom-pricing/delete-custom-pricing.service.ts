@@ -18,6 +18,6 @@ export class DeleteCustomPricingService implements ICommandHandler {
   async execute(command: DeleteCustomPricingCommand): Promise<void> {
     const entity = await this.customPricingRepo.findOne(command.customPricingId)
     if (!entity) throw new CustomPricingNotFoundException()
-    await this.customPricingRepo.update(entity)
+    await this.customPricingRepo.delete(entity)
   }
 }

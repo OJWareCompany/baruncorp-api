@@ -6,6 +6,7 @@ import { CustomCommercialNewServicePricingTier } from './value-objects/custom-co
 import { Pricing } from '../../service/domain/value-objects/pricing.value-object'
 import { CustomResidentialRevisionPricing } from './value-objects/custom-residential-revision-pricing.value-object'
 import { CustomResidentialNewServicePricingTier } from './value-objects/custom-residential-new-servier-tier.value-object'
+import { CustomPricingType } from '../commands/create-custom-pricing/create-custom-pricing.command'
 
 export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   protected _id: string
@@ -16,6 +17,10 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
       ...create,
     }
     return new CustomPricingEntity({ id, props })
+  }
+
+  getType(): CustomPricingType {
+    return this.props.fixedPricing ? CustomPricingType.custom_fixed : CustomPricingType.custom_standard
   }
 
   setResidentialNewServiceTiers(

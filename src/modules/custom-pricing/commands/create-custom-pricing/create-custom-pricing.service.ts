@@ -63,7 +63,7 @@ export class CreateCustomPricingService implements ICommandHandler {
     const entity = CustomPricingEntity.create({
       serviceId: command.serviceId,
       serviceName: service.name,
-      oragnizationId: command.organizationId,
+      organizationId: command.organizationId,
       organizationName: organization.name,
       residentialNewServiceTiers,
       residentialRevisionPricing,

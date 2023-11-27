@@ -29,7 +29,7 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
     const props = entity.getProps()
 
     const foreignKey = {
-      organizationId: props.oragnizationId,
+      organizationId: props.organizationId,
       organizationName: props.organizationName,
       serviceId: props.serviceId,
       serviceName: props.serviceName,
@@ -105,7 +105,7 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
       props: {
         serviceId: customPricings.serviceId,
         serviceName: customPricings.serviceName,
-        oragnizationId: customPricings.organizationId,
+        organizationId: customPricings.organizationId,
         organizationName: customPricings.organizationName,
         residentialNewServiceTiers: customResidentialPricings.map((tier) => {
           return new CustomResidentialNewServicePricingTier({
@@ -137,17 +137,30 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
 
   toResponse(entity: CustomPricingEntity): CustomPricingResponseDto {
     const props = entity.getProps()
-    const response = new CustomPricingResponseDto({
-      id: 'string',
-      organizationId: '',
-      organizationName: '',
-      serviceId: '',
-      serviceName: '',
-      hasResidentialNewServiceTier: true,
-      hasResidentialRevisionPricing: true,
-      hasCommercialNewServiceTier: true,
-      hasFixedPricing: true,
+    return new CustomPricingResponseDto({
+      customPricingId: props.id,
+      serviceId: props.serviceId,
+      organizationId: props.organizationId,
+      customPricingType: entity.getType(),
+      residentialNewServiceTiers: props.residentialNewServiceTiers.map((tier) => {
+        return {
+          startingPoint: tier.startingPoint,
+          finishingPoint: tier.finishingPoint,
+          price: tier.price,
+          gmPrice: tier.price,
+        }
+      }),
+      residentialRevisionPrice: props.residentialRevisionPricing ? props.residentialRevisionPricing.price : null,
+      residentialRevisionGmPrice: props.residentialRevisionPricing ? props.residentialRevisionPricing.gmPrice : null,
+      commercialNewServiceTiers: props.commercialNewServiceTiers.map((tier) => {
+        return {
+          startingPoint: tier.startingPoint,
+          finishingPoint: tier.finishingPoint,
+          price: tier.price,
+          gmPrice: tier.price,
+        }
+      }),
+      fixedPrice: props.fixedPricing ? props.fixedPricing.value : null,
     })
-    return response
   }
 }

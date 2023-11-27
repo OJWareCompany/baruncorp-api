@@ -6,7 +6,7 @@ import { CustomResidentialRevisionPricing } from './value-objects/custom-residen
 export interface CreateCustomPricingProps {
   serviceId: string
   serviceName: string
-  oragnizationId: string
+  organizationId: string
   organizationName: string
   residentialNewServiceTiers: CustomResidentialNewServicePricingTier[]
   residentialRevisionPricing: CustomResidentialRevisionPricing | null
