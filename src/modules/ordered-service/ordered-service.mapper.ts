@@ -26,6 +26,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       status: props.status,
       orderedAt: props.orderedAt,
       doneAt: props.doneAt,
+      is_manual_price: entity.getProps().isManualPrice,
     }
   }
 
@@ -46,6 +47,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
         orderedAt: record.orderedAt,
         doneAt: record.doneAt,
         status: record.status as OrderedServiceStatus,
+        isManualPrice: record.is_manual_price, //record.isManualPrice,
         assignedTasks: record.assignedTasks,
       },
     })

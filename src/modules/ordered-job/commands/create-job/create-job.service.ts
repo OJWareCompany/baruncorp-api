@@ -57,7 +57,6 @@ export class CreateJobService implements ICommandHandler {
     })
 
     await this.jobRepository.insert(job)
-
     return {
       id: job.id,
     }

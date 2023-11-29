@@ -3,25 +3,22 @@ import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
-import { UpdateOrderedServiceCommand } from './update-ordered-service.command'
-import {
-  UpdateOrderedServiceParamRequestDto,
-  UpdateOrderedServiceRequestDto,
-} from './update-ordered-service.request.dto'
+import { UpdateRevisionSizeCommand } from './update-mounting-type.command'
+import { UpdateRevisionSizeParamRequestDto, UpdateRevisionSizeRequestDto } from './update-mounting-type.request.dto'
 
 @Controller('ordered-services')
-export class UpdateOrderedServiceHttpController {
+export class UpdateRevisionSizeHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Patch(':orderedServiceId')
+  @Patch(':orderedServiceId/revision-size')
   @UseGuards(AuthGuard)
   async patch(
     @User() user: UserEntity,
-    @Param() param: UpdateOrderedServiceParamRequestDto,
-    @Body() request: UpdateOrderedServiceRequestDto,
+    @Param() param: UpdateRevisionSizeParamRequestDto,
+    @Body() request: UpdateRevisionSizeRequestDto,
   ): Promise<void> {
-    const command = new UpdateOrderedServiceCommand({
+    const command = new UpdateRevisionSizeCommand({
       orderedServiceId: param.orderedServiceId,
-      description: request.description,
+      revisionSize: request.sizeForRevision,
     })
     await this.commandBus.execute(command)
   }

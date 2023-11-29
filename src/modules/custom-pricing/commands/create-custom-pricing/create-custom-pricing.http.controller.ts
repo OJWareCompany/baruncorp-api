@@ -23,7 +23,7 @@ export class CreateCustomPricingHttpController {
       serviceId: request.serviceId,
       organizationId: request.organizationId,
       type: request.customPricingType,
-      residentialNewServiceTiers: request.commercialNewServiceTiers,
+      residentialNewServiceTiers: request.residentialNewServiceTiers,
       residentialRevisionPrice: request.residentialRevisionPrice,
       residentialRevisionGmPrice: request.residentialRevisionGmPrice,
       commercialNewServiceTiers: request.commercialNewServiceTiers,

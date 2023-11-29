@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, NotFoundException } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
 import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'

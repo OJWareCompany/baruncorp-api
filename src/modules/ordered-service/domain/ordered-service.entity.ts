@@ -23,6 +23,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       status: 'Pending',
       doneAt: null,
       orderedAt: new Date(),
+      isManualPrice: false,
       assignedTasks: [],
     }
     const entity = new OrderedServiceEntity({ id, props })
@@ -74,8 +75,33 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   setTaskSizeForRevision(sizeForRevision: OrderedServiceSizeForRevisionEnum | null): this {
+    if (sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor) {
+      this.props.price = 0
+    }
     this.props.sizeForRevision = this.props.isRevision ? sizeForRevision : null
     return this
+  }
+
+  setPrice(price: number | null) {
+    if (this.props.isManualPrice) return this
+    this.props.price = price
+    return this
+    // 100원 -> 0원
+    // 매뉴얼 -> 자동 무시 -> 들어오는 값이 매뉴얼한 Price인지는 어떻게 판단? 0원도 들어오는데
+    // update price를 vo로 만들어서 ismanully라는 속성을 가지고있게 하자?
+    // Pricing에 서비스를 넣어서 manully면 거르게 해야한다.
+
+    // api 나누기
+    // revision size 변경하는 api
+    // update(pricing), manually이면 적용X
+    // 가격 업데이트하는 api
+    // 무조건 업데이트
+    // task에서 시간 입력 api도 필요하다.
+  }
+
+  setManualPrice(price: number) {
+    this.props.price = price
+    this.props.isManualPrice = true
   }
 
   setPriceOverride(priceOverride: number | null): this {

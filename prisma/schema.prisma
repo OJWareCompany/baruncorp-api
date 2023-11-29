@@ -190,6 +190,7 @@ model OrderedServices {
   sizeForRevision String?         @map("size_for_revision") @db.VarChar(255)
   projectId       String          @map("project_id") @db.VarChar(255)
   isRevision      Boolean         @default(false) @map("is_revision")
+  is_manual_price Boolean
   job             OrderedJobs     @relation(fields: [jobId], references: [id])
   service         Service         @relation(fields: [serviceId], references: [id])
   assignedTasks   AssignedTasks[]

@@ -1,10 +1,10 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { OrderedServiceSizeForRevisionEnum } from '../../domain/ordered-service.type'
 
-export class UpdateOrderedServiceCommand {
+export class UpdateRevisionSizeCommand {
   readonly orderedServiceId: string
-  readonly description: string | null
-  constructor(props: UpdateOrderedServiceCommand) {
+  readonly revisionSize: OrderedServiceSizeForRevisionEnum | null
+  constructor(props: UpdateRevisionSizeCommand) {
     initialize(this, props)
   }
 }

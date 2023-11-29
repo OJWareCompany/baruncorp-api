@@ -11,3 +11,9 @@ export class OrderedServiceAlreadyCompletedException extends BadRequestException
     super('completed service can not be modified status.', '40301')
   }
 }
+
+export class OrderedServiceInvalidRevisionSizeForManualPriceUpdateException extends BadRequestException {
+  constructor() {
+    super('Invalid Revision Size For Update Manual Price. please update state to Major.', '40302')
+  }
+}

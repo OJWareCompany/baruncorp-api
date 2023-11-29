@@ -30,4 +30,5 @@ export interface OrderedServiceProps extends CreateOrderedServiceProps {
   status: OrderedServiceStatus
   doneAt: Date | null
   assignedTasks: AssignedTasks[]
+  isManualPrice: boolean
 }

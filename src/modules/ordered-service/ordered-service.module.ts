@@ -20,6 +20,16 @@ import { ReactivateOrderedServiceHttpController } from './command/reactivate-ord
 import { ReactivateOrderedServiceService } from './command/reactivate-ordered-service/reactivate-ordered-service.service'
 import { CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/complete-ordered-service-when-task-is-completed.domain-event-handler'
 import { CancelOrderedServiceWhenJobIsCanceledDomainEventHandler } from './application/event-handlers/cancel-ordered-service-when-job-is-canceled.domain-event-handler'
+import { ServiceRepository } from '../service/database/service.repository'
+import { SERVICE_REPOSITORY } from '../service/service.di-token'
+import { CustomPricingRepository } from '../custom-pricing/database/custom-pricing.repository'
+import { CUSTOM_PRICING_REPOSITORY } from '../custom-pricing/custom-pricing.di-token'
+import { ServiceMapper } from '../service/service.mapper'
+import { CustomPricingMapper } from '../custom-pricing/custom-pricing.mapper'
+import { UpdateManualPriceHttpController } from './command/update-manual-price/update-manual-price.http.controller'
+import { UpdateRevisionSizeHttpController } from './command/update-revision-size/update-mounting-type.http.controller'
+import { UpdateManualPriceService } from './command/update-manual-price/update-manual-price-service.service'
+import { UpdateRevisionSizeService } from './command/update-revision-size/update-mounting-type.service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -28,6 +38,8 @@ const httpControllers = [
   FindOrderedServiceHttpController,
   CancelOrderedServiceHttpController,
   ReactivateOrderedServiceHttpController,
+  UpdateManualPriceHttpController,
+  UpdateRevisionSizeHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateOrderedServiceService,
@@ -35,6 +47,8 @@ const commandHandlers: Provider[] = [
   // DeleteOrderedServiceService,
   CancelOrderedServiceService,
   ReactivateOrderedServiceService,
+  UpdateManualPriceService,
+  UpdateRevisionSizeService,
 ]
 const queryHandlers: Provider[] = [FindOrderedServiceQueryHandler]
 const eventHandlers: Provider[] = [
@@ -42,8 +56,12 @@ const eventHandlers: Provider[] = [
   CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler,
   CancelOrderedServiceWhenJobIsCanceledDomainEventHandler,
 ]
-const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]
-const mappers: Provider[] = [OrderedServiceMapper, UserMapper]
+const repositories: Provider[] = [
+  { provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository },
+  { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
+  { provide: CUSTOM_PRICING_REPOSITORY, useClass: CustomPricingRepository },
+]
+const mappers: Provider[] = [OrderedServiceMapper, UserMapper, ServiceMapper, CustomPricingMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

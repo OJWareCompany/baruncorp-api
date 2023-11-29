@@ -10,15 +10,6 @@ export class UpdateOrderedServiceParamRequestDto {
 
 export class UpdateOrderedServiceRequestDto {
   @ApiProperty({ default: '' })
-  @IsNumber()
-  readonly priceOverride: number
-
-  @ApiProperty({ default: null, enum: OrderedServiceSizeForRevisionEnum })
-  @IsEnum(OrderedServiceSizeForRevisionEnum)
-  @IsOptional()
-  readonly sizeForRevision: OrderedServiceSizeForRevisionEnum | null
-
-  @ApiProperty({ default: '' })
   @IsString()
   @IsOptional()
   readonly description: string | null

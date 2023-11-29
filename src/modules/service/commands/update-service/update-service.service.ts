@@ -55,7 +55,6 @@ export class UpdateServiceService implements ICommandHandler {
       costPerUnit: command.commercialRevisionCostPerUnit,
       minutesPerUnit: command.commercialRevisionMinutesPerUnit,
     })
-
     service.updatePricing(
       new Pricing({
         type: command.type,

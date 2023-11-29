@@ -2,25 +2,30 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
-import { UpdateOrderedServiceCommand } from './update-ordered-service.command'
+import { UpdateManualPriceCommand } from './update-manual-price.command'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
-import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
+import {
+  OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
+  OrderedServiceNotFoundException,
+} from '../../domain/ordered-service.error'
 import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
 import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
 
-@CommandHandler(UpdateOrderedServiceCommand)
-export class UpdateOrderedServiceService implements ICommandHandler {
+@CommandHandler(UpdateManualPriceCommand)
+export class UpdateManualPriceService implements ICommandHandler {
   constructor(
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY)
     private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
-  async execute(command: UpdateOrderedServiceCommand): Promise<void> {
+  async execute(command: UpdateManualPriceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
+
+    if (orderedService.getProps().sizeForRevision !== 'Major')
+      throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()
 
     // TODO: REFACTOR
     const job = await this.prismaService.orderedJobs.findUnique({ where: { id: orderedService.getProps().jobId } })
@@ -33,12 +38,8 @@ export class UpdateOrderedServiceService implements ICommandHandler {
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
-    const project = await this.prismaService.orderedProjects.findUnique({
-      where: { id: orderedService.getProps().projectId },
-    })
-    if (!project) throw new ProjectNotFoundException()
+    orderedService.setManualPrice(command.price)
 
-    orderedService.setDescription(command.description)
     await this.orderedServiceRepo.update(orderedService)
   }
 }
