@@ -38,6 +38,7 @@ export class FindAssignedTaskPaginatedHttpController {
         description: item.orderedService.description,
         assigneeId: item.assigneeId,
         assigneeName: item.user ? item.user.firstName + ' ' + item.user.lastName : null,
+        duration: item.duration,
         startedAt: item.startedAt,
         doneAt: item.doneAt,
       })),

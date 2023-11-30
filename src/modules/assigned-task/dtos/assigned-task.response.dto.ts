@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsNumber, IsOptional, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { AssignedTasks } from '@prisma/client'
 import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
@@ -49,6 +49,11 @@ export class AssignedTaskResponseDto implements AssignedTasks {
   @IsString()
   @IsOptional()
   readonly doneAt: Date | null
+
+  @ApiProperty()
+  @IsNumber()
+  @IsOptional()
+  readonly duration: number | null
 
   constructor(props: AssignedTaskResponseDto) {
     initialize(this, props)

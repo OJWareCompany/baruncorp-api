@@ -17,6 +17,7 @@ export interface CreateAssignedTaskProps {
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {
   status: AssignedTaskStatus
+  duration: number | null
   startedAt: Date | null
   doneAt: Date | null
 }

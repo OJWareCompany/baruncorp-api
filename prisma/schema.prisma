@@ -733,6 +733,7 @@ model AssignedTasks {
   assigneeId       String?         @map("assignee_id") @db.VarChar(255)
   startedAt        DateTime?       @map("started_at") @db.DateTime(0)
   doneAt           DateTime?       @map("done_at") @db.DateTime(0)
+  duration         Int?            @db.TinyInt
   task             Tasks           @relation(fields: [taskId], references: [id])
   orderedService   OrderedServices @relation(fields: [orderedServiceId], references: [id])
   job              OrderedJobs     @relation(fields: [jobId], references: [id])

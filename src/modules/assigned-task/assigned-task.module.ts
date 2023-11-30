@@ -17,14 +17,17 @@ import { ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler } fro
 import { CompleteAssignedTaskHttpController } from './commands/complete-assigned-task/complete-assigned-task.http.controller'
 import { CompleteAssignedTaskService } from './commands/complete-assigned-task/complete-assigned-task.service'
 import { HoldAssignedTaskWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-assigned-task-when-job-is-held.domain-event-handler'
+import { UpdateTaskDurationHttpController } from './commands/update-task-duration/update-task-duration.http.controller'
+import { UpdateTaskDurationService } from './commands/update-task-duration/update-task-duration.service'
 
 const httpControllers = [
   UpdateAssignedTaskHttpController,
   FindAssignedTaskHttpController,
   FindAssignedTaskPaginatedHttpController,
   CompleteAssignedTaskHttpController,
+  UpdateTaskDurationHttpController,
 ]
-const commandHandlers: Provider[] = [UpdateAssignedTaskService, CompleteAssignedTaskService]
+const commandHandlers: Provider[] = [UpdateAssignedTaskService, CompleteAssignedTaskService, UpdateTaskDurationService]
 const queryHandlers: Provider[] = [FindAssignedTaskQueryHandler, FindAssignedTaskPaginatedQueryHandler]
 const repositories: Provider[] = [
   {

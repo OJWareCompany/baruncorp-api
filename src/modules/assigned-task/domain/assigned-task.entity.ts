@@ -4,6 +4,7 @@ import { CreateAssignedTaskProps, AssignedTaskProps, AssignedTaskStatus } from '
 import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned.domain-event'
 import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
 import { AssignedTaskReopenedDomainEvent } from './events/assigned-task-reopened.domain-event'
+import { AssignedTaskDurationUpdatedDomainEvent } from './events/assigned-task-duration-updated.domain-event'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -13,6 +14,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     const props: AssignedTaskProps = {
       ...create,
       status: 'Not Started',
+      duration: null,
       startedAt: null,
       doneAt: null,
     }
@@ -67,6 +69,17 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
       new AssignedTaskAssignedDomainEvent({
         aggregateId: this.id,
         jobId: this.props.jobId,
+      }),
+    )
+    return this
+  }
+
+  setDuration(duration: number | null): this {
+    this.props.duration = duration
+    this.addEvent(
+      new AssignedTaskDurationUpdatedDomainEvent({
+        aggregateId: this.id,
+        orderedServiceId: this.props.orderedServiceId,
       }),
     )
     return this

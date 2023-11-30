@@ -30,6 +30,7 @@ import { UpdateManualPriceHttpController } from './command/update-manual-price/u
 import { UpdateRevisionSizeHttpController } from './command/update-revision-size/update-mounting-type.http.controller'
 import { UpdateManualPriceService } from './command/update-manual-price/update-manual-price-service.service'
 import { UpdateRevisionSizeService } from './command/update-revision-size/update-mounting-type.service'
+import { UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-service-price-when-task-duration-updated.domain-event-handler'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -55,6 +56,7 @@ const eventHandlers: Provider[] = [
   CreateOrderedServiceWhenJobIsCreatedEventHandler,
   CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler,
   CancelOrderedServiceWhenJobIsCanceledDomainEventHandler,
+  UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler,
 ]
 const repositories: Provider[] = [
   { provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository },
