@@ -128,19 +128,6 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
         )
       })
 
-      /**
-       * Standard Pricing, Custom Pricing 두개를 같이 구한다.
-       * 이유: ordered service의 project type, revision 여부에 따라서 분기처리 하는것보다 로직을 간결하게 하기 위해서
-       *
-       * 그럼 이렇게 된다. price: customPrice ?? standardPrice
-       *
-       * 이때.. Custom  Pricing이 있더라도 New Residential의 경우에는 가격이 정해지지 않는다.
-       * null로 처리할 경우 standard price가 되기때문에.. 0으로 처리한다.
-       *
-       * 이때 0과 null의 차이를 두어야하나, 아니면 null도 0원으로 표현하면 되나
-       *
-       * 일단은 null로 되도록 구현하자.
-       */
       if (!residentialFixedPrice || pricing.residentialNewServiceTiers.length > 1) return (price = null)
 
       price = mountingType === 'Ground Mount' ? residentialFixedPrice.gmPrice : residentialFixedPrice.price

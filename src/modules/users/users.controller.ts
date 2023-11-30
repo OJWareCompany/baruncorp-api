@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Query, UseGuards } from '@nestjs/common'
+import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
 import { UserService } from './users.service'
 import { CreateInvitationMailRequestDto } from './commands/create-invitation-mail/create-invitation-mail.request.dto'
 import { User } from '../../libs/decorators/requests/logged-in-user.decorator'
@@ -13,8 +13,6 @@ import { UpdateUserRequestDto } from './commands/update-user/update-user.request
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 import { CreateLicenseRequestDto } from '../users/commands/create-user-license/create-license.request.dto'
 import { UserRequestDto } from './user-param.request.dto'
-import { DeleteMemberLicenseRequestDto } from './commands/delete-member-license/delete-member-license.request.dto'
-import { LincenseResponseDto } from './dtos/license.response.dto'
 import { InvitationEmailProp } from './domain/invitationMail.types'
 
 ConfigModule.forRoot()
