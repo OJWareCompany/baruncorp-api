@@ -120,7 +120,8 @@ export class CreateOrderedServiceService implements ICommandHandler {
     const orderedService = OrderedServiceEntity.create({
       projectId: job.projectId,
       isRevision: !!preOrderedServices.length,
-      sizeForRevision: null,
+      sizeForRevision:
+        isFreeRevision || customPricing?.hasFixedPricing() || standardPricing.fixedPrice ? 'Major' : null,
       price: initialPrice,
       serviceId: command.serviceId,
       jobId: command.jobId,

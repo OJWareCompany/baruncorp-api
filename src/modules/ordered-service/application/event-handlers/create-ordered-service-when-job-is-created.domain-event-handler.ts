@@ -124,7 +124,8 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
         const entity = OrderedServiceEntity.create({
           projectId: event.projectId,
           isRevision,
-          sizeForRevision: null,
+          sizeForRevision:
+            isFreeRevision || customPricing?.hasFixedPricing() || standardPricing.fixedPrice ? 'Major' : null, // Fixed여도 고정이어야하는데
           price: initialPrice,
           serviceId: orderedService.serviceId,
           description: orderedService.description,
