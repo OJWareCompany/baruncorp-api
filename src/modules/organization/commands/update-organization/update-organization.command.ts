@@ -18,6 +18,7 @@ export class UpdateOrganizationCommand {
   }
   readonly projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
+  readonly isSpecialRevisionPricing: boolean
 
   constructor(props: UpdateOrganizationCommand) {
     initialize(this, props)

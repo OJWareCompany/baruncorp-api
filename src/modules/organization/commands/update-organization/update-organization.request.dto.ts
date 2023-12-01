@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsEnum, IsObject, IsOptional, IsString, Matches } from 'class-validator'
+import { IsBoolean, IsEmail, IsEnum, IsObject, IsOptional, IsString, Matches } from 'class-validator'
 import { AddressDto } from '../../../ordered-job/dtos/address.dto'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 
@@ -38,4 +38,8 @@ export class UpdateOrganizationRequestDto {
   @IsEnum(MountingTypeEnum)
   @IsOptional()
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly isSpecialRevisionPricing: boolean
 }

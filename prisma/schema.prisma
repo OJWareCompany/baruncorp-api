@@ -42,6 +42,7 @@ model Organizations {
   mountingTypeDefaultValue        String?            @map("mounting_type_default_value") @db.VarChar(255)
   addressCoordinates              String             @map("address_coordinates") @db.VarChar(255)
   fullAddress                     String             @map("full_address") @db.VarChar(255)
+  isSpecialRevisionPricing        Boolean            @map("is_special_revision_pricing")
   invitationEmailEntity           InvitationEmails[]
   organizationTypeEntity          OrganizationTypes  @relation(fields: [organizationType], references: [type])
   users                           Users[]

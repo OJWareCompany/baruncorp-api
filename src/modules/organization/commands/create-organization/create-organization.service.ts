@@ -34,6 +34,7 @@ export class CreateOrganizationService implements ICommandHandler {
       isRevisionRevenueShare: null,
       invoiceRecipient: null,
       invoiceRecipientEmail: null,
+      isSpecialRevisionPricing: command.isSpecialRevisionPricing,
     })
 
     await this.organizationRepository.insertOrganization(entity)

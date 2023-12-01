@@ -56,6 +56,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       revisionRevenueShare: props.isRevisionRevenueShare ? 1 : 0,
       invoiceRecipient: props.invoiceRecipient,
       invoiceRecipientEmail: props.invoiceRecipientEmail,
+      isSpecialRevisionPricing: props.isSpecialRevisionPricing,
     }
     return record
   }
@@ -89,6 +90,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       isRevisionRevenueShare: !!record.revisionRevenueShare,
       invoiceRecipient: record.invoiceRecipient,
       invoiceRecipientEmail: record.invoiceRecipientEmail,
+      isSpecialRevisionPricing: record.isSpecialRevisionPricing,
     }
     return new OrganizationEntity({ id: record.id, props })
   }
@@ -114,6 +116,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
 
     response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
     response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
+    response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare
@@ -133,6 +136,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.fullAddress = entity.getProps().address.fullAddress
     response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
     response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
+    response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare

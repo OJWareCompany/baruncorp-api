@@ -28,6 +28,9 @@ export class OrganizationPaginatedResponseFields {
 
   @ApiProperty()
   mountingTypeDefaultValue: string | null
+
+  @ApiProperty()
+  isSpecialRevisionPricing: boolean
 }
 
 export class OrganizationPaginatedResponseDto extends PaginatedResponseDto<OrganizationPaginatedResponseFields> {

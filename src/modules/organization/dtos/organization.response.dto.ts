@@ -31,6 +31,9 @@ export class OrganizationResponseDto {
   @ApiProperty()
   mountingTypeDefaultValue: string | null
 
+  @ApiProperty()
+  isSpecialRevisionPricing: boolean
+
   // @ApiProperty({ description: '필요한지 확인 필요' })
   // isActiveContractor: boolean | null
 

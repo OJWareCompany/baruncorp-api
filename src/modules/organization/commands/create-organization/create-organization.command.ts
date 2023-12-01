@@ -25,6 +25,7 @@ export class CreateOrganizationCommand {
   // readonly invoiceRecipientEmail: string | null
   readonly projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
+  readonly isSpecialRevisionPricing: boolean
 
   constructor(props: CreateOrganizationCommand) {
     initialize(this, props)

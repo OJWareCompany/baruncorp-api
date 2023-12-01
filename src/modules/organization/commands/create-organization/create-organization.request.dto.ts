@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEmail, IsEnum, IsObject, IsOptional, IsString, Matches } from 'class-validator'
+import { IsBoolean, IsEmail, IsEnum, IsObject, IsOptional, IsString, Matches } from 'class-validator'
 import { AddressDto } from '../../../ordered-job/dtos/address.dto'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 
@@ -42,27 +42,7 @@ export class CreateOrganizationRequestDto {
   @IsOptional()
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
 
-  // @ApiProperty({ default: true, description: '필요한지 확인 필요' })
-  // @IsBoolean()
-  // readonly isActiveContractor: boolean | null
-
-  // @ApiProperty({ default: true, description: '필요한지 확인 필요' })
-  // @IsBoolean()
-  // readonly isActiveWorkResource: boolean | null
-
-  // @ApiProperty({ default: true, description: '필요한지 확인 필요' })
-  // @IsBoolean()
-  // readonly isRevenueShare: boolean | null
-
-  // @ApiProperty({ default: true, description: '필요한지 확인 필요' })
-  // @IsBoolean()
-  // readonly isRevisionRevenueShare: boolean | null
-
-  // @ApiProperty({ default: 'chris kim', description: '필요한지 확인 필요' })
-  // @IsString()
-  // readonly invoiceRecipient: string | null
-
-  // @ApiProperty({ default: 'chriskim@gmail.com', description: '필요한지 확인 필요' })
-  // @IsString()
-  // readonly invoiceRecipientEmail: string | null
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly isSpecialRevisionPricing: boolean
 }
