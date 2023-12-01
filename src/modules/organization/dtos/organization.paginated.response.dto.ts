@@ -31,6 +31,9 @@ export class OrganizationPaginatedResponseFields {
 
   @ApiProperty()
   isSpecialRevisionPricing: boolean
+
+  @ApiProperty()
+  numberOfFreeRevisionCount: number | null
 }
 
 export class OrganizationPaginatedResponseDto extends PaginatedResponseDto<OrganizationPaginatedResponseFields> {

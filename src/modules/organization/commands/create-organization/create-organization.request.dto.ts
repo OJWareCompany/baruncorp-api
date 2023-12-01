@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsEmail, IsEnum, IsObject, IsOptional, IsString, Matches } from 'class-validator'
+import { IsBoolean, IsEmail, IsEnum, IsNumber, IsObject, IsOptional, IsString, Matches } from 'class-validator'
 import { AddressDto } from '../../../ordered-job/dtos/address.dto'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 
@@ -45,4 +45,9 @@ export class CreateOrganizationRequestDto {
   @ApiProperty({ default: false })
   @IsBoolean()
   readonly isSpecialRevisionPricing: boolean
+
+  @ApiProperty({ default: 2 })
+  @IsNumber()
+  @IsOptional()
+  readonly numberOfFreeRevisionCount: number | null
 }

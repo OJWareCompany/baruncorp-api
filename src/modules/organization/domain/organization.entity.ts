@@ -30,6 +30,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
     mountingTypeDefaultValue: MountingTypeEnum | null
     isSpecialRevisionPricing: boolean
+    numberOfFreeRevisionCount: number | null
   }) {
     this.props.email = data.email
     this.props.phoneNumber = data.phoneNumber
@@ -38,6 +39,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     this.props.projectPropertyTypeDefaultValue = data.projectPropertyTypeDefaultValue
     this.props.mountingTypeDefaultValue = data.mountingTypeDefaultValue
     this.props.isSpecialRevisionPricing = data.isSpecialRevisionPricing
+    this.props.numberOfFreeRevisionCount = data.numberOfFreeRevisionCount
   }
 
   public validate(): void {

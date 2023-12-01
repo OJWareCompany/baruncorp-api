@@ -57,6 +57,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       invoiceRecipient: props.invoiceRecipient,
       invoiceRecipientEmail: props.invoiceRecipientEmail,
       isSpecialRevisionPricing: props.isSpecialRevisionPricing,
+      numberOfFreeRevisionCount: props.numberOfFreeRevisionCount,
     }
     return record
   }
@@ -91,6 +92,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       invoiceRecipient: record.invoiceRecipient,
       invoiceRecipientEmail: record.invoiceRecipientEmail,
       isSpecialRevisionPricing: record.isSpecialRevisionPricing,
+      numberOfFreeRevisionCount: record.numberOfFreeRevisionCount,
     }
     return new OrganizationEntity({ id: record.id, props })
   }
@@ -117,6 +119,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
     response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
+    response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare
@@ -137,6 +140,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
     response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
+    response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare

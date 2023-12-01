@@ -26,6 +26,7 @@ export class CreateOrganizationCommand {
   readonly projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
   readonly isSpecialRevisionPricing: boolean
+  readonly numberOfFreeRevisionCount: number | null
 
   constructor(props: CreateOrganizationCommand) {
     initialize(this, props)

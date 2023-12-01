@@ -43,6 +43,7 @@ model Organizations {
   addressCoordinates              String             @map("address_coordinates") @db.VarChar(255)
   fullAddress                     String             @map("full_address") @db.VarChar(255)
   isSpecialRevisionPricing        Boolean            @map("is_special_revision_pricing")
+  numberOfFreeRevisionCount       Int?               @map("number_of_free_revision_count") @db.TinyInt
   invitationEmailEntity           InvitationEmails[]
   organizationTypeEntity          OrganizationTypes  @relation(fields: [organizationType], references: [type])
   users                           Users[]

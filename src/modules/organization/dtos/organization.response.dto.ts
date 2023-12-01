@@ -34,6 +34,9 @@ export class OrganizationResponseDto {
   @ApiProperty()
   isSpecialRevisionPricing: boolean
 
+  @ApiProperty()
+  numberOfFreeRevisionCount: number | null
+
   // @ApiProperty({ description: '필요한지 확인 필요' })
   // isActiveContractor: boolean | null
 
