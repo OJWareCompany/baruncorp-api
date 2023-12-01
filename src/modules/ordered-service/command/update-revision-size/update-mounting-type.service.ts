@@ -92,6 +92,8 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     // Determine final price
     const updatePrice = customPrice ?? standardPrice
 
+    if (customPricing?.hasFixedPricing() || service.getProps().pricing.fixedPrice) return
+
     // End Pricing Logic
     orderedService.setPrice(updatePrice)
     orderedService.setTaskSizeForRevision(command.revisionSize)
