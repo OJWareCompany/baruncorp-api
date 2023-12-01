@@ -40,7 +40,7 @@ export class CreateServiceService implements ICommandHandler {
         startingPoint: Number(tier.startingPoint),
         finishingPoint: Number(tier.finishingPoint),
         price: Number(tier.price),
-        gmPrice: 0,
+        gmPrice: Number(tier.gmPrice),
       })
     })
 

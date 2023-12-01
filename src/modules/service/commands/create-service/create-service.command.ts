@@ -13,6 +13,7 @@ export class CreateServiceCommand {
     readonly startingPoint: number
     readonly finishingPoint: number
     readonly price: number
+    readonly gmPrice: number
   }[]
   readonly commercialRevisionCostPerUnit: number | null
   readonly commercialRevisionMinutesPerUnit: number | null
