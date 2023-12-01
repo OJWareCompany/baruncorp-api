@@ -15,6 +15,7 @@ import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { OrderedProjects } from '@prisma/client'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 
 @CommandHandler(UpdateRevisionSizeCommand)
 export class UpdateRevisionSizeService implements ICommandHandler {
@@ -56,7 +57,15 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.projectId } })
     if (!project) throw new ProjectNotFoundException()
 
+    const organization = await this.prismaService.organizations.findUnique({
+      where: { id: project.clientOrganizationId },
+    })
+    if (!organization) throw new OrganizationNotFoundException()
+    if (organization.isSpecialRevisionPricing) return
+
     const isRevision = orderedService.getProps().isRevision
+    if (!isRevision) return
+
     const projectType = getProjectType(project)
     const mountingType = getMountingType(job.mountingType)
     const systemSize = job.systemSize ? Number(job.systemSize) : null

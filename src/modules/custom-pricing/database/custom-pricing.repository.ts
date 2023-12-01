@@ -119,7 +119,7 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
     const condition = id ? { id: id } : { ...where }
 
     const record = await this.prismaService.customPricings.findFirst({ where: { ...condition } })
-    if (!record) throw new CustomPricingNotFoundException()
+    if (!record) return null
 
     const customResidentialPricings = await this.prismaService.customResidentialPricingTiers.findMany({
       where: { organizationId: record.organizationId, serviceId: record.serviceId },

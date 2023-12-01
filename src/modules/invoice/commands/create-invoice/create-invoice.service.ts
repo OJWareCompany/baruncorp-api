@@ -48,6 +48,10 @@ export class CreateInvoiceService implements ICommandHandler {
       if (orderedService.price === null && orderedService.priceOverride === null) throw new NullPriceExistsException()
     })
 
+    // custom price / standard price 준비
+    // new residential service && (!isMaulalPrice || null) 모아서
+    // 가격 업데이트 (standard, custom 둘중 하나)
+
     await this.invoiceRepo.insert(entity)
 
     await Promise.all(

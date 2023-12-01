@@ -11,6 +11,9 @@ import {
 } from '../../domain/ordered-service.error'
 import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
 import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
+import { ProjectNotFoundException } from '../../../project/domain/project.error'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
+import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
 
 @CommandHandler(UpdateManualPriceCommand)
 export class UpdateManualPriceService implements ICommandHandler {
@@ -26,6 +29,35 @@ export class UpdateManualPriceService implements ICommandHandler {
 
     if (orderedService.getProps().sizeForRevision !== 'Major')
       throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()
+
+    const project = await this.prismaService.orderedProjects.findUnique({
+      where: { id: orderedService.getProps().projectId },
+    })
+    if (!project) throw new ProjectNotFoundException()
+
+    const organization = await this.prismaService.organizations.findUnique({
+      where: { id: project.clientOrganizationId },
+    })
+    if (!organization) throw new OrganizationNotFoundException()
+
+    // Free Revision
+    const preOrderedServices = await this.prismaService.orderedServices.findMany({
+      where: {
+        projectId: project.id,
+        serviceId: orderedService.getProps().serviceId,
+        status: { notIn: [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold] },
+      },
+    })
+
+    const freeRevisionCount = organization.numberOfFreeRevisionCount
+    const receivedFreeRevisionsCount = preOrderedServices.filter((service) => {
+      return Number(service.price) === 0
+    }).length
+    const hasRemainingFreeRevisions = Number(freeRevisionCount) > receivedFreeRevisionsCount
+    const isFreeRevision =
+      orderedService.getProps().isRevision && organization.isSpecialRevisionPricing && hasRemainingFreeRevisions
+
+    if (isFreeRevision) return
 
     // TODO: REFACTOR
     const job = await this.prismaService.orderedJobs.findUnique({ where: { id: orderedService.getProps().jobId } })

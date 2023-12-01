@@ -12,7 +12,8 @@ import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/cu
 import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
-import { CustomPricingNotFoundException } from '../../../custom-pricing/domain/custom-pricing.error'
+import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -33,6 +34,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   async handle(event: JobCreatedDomainEvent) {
     // New Residential (Fixed / 0)
     // Residential Revision (Size, Mounting Type)
+    //    - Free Revision
     // New Commercial Tier (System Size, Mounting Type)
     // Commercial Revision X
     // Fixed Price
@@ -47,6 +49,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
      *
      * isRevision?
      *  return null -> price is when it turns out it's gm
+     *          or Free Revision? Yes -> Done? -> input price
      *
      * new zone
      *
@@ -62,16 +65,22 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     const project = await this.prismaService.orderedProjects.findFirst({ where: { id: event.projectId } })
     if (!project) throw new ProjectNotFoundException()
 
+    const organization = await this.prismaService.organizations.findUnique({
+      where: { id: project.clientOrganizationId },
+    })
+    if (!organization) throw new OrganizationNotFoundException()
+
     const orderedServiceEntities = await Promise.all(
       event.services.map(async (orderedService) => {
-        let standardPrice = null
-        // if (event.projectType === 'Residential') {
         const service = await this.serviceRepo.findOne(orderedService.serviceId)
         if (!service) throw new ServiceNotFoundException()
-        // }
 
         const preOrderedServices = await this.prismaService.orderedServices.findMany({
-          where: { projectId: event.projectId, serviceId: orderedService.serviceId },
+          where: {
+            projectId: event.projectId,
+            serviceId: orderedService.serviceId,
+            status: { notIn: [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold] },
+          },
         })
 
         // Start Pricing Logic
@@ -79,7 +88,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
 
         // Standard Pricing
         const standardPricing = service.getProps().pricing
-        standardPrice = standardPricing.getPrice(
+        const standardPrice = standardPricing.getPrice(
           isRevision,
           event.projectType,
           event.mountingType,
@@ -96,11 +105,19 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
           ? customPricing.getPrice(isRevision, event.projectType, event.mountingType, event.systemSize, null)
           : null
 
+        // Free Revision
+        const freeRevisionCount = organization.numberOfFreeRevisionCount
+        const receivedFreeRevisionsCount = preOrderedServices.filter((service) => {
+          return Number(service.price) === 0
+        }).length
+        const hasRemainingFreeRevisions = Number(freeRevisionCount) > receivedFreeRevisionsCount
+        const isFreeRevision = isRevision && organization.isSpecialRevisionPricing && hasRemainingFreeRevisions
         // determine price
-        const initialPrice =
-          !!customPricing && customPricing.hasNewResidentialPricing() //
-            ? customPrice
-            : customPrice ?? standardPrice
+        const initialPrice = isFreeRevision
+          ? 0
+          : !!customPricing && customPricing.hasNewResidentialPricing() //
+          ? customPrice
+          : customPrice ?? standardPrice
 
         // End Pricing Logic
 
