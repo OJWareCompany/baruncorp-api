@@ -10,12 +10,12 @@ import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered
 import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
-import { ServiceNotFoundException } from '../../../service/domain/service.error'
 import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
-import { OrderedProjects } from '@prisma/client'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
+import { OrderedServiceManager } from '../../application/event-handlers/determine-initial-price.domain-service'
+import { ServiceNotFoundException } from '../../../service/domain/service.error'
 
 @CommandHandler(UpdateRevisionSizeCommand)
 export class UpdateRevisionSizeService implements ICommandHandler {
@@ -32,27 +32,23 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: UpdateRevisionSizeCommand): Promise<void> {
+    // #region Validation
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
 
-    // TODO: REFACTOR
+    const isRevision = orderedService.getProps().isRevision
+    if (!isRevision) return
+
+    const service = await this.serviceRepo.findOne(orderedService.getProps().serviceId)
+    if (!service) throw new ServiceNotFoundException()
+
     const job = await this.prismaService.orderedJobs.findUnique({ where: { id: orderedService.getProps().jobId } })
     if (!job) throw new JobNotFoundException()
-    const invoiceId = job.invoiceId
-
-    if (invoiceId !== null) {
-      const invoice = await this.prismaService.invoices.findUnique({ where: { id: invoiceId } })
+    if (job.invoiceId !== null) {
+      const invoice = await this.prismaService.invoices.findUnique({ where: { id: job.invoiceId } })
       if (!invoice) throw new InvoiceNotFoundException()
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
-
-    // Start Pricing Logic
-    // Helper function to get project type
-    const getProjectType = (project: OrderedProjects) =>
-      project.projectPropertyType === 'Residential' ? 'Residential' : 'Commercial'
-
-    // Helper function to get mounting type
-    const getMountingType = (mountingType: string) => (mountingType === 'Ground Mount' ? 'Ground Mount' : 'Roof Mount')
 
     const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.projectId } })
     if (!project) throw new ProjectNotFoundException()
@@ -63,41 +59,24 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     if (!organization) throw new OrganizationNotFoundException()
     if (organization.isSpecialRevisionPricing) return
 
-    const isRevision = orderedService.getProps().isRevision
-    if (!isRevision) return
+    // #endregion
 
-    const projectType = getProjectType(project)
-    const mountingType = getMountingType(job.mountingType)
-    const systemSize = job.systemSize ? Number(job.systemSize) : null
-
-    // Get standard service pricing
-    const service = await this.serviceRepo.findOne(orderedService.getProps().serviceId)
-    if (!service) throw new ServiceNotFoundException()
-    const standardPrice = service.getProps().pricing.getPrice(isRevision, projectType, mountingType, systemSize, null)
-
-    // Get custom pricing if available
-    const customPricing = await this.customPricingRepo.findOne(null, {
-      serviceId: orderedService.getProps().serviceId,
-      organizationId: project.clientOrganizationId,
-    })
-    const customPrice = customPricing
-      ? customPricing.getPrice(
-          isRevision,
-          projectType,
-          mountingType,
-          systemSize,
-          orderedService.getProps().sizeForRevision,
-        )
-      : null
-    // Determine final price
-    const updatePrice = customPrice ?? standardPrice
-
-    if (customPricing?.hasFixedPricing() || service.getProps().pricing.fixedPrice) return
-
-    // End Pricing Logic
-    orderedService.setPrice(updatePrice)
     orderedService.setTaskSizeForRevision(command.revisionSize)
 
+    const orderedServiceManager = new OrderedServiceManager(
+      this.prismaService,
+      service,
+      this.customPricingRepo,
+      organization,
+      project,
+      job,
+      orderedService,
+    )
+
+    if (await orderedServiceManager.isFixedPricing()) return
+
+    const updatePrice = await orderedServiceManager.determineInitialPrice()
+    orderedService.setPrice(updatePrice)
     await this.orderedServiceRepo.update(orderedService)
   }
 }

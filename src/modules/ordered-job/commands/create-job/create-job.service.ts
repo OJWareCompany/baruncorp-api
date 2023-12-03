@@ -55,7 +55,6 @@ export class CreateJobService implements ICommandHandler {
       totalOfJobs: project.totalOfJobs,
       projectType: project.projectPropertyType,
     })
-
     await this.jobRepository.insert(job)
     return {
       id: job.id,
