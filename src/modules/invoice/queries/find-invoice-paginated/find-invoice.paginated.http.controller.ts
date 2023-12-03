@@ -56,9 +56,7 @@ export class FindInvoicePaginatedHttpController {
           mountingType:
             (job.getProps().mountingType as MountingType) === 'Ground Mount'
               ? MountingTypeEnum.Ground_Mount
-              : (job.getProps().mountingType as MountingType) === 'Roof Mount'
-              ? MountingTypeEnum.Roof_Mount
-              : MountingTypeEnum.RG_Mount,
+              : MountingTypeEnum.Roof_Mount,
           totalJobPriceOverride: null, //TODO: job필드 추가?
           clientOrganization: {
             id: job.getProps().clientInfo.clientOrganizationId,
