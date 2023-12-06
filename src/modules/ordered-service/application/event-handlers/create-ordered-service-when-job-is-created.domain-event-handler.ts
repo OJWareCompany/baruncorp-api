@@ -33,7 +33,6 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     const project = await this.prismaService.orderedProjects.findFirst({ where: { id: event.projectId } })
     if (!project) throw new ProjectNotFoundException()
     const job = await this.prismaService.orderedJobs.findUnique({ where: { id: event.aggregateId } })
-    console.log(job)
     if (!job) throw new JobNotFoundException()
 
     const organization = await this.prismaService.organizations.findUnique({

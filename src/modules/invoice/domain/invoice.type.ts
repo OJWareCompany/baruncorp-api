@@ -20,6 +20,9 @@ export interface CreateInvoiceProps {
   notesToClient: string | null
   clientOrganizationId: string
   serviceMonth: Date
+  subTotal: number
+  discount: number
+  total: number
 }
 
 export interface InvoiceProps extends CreateInvoiceProps {

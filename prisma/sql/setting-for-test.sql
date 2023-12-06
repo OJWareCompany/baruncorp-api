@@ -31,24 +31,42 @@ FROM service;
 -- Custom Residential
 
 INSERT INTO `custom_residential_pricing_tiers` (`service_id`, `service_name`, `organization_id`, `organization_name`, `starting_point`, `finishing_point`, `price`, `gm_price`)
-SELECT	service.id, service.name, 'asda', 'BarunCorp', 1,2,9,11
-FROM service
-WHERE  id NOT IN('2a2a256b-57a5-46f5-8cfb-1855cc29238a','0ce5a100-8b38-45fd-92a7-69e9aa7bd549', 'e95483bd-16ea-4a4d-8d68-81d2fa10a384');
+VALUES
+	('a061c441-be8c-4bcc-9bcc-2460a01d5a16', 'Electrical Load Calculation', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('a061c441-be8c-4bcc-9bcc-2460a01d5a16', 'Electrical Load Calculation', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('a061c441-be8c-4bcc-9bcc-2460a01d5a16', 'Electrical Load Calculation', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('d7e19772-e937-40fd-b94f-77f056169d34', 'Electrical Load Justification Letter', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('d7e19772-e937-40fd-b94f-77f056169d34', 'Electrical Load Justification Letter', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('d7e19772-e937-40fd-b94f-77f056169d34', 'Electrical Load Justification Letter', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('5c29f1ae-d50b-4400-a6fb-b1a2c87126e9', 'Electrical PE Stamp', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('5c29f1ae-d50b-4400-a6fb-b1a2c87126e9', 'Electrical PE Stamp', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('5c29f1ae-d50b-4400-a6fb-b1a2c87126e9', 'Electrical PE Stamp', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('8d44cfe8-6c39-454f-8544-ede966943e6a', 'Electrical Post Installed Letter', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('8d44cfe8-6c39-454f-8544-ede966943e6a', 'Electrical Post Installed Letter', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('8d44cfe8-6c39-454f-8544-ede966943e6a', 'Electrical Post Installed Letter', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('4728f174-933a-4974-8e9a-6917720bffce', 'ESS Electrical PE Stamp', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('4728f174-933a-4974-8e9a-6917720bffce', 'ESS Electrical PE Stamp', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('4728f174-933a-4974-8e9a-6917720bffce', 'ESS Electrical PE Stamp', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('ab9cc5cf-62e4-4f27-8ffd-97488068f9fa', 'ESS Structural PE Stamp', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('ab9cc5cf-62e4-4f27-8ffd-97488068f9fa', 'ESS Structural PE Stamp', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('ab9cc5cf-62e4-4f27-8ffd-97488068f9fa', 'ESS Structural PE Stamp', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('435c5ab0-7605-40cd-811f-9343872f641a', 'FL Statute Letter', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('435c5ab0-7605-40cd-811f-9343872f641a', 'FL Statute Letter', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('435c5ab0-7605-40cd-811f-9343872f641a', 'FL Statute Letter', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('e5d81943-3fef-416d-a85b-addb8be296c0', 'PV Design', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('e5d81943-3fef-416d-a85b-addb8be296c0', 'PV Design', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('e5d81943-3fef-416d-a85b-addb8be296c0', 'PV Design', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('0ce4b659-601e-43c0-8420-a8ee6b95a385', 'Special Inspection Form', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('0ce4b659-601e-43c0-8420-a8ee6b95a385', 'Special Inspection Form', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('0ce4b659-601e-43c0-8420-a8ee6b95a385', 'Special Inspection Form', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('0904b078-6c8a-4044-9323-4757d6ca8afa', 'Structural Feasibility', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('0904b078-6c8a-4044-9323-4757d6ca8afa', 'Structural Feasibility', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('0904b078-6c8a-4044-9323-4757d6ca8afa', 'Structural Feasibility', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000),
+	('99ff64ee-fe47-4235-a026-db197628d077', 'Structural PE Stamp', 'asda', 'BarunCorp', 1, NULL, 9.0000, 11.0000),
+	('81b11cd8-bbcb-47c7-a45f-af339a422555', 'Structural Post Installed Letter ', 'asda', 'BarunCorp', 1, 2, 9.0000, 11.0000),
+	('81b11cd8-bbcb-47c7-a45f-af339a422555', 'Structural Post Installed Letter ', 'asda', 'BarunCorp', 3, 4, 7.0000, 9.0000),
+	('81b11cd8-bbcb-47c7-a45f-af339a422555', 'Structural Post Installed Letter ', 'asda', 'BarunCorp', 5, NULL, 6.0000, 8.0000);
 
-INSERT INTO `custom_residential_pricing_tiers` (`service_id`, `service_name`, `organization_id`, `organization_name`, `starting_point`, `finishing_point`, `price`, `gm_price`)
-SELECT	service.id, service.name, 'asda', 'BarunCorp', 2,3,8,10
-FROM service
-WHERE  id NOT IN('2a2a256b-57a5-46f5-8cfb-1855cc29238a','0ce5a100-8b38-45fd-92a7-69e9aa7bd549', 'e95483bd-16ea-4a4d-8d68-81d2fa10a384');
-
-INSERT INTO `custom_residential_pricing_tiers` (`service_id`, `service_name`, `organization_id`, `organization_name`, `starting_point`, `finishing_point`, `price`, `gm_price`)
-SELECT	service.id, service.name, 'asda', 'BarunCorp', 3,4,7,9
-FROM service
-WHERE  id NOT IN('2a2a256b-57a5-46f5-8cfb-1855cc29238a','0ce5a100-8b38-45fd-92a7-69e9aa7bd549', 'e95483bd-16ea-4a4d-8d68-81d2fa10a384');
-
-INSERT INTO `custom_residential_pricing_tiers` (`service_id`, `service_name`, `organization_id`, `organization_name`, `starting_point`, `finishing_point`, `price`, `gm_price`)
-SELECT	service.id, service.name, 'asda', 'BarunCorp', 5,null,6,8
-FROM service
-WHERE  id NOT IN('2a2a256b-57a5-46f5-8cfb-1855cc29238a','0ce5a100-8b38-45fd-92a7-69e9aa7bd549', 'e95483bd-16ea-4a4d-8d68-81d2fa10a384');
 
 -- Custom Fixed
 INSERT INTO `custom_fixed_pricings` (`service_id`, `service_name`, `organization_id`, `organization_name`, `price`)
