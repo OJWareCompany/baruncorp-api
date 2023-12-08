@@ -4,7 +4,7 @@ import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.r
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { FindUserRqeustDto } from './find-user.request.dto'
 import { FindUsersQuery } from './find-user.query'
-import { UserPaginatedResopnseDto } from '../../dtos/user-paginated.response.dto'
+import { UserPaginatedResponseDto } from '../../dtos/user-paginated.response.dto'
 import { UserResponseDto } from '../../dtos/user.response.dto'
 
 @Controller('users')
@@ -15,7 +15,7 @@ export class FindUsersHttpController {
   async getFindUsers(
     @Query() dto: FindUserRqeustDto,
     @Query() queryParams: PaginatedQueryRequestDto,
-  ): Promise<UserPaginatedResopnseDto> {
+  ): Promise<UserPaginatedResponseDto> {
     const query = new FindUsersQuery({
       page: queryParams.page,
       limit: queryParams.limit,
@@ -23,7 +23,7 @@ export class FindUsersHttpController {
     })
     const result: Paginated<UserResponseDto> = await this.queryBus.execute(query)
 
-    return new UserPaginatedResopnseDto({
+    return new UserPaginatedResponseDto({
       ...result,
       items: result.items,
     })

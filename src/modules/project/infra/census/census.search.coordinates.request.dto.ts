@@ -9,7 +9,7 @@ import { CensusCounties, CensusCountySubdivisions, CensusPlace, CensusState } fr
  * UI에 Barun DB에서 검색된 것이라는 것을 표현해주고, 사용자가 Census의 검색 결과를 원하면 다시 검색하게하면 된다.
  */
 
-export type censusSearchResopnse = {
+export type censusSearchResponse = {
   result: { geographies: censusSearchContents }
 }
 
@@ -30,7 +30,7 @@ export class CensusSearchCoordinatesService {
     coordinates[1] = Number(coordinates[1].toFixed(2))
     const query = `?x=${coordinates[0]}&y=${coordinates[1]}&benchmark=4&vintage=4&format=json`
     const searchUrl = `${this.baseUrl}${this.path}${query}`
-    const response: censusSearchResopnse = await got.get(searchUrl).json()
+    const response: censusSearchResponse = await got.get(searchUrl).json()
     const result = response?.result.geographies
 
     return new CensusResponseDto(result)

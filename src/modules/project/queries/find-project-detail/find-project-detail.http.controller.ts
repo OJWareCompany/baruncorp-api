@@ -42,12 +42,12 @@ export class FindProjectDetailHttpController {
         })
       : null
 
-    const jobsResopnse = result.jobs.map(this.jobMapper.toDomain).map(this.jobMapper.toResponse)
+    const jobsResponse = result.jobs.map(this.jobMapper.toDomain).map(this.jobMapper.toResponse)
 
     const response = new ProjectResponseDto()
     response.projectId = result.id
 
-    response.jobs = jobsResopnse
+    response.jobs = jobsResponse
 
     response.systemSize = result.systemSize ? Number(result.systemSize) : null
     response.projectPropertyOwnerName = result.propertyOwnerName

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { OrderedServiceStatusEnum } from '../domain/ordered-service.type'
 
-export class OrderedServiceAssignedTaskResopnse {
+export class OrderedServiceAssignedTaskResponse {
   @ApiProperty()
   id: string
   @ApiProperty()
@@ -46,7 +46,7 @@ export class OrderedServiceResponseDto {
   isRevision: boolean
 
   @ApiProperty()
-  assignedTasks: OrderedServiceAssignedTaskResopnse[]
+  assignedTasks: OrderedServiceAssignedTaskResponse[]
 
   constructor(props: OrderedServiceResponseDto) {
     initialize(this, props)

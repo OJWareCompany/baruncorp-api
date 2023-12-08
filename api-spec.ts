@@ -154,7 +154,7 @@ export interface IdResponse {
   id: string
 }
 
-export interface UserPaginatedResopnseDto {
+export interface UserPaginatedResponseDto {
   /** @default 1 */
   page: number
   /** @default 20 */
@@ -885,7 +885,7 @@ export interface UpdateOrderedServiceRequestDto {
   description: string | null
 }
 
-export interface OrderedServiceAssignedTaskResopnse {
+export interface OrderedServiceAssignedTaskResponse {
   id: string
   taskName: string
   status: string
@@ -905,7 +905,7 @@ export interface OrderedServiceResponseDto {
   orderedAt: string | null
   doneAt: string | null
   isRevision: boolean
-  assignedTasks: OrderedServiceAssignedTaskResopnse[]
+  assignedTasks: OrderedServiceAssignedTaskResponse[]
 }
 
 export interface UpdateManualPriceRequestDto {
@@ -1904,7 +1904,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindUsersHttpControllerGetFindUsersParams,
       params: RequestParams = {},
     ) =>
-      this.request<UserPaginatedResopnseDto, any>({
+      this.request<UserPaginatedResponseDto, any>({
         path: `/users`,
         method: 'GET',
         query: query,
@@ -1996,7 +1996,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       { organizationId, ...query }: FindMemberPaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
-      this.request<UserPaginatedResopnseDto, any>({
+      this.request<UserPaginatedResponseDto, any>({
         path: `/organizations/${organizationId}/members`,
         method: 'GET',
         query: query,
@@ -2015,7 +2015,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindMyMemberPaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
-      this.request<UserPaginatedResopnseDto, any>({
+      this.request<UserPaginatedResponseDto, any>({
         path: `/organizations/members/my`,
         method: 'GET',
         query: query,
