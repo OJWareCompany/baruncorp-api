@@ -3,8 +3,8 @@ import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
-import { UpdateRevisionSizeCommand } from './update-mounting-type.command'
-import { UpdateRevisionSizeParamRequestDto, UpdateRevisionSizeRequestDto } from './update-mounting-type.request.dto'
+import { UpdateRevisionSizeCommand } from './update-revision-size.command'
+import { UpdateRevisionSizeParamRequestDto, UpdateRevisionSizeRequestDto } from './update-revision-size.request.dto'
 
 @Controller('ordered-services')
 export class UpdateRevisionSizeHttpController {

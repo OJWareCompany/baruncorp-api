@@ -1,5 +1,5 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { MountingType, ProjectPropertyType } from '../../../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { NewOrderedServices } from '../value-objects/assigned-task.value-object'
@@ -10,12 +10,14 @@ import { NewOrderedServices } from '../value-objects/assigned-task.value-object'
  * - 비동기
  */
 export class JobCreatedDomainEvent extends DomainEvent {
-  public readonly projectId: string
-  public readonly services: NewOrderedServices[]
-  public readonly systemSize: number | null
-  public readonly mailingAddressForWetStamp: Address | null
-  public readonly mountingType: MountingType
-  public readonly projectType: ProjectPropertyType
+  readonly projectId: string
+  readonly services: NewOrderedServices[]
+  readonly systemSize: number | null
+  readonly mailingAddressForWetStamp: Address | null
+  readonly organizationId: string
+  readonly organizationName: string
+  readonly mountingType: MountingTypeEnum
+  readonly projectType: ProjectPropertyTypeEnum
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {
     super(props)

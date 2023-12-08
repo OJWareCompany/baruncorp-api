@@ -8,6 +8,7 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatus,
 } from './domain/ordered-service.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 
 @Injectable()
 export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, OrderedServices, OrderedServiceResponseDto> {
@@ -26,7 +27,12 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       status: props.status,
       orderedAt: props.orderedAt,
       doneAt: props.doneAt,
-      is_manual_price: entity.getProps().isManualPrice,
+      isManualPrice: props.isManualPrice,
+      projectPropertyType: props.projectPropertyType,
+      mountingType: props.mountingType,
+      organizationId: props.organizationId,
+      organizationName: props.organizationName,
+      serviceName: props.serviceName,
     }
   }
 
@@ -47,8 +53,13 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
         orderedAt: record.orderedAt,
         doneAt: record.doneAt,
         status: record.status as OrderedServiceStatus,
-        isManualPrice: record.is_manual_price, //record.isManualPrice,
+        isManualPrice: record.isManualPrice, //record.isManualPrice,
         assignedTasks: record.assignedTasks,
+        projectPropertyType: record.projectPropertyType as ProjectPropertyTypeEnum,
+        mountingType: record.mountingType as MountingTypeEnum,
+        organizationId: record.mountingType,
+        organizationName: record.organizationName,
+        serviceName: record.serviceName,
       },
     })
     return entity

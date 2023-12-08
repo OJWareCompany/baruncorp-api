@@ -3,6 +3,7 @@ import { ValueObject } from '../../../../libs/ddd/value-object.base'
 
 export class NewOrderedServices {
   serviceId: string
+  serviceName: string
   description: string | null
   constructor(props: NewOrderedServices) {
     this.serviceId = props.serviceId

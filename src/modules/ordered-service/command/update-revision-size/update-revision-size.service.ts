@@ -2,7 +2,7 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
-import { UpdateRevisionSizeCommand as UpdateRevisionSizeCommand } from './update-mounting-type.command'
+import { UpdateRevisionSizeCommand as UpdateRevisionSizeCommand } from './update-revision-size.command'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
@@ -16,6 +16,7 @@ import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricin
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { OrderedServiceManager } from '../../application/event-handlers/determine-initial-price.domain-service'
 import { ServiceNotFoundException } from '../../../service/domain/service.error'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @CommandHandler(UpdateRevisionSizeCommand)
 export class UpdateRevisionSizeService implements ICommandHandler {
@@ -68,8 +69,10 @@ export class UpdateRevisionSizeService implements ICommandHandler {
       service,
       this.customPricingRepo,
       organization,
-      project,
-      job,
+      project.id,
+      project.projectPropertyType as ProjectPropertyTypeEnum,
+      job.mountingType as MountingTypeEnum,
+      job.systemSize ? Number(job.systemSize) : null,
       orderedService,
     )
 

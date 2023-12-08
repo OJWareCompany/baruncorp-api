@@ -15,7 +15,7 @@ import {
   OrderedServiceStatus,
 } from '../ordered-service/domain/ordered-service.type'
 import { ProjectPropertyType, ProjectPropertyTypeEnum } from '../project/domain/project.type'
-import { TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
+import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -24,8 +24,10 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     return {
       id: props.id,
       invoiceId: props.invoiceId,
+      revisionSize: props.revisionSize,
       propertyAddress: props.propertyFullAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
       jobStatus: props.jobStatus,
+      pricingType: props.pricingType,
       additionalInformationFromClient: props.additionalInformationFromClient,
       clientOrganizationId: props.clientInfo.clientOrganizationId,
       clientOrganizationName: props.clientInfo.clientOrganizationName,
@@ -56,6 +58,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
 
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
+      // 퀵베이스에 있던 컬럼중 아직 사용하지 않는 것
       otherComments: null,
       jobNotesF: null,
       agreedMinimumUnits: null,
@@ -140,18 +143,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       })
     })
 
-    const sizeForRevision = record.orderedServices.find(
-      (orderedService) =>
-        orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
-    )
-      ? TaskSizeEnum.Major
-      : record.orderedServices.find(
-          (orderedService) =>
-            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
-        )
-      ? TaskSizeEnum.Minor
-      : null
-
     const orderedServices: OrderedService[] = []
     record.orderedServices.map((orderedService) => {
       orderedServices.push(
@@ -184,7 +175,9 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         projectId: record.projectId,
         invoiceId: record.invoiceId,
         projectType: record.projectType,
+        pricingType: record.pricingType as PricingTypeEnum | null,
         mountingType: record.mountingType,
+        revisionSize: record.revisionSize as OrderedServiceSizeForRevisionEnum | null,
         jobStatus: record.jobStatus as JobStatus, // TODO: status any
         jobRequestNumber: record.jobRequestNumber,
         propertyFullAddress: record.propertyAddress,
@@ -226,6 +219,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         receivedAt: record.receivedAt,
         isExpedited: !!record.isExpedited,
         isCurrentJob: record.isCurrentJob,
+        organizationId: record.clientOrganizationId,
+        organizationName: record.clientOrganizationName,
       },
     })
   }

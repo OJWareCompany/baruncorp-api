@@ -15,7 +15,15 @@ export class AssignedTaskResponseDto implements AssignedTasks {
 
   @ApiProperty()
   @IsString()
+  readonly taskName: string
+
+  @ApiProperty()
+  @IsString()
   readonly orderedServiceId: string
+
+  @ApiProperty()
+  @IsString()
+  readonly serviceName: string
 
   @ApiProperty()
   @IsString()
@@ -39,6 +47,26 @@ export class AssignedTaskResponseDto implements AssignedTasks {
   @IsString()
   @IsOptional()
   readonly assigneeName: string | null
+
+  @ApiProperty()
+  @IsString()
+  readonly projectId: string
+
+  @ApiProperty()
+  @IsString()
+  readonly organizationId: string
+
+  @ApiProperty()
+  @IsString()
+  readonly organizationName: string
+
+  @ApiProperty()
+  @IsString()
+  readonly projectPropertyType: string
+
+  @ApiProperty()
+  @IsString()
+  readonly mountingType: string
 
   @ApiProperty()
   @IsString()

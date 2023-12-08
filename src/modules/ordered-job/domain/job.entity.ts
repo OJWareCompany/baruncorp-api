@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
 import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { MountingType, ProjectPropertyType } from '../../project/domain/project.type'
+import { MountingType, MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import { CreateJobProps, JobProps } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
@@ -15,6 +15,7 @@ import {
 import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
+import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -24,6 +25,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     const props: JobProps = {
       ...create,
       invoiceId: null,
+      revisionSize: null,
       jobRequestNumber: ++create.totalOfJobs,
       propertyFullAddress: create.propertyFullAddress,
       jobName: `Job #${create.totalOfJobs} ` + create.propertyFullAddress,
@@ -31,17 +33,20 @@ export class JobEntity extends AggregateRoot<JobProps> {
       receivedAt: new Date(),
       assignedTasks: [],
       orderedServices: [],
+      pricingType: null,
     }
     const job = new JobEntity({ id, props })
     job.addEvent(
       new JobCreatedDomainEvent({
         aggregateId: id,
+        organizationId: create.organizationId,
+        organizationName: create.organizationName,
         projectId: create.projectId,
         services: create.orderedServices,
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
-        mountingType: create.mountingType as MountingType, // TODO: status any
-        projectType: create.projectType as ProjectPropertyType,
+        mountingType: create.mountingType as MountingTypeEnum, // TODO: status any
+        projectType: create.projectType as ProjectPropertyTypeEnum,
       }),
     )
     return job
@@ -67,6 +72,22 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   get billingCodes(): string[] {
     return this.props.orderedServices.map((orderedService) => orderedService.billingCode)
+  }
+
+  updateRivisionSize() {
+    const sizeForRevision = this.props.orderedServices.find(
+      (orderedService) =>
+        orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
+    )
+      ? OrderedServiceSizeForRevisionEnum.Major
+      : this.props.orderedServices.find(
+          (orderedService) =>
+            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
+        )
+      ? OrderedServiceSizeForRevisionEnum.Minor
+      : null
+    this.props.revisionSize = sizeForRevision
+    return this
   }
 
   notStart(): this {

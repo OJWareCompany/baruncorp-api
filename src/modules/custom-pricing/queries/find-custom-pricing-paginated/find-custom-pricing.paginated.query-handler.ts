@@ -6,7 +6,10 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { PrismaService } from '../../../database/prisma.service'
 
 export class FindCustomPricingPaginatedQuery extends PaginatedQueryBase {
-  readonly customPricingId: string
+  readonly organizationId?: string | null
+  readonly organizationName?: string | null
+  readonly serviceId?: string | null
+  readonly serviceName?: string | null
   constructor(props: PaginatedParams<FindCustomPricingPaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -19,6 +22,12 @@ export class FindCustomPricingPaginatedQueryHandler implements IQueryHandler {
 
   async execute(query: FindCustomPricingPaginatedQuery): Promise<Paginated<CustomPricings>> {
     const result = await this.prismaService.customPricings.findMany({
+      where: {
+        ...(query.organizationId && { organizationId: query.organizationId }),
+        ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
+        ...(query.serviceId && { serviceId: query.serviceId }),
+        ...(query.serviceName && { serviceName: { contains: query.serviceName } }),
+      },
       skip: query.offset,
       take: query.limit,
     })

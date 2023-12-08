@@ -12,6 +12,7 @@ import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canc
 import { OrderedServiceReactivatedDomainEvent } from './events/ordered-service-reactivated.domain-event'
 import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
 import { Service } from '@prisma/client'
+import { OrderedServiceUpdatedRevisionSizeDomainEvent } from './events/ordered-service-updated-revision-size.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -31,9 +32,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     entity.addEvent(
       new OrderedServiceCreatedDomainEvent({
         aggregateId: entity.id,
-        serviceId: props.serviceId,
-        jobId: props.jobId,
-        orderedAt: props.orderedAt,
+        ...props,
       }),
     )
     return entity
@@ -80,6 +79,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       this.props.price = 0
     }
     this.props.sizeForRevision = this.props.isRevision ? sizeForRevision : null
+    this.addEvent(
+      new OrderedServiceUpdatedRevisionSizeDomainEvent({
+        aggregateId: this.id,
+        jobId: this.props.jobId,
+      }),
+    )
     return this
   }
 

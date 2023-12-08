@@ -9,12 +9,11 @@ import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
 import { ServiceNotFoundException } from '../../../service/domain/service.error'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { OrderedServiceManager } from './determine-initial-price.domain-service'
-import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -30,16 +29,11 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
 
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
-    const project = await this.prismaService.orderedProjects.findFirst({ where: { id: event.projectId } })
-    if (!project) throw new ProjectNotFoundException()
-    const job = await this.prismaService.orderedJobs.findUnique({ where: { id: event.aggregateId } })
-    if (!job) throw new JobNotFoundException()
-
     const organization = await this.prismaService.organizations.findUnique({
-      where: { id: project.clientOrganizationId },
+      where: { id: event.organizationId },
     })
     if (!organization) throw new OrganizationNotFoundException()
-
+    console.log(event)
     const orderedServiceEntities = await Promise.all(
       event.services.map(async (orderedService) => {
         // #region get ordered service manager
@@ -51,25 +45,33 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
           service,
           this.customPricingRepo,
           organization,
-          project,
-          job,
+          event.projectId,
+          event.projectType,
+          event.mountingType,
+          event.systemSize,
           null,
         )
         // #endregion
 
         const entity = OrderedServiceEntity.create({
           projectId: event.projectId,
+          organizationId: event.organizationId,
+          organizationName: event.organizationName,
           isRevision: await orderedServiceManager.isRevision(),
-          sizeForRevision: await orderedServiceManager.getRevisionSize(), // Fixed여도 고정이어야하는데
+          sizeForRevision: await orderedServiceManager.getRevisionSize(),
           price: await orderedServiceManager.determineInitialPrice(),
           serviceId: orderedService.serviceId,
+          serviceName: orderedService.serviceName,
           description: orderedService.description,
           jobId: event.aggregateId,
+          projectPropertyType: event.projectType as ProjectPropertyTypeEnum,
+          mountingType: event.mountingType as MountingTypeEnum,
         })
+        console.log(entity)
         return entity
       }),
     )
-    await this.orderedServiceRepo.insert(orderedServiceEntities)
+    // await this.orderedServiceRepo.insert(orderedServiceEntities)
   }
 }
 
@@ -79,10 +81,6 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
 // New Commercial Tier (System Size, Mounting Type)
 // Commercial Revision X
 // Fixed Price
-
-/**
- * 가격 수정시 매뉴얼리 표시 필요함. 인보이스할때 매뉴얼리는 고정됨
- */
 
 /**
  * isFixed?
@@ -102,4 +100,15 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
  *
  * commercial Zone
  *  return match tier! OR 0
+ */
+
+/**
+ * NOTE:
+ * 이벤트로 처리하면 확실히 종속성을 많이 줄일수 있음, 보내는 측에서 유효성 검사를 하고 보낼수 있으니까,
+ * 근데 Request API로 만들어야하는 것은 여전히 유효성 검사를 위해서 다른 Aggregate를 조회해야함.
+ *
+ * NOTE:
+ * 데이터 변경은 Aggregate에서 이루어져야 하는 이유
+ * 1. 변경된 데이터가 다른 데이터에 영향을 받을 수 있다. 관련된 데이터를 합쳐놓은 것이 Aggregate.
+ * 2. 도메인 이벤트로 변경사항을 관리하기 쉬워진다. (중복된 데이터를 가진 Aggregate가 해당 이벤트를 구독함으로서)
  */

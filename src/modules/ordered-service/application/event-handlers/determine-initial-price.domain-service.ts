@@ -1,9 +1,9 @@
-import { OrderedJobs, OrderedProjects, OrderedServices, Organizations } from '@prisma/client'
+import { OrderedServices, Organizations } from '@prisma/client'
 import { ServiceEntity } from '../../../service/domain/service.entity'
 import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
 import { PrismaService } from '../../../database/prisma.service'
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
-import { MountingType, ProjectPropertyType } from '../../../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { OrderedServiceSizeForRevision } from '../../domain/ordered-service.type'
 import { CustomPricingEntity } from '../../../custom-pricing/domain/custom-pricing.entity'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
@@ -20,26 +20,25 @@ export class OrderedServiceManager {
     private readonly service: ServiceEntity,
     private readonly customPricingRepo: CustomPricingRepositoryPort,
     private readonly organization: Organizations,
-    private readonly project: OrderedProjects,
-    private readonly job: OrderedJobs,
+    private readonly projectId: string,
+    private readonly projectPropertyType: ProjectPropertyTypeEnum,
+    private readonly mountingType: MountingTypeEnum,
+    private readonly systemSize: number | null,
     private readonly orderedService: OrderedServiceEntity | null,
   ) {}
 
   // 생성자인자와 메서드인자 구분을 어떻게해야할까, 클래스가 여러 조직이 사용가능한가, 조직마다 새로 생성해야하나의 여부에따라 달라질수도있다.
   async determineInitialPrice() {
-    const projectType = this.getProjectType(this.project)
-    const mountingType = this.getMountingType(this.job.mountingType)
-    const systemSize = this.job.systemSize ? Number(this.job.systemSize) : null
     const revisionSize = await this.getRevisionSize()
     const isRevision = await this.determineRevisionStatus()
 
     const standardPrice = this.service
       .getProps()
-      .pricing.getPrice(isRevision, projectType, mountingType, systemSize, revisionSize)
+      .pricing.getPrice(isRevision, this.projectPropertyType, this.mountingType, this.systemSize, revisionSize)
 
     const customPricing = await this.getCustomPricing()
     const customPrice = customPricing
-      ? customPricing.getPrice(isRevision, projectType, mountingType, systemSize, revisionSize)
+      ? customPricing.getPrice(isRevision, this.projectPropertyType, this.mountingType, this.systemSize, revisionSize)
       : null
 
     const isFreeRevision = await this.calculateFreeRevisionStatus()
@@ -66,17 +65,11 @@ export class OrderedServiceManager {
     const isFreeRevision = await this.calculateFreeRevisionStatus()
     return this.orderedService?.getProps().sizeForRevision
       ? (this.orderedService.getProps().sizeForRevision as OrderedServiceSizeForRevision)
-      : isFreeRevision || (await this.isFixedPricing())
+      : isFreeRevision
+      ? 'Minor'
+      : (await this.isFixedPricing()) || (await this.isDoneFreeRevision())
       ? 'Major'
       : null
-  }
-
-  private getProjectType(project: OrderedProjects): ProjectPropertyType {
-    return project.projectPropertyType === 'Residential' ? 'Residential' : 'Commercial'
-  }
-
-  private getMountingType(mountingType: string): MountingType {
-    return mountingType === 'Ground Mount' ? 'Ground Mount' : 'Roof Mount'
   }
 
   private async determineRevisionStatus() {
@@ -97,6 +90,14 @@ export class OrderedServiceManager {
     return isRevision && this.organization.isSpecialRevisionPricing && hasRemainingFreeRevisions
   }
 
+  private async isDoneFreeRevision() {
+    const preOrderedServices = await this.getPreOrederedServices()
+    const isRevision = await this.determineRevisionStatus()
+    const receivedFreeRevisionsCount = preOrderedServices.filter((service) => Number(service.price) === 0).length
+    const hasRemainingFreeRevisions = Number(this.organization.numberOfFreeRevisionCount) > receivedFreeRevisionsCount
+    return isRevision && this.organization.isSpecialRevisionPricing && !hasRemainingFreeRevisions
+  }
+
   private async getCustomPricing() {
     //계속해서 체크할 여지 있음
     if (!this.customPricing) {
@@ -112,7 +113,7 @@ export class OrderedServiceManager {
     if (!this.isCheckoutPreOrderedServices) {
       this.preOrderedServices = await this.prismaService.orderedServices.findMany({
         where: {
-          projectId: this.project.id,
+          projectId: this.projectId,
           serviceId: this.service.id,
           status: { notIn: [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold] },
         },

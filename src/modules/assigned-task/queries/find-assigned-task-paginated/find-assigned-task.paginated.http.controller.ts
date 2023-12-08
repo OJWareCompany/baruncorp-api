@@ -7,6 +7,7 @@ import { FindAssignedTaskPaginatedRequestDto } from './find-assigned-task.pagina
 import { FindAssignedTaskPaginatedQuery } from './find-assigned-task.paginated.query-handler'
 import { AssignedTaskPaginatedResponseDto } from '../../dtos/assigned-task.paginated.response.dto'
 import { ApiOperation } from '@nestjs/swagger'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @Controller('assigned-tasks')
 export class FindAssignedTaskPaginatedHttpController {
@@ -23,8 +24,7 @@ export class FindAssignedTaskPaginatedHttpController {
       ...queryParams,
     })
 
-    const result: Paginated<AssignedTasks & { user: Users | null; orderedService: OrderedServices }> =
-      await this.queryBus.execute(command)
+    const result: Paginated<AssignedTasks & { orderedService: OrderedServices }> = await this.queryBus.execute(command)
 
     return new AssignedTaskPaginatedResponseDto({
       ...queryParams,
@@ -37,10 +37,17 @@ export class FindAssignedTaskPaginatedHttpController {
         status: item.status,
         description: item.orderedService.description,
         assigneeId: item.assigneeId,
-        assigneeName: item.user ? item.user.firstName + ' ' + item.user.lastName : null,
+        assigneeName: item.assigneeName,
         duration: item.duration,
         startedAt: item.startedAt,
         doneAt: item.doneAt,
+        taskName: item.taskName,
+        serviceName: item.serviceName,
+        projectId: item.projectId,
+        organizationId: item.organizationId,
+        organizationName: item.organizationName,
+        projectPropertyType: item.projectPropertyType as ProjectPropertyTypeEnum,
+        mountingType: item.mountingType as MountingTypeEnum,
       })),
     })
   }

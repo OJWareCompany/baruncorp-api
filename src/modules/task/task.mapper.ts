@@ -12,6 +12,7 @@ export class TaskMapper implements Mapper<TaskEntity, Tasks, TaskResponseDto> {
       id: props.id,
       name: props.name,
       serviceId: props.serviceId,
+      serviceName: props.serviceName,
     }
     return record
   }
@@ -22,6 +23,7 @@ export class TaskMapper implements Mapper<TaskEntity, Tasks, TaskResponseDto> {
       props: {
         name: record.name,
         serviceId: record.serviceId,
+        serviceName: record.serviceName,
       },
     })
     return entity

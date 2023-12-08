@@ -17,6 +17,7 @@ import { OrganizationNotFoundException } from '../../../organization/domain/orga
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { OrderedServiceManager } from '../../application/event-handlers/determine-initial-price.domain-service'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -65,26 +66,31 @@ export class CreateOrderedServiceService implements ICommandHandler {
     if (!organization) throw new OrganizationNotFoundException()
     // #endregion validation
 
-    // #region get ordered service manager
     const orderedServiceManager = new OrderedServiceManager(
       this.prismaService,
       service,
       this.customPricingRepo,
       organization,
-      project,
-      job,
+      project.id,
+      project.projectPropertyType as ProjectPropertyTypeEnum,
+      job.mountingType as MountingTypeEnum,
+      job.systemSize ? Number(job.systemSize) : null,
       null,
     )
-    // #endregion get ordered service manager
 
     const orderedService = OrderedServiceEntity.create({
       projectId: job.projectId,
+      jobId: command.jobId,
       isRevision: await orderedServiceManager.isRevision(),
       sizeForRevision: await orderedServiceManager.getRevisionSize(),
       price: await orderedServiceManager.determineInitialPrice(),
       serviceId: command.serviceId,
-      jobId: command.jobId,
+      serviceName: service.getProps().name,
       description: command.description,
+      projectPropertyType: job.projectType as ProjectPropertyTypeEnum,
+      mountingType: job.mountingType as MountingTypeEnum,
+      organizationId: job.clientOrganizationId,
+      organizationName: job.clientOrganizationName,
     })
 
     await this.orderedServiceRepo.insert(orderedService)

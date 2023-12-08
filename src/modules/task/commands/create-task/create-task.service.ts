@@ -7,6 +7,7 @@ import { TASK_REPOSITORY } from '../../task.di-token'
 import { CreateTaskCommand } from './create-task.command'
 import { TaskRepositoryPort } from '../../database/task.repository.port'
 import { TaskEntity } from '../../domain/task.entity'
+import { ServiceNotFoundException } from '../../../service/domain/service.error'
 
 @CommandHandler(CreateTaskCommand)
 export class CreateTaskService implements ICommandHandler {
@@ -17,9 +18,14 @@ export class CreateTaskService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: CreateTaskCommand): Promise<AggregateID> {
+    // service를 생성할때 조회하느냐 조회할때 조회하느냐
+    const service = await this.prismaService.service.findUnique({ where: { id: command.serviceId } })
+    if (!service) throw new ServiceNotFoundException()
+
     const entity = TaskEntity.create({
       serviceId: command.serviceId,
       name: command.name,
+      serviceName: service.name,
     })
 
     await this.taskRepo.insert(entity)

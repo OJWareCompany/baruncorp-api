@@ -10,6 +10,7 @@ import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobEntity } from '../../domain/job.entity'
 import { CreateJobCommand } from './create-job.command'
 import { ProjectNotFoundException } from '../../../project/domain/project.error'
+import { ServiceNotFoundException } from '../../../service/domain/service.error'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -31,10 +32,23 @@ export class CreateJobService implements ICommandHandler {
     const project = await this.jobRepository.findProject(command.projectId)
     if (!project) throw new ProjectNotFoundException()
 
+    const services = await this.prismaService.service.findMany({
+      where: { id: { in: command.orderedTasks.map((task) => task.serviceId) } },
+    })
+
     // Entity에는 Record에 저장 될 모든 필드가 있어야한다.
     const job = JobEntity.create({
       propertyFullAddress: project.propertyFullAddress,
-      orderedServices: command.orderedTasks,
+      organizationId: project.clientOrganizationId,
+      organizationName: organization.name,
+      orderedServices: services.map((service) => {
+        const filtered = command.orderedTasks.find((task) => task.serviceId === service.id)
+        if (!filtered) throw new ServiceNotFoundException()
+        return {
+          ...filtered,
+          serviceName: service.name,
+        }
+      }),
       systemSize: command.systemSize,
       additionalInformationFromClient: command.additionalInformationFromClient,
       mailingAddressForWetStamp: command.mailingAddressForWetStamp,

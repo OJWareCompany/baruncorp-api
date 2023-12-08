@@ -4,7 +4,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { JobEntity } from '../../../ordered-job/domain/job.entity'
-import { InvoiceResponseDto, LineItem, TaskSizeEnum } from '../../dtos/invoice.response.dto'
+import { InvoiceResponseDto, LineItem, PricingType, TaskSizeEnum } from '../../dtos/invoice.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
@@ -57,23 +57,10 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       orderBy: { paymentDate: 'desc' },
     })
 
-    let subtotal = 0
-    jobs.map((job) => {
-      job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.price ?? 0)))
-    })
-
-    let total = 0
-    jobs.map((job) => {
-      job.orderedServices.map(
-        (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),
-      )
-    })
-
-    const discountAmount = subtotal - total
-
     // TODO: 조회에서 단순 조회가 아닌 계산 로직이 생긴다. 이게 맞나
     const lineItems: LineItem[] = await Promise.all(
       jobs.map(async (job) => {
+        // 이거 뭐냐.
         let subtotal = 0
         job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.service.basePrice ?? 0)))
         let total = 0
@@ -82,18 +69,6 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
         )
 
         const isContainsRevisionTask = job.orderedServices.find((orderedService) => orderedService.isRevision)
-
-        const sizeForRevision = job.orderedServices.find(
-          (orderedService) =>
-            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
-        )
-          ? TaskSizeEnum.Major
-          : job.orderedServices.find(
-              (orderedService) =>
-                orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
-            )
-          ? TaskSizeEnum.Minor
-          : null
 
         const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.projectId } })
 
@@ -121,8 +96,8 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
           // totalJobPriceOverride: null, // TODO: job필드 추가? -> X Job의 Service 가격을 수정하는 방식으로.
           state: stateName,
           isContainsRevisionTask: !!isContainsRevisionTask,
-          taskSizeForRevision: sizeForRevision,
-          pricingType: 'Standard', // TODO: 조직별 할인 작업 들어가야 할 수 있음
+          taskSizeForRevision: job.revisionSize as TaskSizeEnum | null, // 컬럼 추가, 프로젝트 Aggregate를 만든다고 될 일이 아님
+          pricingType: job.pricingType as PricingType, // TODO: 조직별 할인 작업 들어가야 할 수 있음
         }
       }),
     )
@@ -140,9 +115,9 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       createdAt: invoice.createdAt.toISOString(),
       updatedAt: invoice.updatedAt.toISOString(),
       servicePeriodDate: invoice.serviceMonth.toISOString(),
-      subtotal: subtotal,
-      discount: discountAmount,
-      total: total,
+      subtotal: Number(invoice.subTotal),
+      discount: Number(invoice.discount),
+      total: Number(invoice.total),
       clientOrganization: {
         id: jobs[0].clientOrganizationId,
         name: jobs[0].clientOrganizationName,
@@ -167,3 +142,8 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
     }
   }
 }
+
+/**
+ * total,등의 계산해야하는 필드는 컬럼으로 만들고
+ * 관련 데이터가 update될때만 로직을 돌리도록 수정하기.
+ */
