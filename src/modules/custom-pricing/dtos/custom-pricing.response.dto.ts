@@ -43,7 +43,7 @@ export class CustomPricingResponseDto {
 
   @ApiProperty({
     enum: ResidentialNewServicePricingTypeEnum,
-    default: ResidentialNewServicePricingTypeEnum.tiered,
+    default: ResidentialNewServicePricingTypeEnum.tier,
   })
   @IsEnum(ResidentialNewServicePricingTypeEnum)
   @IsOptional()

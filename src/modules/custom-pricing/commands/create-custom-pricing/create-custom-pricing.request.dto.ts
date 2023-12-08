@@ -35,10 +35,10 @@ export class CreateCustomPricingRequestDto {
 
   @ApiProperty({
     enum: ResidentialNewServicePricingTypeEnum,
-    default: ResidentialNewServicePricingTypeEnum.tiered,
+    default: ResidentialNewServicePricingTypeEnum.tier,
   })
   @IsEnum(ResidentialNewServicePricingTypeEnum)
-  readonly residentialNewServicePricingType: ResidentialNewServicePricingTypeEnum
+  readonly residentialNewServicePricingType: ResidentialNewServicePricingTypeEnum | null
 
   @ApiProperty({ default: null })
   @IsOptional()

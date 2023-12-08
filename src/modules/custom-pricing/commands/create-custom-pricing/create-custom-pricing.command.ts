@@ -6,7 +6,7 @@ export enum CustomPricingTypeEnum {
 }
 
 export enum ResidentialNewServicePricingTypeEnum {
-  tiered = 'Tired',
+  tier = 'Tier',
   flat = 'Flat',
 }
 
@@ -14,7 +14,7 @@ export class CreateCustomPricingCommand {
   readonly serviceId: string
   readonly organizationId: string
   readonly type: CustomPricingTypeEnum
-  readonly residentialNewServicePricingType: ResidentialNewServicePricingTypeEnum
+  readonly residentialNewServicePricingType: ResidentialNewServicePricingTypeEnum | null
   readonly residentialNewServiceFlatPrice: number | null
   readonly residentialNewServiceFlatGmPrice: number | null
   readonly residentialNewServiceTiers: {

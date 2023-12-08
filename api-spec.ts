@@ -1127,8 +1127,8 @@ export interface CreateCustomPricingRequestDto {
   organizationId: string
   /** @default "custom_standard" */
   customPricingType: 'custom_standard' | 'custom_fixed'
-  /** @default "Tired" */
-  residentialNewServicePricingType: 'Tired' | 'Flat'
+  /** @default "Tier" */
+  residentialNewServicePricingType: 'Tier' | 'Flat' | null
   /** @default null */
   residentialNewServiceFlatPrice: number | null
   /** @default null */
@@ -1174,8 +1174,8 @@ export interface CustomPricingResponseDto {
   organizationId: string
   /** @default "custom_standard" */
   customPricingType: 'custom_standard' | 'custom_fixed'
-  /** @default "Tired" */
-  residentialNewServicePricingType: 'Tired' | 'Flat' | null
+  /** @default "Tier" */
+  residentialNewServicePricingType: 'Tier' | 'Flat' | null
   /** @default null */
   residentialNewServiceFlatPrice: number | null
   /** @default null */
