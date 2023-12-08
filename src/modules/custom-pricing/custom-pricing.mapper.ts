@@ -145,17 +145,10 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
       residentialNewServiceFlatPrice: entity.residentialNewFlatPrice,
       residentialNewServiceFlatGmPrice: entity.residentialNewFlatGmPrice,
       customPricingType: entity.customPricingType,
-      residentialNewServiceTiers: entity.residentialNewServiceTiers,
+      residentialNewServiceTiers: entity.residentialNewServiceTiers.map((tier) => tier.unpack()),
       residentialRevisionPrice: props.residentialRevisionPricing ? props.residentialRevisionPricing.price : null,
       residentialRevisionGmPrice: props.residentialRevisionPricing ? props.residentialRevisionPricing.gmPrice : null,
-      commercialNewServiceTiers: props.commercialNewServiceTiers.map((tier) => {
-        return {
-          startingPoint: tier.startingPoint,
-          finishingPoint: tier.finishingPoint,
-          price: tier.price,
-          gmPrice: tier.price,
-        }
-      }),
+      commercialNewServiceTiers: props.commercialNewServiceTiers.map((tier) => tier.unpack()),
       fixedPrice: props.fixedPricing ? props.fixedPricing.value : null,
     })
   }

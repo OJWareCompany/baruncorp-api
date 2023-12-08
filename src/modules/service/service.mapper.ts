@@ -140,7 +140,9 @@ export class ServiceMapper
             residentialRevisionGmPrice: standard.residential ? standard.residential.revisionGmPrice : null,
             commercialRevisionCostPerUnit: standard.commercial ? standard.commercial.revision.costPerUnit : null,
             commercialRevisionMinutesPerUnit: standard.commercial ? standard.commercial?.revision.minutesPerUnit : null,
-            commercialNewServiceTiers: standard.commercial ? standard.commercial.newServiceTiers : [],
+            commercialNewServiceTiers: standard.commercial
+              ? standard.commercial.newServiceTiers.map((tier) => tier.unpack())
+              : [],
           }
         : null,
       fixedPrice: props.pricing.fixedPrice,
