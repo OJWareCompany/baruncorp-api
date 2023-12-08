@@ -950,13 +950,20 @@ export interface UpdateAssignedTaskRequestDto {
 export interface AssignedTaskResponseDto {
   id: string
   taskId: string
+  taskName: string
   orderedServiceId: string
+  serviceName: string
   jobId: string
   /** @default "Not Started" */
   status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
   description: string | null
   assigneeId: string | null
   assigneeName: string | null
+  projectId: string
+  organizationId: string
+  organizationName: string
+  projectPropertyType: string
+  mountingType: string
   /** @format date-time */
   startedAt: string | null
   /** @format date-time */
@@ -1120,6 +1127,12 @@ export interface CreateCustomPricingRequestDto {
   organizationId: string
   /** @default "custom_standard" */
   customPricingType: 'custom_standard' | 'custom_fixed'
+  /** @default "Tired" */
+  residentialNewServicePricingType: 'Tired' | 'Flat'
+  /** @default null */
+  residentialNewServiceFlatPrice: number | null
+  /** @default null */
+  residentialNewServiceFlatGmPrice: number | null
   /** @default [{"startingPoint":1,"finishingPoint":100,"price":10,"gmPrice":12.01},{"startingPoint":101,"finishingPoint":200,"price":10,"gmPrice":12.01},{"startingPoint":201,"finishingPoint":null,"price":10,"gmPrice":12.01}] */
   residentialNewServiceTiers: Tier[]
   /** @default 10 */
@@ -1161,6 +1174,12 @@ export interface CustomPricingResponseDto {
   organizationId: string
   /** @default "custom_standard" */
   customPricingType: 'custom_standard' | 'custom_fixed'
+  /** @default "Tired" */
+  residentialNewServicePricingType: 'Tired' | 'Flat' | null
+  /** @default null */
+  residentialNewServiceFlatPrice: number | null
+  /** @default null */
+  residentialNewServiceFlatGmPrice: number | null
   /** @default [{"startingPoint":1,"finishingPoint":100,"price":10,"gmPrice":12.01},{"startingPoint":101,"finishingPoint":200,"price":10,"gmPrice":12.01},{"startingPoint":201,"finishingPoint":null,"price":10,"gmPrice":12.01}] */
   residentialNewServiceTiers: Tier[]
   /** @default 10 */
@@ -1179,7 +1198,7 @@ export interface CustomPricingPaginatedResponseDtoFields {
   organizationName: string
   serviceId: string
   serviceName: string
-  hasResidentialNewServiceTier: boolean
+  hasResidentialNewServicePricing: boolean
   hasResidentialRevisionPricing: boolean
   hasCommercialNewServiceTier: boolean
   hasFixedPricing: boolean
@@ -1195,6 +1214,11 @@ export interface CustomPricingPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: CustomPricingPaginatedResponseDtoFields[]
+}
+
+export interface CreatableCustomPricingResponse {
+  serviceName: string
+  serviceId: string
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -1461,8 +1485,14 @@ export interface FindPaymentPaginatedHttpControllerGetParams {
 }
 
 export interface FindCustomPricingPaginatedHttpControllerGetParams {
+  /** @default "asda" */
+  organizationId?: string | null
+  /** @default "Barun Corp" */
+  organizationName?: string | null
   /** @default "" */
-  customPricingId: string
+  serviceId?: string | null
+  /** @default "" */
+  serviceName?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1475,6 +1505,11 @@ export interface FindCustomPricingPaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
+}
+
+export interface FindCreatableCustomPricingHttpControllerGetParams {
+  /** @default "" */
+  organizationId: string
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
@@ -3052,6 +3087,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<CustomPricingResponseDto, any>({
         path: `/custom-pricings/${customPricingId}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  creatableCustomPricings = {
+    /**
+     * No description
+     *
+     * @name FindCreatableCustomPricingHttpControllerGet
+     * @request GET:/creatable-custom-pricings
+     */
+    findCreatableCustomPricingHttpControllerGet: (
+      query: FindCreatableCustomPricingHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<CreatableCustomPricingResponse[], any>({
+        path: `/creatable-custom-pricings`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),

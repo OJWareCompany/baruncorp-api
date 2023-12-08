@@ -10,11 +10,11 @@ import { FindCustomPricingPaginatedHttpController } from './queries/find-custom-
 import { CreateCustomPricingService } from './commands/create-custom-pricing/create-custom-pricing.service'
 import { UpdateCustomPricingService } from './commands/update-custom-pricing/update-custom-pricing.service'
 import { DeleteCustomPricingService } from './commands/delete-custom-pricing/delete-custom-pricing.service'
-import { FindCustomPricingQueryHandler } from './queries/find-custom-pricing/find-custom-pricing.query-handler'
 import { FindCustomPricingPaginatedQueryHandler } from './queries/find-custom-pricing-paginated/find-custom-pricing.paginated.query-handler'
 import { CUSTOM_PRICING_REPOSITORY } from './custom-pricing.di-token'
 import { CustomPricingRepository } from './database/custom-pricing.repository'
 import { CustomPricingMapper } from './custom-pricing.mapper'
+import { FindCreatableCustomPricingHttpController } from './queries/find-creatable-custom-pricing/find-creatable-custom-pricing.http.controller'
 
 const httpControllers = [
   CreateCustomPricingHttpController,
@@ -22,9 +22,10 @@ const httpControllers = [
   DeleteCustomPricingHttpController,
   FindCustomPricingHttpController,
   FindCustomPricingPaginatedHttpController,
+  FindCreatableCustomPricingHttpController,
 ]
 const commandHandlers: Provider[] = [CreateCustomPricingService, UpdateCustomPricingService, DeleteCustomPricingService]
-const queryHandlers: Provider[] = [FindCustomPricingQueryHandler, FindCustomPricingPaginatedQueryHandler]
+const queryHandlers: Provider[] = [FindCustomPricingPaginatedQueryHandler, FindCustomPricingPaginatedQueryHandler]
 const repositories: Provider[] = [
   {
     provide: CUSTOM_PRICING_REPOSITORY,
