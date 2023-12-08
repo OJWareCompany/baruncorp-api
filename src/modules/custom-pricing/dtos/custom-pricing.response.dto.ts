@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
-import { CustomPricingType } from '../commands/create-custom-pricing/create-custom-pricing.command'
+import {
+  CustomPricingTypeEnum,
+  ResidentialNewServicePricingTypeEnum,
+} from '../commands/create-custom-pricing/create-custom-pricing.command'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 
 export class Tier {
@@ -34,9 +37,25 @@ export class CustomPricingResponseDto {
   @IsString()
   readonly organizationId: string
 
-  @ApiProperty({ enum: CustomPricingType, default: CustomPricingType.custom_standard })
-  @IsEnum(CustomPricingType)
-  readonly customPricingType: CustomPricingType
+  @ApiProperty({ enum: CustomPricingTypeEnum, default: CustomPricingTypeEnum.custom_standard })
+  @IsEnum(CustomPricingTypeEnum)
+  readonly customPricingType: CustomPricingTypeEnum
+
+  @ApiProperty({
+    enum: ResidentialNewServicePricingTypeEnum,
+    default: ResidentialNewServicePricingTypeEnum.tiered,
+  })
+  @IsEnum(ResidentialNewServicePricingTypeEnum)
+  @IsOptional()
+  readonly residentialNewServicePricingType: ResidentialNewServicePricingTypeEnum | null
+
+  @ApiProperty({ default: null })
+  @IsOptional()
+  readonly residentialNewServiceFlatPrice: number | null
+
+  @ApiProperty({ default: null })
+  @IsOptional()
+  readonly residentialNewServiceFlatGmPrice: number | null
 
   @ApiProperty({
     default: [

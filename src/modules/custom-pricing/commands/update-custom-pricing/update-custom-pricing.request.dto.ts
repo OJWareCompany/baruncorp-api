@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
-import { CustomPricingType } from '../create-custom-pricing/create-custom-pricing.command'
+import { CustomPricingTypeEnum } from '../create-custom-pricing/create-custom-pricing.command'
 import { Tier } from '../create-custom-pricing/create-custom-pricing.request.dto'
 
 export class UpdateCustomPricingParamRequestDto {
@@ -10,9 +10,9 @@ export class UpdateCustomPricingParamRequestDto {
 }
 
 export class UpdateCustomPricingRequestDto {
-  @ApiProperty({ enum: CustomPricingType, default: CustomPricingType.custom_standard })
-  @IsEnum(CustomPricingType)
-  readonly customPricingType: CustomPricingType
+  @ApiProperty({ enum: CustomPricingTypeEnum, default: CustomPricingTypeEnum.custom_standard })
+  @IsEnum(CustomPricingTypeEnum)
+  readonly customPricingType: CustomPricingTypeEnum
 
   @ApiProperty({
     default: [

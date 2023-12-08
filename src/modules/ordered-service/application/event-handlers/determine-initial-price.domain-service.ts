@@ -38,14 +38,14 @@ export class OrderedServiceManager {
 
     const customPricing = await this.getCustomPricing()
     const customPrice = customPricing
-      ? customPricing.getPrice(isRevision, this.projectPropertyType, this.mountingType, this.systemSize, revisionSize)
+      ? customPricing.calcPrice(isRevision, this.projectPropertyType, this.mountingType, this.systemSize, revisionSize)
       : null
 
     const isFreeRevision = await this.calculateFreeRevisionStatus()
 
     const initialPrice = isFreeRevision
       ? 0
-      : !!customPricing && customPricing.hasNewResidentialPricing() //
+      : !!customPricing && customPricing.hasNewResidentialPricing //
       ? customPrice
       : customPrice ?? standardPrice
 
@@ -58,7 +58,7 @@ export class OrderedServiceManager {
 
   async isFixedPricing() {
     const customPricing = await this.getCustomPricing()
-    return customPricing?.hasFixedPricing() || this.service.getProps().pricing.fixedPrice
+    return customPricing?.hasFixedPricing || this.service.getProps().pricing.fixedPrice
   }
 
   async getRevisionSize(): Promise<OrderedServiceSizeForRevision | null> {

@@ -78,7 +78,7 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
     const customPricingsRecord: CustomPricings = {
       id: props.id,
       ...foreignKey,
-      hasResidentialNewServiceTier: !!customResidentialPricingTiersRecord.length,
+      hasResidentialNewServicePricing: !!customResidentialPricingTiersRecord.length,
       hasResidentialRevisionPricing: !!customResidentialRevisionPricingsRecord,
       hasCommercialNewServiceTier: !!customCommercialPricingTiersRecord.length,
       hasFixedPricing: !!customFixedPricingsRecord,
@@ -141,15 +141,11 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
       customPricingId: props.id,
       serviceId: props.serviceId,
       organizationId: props.organizationId,
-      customPricingType: entity.getType(),
-      residentialNewServiceTiers: props.residentialNewServiceTiers.map((tier) => {
-        return {
-          startingPoint: tier.startingPoint,
-          finishingPoint: tier.finishingPoint,
-          price: tier.price,
-          gmPrice: tier.price,
-        }
-      }),
+      residentialNewServicePricingType: entity.residentialNewServicePricingType,
+      residentialNewServiceFlatPrice: entity.residentialNewFlatPrice,
+      residentialNewServiceFlatGmPrice: entity.residentialNewFlatGmPrice,
+      customPricingType: entity.customPricingType,
+      residentialNewServiceTiers: entity.residentialNewServiceTiers,
       residentialRevisionPrice: props.residentialRevisionPricing ? props.residentialRevisionPricing.price : null,
       residentialRevisionGmPrice: props.residentialRevisionPricing ? props.residentialRevisionPricing.gmPrice : null,
       commercialNewServiceTiers: props.commercialNewServiceTiers.map((tier) => {

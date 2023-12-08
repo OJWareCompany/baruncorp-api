@@ -1,14 +1,22 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
-export enum CustomPricingType {
+export enum CustomPricingTypeEnum {
   custom_standard = 'custom_standard',
   custom_fixed = 'custom_fixed',
+}
+
+export enum ResidentialNewServicePricingTypeEnum {
+  tiered = 'Tired',
+  flat = 'Flat',
 }
 
 export class CreateCustomPricingCommand {
   readonly serviceId: string
   readonly organizationId: string
-  readonly type: CustomPricingType
+  readonly type: CustomPricingTypeEnum
+  readonly residentialNewServicePricingType: ResidentialNewServicePricingTypeEnum
+  readonly residentialNewServiceFlatPrice: number | null
+  readonly residentialNewServiceFlatGmPrice: number | null
   readonly residentialNewServiceTiers: {
     readonly startingPoint: number
     readonly finishingPoint: number

@@ -34,14 +34,9 @@ export class CreateCustomPricingService implements ICommandHandler {
     const service = await this.prismaService.service.findUnique({ where: { id: command.serviceId } })
     if (!service) throw new ServiceNotFoundException()
 
-    const residentialNewServiceTiers = command.residentialNewServiceTiers.map((tier) => {
-      return new CustomResidentialNewServicePricingTier({
-        startingPoint: tier.startingPoint,
-        finishingPoint: tier.finishingPoint,
-        price: tier.price,
-        gmPrice: tier.gmPrice,
-      })
-    })
+    const residentialNewServiceTiers = command.residentialNewServiceTiers.map(
+      (tier) => new CustomResidentialNewServicePricingTier(tier),
+    )
 
     const residentialRevisionPricing =
       command.residentialRevisionPrice && command.residentialRevisionGmPrice
@@ -51,14 +46,9 @@ export class CreateCustomPricingService implements ICommandHandler {
           })
         : null
 
-    const commercialNewServiceTiers = command.commercialNewServiceTiers.map((tier) => {
-      return new CustomCommercialNewServicePricingTier({
-        startingPoint: tier.startingPoint,
-        finishingPoint: tier.finishingPoint,
-        price: tier.price,
-        gmPrice: tier.gmPrice,
-      })
-    })
+    const commercialNewServiceTiers = command.commercialNewServiceTiers.map(
+      (tier) => new CustomCommercialNewServicePricingTier(tier),
+    )
 
     const entity = CustomPricingEntity.create({
       serviceId: command.serviceId,

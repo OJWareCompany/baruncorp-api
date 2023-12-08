@@ -1,7 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
-import { CustomPricingResponseDto } from './custom-pricing.response.dto'
 
 class CustomPricingPaginatedResponseDtoFields {
   @ApiProperty()
@@ -26,7 +25,7 @@ class CustomPricingPaginatedResponseDtoFields {
 
   @ApiProperty()
   @IsString()
-  hasResidentialNewServiceTier: boolean
+  hasResidentialNewServicePricing: boolean
 
   @ApiProperty()
   @IsString()

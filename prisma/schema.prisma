@@ -877,15 +877,15 @@ model CommercialStandardPricingTiers {
 }
 
 model CustomPricings {
-  id                            String  @id @map("id") @db.VarChar(255)
-  organizationId                String  @map("organization_id") @db.VarChar(255)
-  organizationName              String  @map("organization_name") @db.VarChar(255)
-  serviceId                     String  @map("service_id") @db.VarChar(255)
-  serviceName                   String  @map("service_name") @db.VarChar(255)
-  hasResidentialNewServiceTier  Boolean @map("has_residential_new_service_tier")
-  hasResidentialRevisionPricing Boolean @map("has_residential_revision_pricing")
-  hasCommercialNewServiceTier   Boolean @map("has_commercial_new_service_tier")
-  hasFixedPricing               Boolean @map("has_fixed_pricing")
+  id                                  String  @id @map("id") @db.VarChar(255)
+  organizationId                      String  @map("organization_id") @db.VarChar(255)
+  organizationName                    String  @map("organization_name") @db.VarChar(255)
+  serviceId                           String  @map("service_id") @db.VarChar(255)
+  serviceName                         String  @map("service_name") @db.VarChar(255)
+  hasResidentialNewServicePricing Boolean @map("has_residential_new_service_pricing")
+  hasResidentialRevisionPricing       Boolean @map("has_residential_revision_pricing")
+  hasCommercialNewServiceTier         Boolean @map("has_commercial_new_service_tier")
+  hasFixedPricing                     Boolean @map("has_fixed_pricing")
 
   @@map("custom_pricings")
 }
