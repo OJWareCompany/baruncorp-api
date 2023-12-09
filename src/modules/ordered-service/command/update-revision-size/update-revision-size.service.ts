@@ -14,7 +14,7 @@ import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
-import { OrderedServiceManager } from '../../application/event-handlers/determine-initial-price.domain-service'
+import { OrderedServiceManager } from '../../domain/ordered-service-manager.domain-service'
 import { ServiceNotFoundException } from '../../../service/domain/service.error'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 

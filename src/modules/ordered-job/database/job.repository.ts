@@ -6,7 +6,17 @@ import { JobMapper } from '../job.mapper'
 import { JobEntity } from '../domain/job.entity'
 import { PrismaService } from '../../../modules/database/prisma.service'
 import { JobNotFoundException } from '../domain/job.error'
-
+import { zonedTimeToUtc } from 'date-fns-tz'
+import { endOfMonth, startOfMonth } from 'date-fns'
+import { JobStatusEnum } from '../domain/job.type'
+import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
+type JobModel =
+  | OrderedJobs & {
+      orderedServices: (OrderedServices & {
+        service: Service
+        assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
+      })[]
+    }
 @Injectable()
 export class JobRepository implements JobRepositoryPort {
   constructor(
@@ -15,10 +25,13 @@ export class JobRepository implements JobRepositoryPort {
     protected readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async insert(entity: JobEntity): Promise<void> {
-    const record = this.jobMapper.toPersistence(entity)
-    await this.prismaService.orderedJobs.create({ data: { ...record } })
-    await entity.publishEvents(this.eventEmitter)
+  async insert(entity: JobEntity | JobEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.jobMapper.toPersistence)
+    await this.prismaService.orderedJobs.createMany({ data: records })
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async update(entity: JobEntity | JobEntity[]): Promise<void> {
@@ -48,14 +61,7 @@ export class JobRepository implements JobRepositoryPort {
   }
 
   async findJobOrThrow(id: string): Promise<JobEntity> {
-    const record:
-      | (OrderedJobs & {
-          orderedServices: (OrderedServices & {
-            service: Service
-            assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
-          })[]
-        })
-      | null = await this.prismaService.orderedJobs.findUnique({
+    const record: JobModel | null = await this.prismaService.orderedJobs.findUnique({
       where: { id },
       include: {
         orderedServices: {
@@ -85,13 +91,7 @@ export class JobRepository implements JobRepositoryPort {
   }
 
   async findManyJob(projectId: string): Promise<JobEntity[]> {
-    const records:
-      | (OrderedJobs & {
-          orderedServices: (OrderedServices & {
-            service: Service
-            assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
-          })[]
-        })[] = await this.prismaService.orderedJobs.findMany({
+    const records: JobModel[] = await this.prismaService.orderedJobs.findMany({
       where: { projectId: projectId },
       include: {
         orderedServices: {
@@ -108,6 +108,35 @@ export class JobRepository implements JobRepositoryPort {
       },
     })
 
+    return records.map(this.jobMapper.toDomain)
+  }
+
+  async findJobsToInvoice(clientOrganizationId: string, serviceMonth: Date): Promise<JobEntity[]> {
+    const records = await this.prismaService.orderedJobs.findMany({
+      where: {
+        clientOrganizationId: clientOrganizationId,
+        createdAt: {
+          gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
+          lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+        },
+        jobStatus: { in: [JobStatusEnum.Completed, JobStatusEnum.Canceled] },
+        orderedServices: { some: { status: OrderedServiceStatusEnum.Completed } },
+        invoice: null,
+      },
+      include: {
+        orderedServices: {
+          include: {
+            service: true,
+            assignedTasks: {
+              include: {
+                task: true,
+                user: true,
+              },
+            },
+          },
+        },
+      },
+    })
     return records.map(this.jobMapper.toDomain)
   }
 }

@@ -4,6 +4,7 @@ import {
   CreateOrderedServiceProps,
   OrderedServiceProps,
   OrderedServiceSizeForRevisionEnum,
+  OrderedServiceStatusEnum,
 } from './ordered-service.type'
 import { NegativeNumberException } from '../../../libs/exceptions/exceptions'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
@@ -13,6 +14,10 @@ import { OrderedServiceReactivatedDomainEvent } from './events/ordered-service-r
 import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
 import { Service } from '@prisma/client'
 import { OrderedServiceUpdatedRevisionSizeDomainEvent } from './events/ordered-service-updated-revision-size.domain-event'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { CalculateInvoiceService } from '../../invoice/domain/calculate-invoice-service.domain-service'
+import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custom-pricing.repository.port'
+import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-service-invoiced.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -36,6 +41,34 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       }),
     )
     return entity
+  }
+
+  get serviceId() {
+    return this.props.serviceId
+  }
+
+  get mountingType() {
+    return this.props.mountingType
+  }
+
+  get price() {
+    return this.props.price
+  }
+
+  get jobId() {
+    return this.props.jobId
+  }
+
+  get isGroundMount() {
+    return this.props.mountingType === MountingTypeEnum.Ground_Mount
+  }
+
+  get isRoofMount() {
+    return this.props.mountingType === MountingTypeEnum.Roof_Mount
+  }
+
+  get organizationId() {
+    return this.props.organizationId
   }
 
   cancel(): this {
@@ -92,17 +125,6 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     if (this.props.isManualPrice) return this
     this.props.price = price
     return this
-    // 100원 -> 0원
-    // 매뉴얼 -> 자동 무시 -> 들어오는 값이 매뉴얼한 Price인지는 어떻게 판단? 0원도 들어오는데
-    // update price를 vo로 만들어서 ismanully라는 속성을 가지고있게 하자?
-    // Pricing에 서비스를 넣어서 manully면 거르게 해야한다.
-
-    // api 나누기
-    // revision size 변경하는 api
-    // update(pricing), manually이면 적용X
-    // 가격 업데이트하는 api
-    // 무조건 업데이트
-    // task에서 시간 입력 api도 필요하다.
   }
 
   setManualPrice(price: number) {
@@ -141,6 +163,57 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     const totalCost: number = Math.round(units) * costPerUnit
 
     return totalCost
+  }
+
+  private freeCost() {
+    const NO_COST = 0
+    if (this.isCanceledOrMinorCompleted) this.props.price = NO_COST
+  }
+
+  async determinePriceWhenInvoice(
+    calcService: CalculateInvoiceService,
+    orderedServices: OrderedServiceEntity[],
+    customPricingRepo: CustomPricingRepositoryPort,
+  ) {
+    if (this.isCanceledOrMinorCompleted) return this.freeCost()
+    if (!this.isNewResidentialPurePrice) return
+
+    const tier = await calcService.getTier(this, orderedServices, customPricingRepo)
+    if (!tier) return
+
+    this.props.price = this.isGroundMount ? tier.gmPrice : tier.price
+    // TODO: EVENT job.pricingType = PricingTypeEnum.Tiered
+    this.addEvent(
+      new OrderedServiceAppliedTieredPricingDomainEvent({
+        aggregateId: this.id,
+        jobId: this.props.jobId,
+      }),
+    )
+  }
+
+  get isCanceledOrMinorCompleted(): boolean {
+    return (
+      this.props.status === OrderedServiceStatusEnum.Canceled ||
+      (this.props.status === OrderedServiceStatusEnum.Completed &&
+        this.props.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor)
+    )
+  }
+
+  get isNewResidentialService(): boolean {
+    return (
+      this.props.projectPropertyType === ProjectPropertyTypeEnum.Residential &&
+      this.props.status === OrderedServiceStatusEnum.Completed &&
+      !this.props.isRevision
+    )
+  }
+
+  get isNewResidentialPurePrice(): boolean {
+    return (
+      this.props.projectPropertyType === ProjectPropertyTypeEnum.Residential &&
+      this.props.status === OrderedServiceStatusEnum.Completed &&
+      !this.props.isRevision &&
+      !this.props.isManualPrice
+    )
   }
 
   public validate(): void {

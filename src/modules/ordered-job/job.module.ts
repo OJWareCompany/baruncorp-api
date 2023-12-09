@@ -29,6 +29,7 @@ import { FindJobToInvoiceHttpController } from './queries/find-job-to-invoice/fi
 import { FindJobToInvoiceQueryHandler } from './queries/find-job-to-invoice/find-job-to-invoice.query-handler'
 import { UpdateJobWhenTaskIsReopenedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-reopended.domain-event-handler'
 import { UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler } from './application/event-handlers/update-job-revision-size-when-ordered-service-revision-size-updated.domain-event-handler'
+import { UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler } from './application/event-handlers/update-pricing-type-when-ordered-service-applied.domain-event-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -60,6 +61,7 @@ const eventHandlers: Provider[] = [
   CompleteJobWhenServiceIsCompletedDomainEventHandler,
   UpdateJobWhenTaskIsReopenedDomainEventHandler,
   UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler,
+  UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 

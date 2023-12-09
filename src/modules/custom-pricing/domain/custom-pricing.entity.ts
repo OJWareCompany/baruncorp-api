@@ -50,6 +50,7 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     const price = this.residentialNewFlatPricing
     return isFlat && price ? price.price : null
   }
+
   get residentialNewFlatGmPrice(): number | null {
     const isFlat = this.isResidentialNewServiceFlatPricing
     const price = this.residentialNewFlatPricing
@@ -73,8 +74,8 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   // residentialRevisionPricing: CustomResidentialRevisionPricing | null
   // commercialNewServiceTiers: CustomCommercialNewServicePricingTier[]
   // fixedPricing: CustomFixedPrice | null
-  get hasNewResidentialPricing() {
-    return !!this.props.residentialNewServiceTiers.length
+  get hasNewResidentialTieredPricing() {
+    return !this.isResidentialNewServiceFlatPricing || this.props.residentialNewServiceTiers.length > 1
   }
 
   get hasRevisionResidentialPricing() {
@@ -142,6 +143,16 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     return
   }
 
+  getVolumeTieredPrice(numberOfServices: number) {
+    return (
+      this.props.residentialNewServiceTiers.find((tier) => {
+        const isWithinStart = tier.startingPoint <= numberOfServices
+        const isWithinEnd = !tier.finishingPoint || tier.finishingPoint >= numberOfServices
+        return isWithinStart && isWithinEnd
+      }) || null
+    )
+  }
+
   calcPrice(
     isRevision: boolean,
     projectType: ProjectPropertyType,
@@ -156,19 +167,13 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
       // 고정가격
       price = pricing.fixedPricing.value
     } else if (!isRevision && projectType === ProjectPropertyTypeEnum.Residential) {
-      // New Residential Service 고정가격
-      const residentialFlatdPrice = pricing.residentialNewServiceTiers.find((tier) => {
-        return (
-          (tier.startingPoint === 0 && tier.finishingPoint === null) ||
-          (tier.startingPoint === 1 && tier.finishingPoint === null)
-        )
-      })
-
       // New Residential Service Tiered 적용 예정
-      if (!residentialFlatdPrice || pricing.residentialNewServiceTiers.length > 1) return (price = null)
+      if (!this.residentialNewFlatPricing || pricing.residentialNewServiceTiers.length > 1) return (price = null)
 
       price =
-        mountingType === MountingTypeEnum.Ground_Mount ? residentialFlatdPrice.gmPrice : residentialFlatdPrice.price
+        mountingType === MountingTypeEnum.Ground_Mount
+          ? this.residentialNewFlatPricing.gmPrice
+          : this.residentialNewFlatPricing.price
     } else if (!isRevision && projectType === ProjectPropertyTypeEnum.Commercial && systemSize) {
       // New Commercial Service 가격
       const commercialTier = pricing.commercialNewServiceTiers.find((tier) => {

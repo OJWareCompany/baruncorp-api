@@ -16,7 +16,7 @@ import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
-import { OrderedServiceManager } from '../../application/event-handlers/determine-initial-price.domain-service'
+import { OrderedServiceManager } from '../../domain/ordered-service-manager.domain-service'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @CommandHandler(CreateOrderedServiceCommand)

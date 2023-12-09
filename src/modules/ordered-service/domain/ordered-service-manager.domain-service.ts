@@ -1,12 +1,12 @@
 import { OrderedServices, Organizations } from '@prisma/client'
-import { ServiceEntity } from '../../../service/domain/service.entity'
-import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
-import { PrismaService } from '../../../database/prisma.service'
-import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { OrderedServiceSizeForRevision } from '../../domain/ordered-service.type'
-import { CustomPricingEntity } from '../../../custom-pricing/domain/custom-pricing.entity'
-import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
+import { ServiceEntity } from '../../service/domain/service.entity'
+import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
+import { PrismaService } from '../../database/prisma.service'
+import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custom-pricing.repository.port'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { OrderedServiceSizeForRevision } from './ordered-service.type'
+import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
+import { OrderedServiceEntity } from './ordered-service.entity'
 
 export class OrderedServiceManager {
   // Don't use Directly
@@ -45,7 +45,7 @@ export class OrderedServiceManager {
 
     const initialPrice = isFreeRevision
       ? 0
-      : !!customPricing && customPricing.hasNewResidentialPricing //
+      : !!customPricing && customPricing.hasNewResidentialTieredPricing //
       ? customPrice
       : customPrice ?? standardPrice
 
@@ -101,10 +101,7 @@ export class OrderedServiceManager {
   private async getCustomPricing() {
     //계속해서 체크할 여지 있음
     if (!this.customPricing) {
-      this.customPricing = await this.customPricingRepo.findOne(null, {
-        serviceId: this.service.id,
-        organizationId: this.organization.id,
-      })
+      this.customPricing = await this.customPricingRepo.findOne(null, this.service.id, this.organization.id)
     }
     return this.customPricing
   }

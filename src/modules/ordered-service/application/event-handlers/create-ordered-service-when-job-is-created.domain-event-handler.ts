@@ -12,7 +12,7 @@ import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/cu
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
-import { OrderedServiceManager } from './determine-initial-price.domain-service'
+import { OrderedServiceManager } from '../../domain/ordered-service-manager.domain-service'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @Injectable()

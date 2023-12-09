@@ -16,6 +16,7 @@ import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
 import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
+import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -50,6 +51,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
       }),
     )
     return job
+  }
+
+  get pricingType() {
+    return this.props.pricingType
   }
 
   get subtotal(): number {
@@ -136,6 +141,16 @@ export class JobEntity extends AggregateRoot<JobProps> {
         aggregateId: this.id,
       }),
     )
+    return this
+  }
+
+  applyTieredPricing() {
+    this.props.pricingType = PricingTypeEnum.Tiered
+    return this
+  }
+
+  invoice(invoiceId: string) {
+    this.props.invoiceId = invoiceId
     return this
   }
 
