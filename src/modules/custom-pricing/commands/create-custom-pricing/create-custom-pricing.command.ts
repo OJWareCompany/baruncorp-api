@@ -1,8 +1,8 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export enum CustomPricingTypeEnum {
-  custom_standard = 'custom_standard',
-  custom_fixed = 'custom_fixed',
+  custom_standard = 'Custom Standard',
+  custom_fixed = 'Custom Fixed',
 }
 
 export enum ResidentialNewServicePricingTypeEnum {

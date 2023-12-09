@@ -14,9 +14,9 @@ export class CreateServiceHttpController {
   @Post()
   @ApiException(() => [ServiceNameConflictException, ServiceBillingCodeConflictException])
   async postCreateService(@Body() request: CreateServiceRequestDto): Promise<IdResponse> {
-    if (request.type === 'standard' && !request.standardPricing) throw new BadRequestException()
+    if (request.type === 'Standard' && !request.standardPricing) throw new BadRequestException()
     const pricingType =
-      request.type === 'standard' && request.standardPricing
+      request.type === 'Standard' && request.standardPricing
         ? {
             residentialPrice: request.standardPricing.residentialPrice,
             residentialGmPrice: request.standardPricing.residentialGmPrice,

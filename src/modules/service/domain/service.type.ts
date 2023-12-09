@@ -14,8 +14,8 @@ export interface ServiceProps extends CreateServiceProps {
 // export type AssignedTaskStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
 
 export enum ServicePricingTypeEnum {
-  standard = 'standard',
-  fixed = 'fixed',
+  standard = 'Standard',
+  fixed = 'Fixed',
 }
 
 /**

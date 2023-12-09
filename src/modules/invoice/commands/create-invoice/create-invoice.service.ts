@@ -31,7 +31,7 @@ export class CreateInvoiceService implements ICommandHandler {
     const orderedServices = await this.prismaService.orderedServices.findMany({
       where: { jobId: { in: jobs.map((job) => job.id) } },
     })
-    console.log(orderedServices)
+
     /**
      * Canceled = 0원 (취소여도 가격을 입력하길 원한다면?)
      * Completed & Minor = 0원
@@ -40,12 +40,14 @@ export class CreateInvoiceService implements ICommandHandler {
     const NO_COST = 0
 
     const calcCost = orderedServices.map(async (orderedService) => {
-      const job = jobs.find((job) => job.id === orderedService.jobId)
       if (this.isCanceledOrMinorCompleted(orderedService)) {
         orderedService.price = new Prisma.Decimal(NO_COST)
-      } else if (job && this.isNewResidentialPurePrice(orderedService)) {
+      } else if (this.isNewResidentialPurePrice(orderedService)) {
+        const job = jobs.find((job) => job.id === orderedService.jobId)
+        if (!job) throw new JobNotFoundException()
+
         const volumeTiers = await this.prismaService.customResidentialPricingTiers.findMany({
-          where: { organizationId: job.clientOrganizationId, serviceId: orderedService.serviceId },
+          where: { organizationId: orderedService.organizationId, serviceId: orderedService.serviceId },
         })
         if (volumeTiers.length <= 1) return
         // Tier 적용 구간
@@ -78,29 +80,29 @@ export class CreateInvoiceService implements ICommandHandler {
       discount,
       total: subTotal - discount,
     })
-    console.log(jobs)
-    // await this.invoiceRepo.insert(entity)
 
-    // await Promise.all(
-    //   jobs.map(async (job) => {
-    //     await this.prismaService.orderedJobs.update({
-    //       where: { id: job.id },
-    //       data: {
-    //         invoiceId: entity.id,
-    //         pricingType: job.pricingType,
-    //       },
-    //     })
-    //   }),
-    // )
+    await this.invoiceRepo.insert(entity)
 
-    // await Promise.all(
-    //   orderedServices.map(async (orderedService) => {
-    //     await this.prismaService.orderedServices.update({
-    //       where: { id: orderedService.id },
-    //       data: { price: orderedService.price },
-    //     })
-    //   }),
-    // )
+    await Promise.all(
+      jobs.map(async (job) => {
+        await this.prismaService.orderedJobs.update({
+          where: { id: job.id },
+          data: {
+            invoiceId: entity.id,
+            pricingType: job.pricingType,
+          },
+        })
+      }),
+    )
+
+    await Promise.all(
+      orderedServices.map(async (orderedService) => {
+        await this.prismaService.orderedServices.update({
+          where: { id: orderedService.id },
+          data: { price: orderedService.price },
+        })
+      }),
+    )
 
     return entity.id
   }
@@ -219,4 +221,8 @@ export class CreateInvoiceService implements ICommandHandler {
  *
  * 중복 데이터 단점
  * 1. 단순하게 join하면 되는 데이터는 로직 복잡성을 해결하는것 보다, 상위 데이터가 없데이트 되었을때 같이 업데이트되어야하는 단점이 더 클 수 있다. (id, 이름)
+ */
+
+/**
+ * 도메인서비스에서 repository 가능?
  */

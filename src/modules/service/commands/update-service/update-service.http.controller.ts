@@ -17,7 +17,7 @@ export class UpdateServiceHttpController {
   @Patch(':serviceId')
   async patch(@Param() param: UpdateServiceRequestDtoParam, @Body() request: UpdateServiceRequestDto): Promise<void> {
     const pricingType =
-      request.type === 'standard' && request.standardPricing
+      request.type === 'Standard' && request.standardPricing
         ? {
             residentialPrice: request.standardPricing.residentialPrice,
             residentialGmPrice: request.standardPricing.residentialGmPrice,
