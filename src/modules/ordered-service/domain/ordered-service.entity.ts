@@ -25,6 +25,7 @@ import { ServiceEntity } from '../../service/domain/service.entity'
 import { JobEntity } from '../../ordered-job/domain/job.entity'
 import { OrganizationEntity } from '../../organization/domain/organization.entity'
 import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
+import { OrderedServiceManualPriceUpdatedDomainEvent } from './events/ordered-service-manual-price-updated.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -204,6 +205,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   setManualPrice(price: number) {
     this.props.price = price
     this.props.isManualPrice = true
+    this.addEvent(
+      new OrderedServiceManualPriceUpdatedDomainEvent({
+        aggregateId: this.id,
+        jobId: this.jobId,
+      }),
+    )
   }
 
   setDescription(description: string | null): this {

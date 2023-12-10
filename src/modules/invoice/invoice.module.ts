@@ -34,6 +34,7 @@ import { IssueInvoiceService } from './commands/issue-invoice/issue-invoice.serv
 import { PayInvoiceWhenPaymentIsCreatedEventHandler } from './application/event-handlers/pay-invoice-when-payment-is-created.domain-event-handler'
 import { UpdatedInvoiceWhenPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-payment-is-canceled.domain-event-handler'
 import { CalculateInvoiceService } from './domain/calculate-invoice-service.domain-service'
+import { UpdateInvoiceTotalWhenOrderedServiceManualPriceIsUpddatedDomainEventHandler } from './application/event-handlers/update-invoice-total-when-ordered-service-manual-price-is-updated.domain-event-handler'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -81,6 +82,7 @@ const repositories: Provider[] = [
 const eventHandlers: Provider[] = [
   PayInvoiceWhenPaymentIsCreatedEventHandler,
   UpdatedInvoiceWhenPaymentIsCanceledEventHandler,
+  UpdateInvoiceTotalWhenOrderedServiceManualPriceIsUpddatedDomainEventHandler,
 ]
 
 const mappers: Provider[] = [

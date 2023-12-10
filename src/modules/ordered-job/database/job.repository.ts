@@ -90,9 +90,9 @@ export class JobRepository implements JobRepositoryPort {
     })
   }
 
-  async findManyJob(projectId: string): Promise<JobEntity[]> {
+  async findManyBy(property: keyof OrderedJobs, value: OrderedJobs[typeof property]): Promise<JobEntity[]> {
     const records: JobModel[] = await this.prismaService.orderedJobs.findMany({
-      where: { projectId: projectId },
+      where: { [property]: value },
       include: {
         orderedServices: {
           include: {
