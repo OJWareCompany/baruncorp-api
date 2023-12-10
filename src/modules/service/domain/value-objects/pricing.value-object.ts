@@ -28,13 +28,13 @@ export class Pricing extends ValueObject<PricingProps> {
     return
   }
 
-  getPrice(
+  calcPrice(
     isRevision: boolean,
     projectType: ProjectPropertyTypeEnum,
     mountingType: MountingTypeEnum,
     systemSize: number | null,
     revisionSize: OrderedServiceSizeForRevisionEnum | null,
-  ) {
+  ): number | null {
     if (this.fixedPrice) return this.fixedPrice
     if (isRevision) {
       return this.calculateResidentialRevisionPrice(projectType, mountingType, revisionSize)

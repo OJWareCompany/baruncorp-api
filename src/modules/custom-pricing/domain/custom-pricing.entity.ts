@@ -9,16 +9,8 @@ import {
   CustomPricingTypeEnum,
   ResidentialNewServicePricingTypeEnum,
 } from '../commands/create-custom-pricing/create-custom-pricing.command'
-import {
-  MountingType,
-  MountingTypeEnum,
-  ProjectPropertyType,
-  ProjectPropertyTypeEnum,
-} from '../../project/domain/project.type'
-import {
-  OrderedServiceSizeForRevision,
-  OrderedServiceSizeForRevisionEnum,
-} from '../../ordered-service/domain/ordered-service.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
 
 export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   protected _id: string
@@ -70,10 +62,6 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     })
   }
 
-  // residentialNewServiceTiers: CustomResidentialNewServicePricingTier[]
-  // residentialRevisionPricing: CustomResidentialRevisionPricing | null
-  // commercialNewServiceTiers: CustomCommercialNewServicePricingTier[]
-  // fixedPricing: CustomFixedPrice | null
   get hasNewResidentialTieredPricing() {
     return !this.isResidentialNewServiceFlatPricing || this.props.residentialNewServiceTiers.length > 1
   }

@@ -19,7 +19,7 @@ export class ServiceInitialPriceManager {
   ) {
     const isRevision = !!previouslyOrderedServices.length
 
-    const standardPrice = service.pricing.getPrice(
+    const standardPrice = service.pricing.calcPrice(
       isRevision,
       job.projectPropertyType,
       job.mountingType,
