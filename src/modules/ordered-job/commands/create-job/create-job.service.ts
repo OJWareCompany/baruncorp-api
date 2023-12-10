@@ -11,6 +11,7 @@ import { JobEntity } from '../../domain/job.entity'
 import { CreateJobCommand } from './create-job.command'
 import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { ServiceNotFoundException } from '../../../service/domain/service.error'
+import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -67,7 +68,7 @@ export class CreateJobService implements ICommandHandler {
       isExpedited: command.isExpedited,
       mountingType: command.mountingType,
       totalOfJobs: project.totalOfJobs,
-      projectType: project.projectPropertyType,
+      projectType: project.projectPropertyType as ProjectPropertyTypeEnum,
     })
     await this.jobRepository.insert(job)
     return {

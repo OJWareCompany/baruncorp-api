@@ -18,12 +18,10 @@ export enum OrderedServiceSizeForRevisionEnum {
 export interface CreateOrderedServiceProps {
   serviceId: string
   serviceName: string
-  price: number | null
+  isRevision: boolean
   projectId: string
   jobId: string
   description: string | null
-  isRevision: boolean
-  sizeForRevision: OrderedServiceSizeForRevision | null
   projectPropertyType: ProjectPropertyTypeEnum
   mountingType: MountingTypeEnum // TODO: Job의 값이 변경될때 같이 변경되어야함.
   organizationId: string
@@ -31,7 +29,9 @@ export interface CreateOrderedServiceProps {
 }
 
 export interface OrderedServiceProps extends CreateOrderedServiceProps {
+  price: number | null
   priceOverride: number | null
+  sizeForRevision: OrderedServiceSizeForRevisionEnum | null
   orderedAt: Date
   status: OrderedServiceStatus
   doneAt: Date | null

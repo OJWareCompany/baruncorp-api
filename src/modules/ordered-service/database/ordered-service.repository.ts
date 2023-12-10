@@ -6,6 +6,7 @@ import { OrderedServiceRepositoryPort } from './ordered-service.repository.port'
 import { OrderedServiceNotFoundException } from '../domain/ordered-service.error'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { OrderedServices } from '@prisma/client'
+import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 
 @Injectable()
 export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
@@ -29,8 +30,7 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
       where: { id },
       include: { assignedTasks: true },
     })
-    if (!record) throw new OrderedServiceNotFoundException()
-    return this.orderedServiceMapper.toDomain(record)
+    return record ? this.orderedServiceMapper.toDomain(record) : null
   }
 
   async find(ids: string[]): Promise<OrderedServiceEntity[] | null> {
@@ -39,6 +39,12 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
       include: { assignedTasks: true },
     })
     return records.map(this.orderedServiceMapper.toDomain)
+  }
+
+  async findOneOrThrow(id: string): Promise<OrderedServiceEntity> {
+    const entity = await this.findOne(id)
+    if (!entity) throw new OrderedServiceNotFoundException()
+    return entity
   }
 
   async findBy(
@@ -68,5 +74,19 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
 
   async delete(id: string): Promise<void> {
     await this.prismaService.orderedServices.delete({ where: { id } })
+  }
+
+  async getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]> {
+    const records = await this.prismaService.orderedServices.findMany({
+      where: {
+        projectId: projectId,
+        serviceId: serviceId,
+        // id: { not: orderedServiceId },
+        status: { notIn: [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold] },
+      },
+      include: { assignedTasks: true },
+    })
+
+    return records.map(this.orderedServiceMapper.toDomain)
   }
 }

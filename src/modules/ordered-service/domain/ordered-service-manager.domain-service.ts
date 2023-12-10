@@ -1,47 +1,40 @@
-import { OrderedServices, Organizations } from '@prisma/client'
+import { Injectable } from '@nestjs/common'
+import { JobEntity } from '../../ordered-job/domain/job.entity'
+import { OrganizationEntity } from '../../organization/domain/organization.entity'
 import { ServiceEntity } from '../../service/domain/service.entity'
-import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
-import { PrismaService } from '../../database/prisma.service'
-import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custom-pricing.repository.port'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
-import { OrderedServiceSizeForRevision } from './ordered-service.type'
-import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
 import { OrderedServiceEntity } from './ordered-service.entity'
+import { OrderedServiceSizeForRevisionEnum } from './ordered-service.type'
+import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
 
-export class OrderedServiceManager {
-  // Don't use Directly
-  private preOrderedServices: OrderedServices[]
-  private isCheckoutPreOrderedServices = false
-  // Don't use Directly
-  private customPricing: CustomPricingEntity | null
-
-  constructor(
-    private readonly prismaService: PrismaService,
-    private readonly service: ServiceEntity,
-    private readonly customPricingRepo: CustomPricingRepositoryPort,
-    private readonly organization: Organizations,
-    private readonly projectId: string,
-    private readonly projectPropertyType: ProjectPropertyTypeEnum,
-    private readonly mountingType: MountingTypeEnum,
-    private readonly systemSize: number | null,
-    private readonly orderedService: OrderedServiceEntity | null,
-  ) {}
-
+@Injectable()
+export class ServiceInitialPriceManager {
   // 생성자인자와 메서드인자 구분을 어떻게해야할까, 클래스가 여러 조직이 사용가능한가, 조직마다 새로 생성해야하나의 여부에따라 달라질수도있다.
-  async determineInitialPrice() {
-    const revisionSize = await this.getRevisionSize()
-    const isRevision = await this.determineRevisionStatus()
+  determinePrice(
+    revisionSize: OrderedServiceSizeForRevisionEnum | null,
+    previouslyOrderedServices: OrderedServiceEntity[],
+    service: ServiceEntity,
+    organization: OrganizationEntity,
+    job: JobEntity,
+    customPricing: CustomPricingEntity | null,
+  ) {
+    const isRevision = !!previouslyOrderedServices.length
 
-    const standardPrice = this.service
-      .getProps()
-      .pricing.getPrice(isRevision, this.projectPropertyType, this.mountingType, this.systemSize, revisionSize)
+    const standardPrice = service.pricing.getPrice(
+      isRevision,
+      job.projectPropertyType,
+      job.mountingType,
+      job.systemSize,
+      revisionSize,
+    )
 
-    const customPricing = await this.getCustomPricing()
     const customPrice = customPricing
-      ? customPricing.calcPrice(isRevision, this.projectPropertyType, this.mountingType, this.systemSize, revisionSize)
+      ? customPricing.calcPrice(isRevision, job.projectPropertyType, job.mountingType, job.systemSize, revisionSize)
       : null
 
-    const isFreeRevision = await this.calculateFreeRevisionStatus()
+    const isFreeRevision =
+      isRevision &&
+      organization.isSpecialRevisionPricing &&
+      this.hasRemainingFreeRevisions(previouslyOrderedServices, organization)
 
     const initialPrice = isFreeRevision
       ? 0
@@ -52,70 +45,36 @@ export class OrderedServiceManager {
     return initialPrice
   }
 
-  async isRevision() {
-    return await this.determineRevisionStatus()
+  isFixedPricing(service: ServiceEntity, customPricing: CustomPricingEntity | null) {
+    return customPricing?.hasFixedPricing || service.pricing.fixedPrice
   }
 
-  async isFixedPricing() {
-    const customPricing = await this.getCustomPricing()
-    return customPricing?.hasFixedPricing || this.service.getProps().pricing.fixedPrice
-  }
+  determineInitialRevisionSize(
+    orderedService: OrderedServiceEntity,
+    previouslyOrderedServices: OrderedServiceEntity[],
+    organization: OrganizationEntity,
+    service: ServiceEntity,
+    customPricing: CustomPricingEntity | null,
+  ): OrderedServiceSizeForRevisionEnum | null {
+    if (orderedService.sizeForRevision) return orderedService.sizeForRevision
 
-  async getRevisionSize(): Promise<OrderedServiceSizeForRevision | null> {
-    const isFreeRevision = await this.calculateFreeRevisionStatus()
-    return this.orderedService?.getProps().sizeForRevision
-      ? (this.orderedService.getProps().sizeForRevision as OrderedServiceSizeForRevision)
-      : isFreeRevision
-      ? 'Minor'
-      : (await this.isFixedPricing()) || (await this.isDoneFreeRevision())
-      ? 'Major'
-      : null
-  }
-
-  private async determineRevisionStatus() {
-    // 주문 정보를 다 가지고 있는 프로젝트 엔티티가 필요한가
-    const preOrderedServices = await this.getPreOrederedServices()
-    const isNew =
-      preOrderedServices.length === 0 ||
-      (preOrderedServices.length === 1 && preOrderedServices[0].id === this.orderedService?.id)
-
-    return !isNew // True if it's a revision
-  }
-
-  private async calculateFreeRevisionStatus() {
-    const preOrderedServices = await this.getPreOrederedServices()
-    const isRevision = await this.determineRevisionStatus()
-    const receivedFreeRevisionsCount = preOrderedServices.filter((service) => Number(service.price) === 0).length
-    const hasRemainingFreeRevisions = Number(this.organization.numberOfFreeRevisionCount) > receivedFreeRevisionsCount
-    return isRevision && this.organization.isSpecialRevisionPricing && hasRemainingFreeRevisions
-  }
-
-  private async isDoneFreeRevision() {
-    const preOrderedServices = await this.getPreOrederedServices()
-    const isRevision = await this.determineRevisionStatus()
-    const receivedFreeRevisionsCount = preOrderedServices.filter((service) => Number(service.price) === 0).length
-    const hasRemainingFreeRevisions = Number(this.organization.numberOfFreeRevisionCount) > receivedFreeRevisionsCount
-    return isRevision && this.organization.isSpecialRevisionPricing && !hasRemainingFreeRevisions
-  }
-
-  private async getCustomPricing() {
-    //계속해서 체크할 여지 있음
-    if (!this.customPricing) {
-      this.customPricing = await this.customPricingRepo.findOne(null, this.service.id, this.organization.id)
+    // 이 로직은 애초에 OrderedServiceEntity가 preOrderedServices를 VO로서 가지고 있었어야했나?
+    if (orderedService.isRevision && organization.isSpecialRevisionPricing) {
+      return this.hasRemainingFreeRevisions(previouslyOrderedServices, organization)
+        ? OrderedServiceSizeForRevisionEnum.Minor
+        : OrderedServiceSizeForRevisionEnum.Major
     }
-    return this.customPricing
+
+    const isFixedPricing = this.isFixedPricing(service, customPricing)
+    if (isFixedPricing) {
+      return OrderedServiceSizeForRevisionEnum.Major
+    }
+
+    return null
   }
 
-  private async getPreOrederedServices() {
-    if (!this.isCheckoutPreOrderedServices) {
-      this.preOrderedServices = await this.prismaService.orderedServices.findMany({
-        where: {
-          projectId: this.projectId,
-          serviceId: this.service.id,
-          status: { notIn: [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold] },
-        },
-      })
-    }
-    return this.preOrderedServices
+  private hasRemainingFreeRevisions(preOrderedServices: OrderedServiceEntity[], organization: OrganizationEntity) {
+    const receivedFreeRevisionsCount = preOrderedServices.filter((service) => Number(service.price) === 0).length
+    return Number(organization.numberOfFreeRevisionCount) > receivedFreeRevisionsCount
   }
 }

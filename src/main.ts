@@ -18,8 +18,6 @@ async function bootstrap() {
     credentials: true,
   })
 
-  // const prismaService = app.get(PrismaService)
-  // await prismaService.enableShutdownHooks(app)
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
   app.use(cookieParser())
 

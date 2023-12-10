@@ -5,6 +5,7 @@ import { InvoiceMapper } from '../invoice.mapper'
 import { InvoiceRepositoryPort } from './invoice.repository.port'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { InvoiceEntity } from '../domain/invoice.entity'
+import { InvoiceNotFoundException } from '../domain/invoice.error'
 
 @Injectable()
 export class InvoiceRepository implements InvoiceRepositoryPort {
@@ -35,5 +36,11 @@ export class InvoiceRepository implements InvoiceRepositoryPort {
   async findOne(id: string): Promise<InvoiceEntity | null> {
     const record = await this.prismaService.invoices.findUnique({ where: { id } })
     return record ? this.invoiceMapper.toDomain(record) : null
+  }
+
+  async findOneOrThrow(id: string): Promise<InvoiceEntity> {
+    const record = await this.prismaService.invoices.findUnique({ where: { id } })
+    if (!record) throw new InvoiceNotFoundException()
+    return this.invoiceMapper.toDomain(record)
   }
 }

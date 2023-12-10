@@ -1,6 +1,6 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
-import { OrderedServiceSizeForRevision } from '../../../ordered-service/domain/ordered-service.type'
-import { ProjectPropertyType, MountingType } from '../../../project/domain/project.type'
+import { OrderedServiceSizeForRevisionEnum } from '../../../ordered-service/domain/ordered-service.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { ServicePricingTypeEnum } from '../service.type'
 import { FixedPrice } from './fixed-price.value-object'
 import { StandardPricing } from './standard-pricing.value-object'
@@ -24,48 +24,83 @@ export class Pricing extends ValueObject<PricingProps> {
     return this.props.fixed ? this.props.fixed.value : null
   }
 
-  getPrice(
-    isRevision: boolean,
-    projectType: ProjectPropertyType,
-    mountingType: MountingType,
-    systemSize: number | null,
-    revisionSize: OrderedServiceSizeForRevision | null,
-  ): number | null {
-    let price = null
-    if (this.fixedPrice) {
-      price = this.fixedPrice
-    } else if (!isRevision && projectType === 'Residential') {
-      if (!this.props.standard || !this.props.standard.residential) {
-        return (price = null)
-      }
-      price =
-        mountingType === 'Ground Mount'
-          ? this.props.standard.residential.gmPrice
-          : this.props.standard.residential.price
-    } else if (!isRevision && projectType === 'Commercial' && systemSize) {
-      const commercialTier = this.props.standard?.commercial?.newServiceTiers.find((tier) => {
-        if (!systemSize) return
-        return tier.startingPoint <= systemSize && tier.finishingPoint >= systemSize
-      })
-      if (!commercialTier) return (price = null)
-      price = mountingType === 'Ground Mount' ? commercialTier.gmPrice : commercialTier.price
-    } else if (isRevision && projectType === 'Residential' && revisionSize) {
-      if (!this.props.standard || !this.props.standard.residential) {
-        return (price = null)
-      }
-      if (revisionSize === 'Minor') price = 0
-      if (revisionSize === 'Major') {
-        price =
-          mountingType === 'Ground Mount'
-            ? this.props.standard.residential.revisionGmPrice
-            : this.props.standard.residential.revisionPrice
-      }
-    }
-
-    return price
-  }
-
   protected validate(props: PricingProps): void {
     return
+  }
+
+  getPrice(
+    isRevision: boolean,
+    projectType: ProjectPropertyTypeEnum,
+    mountingType: MountingTypeEnum,
+    systemSize: number | null,
+    revisionSize: OrderedServiceSizeForRevisionEnum | null,
+  ) {
+    if (this.fixedPrice) return this.fixedPrice
+    if (isRevision) {
+      return this.calculateResidentialRevisionPrice(projectType, mountingType, revisionSize)
+    } else {
+      return this.calculateNonRevisionPrice(projectType, mountingType, systemSize)
+    }
+  }
+
+  private calculateResidentialRevisionPrice(
+    projectType: ProjectPropertyTypeEnum,
+    mountingType: MountingTypeEnum,
+    revisionSize: OrderedServiceSizeForRevisionEnum | null,
+  ): number | null {
+    if (projectType !== ProjectPropertyTypeEnum.Residential || !revisionSize) {
+      return null
+    }
+
+    if (!this.props.standard || !this.props.standard.residential) {
+      return null
+    }
+
+    if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
+      return 0
+    }
+
+    if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
+      return mountingType === MountingTypeEnum.Ground_Mount
+        ? this.props.standard.residential.revisionGmPrice
+        : this.props.standard.residential.revisionPrice
+    }
+
+    return null
+  }
+
+  private calculateNonRevisionPrice(
+    projectType: ProjectPropertyTypeEnum,
+    mountingType: MountingTypeEnum,
+    systemSize: number | null,
+  ) {
+    if (projectType === ProjectPropertyTypeEnum.Residential) {
+      return this.calculateResidentialPrice(mountingType)
+    } else if (projectType === ProjectPropertyTypeEnum.Commercial && systemSize) {
+      return this.calculateCommercialPrice(systemSize, mountingType)
+    }
+    return null
+  }
+
+  private calculateResidentialPrice(mountingType: MountingTypeEnum) {
+    if (!this.props.standard || !this.props.standard.residential) {
+      return null
+    }
+
+    return mountingType === MountingTypeEnum.Ground_Mount
+      ? this.props.standard.residential.gmPrice
+      : this.props.standard.residential.price
+  }
+
+  private calculateCommercialPrice(systemSize: number, mountingType: MountingTypeEnum) {
+    const commercialTier = this.findCommercialTier(systemSize)
+    if (!commercialTier) return null
+    return mountingType === MountingTypeEnum.Ground_Mount ? commercialTier.gmPrice : commercialTier.price
+  }
+
+  private findCommercialTier(systemSize: number) {
+    return this.props.standard?.commercial?.newServiceTiers.find((tier) => {
+      return tier.startingPoint <= systemSize && tier.finishingPoint >= systemSize
+    })
   }
 }

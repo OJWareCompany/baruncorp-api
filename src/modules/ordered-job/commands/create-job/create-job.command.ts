@@ -1,5 +1,6 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
+import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { CreateOrderedTaskWhenJobIsCreatedRequestDto } from './create-job.request.dto'
 
 export class CreateJobCommand {
@@ -12,7 +13,7 @@ export class CreateJobCommand {
   readonly orderedTasks: CreateOrderedTaskWhenJobIsCreatedRequestDto[] // 주문받은 태스크는 내부에서 실제 수행되는 여러가지 태스크들로 쪼개진다.
   readonly mailingAddressForWetStamp: Address | null
   readonly numberOfWetStamp: number | null
-  readonly mountingType: string
+  readonly mountingType: MountingTypeEnum
   readonly isExpedited: boolean
 
   constructor(props: CreateJobCommand) {

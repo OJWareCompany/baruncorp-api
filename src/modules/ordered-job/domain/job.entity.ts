@@ -53,6 +53,33 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return job
   }
 
+  get organizationId() {
+    return this.props.organizationId
+  }
+  get organizationName() {
+    return this.props.organizationName
+  }
+
+  get invoiceId() {
+    return this.props.invoiceId
+  }
+
+  get projectId() {
+    return this.props.projectId
+  }
+
+  get projectPropertyType() {
+    return this.props.projectType
+  }
+
+  get mountingType() {
+    return this.props.mountingType
+  }
+
+  get systemSize() {
+    return this.props.systemSize
+  }
+
   get pricingType() {
     return this.props.pricingType
   }
@@ -206,7 +233,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  updateMountingType(mountingType: MountingType): JobEntity {
+  updateMountingType(mountingType: MountingTypeEnum): JobEntity {
     this.props.mountingType = mountingType
     return this
   }

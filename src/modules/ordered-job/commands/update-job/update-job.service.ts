@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { OrganizationNotFoundException, WrongClientException } from '../../../organization/domain/organization.error'
 import { ProjectNotFoundException } from '../../../project/domain/project.error'
-import { MountingType } from '../../../project/domain/project.type'
+import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { PrismaService } from '../../../database/prisma.service'
 import { UserNotFoundException } from '../../../users/user.error'
 import { JOB_REPOSITORY } from '../../job.di-token'
@@ -52,7 +52,7 @@ export class UpdateJobService implements ICommandHandler {
 
     const updatedByUserName = editor.firstName + ' ' + editor.lastName
 
-    job.updateMountingType(command.mountingType as MountingType)
+    job.updateMountingType(command.mountingType as MountingTypeEnum)
     job.updateClientInfo(
       new ClientInformation({
         clientOrganizationId: organization.id,

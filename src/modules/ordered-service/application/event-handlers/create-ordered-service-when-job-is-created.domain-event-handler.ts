@@ -1,77 +1,78 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { PrismaService } from '../../../database/prisma.service'
 import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-created.domain-event'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { ServiceNotFoundException } from '../../../service/domain/service.error'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
-import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
-import { OrderedServiceManager } from '../../domain/ordered-service-manager.domain-service'
+import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
+import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   constructor(
+    // @ts-ignore
+    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
     // @ts-ignore
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     // @ts-ignore
     @Inject(CUSTOM_PRICING_REPOSITORY) private readonly customPricingRepo: CustomPricingRepositoryPort,
-    private readonly prismaService: PrismaService,
+    // @ts-ignore
+    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
+    private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
   ) {}
 
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
-    const organization = await this.prismaService.organizations.findUnique({
-      where: { id: event.organizationId },
+    const organization = await this.organizationRepo.findOneOrThrow(event.organizationId)
+    const job = await this.jobRepo.findJobOrThrow(event.aggregateId)
+
+    const makeEntities = event.services.map(async (orderedService) => {
+      const service = await this.serviceRepo.findOneOrThrow(orderedService.serviceId)
+      const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
+        event.projectId,
+        orderedService.serviceId,
+      )
+
+      const orderedServiceEntity = OrderedServiceEntity.create({
+        projectId: event.projectId,
+        jobId: event.aggregateId,
+        isRevision: !!previouslyOrderedServices.length,
+        serviceId: orderedService.serviceId,
+        serviceName: orderedService.serviceName,
+        description: orderedService.description,
+        projectPropertyType: event.projectType as ProjectPropertyTypeEnum,
+        mountingType: event.mountingType as MountingTypeEnum,
+        organizationId: event.organizationId,
+        organizationName: event.organizationName,
+      })
+
+      const customPricing = await this.customPricingRepo.findOne(null, service.id, organization.id)
+
+      orderedServiceEntity.determineInitialValues(
+        this.serviceInitialPriceManager,
+        service,
+        organization,
+        job,
+        previouslyOrderedServices,
+        customPricing,
+      )
+      return orderedServiceEntity
     })
-    if (!organization) throw new OrganizationNotFoundException()
-    console.log(event)
-    const orderedServiceEntities = await Promise.all(
-      event.services.map(async (orderedService) => {
-        // #region get ordered service manager
-        const service = await this.serviceRepo.findOne(orderedService.serviceId)
-        if (!service) throw new ServiceNotFoundException()
 
-        const orderedServiceManager = new OrderedServiceManager(
-          this.prismaService,
-          service,
-          this.customPricingRepo,
-          organization,
-          event.projectId,
-          event.projectType,
-          event.mountingType,
-          event.systemSize,
-          null,
-        )
-        // #endregion
+    const orderedServiceEntities = await Promise.all(makeEntities)
 
-        const entity = OrderedServiceEntity.create({
-          projectId: event.projectId,
-          organizationId: event.organizationId,
-          organizationName: event.organizationName,
-          isRevision: await orderedServiceManager.isRevision(),
-          sizeForRevision: await orderedServiceManager.getRevisionSize(),
-          price: await orderedServiceManager.determineInitialPrice(),
-          serviceId: orderedService.serviceId,
-          serviceName: orderedService.serviceName,
-          description: orderedService.description,
-          jobId: event.aggregateId,
-          projectPropertyType: event.projectType as ProjectPropertyTypeEnum,
-          mountingType: event.mountingType as MountingTypeEnum,
-        })
-        console.log(entity)
-        return entity
-      }),
-    )
-    // await this.orderedServiceRepo.insert(orderedServiceEntities)
+    await this.orderedServiceRepo.insert(orderedServiceEntities)
   }
 }
 

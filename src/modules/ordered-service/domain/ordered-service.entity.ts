@@ -6,9 +6,11 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from './ordered-service.type'
-import { NegativeNumberException } from '../../../libs/exceptions/exceptions'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
-import { OrderedServiceAlreadyCompletedException } from './ordered-service.error'
+import {
+  OrderedServiceAlreadyCompletedException,
+  OrderedServiceInvalidRevisionStateException,
+} from './ordered-service.error'
 import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
 import { OrderedServiceReactivatedDomainEvent } from './events/ordered-service-reactivated.domain-event'
 import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
@@ -18,6 +20,11 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/
 import { CalculateInvoiceService } from '../../invoice/domain/calculate-invoice-service.domain-service'
 import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custom-pricing.repository.port'
 import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-service-invoiced.domain-event'
+import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
+import { ServiceEntity } from '../../service/domain/service.entity'
+import { JobEntity } from '../../ordered-job/domain/job.entity'
+import { OrganizationEntity } from '../../organization/domain/organization.entity'
+import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -32,6 +39,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       orderedAt: new Date(),
       isManualPrice: false,
       assignedTasks: [],
+      price: null,
+      sizeForRevision: null,
     }
     const entity = new OrderedServiceEntity({ id, props })
     entity.addEvent(
@@ -41,6 +50,14 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       }),
     )
     return entity
+  }
+
+  get sizeForRevision() {
+    return this.props.sizeForRevision
+  }
+
+  get projectId() {
+    return this.props.projectId
   }
 
   get serviceId() {
@@ -69,6 +86,83 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   get organizationId() {
     return this.props.organizationId
+  }
+
+  get isRevision() {
+    return this.props.isRevision
+  }
+
+  determineInitialValues(
+    calcService: ServiceInitialPriceManager,
+    service: ServiceEntity,
+    organization: OrganizationEntity,
+    job: JobEntity,
+    previouslyOrderedServices: OrderedServiceEntity[],
+    customPricing: CustomPricingEntity | null,
+  ) {
+    const revisionSize = calcService.determineInitialRevisionSize(
+      this,
+      previouslyOrderedServices,
+      organization,
+      service,
+      customPricing,
+    )
+
+    const initialPrice = calcService.determinePrice(
+      revisionSize,
+      previouslyOrderedServices,
+      service,
+      organization,
+      job,
+      customPricing,
+    )
+
+    this.props.price = initialPrice
+    if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
+      this.updateRevisionSizeToMajor(calcService, service, organization, job, previouslyOrderedServices, customPricing)
+    } else if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
+      this.updateRevisionSizeToMinor()
+    }
+    return this
+  }
+
+  updateRevisionSizeToMinor() {
+    if (!this.props.isRevision) throw new OrderedServiceInvalidRevisionStateException()
+    this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Minor
+    this.props.price = 0
+    return this
+  }
+
+  // TODO: 그냥 처음부터 revision price 입력해놓고, 인보이스에서 0원으로 바꾸는게 나을지도 모르겠다.
+  updateRevisionSizeToMajor(
+    calcService: ServiceInitialPriceManager,
+    service: ServiceEntity,
+    organization: OrganizationEntity,
+    job: JobEntity,
+    previouslyOrderedServices: OrderedServiceEntity[],
+    customPricing: CustomPricingEntity | null,
+  ): this {
+    if (!this.props.isRevision) throw new OrderedServiceInvalidRevisionStateException()
+    const revisionSize = OrderedServiceSizeForRevisionEnum.Major
+    const initialPrice = calcService.determinePrice(
+      revisionSize,
+      previouslyOrderedServices,
+      service,
+      organization,
+      job,
+      customPricing,
+    )
+
+    this.props.sizeForRevision = revisionSize
+    this.props.price = initialPrice
+
+    this.addEvent(
+      new OrderedServiceUpdatedRevisionSizeDomainEvent({
+        aggregateId: this.id,
+        jobId: this.props.jobId,
+      }),
+    )
+    return this
   }
 
   cancel(): this {
@@ -107,35 +201,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  setTaskSizeForRevision(sizeForRevision: OrderedServiceSizeForRevisionEnum | null): this {
-    if (sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor) {
-      this.props.price = 0
-    }
-    this.props.sizeForRevision = this.props.isRevision ? sizeForRevision : null
-    this.addEvent(
-      new OrderedServiceUpdatedRevisionSizeDomainEvent({
-        aggregateId: this.id,
-        jobId: this.props.jobId,
-      }),
-    )
-    return this
-  }
-
-  setPrice(price: number | null) {
-    if (this.props.isManualPrice) return this
-    this.props.price = price
-    return this
-  }
-
   setManualPrice(price: number) {
     this.props.price = price
     this.props.isManualPrice = true
-  }
-
-  setPriceOverride(priceOverride: number | null): this {
-    if (typeof priceOverride === 'number' && priceOverride < 0) throw new NegativeNumberException()
-    this.props.priceOverride = priceOverride
-    return this
   }
 
   setDescription(description: string | null): this {
@@ -155,7 +223,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  calculateCost(minutesWorked: number, minutesPerUnit: number, costPerUnit: number): number {
+  private calculateCost(minutesWorked: number, minutesPerUnit: number, costPerUnit: number): number {
     // 작업 시간을 단위 시간으로 나누어 필요한 단위의 수를 계산합니다.
     const units: number = minutesWorked / minutesPerUnit
 
@@ -182,7 +250,6 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     if (!tier) return
 
     this.props.price = this.isGroundMount ? tier.gmPrice : tier.price
-    // TODO: EVENT job.pricingType = PricingTypeEnum.Tiered
     this.addEvent(
       new OrderedServiceAppliedTieredPricingDomainEvent({
         aggregateId: this.id,

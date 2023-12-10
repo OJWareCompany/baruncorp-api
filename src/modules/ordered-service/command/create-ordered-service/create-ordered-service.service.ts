@@ -2,22 +2,23 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
-import { PrismaService } from '../../../database/prisma.service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
-import { ServiceNotFoundException } from '../../../service/domain/service.error'
+import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { CreateOrderedServiceCommand } from './create-ordered-service.command'
-import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
-import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
 import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
-import { OrderedServiceManager } from '../../domain/ordered-service-manager.domain-service'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { MountingTypeEnum } from '../../../project/domain/project.type'
+import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
+import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -29,7 +30,16 @@ export class CreateOrderedServiceService implements ICommandHandler {
     private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     // @ts-ignore
     @Inject(CUSTOM_PRICING_REPOSITORY) private readonly customPricingRepo: CustomPricingRepositoryPort,
-    private readonly prismaService: PrismaService,
+    // @ts-ignore
+    @Inject(ORGANIZATION_REPOSITORY)
+    private readonly organizationRepo: OrganizationRepositoryPort,
+    // @ts-ignore
+    @Inject(JOB_REPOSITORY)
+    private readonly jobRepo: JobRepositoryPort,
+    // @ts-ignore
+    @Inject(INVOICE_REPOSITORY)
+    private readonly invoiceRepo: InvoiceRepositoryPort,
+    private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
   ) {}
 
   /**
@@ -41,59 +51,45 @@ export class CreateOrderedServiceService implements ICommandHandler {
    * 가격은 인보이스 청구될때 정하는걸로 하자.
    */
   async execute(command: CreateOrderedServiceCommand): Promise<AggregateID> {
-    // #region validation
-    const service = await this.serviceRepo.findOne(command.serviceId)
-    if (!service) throw new ServiceNotFoundException()
+    const service = await this.serviceRepo.findOneOrThrow(command.serviceId)
+    const job = await this.jobRepo.findJobOrThrow(command.jobId)
+    const organization = await this.organizationRepo.findOneOrThrow(job.organizationId)
 
-    const job = await this.prismaService.orderedJobs.findUnique({ where: { id: command.jobId } })
-    if (!job) throw new JobNotFoundException()
-
-    const project = await this.prismaService.orderedProjects.findFirst({ where: { id: job.projectId } })
-    if (!project) throw new ProjectNotFoundException()
-
-    const invoiceId = job.invoiceId
-
-    // TODO: REFACTOR
-    if (invoiceId !== null) {
-      const invoice = await this.prismaService.invoices.findUnique({ where: { id: invoiceId } })
-      if (!invoice) throw new InvoiceNotFoundException()
+    if (job.invoiceId !== null) {
+      const invoice = await this.invoiceRepo.findOneOrThrow(job.invoiceId)
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
-    const organization = await this.prismaService.organizations.findUnique({
-      where: { id: project.clientOrganizationId },
-    })
-    if (!organization) throw new OrganizationNotFoundException()
-    // #endregion validation
-
-    const orderedServiceManager = new OrderedServiceManager(
-      this.prismaService,
-      service,
-      this.customPricingRepo,
-      organization,
-      project.id,
-      project.projectPropertyType as ProjectPropertyTypeEnum,
-      job.mountingType as MountingTypeEnum,
-      job.systemSize ? Number(job.systemSize) : null,
-      null,
+    const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
+      job.projectId,
+      command.serviceId,
     )
 
-    const orderedService = OrderedServiceEntity.create({
+    const orderedServiceEntity = OrderedServiceEntity.create({
       projectId: job.projectId,
       jobId: command.jobId,
-      isRevision: await orderedServiceManager.isRevision(),
-      sizeForRevision: await orderedServiceManager.getRevisionSize(),
-      price: await orderedServiceManager.determineInitialPrice(),
+      isRevision: !!previouslyOrderedServices.length,
       serviceId: command.serviceId,
-      serviceName: service.getProps().name,
+      serviceName: service.name,
       description: command.description,
-      projectPropertyType: job.projectType as ProjectPropertyTypeEnum,
+      projectPropertyType: job.projectPropertyType,
       mountingType: job.mountingType as MountingTypeEnum,
-      organizationId: job.clientOrganizationId,
-      organizationName: job.clientOrganizationName,
+      organizationId: job.organizationId,
+      organizationName: job.organizationName,
     })
 
-    await this.orderedServiceRepo.insert(orderedService)
-    return orderedService.id
+    const customPricing = await this.customPricingRepo.findOne(null, service.id, organization.id)
+
+    orderedServiceEntity.determineInitialValues(
+      this.serviceInitialPriceManager,
+      service,
+      organization,
+      job,
+      previouslyOrderedServices,
+      customPricing,
+    )
+
+    await this.orderedServiceRepo.insert(orderedServiceEntity)
+    return orderedServiceEntity.id
   }
 }

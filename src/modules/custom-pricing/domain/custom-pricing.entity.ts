@@ -155,48 +155,77 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
 
   calcPrice(
     isRevision: boolean,
-    projectType: ProjectPropertyType,
-    mountingType: MountingType,
+    projectType: ProjectPropertyTypeEnum,
+    mountingType: MountingTypeEnum,
     systemSize: number | null,
-    revisionSize: OrderedServiceSizeForRevision | null,
+    revisionSize: OrderedServiceSizeForRevisionEnum | null,
   ): number | null {
     const pricing = this.getProps()
-    let price = null
 
     if (this.customPricingType === CustomPricingTypeEnum.custom_fixed && pricing.fixedPricing) {
-      // 고정가격
-      price = pricing.fixedPricing.value
-    } else if (!isRevision && projectType === ProjectPropertyTypeEnum.Residential) {
-      // New Residential Service Tiered 적용 예정
-      if (!this.residentialNewFlatPricing || pricing.residentialNewServiceTiers.length > 1) return (price = null)
-
-      price =
-        mountingType === MountingTypeEnum.Ground_Mount
-          ? this.residentialNewFlatPricing.gmPrice
-          : this.residentialNewFlatPricing.price
-    } else if (!isRevision && projectType === ProjectPropertyTypeEnum.Commercial && systemSize) {
-      // New Commercial Service 가격
-      const commercialTier = pricing.commercialNewServiceTiers.find((tier) => {
-        if (!systemSize) return
-        return tier.startingPoint <= systemSize && tier.finishingPoint >= systemSize
-      })
-      if (!commercialTier) return (price = null)
-      price = mountingType === MountingTypeEnum.Ground_Mount ? commercialTier.gmPrice : commercialTier.price
-    } else if (isRevision && projectType === ProjectPropertyTypeEnum.Residential && revisionSize) {
-      if (!this.props.residentialRevisionPricing) {
-        return (price = null)
-      }
-      if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) price = 0
-      if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
-        price =
-          mountingType === MountingTypeEnum.Ground_Mount
-            ? this.props.residentialRevisionPricing.gmPrice
-            : this.props.residentialRevisionPricing.price
-      }
-    } else if (isRevision) {
-      price = null
+      return pricing.fixedPricing.value
     }
 
-    return price
+    if (isRevision) {
+      return this.calculateResidentialRevisionPrice(projectType, mountingType, revisionSize)
+    } else {
+      return this.calculateNonRevisionPrice(projectType, mountingType, systemSize)
+    }
+  }
+
+  private calculateResidentialRevisionPrice(
+    projectType: ProjectPropertyTypeEnum,
+    mountingType: MountingTypeEnum,
+    revisionSize: OrderedServiceSizeForRevisionEnum | null,
+  ) {
+    if (projectType !== ProjectPropertyTypeEnum.Residential || !revisionSize) {
+      return null
+    }
+
+    if (!this.props.residentialRevisionPricing) {
+      return null
+    }
+
+    if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
+      return 0
+    }
+
+    if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
+      return mountingType === MountingTypeEnum.Ground_Mount
+        ? this.props.residentialRevisionPricing.gmPrice
+        : this.props.residentialRevisionPricing.price
+    }
+
+    return null
+  }
+
+  private calculateNonRevisionPrice(
+    projectType: ProjectPropertyTypeEnum,
+    mountingType: MountingTypeEnum,
+    systemSize: number | null,
+  ) {
+    if (projectType === ProjectPropertyTypeEnum.Residential) {
+      return this.calculateResidentialPrice(mountingType)
+    } else if (projectType === ProjectPropertyTypeEnum.Commercial && systemSize) {
+      return this.calculateCommercialPrice(systemSize, mountingType)
+    }
+    return null
+  }
+
+  private calculateResidentialPrice(mountingType: MountingTypeEnum) {
+    if (!this.residentialNewFlatPricing || this.getProps().residentialNewServiceTiers.length > 1) return null
+
+    return mountingType === MountingTypeEnum.Ground_Mount
+      ? this.residentialNewFlatPricing.gmPrice
+      : this.residentialNewFlatPricing.price
+  }
+
+  private calculateCommercialPrice(systemSize: number, mountingType: MountingTypeEnum) {
+    const commercialTier = this.getProps().commercialNewServiceTiers.find((tier) => {
+      if (!systemSize) return
+      return tier.startingPoint <= systemSize && tier.finishingPoint >= systemSize
+    })
+    if (!commercialTier) return null
+    return mountingType === MountingTypeEnum.Ground_Mount ? commercialTier.gmPrice : commercialTier.price
   }
 }

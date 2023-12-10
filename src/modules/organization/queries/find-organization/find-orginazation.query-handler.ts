@@ -24,7 +24,7 @@ export class FindOrganizationQueryHandler implements IQueryHandler {
     private readonly organizationMapper: OrganizationMapper,
   ) {}
   async execute(query: FindOrganizationQuery): Promise<OrganizationResponseDto> {
-    const result = await this.organizationRepository.findOneById(query.organizationId)
+    const result = await this.organizationRepository.findOneOrThrow(query.organizationId)
     if (!result) throw new OrganizationNotFoundException()
     return this.organizationMapper.toResponse(result)
   }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { OrganizationRepositoryPort } from './organization.repository.port'
 import { PrismaService } from '../../database/prisma.service'
 import { Organizations, UserRole } from '@prisma/client'
@@ -30,7 +30,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     return records.map(this.organizationMapper.toDomain)
   }
 
-  async findOneById(organizationId: string): Promise<OrganizationEntity> {
+  async findOneOrThrow(organizationId: string): Promise<OrganizationEntity> {
     const record = await this.prismaService.organizations.findUnique({ where: { id: organizationId } })
     if (!record) throw new OrganizationNotFoundException()
     return this.organizationMapper.toDomain(record)

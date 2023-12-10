@@ -39,7 +39,7 @@ export class UserService {
   async makeAdmin(userId: string) {
     // TODO: Consider an Aggregate Pattern
     const user = await this.userRepository.findOneById(userId)
-    const organizationEntity = await this.organizationRepository.findOneById(user.getProps().organization.id)
+    const organizationEntity = await this.organizationRepository.findOneOrThrow(user.getProps().organization.id)
     if (!organizationEntity || organizationEntity?.getProps().organizationType !== 'Administration') {
       throw new OnlyMemberCanBeAdminException()
     }
@@ -54,7 +54,7 @@ export class UserService {
   async getUserProfile(userId: string): Promise<UserResponseDto> {
     // TODO: Consider an Aggregate Pattern
     const userEntity = await this.userRepository.findOneById(userId)
-    const organizationEntity = await this.organizationRepository.findOneById(userEntity.getProps().organization.id)
+    const organizationEntity = await this.organizationRepository.findOneOrThrow(userEntity.getProps().organization.id)
     if (!organizationEntity) throw new OrganizationNotFoundException()
     return this.userMapper.toResponse(userEntity)
   }

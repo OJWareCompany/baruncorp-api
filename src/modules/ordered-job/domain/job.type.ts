@@ -4,6 +4,7 @@ import { OrderedService } from './value-objects/ordered-service.value-object'
 import { AssignedTask, NewOrderedServices } from './value-objects/assigned-task.value-object'
 import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 export enum JobStatusEnum {
   Not_Started = 'Not Started',
@@ -22,7 +23,7 @@ export interface CreateJobProps {
   organizationId: string
   organizationName: string
   projectId: string
-  mountingType: string
+  mountingType: MountingTypeEnum
   propertyFullAddress: string
   totalOfJobs: number
   deliverablesEmails: string[]
@@ -32,7 +33,7 @@ export interface CreateJobProps {
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
-  projectType: string // Type이나 Enum으로 수정하기
+  projectType: ProjectPropertyTypeEnum
   isExpedited: boolean
   updatedBy: string
 }

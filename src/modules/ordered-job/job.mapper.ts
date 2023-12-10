@@ -14,7 +14,7 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatus,
 } from '../ordered-service/domain/ordered-service.type'
-import { ProjectPropertyType, ProjectPropertyTypeEnum } from '../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyType, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
 
 @Injectable()
@@ -174,9 +174,9 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       props: {
         projectId: record.projectId,
         invoiceId: record.invoiceId,
-        projectType: record.projectType,
+        projectType: record.projectType as ProjectPropertyTypeEnum,
         pricingType: record.pricingType as PricingTypeEnum | null,
-        mountingType: record.mountingType,
+        mountingType: record.mountingType as MountingTypeEnum,
         revisionSize: record.revisionSize as OrderedServiceSizeForRevisionEnum | null,
         jobStatus: record.jobStatus as JobStatus, // TODO: status any
         jobRequestNumber: record.jobRequestNumber,

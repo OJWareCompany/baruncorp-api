@@ -29,6 +29,17 @@ import { UpdateRevisionSizeHttpController } from './command/update-revision-size
 import { UpdateManualPriceService } from './command/update-manual-price/update-manual-price-service.service'
 import { UpdateRevisionSizeService } from './command/update-revision-size/update-revision-size.service'
 import { UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-service-price-when-task-duration-updated.domain-event-handler'
+import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
+import { OrganizationRepository } from '../organization/database/organization.repository'
+import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
+import { JobRepository } from '../ordered-job/database/job.repository'
+import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
+import { InvoiceRepository } from '../invoice/database/invoice.repository'
+import { ServiceInitialPriceManager } from './domain/ordered-service-manager.domain-service'
+import { UserRoleMapper } from '../users/user-role.mapper'
+import { OrganizationMapper } from '../organization/organization.mapper'
+import { JobMapper } from '../ordered-job/job.mapper'
+import { InvoiceMapper } from '../invoice/invoice.mapper'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -60,12 +71,27 @@ const repositories: Provider[] = [
   { provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository },
   { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
   { provide: CUSTOM_PRICING_REPOSITORY, useClass: CustomPricingRepository },
+  { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
+  { provide: JOB_REPOSITORY, useClass: JobRepository },
+  { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
 ]
-const mappers: Provider[] = [OrderedServiceMapper, UserMapper, ServiceMapper, CustomPricingMapper]
+
+const domainServices: Provider[] = [ServiceInitialPriceManager]
+
+const mappers: Provider[] = [
+  UserMapper,
+  CustomPricingMapper,
+  UserRoleMapper,
+  OrganizationMapper,
+  ServiceMapper,
+  JobMapper,
+  OrderedServiceMapper,
+  InvoiceMapper,
+]
 
 @Module({
   imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })
 export class OrderedServiceModule {}

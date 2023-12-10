@@ -144,4 +144,9 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
         })
       : null
   }
+  async findOneOrThrow(id: string | null, serviceId?: string, organizationId?: string): Promise<CustomPricingEntity> {
+    const entity = await this.findOne(id, serviceId, organizationId)
+    if (!entity) throw new CustomPricingNotFoundException()
+    return entity
+  }
 }

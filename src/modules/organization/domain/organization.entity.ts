@@ -1,5 +1,5 @@
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { MountingType, MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { CreateOrganizationProps, OrganizationProps } from './organization.types'
 import { v4 } from 'uuid'
 export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
@@ -11,6 +11,14 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
       ...create,
     }
     return new OrganizationEntity({ id, props })
+  }
+
+  get numberOfFreeRevisionCount() {
+    return this.props.numberOfFreeRevisionCount
+  }
+
+  get isSpecialRevisionPricing() {
+    return this.props.isSpecialRevisionPricing
   }
 
   update(data: {

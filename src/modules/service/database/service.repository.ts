@@ -4,7 +4,7 @@ import { PrismaService } from '../../database/prisma.service'
 import { ServiceMapper } from '../service.mapper'
 import { ServiceRepositoryPort } from './service.repository.port'
 import { ServiceEntity } from '../domain/service.entity'
-import { ServiceWithAssociatedTasksDeleteException } from '../domain/service.error'
+import { ServiceNotFoundException, ServiceWithAssociatedTasksDeleteException } from '../domain/service.error'
 
 @Injectable()
 export class ServiceRepository implements ServiceRepositoryPort {
@@ -49,6 +49,12 @@ export class ServiceRepository implements ServiceRepositoryPort {
           tasks: record.tasks,
         })
       : null
+  }
+
+  async findOneOrThrow(id: string): Promise<ServiceEntity> {
+    const entity = await this.findOne(id)
+    if (!entity) throw new ServiceNotFoundException()
+    return entity
   }
 
   find(): Promise<Paginated<ServiceEntity>> {

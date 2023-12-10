@@ -17,3 +17,9 @@ export class OrderedServiceInvalidRevisionSizeForManualPriceUpdateException exte
     super('Invalid Revision Size For Update Manual Price. please update state to Major.', '40302')
   }
 }
+
+export class OrderedServiceInvalidRevisionStateException extends BadRequestException {
+  constructor() {
+    super('Invalid Revision State For Update Revision Size.', '40303')
+  }
+}

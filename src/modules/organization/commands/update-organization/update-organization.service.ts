@@ -16,7 +16,7 @@ export class UpdateOrganizationService implements ICommandHandler {
   ) {}
 
   async execute(command: UpdateOrganizationCommand): Promise<void> {
-    const organization = await this.organizationRepository.findOneById(command.organizationId)
+    const organization = await this.organizationRepository.findOneOrThrow(command.organizationId)
     if (!organization) throw new OrganizationNotFoundException()
 
     organization.update(command)

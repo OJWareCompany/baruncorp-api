@@ -17,6 +17,10 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     return new InvoiceEntity({ id, props })
   }
 
+  get status() {
+    return this.props.status
+  }
+
   issue(): this {
     this.props.status = InvoiceStatusEnum.Issued
     return this

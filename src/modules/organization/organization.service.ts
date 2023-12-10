@@ -20,7 +20,7 @@ export class OrganizationService {
   ) {}
 
   async findOrganizationById(organizationId: string): Promise<OrganizationEntity | null> {
-    return await this.organizationRepository.findOneById(organizationId)
+    return await this.organizationRepository.findOneOrThrow(organizationId)
   }
 
   /**

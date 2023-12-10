@@ -6,5 +6,6 @@ export interface ServiceRepositoryPort {
   update(entity: ServiceEntity): Promise<void>
   delete(entity: ServiceEntity): Promise<void>
   findOne(id: string): Promise<ServiceEntity | null>
+  findOneOrThrow(id: string): Promise<ServiceEntity>
   find(): Promise<Paginated<ServiceEntity>>
 }

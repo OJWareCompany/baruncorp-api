@@ -5,7 +5,7 @@
 import { OrganizationEntity } from '../domain/organization.entity'
 
 export interface OrganizationRepositoryPort {
-  findOneById(organizationId: string): Promise<OrganizationEntity | null>
+  findOneOrThrow(organizationId: string): Promise<OrganizationEntity>
   findByName(name: string): Promise<OrganizationEntity[]>
   findOneByName(name: string): Promise<OrganizationEntity | null>
   findAll(): Promise<OrganizationEntity[]>
