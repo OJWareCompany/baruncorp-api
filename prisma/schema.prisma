@@ -896,8 +896,8 @@ model CustomPricings {
   @@map("custom_pricings")
 }
 
-model expense_pricings {
-  id                 Int     @id @default(autoincrement()) @db.UnsignedInt
+model ExpensePricings {
+  id                 String  @id @db.VarChar(255)
   taskId             String  @map("task_id") @db.VarChar(255)
   organizationId     String  @map("organization_id") @db.VarChar(255)
   taskName           String  @map("task_name") @db.VarChar(255)
@@ -909,10 +909,12 @@ model expense_pricings {
   comNewValue        Decimal @map("com_new_value") @db.Decimal(13, 4)
   comRevExpenseType  String  @map("com_rev_expense_type") @db.VarChar(255)
   comRevValue        Decimal @map("com_rev_value") @db.Decimal(13, 4)
+
+  @@map("expense_pricings")
 }
 
-model vendor_invoices {
-  id                      Int       @id @default(autoincrement()) @db.UnsignedInt
+model VendorInvoices {
+  id                      String    @id @db.VarChar(255)
   organizationId          String    @map("organization_id") @db.VarChar(255)
   organizationName        String    @map("organization_name") @db.VarChar(255)
   daysPastDue             DateTime? @map("days_past_due") @db.DateTime(0)
@@ -926,6 +928,8 @@ model vendor_invoices {
   total                   Decimal   @map("total") @db.Decimal(13, 4)
   invoiceTotalDifference  Decimal   @map("invoice_total_difference") @db.Decimal(13, 4)
   internalTotalBalanceDue Decimal?  @map("internal_total_balance_due") @db.Decimal(13, 4)
+
+  @@map("vendor_invoices")
 }
 
 enum InvoicesStatus {

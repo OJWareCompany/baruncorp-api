@@ -17,6 +17,7 @@ import { AssignedTaskModule } from './modules/assigned-task/assigned-task.module
 import { InvoiceModule } from './modules/invoice/invoice.module'
 import { PaymentModule } from './modules/payment/payment.module'
 import { CustomPricingModule } from './modules/custom-pricing/custom-pricing.module'
+import { ExpensePricingModule } from './modules/expense-pricing/expense-pricing.module'
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { CustomPricingModule } from './modules/custom-pricing/custom-pricing.mod
     InvoiceModule,
     PaymentModule,
     CustomPricingModule,
+    ExpensePricingModule,
   ],
   controllers: [],
   providers: [

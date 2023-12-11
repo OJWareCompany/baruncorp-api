@@ -1228,6 +1228,56 @@ export interface CreatableCustomPricingResponse {
   serviceId: string
 }
 
+export interface CreateExpensePricingRequestDto {
+  taskId: string
+  organizationId: string
+  resiNewExpenseType: string
+  resiNewValue: number
+  resiRevExpenseType: string
+  resiRevValue: number
+  comNewExpenseType: string
+  comNewValue: number
+  comRevExpenseType: string
+  comRevValue: number
+}
+
+export interface UpdateExpensePricingRequestDto {
+  resiNewExpenseType: string
+  resiNewValue: number
+  resiRevExpenseType: string
+  resiRevValue: number
+  comNewExpenseType: string
+  comNewValue: number
+  comRevExpenseType: string
+  comRevValue: number
+}
+
+export interface ExpensePricingResponseDto {
+  taskId: string
+  organizationId: string
+  taskName: string
+  resiNewExpenseType: string
+  resiNewValue: number
+  resiRevExpenseType: string
+  resiRevValue: number
+  comNewExpenseType: string
+  comNewValue: number
+  comRevExpenseType: string
+  comRevValue: number
+}
+
+export interface ExpensePricingPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: ExpensePricingResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -1517,6 +1567,23 @@ export interface FindCustomPricingPaginatedHttpControllerGetParams {
 export interface FindCreatableCustomPricingHttpControllerGetParams {
   /** @default "" */
   organizationId: string
+}
+
+export interface FindExpensePricingPaginatedHttpControllerGetParams {
+  taskId?: string | null
+  organizationId?: string | null
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
@@ -3108,6 +3175,93 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/creatable-custom-pricings`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
+  expensePricings = {
+    /**
+     * No description
+     *
+     * @name CreateExpensePricingHttpControllerPost
+     * @request POST:/expense-pricings
+     */
+    createExpensePricingHttpControllerPost: (data: CreateExpensePricingRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/expense-pricings`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindExpensePricingPaginatedHttpControllerGet
+     * @request GET:/expense-pricings
+     */
+    findExpensePricingPaginatedHttpControllerGet: (
+      query: FindExpensePricingPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<ExpensePricingPaginatedResponseDto, any>({
+        path: `/expense-pricings`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateExpensePricingHttpControllerPatch
+     * @request PATCH:/expense-pricings/{organizationId}/{taskId}
+     */
+    updateExpensePricingHttpControllerPatch: (
+      taskId: string,
+      organizationId: string,
+      data: UpdateExpensePricingRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/expense-pricings/${organizationId}/${taskId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteExpensePricingHttpControllerDelete
+     * @request DELETE:/expense-pricings/{organizationId}/{taskId}
+     */
+    deleteExpensePricingHttpControllerDelete: (taskId: string, organizationId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/expense-pricings/${organizationId}/${taskId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindExpensePricingHttpControllerGet
+     * @request GET:/expense-pricings/{expensePricingId}
+     */
+    findExpensePricingHttpControllerGet: (
+      taskId: string,
+      organizationId: string,
+      expensePricingId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<ExpensePricingResponseDto, any>({
+        path: `/expense-pricings/${expensePricingId}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),
