@@ -21,11 +21,7 @@ export class UserRoleMapper implements Mapper<UserRole, UserRoleModel, UserRoleR
   }
 
   toDomain(record: UserRoleModel): UserRole {
-    let role: UserRoleNameEnum = UserRoleNameEnum.guest
-    if (record.roleName === 'domain') role = UserRoleNameEnum.admin
-    else if (record.roleName === 'manager') role = UserRoleNameEnum.manager
-    else if (record.roleName === 'member') role = UserRoleNameEnum.member
-    return new UserRole({ userId: record.userId, roleName: role })
+    return new UserRole({ userId: record.userId, roleName: record.roleName as UserRoleNameEnum })
   }
 
   toResponse(entity: UserRole, ...dtos: any): UserRoleResponseDto {

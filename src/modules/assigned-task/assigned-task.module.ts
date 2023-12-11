@@ -19,6 +19,15 @@ import { CompleteAssignedTaskService } from './commands/complete-assigned-task/c
 import { HoldAssignedTaskWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-assigned-task-when-job-is-held.domain-event-handler'
 import { UpdateTaskDurationHttpController } from './commands/update-task-duration/update-task-duration.http.controller'
 import { UpdateTaskDurationService } from './commands/update-task-duration/update-task-duration.service'
+import { USER_REPOSITORY } from '../users/user.di-tokens'
+import { UserRepository } from '../users/database/user.repository'
+import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
+import { JobRepository } from '../ordered-job/database/job.repository'
+import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
+import { InvoiceRepository } from '../invoice/database/invoice.repository'
+import { UserRoleMapper } from '../users/user-role.mapper'
+import { JobMapper } from '../ordered-job/job.mapper'
+import { InvoiceMapper } from '../invoice/invoice.mapper'
 
 const httpControllers = [
   UpdateAssignedTaskHttpController,
@@ -34,6 +43,18 @@ const repositories: Provider[] = [
     provide: ASSIGNED_TASK_REPOSITORY,
     useClass: AssignedTaskRepository,
   },
+  {
+    provide: USER_REPOSITORY,
+    useClass: UserRepository,
+  },
+  {
+    provide: JOB_REPOSITORY,
+    useClass: JobRepository,
+  },
+  {
+    provide: INVOICE_REPOSITORY,
+    useClass: InvoiceRepository,
+  },
 ]
 const eventHandlers: Provider[] = [
   CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler,
@@ -41,7 +62,7 @@ const eventHandlers: Provider[] = [
   ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler,
   HoldAssignedTaskWhenJobIsHeldDomainEventHandler,
 ]
-const mappers: Provider[] = [AssignedTaskMapper, UserMapper]
+const mappers: Provider[] = [AssignedTaskMapper, UserMapper, UserRoleMapper, JobMapper, InvoiceMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

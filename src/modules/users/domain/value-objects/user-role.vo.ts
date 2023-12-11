@@ -1,11 +1,12 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
 
 export enum UserRoleNameEnum {
+  special_admin = 'special admin',
   admin = 'admin',
-  manager = 'manager',
   member = 'member',
+  client_company_manager = 'client company manager',
+  client_company_employee = 'client company employee',
   guest = 'guest',
-  client = 'client',
 }
 
 export interface CreateUserRoleProps {

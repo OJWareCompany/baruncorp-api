@@ -4,7 +4,7 @@ import { User } from '../../../../libs/decorators/requests/logged-in-user.decora
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { UpdateAssignedTaskCommand } from './update-assigned-task.command'
-import { UpdateAssignedTaskRequestDto, UpdateAssignedTaskParamRequestDto } from './update-assigned-task.request.dto'
+import { UpdateAssignedTaskParamRequestDto, UpdateAssignedTaskRequestDto } from './update-assigned-task.request.dto'
 
 @Controller('assigned-tasks')
 export class UpdateAssignedTaskHttpController {

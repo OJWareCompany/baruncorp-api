@@ -45,12 +45,7 @@ export class CreateUserService implements ICommandHandler {
     // Give User Role
     const role = new UserRole({
       userId: user.id,
-      roleName:
-        user.getProps().type === 'member'
-          ? UserRoleNameEnum.member
-          : 'client'
-          ? UserRoleNameEnum.client
-          : UserRoleNameEnum.guest,
+      roleName: user.getProps().type as UserRoleNameEnum,
     })
 
     const roleRecord: UserRoleModel = {

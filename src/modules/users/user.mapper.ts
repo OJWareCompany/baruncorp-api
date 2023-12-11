@@ -82,17 +82,6 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         }),
     )
 
-    const role: UserRoleNameEnum =
-      record.userRole?.roleName === 'admin'
-        ? UserRoleNameEnum.admin
-        : record.userRole?.roleName === 'manager'
-        ? UserRoleNameEnum.manager
-        : record.userRole?.roleName === 'member'
-        ? UserRoleNameEnum.member
-        : record.userRole?.roleName === 'client'
-        ? UserRoleNameEnum.client
-        : UserRoleNameEnum.guest
-
     const entity = new UserEntity({
       id: record.id,
       props: {
@@ -112,7 +101,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
           : null,
         licenses: [...userElectricalLicenses, ...userStructuralLicenses],
         services: services,
-        role: role,
+        role: record.userRole?.roleName as UserRoleNameEnum,
         isVendor: record.isVendor,
       },
     })

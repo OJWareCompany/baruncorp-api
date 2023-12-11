@@ -5,6 +5,7 @@ import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned
 import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
 import { AssignedTaskReopenedDomainEvent } from './events/assigned-task-reopened.domain-event'
 import { AssignedTaskDurationUpdatedDomainEvent } from './events/assigned-task-duration-updated.domain-event'
+import { UserEntity } from '../../users/domain/user.entity'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -64,14 +65,19 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  setAssigneeId(assigneeId: string): this {
-    this.props.assigneeId = assigneeId
+  setAssigneeId(user: UserEntity): this {
+    this.props.assigneeId = user.getProps().id
     this.props.status = 'In Progress'
     this.props.startedAt = new Date()
+    if (user.isVendor) {
+      this.props.isVendor = true
+    }
     this.addEvent(
       new AssignedTaskAssignedDomainEvent({
         aggregateId: this.id,
+        organizationId: this.props.organizationId,
         jobId: this.props.jobId,
+        taskId: this.props.taskId,
       }),
     )
     return this
