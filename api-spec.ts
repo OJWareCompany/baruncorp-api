@@ -1148,6 +1148,12 @@ export interface CreateCustomPricingRequestDto {
 export interface UpdateCustomPricingRequestDto {
   /** @default "Custom Standard" */
   customPricingType: 'Custom Standard' | 'Custom Fixed'
+  /** @default "Tier" */
+  residentialNewServicePricingType: 'Tier' | 'Flat' | null
+  /** @default null */
+  residentialNewServiceFlatPrice: number | null
+  /** @default null */
+  residentialNewServiceFlatGmPrice: number | null
   /** @default [{"startingPoint":1,"finishingPoint":100,"price":10,"gmPrice":12.01},{"startingPoint":101,"finishingPoint":200,"price":10,"gmPrice":12.01},{"startingPoint":201,"finishingPoint":null,"price":10,"gmPrice":12.01}] */
   residentialNewServiceTiers: Tier[]
   /** @default 10 */
@@ -1160,17 +1166,8 @@ export interface UpdateCustomPricingRequestDto {
   fixedPrice: number | null
 }
 
-export interface DeleteCustomPricingRequestDto {
-  /** @default "" */
-  id: string
-}
-
 export interface CustomPricingResponseDto {
-  /** @default "" */
-  customPricingId: string
-  /** @default "" */
   serviceId: string
-  /** @default "" */
   organizationId: string
   /** @default "Custom Standard" */
   customPricingType: 'Custom Standard' | 'Custom Fixed'
@@ -3009,7 +3006,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
             statusCode: number
             /** @example "CustomPricing is Already Existed" */
             message: string
-            /** @example "CustomPricing is Already Existed" */
+            /** @example "30101" */
             error?: string
           }
       >({
@@ -3043,15 +3040,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name UpdateCustomPricingHttpControllerPut
-     * @request PUT:/custom-pricings/{customPricingId}
+     * @request PUT:/custom-pricings/{organizationId}/{serviceId}
      */
     updateCustomPricingHttpControllerPut: (
-      customPricingId: string,
+      organizationId: string,
+      serviceId: string,
       data: UpdateCustomPricingRequestDto,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
-        path: `/custom-pricings/${customPricingId}`,
+        path: `/custom-pricings/${organizationId}/${serviceId}`,
         method: 'PUT',
         body: data,
         type: ContentType.Json,
@@ -3062,18 +3060,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name DeleteCustomPricingHttpControllerDelete
-     * @request DELETE:/custom-pricings/{customPricingId}
+     * @request DELETE:/custom-pricings/{organizationId}/{serviceId}
      */
-    deleteCustomPricingHttpControllerDelete: (
-      customPricingId: string,
-      data: DeleteCustomPricingRequestDto,
-      params: RequestParams = {},
-    ) =>
+    deleteCustomPricingHttpControllerDelete: (organizationId: string, serviceId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/custom-pricings/${customPricingId}`,
+        path: `/custom-pricings/${organizationId}/${serviceId}`,
         method: 'DELETE',
-        body: data,
-        type: ContentType.Json,
         ...params,
       }),
 
@@ -3081,11 +3073,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindCustomPricingHttpControllerGet
-     * @request GET:/custom-pricings/{customPricingId}
+     * @request GET:/custom-pricings/{organizationId}/{serviceId}
      */
-    findCustomPricingHttpControllerGet: (customPricingId: string, params: RequestParams = {}) =>
+    findCustomPricingHttpControllerGet: (organizationId: string, serviceId: string, params: RequestParams = {}) =>
       this.request<CustomPricingResponseDto, any>({
-        path: `/custom-pricings/${customPricingId}`,
+        path: `/custom-pricings/${organizationId}/${serviceId}`,
         method: 'GET',
         format: 'json',
         ...params,

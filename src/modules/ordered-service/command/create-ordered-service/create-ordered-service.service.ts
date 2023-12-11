@@ -78,7 +78,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
       organizationName: job.organizationName,
     })
 
-    const customPricing = await this.customPricingRepo.findOne(null, service.id, organization.id)
+    const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
 
     orderedServiceEntity.determineInitialValues(
       this.serviceInitialPriceManager,

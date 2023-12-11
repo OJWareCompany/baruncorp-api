@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PrismaService } from '../../../database/prisma.service'
 import { CustomPricingRepositoryPort } from '../../database/custom-pricing.repository.port'
 import { CUSTOM_PRICING_REPOSITORY } from '../../custom-pricing.di-token'
 import { UpdateCustomPricingCommand } from './update-custom-pricing.command'
+import { ResidentialNewServicePricingTypeEnum } from '../create-custom-pricing/create-custom-pricing.command'
 
 @CommandHandler(UpdateCustomPricingCommand)
 export class UpdateCustomPricingService implements ICommandHandler {
@@ -14,8 +14,7 @@ export class UpdateCustomPricingService implements ICommandHandler {
     private readonly customPricingRepo: CustomPricingRepositoryPort,
   ) {}
   async execute(command: UpdateCustomPricingCommand): Promise<void> {
-    const entity = await this.customPricingRepo.findOneOrThrow(command.customPricingId)
-
+    const entity = await this.customPricingRepo.findOneOrThrow(command.organizationId, command.serviceId)
     const residentialRevisionPricing =
       command.residentialRevisionPrice && command.residentialRevisionGmPrice
         ? {
@@ -24,7 +23,15 @@ export class UpdateCustomPricingService implements ICommandHandler {
           }
         : null
 
-    entity.setResidentialNewServiceTiers(command.residentialNewServiceTiers)
+    if (command.residentialNewServicePricingType === ResidentialNewServicePricingTypeEnum.flat) {
+      entity.setResidentialNewServiceFlatPrice(
+        Number(command.residentialNewServiceFlatPrice),
+        Number(command.residentialNewServiceFlatGmPrice),
+      )
+    } else if (command.residentialNewServicePricingType === ResidentialNewServicePricingTypeEnum.tier) {
+      entity.setResidentialNewServiceTiers(command.residentialNewServiceTiers)
+    }
+
     entity.setResidentialRevisionPricing(residentialRevisionPricing)
     entity.setCommercialNewServiceTiers(command.commercialNewServiceTiers)
     entity.setFixedPrice(command.fixedPrice)

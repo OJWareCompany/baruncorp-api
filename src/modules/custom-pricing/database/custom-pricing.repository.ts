@@ -112,8 +112,8 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
     await this.prismaService.$executeRaw<CustomPricings>`DELETE FROM custom_pricings WHERE id = ${entity.id}`
   }
 
-  async findOne(id: string | null, serviceId?: string, organizationId?: string): Promise<CustomPricingEntity | null> {
-    const condition = id ? { id: id } : { serviceId, organizationId }
+  async findOne(organizationId: string, serviceId: string): Promise<CustomPricingEntity | null> {
+    const condition = { serviceId, organizationId }
 
     const record = await this.prismaService.customPricings.findFirst({ where: { ...condition } })
     if (!record) return null
@@ -144,8 +144,8 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
         })
       : null
   }
-  async findOneOrThrow(id: string | null, serviceId?: string, organizationId?: string): Promise<CustomPricingEntity> {
-    const entity = await this.findOne(id, serviceId, organizationId)
+  async findOneOrThrow(organizationId: string, serviceId: string): Promise<CustomPricingEntity> {
+    const entity = await this.findOne(organizationId, serviceId)
     if (!entity) throw new CustomPricingNotFoundException()
     return entity
   }

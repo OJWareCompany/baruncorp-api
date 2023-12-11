@@ -16,9 +16,9 @@ export class FindCustomPricingHttpController {
     private readonly mapper: CustomPricingMapper,
   ) {}
 
-  @Get(':customPricingId')
+  @Get(':organizationId/:serviceId')
   async get(@Param() request: FindCustomPricingRequestDto): Promise<CustomPricingResponseDto> {
-    const entity = await this.customPricingRepo.findOne(request.customPricingId)
+    const entity = await this.customPricingRepo.findOne(request.organizationId, request.serviceId)
     if (!entity) throw new CustomPricingNotFoundException()
     return this.mapper.toResponse(entity)
   }

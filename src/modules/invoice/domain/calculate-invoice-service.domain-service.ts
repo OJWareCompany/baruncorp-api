@@ -10,7 +10,7 @@ export class CalculateInvoiceService {
     orderedServices: OrderedServiceEntity[],
     customPricingRepo: CustomPricingRepositoryPort,
   ) {
-    const customPricing = await customPricingRepo.findOne(null, target.organizationId, target.serviceId)
+    const customPricing = await customPricingRepo.findOne(target.organizationId, target.serviceId)
     if (!customPricing) return // TODO: 예외처리 필요?
     if (!customPricing.hasNewResidentialTieredPricing) return
     const numberOfServices = this.calcNewResiServices(target, orderedServices)

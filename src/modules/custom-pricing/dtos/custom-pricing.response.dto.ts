@@ -25,15 +25,11 @@ export class Tier {
 }
 
 export class CustomPricingResponseDto {
-  @ApiProperty({ default: '' })
-  @IsString()
-  readonly customPricingId: string
-
-  @ApiProperty({ default: '' })
+  @ApiProperty()
   @IsString()
   readonly serviceId: string
 
-  @ApiProperty({ default: '' })
+  @ApiProperty()
   @IsString()
   readonly organizationId: string
 

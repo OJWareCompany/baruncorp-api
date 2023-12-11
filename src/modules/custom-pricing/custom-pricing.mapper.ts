@@ -138,7 +138,6 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
   toResponse(entity: CustomPricingEntity): CustomPricingResponseDto {
     const props = entity.getProps()
     return new CustomPricingResponseDto({
-      customPricingId: props.id,
       serviceId: props.serviceId,
       organizationId: props.organizationId,
       residentialNewServicePricingType: entity.residentialNewServicePricingType,

@@ -1,25 +1,10 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { CustomPricingTypeEnum } from '../create-custom-pricing/create-custom-pricing.command'
+import { CreateCustomPricingCommand } from '../create-custom-pricing/create-custom-pricing.command'
 
-export class UpdateCustomPricingCommand {
-  readonly customPricingId: string
-  readonly type: CustomPricingTypeEnum
-  readonly residentialNewServiceTiers: {
-    readonly startingPoint: number
-    readonly finishingPoint: number
-    readonly price: number
-    readonly gmPrice: number
-  }[]
-  readonly residentialRevisionPrice: number | null
-  readonly residentialRevisionGmPrice: number | null
-  readonly commercialNewServiceTiers: {
-    readonly startingPoint: number
-    readonly finishingPoint: number
-    readonly price: number
-    readonly gmPrice: number
-  }[]
-  readonly fixedPrice: number | null
+// 나중에
+export class UpdateCustomPricingCommand extends CreateCustomPricingCommand {
   constructor(props: UpdateCustomPricingCommand) {
+    super(props)
     initialize(this, props)
   }
 }

@@ -11,6 +11,7 @@ import {
 } from '../commands/create-custom-pricing/create-custom-pricing.command'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
+import { CustomPricingInvalidPriceException } from './custom-pricing.error'
 
 export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   protected _id: string
@@ -80,6 +81,19 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
 
   get residentialNewServiceTiers() {
     return this.isResidentialNewServiceFlatPricing ? [] : this.props.residentialNewServiceTiers
+  }
+
+  setResidentialNewServiceFlatPrice(price: number, gmPrice: number) {
+    if (price <= 0 || gmPrice <= 0) throw new CustomPricingInvalidPriceException()
+    this.props.residentialNewServiceTiers = [
+      new CustomResidentialNewServicePricingTier({
+        startingPoint: 1,
+        finishingPoint: null,
+        price,
+        gmPrice,
+      }),
+    ]
+    return this
   }
 
   setResidentialNewServiceTiers(

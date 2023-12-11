@@ -9,7 +9,7 @@ import { UpdateCustomPricingRequestDto, UpdateCustomPricingParamRequestDto } fro
 @Controller('custom-pricings')
 export class UpdateCustomPricingHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Put(':customPricingId')
+  @Put(':organizationId/:serviceId')
   @UseGuards(AuthGuard)
   async put(
     @User() user: UserEntity,
@@ -17,9 +17,13 @@ export class UpdateCustomPricingHttpController {
     @Body() request: UpdateCustomPricingRequestDto,
   ): Promise<void> {
     const command = new UpdateCustomPricingCommand({
-      customPricingId: param.customPricingId,
+      organizationId: param.organizationId,
+      serviceId: param.serviceId,
       type: request.customPricingType,
-      residentialNewServiceTiers: request.commercialNewServiceTiers,
+      residentialNewServicePricingType: request.residentialNewServicePricingType,
+      residentialNewServiceFlatPrice: request.residentialNewServiceFlatPrice,
+      residentialNewServiceFlatGmPrice: request.residentialNewServiceFlatGmPrice,
+      residentialNewServiceTiers: request.residentialNewServiceTiers,
       residentialRevisionPrice: request.residentialRevisionPrice,
       residentialRevisionGmPrice: request.residentialRevisionGmPrice,
       commercialNewServiceTiers: request.commercialNewServiceTiers,
