@@ -14,9 +14,9 @@ export class CreateServiceHttpController {
   @Post()
   @ApiException(() => [ServiceNameConflictException, ServiceBillingCodeConflictException])
   async postCreateService(@Body() request: CreateServiceRequestDto): Promise<IdResponse> {
-    if (request.type === 'Standard' && !request.standardPricing) throw new BadRequestException()
+    if (request.pricingType === 'Standard' && !request.standardPricing) throw new BadRequestException()
     const pricingType =
-      request.type === 'Standard' && request.standardPricing
+      request.pricingType === 'Standard' && request.standardPricing
         ? {
             residentialPrice: request.standardPricing.residentialPrice,
             residentialGmPrice: request.standardPricing.residentialGmPrice,
@@ -41,7 +41,7 @@ export class CreateServiceHttpController {
     const command = new CreateServiceCommand({
       name: request.name,
       billingCode: request.billingCode,
-      type: request.type,
+      type: request.pricingType,
       ...pricingType,
     })
     const result: AggregateID = await this.commandBus.execute(command)

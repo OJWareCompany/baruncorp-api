@@ -27,6 +27,7 @@ export class ServiceMapper
     commercialStandardPricingTiers: CommercialStandardPricingTiers[]
   } {
     const props = entity.getProps()
+    console.log('!!', props.pricing.standard?.commercial?.revision.costPerUnit)
     const serviceRecord: Service = {
       id: props.id,
       name: props.name,
@@ -51,7 +52,7 @@ export class ServiceMapper
         ? props.pricing.standard.commercial.revision.minutesPerUnit
         : null,
     }
-
+    console.log(serviceRecord)
     const commercialStandardPricingTiersRecord: CommercialStandardPricingTiers[] = props.pricing.standard?.commercial
       ? props.pricing.standard?.commercial?.newServiceTiers.map((tier) => {
           return {
@@ -90,13 +91,17 @@ export class ServiceMapper
         startingPoint: Number(tier.startingPoint),
         finishingPoint: Number(tier.finishingPoint),
         price: Number(tier.price),
-        gmPrice: 0,
+        gmPrice: Number(tier.gmPrice),
       })
     })
 
     const commercialRevision = new CommercialRevisionStandardPricing({
-      costPerUnit: Number(record.service.commercialRevisionCostPerUnit),
-      minutesPerUnit: record.service.commercialRevisionMinutesPerUnit,
+      costPerUnit: record.service.commercialRevisionCostPerUnit
+        ? Number(record.service.commercialRevisionCostPerUnit)
+        : null,
+      minutesPerUnit: record.service.commercialRevisionMinutesPerUnit
+        ? Number(record.service.commercialRevisionMinutesPerUnit)
+        : null,
     })
 
     // Fixed
@@ -139,7 +144,7 @@ export class ServiceMapper
             residentialRevisionPrice: standard.residential ? standard.residential.revisionPrice : null,
             residentialRevisionGmPrice: standard.residential ? standard.residential.revisionGmPrice : null,
             commercialRevisionCostPerUnit: standard.commercial ? standard.commercial.revision.costPerUnit : null,
-            commercialRevisionMinutesPerUnit: standard.commercial ? standard.commercial?.revision.minutesPerUnit : null,
+            commercialRevisionMinutesPerUnit: standard.commercial ? standard.commercial.revision.minutesPerUnit : null,
             commercialNewServiceTiers: standard.commercial
               ? standard.commercial.newServiceTiers.map((tier) => tier.unpack())
               : [],

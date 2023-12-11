@@ -820,7 +820,7 @@ export interface CreateServiceRequestDto {
   /** @default "" */
   billingCode: string
   /** @default "Standard" */
-  type: 'Standard' | 'Fixed'
+  pricingType: 'Standard' | 'Fixed'
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
@@ -832,7 +832,7 @@ export interface UpdateServiceRequestDto {
   /** @default "" */
   billingCode: string
   /** @default "Standard" */
-  type: 'Standard' | 'Fixed'
+  pricingType: 'Standard' | 'Fixed'
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
@@ -2476,7 +2476,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name UpdateServiceHttpControllerPatch
-     * @request PATCH:/services/{serviceId}
+     * @request PUT:/services/{serviceId}
      */
     updateServiceHttpControllerPatch: (serviceId: string, data: UpdateServiceRequestDto, params: RequestParams = {}) =>
       this.request<
@@ -2499,7 +2499,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
           }
       >({
         path: `/services/${serviceId}`,
-        method: 'PATCH',
+        method: 'PUT',
         body: data,
         type: ContentType.Json,
         ...params,

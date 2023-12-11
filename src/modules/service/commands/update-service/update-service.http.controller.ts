@@ -1,5 +1,5 @@
 import { CommandBus } from '@nestjs/cqrs'
-import { Body, Controller, Param, Patch } from '@nestjs/common'
+import { Body, Controller, Param, Put } from '@nestjs/common'
 import { UpdateServiceRequestDto, UpdateServiceRequestDtoParam } from './update-service.request.dto'
 import { UpdateServiceCommand } from './update-service.command'
 import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator'
@@ -14,10 +14,10 @@ export class UpdateServiceHttpController {
   constructor(private readonly commandBus: CommandBus) {}
 
   @ApiException(() => [ServiceNotFoundException, ServiceNameConflictException, ServiceBillingCodeConflictException])
-  @Patch(':serviceId')
+  @Put(':serviceId')
   async patch(@Param() param: UpdateServiceRequestDtoParam, @Body() request: UpdateServiceRequestDto): Promise<void> {
     const pricingType =
-      request.type === 'Standard' && request.standardPricing
+      request.pricingType === 'Standard' && request.standardPricing
         ? {
             residentialPrice: request.standardPricing.residentialPrice,
             residentialGmPrice: request.standardPricing.residentialGmPrice,
@@ -43,7 +43,7 @@ export class UpdateServiceHttpController {
       serviceId: param.serviceId,
       name: request.name,
       billingCode: request.billingCode,
-      type: request.type,
+      type: request.pricingType,
       ...pricingType,
     })
 

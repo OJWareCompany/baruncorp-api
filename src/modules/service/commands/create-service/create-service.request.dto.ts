@@ -71,7 +71,7 @@ export class CreateServiceRequestDto {
 
   @ApiProperty({ enum: ServicePricingTypeEnum, default: ServicePricingTypeEnum.standard })
   @IsEnum(ServicePricingTypeEnum)
-  readonly type: ServicePricingTypeEnum
+  readonly pricingType: ServicePricingTypeEnum
 
   @ApiProperty({ type: StandardPricingRequestDtoFields, default: StandardPricingRequestDtoFields, nullable: true })
   @IsOptional()
