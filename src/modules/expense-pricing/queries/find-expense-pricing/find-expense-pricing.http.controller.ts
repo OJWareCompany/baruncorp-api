@@ -15,7 +15,7 @@ export class FindExpensePricingHttpController {
     private readonly mapper: ExpensePricingMapper,
   ) {}
 
-  @Get(':expensePricingId')
+  @Get(':organizationId/:taskId')
   async get(@Param() request: FindExpensePricingRequestDto): Promise<ExpensePricingResponseDto> {
     const entity: ExpensePricingEntity = await this.expenseRepo.findOneOrThrow(request.organizationId, request.taskId)
     return this.mapper.toResponse(entity)

@@ -3251,16 +3251,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindExpensePricingHttpControllerGet
-     * @request GET:/expense-pricings/{expensePricingId}
+     * @request GET:/expense-pricings/{organizationId}/{taskId}
      */
-    findExpensePricingHttpControllerGet: (
-      taskId: string,
-      organizationId: string,
-      expensePricingId: string,
-      params: RequestParams = {},
-    ) =>
+    findExpensePricingHttpControllerGet: (taskId: string, organizationId: string, params: RequestParams = {}) =>
       this.request<ExpensePricingResponseDto, any>({
-        path: `/expense-pricings/${expensePricingId}`,
+        path: `/expense-pricings/${organizationId}/${taskId}`,
         method: 'GET',
         format: 'json',
         ...params,
