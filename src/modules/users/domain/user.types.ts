@@ -15,6 +15,7 @@ export interface CreateUserProps {
   organization: Organization
   phone: Phone | null
   updatedBy: string
+  isVendor: boolean
   deliverablesEmails: string[]
 }
 

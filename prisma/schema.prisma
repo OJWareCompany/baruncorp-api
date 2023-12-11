@@ -22,6 +22,7 @@ model Organizations {
   name                            String             @unique
   description                     String?
   organizationType                String             @map("organization_type")
+  isVendor                        Boolean            @default(false) @map("is_vendor")
   city                            String
   country                         String?
   street1                         String
@@ -110,6 +111,7 @@ model Users {
   revenueShare               Boolean?                 @map("revenue_share")
   revisionRevenueShare       Boolean?                 @map("revision_revenue_share")
   updatedBy                  String                   @map("updated_by") @db.VarChar(255)
+  isVendor                   Boolean                  @default(false) @map("is_vendor")
   passwordEntity             Passwords?
   userRole                   UserRole?
   userPosition               UserPosition?
@@ -739,6 +741,7 @@ model AssignedTasks {
   taskId              String          @map("task_id") @db.VarChar(255)
   taskName            String          @map("task_name") @db.VarChar(255)
   orderedServiceId    String          @map("ordered_service_id") @db.VarChar(255)
+  serviceId           String          @map("service_id") @db.VarChar(255)
   serviceName         String          @map("service_name") @db.VarChar(255)
   projectId           String          @map("project_id") @db.VarChar(255)
   jobId               String          @map("job_id") @db.VarChar(255)
@@ -753,6 +756,9 @@ model AssignedTasks {
   projectPropertyType String          @map("project_property_type") @db.VarChar(255)
   mountingType        String          @map("mounting_type") @db.VarChar(255)
   description         String?         @db.Text
+  cost                Decimal?        @db.Decimal(13, 4)
+  isVendor            Boolean         @map("is_vendor")
+  vendorInvoiceId     String?         @map("vendor_invoice_id") @db.VarChar(255)
   task                Tasks           @relation(fields: [taskId], references: [id])
   orderedService      OrderedServices @relation(fields: [orderedServiceId], references: [id])
   job                 OrderedJobs     @relation(fields: [jobId], references: [id])
@@ -877,17 +883,49 @@ model CommercialStandardPricingTiers {
 }
 
 model CustomPricings {
-  id                                  String  @id @map("id") @db.VarChar(255)
-  organizationId                      String  @map("organization_id") @db.VarChar(255)
-  organizationName                    String  @map("organization_name") @db.VarChar(255)
-  serviceId                           String  @map("service_id") @db.VarChar(255)
-  serviceName                         String  @map("service_name") @db.VarChar(255)
+  id                              String  @id @map("id") @db.VarChar(255)
+  organizationId                  String  @map("organization_id") @db.VarChar(255)
+  organizationName                String  @map("organization_name") @db.VarChar(255)
+  serviceId                       String  @map("service_id") @db.VarChar(255)
+  serviceName                     String  @map("service_name") @db.VarChar(255)
   hasResidentialNewServicePricing Boolean @map("has_residential_new_service_pricing")
-  hasResidentialRevisionPricing       Boolean @map("has_residential_revision_pricing")
-  hasCommercialNewServiceTier         Boolean @map("has_commercial_new_service_tier")
-  hasFixedPricing                     Boolean @map("has_fixed_pricing")
+  hasResidentialRevisionPricing   Boolean @map("has_residential_revision_pricing")
+  hasCommercialNewServiceTier     Boolean @map("has_commercial_new_service_tier")
+  hasFixedPricing                 Boolean @map("has_fixed_pricing")
 
   @@map("custom_pricings")
+}
+
+model expense_pricings {
+  id                 Int     @id @default(autoincrement()) @db.UnsignedInt
+  taskId             String  @map("task_id") @db.VarChar(255)
+  organizationId     String  @map("organization_id") @db.VarChar(255)
+  taskName           String  @map("task_name") @db.VarChar(255)
+  resiNewExpenseType String  @map("resi_new_expense_type") @db.VarChar(255)
+  resiNewValue       Decimal @map("resi_new_value") @db.Decimal(13, 4)
+  resiRevExpenseType String  @map("resi_rev_expense_type") @db.VarChar(255)
+  resiRevValue       Decimal @map("resi_rev_value") @db.Decimal(13, 4)
+  comNewExpenseType  String  @map("com_new_expense_type") @db.VarChar(255)
+  comNewValue        Decimal @map("com_new_value") @db.Decimal(13, 4)
+  comRevExpenseType  String  @map("com_rev_expense_type") @db.VarChar(255)
+  comRevValue        Decimal @map("com_rev_value") @db.Decimal(13, 4)
+}
+
+model vendor_invoices {
+  id                      Int       @id @default(autoincrement()) @db.UnsignedInt
+  organizationId          String    @map("organization_id") @db.VarChar(255)
+  organizationName        String    @map("organization_name") @db.VarChar(255)
+  daysPastDue             DateTime? @map("days_past_due") @db.DateTime(0)
+  invoiceDate             DateTime  @map("invoice_date") @db.DateTime(0)
+  dateDue                 DateTime  @map("date_due") @db.DateTime(0)
+  invoiceNumber           String    @map("invoice_number") @db.VarChar(255)
+  terms                   Int       @map("terms") @db.TinyInt
+  note                    String?   @map("note") @db.Text
+  serviceMonth            DateTime  @map("service_month") @db.Date
+  subTotal                Decimal   @map("sub_total") @db.Decimal(13, 4)
+  total                   Decimal   @map("total") @db.Decimal(13, 4)
+  invoiceTotalDifference  Decimal   @map("invoice_total_difference") @db.Decimal(13, 4)
+  internalTotalBalanceDue Decimal?  @map("internal_total_balance_due") @db.Decimal(13, 4)
 }
 
 enum InvoicesStatus {

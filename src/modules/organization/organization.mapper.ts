@@ -58,6 +58,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       invoiceRecipientEmail: props.invoiceRecipientEmail,
       isSpecialRevisionPricing: props.isSpecialRevisionPricing,
       numberOfFreeRevisionCount: props.numberOfFreeRevisionCount,
+      isVendor: props.isVendor,
     }
     return record
   }
@@ -93,6 +94,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       invoiceRecipientEmail: record.invoiceRecipientEmail,
       isSpecialRevisionPricing: record.isSpecialRevisionPricing,
       numberOfFreeRevisionCount: record.numberOfFreeRevisionCount,
+      isVendor: record.isVendor,
     }
     return new OrganizationEntity({ id: record.id, props })
   }

@@ -35,6 +35,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       isInactiveOrganizationUser: null,
       revenueShare: null,
       revisionRevenueShare: null,
+      isVendor: copy.isVendor,
     }
     return record
   }
@@ -112,6 +113,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         licenses: [...userElectricalLicenses, ...userStructuralLicenses],
         services: services,
         role: role,
+        isVendor: record.isVendor,
       },
     })
     return entity

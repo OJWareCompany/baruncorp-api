@@ -48,6 +48,10 @@ export class FindAssignedTaskPaginatedHttpController {
         organizationName: item.organizationName,
         projectPropertyType: item.projectPropertyType as ProjectPropertyTypeEnum,
         mountingType: item.mountingType as MountingTypeEnum,
+        cost: Number(item.cost),
+        isVendor: item.isVendor,
+        vendorInvoiceId: item.vendorInvoiceId,
+        serviceId: item.serviceId,
       })),
     })
   }

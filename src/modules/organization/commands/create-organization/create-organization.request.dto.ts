@@ -9,6 +9,10 @@ export class CreateOrganizationRequestDto {
   @IsOptional()
   readonly email: string | null
 
+  @ApiProperty({ default: true })
+  @IsBoolean()
+  readonly isVendor: boolean
+
   @ApiProperty({ default: AddressDto })
   @IsObject()
   readonly address: AddressDto

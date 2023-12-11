@@ -17,5 +17,6 @@ export interface CreateOrganizationProps {
   mountingTypeDefaultValue: MountingTypeEnum | null
   isSpecialRevisionPricing: boolean
   numberOfFreeRevisionCount: number | null
+  isVendor: boolean
 }
 export type OrganizationProps = CreateOrganizationProps

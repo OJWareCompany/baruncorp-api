@@ -3,6 +3,7 @@ import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/doma
 
 export class CreateOrganizationCommand {
   readonly email: string | null
+  readonly isVendor: boolean
   readonly phoneNumber: string | null
   readonly name: string
   readonly description: string | null

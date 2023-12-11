@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsEmail, IsArray, IsOptional } from 'class-validator'
+import { IsString, IsEmail, IsArray, IsOptional, IsBoolean } from 'class-validator'
 
 export class CreateUserRequestDto {
   @ApiProperty({ default: '07e12e89-6077-4fd1-a029-c50060b57f43' })
@@ -17,6 +17,10 @@ export class CreateUserRequestDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
   @IsEmail()
   readonly email: string
+
+  @ApiProperty({ default: true })
+  @IsBoolean()
+  readonly isVendor: boolean
 
   @ApiProperty({ default: 'hyomin@ojware.com', type: String, isArray: true })
   @IsArray()

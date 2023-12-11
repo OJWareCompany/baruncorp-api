@@ -1,4 +1,4 @@
-import { IsArray, IsEmail, IsOptional, IsString, IsStrongPassword } from 'class-validator'
+import { IsArray, IsBoolean, IsEmail, IsOptional, IsString, IsStrongPassword } from 'class-validator'
 import { PasswordOption } from '../../../users/domain/value-objects/password.vo'
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -14,6 +14,10 @@ export class SignUpRequestDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
   @IsEmail()
   readonly email: string
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly isVendor: boolean
 
   @ApiProperty({ default: 'hyomin@ojware.com', type: String, isArray: true })
   @IsArray()

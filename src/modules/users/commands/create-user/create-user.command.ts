@@ -5,6 +5,7 @@ export class CreateUserCommand {
   readonly firstName: string
   readonly lastName: string
   readonly email: string
+  readonly isVendor: boolean
   readonly deliverablesEmails: string[]
   readonly phoneNumber: string | null
   readonly updatedBy: string

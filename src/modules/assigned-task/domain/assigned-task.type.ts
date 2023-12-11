@@ -14,6 +14,7 @@ export interface CreateAssignedTaskProps {
   taskId: string
   taskName: string
   orderedServiceId: string
+  serviceId: string
   serviceName: string
   projectId: string
   jobId: string
@@ -28,6 +29,9 @@ export interface CreateAssignedTaskProps {
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {
   status: AssignedTaskStatus
+  cost: number | null
+  isVendor: boolean
+  vendorInvoiceId: string | null
   duration: number | null
   startedAt: Date | null
   doneAt: Date | null

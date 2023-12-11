@@ -110,6 +110,7 @@ export class AuthenticationService {
       }),
       phone: rest.phoneNumber ? new Phone({ number: rest.phoneNumber }) : null,
       updatedBy: 'system',
+      isVendor: rest.isVendor,
     })
 
     await this.usersService.insertUser(userEntity, new InputPasswordVO(password))
@@ -135,6 +136,7 @@ export class AuthenticationService {
       }),
       phone: null,
       updatedBy: 'system',
+      isVendor: true,
     })
 
     await this.usersService.insertUser(userEntity, new InputPasswordVO('Test123123!@#'))

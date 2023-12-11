@@ -1,4 +1,4 @@
-import { AssignedTasks } from '@prisma/client'
+import { AssignedTasks, Prisma } from '@prisma/client'
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { AssignedTaskResponseDto } from './dtos/assigned-task.response.dto'
@@ -29,6 +29,10 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       projectPropertyType: props.projectPropertyType,
       mountingType: props.mountingType,
       description: props.description,
+      serviceId: props.serviceId,
+      cost: props.cost ? new Prisma.Decimal(props.cost) : null,
+      isVendor: props.isVendor,
+      vendorInvoiceId: props.vendorInvoiceId,
     }
     return record
   }
@@ -54,6 +58,10 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         projectPropertyType: record.projectPropertyType as ProjectPropertyTypeEnum,
         mountingType: record.mountingType as MountingTypeEnum,
         description: record.description,
+        serviceId: record.serviceId,
+        cost: record.cost ? Number(record.cost) : null,
+        isVendor: record.isVendor,
+        vendorInvoiceId: record.vendorInvoiceId,
       },
     })
     return entity
