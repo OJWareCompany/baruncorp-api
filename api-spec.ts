@@ -28,6 +28,8 @@ export interface SignUpRequestDto {
   lastName: string
   /** @default "hyomin@ojware.com" */
   email: string
+  /** @default false */
+  isVendor: boolean
   /** @default "hyomin@ojware.com" */
   deliverablesEmails: string[]
   /** @default "thisistestPass123!" */
@@ -143,6 +145,8 @@ export interface CreateUserRequestDto {
   lastName: string
   /** @default "hyomin@ojware.com" */
   email: string
+  /** @default true */
+  isVendor: boolean
   /** @default "hyomin@ojware.com" */
   deliverablesEmails: string[]
   /** @default "857-250-4567" */
@@ -228,6 +232,8 @@ export interface OrganizationPaginatedResponseDto {
 export interface CreateOrganizationRequestDto {
   /** @default "hyomin@ojware.com" */
   email: string | null
+  /** @default true */
+  isVendor: boolean
   address: AddressDto
   /** @default "01012341234" */
   phoneNumber: string | null
@@ -964,11 +970,15 @@ export interface AssignedTaskResponseDto {
   organizationName: string
   projectPropertyType: string
   mountingType: string
+  serviceId: string
+  vendorInvoiceId: string | null
+  isVendor: boolean
   /** @format date-time */
   startedAt: string | null
   /** @format date-time */
   doneAt: string | null
   duration: number | null
+  cost: number | null
 }
 
 export interface AssignedTaskPaginatedResponseDto {
