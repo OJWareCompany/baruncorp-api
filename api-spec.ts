@@ -819,8 +819,8 @@ export interface CreateServiceRequestDto {
   name: string
   /** @default "" */
   billingCode: string
-  /** @default "standard" */
-  type: 'standard' | 'fixed'
+  /** @default "Standard" */
+  type: 'Standard' | 'Fixed'
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
@@ -831,8 +831,8 @@ export interface UpdateServiceRequestDto {
   name: string
   /** @default "" */
   billingCode: string
-  /** @default "standard" */
-  type: 'standard' | 'fixed'
+  /** @default "Standard" */
+  type: 'Standard' | 'Fixed'
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
@@ -851,8 +851,8 @@ export interface ServiceResponseDto {
   id: string
   name: string
   billingCode: string
-  /** @default "standard" */
-  pricingType: 'standard' | 'fixed'
+  /** @default "Standard" */
+  pricingType: 'Standard' | 'Fixed'
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
@@ -1125,8 +1125,8 @@ export interface CreateCustomPricingRequestDto {
   serviceId: string
   /** @default "" */
   organizationId: string
-  /** @default "custom_standard" */
-  customPricingType: 'custom_standard' | 'custom_fixed'
+  /** @default "Custom Standard" */
+  customPricingType: 'Custom Standard' | 'Custom Fixed'
   /** @default "Tier" */
   residentialNewServicePricingType: 'Tier' | 'Flat' | null
   /** @default null */
@@ -1146,8 +1146,8 @@ export interface CreateCustomPricingRequestDto {
 }
 
 export interface UpdateCustomPricingRequestDto {
-  /** @default "custom_standard" */
-  customPricingType: 'custom_standard' | 'custom_fixed'
+  /** @default "Custom Standard" */
+  customPricingType: 'Custom Standard' | 'Custom Fixed'
   /** @default [{"startingPoint":1,"finishingPoint":100,"price":10,"gmPrice":12.01},{"startingPoint":101,"finishingPoint":200,"price":10,"gmPrice":12.01},{"startingPoint":201,"finishingPoint":null,"price":10,"gmPrice":12.01}] */
   residentialNewServiceTiers: Tier[]
   /** @default 10 */
@@ -1172,8 +1172,8 @@ export interface CustomPricingResponseDto {
   serviceId: string
   /** @default "" */
   organizationId: string
-  /** @default "custom_standard" */
-  customPricingType: 'custom_standard' | 'custom_fixed'
+  /** @default "Custom Standard" */
+  customPricingType: 'Custom Standard' | 'Custom Fixed'
   /** @default "Tier" */
   residentialNewServicePricingType: 'Tier' | 'Flat' | null
   /** @default null */
