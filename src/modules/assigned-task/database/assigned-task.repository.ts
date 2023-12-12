@@ -7,6 +7,9 @@ import { AssignedTaskRepositoryPort } from './assigned-task.repository.port'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { AssignedTaskEntity } from '../domain/assigned-task.entity'
 import { AssignedTaskNotFoundException } from '../domain/assigned-task.error'
+import { zonedTimeToUtc } from 'date-fns-tz'
+import { endOfMonth, startOfMonth } from 'date-fns'
+import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
 
 @Injectable()
 export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
@@ -56,5 +59,23 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     const record = await this.findOne(id)
     if (!record) throw new AssignedTaskNotFoundException()
     return record
+  }
+
+  async findToVendorInvoice(organizationId: string, serviceMonth: Date): Promise<AssignedTaskEntity[]> {
+    // cost not null, completed, is vendor, date
+    const records = await this.prismaService.assignedTasks.findMany({
+      where: {
+        organizationId: organizationId,
+        status: AssignedTaskStatusEnum.Completed,
+        isVendor: true,
+        NOT: { cost: null },
+        // TODO: 검토필요, createdAt으로 교체?
+        startedAt: {
+          gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
+          lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+        },
+      },
+    })
+    return records.map(this.assignedTaskMapper.toDomain)
   }
 }

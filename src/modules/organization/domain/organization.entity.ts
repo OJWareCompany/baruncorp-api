@@ -13,6 +13,10 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     return new OrganizationEntity({ id, props })
   }
 
+  get name() {
+    return this.props.name
+  }
+
   get numberOfFreeRevisionCount() {
     return this.props.numberOfFreeRevisionCount
   }

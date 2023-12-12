@@ -18,6 +18,7 @@ import { InvoiceModule } from './modules/invoice/invoice.module'
 import { PaymentModule } from './modules/payment/payment.module'
 import { CustomPricingModule } from './modules/custom-pricing/custom-pricing.module'
 import { ExpensePricingModule } from './modules/expense-pricing/expense-pricing.module'
+import { VendorInvoiceModule } from './modules/vendor-invoice/vendor-invoice.module'
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { ExpensePricingModule } from './modules/expense-pricing/expense-pricing.
     PaymentModule,
     CustomPricingModule,
     ExpensePricingModule,
+    VendorInvoiceModule,
   ],
   controllers: [],
   providers: [
