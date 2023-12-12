@@ -19,6 +19,7 @@ export interface CreateInvoiceProps {
   terms: InvoiceTermsEnum
   notesToClient: string | null
   clientOrganizationId: string
+  organizationName: string
   serviceMonth: Date
   subTotal: number
   discount: number

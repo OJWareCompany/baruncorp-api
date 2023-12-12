@@ -65,6 +65,7 @@ export class CreateInvoiceService implements ICommandHandler {
 
     const invoice = InvoiceEntity.create({
       ...command,
+      organizationName: jobs[0].organizationName,
       subTotal,
       discount,
       total: subTotal - discount,

@@ -791,6 +791,7 @@ model Invoices {
   createdAt            DateTime       @default(now()) @map("createdAt") @db.Timestamp(0)
   updatedAt            DateTime       @default(now()) @updatedAt @map("updatedAt") @db.Timestamp(0)
   clientOrganizationId String         @map("client_organization_id") @db.VarChar(255)
+  organizationName     String         @map("organization_name") @db.VarChar(255)
   serviceMonth         DateTime       @map("service_month") @db.Date
   subTotal             Decimal        @map("sub_total") @db.Decimal(13, 4)
   discount             Decimal        @db.Decimal(13, 4)

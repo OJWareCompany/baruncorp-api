@@ -44,7 +44,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
     })
 
     const organization = await this.prismaService.organizations.findUnique({
-      where: { id: jobs[0].clientOrganizationId },
+      where: { id: invoice.clientOrganizationId },
     })
 
     const payments = await this.prismaService.payments.findMany({
@@ -119,8 +119,8 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       discount: Number(invoice.discount),
       total: Number(invoice.total),
       clientOrganization: {
-        id: jobs[0].clientOrganizationId,
-        name: jobs[0].clientOrganizationName,
+        id: invoice.clientOrganizationId,
+        name: invoice.organizationName,
       },
       lineItems: lineItems,
       payments: paymentsWithCanceled.map((payment) => {
