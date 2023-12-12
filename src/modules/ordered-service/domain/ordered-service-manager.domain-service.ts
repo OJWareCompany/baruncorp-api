@@ -66,7 +66,7 @@ export class ServiceInitialPriceManager {
     }
 
     const isFixedPricing = this.isFixedPricing(service, customPricing)
-    if (isFixedPricing) {
+    if (isFixedPricing && previouslyOrderedServices.length) {
       return OrderedServiceSizeForRevisionEnum.Major
     }
 
