@@ -147,7 +147,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     previouslyOrderedServices: OrderedServiceEntity[],
     customPricing: CustomPricingEntity | null,
   ): this {
-    if (!this.props.isRevision) throw new OrderedServiceInvalidRevisionStateException()
+    if (!this.props.isRevision || this.props.projectPropertyType !== ProjectPropertyTypeEnum.Residential) {
+      throw new OrderedServiceInvalidRevisionStateException()
+    }
     const revisionSize = OrderedServiceSizeForRevisionEnum.Major
     const initialPrice = calcService.determinePrice(
       revisionSize,
@@ -233,7 +235,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   setPriceForCommercialRevision(minutesWorked: number, service: Service): this {
-    if (this.props.isManualPrice) return this
+    if (this.props.isManualPrice || this.props.projectPropertyType !== ProjectPropertyTypeEnum.Commercial) return this
 
     const price = this.calculateCost(
       minutesWorked,
