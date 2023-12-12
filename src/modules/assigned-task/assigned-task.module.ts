@@ -2,10 +2,8 @@ import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
-import { UpdateAssignedTaskHttpController } from './commands/update-assigned-task/update-assigned-task.http.controller'
 import { FindAssignedTaskHttpController } from './queries/find-assigned-task/find-assigned-task.http.controller'
 import { FindAssignedTaskPaginatedHttpController } from './queries/find-assigned-task-paginated/find-assigned-task.paginated.http.controller'
-import { UpdateAssignedTaskService } from './commands/update-assigned-task/update-assigned-task.service'
 import { FindAssignedTaskQueryHandler } from './queries/find-assigned-task/find-assigned-task.query-handler'
 import { FindAssignedTaskPaginatedQueryHandler } from './queries/find-assigned-task-paginated/find-assigned-task.paginated.query-handler'
 import { ASSIGNED_TASK_REPOSITORY } from './assigned-task.di-token'
@@ -28,15 +26,34 @@ import { InvoiceRepository } from '../invoice/database/invoice.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { JobMapper } from '../ordered-job/job.mapper'
 import { InvoiceMapper } from '../invoice/invoice.mapper'
+import { UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler } from './application/event-handlers/update-cost-when-ordered-service-price-is-updated.domain-event-handler'
+import { UpdateCostWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/update-cost-when-task-is-assigned.domain-event-handler'
+import { ORDERED_SERVICE_REPOSITORY } from '../ordered-service/ordered-service.di-token'
+import { OrderedServiceRepository } from '../ordered-service/database/ordered-service.repository'
+import { EXPENSE_PRICING_REPOSITORY } from '../expense-pricing/expense-pricing.di-token'
+import { ExpensePricingRepository } from '../expense-pricing/database/expense-pricing.repository'
+import { CalculateVendorCostDomainService } from './domain/calculate-vendor-cost.domain-service'
+import { OrderedServiceMapper } from '../ordered-service/ordered-service.mapper'
+import { ExpensePricingMapper } from '../expense-pricing/expense-pricing.mapper'
+import { AssignTaskHttpController } from './commands/assign-task/assign-task.http.controller'
+import { AssignTaskService } from './commands/assign-task/assign-task.service'
+import { UpdateTaskCostService } from './commands/update-task-cost/update-task-cost.service'
+import { UpdateTaskCostHttpController } from './commands/update-task-cost/update-task-cost.http.controller'
 
 const httpControllers = [
-  UpdateAssignedTaskHttpController,
+  AssignTaskHttpController,
   FindAssignedTaskHttpController,
   FindAssignedTaskPaginatedHttpController,
   CompleteAssignedTaskHttpController,
   UpdateTaskDurationHttpController,
+  UpdateTaskCostHttpController,
 ]
-const commandHandlers: Provider[] = [UpdateAssignedTaskService, CompleteAssignedTaskService, UpdateTaskDurationService]
+const commandHandlers: Provider[] = [
+  AssignTaskService,
+  CompleteAssignedTaskService,
+  UpdateTaskDurationService,
+  UpdateTaskCostService,
+]
 const queryHandlers: Provider[] = [FindAssignedTaskQueryHandler, FindAssignedTaskPaginatedQueryHandler]
 const repositories: Provider[] = [
   {
@@ -55,18 +72,37 @@ const repositories: Provider[] = [
     provide: INVOICE_REPOSITORY,
     useClass: InvoiceRepository,
   },
+  {
+    provide: ORDERED_SERVICE_REPOSITORY,
+    useClass: OrderedServiceRepository,
+  },
+  {
+    provide: EXPENSE_PRICING_REPOSITORY,
+    useClass: ExpensePricingRepository,
+  },
 ]
 const eventHandlers: Provider[] = [
   CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler,
   CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler,
   ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler,
   HoldAssignedTaskWhenJobIsHeldDomainEventHandler,
+  UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler,
+  UpdateCostWhenTaskIsAssignedDomainEventHandler,
 ]
-const mappers: Provider[] = [AssignedTaskMapper, UserMapper, UserRoleMapper, JobMapper, InvoiceMapper]
+const domainServices: Provider[] = [CalculateVendorCostDomainService, UpdateTaskCostService]
+const mappers: Provider[] = [
+  AssignedTaskMapper,
+  UserMapper,
+  UserRoleMapper,
+  JobMapper,
+  InvoiceMapper,
+  OrderedServiceMapper,
+  ExpensePricingMapper,
+]
 
 @Module({
   imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })
 export class AssignedTaskModule {}

@@ -27,7 +27,6 @@ export class ServiceMapper
     commercialStandardPricingTiers: CommercialStandardPricingTiers[]
   } {
     const props = entity.getProps()
-    console.log('!!', props.pricing.standard?.commercial?.revision.costPerUnit)
     const serviceRecord: Service = {
       id: props.id,
       name: props.name,
@@ -52,7 +51,6 @@ export class ServiceMapper
         ? props.pricing.standard.commercial.revision.minutesPerUnit
         : null,
     }
-    console.log(serviceRecord)
     const commercialStandardPricingTiersRecord: CommercialStandardPricingTiers[] = props.pricing.standard?.commercial
       ? props.pricing.standard?.commercial?.newServiceTiers.map((tier) => {
           return {

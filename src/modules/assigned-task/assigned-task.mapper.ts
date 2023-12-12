@@ -11,7 +11,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
   toPersistence(entity: AssignedTaskEntity): AssignedTasks {
     const props = entity.getProps()
     const record: AssignedTasks = {
-      id: props.id,
+      id: entity.id,
       taskId: props.taskId,
       orderedServiceId: props.orderedServiceId,
       jobId: props.jobId,

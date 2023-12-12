@@ -948,7 +948,7 @@ export interface TaskPaginatedResponseDto {
   items: TaskResponseDto[]
 }
 
-export interface UpdateAssignedTaskRequestDto {
+export interface AssignTaskRequestDto {
   /** @default null */
   assigneeId: string
 }
@@ -996,6 +996,11 @@ export interface AssignedTaskPaginatedResponseDto {
 export interface UpdateTaskDurationRequestDto {
   /** @default null */
   duration: number | null
+}
+
+export interface UpdateTaskCostRequestDto {
+  /** @default null */
+  cost: number | null
 }
 
 export interface CreateInvoiceRequestDto {
@@ -2811,16 +2816,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UpdateAssignedTaskHttpControllerPatch
-     * @request PATCH:/assigned-tasks/{assignedTaskId}
+     * @name AssignTaskHttpControllerPatch
+     * @request PATCH:/assigned-tasks/{assignedTaskId}/assign
      */
-    updateAssignedTaskHttpControllerPatch: (
-      assignedTaskId: string,
-      data: UpdateAssignedTaskRequestDto,
-      params: RequestParams = {},
-    ) =>
+    assignTaskHttpControllerPatch: (assignedTaskId: string, data: AssignTaskRequestDto, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/assigned-tasks/${assignedTaskId}`,
+        path: `/assigned-tasks/${assignedTaskId}/assign`,
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
@@ -2885,6 +2886,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<void, any>({
         path: `/assigned-tasks/${assignedTaskId}/duration`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateTaskCostHttpControllerPatch
+     * @request PATCH:/assigned-tasks/{assignedTaskId}/cost
+     */
+    updateTaskCostHttpControllerPatch: (
+      assignedTaskId: string,
+      data: UpdateTaskCostRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/assigned-tasks/${assignedTaskId}/cost`,
         method: 'PATCH',
         body: data,
         type: ContentType.Json,

@@ -6,6 +6,7 @@ import { AssignedTaskMapper } from '../assigned-task.mapper'
 import { AssignedTaskRepositoryPort } from './assigned-task.repository.port'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { AssignedTaskEntity } from '../domain/assigned-task.entity'
+import { AssignedTaskNotFoundException } from '../domain/assigned-task.error'
 
 @Injectable()
 export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
@@ -49,5 +50,11 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
   async findOne(id: string): Promise<AssignedTaskEntity | null> {
     const record = await this.prismaService.assignedTasks.findUnique({ where: { id } })
     return record ? this.assignedTaskMapper.toDomain(record) : null
+  }
+
+  async findOneOrThrow(id: string): Promise<AssignedTaskEntity> {
+    const record = await this.findOne(id)
+    if (!record) throw new AssignedTaskNotFoundException()
+    return record
   }
 }

@@ -22,14 +22,23 @@ export class CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler {
   async handle(event: OrderedServiceCreatedDomainEvent) {
     const tasks = await this.prismaService.tasks.findMany({ where: { serviceId: event.serviceId } })
     const assignedTaskEntities = tasks.map((task) => {
-      return AssignedTaskEntity.create({
-        ...event,
+      const entity = AssignedTaskEntity.create({
+        serviceId: event.serviceId,
+        serviceName: event.serviceName,
+        projectId: event.projectId,
+        jobId: event.jobId,
+        organizationId: event.organizationId,
+        organizationName: event.organizationName,
+        projectPropertyType: event.projectPropertyType,
+        mountingType: event.mountingType,
+        description: event.description,
         taskId: task.id,
         taskName: task.name,
         orderedServiceId: event.aggregateId,
         assigneeId: null,
         assigneeName: null,
       })
+      return entity
     })
     await this.assignedTaskRepo.insert(assignedTaskEntities)
   }

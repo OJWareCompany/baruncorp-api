@@ -1,13 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
 
-export class UpdateAssignedTaskParamRequestDto {
+export class AssignTaskParamRequestDto {
   @ApiProperty({ default: '' })
   @IsString()
   readonly assignedTaskId: string
 }
 
-export class UpdateAssignedTaskRequestDto {
+export class AssignTaskRequestDto {
   @ApiProperty({ default: null })
   @IsString()
   readonly assigneeId: string

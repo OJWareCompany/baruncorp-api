@@ -101,7 +101,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
 
   toResponse(entity: OrganizationEntity): OrganizationResponseDto {
     const response = new OrganizationResponseDto()
-    response.id = entity.getProps().id
+    response.id = entity.id
     response.name = entity.getProps().name
     response.description = entity.getProps().description
     response.email = entity.getProps().email

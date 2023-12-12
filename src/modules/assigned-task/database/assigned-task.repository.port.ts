@@ -6,5 +6,6 @@ export interface AssignedTaskRepositoryPort {
   update(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void>
   delete(id: string): Promise<void>
   findOne(id: string): Promise<AssignedTaskEntity | null>
+  findOneOrThrow(id: string): Promise<AssignedTaskEntity>
   find(): Promise<Paginated<AssignedTaskEntity>>
 }

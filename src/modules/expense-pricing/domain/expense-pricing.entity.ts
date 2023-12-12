@@ -33,6 +33,26 @@ export class ExpensePricingEntity extends AggregateRoot<ExpensePricingProps> {
     return this
   }
 
+  calcResidentialNewCost(price: number | null) {
+    if (this.props.resiNewExpenseType === ExpenseTypeEnum.fixed) return this.props.resiNewValue
+    return this.props.resiNewValue * Number(price)
+  }
+
+  calcResidentialRevisionCost(price: number | null) {
+    if (this.props.resiRevExpenseType === ExpenseTypeEnum.fixed) return this.props.resiRevValue
+    return this.props.resiRevValue * Number(price)
+  }
+
+  calcCommerciallNewCost(price: number | null) {
+    if (this.props.comNewExpenseType === ExpenseTypeEnum.fixed) return this.props.comNewValue
+    return this.props.comNewValue * Number(price)
+  }
+
+  calcCommerciallRevisionCost(price: number | null) {
+    if (this.props.comRevExpenseType === ExpenseTypeEnum.fixed) return this.props.comRevValue
+    return this.props.comRevValue * Number(price)
+  }
+
   public validate(): void {
     return
   }

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { OnEvent } from '@nestjs/event-emitter'
 import { Inject } from '@nestjs/common'
-import { OrderedServiceManualPriceUpdatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-manual-price-updated.domain-event'
+import { OrderedServicePriceUpdatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-price-updated.domain-event'
 import { INVOICE_REPOSITORY } from '../../invoice.di-token'
 import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
@@ -14,7 +14,7 @@ import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { CalculateInvoiceService } from '../../domain/calculate-invoice-service.domain-service'
 
-export class UpdateInvoiceTotalWhenOrderedServiceManualPriceIsUpddatedDomainEventHandler {
+export class UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(INVOICE_REPOSITORY)
@@ -33,8 +33,8 @@ export class UpdateInvoiceTotalWhenOrderedServiceManualPriceIsUpddatedDomainEven
     private readonly serviceRepo: ServiceRepositoryPort,
     private readonly calcInvoiceService: CalculateInvoiceService,
   ) {}
-  @OnEvent(OrderedServiceManualPriceUpdatedDomainEvent.name, { async: true, promisify: true })
-  async handle(event: OrderedServiceManualPriceUpdatedDomainEvent) {
+  @OnEvent(OrderedServicePriceUpdatedDomainEvent.name, { async: true, promisify: true })
+  async handle(event: OrderedServicePriceUpdatedDomainEvent) {
     const job = await this.jobRepo.findJobOrThrow(event.jobId)
     if (!job.invoiceId) return
 

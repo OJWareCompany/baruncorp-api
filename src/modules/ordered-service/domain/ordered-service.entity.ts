@@ -25,7 +25,7 @@ import { ServiceEntity } from '../../service/domain/service.entity'
 import { JobEntity } from '../../ordered-job/domain/job.entity'
 import { OrganizationEntity } from '../../organization/domain/organization.entity'
 import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
-import { OrderedServiceManualPriceUpdatedDomainEvent } from './events/ordered-service-manual-price-updated.domain-event'
+import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -93,6 +93,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this.props.isRevision
   }
 
+  get projectPropertyType() {
+    return this.props.projectPropertyType
+  }
+
   determineInitialValues(
     calcService: ServiceInitialPriceManager,
     service: ServiceEntity,
@@ -118,7 +122,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       customPricing,
     )
 
-    this.props.price = initialPrice
+    this.setPrice(initialPrice)
     if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
       this.updateRevisionSizeToMajor(calcService, service, organization, job, previouslyOrderedServices, customPricing)
     } else if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
@@ -130,7 +134,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   updateRevisionSizeToMinor() {
     if (!this.props.isRevision) throw new OrderedServiceInvalidRevisionStateException()
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Minor
-    this.props.price = 0
+    this.freeCost()
     return this
   }
 
@@ -155,7 +159,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     )
 
     this.props.sizeForRevision = revisionSize
-    this.props.price = initialPrice
+    this.setPrice(initialPrice)
 
     this.addEvent(
       new OrderedServiceUpdatedRevisionSizeDomainEvent({
@@ -175,6 +179,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
         aggregateId: this.id,
       }),
     )
+    this.freeCost()
     return this
   }
 
@@ -203,19 +208,28 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   setManualPrice(price: number) {
-    this.props.price = price
     this.props.isManualPrice = true
-    this.addEvent(
-      new OrderedServiceManualPriceUpdatedDomainEvent({
-        aggregateId: this.id,
-        jobId: this.jobId,
-      }),
-    )
+    this.setPrice(price)
   }
 
   setDescription(description: string | null): this {
     this.props.description = description
     return this
+  }
+
+  private freeCost() {
+    const NO_COST = 0
+    if (this.isCanceledOrMinorCompleted) this.setPrice(NO_COST)
+  }
+
+  private setPrice(price: number | null): void {
+    this.props.price = price
+    this.addEvent(
+      new OrderedServicePriceUpdatedDomainEvent({
+        aggregateId: this.id,
+        jobId: this.jobId,
+      }),
+    )
   }
 
   setPriceForCommercialRevision(minutesWorked: number, service: Service): this {
@@ -226,7 +240,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       Number(service.commercialRevisionMinutesPerUnit) + Number.EPSILON,
       Number(service.commercialRevisionCostPerUnit) + Number.EPSILON,
     )
-    this.props.price = price
+    this.setPrice(price)
     return this
   }
 
@@ -240,11 +254,6 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return totalCost
   }
 
-  private freeCost() {
-    const NO_COST = 0
-    if (this.isCanceledOrMinorCompleted) this.props.price = NO_COST
-  }
-
   async determinePriceWhenInvoice(
     calcService: CalculateInvoiceService,
     orderedServices: OrderedServiceEntity[],
@@ -256,7 +265,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     const tier = await calcService.getTier(this, orderedServices, customPricingRepo)
     if (!tier) return
 
-    this.props.price = this.isGroundMount ? tier.gmPrice : tier.price
+    const price = this.isGroundMount ? tier.gmPrice : tier.price
+    this.setPrice(price)
     this.addEvent(
       new OrderedServiceAppliedTieredPricingDomainEvent({
         aggregateId: this.id,

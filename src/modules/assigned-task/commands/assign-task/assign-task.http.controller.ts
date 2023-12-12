@@ -3,20 +3,20 @@ import { Body, Param, Controller, Patch, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../../../auth/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
-import { UpdateAssignedTaskCommand } from './update-assigned-task.command'
-import { UpdateAssignedTaskParamRequestDto, UpdateAssignedTaskRequestDto } from './update-assigned-task.request.dto'
+import { AssignTaskCommand } from './assign-task.command'
+import { AssignTaskParamRequestDto, AssignTaskRequestDto } from './assign-task.request.dto'
 
 @Controller('assigned-tasks')
-export class UpdateAssignedTaskHttpController {
+export class AssignTaskHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Patch(':assignedTaskId')
+  @Patch(':assignedTaskId/assign')
   @UseGuards(AuthGuard)
   async patch(
     @User() user: UserEntity,
-    @Param() param: UpdateAssignedTaskParamRequestDto,
-    @Body() request: UpdateAssignedTaskRequestDto,
+    @Param() param: AssignTaskParamRequestDto,
+    @Body() request: AssignTaskRequestDto,
   ): Promise<void> {
-    const command = new UpdateAssignedTaskCommand({
+    const command = new AssignTaskCommand({
       assignedTaskId: param.assignedTaskId,
       ...request,
     })

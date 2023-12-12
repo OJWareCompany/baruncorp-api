@@ -5,7 +5,6 @@ import { PrismaService } from '../../../database/prisma.service'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { UpdateAssignedTaskCommand } from './update-assigned-task.command'
 import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
@@ -13,9 +12,10 @@ import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
 import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { AssignTaskCommand } from './assign-task.command'
 
-@CommandHandler(UpdateAssignedTaskCommand)
-export class UpdateAssignedTaskService implements ICommandHandler {
+@CommandHandler(AssignTaskCommand)
+export class AssignTaskService implements ICommandHandler {
   constructor(
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
@@ -31,7 +31,7 @@ export class UpdateAssignedTaskService implements ICommandHandler {
     private readonly invoiceRepo: InvoiceRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
-  async execute(command: UpdateAssignedTaskCommand): Promise<void> {
+  async execute(command: AssignTaskCommand): Promise<void> {
     const userEntity = await this.userRepo.findOneById(command.assigneeId)
     const assignedTaskEntity = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!assignedTaskEntity) throw new AssignedTaskNotFoundException()
