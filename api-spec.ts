@@ -949,7 +949,7 @@ export interface TaskPaginatedResponseDto {
 }
 
 export interface AssignTaskRequestDto {
-  /** @default null */
+  /** @default "295fff4a-b13f-4c42-ba30-c0f39536ee6e" */
   assigneeId: string
 }
 
