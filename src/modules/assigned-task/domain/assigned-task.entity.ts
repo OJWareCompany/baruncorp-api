@@ -45,6 +45,11 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this.props.projectPropertyType
   }
 
+  invoice(vendorInvoiceId: string) {
+    this.props.vendorInvoiceId = vendorInvoiceId
+    return this
+  }
+
   updateCost(
     calcService: CalculateVendorCostDomainService,
     expensePricing: ExpensePricingEntity,

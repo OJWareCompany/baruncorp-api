@@ -10,6 +10,8 @@ import { OrganizationRepositoryPort } from '../../../organization/database/organ
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { ASSIGNED_TASK_REPOSITORY } from '../../../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../../assigned-task/database/assigned-task.repository.port'
+import { startOfMonth } from 'date-fns'
+import { AssignedTaskNotFoundException } from '../../../assigned-task/domain/assigned-task.error'
 
 @CommandHandler(CreateVendorInvoiceCommand)
 export class CreateVendorInvoiceService implements ICommandHandler {
@@ -27,8 +29,9 @@ export class CreateVendorInvoiceService implements ICommandHandler {
   async execute(command: CreateVendorInvoiceCommand): Promise<AggregateID> {
     const organization = await this.organizationRepo.findOneOrThrow(command.organizationId)
     const tasksToInvoice = await this.assignTaskRepo.findToVendorInvoice(command.organizationId, command.serviceMonth)
+    if (!tasksToInvoice.length) throw new AssignedTaskNotFoundException()
 
-    const dateDue = new Date()
+    const dateDue = startOfMonth(new Date())
     dateDue.setDate(dateDue.getDate() + command.terms)
 
     const entity = VendorInvoiceEntity.create({
@@ -50,6 +53,12 @@ export class CreateVendorInvoiceService implements ICommandHandler {
       invoiceTotalDifference: 0, // TODO
       internalTotalBalanceDue: 0, // TODO
     })
+    // console.log(tasksToInvoice)
+    // console.log(entity)
+    tasksToInvoice.map((task) => {
+      task.invoice(entity.id)
+    })
+    await this.assignTaskRepo.update(tasksToInvoice)
     await this.vendorInvoiceRepo.insert(entity)
     return entity.id
   }

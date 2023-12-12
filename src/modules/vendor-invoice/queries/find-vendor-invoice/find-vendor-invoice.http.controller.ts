@@ -1,6 +1,5 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { VendorInvoices } from '@prisma/client'
 import { VendorInvoiceResponseDto } from '../../dtos/vendor-invoice.response.dto'
 import { FindVendorInvoiceRequestDto } from './find-vendor-invoice.request.dto'
 import { FindVendorInvoiceQuery } from './find-vendor-invoice.query-handler'
@@ -13,8 +12,8 @@ export class FindVendorInvoiceHttpController {
   async get(@Param() request: FindVendorInvoiceRequestDto): Promise<VendorInvoiceResponseDto> {
     const command = new FindVendorInvoiceQuery(request)
 
-    const result: VendorInvoices = await this.queryBus.execute(command)
+    const result: VendorInvoiceResponseDto = await this.queryBus.execute(command)
 
-    return new VendorInvoiceResponseDto()
+    return result
   }
 }

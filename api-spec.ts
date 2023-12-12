@@ -1301,6 +1301,93 @@ export interface ExpensePricingPaginatedResponseDto {
   items: ExpensePricingResponseDto[]
 }
 
+export interface CreateVendorInvoiceRequestDto {
+  /** @default "" */
+  organizationId: string
+  /**
+   * @format date-time
+   * @default ""
+   */
+  invoiceDate: string
+  /**
+   * @format date-time
+   * @default ""
+   */
+  serviceMonth: string
+  /** @default "" */
+  invoiceNumber: string
+  terms: 21 | 30
+  /** @default "" */
+  note: string | null
+}
+
+export interface UpdateVendorInvoiceRequestDto {
+  /** @default "" */
+  id: string
+}
+
+export interface DeleteVendorInvoiceRequestDto {
+  /** @default "" */
+  id: string
+}
+
+export interface VendorInvoiceResponseDto {
+  /** @default "" */
+  id: string
+  /** @default "" */
+  organizationId: string
+  /** @default "" */
+  organizationName: string
+  /** @default "" */
+  daysPastDue: string | null
+  /** @default "" */
+  invoiceDate: string
+  /** @default "" */
+  dateDue: string
+  /** @default "" */
+  invoiceNumber: string
+  /** @default "" */
+  terms: number
+  /** @default "" */
+  note: string | null
+  /** @default "" */
+  serviceMonth: string
+  /** @default "" */
+  subTotal: number
+  /** @default "" */
+  total: number
+  /** @default "" */
+  invoiceTotalDifference: number
+  /** @default "" */
+  internalTotalBalanceDue: number | null
+  /** @default "" */
+  createdAt: string
+  /** @default "" */
+  updatedAt: string | null
+}
+
+export interface VendorInvoicePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: VendorInvoiceResponseDto[]
+}
+
+export interface VendorToInvoice {
+  organizationId: string
+  organizationName: string
+  dates: string[]
+}
+
+export interface VendorToInvoiceResponseDto {
+  vendorsToInvoice: VendorToInvoice[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -1607,6 +1694,33 @@ export interface FindExpensePricingPaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
+}
+
+export interface FindVendorInvoicePaginatedHttpControllerGetParams {
+  /** @default "" */
+  vendorInvoiceId: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindVendorToInvoiceLineItemsPaginatedHttpControllerGetParams {
+  /** @default "asda" */
+  clientOrganizationId: string
+  /**
+   * @format date-time
+   * @default "2023-06"
+   */
+  serviceMonth: string
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
@@ -3295,6 +3409,127 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<ExpensePricingResponseDto, any>({
         path: `/expense-pricings/${organizationId}/${taskId}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  vendorInvoices = {
+    /**
+     * No description
+     *
+     * @name CreateVendorInvoiceHttpControllerPost
+     * @request POST:/vendor-invoices
+     */
+    createVendorInvoiceHttpControllerPost: (data: CreateVendorInvoiceRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/vendor-invoices`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorInvoicePaginatedHttpControllerGet
+     * @request GET:/vendor-invoices
+     */
+    findVendorInvoicePaginatedHttpControllerGet: (
+      query: FindVendorInvoicePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<VendorInvoicePaginatedResponseDto, any>({
+        path: `/vendor-invoices`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateVendorInvoiceHttpControllerPatch
+     * @request PATCH:/vendor-invoices/{vendorInvoiceId}
+     */
+    updateVendorInvoiceHttpControllerPatch: (
+      vendorInvoiceId: string,
+      data: UpdateVendorInvoiceRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/vendor-invoices/${vendorInvoiceId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteVendorInvoiceHttpControllerDelete
+     * @request DELETE:/vendor-invoices/{vendorInvoiceId}
+     */
+    deleteVendorInvoiceHttpControllerDelete: (
+      vendorInvoiceId: string,
+      data: DeleteVendorInvoiceRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/vendor-invoices/${vendorInvoiceId}`,
+        method: 'DELETE',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorInvoiceHttpControllerGet
+     * @request GET:/vendor-invoices/{vendorInvoiceId}
+     */
+    findVendorInvoiceHttpControllerGet: (vendorInvoiceId: string, params: RequestParams = {}) =>
+      this.request<VendorInvoiceResponseDto, any>({
+        path: `/vendor-invoices/${vendorInvoiceId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  vendorToInvoices = {
+    /**
+     * No description
+     *
+     * @name FindVendorToInvoicePaginatedHttpControllerGet
+     * @request GET:/vendor-to-invoices
+     */
+    findVendorToInvoicePaginatedHttpControllerGet: (params: RequestParams = {}) =>
+      this.request<VendorToInvoiceResponseDto, any>({
+        path: `/vendor-to-invoices`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  vendorToInvoiceLineItems = {
+    /**
+     * No description
+     *
+     * @name FindVendorToInvoiceLineItemsPaginatedHttpControllerGet
+     * @request GET:/vendor-to-invoice-line-items
+     */
+    findVendorToInvoiceLineItemsPaginatedHttpControllerGet: (
+      query: FindVendorToInvoiceLineItemsPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<AssignedTaskResponseDto[], any>({
+        path: `/vendor-to-invoice-line-items`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),

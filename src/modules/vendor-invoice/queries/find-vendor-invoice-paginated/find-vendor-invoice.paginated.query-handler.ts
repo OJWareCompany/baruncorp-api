@@ -32,14 +32,11 @@ export class FindVendorInvoicePaginatedQueryHandler implements IQueryHandler {
     const result = await this.vendorInvoiceRepo.find()
     // skip: query.offset,
     // take: query.limit,
-    const totalCount = await this.prismaService.vendorInvoices.count()
+    // const totalCount = await this.prismaService.vendorInvoices.count()
 
-    result.items.map
-    return new Paginated({
-      page: query.page,
-      pageSize: query.limit,
-      totalCount: totalCount,
-      items: [],
-    })
+    return {
+      ...result,
+      items: result.items.map(this.mapper.toResponse),
+    }
   }
 }

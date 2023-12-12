@@ -13,8 +13,16 @@ export class VendorInvoiceRepository implements VendorInvoiceRepositoryPort {
     private readonly vendorInvoiceMapper: VendorInvoiceMapper,
   ) {}
 
-  find(): Promise<Paginated<VendorInvoiceEntity>> {
-    throw new Error('Method not implemented.')
+  async find(): Promise<Paginated<VendorInvoiceEntity>> {
+    const record = await this.prismaService.vendorInvoices.findMany()
+    const totalCount = await this.prismaService.vendorInvoices.count()
+    // TODO
+    return new Paginated({
+      page: 1,
+      pageSize: 10,
+      totalCount,
+      items: record.map(this.vendorInvoiceMapper.toDomain),
+    })
   }
   async insert(entity: VendorInvoiceEntity): Promise<void> {
     const record = this.vendorInvoiceMapper.toPersistence(entity)

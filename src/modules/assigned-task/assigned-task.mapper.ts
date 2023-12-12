@@ -68,6 +68,31 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
   }
 
   toResponse(entity: AssignedTaskEntity): AssignedTaskResponseDto {
-    throw new BadRequestException('toResponse doesnt be implemented.')
+    const result = entity.getProps()
+    console.log(2)
+    return new AssignedTaskResponseDto({
+      id: result.id,
+      taskId: result.taskId,
+      orderedServiceId: result.orderedServiceId,
+      jobId: result.jobId,
+      status: result.status,
+      description: result.description,
+      assigneeId: result.assigneeId,
+      assigneeName: result.assigneeName,
+      duration: result.duration,
+      startedAt: result.startedAt,
+      doneAt: result.doneAt,
+      taskName: result.taskName,
+      serviceName: result.serviceName,
+      projectId: result.projectId,
+      organizationId: result.organizationId,
+      organizationName: result.organizationName,
+      projectPropertyType: result.projectPropertyType,
+      mountingType: result.mountingType,
+      cost: result.cost ? Number(result.cost) : null,
+      isVendor: result.isVendor,
+      vendorInvoiceId: result.vendorInvoiceId,
+      serviceId: result.serviceId,
+    })
   }
 }

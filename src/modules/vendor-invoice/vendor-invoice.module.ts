@@ -22,6 +22,9 @@ import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
+import { FindVendorToInvoicePaginatedHttpController } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.http.controller'
+import { FindVendorToInvoicePaginatedQueryHandler } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.query-handler'
+import { FindVendorToInvoiceLineItemsPaginatedHttpController } from './queries/find-vendor-to-invoice-line-items-paginated/find-vendor-to-invoice-line-items.paginated.http.controller'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -29,9 +32,15 @@ const httpControllers = [
   DeleteVendorInvoiceHttpController,
   FindVendorInvoiceHttpController,
   FindVendorInvoicePaginatedHttpController,
+  FindVendorToInvoicePaginatedHttpController,
+  FindVendorToInvoiceLineItemsPaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [CreateVendorInvoiceService, UpdateVendorInvoiceService, DeleteVendorInvoiceService]
-const queryHandlers: Provider[] = [FindVendorInvoiceQueryHandler, FindVendorInvoicePaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindVendorInvoiceQueryHandler,
+  FindVendorInvoicePaginatedQueryHandler,
+  FindVendorToInvoicePaginatedQueryHandler,
+]
 const repositories: Provider[] = [
   {
     provide: VENDOR_INVOICE_REPOSITORY,
