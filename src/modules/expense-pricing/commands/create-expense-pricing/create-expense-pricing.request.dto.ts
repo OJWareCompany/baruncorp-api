@@ -2,43 +2,43 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNumber, IsString } from 'class-validator'
 
 export class CreateExpensePricingRequestDto {
-  @ApiProperty()
+  @ApiProperty({ default: '43e0ab61-f929-40a9-bb03-be7d6eb9de57' })
   @IsString()
   readonly taskId: string
 
-  @ApiProperty()
+  @ApiProperty({ default: 'asda' })
   @IsString()
   readonly organizationId: string
 
-  @ApiProperty()
+  @ApiProperty({ default: 'Fixed' })
   @IsString()
   readonly resiNewExpenseType: string
 
-  @ApiProperty()
+  @ApiProperty({ default: 25 })
   @IsNumber()
   readonly resiNewValue: number
 
-  @ApiProperty()
+  @ApiProperty({ default: 'Fixed' })
   @IsString()
   readonly resiRevExpenseType: string
 
-  @ApiProperty()
+  @ApiProperty({ default: 25 })
   @IsNumber()
   readonly resiRevValue: number
 
-  @ApiProperty()
+  @ApiProperty({ default: 'Fixed' })
   @IsString()
   readonly comNewExpenseType: string
 
-  @ApiProperty()
+  @ApiProperty({ default: 25 })
   @IsNumber()
   readonly comNewValue: number
 
-  @ApiProperty()
+  @ApiProperty({ default: 'Fixed' })
   @IsString()
   readonly comRevExpenseType: string
 
-  @ApiProperty()
+  @ApiProperty({ default: 25 })
   @IsNumber()
   readonly comRevValue: number
 }

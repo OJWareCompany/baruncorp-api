@@ -1234,26 +1234,44 @@ export interface CreatableCustomPricingResponse {
 }
 
 export interface CreateExpensePricingRequestDto {
+  /** @default "43e0ab61-f929-40a9-bb03-be7d6eb9de57" */
   taskId: string
+  /** @default "asda" */
   organizationId: string
+  /** @default "Fixed" */
   resiNewExpenseType: string
+  /** @default 25 */
   resiNewValue: number
+  /** @default "Fixed" */
   resiRevExpenseType: string
+  /** @default 25 */
   resiRevValue: number
+  /** @default "Fixed" */
   comNewExpenseType: string
+  /** @default 25 */
   comNewValue: number
+  /** @default "Fixed" */
   comRevExpenseType: string
+  /** @default 25 */
   comRevValue: number
 }
 
 export interface UpdateExpensePricingRequestDto {
+  /** @default "Fixed" */
   resiNewExpenseType: string
+  /** @default 25 */
   resiNewValue: number
+  /** @default "Fixed" */
   resiRevExpenseType: string
+  /** @default 25 */
   resiRevValue: number
+  /** @default "Fixed" */
   comNewExpenseType: string
+  /** @default 25 */
   comNewValue: number
+  /** @default "Fixed" */
   comRevExpenseType: string
+  /** @default 25 */
   comRevValue: number
 }
 
