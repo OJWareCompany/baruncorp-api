@@ -25,7 +25,7 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.aggregateId)
     await Promise.all(
       orderedService.getProps().assignedTasks.map(async (task) => {
-        const expensePricing = await this.expensePricingRepo.findOneOrThrow(orderedService.organizationId, task.id)
+        const expensePricing = await this.expensePricingRepo.findOneOrThrow(orderedService.organizationId, task.taskId)
         const assignedTask = await this.assignedTaskRepo.findOneOrThrow(task.id)
         assignedTask.updateCost(this.calculateVendorCostDomainService, expensePricing, orderedService)
         await this.assignedTaskRepo.update(assignedTask)
