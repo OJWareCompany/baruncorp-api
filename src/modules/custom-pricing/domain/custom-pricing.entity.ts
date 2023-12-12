@@ -84,7 +84,8 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   }
 
   setResidentialNewServiceFlatPrice(price: number, gmPrice: number) {
-    if (price <= 0 || gmPrice <= 0) throw new CustomPricingInvalidPriceException()
+    if (price <= 0) throw new CustomPricingInvalidPriceException('price', price)
+    if (gmPrice <= 0) throw new CustomPricingInvalidPriceException('gmPrice', gmPrice)
     this.props.residentialNewServiceTiers = [
       new CustomResidentialNewServicePricingTier({
         startingPoint: 1,
@@ -93,6 +94,11 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
         gmPrice,
       }),
     ]
+    return this
+  }
+
+  cleanResidentialnewServiceTiers() {
+    this.props.residentialNewServiceTiers = []
     return this
   }
 

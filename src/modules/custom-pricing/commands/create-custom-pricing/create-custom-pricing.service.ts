@@ -5,7 +5,7 @@ import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { CUSTOM_PRICING_REPOSITORY } from '../../custom-pricing.di-token'
 import { CustomPricingEntity } from '../../domain/custom-pricing.entity'
-import { CreateCustomPricingCommand } from './create-custom-pricing.command'
+import { CreateCustomPricingCommand, ResidentialNewServicePricingTypeEnum } from './create-custom-pricing.command'
 import { CustomPricingRepositoryPort } from '../../database/custom-pricing.repository.port'
 import { CustomResidentialNewServicePricingTier } from '../../domain/value-objects/custom-residential-new-servier-tier.value-object'
 import { CustomResidentialRevisionPricing } from '../../domain/value-objects/custom-residential-revision-pricing.value-object'
@@ -60,6 +60,18 @@ export class CreateCustomPricingService implements ICommandHandler {
       commercialNewServiceTiers,
       fixedPricing: command.fixedPrice ? new CustomFixedPrice({ value: command.fixedPrice }) : null,
     })
+
+    // TODO: Refactor (위의 중복 로직 제거)
+    if (command.residentialNewServicePricingType === ResidentialNewServicePricingTypeEnum.flat) {
+      entity.setResidentialNewServiceFlatPrice(
+        Number(command.residentialNewServiceFlatPrice),
+        Number(command.residentialNewServiceFlatGmPrice),
+      )
+    } else if (command.residentialNewServicePricingType === ResidentialNewServicePricingTypeEnum.tier) {
+      entity.setResidentialNewServiceTiers(command.residentialNewServiceTiers)
+    } else {
+      entity.cleanResidentialnewServiceTiers()
+    }
 
     await this.customPricingRepo.insert(entity)
 

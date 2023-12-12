@@ -13,7 +13,7 @@ export class CustomPricingConflictException extends ConflictException {
 }
 
 export class CustomPricingInvalidPriceException extends BadRequestException {
-  constructor() {
-    super('invalid price exception.', '30102')
+  constructor(field: string, value: number | null) {
+    super(`invalid price exception (field: ${field}, value: ${value})`, '30102')
   }
 }

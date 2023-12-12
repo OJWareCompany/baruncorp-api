@@ -30,6 +30,8 @@ export class UpdateCustomPricingService implements ICommandHandler {
       )
     } else if (command.residentialNewServicePricingType === ResidentialNewServicePricingTypeEnum.tier) {
       entity.setResidentialNewServiceTiers(command.residentialNewServiceTiers)
+    } else {
+      entity.cleanResidentialnewServiceTiers()
     }
 
     entity.setResidentialRevisionPricing(residentialRevisionPricing)

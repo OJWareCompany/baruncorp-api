@@ -38,6 +38,7 @@ export class CreateCustomPricingRequestDto {
     default: ResidentialNewServicePricingTypeEnum.tier,
   })
   @IsEnum(ResidentialNewServicePricingTypeEnum)
+  @IsOptional()
   readonly residentialNewServicePricingType: ResidentialNewServicePricingTypeEnum | null
 
   @ApiProperty({ default: null })
