@@ -59,7 +59,7 @@ export class ServiceMapper
             startingPoint: new Prisma.Decimal(tier.startingPoint),
             finishingPoint: new Prisma.Decimal(tier.finishingPoint),
             price: new Prisma.Decimal(tier.price),
-            gmPrice: new Prisma.Decimal(tier.price),
+            gmPrice: new Prisma.Decimal(tier.gmPrice),
           }
         })
       : []
