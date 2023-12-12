@@ -31,6 +31,7 @@ export class ServiceRepository implements ServiceRepositoryPort {
 
   async delete(entity: ServiceEntity): Promise<void> {
     if (entity.getProps().tasks.length) throw new ServiceWithAssociatedTasksDeleteException()
+    await this.prismaService.commercialStandardPricingTiers.deleteMany({ where: { serviceId: entity.id } })
     await this.prismaService.service.delete({ where: { id: entity.id } })
   }
 
