@@ -57,7 +57,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
         assignedTasks: record.assignedTasks,
         projectPropertyType: record.projectPropertyType as ProjectPropertyTypeEnum,
         mountingType: record.mountingType as MountingTypeEnum,
-        organizationId: record.mountingType,
+        organizationId: record.organizationId,
         organizationName: record.organizationName,
         serviceName: record.serviceName,
       },
