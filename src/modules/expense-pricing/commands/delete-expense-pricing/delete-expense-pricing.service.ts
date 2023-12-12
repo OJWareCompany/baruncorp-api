@@ -18,6 +18,6 @@ export class DeleteExpensePricingService implements ICommandHandler {
   async execute(command: DeleteExpensePricingCommand): Promise<void> {
     const entity = await this.expensePricingRepo.findOne(command.organizationId, command.taskId)
     if (!entity) throw new ExpensePricingNotFoundException()
-    await this.expensePricingRepo.update(entity)
+    await this.expensePricingRepo.delete(entity.getProps().organizationId, entity.getProps().taskId)
   }
 }

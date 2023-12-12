@@ -49,9 +49,10 @@ export class ExpensePricingRepository implements ExpensePricingRepositoryPort {
   }
 
   async delete(organizationId: string, taskId: string): Promise<void> {
+    console.log(organizationId, taskId)
     await this.prismaService.$executeRaw<ExpensePricings>`DELETE FROM expense_pricings WHERE
     organization_id = ${organizationId}
-    AND taskId = ${taskId}
+    AND task_id = ${taskId}
     `
   }
 
