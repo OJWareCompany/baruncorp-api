@@ -69,7 +69,6 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
 
   toResponse(entity: AssignedTaskEntity): AssignedTaskResponseDto {
     const result = entity.getProps()
-    console.log(2)
     return new AssignedTaskResponseDto({
       id: result.id,
       taskId: result.taskId,

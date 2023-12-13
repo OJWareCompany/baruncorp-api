@@ -23,8 +23,8 @@ import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
 import { FindVendorToInvoicePaginatedHttpController } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.http.controller'
-import { FindVendorToInvoicePaginatedQueryHandler } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.query-handler'
 import { FindVendorToInvoiceLineItemsPaginatedHttpController } from './queries/find-vendor-to-invoice-line-items-paginated/find-vendor-to-invoice-line-items.paginated.http.controller'
+import { FindVendorToInvoicePaginatedQueryHandler } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.query-handler'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
