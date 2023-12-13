@@ -34,6 +34,9 @@ export class OrganizationPaginatedResponseFields {
 
   @ApiProperty()
   numberOfFreeRevisionCount: number | null
+
+  @ApiProperty()
+  isVendor: boolean
 }
 
 export class OrganizationPaginatedResponseDto extends PaginatedResponseDto<OrganizationPaginatedResponseFields> {

@@ -132,6 +132,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       expiryDate: license.expiryDate?.toISOString() || null,
     }))
     response.role = props.role
+    response.isVendor = props.isVendor
     return response
   }
 }

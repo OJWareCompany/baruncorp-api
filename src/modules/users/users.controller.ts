@@ -46,6 +46,7 @@ export class UsersController {
       new UserName(dto),
       dto.phoneNumber,
       dto.deliverablesEmails,
+      dto.isVendor,
     )
   }
 

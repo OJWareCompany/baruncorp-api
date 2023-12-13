@@ -79,6 +79,12 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return this
   }
 
+  // update, set은 도메인 용어를 사용하지 않으므로 좋지 않은 예시 (어떤 행위를 했을때 그 안에서 아래의 업데이트가 따라와야함)
+  updateVendor(isVendor: boolean): this {
+    this.props.isVendor = isVendor
+    return this
+  }
+
   public validate(): void {
     if (this.props.phone && this.props.phone.number && this.props.phone.number.length > 20) {
       throw new PhoneNumberFormatException()

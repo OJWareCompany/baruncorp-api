@@ -64,6 +64,7 @@ export class UserService {
     userName: UserName,
     phoneNumber: string | null,
     deliverablesEmails: string[],
+    isVendor?: boolean,
   ): Promise<void> {
     const user = await this.userRepository.findOneById(userId)
     if (!user) throw new UserNotFoundException()
@@ -72,7 +73,9 @@ export class UserService {
       .updateName(userName) //
       .updatePhoneNumber(phoneNumber)
       .updateDeliverableEmails(deliverablesEmails)
-
+    if (isVendor !== undefined) {
+      user.updateVendor(isVendor)
+    }
     await this.userRepository.update(user)
   }
 

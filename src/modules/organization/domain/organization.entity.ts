@@ -27,6 +27,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
 
   update(data: {
     email: string | null
+    isVendor: boolean
     phoneNumber: string | null
     description: string | null
     address: {
@@ -45,6 +46,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     numberOfFreeRevisionCount: number | null
   }) {
     this.props.email = data.email
+    this.props.isVendor = data.isVendor
     this.props.phoneNumber = data.phoneNumber
     this.props.description = data.description
     this.props.address = data.address

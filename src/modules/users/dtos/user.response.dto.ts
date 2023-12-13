@@ -42,4 +42,7 @@ export class UserResponseDto {
 
   @ApiProperty()
   deliverablesEmails: string[]
+
+  @ApiProperty()
+  isVendor: boolean
 }

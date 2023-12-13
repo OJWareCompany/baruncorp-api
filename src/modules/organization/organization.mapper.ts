@@ -122,6 +122,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
+    response.isVendor = entity.getProps().isVendor
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare
@@ -130,6 +131,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     // response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
     return response
   }
+
   toPaginatedResponse(entity: OrganizationEntity): OrganizationPaginatedResponseFields {
     const response = new OrganizationPaginatedResponseFields()
     response.id = entity.getProps().id
@@ -143,6 +145,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
+    response.isVendor = entity.getProps().isVendor
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare
