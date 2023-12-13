@@ -50,6 +50,7 @@ model Organizations {
   users                           Users[]
   projects                        OrderedProjects[]
   invoices                        Invoices[]
+  vendorInvoices                  VendorInvoices[]
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
@@ -924,26 +925,42 @@ model ExpensePricings {
 }
 
 model VendorInvoices {
-  id                      String    @id @db.VarChar(255)
-  invoiceNumber           String    @map("invoice_number") @db.VarChar(255)
-  organizationId          String    @map("organization_id") @db.VarChar(255)
-  organizationName        String    @map("organization_name") @db.VarChar(255)
-  invoiceDate             DateTime  @map("invoice_date") @db.DateTime(0)
-  terms                   Int       @map("terms") @db.TinyInt
-  dueDate                 DateTime? @map("due_date") @db.DateTime(0)
-  daysPastDue             DateTime? @map("days_past_due") @db.DateTime(0)
-  note                    String?   @map("note") @db.Text
-  serviceMonth            DateTime  @map("service_month") @db.Date
-  subTotal                Decimal   @map("sub_total") @db.Decimal(13, 4)
-  total                   Decimal   @map("total") @db.Decimal(13, 4)
-  invoiceTotalDifference  Decimal   @map("invoice_total_difference") @db.Decimal(13, 4)
-  internalTotalBalanceDue Decimal?  @map("internal_total_balance_due") @db.Decimal(13, 4)
-  createdAt               DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
-  updatedAt               DateTime? @default(now()) @map("updated_at") @db.Timestamp(0)
-  transaction_type        String?   @db.VarChar(255)
+  id                      String           @id @db.VarChar(255)
+  invoiceNumber           String           @map("invoice_number") @db.VarChar(255)
+  organizationId          String           @map("organization_id") @db.VarChar(255)
+  organizationName        String           @map("organization_name") @db.VarChar(255)
+  invoiceDate             DateTime         @map("invoice_date") @db.DateTime(0)
+  terms                   Int              @map("terms") @db.TinyInt
+  dueDate                 DateTime?        @map("due_date") @db.DateTime(0)
+  daysPastDue             DateTime?        @map("days_past_due") @db.DateTime(0)
+  note                    String?          @map("note") @db.Text
+  serviceMonth            DateTime         @map("service_month") @db.Date
+  subTotal                Decimal          @map("sub_total") @db.Decimal(13, 4)
+  total                   Decimal          @map("total") @db.Decimal(13, 4)
+  invoiceTotalDifference  Decimal          @map("invoice_total_difference") @db.Decimal(13, 4)
+  internalTotalBalanceDue Decimal?         @map("internal_total_balance_due") @db.Decimal(13, 4)
+  createdAt               DateTime?        @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt               DateTime?        @default(now()) @map("updated_at") @db.Timestamp(0)
+  transaction_type        String?          @db.VarChar(255)
   count_line_items        Int
+  vendorPayments          VendorPayments[]
+  organization            Organizations    @relation(fields: [organizationId], references: [id])
 
   @@map("vendor_invoices")
+}
+
+model VendorPayments {
+  id              String                @id @map("id") @db.VarChar(255)
+  vendorInvoiceId String                @map("vendor_invoice_id") @db.VarChar(255)
+  amount          Decimal               @map("amount") @db.Decimal(13, 4)
+  paymentMethod   PaymentsPaymentMethod @map("payment_method")
+  paymentDate     DateTime              @default(now()) @map("payment_date") @db.Timestamp(0)
+  notes           String?               @map("notes") @db.Text
+  canceledAt      DateTime?             @map("canceled_at") @db.DateTime(0)
+  createdBy       String                @map("created_by") @db.VarChar(255)
+  vendorInvoice   VendorInvoices        @relation(fields: [vendorInvoiceId], references: [id])
+
+  @@map("vendor_payments")
 }
 
 enum InvoicesStatus {

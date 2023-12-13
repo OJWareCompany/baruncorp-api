@@ -1302,11 +1302,11 @@ export interface ExpensePricingPaginatedResponseDto {
 }
 
 export interface CreateVendorInvoiceRequestDto {
-  /** @default "" */
+  /** @default "asda" */
   organizationId: string
   /**
    * @format date-time
-   * @default ""
+   * @default "2023-12-13T21:17:14.970Z"
    */
   invoiceDate: string
   /**
@@ -1326,11 +1326,6 @@ export interface UpdateVendorInvoiceRequestDto {
   id: string
 }
 
-export interface DeleteVendorInvoiceRequestDto {
-  /** @default "" */
-  id: string
-}
-
 export interface VendorInvoiceResponseDto {
   /** @default "" */
   id: string
@@ -1342,8 +1337,12 @@ export interface VendorInvoiceResponseDto {
   daysPastDue: string | null
   /** @default "" */
   invoiceDate: string
+  /** @default "Payment" */
+  transactionType: string
+  /** @default 100 */
+  countLineItems: number
   /** @default "" */
-  dateDue: string
+  dueDate: string | null
   /** @default "" */
   invoiceNumber: string
   /** @default "" */
@@ -1386,6 +1385,69 @@ export interface VendorToInvoice {
 
 export interface VendorToInvoiceResponseDto {
   vendorsToInvoice: VendorToInvoice[]
+}
+
+export interface VendorInvoiceLineItemResponse {
+  vendorInvoiceId: string
+  taskId: string
+  assgineeId: string
+  assgineeName: string
+  clientOrganizationId: string
+  clientOrganizationName: string
+  projectId: string
+  projectNumber: string | null
+  jobDescription: string | null
+  propertyOwnerName: string
+  serviceName: string
+  serviceDescription: string | null
+  taskExpenseTotal: number
+  isRevision: boolean
+  createdAt: string
+  doneAt: string | null
+}
+
+export interface VendorInvoiceLineItemPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: VendorInvoiceLineItemResponse[]
+}
+
+export interface CreateVendorPaymentRequestDto {
+  vendorInvoiceId: string
+  /** @default 100 */
+  amount: number
+  paymentMethod: 'Credit' | 'Direct'
+  notes: string | null
+}
+
+export interface VendorPaymentResponseDto {
+  id: string
+  vendorInvoiceId: string
+  amount: number
+  paymentMethod: 'Credit' | 'Direct'
+  paymentDate: string
+  notes: string | null
+  canceledAt: string | null
+  organizationName: string
+  organizationId: string
+}
+
+export interface VendorPaymentPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: VendorPaymentResponseDto[]
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -1721,6 +1783,50 @@ export interface FindVendorToInvoiceLineItemsPaginatedHttpControllerGetParams {
    * @default "2023-06"
    */
   serviceMonth: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindVendorInvoiceLineItemHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+  /** @default "" */
+  vendorInvoiceId: string
+}
+
+export interface FindVendorPaymentPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
@@ -3473,16 +3579,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name DeleteVendorInvoiceHttpControllerDelete
      * @request DELETE:/vendor-invoices/{vendorInvoiceId}
      */
-    deleteVendorInvoiceHttpControllerDelete: (
-      vendorInvoiceId: string,
-      data: DeleteVendorInvoiceRequestDto,
-      params: RequestParams = {},
-    ) =>
+    deleteVendorInvoiceHttpControllerDelete: (vendorInvoiceId: string, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/vendor-invoices/${vendorInvoiceId}`,
         method: 'DELETE',
-        body: data,
-        type: ContentType.Json,
         ...params,
       }),
 
@@ -3496,6 +3596,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<VendorInvoiceResponseDto, any>({
         path: `/vendor-invoices/${vendorInvoiceId}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorInvoiceLineItemHttpControllerGet
+     * @request GET:/vendor-invoices/{vendorInvoiceId}/line-items
+     */
+    findVendorInvoiceLineItemHttpControllerGet: (
+      { vendorInvoiceId, ...query }: FindVendorInvoiceLineItemHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<VendorInvoiceLineItemPaginatedResponseDto, any>({
+        path: `/vendor-invoices/${vendorInvoiceId}/line-items`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),
@@ -3526,10 +3644,72 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindVendorToInvoiceLineItemsPaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
-      this.request<AssignedTaskResponseDto[], any>({
+      this.request<VendorInvoiceLineItemPaginatedResponseDto, any>({
         path: `/vendor-to-invoice-line-items`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
+  vendorPayments = {
+    /**
+     * No description
+     *
+     * @name CreateVendorPaymentHttpControllerPost
+     * @request POST:/vendor-payments
+     */
+    createVendorPaymentHttpControllerPost: (data: CreateVendorPaymentRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/vendor-payments`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorPaymentPaginatedHttpControllerGet
+     * @request GET:/vendor-payments
+     */
+    findVendorPaymentPaginatedHttpControllerGet: (
+      query: FindVendorPaymentPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<VendorPaymentPaginatedResponseDto, any>({
+        path: `/vendor-payments`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CancelVendorPaymentHttpControllerPatch
+     * @request PATCH:/vendor-payments/{vendorPaymentId}
+     */
+    cancelVendorPaymentHttpControllerPatch: (vendorPaymentId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/vendor-payments/${vendorPaymentId}`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorPaymentHttpControllerGet
+     * @request GET:/vendor-payments/{vendorPaymentId}
+     */
+    findVendorPaymentHttpControllerGet: (vendorPaymentId: string, params: RequestParams = {}) =>
+      this.request<VendorPaymentResponseDto, any>({
+        path: `/vendor-payments/${vendorPaymentId}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),
