@@ -26,15 +26,15 @@ export class CreateOrganizationRequestDto {
   @IsString()
   readonly name: string
 
-  @ApiProperty({ default: 'This is about organization...' })
-  @IsString()
-  @IsOptional()
-  readonly description: string | null
+  // @ApiProperty({ default: 'This is about organization...' })
+  // @IsString()
+  // @IsOptional()
+  // readonly description: string | null
 
-  @ApiProperty({ default: 'client' })
-  @IsString()
-  @Matches(/(client|individual|outsourcing)/, { message: 'Organization Type Not Found' })
-  readonly organizationType: string
+  // @ApiProperty({ default: 'client' })
+  // @IsString()
+  // @Matches(/(client|individual|outsourcing)/, { message: 'Organization Type Not Found' })
+  // readonly organizationType: string
 
   @ApiProperty({ default: 'Commercial' })
   @IsEnum(ProjectPropertyTypeEnum)

@@ -96,6 +96,7 @@ export interface UserResponseDto {
   licenses: LincenseResponseDto[]
   role: string
   deliverablesEmails: string[]
+  isVendor: boolean
 }
 
 export interface UpdateUserRequestDto {
@@ -103,6 +104,8 @@ export interface UpdateUserRequestDto {
   firstName: string
   /** @default "updated Kim" */
   lastName: string
+  /** @default true */
+  isVendor: boolean
   /** @default "hyomin@ojware.com" */
   deliverablesEmails: string[]
   /** @default "857-250-4567" */
@@ -201,6 +204,7 @@ export interface OrganizationResponseDto {
   mountingTypeDefaultValue: string | null
   isSpecialRevisionPricing: boolean
   numberOfFreeRevisionCount: number | null
+  isVendor: boolean
 }
 
 export interface OrganizationPaginatedResponseFields {
@@ -215,6 +219,7 @@ export interface OrganizationPaginatedResponseFields {
   mountingTypeDefaultValue: string | null
   isSpecialRevisionPricing: boolean
   numberOfFreeRevisionCount: number | null
+  isVendor: boolean
 }
 
 export interface OrganizationPaginatedResponseDto {
@@ -239,13 +244,6 @@ export interface CreateOrganizationRequestDto {
   phoneNumber: string | null
   /** @default "OJ Tech" */
   name: string
-  /** @default "This is about organization..." */
-  description: string | null
-  /**
-   * @default "client"
-   * @pattern /(client|individual|outsourcing)/
-   */
-  organizationType: string
   /** @default "Commercial" */
   projectPropertyTypeDefaultValue: 'Residential' | 'Commercial' | null
   /** @default "Roof Mount" */
@@ -259,11 +257,11 @@ export interface CreateOrganizationRequestDto {
 export interface UpdateOrganizationRequestDto {
   /** @default "hyomin@ojware.com" */
   email: string | null
+  /** @default true */
+  isVendor: boolean
   address: AddressDto
   /** @default "01012341234" */
   phoneNumber: string | null
-  /** @default "This is about organization..." */
-  description: string | null
   /** @default "Commercial" */
   projectPropertyTypeDefaultValue: 'Residential' | 'Commercial' | null
   /** @default "Roof Mount" */
@@ -1306,7 +1304,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-13T21:17:14.970Z"
+   * @default "2023-12-13T22:05:17.912Z"
    */
   invoiceDate: string
   /**
@@ -1759,8 +1757,8 @@ export interface FindExpensePricingPaginatedHttpControllerGetParams {
 }
 
 export interface FindVendorInvoicePaginatedHttpControllerGetParams {
-  /** @default "" */
-  vendorInvoiceId: string
+  /** @default "BarunCorp" */
+  organizationName?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20

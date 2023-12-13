@@ -6,8 +6,8 @@ export class CreateOrganizationCommand {
   readonly isVendor: boolean
   readonly phoneNumber: string | null
   readonly name: string
-  readonly description: string | null
-  readonly organizationType: string
+  // readonly description: string | null
+  // readonly organizationType: string
   readonly address: {
     readonly street1: string
     readonly street2: string | null

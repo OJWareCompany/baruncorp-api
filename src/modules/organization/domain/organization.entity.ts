@@ -9,6 +9,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     const id = v4()
     const props: OrganizationProps = {
       ...create,
+      organizationType: 'client',
     }
     return new OrganizationEntity({ id, props })
   }
@@ -48,7 +49,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     this.props.email = data.email
     this.props.isVendor = data.isVendor
     this.props.phoneNumber = data.phoneNumber
-    this.props.description = data.description
+    // this.props.description = data.description
     this.props.address = data.address
     this.props.projectPropertyTypeDefaultValue = data.projectPropertyTypeDefaultValue
     this.props.mountingTypeDefaultValue = data.mountingTypeDefaultValue

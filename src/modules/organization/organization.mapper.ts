@@ -3,7 +3,7 @@ import { Organizations } from '@prisma/client'
 import { Address } from './domain/value-objects/address.vo'
 import { Injectable } from '@nestjs/common'
 import { OrganizationEntity } from './domain/organization.entity'
-import { CreateOrganizationProps } from './domain/organization.types'
+import { CreateOrganizationProps, OrganizationProps } from './domain/organization.types'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
 import { Mapper } from '@libs/ddd/mapper.interface'
 import {
@@ -36,7 +36,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       name: props.name,
       fullAddress: props.address.fullAddress.toString(),
       addressCoordinates: props.address.coordinates.toString(),
-      description: props.description,
+      description: null,
       organizationType: props.organizationType,
       mountingTypeDefaultValue: props.mountingTypeDefaultValue,
       projectPropertyTypeDefaultValue: props.projectPropertyTypeDefaultValue,
@@ -64,9 +64,9 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
   }
 
   toDomain(record: OrganizationModel): OrganizationEntity {
-    const props: CreateOrganizationProps = {
+    const props: OrganizationProps = {
       name: record.name,
-      description: record.description,
+      // description: record.description,
       mountingTypeDefaultValue: record.mountingTypeDefaultValue
         ? (record.mountingTypeDefaultValue as MountingTypeEnum)
         : null,
@@ -103,7 +103,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     const response = new OrganizationResponseDto()
     response.id = entity.id
     response.name = entity.getProps().name
-    response.description = entity.getProps().description
+    // response.description = entity.getProps().description
     response.email = entity.getProps().email
     response.phoneNumber = entity.getProps().phoneNumber
     response.organizationType = entity.getProps().organizationType
@@ -136,7 +136,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     const response = new OrganizationPaginatedResponseFields()
     response.id = entity.getProps().id
     response.name = entity.getProps().name
-    response.description = entity.getProps().description
+    // response.description = entity.getProps().description
     response.email = entity.getProps().email
     response.phoneNumber = entity.getProps().phoneNumber
     response.organizationType = entity.getProps().organizationType

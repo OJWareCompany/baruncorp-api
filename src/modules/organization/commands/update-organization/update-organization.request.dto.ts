@@ -28,10 +28,10 @@ export class UpdateOrganizationRequestDto {
   @IsOptional()
   readonly phoneNumber: string | null
 
-  @ApiProperty({ default: 'This is about organization...' })
-  @IsString()
-  @IsOptional()
-  readonly description: string | null
+  // @ApiProperty({ default: 'This is about organization...' })
+  // @IsString()
+  // @IsOptional()
+  // readonly description: string | null
 
   @ApiProperty({ default: 'Commercial' })
   @IsEnum(ProjectPropertyTypeEnum)

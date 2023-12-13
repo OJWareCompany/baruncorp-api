@@ -2,10 +2,9 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/
 import { Address } from './value-objects/address.vo'
 export interface CreateOrganizationProps {
   name: string
-  description: string | null
+  // description: string | null
   email: string | null
   phoneNumber: string | null
-  organizationType: string
   address: Address
   isActiveContractor: boolean | null
   isActiveWorkResource: boolean | null
@@ -19,4 +18,6 @@ export interface CreateOrganizationProps {
   numberOfFreeRevisionCount: number | null
   isVendor: boolean
 }
-export type OrganizationProps = CreateOrganizationProps
+export interface OrganizationProps extends CreateOrganizationProps {
+  organizationType: string
+}

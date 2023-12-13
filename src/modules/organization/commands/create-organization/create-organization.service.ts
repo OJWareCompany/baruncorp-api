@@ -21,10 +21,10 @@ export class CreateOrganizationService implements ICommandHandler {
     if (organization) throw new OrganizationConflictException(command.name)
     const entity = OrganizationEntity.create({
       name: command.name,
-      description: command.description,
+      // description: null,
       email: command.email,
       phoneNumber: command.phoneNumber,
-      organizationType: command.organizationType,
+      // organizationType: command.organizationType,
       address: command.address,
       projectPropertyTypeDefaultValue: command.projectPropertyTypeDefaultValue,
       mountingTypeDefaultValue: command.mountingTypeDefaultValue,
