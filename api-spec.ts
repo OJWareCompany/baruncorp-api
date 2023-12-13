@@ -1299,12 +1299,17 @@ export interface ExpensePricingPaginatedResponseDto {
   items: ExpensePricingResponseDto[]
 }
 
+export interface CreatableExpensePricingResponse {
+  taskName: string
+  taskId: string
+}
+
 export interface CreateVendorInvoiceRequestDto {
   /** @default "asda" */
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-13T22:05:17.912Z"
+   * @default "2023-12-13T22:14:38.291Z"
    */
   invoiceDate: string
   /**
@@ -1754,6 +1759,11 @@ export interface FindExpensePricingPaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
+}
+
+export interface FindCreatableExpensePricingHttpControllerGetParams {
+  /** @default "" */
+  organizationId: string
 }
 
 export interface FindVendorInvoicePaginatedHttpControllerGetParams {
@@ -3513,6 +3523,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<ExpensePricingResponseDto, any>({
         path: `/expense-pricings/${organizationId}/${taskId}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  creatableExpensePricings = {
+    /**
+     * No description
+     *
+     * @name FindCreatableExpensePricingHttpControllerGet
+     * @request GET:/creatable-expense-pricings
+     */
+    findCreatableExpensePricingHttpControllerGet: (
+      query: FindCreatableExpensePricingHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<CreatableExpensePricingResponse[], any>({
+        path: `/creatable-expense-pricings`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),

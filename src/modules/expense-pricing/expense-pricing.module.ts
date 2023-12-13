@@ -14,6 +14,7 @@ import { FindExpensePricingPaginatedQueryHandler } from './queries/find-expense-
 import { EXPENSE_PRICING_REPOSITORY } from './expense-pricing.di-token'
 import { ExpensePricingRepository } from './database/expense-pricing.repository'
 import { ExpensePricingMapper } from './expense-pricing.mapper'
+import { FindCreatableExpensePricingHttpController } from './queries/find-creatable-expense-pricing/find-creatable-expense-pricing.http.controller'
 
 const httpControllers = [
   CreateExpensePricingHttpController,
@@ -21,6 +22,7 @@ const httpControllers = [
   DeleteExpensePricingHttpController,
   FindExpensePricingHttpController,
   FindExpensePricingPaginatedHttpController,
+  FindCreatableExpensePricingHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateExpensePricingService,
