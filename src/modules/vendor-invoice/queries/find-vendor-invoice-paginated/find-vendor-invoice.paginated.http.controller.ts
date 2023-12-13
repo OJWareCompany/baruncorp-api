@@ -1,6 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { VendorInvoices } from '@prisma/client'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { VendorInvoicePaginatedResponseDto } from '../../dtos/vendor-invoice.paginated.response.dto'

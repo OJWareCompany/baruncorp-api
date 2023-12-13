@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 
 export class FindVendorInvoicePaginatedRequestDto {
-  @ApiProperty({ default: '' })
+  @ApiProperty({ default: 'BarunCorp' })
   @IsString()
-  readonly vendorInvoiceId: string
+  @IsOptional()
+  readonly organizationName?: string | null
 }

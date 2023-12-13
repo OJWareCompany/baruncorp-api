@@ -12,7 +12,7 @@ import { VendorInvoiceRepositoryPort } from '../../database/vendor-invoice.repos
 import { VendorInvoiceMapper } from '../../vendor-invoice.mapper'
 
 export class FindVendorInvoicePaginatedQuery extends PaginatedQueryBase {
-  readonly vendorInvoiceId: string
+  readonly organizationName?: string | null
   constructor(props: PaginatedParams<FindVendorInvoicePaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -21,22 +21,27 @@ export class FindVendorInvoicePaginatedQuery extends PaginatedQueryBase {
 
 @QueryHandler(FindVendorInvoicePaginatedQuery)
 export class FindVendorInvoicePaginatedQueryHandler implements IQueryHandler {
-  constructor(
-    private readonly prismaService: PrismaService,
-    // @ts-ignore
-    @Inject(VENDOR_INVOICE_REPOSITORY) private readonly vendorInvoiceRepo: VendorInvoiceRepositoryPort,
-    private readonly mapper: VendorInvoiceMapper,
-  ) {}
+  constructor(private readonly prismaService: PrismaService, private readonly mapper: VendorInvoiceMapper) {}
 
   async execute(query: FindVendorInvoicePaginatedQuery): Promise<Paginated<VendorInvoiceResponseDto>> {
-    const result = await this.vendorInvoiceRepo.find()
-    // skip: query.offset,
-    // take: query.limit,
-    // const totalCount = await this.prismaService.vendorInvoices.count()
+    const records = await this.prismaService.vendorInvoices.findMany({
+      take: query.limit,
+      skip: query.offset,
+      where: {
+        ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
+      },
+    })
+    const totalCount = await this.prismaService.vendorInvoices.count({
+      where: {
+        ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
+      },
+    })
 
-    return {
-      ...result,
-      items: result.items.map(this.mapper.toResponse),
-    }
+    return new Paginated({
+      page: query.page,
+      pageSize: query.limit,
+      totalCount,
+      items: records.map(this.mapper.toDomain).map(this.mapper.toResponse),
+    })
   }
 }
