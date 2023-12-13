@@ -18,6 +18,6 @@ export class DeleteVendorInvoiceService implements ICommandHandler {
   async execute(command: DeleteVendorInvoiceCommand): Promise<void> {
     const entity = await this.vendorInvoiceRepo.findOne(command.vendorInvoiceId)
     if (!entity) throw new VendorInvoiceNotFoundException()
-    await this.vendorInvoiceRepo.update(entity)
+    await this.vendorInvoiceRepo.delete(entity.id)
   }
 }

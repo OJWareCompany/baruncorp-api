@@ -35,6 +35,16 @@ export class VendorInvoiceRepository implements VendorInvoiceRepositoryPort {
   }
 
   async delete(id: string): Promise<void> {
+    const assignedTasks = await this.prismaService.assignedTasks.findMany({
+      where: {
+        vendorInvoiceId: id,
+      },
+    })
+    await Promise.all(
+      assignedTasks.map(async (record) => {
+        await this.prismaService.assignedTasks.update({ where: { id: record.id }, data: { vendorInvoiceId: null } })
+      }),
+    )
     await this.prismaService.$executeRaw<VendorInvoices>`DELETE FROM vendor_invoices WHERE id = ${id}`
   }
 

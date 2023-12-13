@@ -6,9 +6,3 @@ export class DeleteVendorInvoiceParamRequestDto {
   @IsString()
   readonly vendorInvoiceId: string
 }
-
-export class DeleteVendorInvoiceRequestDto {
-  @ApiProperty({ default: '' })
-  @IsString()
-  readonly id: string
-}
