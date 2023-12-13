@@ -3,7 +3,7 @@ export interface CreateVendorInvoiceProps {
   organizationName: string
   daysPastDue: Date | null
   invoiceDate: Date
-  dateDue: Date
+  dueDate: Date | null
   invoiceNumber: string
   terms: number
   note: string | null

@@ -31,7 +31,8 @@ export class VendorInvoiceResponseDto {
 
   @ApiProperty({ default: '' })
   @IsString()
-  dateDue: string
+  @IsOptional()
+  dueDate: string | null
 
   @ApiProperty({ default: '' })
   @IsString()

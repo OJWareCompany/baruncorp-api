@@ -918,21 +918,21 @@ model ExpensePricings {
 
 model VendorInvoices {
   id                      String    @id @db.VarChar(255)
+  invoiceNumber           String    @map("invoice_number") @db.VarChar(255)
   organizationId          String    @map("organization_id") @db.VarChar(255)
   organizationName        String    @map("organization_name") @db.VarChar(255)
-  daysPastDue             DateTime? @map("days_past_due") @db.DateTime(0)
   invoiceDate             DateTime  @map("invoice_date") @db.DateTime(0)
-  dateDue                 DateTime  @map("date_due") @db.DateTime(0)
-  invoiceNumber           String    @map("invoice_number") @db.VarChar(255)
   terms                   Int       @map("terms") @db.TinyInt
+  dueDate                 DateTime? @map("due_date") @db.DateTime(0)
+  daysPastDue             DateTime? @map("days_past_due") @db.DateTime(0)
   note                    String?   @map("note") @db.Text
   serviceMonth            DateTime  @map("service_month") @db.Date
   subTotal                Decimal   @map("sub_total") @db.Decimal(13, 4)
   total                   Decimal   @map("total") @db.Decimal(13, 4)
   invoiceTotalDifference  Decimal   @map("invoice_total_difference") @db.Decimal(13, 4)
   internalTotalBalanceDue Decimal?  @map("internal_total_balance_due") @db.Decimal(13, 4)
-  createdAt               DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt               DateTime? @default(now()) @map("updated_at") @db.DateTime(0)
+  createdAt               DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
+  updatedAt               DateTime? @default(now()) @map("updated_at") @db.Timestamp(0)
 
   @@map("vendor_invoices")
 }

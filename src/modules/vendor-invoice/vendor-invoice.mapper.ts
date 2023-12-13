@@ -15,7 +15,7 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
       organizationName: props.organizationName,
       daysPastDue: props.daysPastDue,
       invoiceDate: props.invoiceDate,
-      dateDue: props.dateDue,
+      dueDate: props.dueDate,
       invoiceNumber: props.invoiceNumber,
       terms: props.terms,
       note: props.note,
@@ -38,7 +38,7 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
         organizationName: record.organizationName,
         daysPastDue: record.daysPastDue,
         invoiceDate: record.invoiceDate,
-        dateDue: record.dateDue,
+        dueDate: record.dueDate,
         invoiceNumber: record.invoiceNumber,
         terms: record.terms,
         note: record.note,
@@ -60,7 +60,7 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
     response.organizationName = props.organizationName
     response.daysPastDue = props.daysPastDue ? props.daysPastDue.toISOString() : null
     response.invoiceDate = props.invoiceDate.toISOString()
-    response.dateDue = props.dateDue.toISOString()
+    response.dueDate = props.dueDate ? props.dueDate.toISOString() : null
     response.invoiceNumber = props.invoiceNumber
     response.terms = props.terms
     response.note = props.note
