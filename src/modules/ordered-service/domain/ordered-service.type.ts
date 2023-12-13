@@ -26,6 +26,9 @@ export interface CreateOrderedServiceProps {
   mountingType: MountingTypeEnum // TODO: Job의 값이 변경될때 같이 변경되어야함.
   organizationId: string
   organizationName: string
+  projectNumber: string | null
+  projectPropertyOwnerName: string
+  jobName: string
 }
 
 export interface OrderedServiceProps extends CreateOrderedServiceProps {

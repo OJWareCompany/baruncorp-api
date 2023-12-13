@@ -182,27 +182,30 @@ model Service {
 }
 
 model OrderedServices {
-  id                  String          @id @default(uuid()) @db.VarChar(255)
-  organizationId      String          @map("organization_id") @db.VarChar(255)
-  organizationName    String          @map("organization_name") @db.VarChar(255)
-  serviceId           String          @map("service_id") @db.VarChar(255)
-  jobId               String          @map("job_id") @db.VarChar(255)
-  serviceName         String          @map("service_name") @db.VarChar(255)
-  price               Decimal?        @db.Decimal(13, 4)
-  priceOverride       Decimal?        @map("price_override") @db.Decimal(13, 4)
-  status              String?         @db.VarChar(255)
-  doneAt              DateTime?       @map("done_at") @db.DateTime(0)
-  orderedAt           DateTime        @default(now()) @map("ordered_at") @db.DateTime(0)
-  description         String?         @db.Text
-  sizeForRevision     String?         @map("size_for_revision") @db.VarChar(255)
-  projectId           String          @map("project_id") @db.VarChar(255)
-  isRevision          Boolean         @default(false) @map("is_revision")
-  isManualPrice       Boolean         @map("is_manual_price")
-  projectPropertyType String          @map("project_property_type") @db.VarChar(255)
-  mountingType        String          @map("mounting_type") @db.VarChar(255)
-  job                 OrderedJobs     @relation(fields: [jobId], references: [id])
-  service             Service         @relation(fields: [serviceId], references: [id])
-  assignedTasks       AssignedTasks[]
+  id                          String          @id @default(uuid()) @db.VarChar(255)
+  organizationId              String          @map("organization_id") @db.VarChar(255)
+  organizationName            String          @map("organization_name") @db.VarChar(255)
+  serviceId                   String          @map("service_id") @db.VarChar(255)
+  jobId                       String          @map("job_id") @db.VarChar(255)
+  serviceName                 String          @map("service_name") @db.VarChar(255)
+  price                       Decimal?        @db.Decimal(13, 4)
+  priceOverride               Decimal?        @map("price_override") @db.Decimal(13, 4)
+  status                      String?         @db.VarChar(255)
+  doneAt                      DateTime?       @map("done_at") @db.DateTime(0)
+  orderedAt                   DateTime        @default(now()) @map("ordered_at") @db.DateTime(0)
+  description                 String?         @db.Text
+  sizeForRevision             String?         @map("size_for_revision") @db.VarChar(255)
+  projectId                   String          @map("project_id") @db.VarChar(255)
+  isRevision                  Boolean         @default(false) @map("is_revision")
+  isManualPrice               Boolean         @map("is_manual_price")
+  projectPropertyType         String          @map("project_property_type") @db.VarChar(255)
+  mountingType                String          @map("mounting_type") @db.VarChar(255)
+  project_number              String?         @db.VarChar(255)
+  project_property_owner_name String          @db.VarChar(255)
+  job_name                    String          @db.VarChar(255)
+  job                         OrderedJobs     @relation(fields: [jobId], references: [id])
+  service                     Service         @relation(fields: [serviceId], references: [id])
+  assignedTasks               AssignedTasks[]
 
   @@map("ordered_services")
 }
@@ -737,32 +740,36 @@ model Tasks {
 }
 
 model AssignedTasks {
-  id                  String          @id @map("id") @db.VarChar(255)
-  taskId              String          @map("task_id") @db.VarChar(255)
-  taskName            String          @map("task_name") @db.VarChar(255)
-  orderedServiceId    String          @map("ordered_service_id") @db.VarChar(255)
-  serviceId           String          @map("service_id") @db.VarChar(255)
-  serviceName         String          @map("service_name") @db.VarChar(255)
-  projectId           String          @map("project_id") @db.VarChar(255)
-  jobId               String          @map("job_id") @db.VarChar(255)
-  status              String          @map("status") @db.VarChar(255)
-  assigneeId          String?         @map("assignee_id") @db.VarChar(255)
-  assigneeName        String?         @map("assignee_name") @db.VarChar(255)
-  startedAt           DateTime?       @map("started_at") @db.DateTime(0)
-  doneAt              DateTime?       @map("done_at") @db.DateTime(0)
-  duration            Int?            @db.TinyInt
-  organizationId      String          @map("organization_id") @db.VarChar(255)
-  organizationName    String          @map("organization_name") @db.VarChar(255)
-  projectPropertyType String          @map("project_property_type") @db.VarChar(255)
-  mountingType        String          @map("mounting_type") @db.VarChar(255)
-  description         String?         @db.Text
-  cost                Decimal?        @db.Decimal(13, 4)
-  isVendor            Boolean         @map("is_vendor")
-  vendorInvoiceId     String?         @map("vendor_invoice_id") @db.VarChar(255)
-  task                Tasks           @relation(fields: [taskId], references: [id])
-  orderedService      OrderedServices @relation(fields: [orderedServiceId], references: [id])
-  job                 OrderedJobs     @relation(fields: [jobId], references: [id])
-  user                Users?          @relation(fields: [assigneeId], references: [id])
+  id                       String          @id @map("id") @db.VarChar(255)
+  taskId                   String          @map("task_id") @db.VarChar(255)
+  taskName                 String          @map("task_name") @db.VarChar(255)
+  status                   String          @map("status") @db.VarChar(255)
+  cost                     Decimal?        @db.Decimal(13, 4)
+  isRevision               Boolean         @map("is_revision")
+  isVendor                 Boolean         @map("is_vendor")
+  startedAt                DateTime?       @map("started_at") @db.DateTime(0)
+  doneAt                   DateTime?       @map("done_at") @db.DateTime(0)
+  duration                 Int?            @db.TinyInt
+  description              String?         @db.Text
+  vendorInvoiceId          String?         @map("vendor_invoice_id") @db.VarChar(255)
+  assigneeId               String?         @map("assignee_id") @db.VarChar(255)
+  assigneeName             String?         @map("assignee_name") @db.VarChar(255)
+  orderedServiceId         String          @map("ordered_service_id") @db.VarChar(255)
+  serviceId                String          @map("service_id") @db.VarChar(255)
+  serviceName              String          @map("service_name") @db.VarChar(255)
+  projectId                String          @map("project_id") @db.VarChar(255)
+  projectNumber            String?         @map("project_number") @db.VarChar(255)
+  projectPropertyOwnerName String          @map("project_property_owner_name") @db.VarChar(255)
+  projectPropertyType      String          @map("project_property_type") @db.VarChar(255)
+  jobId                    String          @map("job_id") @db.VarChar(255)
+  jobName                  String          @map("job_name") @db.VarChar(255)
+  mountingType             String          @map("mounting_type") @db.VarChar(255)
+  organizationId           String          @map("organization_id") @db.VarChar(255)
+  organizationName         String          @map("organization_name") @db.VarChar(255)
+  task                     Tasks           @relation(fields: [taskId], references: [id])
+  orderedService           OrderedServices @relation(fields: [orderedServiceId], references: [id])
+  job                      OrderedJobs     @relation(fields: [jobId], references: [id])
+  user                     Users?          @relation(fields: [assigneeId], references: [id])
 
   @@map("assigned_tasks")
 }
@@ -933,6 +940,8 @@ model VendorInvoices {
   internalTotalBalanceDue Decimal?  @map("internal_total_balance_due") @db.Decimal(13, 4)
   createdAt               DateTime? @default(now()) @map("created_at") @db.Timestamp(0)
   updatedAt               DateTime? @default(now()) @map("updated_at") @db.Timestamp(0)
+  transaction_type        String?   @db.VarChar(255)
+  count_line_items        Int
 
   @@map("vendor_invoices")
 }

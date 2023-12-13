@@ -10,7 +10,6 @@ import { OrganizationRepositoryPort } from '../../../organization/database/organ
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { ASSIGNED_TASK_REPOSITORY } from '../../../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../../assigned-task/database/assigned-task.repository.port'
-import { startOfMonth } from 'date-fns'
 import { AssignedTaskNotFoundException } from '../../../assigned-task/domain/assigned-task.error'
 
 @CommandHandler(CreateVendorInvoiceCommand)
@@ -48,12 +47,13 @@ export class CreateVendorInvoiceService implements ICommandHandler {
       }, 0), // TODO
       invoiceTotalDifference: 0, // TODO
       internalTotalBalanceDue: 0, // TODO
+      countLineItems: tasksToInvoice.length,
     })
-    // console.log(tasksToInvoice)
-    // console.log(entity)
+
     tasksToInvoice.map((task) => {
       task.invoice(entity.id)
     })
+
     await this.assignTaskRepo.update(tasksToInvoice)
     await this.vendorInvoiceRepo.insert(entity)
     return entity.id

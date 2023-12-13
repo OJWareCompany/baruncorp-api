@@ -37,6 +37,10 @@ export class CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler {
         orderedServiceId: event.aggregateId,
         assigneeId: null,
         assigneeName: null,
+        isRevision: event.isRevision,
+        projectNumber: event.projectNumber,
+        projectPropertyOwnerName: event.projectPropertyOwnerName,
+        jobName: event.jobName,
       })
       return entity
     })

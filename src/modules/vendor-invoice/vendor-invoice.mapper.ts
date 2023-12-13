@@ -26,6 +26,8 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
       internalTotalBalanceDue: props.internalTotalBalanceDue ? new Decimal(props.internalTotalBalanceDue) : null,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
+      transaction_type: props.transactionType,
+      count_line_items: props.countLineItems,
     }
     return record
   }
@@ -47,6 +49,8 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
         total: Number(record.total),
         invoiceTotalDifference: Number(record.invoiceTotalDifference),
         internalTotalBalanceDue: record.internalTotalBalanceDue ? Number(record.internalTotalBalanceDue) : null,
+        transactionType: record.transaction_type,
+        countLineItems: record.count_line_items,
       },
     })
     return entity

@@ -25,6 +25,10 @@ export interface CreateAssignedTaskProps {
   projectPropertyType: ProjectPropertyTypeEnum
   mountingType: MountingTypeEnum
   description: string | null
+  isRevision: boolean
+  projectNumber: string | null
+  projectPropertyOwnerName: string
+  jobName: string
 }
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {

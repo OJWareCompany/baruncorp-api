@@ -15,12 +15,16 @@ import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
+    // @ts-ignore
+    @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
     // @ts-ignore
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
     // @ts-ignore
@@ -36,6 +40,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   async handle(event: JobCreatedDomainEvent) {
     const organization = await this.organizationRepo.findOneOrThrow(event.organizationId)
     const job = await this.jobRepo.findJobOrThrow(event.aggregateId)
+    const project = await this.projectRepo.findProjectOrThrow(job.projectId)
 
     const makeEntities = event.services.map(async (orderedService) => {
       const service = await this.serviceRepo.findOneOrThrow(orderedService.serviceId)
@@ -55,6 +60,9 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
         mountingType: event.mountingType as MountingTypeEnum,
         organizationId: event.organizationId,
         organizationName: event.organizationName,
+        projectNumber: project.projectNumber,
+        projectPropertyOwnerName: project.projectPropertyOwnerName!,
+        jobName: job.jobName,
       })
 
       const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)

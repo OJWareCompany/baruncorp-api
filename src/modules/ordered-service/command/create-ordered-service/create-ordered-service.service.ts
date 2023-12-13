@@ -19,6 +19,8 @@ import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
 import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -33,6 +35,9 @@ export class CreateOrderedServiceService implements ICommandHandler {
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY)
     private readonly organizationRepo: OrganizationRepositoryPort,
+    // @ts-ignore
+    @Inject(PROJECT_REPOSITORY)
+    private readonly projectRepo: ProjectRepositoryPort,
     // @ts-ignore
     @Inject(JOB_REPOSITORY)
     private readonly jobRepo: JobRepositoryPort,
@@ -53,6 +58,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
   async execute(command: CreateOrderedServiceCommand): Promise<AggregateID> {
     const service = await this.serviceRepo.findOneOrThrow(command.serviceId)
     const job = await this.jobRepo.findJobOrThrow(command.jobId)
+    const project = await this.projectRepo.findProjectOrThrow(job.projectId)
     const organization = await this.organizationRepo.findOneOrThrow(job.organizationId)
 
     if (job.invoiceId !== null) {
@@ -76,6 +82,9 @@ export class CreateOrderedServiceService implements ICommandHandler {
       mountingType: job.mountingType as MountingTypeEnum,
       organizationId: job.organizationId,
       organizationName: job.organizationName,
+      projectNumber: project.projectNumber,
+      projectPropertyOwnerName: project.projectPropertyOwnerName!,
+      jobName: job.jobName,
     })
 
     const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)

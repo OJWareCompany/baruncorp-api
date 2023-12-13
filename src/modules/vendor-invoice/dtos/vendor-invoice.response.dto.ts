@@ -1,12 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsNumber, IsOptional, IsString } from 'class-validator'
-import { initialize } from '../../../libs/utils/constructor-initializer'
-import { VendorInvoices } from '@prisma/client'
-import { Decimal } from '@prisma/client/runtime/library'
 
-/**
- * Remove interface after select fields
- */
 export class VendorInvoiceResponseDto {
   @ApiProperty({ default: '' })
   @IsString()
@@ -28,6 +22,14 @@ export class VendorInvoiceResponseDto {
   @ApiProperty({ default: '' })
   @IsString()
   invoiceDate: string
+
+  @ApiProperty({ default: 'Payment' })
+  @IsString()
+  transactionType: string // Payment, Vendor Credit
+
+  @ApiProperty({ default: 100 })
+  @IsNumber()
+  countLineItems: number
 
   @ApiProperty({ default: '' })
   @IsString()

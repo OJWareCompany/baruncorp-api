@@ -40,6 +40,9 @@ import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { JobMapper } from '../ordered-job/job.mapper'
 import { InvoiceMapper } from '../invoice/invoice.mapper'
+import { PROJECT_REPOSITORY } from '../project/project.di-token'
+import { ProjectRepository } from '../project/database/project.repository'
+import { ProjectMapper } from '../project/project.mapper'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -74,6 +77,7 @@ const repositories: Provider[] = [
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
   { provide: JOB_REPOSITORY, useClass: JobRepository },
   { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
+  { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
 ]
 
 const domainServices: Provider[] = [ServiceInitialPriceManager]
@@ -87,6 +91,7 @@ const mappers: Provider[] = [
   JobMapper,
   OrderedServiceMapper,
   InvoiceMapper,
+  ProjectMapper,
 ]
 
 @Module({

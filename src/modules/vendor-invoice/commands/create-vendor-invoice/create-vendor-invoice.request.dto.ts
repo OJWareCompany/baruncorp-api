@@ -4,11 +4,11 @@ import { InvoiceTermsEnum } from '../../../invoice/domain/invoice.type'
 import { Type } from 'class-transformer'
 
 export class CreateVendorInvoiceRequestDto {
-  @ApiProperty({ default: '' })
+  @ApiProperty({ default: 'asda' })
   @IsString()
   readonly organizationId: string
 
-  @ApiProperty({ default: '' })
+  @ApiProperty({ default: new Date() })
   @IsDate()
   @Type(() => Date)
   readonly invoiceDate: Date = new Date()

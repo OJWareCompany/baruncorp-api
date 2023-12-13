@@ -53,9 +53,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return job
   }
 
+  get jobName() {
+    return this.props.jobName
+  }
+
   get organizationId() {
     return this.props.organizationId
   }
+
   get organizationName() {
     return this.props.organizationName
   }

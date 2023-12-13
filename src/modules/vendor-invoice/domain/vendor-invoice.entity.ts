@@ -11,6 +11,7 @@ export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
     const props: VendorInvoiceProps = {
       ...create,
       dueDate: addDays(create.invoiceDate, create.terms),
+      transactionType: null,
     }
     return new VendorInvoiceEntity({ id, props })
   }

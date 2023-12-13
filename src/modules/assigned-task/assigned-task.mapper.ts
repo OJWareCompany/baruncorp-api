@@ -5,6 +5,7 @@ import { AssignedTaskResponseDto } from './dtos/assigned-task.response.dto'
 import { AssignedTaskEntity } from './domain/assigned-task.entity'
 import { AssignedTaskStatus } from './domain/assigned-task.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
+import { VendorInvoiceLineItemResponse } from '../vendor-invoice/dtos/vendor-invoice-line-item.response.dto'
 
 @Injectable()
 export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTasks, AssignedTaskResponseDto> {
@@ -33,6 +34,10 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       cost: props.cost ? new Prisma.Decimal(props.cost) : null,
       isVendor: props.isVendor,
       vendorInvoiceId: props.vendorInvoiceId,
+      isRevision: props.isRevision,
+      projectNumber: props.projectNumber,
+      projectPropertyOwnerName: props.projectPropertyOwnerName,
+      jobName: props.jobName,
     }
     return record
   }
@@ -62,6 +67,10 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         cost: record.cost ? Number(record.cost) : null,
         isVendor: record.isVendor,
         vendorInvoiceId: record.vendorInvoiceId,
+        isRevision: record.isRevision,
+        projectNumber: record.projectNumber,
+        projectPropertyOwnerName: record.projectPropertyOwnerName,
+        jobName: record.jobName,
       },
     })
     return entity
@@ -93,5 +102,26 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       vendorInvoiceId: result.vendorInvoiceId,
       serviceId: result.serviceId,
     })
+  }
+
+  toResponseForVendorLineItem(entity: AssignedTaskEntity): VendorInvoiceLineItemResponse {
+    const response = new VendorInvoiceLineItemResponse()
+    response.vendorInvoiceId = entity.getProps().vendorInvoiceId!
+    response.taskId = entity.getProps().taskId
+    response.assgineeId = entity.getProps().assigneeId!
+    response.assgineeName = entity.getProps().assigneeName!
+    response.clientOrganizationId = entity.getProps().organizationId
+    response.clientOrganizationName = entity.getProps().organizationName
+    response.projectId = entity.getProps().projectId
+    response.projectNumber = entity.getProps().projectNumber
+    response.jobDescription = entity.getProps().jobName
+    response.propertyOwnerName = entity.getProps().projectPropertyOwnerName
+    response.serviceName = entity.getProps().serviceName
+    response.serviceDescription = entity.getProps().description
+    response.taskExpenseTotal = entity.getProps().cost!
+    response.isRevision = entity.getProps().isRevision
+    response.createdAt = entity.getProps().createdAt.toISOString()
+    response.doneAt = entity.getProps().doneAt!.toISOString()
+    return response
   }
 }

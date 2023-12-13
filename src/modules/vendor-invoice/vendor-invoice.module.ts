@@ -25,6 +25,12 @@ import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
 import { FindVendorToInvoicePaginatedHttpController } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.http.controller'
 import { FindVendorToInvoiceLineItemsPaginatedHttpController } from './queries/find-vendor-to-invoice-line-items-paginated/find-vendor-to-invoice-line-items.paginated.http.controller'
 import { FindVendorToInvoicePaginatedQueryHandler } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.query-handler'
+import { FindVendorInvoiceLineItemQueryHandler } from './queries/find-vendor-invoice-line-item/find-vendor-invoice-line-item.query-handler'
+import { FindVendorToInvoiceLineItemsQueryHandler } from './queries/find-vendor-to-invoice-line-items-paginated/find-vendor-to-invoice-line-items.paginated.query-handler'
+import { PROJECT_REPOSITORY } from '../project/project.di-token'
+import { ProjectRepository } from '../project/database/project.repository'
+import { ProjectMapper } from '../project/project.mapper'
+import { FindVendorInvoiceLineItemHttpController } from './queries/find-vendor-invoice-line-item/find-vendor-invoice-line-item.http.controller'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -34,12 +40,15 @@ const httpControllers = [
   FindVendorInvoicePaginatedHttpController,
   FindVendorToInvoicePaginatedHttpController,
   FindVendorToInvoiceLineItemsPaginatedHttpController,
+  FindVendorInvoiceLineItemHttpController,
 ]
 const commandHandlers: Provider[] = [CreateVendorInvoiceService, UpdateVendorInvoiceService, DeleteVendorInvoiceService]
 const queryHandlers: Provider[] = [
   FindVendorInvoiceQueryHandler,
   FindVendorInvoicePaginatedQueryHandler,
   FindVendorToInvoicePaginatedQueryHandler,
+  FindVendorInvoiceLineItemQueryHandler,
+  FindVendorToInvoiceLineItemsQueryHandler,
 ]
 const repositories: Provider[] = [
   {
@@ -54,9 +63,20 @@ const repositories: Provider[] = [
     provide: ASSIGNED_TASK_REPOSITORY,
     useClass: AssignedTaskRepository,
   },
+  {
+    provide: PROJECT_REPOSITORY,
+    useClass: ProjectRepository,
+  },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [VendorInvoiceMapper, UserMapper, UserRoleMapper, OrganizationMapper, AssignedTaskMapper]
+const mappers: Provider[] = [
+  VendorInvoiceMapper,
+  UserMapper,
+  UserRoleMapper,
+  OrganizationMapper,
+  AssignedTaskMapper,
+  ProjectMapper,
+]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

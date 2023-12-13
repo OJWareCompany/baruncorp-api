@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 import { VendorInvoiceResponseDto } from './vendor-invoice.response.dto'
 

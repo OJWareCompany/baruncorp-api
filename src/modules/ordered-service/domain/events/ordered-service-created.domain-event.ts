@@ -13,6 +13,10 @@ export class OrderedServiceCreatedDomainEvent extends DomainEvent {
   readonly mountingType: MountingTypeEnum
   readonly description: string | null
   readonly orderedAt: Date
+  readonly isRevision: boolean
+  readonly projectNumber: string | null
+  readonly projectPropertyOwnerName: string
+  readonly jobName: string
   constructor(props: DomainEventProps<OrderedServiceCreatedDomainEvent>) {
     super(props)
     initialize(this, props)

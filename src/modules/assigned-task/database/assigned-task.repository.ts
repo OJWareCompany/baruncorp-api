@@ -10,6 +10,7 @@ import { AssignedTaskNotFoundException } from '../domain/assigned-task.error'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
+import { PaginatedQueryBase } from '../../../libs/ddd/query.base'
 
 @Injectable()
 export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
@@ -61,9 +62,15 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     return record
   }
 
-  async findToVendorInvoice(organizationId: string, serviceMonth: Date): Promise<AssignedTaskEntity[]> {
+  async findToVendorInvoice(
+    organizationId: string,
+    serviceMonth: Date,
+    query?: PaginatedQueryBase,
+  ): Promise<AssignedTaskEntity[]> {
     // cost not null, completed, is vendor, date
     const records = await this.prismaService.assignedTasks.findMany({
+      ...(query && { skip: query.offset }),
+      ...(query && { take: query.limit }),
       where: {
         organizationId: organizationId,
         status: AssignedTaskStatusEnum.Completed,
