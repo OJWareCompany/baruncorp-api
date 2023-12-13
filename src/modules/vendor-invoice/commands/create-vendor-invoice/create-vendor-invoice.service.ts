@@ -31,15 +31,11 @@ export class CreateVendorInvoiceService implements ICommandHandler {
     const tasksToInvoice = await this.assignTaskRepo.findToVendorInvoice(command.organizationId, command.serviceMonth)
     if (!tasksToInvoice.length) throw new AssignedTaskNotFoundException()
 
-    const dueDate: Date = startOfMonth(new Date())
-    dueDate.setDate(dueDate.getDate() + command.terms)
-
     const entity = VendorInvoiceEntity.create({
       organizationId: command.organizationId,
       organizationName: organization.name,
       daysPastDue: null,
       invoiceDate: command.invoiceDate,
-      dueDate: dueDate,
       invoiceNumber: command.invoiceNumber,
       terms: command.terms,
       note: command.note,

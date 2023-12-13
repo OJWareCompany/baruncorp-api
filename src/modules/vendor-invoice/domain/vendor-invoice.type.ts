@@ -3,7 +3,6 @@ export interface CreateVendorInvoiceProps {
   organizationName: string
   daysPastDue: Date | null
   invoiceDate: Date
-  dueDate: Date | null
   invoiceNumber: string
   terms: number
   note: string | null
@@ -13,4 +12,6 @@ export interface CreateVendorInvoiceProps {
   invoiceTotalDifference: number
   internalTotalBalanceDue: number | null
 }
-export type VendorInvoiceProps = CreateVendorInvoiceProps
+export interface VendorInvoiceProps extends CreateVendorInvoiceProps {
+  dueDate: Date | null
+}
