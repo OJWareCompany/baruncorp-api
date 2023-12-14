@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsBooleanString, IsEnum, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { JobStatusEnum } from '../../domain/job.type'
+import { Transform, Type } from 'class-transformer'
 
 export enum USING_LIKE {
   description = 'Using LIKE (중간 값 검색)',
@@ -40,6 +41,10 @@ export class FindJobPaginatedRequestDto {
 
   @ApiProperty({ default: false })
   @IsBoolean()
+  @Transform(({ value }) => {
+    const isBoolean = ['true', 'false'].includes(value)
+    return isBoolean ? value === 'true' : null
+  })
   @IsOptional()
   readonly isExpedited?: boolean | null
 }

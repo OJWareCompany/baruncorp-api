@@ -3,6 +3,7 @@ import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
 import { USING_LIKE } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { Transform } from 'class-transformer'
 
 export class FindOrderedServicePaginatedRequestDto {
   @ApiProperty({ default: OrderedServiceStatusEnum.Completed, enum: OrderedServiceStatusEnum })
@@ -22,6 +23,10 @@ export class FindOrderedServicePaginatedRequestDto {
 
   @ApiProperty({ default: false })
   @IsBoolean()
+  @Transform(({ value }) => {
+    const isBoolean = ['true', 'false'].includes(value)
+    return isBoolean ? value === 'true' : null
+  })
   @IsOptional()
   readonly isRevision?: boolean | null
 

@@ -3,6 +3,7 @@ import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { USING_LIKE } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
+import { Transform } from 'class-transformer'
 
 export class FindAssignedTaskPaginatedRequestDto {
   @ApiProperty({ default: '' })
@@ -49,10 +50,19 @@ export class FindAssignedTaskPaginatedRequestDto {
 
   @ApiProperty({ default: false })
   @IsBoolean()
+  @Transform(({ value }) => {
+    const isBoolean = ['true', 'false'].includes(value)
+    return isBoolean ? value === 'true' : null
+  })
   @IsOptional()
   readonly isVendor?: boolean | null
+
   @ApiProperty({ default: false })
   @IsBoolean()
+  @Transform(({ value }) => {
+    const isBoolean = ['true', 'false'].includes(value)
+    return isBoolean ? value === 'true' : null
+  })
   @IsOptional()
   readonly isRevision?: boolean | null
 }
