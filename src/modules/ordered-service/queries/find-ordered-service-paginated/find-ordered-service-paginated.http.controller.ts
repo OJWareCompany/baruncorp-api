@@ -1,19 +1,29 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Param, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { OrderedServiceResponseDto } from '../../dtos/ordered-service.response.dto'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
-import { FindOrderedServiceRequestDto } from './find-ordered-service.request.dto'
-import { FindOrderedServiceQuery, FindOrderedServiceQueryReturnType } from './find-ordered-service.query-handler'
+import { FindOrderedServicePaginatedRequestDto } from './find-ordered-service-paginated.request.dto'
+import {
+  FindOrderedServiceQuery,
+  FindOrderedServiceQueryReturnType as FindOrderedServicePaginatedQueryReturnType,
+} from './find-ordered-service-paginated.query-handler'
+import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 
 @Controller('ordered-services')
-export class FindOrderedServiceHttpController {
+export class FindOrderedServicePaginatedHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get(':orderedServiceId')
-  async get(@Param() request: FindOrderedServiceRequestDto): Promise<OrderedServiceResponseDto> {
-    const command = new FindOrderedServiceQuery(request)
+  @Get('')
+  async get(
+    @Param() request: FindOrderedServicePaginatedRequestDto,
+    @Query() queryParams: PaginatedQueryRequestDto,
+  ): Promise<OrderedServiceResponseDto> {
+    const command = new FindOrderedServiceQuery({
+      ...queryParams,
+      ...request,
+    })
 
-    const result: FindOrderedServiceQueryReturnType = await this.queryBus.execute(command)
+    const result: FindOrderedServicePaginatedQueryReturnType = await this.queryBus.execute(command)
     return new OrderedServiceResponseDto({
       id: result.id,
       serviceName: result.serviceName,

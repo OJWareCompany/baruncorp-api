@@ -3,7 +3,6 @@ import { QueryBus } from '@nestjs/cqrs'
 import { FindJobToInvoiceRequestParamDto } from './find-job-to-invoice.request.param.dto'
 import { FindJobToInvoiceQuery } from './find-job-to-invoice.query-handler'
 import { JobMapper } from '../../job.mapper'
-import { LineItem } from '../../../invoice/dtos/invoice.response.dto'
 import { JobToInvoiceResponseDto } from '../../dtos/job-to-invoice.response.dto'
 
 @Controller('jobs-to-invoice')

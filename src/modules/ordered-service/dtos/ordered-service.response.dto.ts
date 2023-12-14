@@ -24,6 +24,15 @@ export class OrderedServiceResponseDto {
   @ApiProperty()
   serviceId: string
 
+  @ApiProperty()
+  serviceName: string
+
+  @ApiProperty()
+  organizationName: string
+
+  @ApiProperty()
+  jobName: string
+
   @ApiProperty({ type: Number, nullable: true })
   price: number | null
 
@@ -33,8 +42,8 @@ export class OrderedServiceResponseDto {
   @ApiProperty()
   jobId: string
 
-  @ApiProperty({ default: OrderedServiceStatusEnum.Completed, enum: OrderedServiceStatusEnum, nullable: true })
-  status: OrderedServiceStatusEnum | null
+  @ApiProperty({ default: OrderedServiceStatusEnum.Completed, enum: OrderedServiceStatusEnum })
+  status: OrderedServiceStatusEnum
 
   @ApiProperty({ nullable: true })
   orderedAt: string | null
@@ -47,6 +56,12 @@ export class OrderedServiceResponseDto {
 
   @ApiProperty()
   assignedTasks: OrderedServiceAssignedTaskResponse[]
+
+  @ApiProperty()
+  projectPropertyType: string
+
+  @ApiProperty()
+  mountingType: string
 
   constructor(props: OrderedServiceResponseDto) {
     initialize(this, props)

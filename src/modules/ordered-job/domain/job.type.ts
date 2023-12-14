@@ -23,6 +23,7 @@ export interface CreateJobProps {
   organizationId: string
   organizationName: string
   projectId: string
+  projectNumber: string | null
   mountingType: MountingTypeEnum
   propertyFullAddress: string
   totalOfJobs: number

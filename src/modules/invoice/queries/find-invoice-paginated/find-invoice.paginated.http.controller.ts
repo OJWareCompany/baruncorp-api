@@ -26,7 +26,7 @@ export class FindInvoicePaginatedHttpController {
       ...result,
       items: result.items.map((invoice) => ({
         id: invoice.id,
-        invoiceName: invoice.invoiceDate.toISOString(),
+        // invoiceName: invoice.invoiceDate.toISOString(),
         status: invoice.status,
         invoiceDate: invoice.invoiceDate.toISOString(),
         terms: invoice.terms,

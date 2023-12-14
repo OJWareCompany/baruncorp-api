@@ -104,9 +104,9 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
 
     return {
       id: invoice.id,
-      invoiceName: organization
-        ? organization.name + ' ' + formatDate(invoice.serviceMonth)
-        : formatDate(invoice.serviceMonth),
+      // invoiceName: organization
+      //   ? organization.name + ' ' + formatDate(invoice.serviceMonth)
+      //   : formatDate(invoice.serviceMonth),
       status: invoice.status,
       invoiceDate: invoice.invoiceDate.toISOString(),
       terms: invoice.terms,

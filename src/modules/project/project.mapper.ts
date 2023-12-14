@@ -17,6 +17,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
 
     return {
       id: entity.id,
+      organizationName: props.organizationName,
       projectNumber: props.projectNumber,
       propertyFullAddress: props.projectPropertyAddress.fullAddress,
       propertyAddressStreet1: props.projectPropertyAddress.street1,
@@ -98,6 +99,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         // record.mailingAddressForWetStamps
         mailingFullAddressForWetStamp: record.mailingAddressForWetStamps,
         clientOrganizationId: record.clientOrganizationId,
+        organizationName: record.organizationName,
         projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
           stateId: record.stateId,
           countyId: record.countyId,

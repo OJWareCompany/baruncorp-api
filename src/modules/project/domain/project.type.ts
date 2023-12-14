@@ -21,22 +21,15 @@ export interface CreateProjectProps {
   projectNumber: string | null
   projectPropertyAddress: Address
   clientOrganizationId: string
+  organizationName: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
 }
 
-export interface ProjectProps {
-  projectPropertyType: ProjectPropertyType
-  projectPropertyOwner: string | null
-  projectNumber: string | null
-  projectPropertyAddress: Address
-  clientOrganizationId: string
-  projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
+export interface ProjectProps extends CreateProjectProps {
   mountingType: MountingType | null
-  updatedBy: string
   hasHistoryElectricalPEStamp: boolean
   hasHistoryStructuralPEStamp: boolean
-
   systemSize: number | null
   mailingFullAddressForWetStamp: string | null
   totalOfJobs: number

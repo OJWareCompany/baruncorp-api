@@ -491,6 +491,7 @@ model OrderedJobNotes {
 model OrderedJobs {
   id                                            String            @id @map("id") @db.VarChar(255)
   createdAt                                     DateTime          @map("created_at") @db.DateTime(0)
+  project_number                                String?           @db.VarChar(255)
   invoiceId                                     String?           @map("invoice_id") @db.VarChar(255)
   revisionSize                                  String?           @map("revision_size") @db.VarChar(255)
   pricingType                                   String?           @map("pricing_type") @db.VarChar(255)
@@ -600,6 +601,7 @@ model OrderedProjects {
   propertyAddressState                          String         @map("property_address_state") @db.VarChar(255)
   propertyAddressPostalCode                     String         @map("property_address_postal_code") @db.VarChar(10)
   propertyOwnerName                             String?        @map("property_owner_name") @db.VarChar(255)
+  organizationName                              String         @map("organization_name") @db.VarChar(255)
   masterLogUpload                               Boolean?       @map("master_log_upload")
   ahjAutomationComplete                         Boolean?       @map("ahj_automation_complete")
   updatedAt                                     DateTime       @updatedAt @map("updated_at") @db.DateTime(0)

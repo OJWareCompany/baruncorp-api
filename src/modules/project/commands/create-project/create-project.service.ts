@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { Inject, NotFoundException } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { GEOGRAPHY_REPOSITORY } from '../../../geography/geography.di-token'
@@ -17,6 +17,8 @@ import { CensusResponseDto } from '../../infra/census/census.response.dto'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectEntity } from '../../domain/project.entity'
 import { CreateProjectCommand } from './create-project.command'
+import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
+import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
@@ -24,6 +26,8 @@ import { CreateProjectCommand } from './create-project.command'
 export class CreateProjectService implements ICommandHandler {
   // TODO: ProjectRepositoryPort = project만 조회하는게 아닌, project 컨텍스트에 필요한 모든 reopsitory 기능을 가지고있어야하는것으로 기억함.
   constructor(
+    // @ts-ignore
+    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
     // @ts-ignore
     @Inject(PROJECT_REPOSITORY) private readonly projectRepository: ProjectRepositoryPort,
     // @ts-ignore
@@ -39,6 +43,8 @@ export class CreateProjectService implements ICommandHandler {
     if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
     await this.generateGeographyAndAhjNotes(censusResponse)
 
+    const organization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
+
     const entity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
@@ -47,6 +53,7 @@ export class CreateProjectService implements ICommandHandler {
         ...command.projectPropertyAddress,
       }),
       clientOrganizationId: command.clientOrganizationId,
+      organizationName: organization.name,
       updatedBy: command.userId,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
         stateId: censusResponse.state.geoId, // 무조건 결과값 받아온다고 가정

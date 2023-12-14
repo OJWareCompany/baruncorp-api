@@ -111,9 +111,6 @@ export class InvoiceResponseDto {
   @IsString()
   readonly id: string
 
-  @ApiProperty()
-  readonly invoiceName: string
-
   @ApiProperty({ enum: InvoiceStatusEnum })
   readonly status: string
 

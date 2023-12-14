@@ -28,6 +28,9 @@ import { JobMapper } from '../ordered-job/job.mapper'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
 import { CensusSearchCoordinatesService } from './infra/census/census.search.coordinates.request.dto'
+import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
+import { OrganizationRepository } from '../organization/database/organization.repository'
+import { OrganizationMapper } from '../organization/organization.mapper'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -59,10 +62,11 @@ const repositories: Provider[] = [
   { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
   { provide: JOB_REPOSITORY, useClass: JobRepository },
   { provide: USER_REPOSITORY, useClass: UserRepository },
+  { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
 ]
 
 // 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
-const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMapper]
+const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMapper, OrganizationMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

@@ -65,6 +65,7 @@ export class CreateJobService implements ICommandHandler {
       }),
       updatedBy: orderer.firstName + ' ' + orderer.lastName,
       projectId: command.projectId,
+      projectNumber: project.projectNumber,
       isExpedited: command.isExpedited,
       mountingType: command.mountingType,
       totalOfJobs: project.totalOfJobs,

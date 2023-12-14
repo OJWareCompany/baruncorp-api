@@ -1,18 +1,16 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { OrderedJobs, OrderedProjects, Organizations } from '@prisma/client'
+import { OrderedProjects, Organizations } from '@prisma/client'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
+import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 
 export class FindProjectsQuery extends PaginatedQueryBase {
-  readonly propertyType?: string | null
-
+  readonly organizationName?: string | null
   readonly projectNumber?: string | null
-
   readonly propertyFullAddress?: string | null
-
-  readonly organizationId?: string | null
+  readonly propertyType?: ProjectPropertyTypeEnum | null
 
   constructor(props: PaginatedParams<FindProjectsQuery>) {
     super(props)
@@ -33,15 +31,17 @@ export class FindProjectsQueryHandler implements IQueryHandler {
   async execute(
     query: FindProjectsQuery,
   ): Promise<Paginated<{ organization: Organizations | null } & OrderedProjects>> {
+    const condition = {
+      ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
+      ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
+      ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
+      ...(query.propertyType && { projectPropertyType: query.propertyType }),
+    }
+
     const records: ({
       organization: Organizations | null
     } & OrderedProjects)[] = await this.prismaService.orderedProjects.findMany({
-      where: {
-        ...(query.propertyType && { projectPropertyType: query.propertyType }),
-        ...(query.projectNumber && { projectNumber: query.projectNumber }),
-        ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
-        ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
-      },
+      where: condition,
       include: {
         organization: true,
       },
@@ -50,20 +50,13 @@ export class FindProjectsQueryHandler implements IQueryHandler {
       skip: query.offset,
     })
 
-    const totalCount = await this.prismaService.orderedProjects.count({
-      where: {
-        ...(query.propertyType && { projectPropertyType: query.propertyType }),
-        ...(query.projectNumber && { projectNumber: query.projectNumber }),
-        ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
-        ...(query.organizationId && { clientOrganizationId: { contains: query.organizationId } }),
-      },
-    })
+    const totalCount = await this.prismaService.orderedProjects.count({ where: condition })
 
     return new Paginated({
-      items: records,
-      totalCount: totalCount,
       pageSize: query.limit,
       page: query.page,
+      items: records,
+      totalCount: totalCount,
     })
   }
 }

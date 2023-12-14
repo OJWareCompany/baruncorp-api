@@ -901,15 +901,20 @@ export interface OrderedServiceAssignedTaskResponse {
 export interface OrderedServiceResponseDto {
   id: string
   serviceId: string
+  serviceName: string
+  organizationName: string
+  jobName: string
   price: number | null
   priceOrverride: number | null
   jobId: string
   /** @default "Completed" */
-  status: 'Pending' | 'Completed' | 'Canceled' | null
+  status: 'Pending' | 'Completed' | 'Canceled'
   orderedAt: string | null
   doneAt: string | null
   isRevision: boolean
   assignedTasks: OrderedServiceAssignedTaskResponse[]
+  projectPropertyType: string
+  mountingType: string
 }
 
 export interface UpdateManualPriceRequestDto {
@@ -1037,7 +1042,6 @@ export interface InvoicePayments {
 
 export interface InvoiceResponseDto {
   id: string
-  invoiceName: string
   status: 'Unissued' | 'Issued' | 'Paid'
   invoiceDate: string
   terms: 21 | 30
@@ -1309,7 +1313,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-13T22:14:38.291Z"
+   * @default "2023-12-14T09:14:36.264Z"
    */
   invoiceDate: string
   /**
@@ -1571,14 +1575,23 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
 }
 
 export interface FindProjectsHttpControllerFindUsersParams {
-  /** @default "Residential" */
-  propertyType?: string | null
-  /** @default null */
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  organizationName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default null
+   */
   projectNumber?: string | null
-  /** @default "3480 Northwest 33rd Court" */
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default "3480 Northwest 33rd Court"
+   */
   propertyFullAddress?: string | null
-  /** @default "" */
-  organizationId?: string | null
+  /** @default "Residential" */
+  propertyType?: 'Residential' | 'Commercial' | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1594,12 +1607,29 @@ export interface FindProjectsHttpControllerFindUsersParams {
 }
 
 export interface FindJobPaginatedHttpControllerFindJobParams {
-  /** @default "Residential" */
-  propertyType?: string | null
-  /** @default "3480 Northwest 33rd Court" */
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default "3480 Northwest 33rd Court"
+   */
   jobName?: string | null
-  /** @default "" */
-  projectId?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  projectNumber?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  propertyFullAddress?: string | null
+  /** @default "Commercial" */
+  propertyPropertyType?: 'Residential' | 'Commercial' | null
+  /** @default "Completed" */
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  /** @default "Ground Mount" */
+  mountingType?: 'Roof Mount' | 'Ground Mount' | null
+  /** @default false */
+  isExpedited?: boolean | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1671,7 +1701,42 @@ export interface FindTaskPaginatedHttpControllerGetParams {
 
 export interface FindAssignedTaskPaginatedHttpControllerGetParams {
   /** @default "" */
-  jobId: string
+  projectNumber?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  jobName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  assigneeName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  taskName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  serviceName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  organizationName?: string | null
+  /** @default "Completed" */
+  status?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | null
+  /** @default "Commercial" */
+  projectPropertyType?: 'Residential' | 'Commercial' | null
+  /** @default "Ground Mount" */
+  mountingType?: 'Roof Mount' | 'Ground Mount' | null
+  /** @default false */
+  isVendor?: boolean | null
+  /** @default false */
+  isRevision?: boolean | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1767,8 +1832,13 @@ export interface FindCreatableExpensePricingHttpControllerGetParams {
 }
 
 export interface FindVendorInvoicePaginatedHttpControllerGetParams {
-  /** @default "BarunCorp" */
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
   organizationName?: string | null
+  /** @default "Issued" */
+  status?: 'Unissued' | 'Issued' | 'Paid' | null
   /**
    * Specifies a limit of returned records
    * @default 20

@@ -23,6 +23,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     const props = entity.getProps()
     return {
       id: props.id,
+      project_number: props.projectId,
       invoiceId: props.invoiceId,
       revisionSize: props.revisionSize,
       propertyAddress: props.propertyFullAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
@@ -173,6 +174,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: new Date(record.updatedAt),
       props: {
         projectId: record.projectId,
+        projectNumber: record.project_number,
         invoiceId: record.invoiceId,
         projectType: record.projectType as ProjectPropertyTypeEnum,
         pricingType: record.pricingType as PricingTypeEnum | null,

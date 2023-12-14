@@ -1,24 +1,26 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsOptional, IsString } from 'class-validator'
+import { USING_LIKE } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
+import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 
 export class FindProjectsRequestDto {
-  @ApiProperty({ default: 'Residential' })
+  @ApiProperty({ default: '', description: USING_LIKE.description })
   @IsString()
   @IsOptional()
-  readonly propertyType?: string | null
+  readonly organizationName?: string | null
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: null, description: USING_LIKE.description })
   @IsString()
   @IsOptional()
   readonly projectNumber?: string | null
 
-  @ApiProperty({ default: '3480 Northwest 33rd Court' })
+  @ApiProperty({ default: '3480 Northwest 33rd Court', description: USING_LIKE.description })
   @IsString()
   @IsOptional()
   readonly propertyFullAddress?: string | null
 
-  @ApiProperty({ default: '' })
-  @IsString()
+  @ApiProperty({ default: ProjectPropertyTypeEnum.Residential, enum: ProjectPropertyTypeEnum })
+  @IsEnum(ProjectPropertyTypeEnum)
   @IsOptional()
-  readonly organizationId?: string | null
+  readonly propertyType?: ProjectPropertyTypeEnum | null
 }

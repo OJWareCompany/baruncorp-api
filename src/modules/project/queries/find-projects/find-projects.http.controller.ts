@@ -28,7 +28,6 @@ export class FindProjectsHttpController {
       propertyType: searchQuery.propertyType,
       projectNumber: searchQuery.projectNumber,
       propertyFullAddress: searchQuery.propertyFullAddress,
-      organizationId: searchQuery.organizationId,
       limit: queryParams?.limit,
       page: queryParams?.page,
     })
