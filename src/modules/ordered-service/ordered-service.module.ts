@@ -43,6 +43,7 @@ import { InvoiceMapper } from '../invoice/invoice.mapper'
 import { PROJECT_REPOSITORY } from '../project/project.di-token'
 import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
+import { FindOrderedServicePaginatedHttpController } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.http.controller'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -53,6 +54,7 @@ const httpControllers = [
   ReactivateOrderedServiceHttpController,
   UpdateManualPriceHttpController,
   UpdateRevisionSizeHttpController,
+  FindOrderedServicePaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateOrderedServiceService,
@@ -63,7 +65,7 @@ const commandHandlers: Provider[] = [
   UpdateManualPriceService,
   UpdateRevisionSizeService,
 ]
-const queryHandlers: Provider[] = [FindOrderedServiceQueryHandler]
+const queryHandlers: Provider[] = [FindOrderedServiceQueryHandler, FindOrderedServiceQueryHandler]
 const eventHandlers: Provider[] = [
   CreateOrderedServiceWhenJobIsCreatedEventHandler,
   CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler,

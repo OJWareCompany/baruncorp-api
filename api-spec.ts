@@ -1313,7 +1313,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-14T09:14:36.264Z"
+   * @default "2023-12-14T09:52:06.869Z"
    */
   invoiceDate: string
   /**
@@ -1682,6 +1682,44 @@ export interface FindServicePaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
+}
+
+export interface FindOrderedServicePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+  /** @default "Completed" */
+  orderedServiceStatus?: 'Pending' | 'Completed' | 'Canceled' | null
+  /** @default "Commercial" */
+  projectPropertyType?: 'Residential' | 'Commercial' | null
+  /** @default "Ground Mount" */
+  mountingType?: 'Roof Mount' | 'Ground Mount' | null
+  /** @default false */
+  isRevision?: boolean | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  serviceName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  organizationName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  jobName?: string | null
 }
 
 export interface FindTaskPaginatedHttpControllerGetParams {
@@ -2953,6 +2991,33 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOrderedServicePaginatedHttpControllerGet
+     * @request GET:/ordered-services
+     */
+    findOrderedServicePaginatedHttpControllerGet: (
+      {
+        orderedServiceStatus,
+        projectPropertyType,
+        mountingType,
+        isRevision,
+        serviceName,
+        organizationName,
+        jobName,
+        ...query
+      }: FindOrderedServicePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<OrderedServiceResponseDto, any>({
+        path: `/ordered-services`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),
