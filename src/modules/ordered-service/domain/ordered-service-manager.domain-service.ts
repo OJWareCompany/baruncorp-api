@@ -5,6 +5,7 @@ import { ServiceEntity } from '../../service/domain/service.entity'
 import { OrderedServiceEntity } from './ordered-service.entity'
 import { OrderedServiceSizeForRevisionEnum } from './ordered-service.type'
 import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
+import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 @Injectable()
 export class ServiceInitialPriceManager {
@@ -56,6 +57,9 @@ export class ServiceInitialPriceManager {
     service: ServiceEntity,
     customPricing: CustomPricingEntity | null,
   ): OrderedServiceSizeForRevisionEnum | null {
+    if (!orderedService.isRevision || orderedService.projectPropertyType !== ProjectPropertyTypeEnum.Residential) {
+      return null
+    }
     if (orderedService.sizeForRevision) return orderedService.sizeForRevision
 
     // 이 로직은 애초에 OrderedServiceEntity가 preOrderedServices를 VO로서 가지고 있었어야했나?
