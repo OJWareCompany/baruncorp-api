@@ -33,7 +33,7 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
 
     return residentialFlatdPrice
       ? ResidentialNewServicePricingTypeEnum.flat
-      : this.props.residentialNewServiceTiers.length > 1
+      : !!this.props.residentialNewServiceTiers.length
       ? ResidentialNewServicePricingTypeEnum.tier
       : null
   }
