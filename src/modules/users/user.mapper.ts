@@ -10,7 +10,7 @@ import { Position } from './domain/value-objects/position.value-object'
 import { License } from './domain/value-objects/license.value-object'
 import { Service } from './domain/value-objects/service.value-object'
 import { Task } from './domain/value-objects/task.value-object'
-import { LicenseType } from './user-license.type'
+import { LicenseTypeEnum } from './user-license.type'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 
 @Injectable()

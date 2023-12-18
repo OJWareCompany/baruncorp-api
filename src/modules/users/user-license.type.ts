@@ -2,7 +2,7 @@ import { UserName } from './domain/value-objects/user-name.vo'
 import { State } from './domain/value-objects/state.vo'
 
 // export type LicenseType =
-export enum LicenseType {
+export enum LicenseTypeEnum {
   Electrical = 'Electrical',
   Structural = 'Structural',
 }
@@ -11,7 +11,7 @@ export enum LicenseType {
 export interface LicenseProps {
   userId: string
   userName: UserName
-  type: LicenseType
+  type: LicenseTypeEnum
   stateEntity: State
   priority: number | null
   // issuedDate: Date
@@ -21,7 +21,7 @@ export interface LicenseProps {
 export interface CreateLicenseProps {
   userId: string
   userName: UserName
-  type: LicenseType
+  type: LicenseTypeEnum
   stateEntity: State
   priority: number | null
   // issuedDate: Date
@@ -30,6 +30,6 @@ export interface CreateLicenseProps {
 
 export interface DeleteLicenseProps {
   userId: string
-  type: LicenseType
+  type: LicenseTypeEnum
   stateEntity: State
 }

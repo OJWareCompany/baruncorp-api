@@ -16,9 +16,19 @@ import { CreateUserHttpContoller } from './commands/create-user/create-user.http
 import { CreateUserService } from './commands/create-user/create-user.service'
 import { FindUsersHttpController } from './queries/find-users/find-user.http.controller'
 import { FindUserQueryHandler } from './queries/find-users/find-user.query-handler'
+import { AppointUserLicenseHttpController } from './commands/appoint-user-license/appoint-user-license.http.controller'
+import { RevokeUserLicenseHttpController } from './commands/revoke-user-license/revoke-user-license.http.controller'
+import { AppointUserLicenseService } from './commands/appoint-user-license/appoint-user-license.service'
+import { RevokeUserLicenseService } from './commands/revoke-user-license/revoke-user-license.service'
 
-const httpControllers = [UsersController, CreateUserHttpContoller, FindUsersHttpController]
-const commandHandlers: Provider[] = [CreateUserService]
+const httpControllers = [
+  UsersController,
+  CreateUserHttpContoller,
+  FindUsersHttpController,
+  AppointUserLicenseHttpController,
+  RevokeUserLicenseHttpController,
+]
+const commandHandlers: Provider[] = [CreateUserService, AppointUserLicenseService, RevokeUserLicenseService]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
 
 const repositories: Provider[] = [

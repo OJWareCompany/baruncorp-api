@@ -1,8 +1,8 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
-import { LicenseType } from '../../user-license.type'
+import { LicenseTypeEnum } from '../../user-license.type'
 
 export interface LicenseProps {
-  type: LicenseType
+  type: LicenseTypeEnum
   ownerName: string
   issuingCountryName: string
   abbreviation: string
@@ -11,7 +11,7 @@ export interface LicenseProps {
 }
 
 export class License extends ValueObject<LicenseProps> {
-  get type(): LicenseType {
+  get type(): LicenseTypeEnum {
     return this.props.type
   }
 

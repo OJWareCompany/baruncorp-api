@@ -124,21 +124,6 @@ export interface CreateInvitationMailRequestDto {
   email: string
 }
 
-export interface CreateLicenseRequestDto {
-  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
-  userId: string
-  /** @default "Electrical" */
-  type: 'Electrical' | 'Structural'
-  /** @default "FLORIDA" */
-  issuingCountryName: string
-  /** @default "FL" */
-  abbreviation: string
-  /** @default 9 */
-  priority: number
-  /** @default "2023-09-04T07:31:27.217Z" */
-  expiryDate: string | null
-}
-
 export interface CreateUserRequestDto {
   /** @default "07e12e89-6077-4fd1-a029-c50060b57f43" */
   organizationId: string
@@ -171,6 +156,25 @@ export interface UserPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: UserResponseDto[]
+}
+
+export interface AppointUserLicenseRequestDto {
+  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
+  userId: string
+  /** @default "Structural" */
+  type: 'Electrical' | 'Structural'
+  /** @default "ALASKA" */
+  stateName: string
+  /**
+   * @format date-time
+   * @default "2023-09-04T07:31:27.217Z"
+   */
+  expiryDate: string | null
+}
+
+export interface RevokeUserLicenseRequestDto {
+  /** @default "Electrical" */
+  type: 'Electrical' | 'Structural'
 }
 
 export interface AddressDto {
@@ -1293,7 +1297,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-18T16:17:02.703Z"
+   * @default "2023-12-18T17:16:32.688Z"
    */
   invoiceDate: string
   /**
@@ -1532,6 +1536,38 @@ export interface PositionUnregisteredUserResponseDto {
   items: PositionUnregisteredUserResponseFields[]
 }
 
+export interface LicensedWorker {
+  userId: string
+  userName: string
+  /** @default "Structural" */
+  type: string
+  expiryDate: string | null
+  updatedAt: string
+  createdAt: string
+}
+
+export interface LicenseResponseDto {
+  /** @default "Structural" */
+  type: 'Structural' | 'Electrical'
+  /** @default "ALASKA" */
+  state: string
+  /** @default "AK" */
+  abbreviation: string
+  workers: LicensedWorker[]
+}
+
+export interface LicensePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: LicenseResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -1556,6 +1592,13 @@ export interface FindUsersHttpControllerGetFindUsersParams {
    * @example 1
    */
   page?: number
+}
+
+export interface FindLicenseHttpControllerGetParams {
+  /** @default "Structural" */
+  type: 'Structural' | 'Electrical'
+  /** @default "" */
+  stateName: string
 }
 
 export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams {
@@ -2035,6 +2078,23 @@ export interface FindPositionPaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindLicensePaginatedHttpControllerGetParams {
+  /** @default "Structural" */
+  type: 'Structural' | 'Electrical'
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 import axios from 'axios'
 
@@ -2387,21 +2447,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }),
 
     /**
-     * @description 등록된 모든 라이센스 조회 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
-     *
-     * @name UsersControllerPostRegisterMemberLicense
-     * @request POST:/users/member-licenses
-     */
-    usersControllerPostRegisterMemberLicense: (data: CreateLicenseRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/users/member-licenses`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
      * No description
      *
      * @name CreateUserHttpContollerCreateUnregisteredUser
@@ -2429,6 +2474,84 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<UserPaginatedResponseDto, any>({
         path: `/users`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
+  licenses = {
+    /**
+     * No description
+     *
+     * @name AppointUserLicenseHttpControllerPost
+     * @request POST:/licenses/{stateName}
+     */
+    appointUserLicenseHttpControllerPost: (
+      stateName: string,
+      data: AppointUserLicenseRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/licenses/${stateName}`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindLicenseHttpControllerGet
+     * @request GET:/licenses/{stateName}
+     */
+    findLicenseHttpControllerGet: (
+      { stateName, ...query }: FindLicenseHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<LicenseResponseDto, any>({
+        path: `/licenses/${stateName}`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name RevokeUserLicenseHttpControllerPost
+     * @request POST:/licenses/{stateName}/users/{userId}
+     */
+    revokeUserLicenseHttpControllerPost: (
+      userId: string,
+      stateName: string,
+      data: RevokeUserLicenseRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/licenses/${stateName}/users/${userId}`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindLicensePaginatedHttpControllerGet
+     * @request GET:/licenses
+     */
+    findLicensePaginatedHttpControllerGet: (
+      query: FindLicensePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<LicensePaginatedResponseDto, any>({
+        path: `/licenses`,
         method: 'GET',
         query: query,
         format: 'json',

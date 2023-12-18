@@ -20,6 +20,7 @@ import { ExpensePricingModule } from './modules/expense-pricing/expense-pricing.
 import { VendorInvoiceModule } from './modules/vendor-invoice/vendor-invoice.module'
 import { VendorPaymentModule } from './modules/vendor-payment/vendor-payment.module'
 import { PositionModule } from './modules/position/position.module'
+import { LicenseModule } from './modules/license/license.module'
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { PositionModule } from './modules/position/position.module'
     VendorInvoiceModule,
     VendorPaymentModule,
     PositionModule,
+    LicenseModule,
   ],
   controllers: [],
   providers: [

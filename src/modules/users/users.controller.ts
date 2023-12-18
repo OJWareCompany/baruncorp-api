@@ -11,7 +11,7 @@ import { UserName } from './domain/value-objects/user-name.vo'
 import { GiveRoleRequestDto } from './commands/give-role/give-role.request.dto'
 import { UpdateUserRequestDto } from './commands/update-user/update-user.request.dto'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
-import { CreateLicenseRequestDto } from '../users/commands/create-user-license/create-license.request.dto'
+import { AppointUserLicenseRequestDto } from './commands/appoint-user-license/appoint-user-license.request.dto'
 import { UserRequestDto } from './user-param.request.dto'
 import { InvitationEmailProp } from './domain/invitationMail.types'
 
@@ -126,19 +126,19 @@ export class UsersController {
   // }
 
   // TODO: create api doesn't retrieve? how handel conflict error?
-  @Post('member-licenses')
-  @UseGuards(AuthGuard)
-  async postRegisterMemberLicense(@Body() dto: CreateLicenseRequestDto): Promise<void> {
-    // return await this.userService.registerLicense(
-    //   dto.userId,
-    //   dto.type,
-    //   dto.issuingCountryName,
-    //   dto.abbreviation,
-    //   dto.priority,
-    //   // new Date(dto.issuedDate),
-    //   dto.expiryDate ? new Date(dto.expiryDate) : null,
-    // )
-  }
+  // @Post('member-licenses')
+  // @UseGuards(AuthGuard)
+  // async postRegisterMemberLicense(@Body() dto: AppointUserLicenseRequestDto): Promise<void> {
+  //   // return await this.userService.registerLicense(
+  //   //   dto.userId,
+  //   //   dto.type,
+  //   //   dto.issuingCountryName,
+  //   //   dto.abbreviation,
+  //   //   dto.priority,
+  //   //   // new Date(dto.issuedDate),
+  //   //   dto.expiryDate ? new Date(dto.expiryDate) : null,
+  //   // )
+  // }
 
   /**
    * // 추후 개선 사항 -> member-licenses/:licenseId

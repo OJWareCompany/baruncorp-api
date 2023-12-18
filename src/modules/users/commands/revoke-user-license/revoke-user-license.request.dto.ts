@@ -5,18 +5,20 @@
 
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
-import { LicenseType } from '../../user-license.type'
+import { LicenseTypeEnum } from '../../user-license.type'
 
-export class DeleteMemberLicenseRequestDto {
+export class RevokeUserLicenseRequestParamDto {
   @ApiProperty({ default: '96d39061-a4d7-4de9-a147-f627467e11d5' })
   @IsString()
   readonly userId: string
 
+  @ApiProperty({ default: 'ALASKA' })
+  @IsString()
+  readonly stateName: string
+}
+
+export class RevokeUserLicenseRequestDto {
   @ApiProperty({ default: 'Electrical' })
   @IsString()
-  readonly type: LicenseType
-
-  @ApiProperty({ default: 'FLORIDA' })
-  @IsString()
-  readonly issuingCountryName: string
+  readonly type: LicenseTypeEnum
 }
