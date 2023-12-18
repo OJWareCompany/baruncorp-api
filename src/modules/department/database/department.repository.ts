@@ -14,6 +14,9 @@ export type LicenseModel = UserStructuralLicenses
 @Injectable()
 export class DepartmentRepository implements DepartmentRepositoryPort {
   constructor(private readonly prismaService: PrismaService, private readonly positionMapper: PositionMapper) {}
+  appointPosition(userId: string, positionId: string): Promise<void> {
+    throw new Error('Method not implemented.')
+  }
 
   async putMemberInChargeOfService(userId: string, serviceId: string): Promise<void> {
     const record = await this.prismaService.userService.findUnique({
@@ -56,13 +59,9 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
   }
 
   async findAllPositions(): Promise<PositionEntity[]> {
-    const records = await this.prismaService.positions.findMany({
-      include: {
-        departmentEntity: true,
-      },
-    })
+    const records = await this.prismaService.positions.findMany({})
     return records.map((position) => {
-      return this.positionMapper.toDomain(position, position.departmentEntity)
+      return this.positionMapper.toDomain(position)
     })
   }
 
@@ -71,10 +70,9 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
     if (!userPositionEntity) return null
     const record = await this.prismaService.positions.findFirst({
       where: { id: userPositionEntity.positionId },
-      include: { departmentEntity: true },
     })
     if (!record) return null
-    return this.positionMapper.toDomain(record, record.departmentEntity)
+    return this.positionMapper.toDomain(record)
   }
 
   // this should be in user repository?
@@ -83,9 +81,10 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
   // }
 
   // Use History instead of soft delete!
-  async appointPosition(userId: string, positionId: string): Promise<void> {
-    await this.prismaService.userPosition.create({ data: { userId, positionId } })
-  }
+  // TODO: use user licnese VO
+  // async appointPosition(userId: string, positionId: string): Promise<void> {
+  //   // await this.prismaService.userPosition.create({ data: { userId, positionId } })
+  // }
 
   async revokePosition(userId: string, positionId: string): Promise<void> {
     await this.prismaService.userPosition.delete({ where: { userId_positionId: { userId, positionId } } })

@@ -12,20 +12,19 @@ export class PositionMapper implements Mapper<PositionEntity, PositionModel, Pos
       id: copy.id,
       name: copy.name,
       description: copy.description,
-      departmentId: copy.departmentId,
       updatedAt: new Date(),
       createdAt: new Date(),
+      maxAssignedTasksLimit: copy.maxAssignedTasksLimit,
     }
     return record
   }
 
   // TODO: validation white list.. since type can't ensure the field in runtime
-  toDomain(record: PositionModel, department: DepartmentModel): PositionEntity {
+  toDomain(record: PositionModel): PositionEntity {
     const props: PositionProps = {
       name: record.name,
-      departmentId: record.departmentId,
-      departmentName: department.name,
       description: record.description,
+      maxAssignedTasksLimit: record.maxAssignedTasksLimit,
     }
 
     const entity = new PositionEntity({
@@ -41,7 +40,6 @@ export class PositionMapper implements Mapper<PositionEntity, PositionModel, Pos
     response.id = props.id
     response.name = props.name
     response.description = props.description
-    response.department = props.departmentName
     return response
   }
 }

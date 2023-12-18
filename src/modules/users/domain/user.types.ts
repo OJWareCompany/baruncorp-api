@@ -25,4 +25,5 @@ export interface UserProps extends CreateUserProps {
   services: Service[]
   role: UserRoleNameEnum
   type: string
+  isHandRaisedForTask: boolean
 }

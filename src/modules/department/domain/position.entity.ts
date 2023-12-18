@@ -1,20 +1,13 @@
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { v4 } from 'uuid'
 
-export interface PositionProps {
+export interface CreatePositionProps {
   name: string
-  departmentId: string
-  departmentName: string
   description: string | null
+  maxAssignedTasksLimit: number | null
 }
 
-export interface CreatePositionProps extends PositionProps {
-  departmentId: string
-}
-
-export interface UpdatePositionProps extends PositionProps {
-  departmentId: string
-}
+export type PositionProps = CreatePositionProps
 
 export interface DeletePositionProps {
   positionId: string

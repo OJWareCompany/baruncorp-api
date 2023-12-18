@@ -104,6 +104,7 @@ model Users {
   organizationId             String                   @map("organization_id")
   updatedAt                  DateTime                 @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt                  DateTime                 @default(now()) @map("created_at") @db.DateTime(0)
+  isHandRaisedForTask        Boolean                  @map("is_hand_raised_for_task")
   address                    String?                  @db.Text
   phoneNumber                String?                  @map("phone_number") @db.VarChar(20)
   isActiveWorkResource       Boolean?                 @map("is_active_work_resource")
@@ -137,28 +138,25 @@ model Passwords {
 }
 
 model Departments {
-  id          String      @id @default(uuid())
+  id          String   @id @default(uuid())
   name        String
   description String
-  updatedAt   DateTime    @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt   DateTime    @default(now()) @map("created_at") @db.DateTime(0)
-  Positions   Positions[]
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(0)
 
   @@map("departments")
 }
 
 model Positions {
-  id               String            @id @default(uuid())
-  name             String
-  description      String?
-  departmentId     String            @map("department_id")
-  updatedAt        DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt        DateTime          @default(now()) @map("created_at") @db.DateTime(0)
-  PositionService  PositionService[]
-  departmentEntity Departments       @relation(fields: [departmentId], references: [id])
-  UserPosition     UserPosition[]
+  id                    String            @id @default(uuid())
+  name                  String
+  description           String?
+  updatedAt             DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt             DateTime          @default(now()) @map("created_at") @db.DateTime(0)
+  maxAssignedTasksLimit Int?              @map("max_assigned_tasks_limit") @db.UnsignedTinyInt
+  PositionService       PositionService[]
+  UserPosition          UserPosition[]
 
-  @@index([departmentId], map: "positions_department_id_fkey")
   @@map("positions")
 }
 
@@ -289,12 +287,14 @@ model UserElectricalLicenses {
 }
 
 model UserPosition {
-  userId     String    @unique(map: "user_id") @map("user_id")
-  positionId String    @map("position_id")
-  updatedAt  DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt  DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  position   Positions @relation(fields: [positionId], references: [id])
-  user       Users     @relation(fields: [userId], references: [id])
+  userId       String    @unique(map: "user_id") @map("user_id")
+  userName     String    @map("user_name") @db.VarChar(255)
+  positionId   String    @map("position_id")
+  positionName String    @map("position_name") @db.VarChar(255)
+  updatedAt    DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt    DateTime  @default(now()) @map("created_at") @db.DateTime(0)
+  position     Positions @relation(fields: [positionId], references: [id])
+  user         Users     @relation(fields: [userId], references: [id])
 
   @@id([userId, positionId])
   @@index([positionId], map: "user_position_position_id_fkey")
@@ -963,6 +963,57 @@ model VendorPayments {
   vendorInvoice   VendorInvoices        @relation(fields: [vendorInvoiceId], references: [id])
 
   @@map("vendor_payments")
+}
+
+model PositionTasks {
+  id                 Int    @id @default(autoincrement()) @db.UnsignedInt
+  positionId         String @map("position_id") @db.VarChar(255)
+  positionName       String @map("position_name") @db.VarChar(255)
+  taskId             String @map("task_id") @db.VarChar(255)
+  taskName           String @map("task_name") @db.VarChar(255)
+  order              Int    @db.UnsignedTinyInt
+  autoAssignmentType String @map("auto_assignment_type") @db.VarChar(255)
+
+  @@map("position_tasks")
+}
+
+model UserAvailableTasks {
+  id                 Int       @id @default(autoincrement()) @db.UnsignedInt
+  userId             String    @map("user_id") @db.VarChar(255)
+  userName           String    @map("user_name") @db.VarChar(255)
+  taskId             String    @map("task_id") @db.VarChar(255)
+  taskName           String    @map("task_name") @db.VarChar(255)
+  autoAssignmentType String    @map("auto_assignment_type") @db.VarChar(255)
+  isHandRaised       Boolean   @map("is_hand_raised")
+  raisedAt           DateTime? @map("raised_at") @db.DateTime(0)
+  userPositionId     String    @map("user_position_id") @db.VarChar(255)
+
+  @@map("user_available_tasks")
+}
+
+model UserLicense {
+  user_id              String
+  user_name            String
+  issuing_country_name String
+  abbreviation         String
+  type                 String    @db.VarChar(255)
+  expiry_date          DateTime?
+  updated_at           DateTime  @db.DateTime(0)
+  created_at           DateTime  @default(now()) @db.DateTime(0)
+
+  @@unique([user_id, abbreviation], map: "user_id")
+  @@map("user_license")
+}
+
+model prerequisiteTasks {
+  id                   Int    @id @default(autoincrement()) @db.UnsignedInt
+  taskId               String @map("task_id") @db.VarChar(255)
+  taskName             String @map("task_name") @db.VarChar(255)
+  prerequisiteTaskId   String @map("prerequisite_task_id") @db.VarChar(255)
+  prerequisiteTaskName String @map("prerequisite_task_name") @db.VarChar(255)
+
+  @@unique([taskId, prerequisiteTaskId], map: "task_id")
+  @@map("prerequisite_tasks")
 }
 
 enum InvoicesStatus {

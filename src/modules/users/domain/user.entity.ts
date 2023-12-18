@@ -17,6 +17,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
       create.organization.organizationType === 'administration'
         ? UserRoleNameEnum.member
         : UserRoleNameEnum.client_company_employee
+
     const props: UserProps = {
       ...create,
       type: role,
@@ -24,6 +25,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
       position: null,
       licenses: [],
       services: [],
+      isHandRaisedForTask: false,
     }
     return new UserEntity({ id, props })
   }

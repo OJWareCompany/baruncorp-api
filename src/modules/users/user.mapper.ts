@@ -36,6 +36,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       revenueShare: null,
       revisionRevenueShare: null,
       isVendor: copy.isVendor,
+      isHandRaisedForTask: copy.isHandRaisedForTask,
     }
     return record
   }
@@ -103,6 +104,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         services: services,
         role: record.userRole?.roleName as UserRoleNameEnum,
         isVendor: record.isVendor,
+        isHandRaisedForTask: record.isHandRaisedForTask,
       },
     })
     return entity
