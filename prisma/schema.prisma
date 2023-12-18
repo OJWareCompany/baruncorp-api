@@ -95,32 +95,30 @@ model UserRole {
 }
 
 model Users {
-  id                         String                   @id @default(uuid())
-  type                       String                   @db.VarChar(255)
-  deliverables_emails        String?                  @db.Text
-  email                      String                   @unique
-  firstName                  String                   @map("first_name")
-  lastName                   String                   @map("last_name")
-  organizationId             String                   @map("organization_id")
-  updatedAt                  DateTime                 @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt                  DateTime                 @default(now()) @map("created_at") @db.DateTime(0)
-  isHandRaisedForTask        Boolean                  @map("is_hand_raised_for_task")
-  address                    String?                  @db.Text
-  phoneNumber                String?                  @map("phone_number") @db.VarChar(20)
-  isActiveWorkResource       Boolean?                 @map("is_active_work_resource")
-  isCurrentUser              Boolean?                 @map("is_current_user")
-  isInactiveOrganizationUser Boolean?                 @map("is_inactive_organization_user")
-  revenueShare               Boolean?                 @map("revenue_share")
-  revisionRevenueShare       Boolean?                 @map("revision_revenue_share")
-  updatedBy                  String                   @map("updated_by") @db.VarChar(255)
-  isVendor                   Boolean                  @default(false) @map("is_vendor")
+  id                         String          @id @default(uuid())
+  type                       String          @db.VarChar(255)
+  deliverables_emails        String?         @db.Text
+  email                      String          @unique
+  firstName                  String          @map("first_name")
+  lastName                   String          @map("last_name")
+  organizationId             String          @map("organization_id")
+  updatedAt                  DateTime        @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                  DateTime        @default(now()) @map("created_at") @db.DateTime(0)
+  isHandRaisedForTask        Boolean         @map("is_hand_raised_for_task")
+  address                    String?         @db.Text
+  phoneNumber                String?         @map("phone_number") @db.VarChar(20)
+  isActiveWorkResource       Boolean?        @map("is_active_work_resource")
+  isCurrentUser              Boolean?        @map("is_current_user")
+  isInactiveOrganizationUser Boolean?        @map("is_inactive_organization_user")
+  revenueShare               Boolean?        @map("revenue_share")
+  revisionRevenueShare       Boolean?        @map("revision_revenue_share")
+  updatedBy                  String          @map("updated_by") @db.VarChar(255)
+  isVendor                   Boolean         @default(false) @map("is_vendor")
   passwordEntity             Passwords?
   userRole                   UserRole?
   userPosition               UserPosition?
   userServices               UserService[]
-  userStructuralLicenses     UserStructuralLicenses[]
-  userElectricalLicenses     UserElectricalLicenses[]
-  organization               Organizations            @relation(fields: [organizationId], references: [id])
+  organization               Organizations   @relation(fields: [organizationId], references: [id])
   assignedTasks              AssignedTasks[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
@@ -235,55 +233,19 @@ model UserService {
 }
 
 model States {
-  stateName              String                   @map("state_name")
-  abbreviation           String                   @map("abbreviation")
-  geoId                  String                   @map("geo_id") @db.VarChar(20)
-  stateCode              String?                  @map("state_code") @db.VarChar(20)
-  ansiCode               String?                  @map("ansi_code") @db.VarChar(20)
-  stateLongName          String?                  @map("state_long_name")
-  lsadCode               String?                  @map("lsad_code") @db.VarChar(20)
-  funcStat               String?                  @map("func_stat") @db.VarChar(20)
-  updatedAt              DateTime                 @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt              DateTime                 @default(now()) @map("created_at") @db.DateTime(0)
-  UserElectricalLicenses UserElectricalLicenses[]
-  UserStructuralLicenses UserStructuralLicenses[]
+  stateName     String   @map("state_name")
+  abbreviation  String   @map("abbreviation")
+  geoId         String   @map("geo_id") @db.VarChar(20)
+  stateCode     String?  @map("state_code") @db.VarChar(20)
+  ansiCode      String?  @map("ansi_code") @db.VarChar(20)
+  stateLongName String?  @map("state_long_name")
+  lsadCode      String?  @map("lsad_code") @db.VarChar(20)
+  funcStat      String?  @map("func_stat") @db.VarChar(20)
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt     DateTime @default(now()) @map("created_at") @db.DateTime(0)
 
   @@id([stateName, abbreviation])
   @@map("states")
-}
-
-model UserStructuralLicenses {
-  userId             String    @map("user_id")
-  issuingCountryName String    @map("issuing_country_name")
-  abbreviation       String
-  priority           Int?
-  expiryDate         DateTime? @map("expiry_date")
-  issuedDate         DateTime? @map("issue_date")
-  updatedAt          DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  state              States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
-  user               Users     @relation(fields: [userId], references: [id])
-
-  @@id([userId, issuingCountryName])
-  @@index([issuingCountryName, abbreviation], map: "user_structural_licenses_issuing_country_name_abbreviation_fkey")
-  @@map("user_structural_licenses")
-}
-
-model UserElectricalLicenses {
-  userId             String    @map("user_id")
-  issuingCountryName String    @map("issuing_country_name")
-  abbreviation       String
-  expiryDate         DateTime? @map("expiry_date")
-  issuedDate         DateTime? @map("issue_date")
-  priority           Int?
-  updatedAt          DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  state              States    @relation(fields: [issuingCountryName, abbreviation], references: [stateName, abbreviation])
-  user               Users     @relation(fields: [userId], references: [id])
-
-  @@id([userId, issuingCountryName])
-  @@index([issuingCountryName, abbreviation], map: "user_electrical_licenses_issuing_country_name_abbreviation_fkey")
-  @@map("user_electrical_licenses")
 }
 
 model UserPosition {
@@ -732,12 +694,13 @@ model ClientAccounts {
 }
 
 model Tasks {
-  id            String          @id @map("id") @db.VarChar(255)
-  serviceId     String          @map("service_id") @db.VarChar(255)
-  name          String          @map("name") @db.VarChar(255)
-  serviceName   String          @map("service_name") @db.VarChar(255)
-  service       Service         @relation(fields: [serviceId], references: [id])
-  assignedTasks AssignedTasks[]
+  id               String          @id @map("id") @db.VarChar(255)
+  serviceId        String          @map("service_id") @db.VarChar(255)
+  name             String          @map("name") @db.VarChar(255)
+  serviceName      String          @map("service_name") @db.VarChar(255)
+  isAutoAssignment Boolean         @map("is_auto_assignment")
+  service          Service         @relation(fields: [serviceId], references: [id])
+  assignedTasks    AssignedTasks[]
 
   @@map("tasks")
 }
@@ -992,16 +955,16 @@ model UserAvailableTasks {
 }
 
 model UserLicense {
-  user_id              String
-  user_name            String
-  issuing_country_name String
-  abbreviation         String
-  type                 String    @db.VarChar(255)
-  expiry_date          DateTime?
-  updated_at           DateTime  @db.DateTime(0)
-  created_at           DateTime  @default(now()) @db.DateTime(0)
+  userId             String    @map("user_id")
+  userName           String    @map("user_name")
+  issuingCountryName String    @map("issuing_country_name")
+  abbreviation       String
+  type               String    @db.VarChar(255)
+  expiryDate         DateTime? @map("expiry_date")
+  updatedAt          DateTime  @map("updated_at") @db.DateTime(0)
+  createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
 
-  @@unique([user_id, abbreviation], map: "user_id")
+  @@unique([userId, abbreviation, type], map: "user_id_2")
   @@map("user_license")
 }
 

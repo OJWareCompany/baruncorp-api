@@ -42,30 +42,6 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
   }
 
   toDomain(record: UserQueryModel): UserEntity {
-    const userElectricalLicenses = record.userElectricalLicenses.map(
-      (elecLicense) =>
-        new License({
-          type: LicenseType.Electrical,
-          ownerName: record.firstName + ' ' + record.lastName,
-          issuingCountryName: elecLicense.issuingCountryName,
-          abbreviation: elecLicense.abbreviation,
-          priority: elecLicense.priority,
-          expiryDate: elecLicense.expiryDate,
-        }),
-    )
-
-    const userStructuralLicenses = record.userStructuralLicenses.map(
-      (elecLicense) =>
-        new License({
-          type: LicenseType.Structural,
-          ownerName: record.firstName + ' ' + record.lastName,
-          issuingCountryName: elecLicense.issuingCountryName,
-          abbreviation: elecLicense.abbreviation,
-          priority: elecLicense.priority,
-          expiryDate: elecLicense.expiryDate,
-        }),
-    )
-
     const services = record.userServices.map(
       (userService) =>
         new Service({
@@ -100,7 +76,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         position: record.userPosition
           ? new Position({ id: record.userPosition.positionId, name: record.userPosition.position.name })
           : null,
-        licenses: [...userElectricalLicenses, ...userStructuralLicenses],
+        licenses: [],
         services: services,
         role: record.userRole?.roleName as UserRoleNameEnum,
         isVendor: record.isVendor,

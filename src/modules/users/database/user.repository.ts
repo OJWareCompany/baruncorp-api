@@ -3,8 +3,6 @@ import { Injectable } from '@nestjs/common'
 import {
   Organizations,
   Positions,
-  UserElectricalLicenses,
-  UserStructuralLicenses,
   Users,
   UserRole,
   UserService,
@@ -31,8 +29,8 @@ export type UserQueryModel = Users & {
   userRole: (UserRole & { role: Roles }) | null
   userPosition: (UserPosition & { position: Positions }) | null
   userServices: (UserService & { service: Service & { tasks: Tasks[] } })[]
-  userElectricalLicenses: (UserElectricalLicenses & { state: States })[]
-  userStructuralLicenses: (UserStructuralLicenses & { state: States })[]
+  // userElectricalLicenses: (UserElectricalLicenses & { state: States })[]
+  // userStructuralLicenses: (UserStructuralLicenses & { state: States })[]
 }
 
 @Injectable()

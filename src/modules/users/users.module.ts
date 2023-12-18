@@ -10,10 +10,7 @@ import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepository } from '../organization/database/organization.repository'
 import UserMapper from './user.mapper'
 import { UserRoleMapper } from './user-role.mapper'
-import { LicenseMapper } from '../department/license.mapper'
 import { PositionMapper } from '../department/position.mapper'
-import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
-import { DepartmentRepository } from '../department/database/department.repository'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { CreateUserHttpContoller } from './commands/create-user/create-user.http.controller'
 import { CreateUserService } from './commands/create-user/create-user.service'
@@ -28,10 +25,9 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
   { provide: INVITATION_MAIL_REPOSITORY, useClass: InvitationMailRepository },
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
-  { provide: DEPARTMENT_REPOSITORY, useClass: DepartmentRepository },
 ]
 
-const mappers: Provider[] = [UserMapper, PositionMapper, LicenseMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [UserMapper, PositionMapper, UserRoleMapper, OrganizationMapper]
 
 @Module({
   imports: [PrismaModule, CqrsModule],

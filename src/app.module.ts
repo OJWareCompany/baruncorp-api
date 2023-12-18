@@ -4,7 +4,6 @@ import { HttpExceptionFilter } from './libs/exceptions/http-exception.filter'
 import { AuthenticationModule } from './modules/auth/authentication.module'
 import { UsersModule } from './modules/users/users.module'
 import { OrganizationModule } from './modules/organization/organization.module'
-import { DepartmentModule } from './modules/department/department.module'
 import { GeographyModule } from './modules/geography/geography.module'
 import { ProjectModule } from './modules/project/project.module'
 import { EventEmitterModule } from '@nestjs/event-emitter'
@@ -28,7 +27,6 @@ import { PositionModule } from './modules/position/position.module'
     AuthenticationModule,
     UsersModule,
     OrganizationModule,
-    DepartmentModule,
     GeographyModule,
     ProjectModule,
     JobModule,

@@ -4,8 +4,6 @@ import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepositoryPort } from './database/organization.repository.port'
 import { UserRepositoryPort } from '../users/database/user.repository.port'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { DepartmentRepositoryPort } from '../department/database/department.repository.port'
-import { DEPARTMENT_REPOSITORY } from '../department/department.di-token'
 import { OrganizationEntity } from './domain/organization.entity'
 
 @Injectable()
@@ -13,8 +11,6 @@ export class OrganizationService {
   constructor(
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
-    // @ts-ignore
-    @Inject(DEPARTMENT_REPOSITORY) private readonly departmentRepository: DepartmentRepositoryPort,
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
   ) {}

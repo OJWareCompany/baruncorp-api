@@ -272,34 +272,6 @@ export interface UpdateOrganizationRequestDto {
   numberOfFreeRevisionCount: number | null
 }
 
-export interface PositionResponseDto {
-  /** @default "" */
-  id: string
-  /** @default "Sr. Designer" */
-  name: string
-  /** @default null */
-  description: string | null
-  /** @default null */
-  maxAssignedTasksLimit: number | null
-  tasks: PositionTask[]
-  workers: Worker[]
-}
-
-export interface StatesResponseDto {
-  /** @default "CALIFORNIA" */
-  stateName: string
-  /** @default "CA" */
-  abbreviation: string | null
-  /** @default "06" */
-  geoId: string | null
-  /** @default "06" */
-  stateCode: string | null
-  /** @default "01779778" */
-  ansiCode: string | null
-  /** @default "California" */
-  stateLongName: string | null
-}
-
 export interface AhjNoteListResponseDto {
   geoId: string
   name: string
@@ -938,6 +910,8 @@ export interface CreateTaskRequestDto {
   serviceId: string
   /** @default "PV Design QA/QC" */
   name: string
+  /** @default true */
+  isAutoAssignment: boolean
 }
 
 export interface UpdateTaskRequestDto {
@@ -1319,7 +1293,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-18T16:03:27.375Z"
+   * @default "2023-12-18T16:17:02.703Z"
    */
   invoiceDate: string
   /**
@@ -1491,6 +1465,19 @@ export interface Worker {
   userId: string
   userName: string
   email: string
+}
+
+export interface PositionResponseDto {
+  /** @default "" */
+  id: string
+  /** @default "Sr. Designer" */
+  name: string
+  /** @default null */
+  description: string | null
+  /** @default null */
+  maxAssignedTasksLimit: number | null
+  tasks: PositionTask[]
+  workers: Worker[]
 }
 
 export interface PositionPaginatedResponseFields {
@@ -2555,35 +2542,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/organizations/members/my`,
         method: 'GET',
         query: query,
-        format: 'json',
-        ...params,
-      }),
-  }
-  departments = {
-    /**
-     * No description
-     *
-     * @name DepartmentControllerGetFindAllPositions
-     * @request GET:/departments/positions
-     */
-    departmentControllerGetFindAllPositions: (params: RequestParams = {}) =>
-      this.request<PositionResponseDto[], any>({
-        path: `/departments/positions`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DepartmentControllerGetFindAllStates
-     * @request GET:/departments/states
-     */
-    departmentControllerGetFindAllStates: (params: RequestParams = {}) =>
-      this.request<StatesResponseDto[], any>({
-        path: `/departments/states`,
-        method: 'GET',
         format: 'json',
         ...params,
       }),
