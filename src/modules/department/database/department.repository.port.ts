@@ -5,12 +5,10 @@
  * and a ResponseDTO is an object returned to a user (usually as json).
  */
 
-import { DepartmentEntity } from '../domain/department.entity'
 import { PositionEntity } from '../domain/position.entity'
-import { State } from '../domain/value-objects/state.vo'
+import { State } from '../../users/domain/value-objects/state.vo'
 
 export interface DepartmentRepositoryPort {
-  findAll(): Promise<DepartmentEntity[]>
   // findByUserId(userId: string): Promise<DepartmentEntity>
 
   // TODO: Consider to Saperate Position From Department

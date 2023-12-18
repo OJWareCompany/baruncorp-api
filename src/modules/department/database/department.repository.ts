@@ -3,9 +3,8 @@ import { Departments, Positions, UserStructuralLicenses } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
 import { DepartmentRepositoryPort } from './department.repository.port'
 import { PositionMapper } from '../position.mapper'
-import { DepartmentEntity } from '../domain/department.entity'
 import { PositionEntity } from '../domain/position.entity'
-import { State } from '../domain/value-objects/state.vo'
+import { State } from '../../users/domain/value-objects/state.vo'
 
 export type DepartmentModel = Departments
 export type PositionModel = Positions
@@ -52,10 +51,6 @@ export class DepartmentRepository implements DepartmentRepositoryPort {
     if (!record) throw new NotFoundException('has no that service.', '10021')
 
     await this.prismaService.userService.delete({ where: { userId_serviceId: { userId, serviceId } } })
-  }
-
-  async findAll(): Promise<DepartmentEntity[]> {
-    return await this.prismaService.departments.findMany()
   }
 
   async findAllPositions(): Promise<PositionEntity[]> {

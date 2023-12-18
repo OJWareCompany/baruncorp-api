@@ -1,5 +1,5 @@
 import { UserName } from './domain/value-objects/user-name.vo'
-import { State } from '../department/domain/value-objects/state.vo'
+import { State } from './domain/value-objects/state.vo'
 
 // export type LicenseType =
 export enum LicenseType {

@@ -273,10 +273,16 @@ export interface UpdateOrganizationRequestDto {
 }
 
 export interface PositionResponseDto {
+  /** @default "" */
   id: string
+  /** @default "Sr. Designer" */
   name: string
+  /** @default null */
   description: string | null
-  department: string
+  /** @default null */
+  maxAssignedTasksLimit: number | null
+  tasks: PositionTask[]
+  workers: Worker[]
 }
 
 export interface StatesResponseDto {
@@ -1313,7 +1319,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-14T09:52:06.869Z"
+   * @default "2023-12-18T16:03:27.375Z"
    */
   invoiceDate: string
   /**
@@ -1455,6 +1461,88 @@ export interface VendorPaymentPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: VendorPaymentResponseDto[]
+}
+
+export interface CreatePositionRequestDto {
+  /** @default "Sr. Designer" */
+  name: string
+  /** @default 5 */
+  maxAssignedTasksLimit: number | null
+  /** @default null */
+  description?: string | null
+}
+
+export interface UpdatePositionRequestDto {
+  /** @default "Sr. Designer" */
+  name: string
+  /** @default 5 */
+  maxAssignedTasksLimit: number | null
+  /** @default null */
+  description?: string | null
+}
+
+export interface PositionTask {
+  taskId: string
+  taskName: string
+  autoAssignmentType: string
+}
+
+export interface Worker {
+  userId: string
+  userName: string
+  email: string
+}
+
+export interface PositionPaginatedResponseFields {
+  /** @default "" */
+  id: string
+  /** @default "Sr. Designer" */
+  name: string
+  /** @default null */
+  description: string | null
+  /** @default null */
+  maxAssignedTasksLimit: number | null
+  tasks: PositionTask[]
+}
+
+export interface PositionPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: PositionPaginatedResponseFields[]
+}
+
+export interface AddPositionTaskRequestDto {
+  /** @default "911fe9ac-94b8-4a0e-b478-56e88f4aa7d7" */
+  taskId: string
+  /** @default "Rsidential / Commercial" */
+  autoAssignmentType: 'None' | 'Rsidential' | 'Commercial' | 'Rsidential / Commercial'
+}
+
+export interface UpdatePositionTaskAutoAssignmentTypeRequestDto {
+  /** @default "Rsidential / Commercial" */
+  autoAssignmentType: 'None' | 'Rsidential' | 'Commercial' | 'Rsidential / Commercial'
+}
+
+export interface AddPositionWorkerRequestDto {
+  /** @default "" */
+  userId: string
+}
+
+export interface PositionUnregisteredUserResponseFields {
+  userId: string
+  userName: string
+  email: string
+  position: string
+}
+
+export interface PositionUnregisteredUserResponseDto {
+  items: PositionUnregisteredUserResponseFields[]
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -1931,6 +2019,21 @@ export interface FindVendorInvoiceLineItemHttpControllerGetParams {
 }
 
 export interface FindVendorPaymentPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindPositionPaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -3871,6 +3974,187 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     findVendorPaymentHttpControllerGet: (vendorPaymentId: string, params: RequestParams = {}) =>
       this.request<VendorPaymentResponseDto, any>({
         path: `/vendor-payments/${vendorPaymentId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  positions = {
+    /**
+     * No description
+     *
+     * @name CreatePositionHttpControllerPost
+     * @request POST:/positions
+     */
+    createPositionHttpControllerPost: (data: CreatePositionRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/positions`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPositionPaginatedHttpControllerGet
+     * @request GET:/positions
+     */
+    findPositionPaginatedHttpControllerGet: (
+      query: FindPositionPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<PositionPaginatedResponseDto, any>({
+        path: `/positions`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdatePositionHttpControllerPatch
+     * @request PATCH:/positions/{positionId}
+     */
+    updatePositionHttpControllerPatch: (
+      positionId: string,
+      data: UpdatePositionRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/positions/${positionId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeletePositionHttpControllerDelete
+     * @request DELETE:/positions/{positionId}
+     */
+    deletePositionHttpControllerDelete: (positionId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/positions/${positionId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPositionHttpControllerGet
+     * @request GET:/positions/{positionId}
+     */
+    findPositionHttpControllerGet: (positionId: string, params: RequestParams = {}) =>
+      this.request<PositionResponseDto, any>({
+        path: `/positions/${positionId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AddPositionTaskHttpControllerPost
+     * @request POST:/positions/{positionId}/tasks
+     */
+    addPositionTaskHttpControllerPost: (
+      positionId: string,
+      data: AddPositionTaskRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/positions/${positionId}/tasks`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeletePositionTaskHttpControllerDelete
+     * @request DELETE:/positions/{positionId}/tasks/{taskId}
+     */
+    deletePositionTaskHttpControllerDelete: (positionId: string, taskId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/positions/${positionId}/tasks/${taskId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdatePositionTaskAutoAssignmentTypeHttpControllerPatch
+     * @request PATCH:/positions/{positionId}/tasks/{taskId}
+     */
+    updatePositionTaskAutoAssignmentTypeHttpControllerPatch: (
+      positionId: string,
+      taskId: string,
+      data: UpdatePositionTaskAutoAssignmentTypeRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/positions/${positionId}/tasks/${taskId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AddPositionWorkerHttpControllerPost
+     * @request POST:/positions/{positionId}/users
+     */
+    addPositionWorkerHttpControllerPost: (
+      positionId: string,
+      data: AddPositionWorkerRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/positions/${positionId}/users`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeletePositionWorkerHttpControllerDelete
+     * @request DELETE:/positions/{positionId}/users/{userId}
+     */
+    deletePositionWorkerHttpControllerDelete: (positionId: string, userId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/positions/${positionId}/users/${userId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPositionUnRegisteredUsersHttpControllerGet
+     * @request GET:/positions/{positionId}/unregistered-users
+     */
+    findPositionUnRegisteredUsersHttpControllerGet: (positionId: string, params: RequestParams = {}) =>
+      this.request<PositionUnregisteredUserResponseDto, any>({
+        path: `/positions/${positionId}/unregistered-users`,
         method: 'GET',
         format: 'json',
         ...params,
