@@ -7,7 +7,7 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
-export class FindOrderedServiceQuery extends PaginatedQueryBase {
+export class FindOrderedServicePaginatedQuery extends PaginatedQueryBase {
   readonly serviceName?: string | null
   readonly organizationName?: string | null
   readonly jobName?: string | null
@@ -15,7 +15,7 @@ export class FindOrderedServiceQuery extends PaginatedQueryBase {
   readonly isRevision?: boolean | null
   readonly projectPropertyType?: ProjectPropertyTypeEnum | null
   readonly mountingType?: MountingTypeEnum | null
-  constructor(props: PaginatedParams<FindOrderedServiceQuery>) {
+  constructor(props: PaginatedParams<FindOrderedServicePaginatedQuery>) {
     super(props)
     initialize(this, props)
   }
@@ -26,11 +26,11 @@ export type FindOrderedServiceQueryReturnType = OrderedServices & {
   service: Service & { tasks: Tasks[] }
 }
 
-@QueryHandler(FindOrderedServiceQuery)
-export class FindOrderedServiceQueryHandler implements IQueryHandler {
+@QueryHandler(FindOrderedServicePaginatedQuery)
+export class FindOrderedServicePaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindOrderedServiceQuery): Promise<Paginated<FindOrderedServiceQueryReturnType>> {
+  async execute(query: FindOrderedServicePaginatedQuery): Promise<Paginated<FindOrderedServiceQueryReturnType>> {
     const condition: Prisma.OrderedServicesWhereInput = {
       ...(query.serviceName && { serviceName: { contains: query.serviceName } }),
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),

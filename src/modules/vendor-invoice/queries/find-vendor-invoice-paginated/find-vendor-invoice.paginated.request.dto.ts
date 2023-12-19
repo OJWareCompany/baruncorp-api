@@ -9,8 +9,8 @@ export class FindVendorInvoicePaginatedRequestDto {
   @IsOptional()
   readonly organizationName?: string | null
 
-  @ApiProperty({ default: InvoiceStatusEnum.Issued, enum: InvoiceStatusEnum })
-  @IsEnum(InvoiceStatusEnum)
-  @IsOptional()
-  readonly status?: InvoiceStatusEnum | null
+  // @ApiProperty({ default: InvoiceStatusEnum.Issued, enum: InvoiceStatusEnum })
+  // @IsEnum(InvoiceStatusEnum)
+  // @IsOptional()
+  // readonly status?: InvoiceStatusEnum | null
 }

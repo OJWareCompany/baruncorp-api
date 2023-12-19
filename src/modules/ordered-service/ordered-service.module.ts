@@ -44,6 +44,7 @@ import { PROJECT_REPOSITORY } from '../project/project.di-token'
 import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
 import { FindOrderedServicePaginatedHttpController } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.http.controller'
+import { FindOrderedServicePaginatedQueryHandler } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.query-handler'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -65,7 +66,11 @@ const commandHandlers: Provider[] = [
   UpdateManualPriceService,
   UpdateRevisionSizeService,
 ]
-const queryHandlers: Provider[] = [FindOrderedServiceQueryHandler, FindOrderedServiceQueryHandler]
+const queryHandlers: Provider[] = [
+  FindOrderedServiceQueryHandler,
+  FindOrderedServiceQueryHandler,
+  FindOrderedServicePaginatedQueryHandler,
+]
 const eventHandlers: Provider[] = [
   CreateOrderedServiceWhenJobIsCreatedEventHandler,
   CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler,

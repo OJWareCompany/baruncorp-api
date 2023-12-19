@@ -15,6 +15,10 @@ import { FindTaskPaginatedQueryHandler } from './queries/find-task-paginated/tas
 import { TASK_REPOSITORY } from './task.di-token'
 import { TaskRepository } from './database/task.repository'
 import { TaskMapper } from './task.mapper'
+import { AddPrerequisiteTaskHttpController } from './commands/add-prerequisite-task/add-prerequisite-task.http.controller'
+import { DeletePrerequisiteTaskHttpController } from './commands/delete-prerequisite-task/delete-prerequisite-task.http.controller'
+import { AddPrerequisiteTaskService } from './commands/add-prerequisite-task/add-prerequisite-task.service'
+import { DeletePrerequisiteTaskService } from './commands/delete-prerequisite-task/delete-prerequisite-task.service'
 
 const httpControllers = [
   CreateTaskHttpController,
@@ -22,8 +26,16 @@ const httpControllers = [
   DeleteTaskHttpController,
   FindTaskHttpController,
   FindTaskPaginatedHttpController,
+  AddPrerequisiteTaskHttpController,
+  DeletePrerequisiteTaskHttpController,
 ]
-const commandHandlers: Provider[] = [CreateTaskService, UpdateTaskService, DeleteTaskService]
+const commandHandlers: Provider[] = [
+  CreateTaskService,
+  UpdateTaskService,
+  DeleteTaskService,
+  AddPrerequisiteTaskService,
+  DeletePrerequisiteTaskService,
+]
 const queryHandlers: Provider[] = [FindTaskQueryHandler, FindTaskPaginatedQueryHandler]
 const repositories: Provider[] = [
   {

@@ -5,6 +5,7 @@ import { TaskResponseDto } from '../../dtos/task.response.dto'
 import { FindTaskRequestDto } from './find-task.request.dto'
 import { FindTaskQuery } from './find-task.query-handler'
 import { LicenseRequiredEnum } from '../../domain/task.type'
+import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
 
 @Controller('tasks')
 export class FindTaskHttpController {
@@ -22,9 +23,31 @@ export class FindTaskHttpController {
       serviceId: result.serviceId,
       serviceName: 'PV Designe',
       licenseRequired: LicenseRequiredEnum.structural,
-      taskPositions: [],
-      prerequisiteTask: [],
-      taskWorker: [],
+      taskPositions: [
+        {
+          order: 1,
+          positionId: 'vdscasdsazx',
+          positionName: 'Sr. Designer',
+          autoAssignmentType: AutoAssignmentTypeEnum.all,
+        },
+        {
+          order: 2,
+          positionId: 'vdscasdsazx',
+          positionName: 'Jr. Designer',
+          autoAssignmentType: AutoAssignmentTypeEnum.all,
+        },
+      ],
+      prerequisiteTask: [{ taskId: 'asd', taskName: 'Something' }],
+      taskWorker: [
+        {
+          email: 'asd@naver.com',
+          organizationId: 'asda',
+          organizationName: 'BarunCorp',
+          position: 'Sr. Designer',
+          userId: 'as',
+          userName: 'chris k',
+        },
+      ],
     })
   }
 }

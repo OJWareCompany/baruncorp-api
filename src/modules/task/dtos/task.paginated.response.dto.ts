@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 import { TaskResponseDto } from './task.response.dto'
-import { IsEnum, IsNumber, IsString, ValidateNested } from 'class-validator'
+import { IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { AutoAssignmentTypeEnum } from '../../position/domain/position.type'
 import { LicenseRequiredEnum } from '../domain/task.type'
 import { initialize } from '../../../libs/utils/constructor-initializer'
@@ -53,7 +53,8 @@ export class TaskPaginatedResponseFields {
 
   @ApiProperty({ default: LicenseRequiredEnum.structural, enum: LicenseRequiredEnum })
   @IsEnum(LicenseRequiredEnum)
-  readonly licenseRequired: LicenseRequiredEnum
+  @IsOptional()
+  readonly licenseRequired: LicenseRequiredEnum | null
 
   @ApiProperty({ type: TaskPosition, isArray: true })
   @ValidateNested()
@@ -68,7 +69,7 @@ export class TaskPaginatedResponseFields {
   }
 }
 
-export class TaskPaginatedResponseDto extends PaginatedResponseDto<TaskResponseDto> {
-  @ApiProperty({ type: TaskResponseDto, isArray: true })
-  items: readonly TaskResponseDto[]
+export class TaskPaginatedResponseDto extends PaginatedResponseDto<TaskPaginatedResponseFields> {
+  @ApiProperty({ type: TaskPaginatedResponseFields, isArray: true })
+  items: readonly TaskPaginatedResponseFields[]
 }

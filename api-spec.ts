@@ -855,7 +855,7 @@ export interface TaskResponseDto {
   /** @default "" */
   serviceName: string
   /** @default "Structural" */
-  licenseRequired: 'Structural' | 'Electrical'
+  licenseRequired: 'Structural' | 'Electrical' | null
   taskPositions: TaskPosition[]
   prerequisiteTask: PrerequisiteTask[]
   taskWorker: TaskWorker[]
@@ -937,11 +937,25 @@ export interface UpdateRevisionSizeRequestDto {
   sizeForRevision: 'Major' | 'Minor' | null
 }
 
+export interface OrderedServicePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: OrderedServiceResponseDto[]
+}
+
 export interface CreateTaskRequestDto {
   /** @default "618d6167-0cff-4c0f-bbf6-ed7d6e14e2f1" */
   serviceId: string
   /** @default "PV Design QA/QC" */
   name: string
+  /** @default "Structural" */
+  licenseRequired: 'Structural' | 'Electrical' | null
   /** @default true */
   isAutoAssignment: boolean
 }
@@ -949,6 +963,25 @@ export interface CreateTaskRequestDto {
 export interface UpdateTaskRequestDto {
   /** @default "" */
   name: string
+  /** @default "Structural" */
+  licenseRequired: 'Structural' | 'Electrical' | null
+  /** @default true */
+  isAutoAssignment: boolean
+}
+
+export interface TaskPaginatedResponseFields {
+  /** @default "" */
+  id: string
+  /** @default "" */
+  name: string
+  /** @default "" */
+  serviceId: string
+  /** @default "" */
+  serviceName: string
+  /** @default "Structural" */
+  licenseRequired: 'Structural' | 'Electrical' | null
+  taskPositions: TaskPosition[]
+  prerequisiteTask: PrerequisiteTask[]
 }
 
 export interface TaskPaginatedResponseDto {
@@ -960,7 +993,17 @@ export interface TaskPaginatedResponseDto {
   totalCount: number
   /** @example 500 */
   totalPage: number
-  items: any[][]
+  items: TaskPaginatedResponseFields[]
+}
+
+export interface AddPrerequisiteTaskRequestDto {
+  /** @default "618d6167-0cff-4c0f-bbf6-ed7d6e14e2f1" */
+  prerequisiteTaskId: string
+}
+
+export interface DeletePrerequisiteTaskRequestDto {
+  /** @default "618d6167-0cff-4c0f-bbf6-ed7d6e14e2f1" */
+  prerequisiteTaskId: string
 }
 
 export interface AssignTaskRequestDto {
@@ -1325,7 +1368,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-19T02:56:24.343Z"
+   * @default "2023-12-19T07:12:39.983Z"
    */
   invoiceDate: string
   /**
@@ -2021,8 +2064,6 @@ export interface FindVendorInvoicePaginatedHttpControllerGetParams {
    * @default ""
    */
   organizationName?: string | null
-  /** @default "Issued" */
-  status?: 'Unissued' | 'Issued' | 'Paid' | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -3226,7 +3267,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       }: FindOrderedServicePaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
-      this.request<OrderedServiceResponseDto, any>({
+      this.request<OrderedServicePaginatedResponseDto, any>({
         path: `/ordered-services`,
         method: 'GET',
         query: query,
@@ -3401,6 +3442,47 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<TaskResponseDto, any>({
         path: `/tasks/${taskId}`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AddPrerequisiteTaskHttpControllerPost
+     * @request POST:/tasks/{taskId}/pre-tasks
+     */
+    addPrerequisiteTaskHttpControllerPost: (
+      taskId: string,
+      data: AddPrerequisiteTaskRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/tasks/${taskId}/pre-tasks`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeletePrerequisiteTaskHttpControllerDelete
+     * @request DELETE:/tasks/{taskId}/pre-task/{prerequisiteTaskId}
+     */
+    deletePrerequisiteTaskHttpControllerDelete: (
+      taskId: string,
+      prerequisiteTaskId: string,
+      data: DeletePrerequisiteTaskRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<string, any>({
+        path: `/tasks/${taskId}/pre-task/${prerequisiteTaskId}`,
+        method: 'DELETE',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),

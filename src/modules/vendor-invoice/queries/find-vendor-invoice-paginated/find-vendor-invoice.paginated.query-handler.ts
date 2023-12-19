@@ -11,7 +11,7 @@ import { Prisma } from '@prisma/client'
 
 export class FindVendorInvoicePaginatedQuery extends PaginatedQueryBase {
   readonly organizationName?: string | null
-  readonly status?: InvoiceStatusEnum | null
+  // readonly status?: InvoiceStatusEnum | null
   constructor(props: PaginatedParams<FindVendorInvoicePaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -25,7 +25,7 @@ export class FindVendorInvoicePaginatedQueryHandler implements IQueryHandler {
   async execute(query: FindVendorInvoicePaginatedQuery): Promise<Paginated<VendorInvoiceResponseDto>> {
     const condition: Prisma.VendorInvoicesWhereInput = {
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
-      ...(query.status && { status: query.status }),
+      // ...(query.status && { status: query.status }),
     }
 
     const records = await this.prismaService.vendorInvoices.findMany({

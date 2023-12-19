@@ -8,6 +8,7 @@ import { TaskPaginatedResponseDto } from '../../dtos/task.paginated.response.dto
 import { FindTaskPaginatedQuery } from './task.paginated.query-handler'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { LicenseRequiredEnum } from '../../domain/task.type'
+import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
 
 @Controller('tasks')
 export class FindTaskPaginatedHttpController {
@@ -32,11 +33,33 @@ export class FindTaskPaginatedHttpController {
           id: task.id,
           name: task.name,
           serviceId: task.serviceId,
-          serviceName: 'string',
+          serviceName: 'PV Design',
           licenseRequired: LicenseRequiredEnum.structural,
-          taskPositions: [],
-          prerequisiteTask: [],
-          taskWorker: [],
+          taskPositions: [
+            {
+              order: 1,
+              positionId: 'vdscasdsazx',
+              positionName: 'Sr. Designer',
+              autoAssignmentType: AutoAssignmentTypeEnum.all,
+            },
+            {
+              order: 2,
+              positionId: 'vdscasdsazx',
+              positionName: 'Jr. Designer',
+              autoAssignmentType: AutoAssignmentTypeEnum.all,
+            },
+          ],
+          prerequisiteTask: [{ taskId: 'asd', taskName: 'Something' }],
+          taskWorker: [
+            {
+              email: 'asd@naver.com',
+              organizationId: 'asda',
+              organizationName: 'BarunCorp',
+              position: 'Sr. Designer',
+              userId: 'as',
+              userName: 'chris k',
+            },
+          ],
         })
       }),
     })
