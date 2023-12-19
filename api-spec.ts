@@ -1006,6 +1006,27 @@ export interface DeletePrerequisiteTaskRequestDto {
   prerequisiteTaskId: string
 }
 
+export interface UpdatePositionOrderRequestDto {
+  taskPositions: TaskPosition[]
+}
+
+export interface UnregisteredUserForTaskResponseDto {
+  userId: string
+  userName: string
+}
+
+export interface UnregisteredUserForTaskPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: UnregisteredUserForTaskResponseDto[]
+}
+
 export interface AssignTaskRequestDto {
   /** @default "295fff4a-b13f-4c42-ba30-c0f39536ee6e" */
   assigneeId: string
@@ -1368,7 +1389,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-19T07:12:39.983Z"
+   * @default "2023-12-19T08:17:09.116Z"
    */
   invoiceDate: string
   /**
@@ -1924,6 +1945,22 @@ export interface FindTaskPaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
+}
+
+export interface FindUnregisteredUsersForTaskHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+  taskId: string
 }
 
 export interface FindAssignedTaskPaginatedHttpControllerGetParams {
@@ -3483,6 +3520,43 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'DELETE',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdatePositionOrderHttpControllerPatch
+     * @request PATCH:/tasks/{taskId}/position-order
+     */
+    updatePositionOrderHttpControllerPatch: (
+      taskId: string,
+      data: UpdatePositionOrderRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/tasks/${taskId}/position-order`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindUnregisteredUsersForTaskHttpControllerGet
+     * @request GET:/tasks/{taskId}/unregistered-users
+     */
+    findUnregisteredUsersForTaskHttpControllerGet: (
+      { taskId, ...query }: FindUnregisteredUsersForTaskHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UnregisteredUserForTaskPaginatedResponseDto, any>({
+        path: `/tasks/${taskId}/unregistered-users`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),

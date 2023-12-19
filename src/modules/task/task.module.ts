@@ -19,6 +19,10 @@ import { AddPrerequisiteTaskHttpController } from './commands/add-prerequisite-t
 import { DeletePrerequisiteTaskHttpController } from './commands/delete-prerequisite-task/delete-prerequisite-task.http.controller'
 import { AddPrerequisiteTaskService } from './commands/add-prerequisite-task/add-prerequisite-task.service'
 import { DeletePrerequisiteTaskService } from './commands/delete-prerequisite-task/delete-prerequisite-task.service'
+import { UpdatePositionOrderHttpController } from './commands/update-position-order/update-position-order.http.controller'
+import { UpdatePositionOrderService } from './commands/update-position-order/update-position-order.service'
+import { FindUnregisteredUsersForTaskHttpController } from './queries/find-unregistered-users-for-task/find-unregistered-users-for-task.http.controller'
+import { FindUnregisteredUsersForTaskPaginatedQueryHandler } from './queries/find-unregistered-users-for-task/find-unregistered-users-for-task.query-handler'
 
 const httpControllers = [
   CreateTaskHttpController,
@@ -28,6 +32,8 @@ const httpControllers = [
   FindTaskPaginatedHttpController,
   AddPrerequisiteTaskHttpController,
   DeletePrerequisiteTaskHttpController,
+  UpdatePositionOrderHttpController,
+  FindUnregisteredUsersForTaskHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateTaskService,
@@ -35,8 +41,13 @@ const commandHandlers: Provider[] = [
   DeleteTaskService,
   AddPrerequisiteTaskService,
   DeletePrerequisiteTaskService,
+  UpdatePositionOrderService,
 ]
-const queryHandlers: Provider[] = [FindTaskQueryHandler, FindTaskPaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindTaskQueryHandler,
+  FindTaskPaginatedQueryHandler,
+  FindUnregisteredUsersForTaskPaginatedQueryHandler,
+]
 const repositories: Provider[] = [
   {
     provide: TASK_REPOSITORY,
