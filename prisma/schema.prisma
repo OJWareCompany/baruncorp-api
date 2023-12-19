@@ -117,7 +117,6 @@ model Users {
   passwordEntity             Passwords?
   userRole                   UserRole?
   userPosition               UserPosition?
-  userServices               UserService[]
   organization               Organizations   @relation(fields: [organizationId], references: [id])
   assignedTasks              AssignedTasks[]
 
@@ -135,24 +134,13 @@ model Passwords {
   @@map("passwords")
 }
 
-model Departments {
-  id          String   @id @default(uuid())
-  name        String
-  description String
-  updatedAt   DateTime @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt   DateTime @default(now()) @map("created_at") @db.DateTime(0)
-
-  @@map("departments")
-}
-
 model Positions {
-  id                    String            @id @default(uuid())
+  id                    String         @id @default(uuid())
   name                  String
   description           String?
-  updatedAt             DateTime          @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt             DateTime          @default(now()) @map("created_at") @db.DateTime(0)
-  maxAssignedTasksLimit Int?              @map("max_assigned_tasks_limit") @db.UnsignedTinyInt
-  PositionService       PositionService[]
+  updatedAt             DateTime       @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt             DateTime       @default(now()) @map("created_at") @db.DateTime(0)
+  maxAssignedTasksLimit Int?           @map("max_assigned_tasks_limit") @db.UnsignedTinyInt
   UserPosition          UserPosition[]
 
   @@map("positions")
@@ -171,9 +159,7 @@ model Service {
   commercialRevisionMinutesPerUnit Int?                             @default(1) @map("commercial_revision_minutes_per_unit") @db.UnsignedInt
   orderedServices                  OrderedServices[]
   tasks                            Tasks[]
-  positionService                  PositionService[]
   commercialStandardPricingTiers   CommercialStandardPricingTiers[]
-  userService                      UserService[]
 
   @@map("service")
 }
@@ -205,31 +191,6 @@ model OrderedServices {
   assignedTasks               AssignedTasks[]
 
   @@map("ordered_services")
-}
-
-model PositionService {
-  positionId String    @map("position_id")
-  serviceId  String    @map("service_id")
-  updatedAt  DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt  DateTime  @default(now()) @map("created_at") @db.DateTime(0)
-  position   Positions @relation(fields: [positionId], references: [id])
-  service    Service   @relation(fields: [serviceId], references: [id])
-
-  @@id([positionId, serviceId])
-  @@index([serviceId], map: "position_service_service_id_fkey")
-  @@map("position_service")
-}
-
-model UserService {
-  userId    String   @map("user_id")
-  serviceId String   @map("service_id")
-  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  service   Service  @relation(fields: [serviceId], references: [id])
-  user      Users    @relation(fields: [userId], references: [id])
-
-  @@id([userId, serviceId])
-  @@map("user_service")
 }
 
 model States {

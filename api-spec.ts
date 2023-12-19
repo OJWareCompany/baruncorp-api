@@ -824,13 +824,41 @@ export interface UpdateServiceRequestDto {
   fixedPrice: number | null
 }
 
+export interface TaskPosition {
+  positionId: string
+  positionName: string
+  order: number
+  autoAssignmentType: 'None' | 'Rsidential' | 'Commercial' | 'Rsidential / Commercial'
+}
+
+export interface PrerequisiteTask {
+  taskId: string
+  taskName: string
+}
+
+export interface TaskWorker {
+  userId: string
+  userName: string
+  email: string
+  position: string
+  organizationName: string
+  organizationId: string
+}
+
 export interface TaskResponseDto {
   /** @default "" */
   id: string
   /** @default "" */
+  name: string
+  /** @default "" */
   serviceId: string
   /** @default "" */
-  name: string
+  serviceName: string
+  /** @default "Structural" */
+  licenseRequired: 'Structural' | 'Electrical'
+  taskPositions: TaskPosition[]
+  prerequisiteTask: PrerequisiteTask[]
+  taskWorker: TaskWorker[]
 }
 
 export interface ServiceResponseDto {
@@ -932,7 +960,7 @@ export interface TaskPaginatedResponseDto {
   totalCount: number
   /** @example 500 */
   totalPage: number
-  items: TaskResponseDto[]
+  items: any[][]
 }
 
 export interface AssignTaskRequestDto {
@@ -1297,7 +1325,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-18T17:16:32.688Z"
+   * @default "2023-12-19T02:56:24.343Z"
    */
   invoiceDate: string
   /**

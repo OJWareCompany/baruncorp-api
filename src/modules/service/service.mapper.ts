@@ -149,7 +149,7 @@ export class ServiceMapper
           }
         : null,
       fixedPrice: props.pricing.fixedPrice,
-      relatedTasks: props.tasks,
+      relatedTasks: [],
     })
 
     return response

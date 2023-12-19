@@ -7,6 +7,7 @@ import { TaskPaginatedResponseDto } from '../../dtos/task.paginated.response.dto
 // import { FindTaskPaginatedRequestDto } from './task.paginated.request.dto'
 import { FindTaskPaginatedQuery } from './task.paginated.query-handler'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
+import { LicenseRequiredEnum } from '../../domain/task.type'
 
 @Controller('tasks')
 export class FindTaskPaginatedHttpController {
@@ -31,6 +32,11 @@ export class FindTaskPaginatedHttpController {
           id: task.id,
           name: task.name,
           serviceId: task.serviceId,
+          serviceName: 'string',
+          licenseRequired: LicenseRequiredEnum.structural,
+          taskPositions: [],
+          prerequisiteTask: [],
+          taskWorker: [],
         })
       }),
     })

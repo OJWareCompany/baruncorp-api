@@ -42,23 +42,6 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
   }
 
   toDomain(record: UserQueryModel): UserEntity {
-    const services = record.userServices.map(
-      (userService) =>
-        new Service({
-          id: userService.serviceId,
-          name: userService.service.name,
-          billingCode: userService.service.billingCode,
-          basePrice: Number(userService.service.basePrice),
-          relatedTasks: userService.service.tasks.map(
-            (task) =>
-              new Task({
-                id: task.id,
-                name: task.name,
-              }),
-          ),
-        }),
-    )
-
     const entity = new UserEntity({
       id: record.id,
       props: {
@@ -77,7 +60,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
           ? new Position({ id: record.userPosition.positionId, name: record.userPosition.position.name })
           : null,
         licenses: [],
-        services: services,
+        services: [],
         role: record.userRole?.roleName as UserRoleNameEnum,
         isVendor: record.isVendor,
         isHandRaisedForTask: record.isHandRaisedForTask,

@@ -1,17 +1,6 @@
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable } from '@nestjs/common'
-import {
-  Organizations,
-  Positions,
-  Users,
-  UserRole,
-  UserService,
-  Service,
-  States,
-  UserPosition,
-  Roles,
-  Tasks,
-} from '@prisma/client'
+import { Organizations, Positions, Users, UserRole, UserPosition, Roles, Tasks } from '@prisma/client'
 import { UserRepositoryPort } from './user.repository.port'
 import { PrismaService } from '../../database/prisma.service'
 import { EmailVO } from '../domain/value-objects/email.vo'
@@ -28,7 +17,7 @@ export type UserQueryModel = Users & {
   organization: Organizations
   userRole: (UserRole & { role: Roles }) | null
   userPosition: (UserPosition & { position: Positions }) | null
-  userServices: (UserService & { service: Service & { tasks: Tasks[] } })[]
+  // userServices: (UserService & { service: Service & { tasks: Tasks[] } })[]
   // userElectricalLicenses: (UserElectricalLicenses & { state: States })[]
   // userStructuralLicenses: (UserStructuralLicenses & { state: States })[]
 }

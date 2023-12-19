@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { TaskResponseDto } from './dtos/task.response.dto'
 import { TaskEntity } from './domain/task.entity'
+import { LicenseRequiredEnum } from './domain/task.type'
 
 @Injectable()
 export class TaskMapper implements Mapper<TaskEntity, Tasks, TaskResponseDto> {
@@ -37,6 +38,11 @@ export class TaskMapper implements Mapper<TaskEntity, Tasks, TaskResponseDto> {
       id: props.id,
       name: props.name,
       serviceId: props.serviceId,
+      serviceName: 'string',
+      licenseRequired: LicenseRequiredEnum.structural,
+      taskPositions: [],
+      prerequisiteTask: [],
+      taskWorker: [],
     })
     return response
   }

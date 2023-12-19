@@ -6,3 +6,8 @@ export interface CreateTaskProps {
 }
 
 export type TaskProps = CreateTaskProps
+
+export enum LicenseRequiredEnum {
+  structural = 'Structural',
+  electrical = 'Electrical',
+}

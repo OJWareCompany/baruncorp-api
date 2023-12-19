@@ -1,21 +1,40 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsEnum, IsString, ValidateNested } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
+import { TaskPaginatedResponseFields } from './task.paginated.response.dto'
 
-export class TaskResponseDto {
-  @ApiProperty({ default: '' })
+export class TaskWorker {
+  @ApiProperty()
   @IsString()
-  readonly id: string
+  userId: string
 
-  @ApiProperty({ default: '' })
+  @ApiProperty()
   @IsString()
-  readonly serviceId: string
+  userName: string
 
-  @ApiProperty({ default: '' })
+  @ApiProperty()
   @IsString()
-  readonly name: string
+  email: string
+
+  @ApiProperty()
+  @IsString()
+  position: string
+
+  @ApiProperty()
+  @IsString()
+  organizationName: string
+
+  @ApiProperty()
+  @IsString()
+  organizationId: string
+}
+export class TaskResponseDto extends TaskPaginatedResponseFields {
+  @ApiProperty({ type: TaskWorker, isArray: true })
+  @ValidateNested()
+  taskWorker: TaskWorker[]
 
   constructor(props: TaskResponseDto) {
+    super(props)
     initialize(this, props)
   }
 }

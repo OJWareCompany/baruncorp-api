@@ -2,7 +2,6 @@ import { CqrsModule } from '@nestjs/cqrs'
 import { Module, Provider } from '@nestjs/common'
 import { PrismaService } from '../database/prisma.service'
 import UserMapper from '../users/user.mapper'
-import { PositionMapper } from '../department/position.mapper'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
@@ -46,7 +45,7 @@ const repositories: Provider[] = [
 
 const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService, UpdateOrganizationService]
 
-const mappers: Provider[] = [UserMapper, PositionMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper]
 
 @Module({
   imports: [CqrsModule],
