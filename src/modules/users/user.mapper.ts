@@ -12,6 +12,7 @@ import { Service } from './domain/value-objects/service.value-object'
 import { Task } from './domain/value-objects/task.value-object'
 import { LicenseTypeEnum } from './user-license.type'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
+import { AutoAssignmentTypeEnum } from '../position/domain/position.type'
 
 @Injectable()
 export default class UserMapper implements Mapper<UserEntity, UserModel, UserResponseDto> {
@@ -83,10 +84,6 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.deliverablesEmails = props.deliverablesEmails
     response.organization = props.organization.name
     response.organizationId = props.organization.id
-    response.services = props.services.map((service) => ({
-      ...service.unpack(),
-      relatedTasks: service.relatedTasks.map((task) => task.unpack()),
-    }))
     response.position = props.position ? props.position.unpack() : null
     response.licenses = props.licenses.map((license) => ({
       ...license.unpack(),
@@ -94,6 +91,13 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     }))
     response.role = props.role
     response.isVendor = props.isVendor
+    response.availableTasks = [
+      {
+        id: 'asdas',
+        name: 'PV Design',
+        autoAssignmentType: AutoAssignmentTypeEnum.all,
+      },
+    ]
     return response
   }
 }

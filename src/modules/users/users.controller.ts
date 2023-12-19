@@ -11,7 +11,6 @@ import { UserName } from './domain/value-objects/user-name.vo'
 import { GiveRoleRequestDto } from './commands/give-role/give-role.request.dto'
 import { UpdateUserRequestDto } from './commands/update-user/update-user.request.dto'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
-import { AppointUserLicenseRequestDto } from './commands/appoint-user-license/appoint-user-license.request.dto'
 import { UserRequestDto } from './user-param.request.dto'
 import { InvitationEmailProp } from './domain/invitationMail.types'
 
@@ -104,48 +103,4 @@ export class UsersController {
 
     return result
   }
-
-  /**
-   * 등록된 모든 라이센스 조회
-   * 라이센스: 특정 State에서 작업 허가 받은 Member의 자격증
-   */
-  // @Get('member-licenses')
-  // async getFindAllLicenses(): Promise<LincenseResponseDto[]> {
-  //   const result = await this.userService.findAllLicenses()
-  //   return result.map(
-  //     (license) =>
-  //       new LincenseResponseDto({
-  //         ownerName: license.getProps().userName.getFullName(),
-  //         type: license.getProps().type,
-  //         issuingCountryName: license.getProps().stateEntity.stateName,
-  //         abbreviation: license.getProps().stateEntity.abbreviation,
-  //         priority: license.getProps().priority,
-  //         expiryDate: license.getProps().expiryDate?.toISOString() || null,
-  //       }),
-  //   )
-  // }
-
-  // TODO: create api doesn't retrieve? how handel conflict error?
-  // @Post('member-licenses')
-  // @UseGuards(AuthGuard)
-  // async postRegisterMemberLicense(@Body() dto: AppointUserLicenseRequestDto): Promise<void> {
-  //   // return await this.userService.registerLicense(
-  //   //   dto.userId,
-  //   //   dto.type,
-  //   //   dto.issuingCountryName,
-  //   //   dto.abbreviation,
-  //   //   dto.priority,
-  //   //   // new Date(dto.issuedDate),
-  //   //   dto.expiryDate ? new Date(dto.expiryDate) : null,
-  //   // )
-  // }
-
-  /**
-   * // 추후 개선 사항 -> member-licenses/:licenseId
-   */
-  // @Delete('member-licenses')
-  // @UseGuards(AuthGuard)
-  // async deleteRemoveMemberLicense(@Query() dto: DeleteMemberLicenseRequestDto): Promise<void> {
-  //   return await this.userService.revokeLicense(dto.userId, dto.type, dto.issuingCountryName)
-  // }
 }

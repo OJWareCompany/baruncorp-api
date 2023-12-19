@@ -58,19 +58,13 @@ export interface UserPositionResponseDto {
   name: string
 }
 
-export interface RelatedTaskResponseDto {
+export interface AvailableTaskResponseDto {
   /** @default "" */
   id: string
   /** @default "" */
   name: string
-}
-
-export interface UserServiceResponseDto {
-  id: string
-  name: string
-  billingCode: string
-  basePrice: number
-  relatedTasks: RelatedTaskResponseDto[]
+  /** @default "Residential / Commercial" */
+  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
 }
 
 export interface LincenseResponseDto {
@@ -92,7 +86,7 @@ export interface UserResponseDto {
   organization: string
   organizationId: string
   position: UserPositionResponseDto | null
-  services: UserServiceResponseDto[]
+  availableTasks: AvailableTaskResponseDto[]
   licenses: LincenseResponseDto[]
   role: string
   deliverablesEmails: string[]
@@ -175,6 +169,21 @@ export interface AppointUserLicenseRequestDto {
 export interface RevokeUserLicenseRequestDto {
   /** @default "Electrical" */
   type: 'Electrical' | 'Structural'
+}
+
+export interface AddAvailableTaskRequestDto {
+  taskId: string
+  /** @default "Residential" */
+  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
+}
+
+export interface ModifyAssignmentTypeOfAvailableTaskRequestDto {
+  /** @default "Residential" */
+  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
+}
+
+export interface HandsStatusResponseDto {
+  status: boolean
 }
 
 export interface AddressDto {
@@ -828,7 +837,7 @@ export interface TaskPosition {
   positionId: string
   positionName: string
   order: number
-  autoAssignmentType: 'None' | 'Rsidential' | 'Commercial' | 'Rsidential / Commercial'
+  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
 }
 
 export interface PrerequisiteTask {
@@ -1389,7 +1398,7 @@ export interface CreateVendorInvoiceRequestDto {
   organizationId: string
   /**
    * @format date-time
-   * @default "2023-12-19T08:17:09.116Z"
+   * @default "2023-12-19T11:57:01.688Z"
    */
   invoiceDate: string
   /**
@@ -1603,13 +1612,13 @@ export interface PositionPaginatedResponseDto {
 export interface AddPositionTaskRequestDto {
   /** @default "911fe9ac-94b8-4a0e-b478-56e88f4aa7d7" */
   taskId: string
-  /** @default "Rsidential / Commercial" */
-  autoAssignmentType: 'None' | 'Rsidential' | 'Commercial' | 'Rsidential / Commercial'
+  /** @default "Residential / Commercial" */
+  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
 }
 
 export interface UpdatePositionTaskAutoAssignmentTypeRequestDto {
-  /** @default "Rsidential / Commercial" */
-  autoAssignmentType: 'None' | 'Rsidential' | 'Commercial' | 'Rsidential / Commercial'
+  /** @default "Residential / Commercial" */
+  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
 }
 
 export interface AddPositionWorkerRequestDto {
@@ -2582,6 +2591,98 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/users`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AddAvailableTaskHttpControllerPost
+     * @request POST:/users/{userId}/available-tasks
+     */
+    addAvailableTaskHttpControllerPost: (
+      userId: string,
+      data: AddAvailableTaskRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/users/${userId}/available-tasks`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteAvailableTaskHttpControllerDelete
+     * @request DELETE:/users/{userId}/available-tasks/{taskId}
+     */
+    deleteAvailableTaskHttpControllerDelete: (userId: string, taskId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/${userId}/available-tasks/${taskId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ModifyAssignmentTypeOfAvailableTaskHttpControllerPatch
+     * @request PATCH:/users/{userId}/available-tasks/{taskId}
+     */
+    modifyAssignmentTypeOfAvailableTaskHttpControllerPatch: (
+      userId: string,
+      taskId: string,
+      data: ModifyAssignmentTypeOfAvailableTaskRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/users/${userId}/available-tasks/${taskId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name HandsDownHttpControllerPatch
+     * @request POST:/users/hands/down
+     */
+    handsDownHttpControllerPatch: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/hands/down`,
+        method: 'POST',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name HandsUpHttpControllerPatch
+     * @request POST:/users/hands/up
+     */
+    handsUpHttpControllerPatch: (params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/hands/up`,
+        method: 'POST',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CheckHandsStatusHttpControllerGet
+     * @request GET:/users/hands/status
+     */
+    checkHandsStatusHttpControllerGet: (params: RequestParams = {}) =>
+      this.request<HandsStatusResponseDto, any>({
+        path: `/users/hands/status`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),

@@ -1,8 +1,8 @@
 export enum AutoAssignmentTypeEnum {
   none = 'None',
-  rsidential = 'Rsidential',
+  residential = 'Residential',
   commercial = 'Commercial',
-  all = 'Rsidential / Commercial',
+  all = 'Residential / Commercial',
 }
 
 export interface CreatePositionProps {

@@ -19,6 +19,17 @@ import { AppointUserLicenseHttpController } from './commands/appoint-user-licens
 import { RevokeUserLicenseHttpController } from './commands/revoke-user-license/revoke-user-license.http.controller'
 import { AppointUserLicenseService } from './commands/appoint-user-license/appoint-user-license.service'
 import { RevokeUserLicenseService } from './commands/revoke-user-license/revoke-user-license.service'
+import { AddAvailableTaskHttpController } from './commands/add-available-task/add-available-task.http.controller'
+import { AddAvailableTaskService } from './commands/add-available-task/add-available-task.service'
+import { DeleteAvailableTaskHttpController } from './commands/delete-available-task/delete-available-task.http.controller'
+import { DeleteAvailableTaskService } from './commands/delete-available-task/delete-available-task.service'
+import { ModifyAssignmentTypeOfAvailableTaskHttpController } from './commands/modify-assignment-type-of-available-task/modify-assignment-type-of-available-task.http.controller'
+import { ModifyAssignmentTypeOfAvailableTaskService } from './commands/modify-assignment-type-of-available-task/modify-assignment-type-of-available-task.service'
+import { HandsDownHttpController } from './commands/hands-down/hands-down.http.controller'
+import { HandsUpHttpController } from './commands/hands-up/hands-up.http.controller'
+import { CheckHandsStatusHttpController } from './queries/check-hands-state/check-hands-state.http.controller'
+import { HandsDownService } from './commands/hands-down/hands-down.service'
+import { HandsUpService } from './commands/hands-up/hands-up.service'
 
 const httpControllers = [
   UsersController,
@@ -26,8 +37,23 @@ const httpControllers = [
   FindUsersHttpController,
   AppointUserLicenseHttpController,
   RevokeUserLicenseHttpController,
+  AddAvailableTaskHttpController,
+  DeleteAvailableTaskHttpController,
+  ModifyAssignmentTypeOfAvailableTaskHttpController,
+  HandsDownHttpController,
+  HandsUpHttpController,
+  CheckHandsStatusHttpController,
 ]
-const commandHandlers: Provider[] = [CreateUserService, AppointUserLicenseService, RevokeUserLicenseService]
+const commandHandlers: Provider[] = [
+  CreateUserService,
+  AppointUserLicenseService,
+  RevokeUserLicenseService,
+  AddAvailableTaskService,
+  DeleteAvailableTaskService,
+  ModifyAssignmentTypeOfAvailableTaskService,
+  HandsDownService,
+  HandsUpService,
+]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
 
 const repositories: Provider[] = [

@@ -8,7 +8,7 @@ export class CreateVendorInvoiceRequestDto {
   @IsString()
   readonly organizationId: string
 
-  @ApiProperty({ default: new Date() })
+  @ApiProperty({ default: '2023-12-19T11:57:01.688Z' })
   @IsDate()
   @Type(() => Date)
   readonly invoiceDate: Date = new Date()
