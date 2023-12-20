@@ -1091,6 +1091,12 @@ export interface UpdateTaskCostRequestDto {
   cost: number | null
 }
 
+export interface AvailableWorkerResponseDto {
+  id: string
+  name: string
+  position: string
+}
+
 export interface CreateInvoiceRequestDto {
   /**
    * @format date-time
@@ -3758,6 +3764,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAvailableWorkersHttpControllerGet
+     * @request GET:/assigned-tasks/{assigendTaskId}/available-tasks
+     */
+    findAvailableWorkersHttpControllerGet: (
+      assignedTaskId: string,
+      assigendTaskId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<AvailableWorkerResponseDto[], any>({
+        path: `/assigned-tasks/${assigendTaskId}/available-tasks`,
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   }

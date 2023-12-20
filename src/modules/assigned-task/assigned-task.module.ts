@@ -39,6 +39,8 @@ import { AssignTaskHttpController } from './commands/assign-task/assign-task.htt
 import { AssignTaskService } from './commands/assign-task/assign-task.service'
 import { UpdateTaskCostService } from './commands/update-task-cost/update-task-cost.service'
 import { UpdateTaskCostHttpController } from './commands/update-task-cost/update-task-cost.http.controller'
+import { FindAvailableWorkersHttpController } from './queries/find-available-workers/find-available-workers.http.controller'
+import { FindAvailableWorkersQueryHandler } from './queries/find-available-workers/find-available-workers.query.handler'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -47,6 +49,7 @@ const httpControllers = [
   CompleteAssignedTaskHttpController,
   UpdateTaskDurationHttpController,
   UpdateTaskCostHttpController,
+  FindAvailableWorkersHttpController,
 ]
 const commandHandlers: Provider[] = [
   AssignTaskService,
@@ -54,7 +57,11 @@ const commandHandlers: Provider[] = [
   UpdateTaskDurationService,
   UpdateTaskCostService,
 ]
-const queryHandlers: Provider[] = [FindAssignedTaskQueryHandler, FindAssignedTaskPaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindAssignedTaskQueryHandler,
+  FindAssignedTaskPaginatedQueryHandler,
+  FindAvailableWorkersQueryHandler,
+]
 const repositories: Provider[] = [
   {
     provide: ASSIGNED_TASK_REPOSITORY,
