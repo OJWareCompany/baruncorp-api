@@ -41,6 +41,11 @@ import { UpdateTaskCostService } from './commands/update-task-cost/update-task-c
 import { UpdateTaskCostHttpController } from './commands/update-task-cost/update-task-cost.http.controller'
 import { FindAvailableWorkersHttpController } from './queries/find-available-workers/find-available-workers.http.controller'
 import { FindAvailableWorkersQueryHandler } from './queries/find-available-workers/find-available-workers.query.handler'
+import { FindRejectedTaskReasonHttpController } from './queries/find-rejected-task-reason-paginated/find-rejected-task-reason.paginated.http.controller'
+import { UnassignAssignedTaskHttpController } from './commands/unassign-assigned-task/unassign-assigned-task.http.controller'
+import { UnassignAssignedTaskService } from './commands/unassign-assigned-task/unassign-assigned-task.service'
+import { RejectAssignedTaskHttpController } from './commands/reject-assigned-task/reject-assigned-task.http.controller'
+import { RejectAssignedTaskService } from './commands/reject-assigned-task/reject-assigned-task.service'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -50,12 +55,17 @@ const httpControllers = [
   UpdateTaskDurationHttpController,
   UpdateTaskCostHttpController,
   FindAvailableWorkersHttpController,
+  FindRejectedTaskReasonHttpController,
+  UnassignAssignedTaskHttpController,
+  RejectAssignedTaskHttpController,
 ]
 const commandHandlers: Provider[] = [
   AssignTaskService,
   CompleteAssignedTaskService,
   UpdateTaskDurationService,
   UpdateTaskCostService,
+  UnassignAssignedTaskService,
+  RejectAssignedTaskService,
 ]
 const queryHandlers: Provider[] = [
   FindAssignedTaskQueryHandler,

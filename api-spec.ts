@@ -1097,6 +1097,32 @@ export interface AvailableWorkerResponseDto {
   position: string
 }
 
+export interface RejectedTaskReasonResponseDto {
+  userId: string
+  userName: string
+  taskName: string
+  rejectedTaskId: string
+  reason: string
+  /** @format date-time */
+  rejectedAt: string
+}
+
+export interface RejectedTaskReasonPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: RejectedTaskReasonResponseDto[]
+}
+
+export interface RejectAssignedTaskRequestDto {
+  reason: string
+}
+
 export interface CreateInvoiceRequestDto {
   /**
    * @format date-time
@@ -3780,6 +3806,53 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<AvailableWorkerResponseDto[], any>({
         path: `/assigned-tasks/${assigendTaskId}/available-tasks`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UnassignAssignedTaskHttpControllerPatch
+     * @request PATCH:/assigned-tasks/{assignedTaskId}/unaasign
+     */
+    unassignAssignedTaskHttpControllerPatch: (assignedTaskId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/assigned-tasks/${assignedTaskId}/unaasign`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name RejectAssignedTaskHttpControllerPatch
+     * @request PATCH:/assigned-tasks/{assignedTaskId}/reject
+     */
+    rejectAssignedTaskHttpControllerPatch: (
+      assignedTaskId: string,
+      data: RejectAssignedTaskRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/assigned-tasks/${assignedTaskId}/reject`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
+  rejectedTaskReasons = {
+    /**
+     * No description
+     *
+     * @name FindRejectedTaskReasonHttpControllerGet
+     * @request GET:/rejected-task-reasons
+     */
+    findRejectedTaskReasonHttpControllerGet: (params: RequestParams = {}) =>
+      this.request<RejectedTaskReasonPaginatedResponseDto, any>({
+        path: `/rejected-task-reasons`,
         method: 'GET',
         format: 'json',
         ...params,
