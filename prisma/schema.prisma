@@ -940,6 +940,18 @@ model prerequisiteTasks {
   @@map("prerequisite_tasks")
 }
 
+model RejectedTaskReasons {
+  id               String   @id @db.VarChar(255)
+  assigneeUserId   String   @map("assignee_user_id") @db.VarChar(255)
+  assigneeUserName String   @map("assignee_user_name") @db.VarChar(255)
+  reason           String   @map("reason") @db.Text
+  taskName         String   @map("task_name") @db.VarChar(255)
+  assignedTaskId   String   @map("assigned_task_id") @db.VarChar(255)
+  rejectedAt       DateTime @map("rejected_at") @db.DateTime(0)
+
+  @@map("rejected_task_reasons")
+}
+
 enum InvoicesStatus {
   Unissued
   Issued
