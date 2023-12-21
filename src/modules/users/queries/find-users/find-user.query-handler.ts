@@ -22,10 +22,12 @@ export class FindUserQueryHandler implements IQueryHandler {
 
   async execute(query: FindUsersQuery): Promise<Paginated<UserResponseDto>> {
     const whereInput: Prisma.UsersWhereInput = {
-      ...(query.email && { email: query.email }),
+      ...(query.email && { email: { contains: query.email } }),
       ...(query.organizationId && { organizationId: query.organizationId }),
+      ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
+      ...(query.isContractor && { isVendor: query.isContractor }),
+      ...(query.userName && { full_name: { contains: query.userName } }),
     }
-
     const records = await this.prismaService.users.findMany({
       where: whereInput,
       include: UserRepository.userQueryIncludeInput,

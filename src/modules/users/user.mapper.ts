@@ -23,6 +23,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       email: copy.email,
       firstName: copy.userName.getFirstName(),
       lastName: copy.userName.getLastName(),
+      full_name: copy.userName.getFullName(),
       organizationId: copy.organization.id,
       updatedAt: new Date(),
       createdAt: new Date(),

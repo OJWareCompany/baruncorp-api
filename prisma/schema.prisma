@@ -101,6 +101,7 @@ model Users {
   email                      String          @unique
   firstName                  String          @map("first_name")
   lastName                   String          @map("last_name")
+  full_name                  String          @db.VarChar(255)
   organizationId             String          @map("organization_id")
   updatedAt                  DateTime        @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt                  DateTime        @default(now()) @map("created_at") @db.DateTime(0)

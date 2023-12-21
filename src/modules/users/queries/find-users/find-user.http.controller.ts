@@ -19,7 +19,11 @@ export class FindUsersHttpController {
     const query = new FindUsersQuery({
       page: queryParams.page,
       limit: queryParams.limit,
-      ...dto,
+      email: dto.email,
+      organizationId: dto.organizationId,
+      organizationName: dto.organizationName,
+      isContractor: dto.isContractor,
+      userName: dto.userName,
     })
     const result: Paginated<UserResponseDto> = await this.queryBus.execute(query)
 

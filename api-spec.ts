@@ -1707,8 +1707,14 @@ export interface AuthenticationControllerPostSignInTimeParams {
 export interface FindUsersHttpControllerGetFindUsersParams {
   /** @default "hyomin@ojware.com" */
   email?: string | null
-  /** @default "" */
+  /** @default null */
   organizationId?: string | null
+  /** @default "BarunCorp" */
+  organizationName?: string | null
+  /** @default null */
+  isContractor?: boolean | null
+  /** @default null */
+  userName?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
