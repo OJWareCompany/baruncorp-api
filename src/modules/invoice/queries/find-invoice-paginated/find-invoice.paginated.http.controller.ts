@@ -64,7 +64,7 @@ export class FindInvoicePaginatedHttpController {
           },
           isContainsRevisionTask: false, // TODO
           propertyType:
-            (job.getProps().projectType as ProjectPropertyType) === 'Commercial'
+            (job.getProps().projectPropertyType as ProjectPropertyType) === 'Commercial'
               ? ProjectPropertyTypeEnum.Commercial
               : ProjectPropertyTypeEnum.Residential,
           state: 'California (Mock)', // TODO

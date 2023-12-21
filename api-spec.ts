@@ -291,6 +291,7 @@ export interface AhjNoteListResponseDto {
   fullAhjName: string
   updatedBy: string
   updatedAt: string
+  type: string | null
 }
 
 export interface AhjNotePaginatedResponseDto {
@@ -574,7 +575,7 @@ export interface JobResponseDto {
   /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
   projectId: string
   isContainsRevisionTask: boolean
-  propertyType: 'Residential' | 'Commercial'
+  projectPropertyType: 'Residential' | 'Commercial'
   billingCodes: string[]
   taskSizeForRevision: 'Major' | 'Minor' | null
   /** @example 300.1 */
@@ -594,8 +595,6 @@ export interface JobResponseDto {
   jobRequestNumber: number
   /** @example "In Progress" */
   jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
-  /** @example "Residential" */
-  projectType: string
   assignedTasks: AssignedTaskResponseFields[]
   orderedServices: OrderedServiceResponseFields[]
   clientInfo: ClientInformationFields
@@ -695,14 +694,14 @@ export interface UpdateJobRequestDto {
 export interface JobPaginatedResponseFields {
   /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
   id: string
+  /** @example "Residential" */
+  projectPropertyType: 'Residential' | 'Commercial'
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
   propertyFullAddress: string
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
   jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
-  /** @example "Residential" */
-  projectType: string
   /** @example "Ground Mount" */
   mountingType: string
   orderedServices: OrderedServiceResponseFields[]
@@ -1874,7 +1873,7 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
    */
   propertyFullAddress?: string | null
   /** @default "Commercial" */
-  propertyPropertyType?: 'Residential' | 'Commercial' | null
+  projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
   jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
   /** @default "Ground Mount" */

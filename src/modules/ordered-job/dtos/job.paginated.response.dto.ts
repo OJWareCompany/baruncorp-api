@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 import { JobStatus, JobStatusEnum } from '../domain/job.type'
 import { OrderedServiceResponseFields, AssignedTaskResponseFields } from './job.response.dto'
+import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -29,6 +30,9 @@ export class JobPaginatedResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
   id: string
 
+  @ApiProperty({ example: 'Residential' })
+  projectPropertyType: ProjectPropertyTypeEnum
+
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
   propertyFullAddress: string
 
@@ -37,9 +41,6 @@ export class JobPaginatedResponseFields {
 
   @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
   jobStatus: JobStatus
-
-  @ApiProperty({ example: 'Residential' })
-  projectType: string
 
   @ApiProperty({ example: 'Ground Mount' })
   mountingType: string

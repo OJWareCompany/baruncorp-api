@@ -34,7 +34,7 @@ export interface CreateJobProps {
   numberOfWetStamp: number | null
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
-  projectType: ProjectPropertyTypeEnum
+  projectPropertyType: ProjectPropertyTypeEnum
   isExpedited: boolean
   updatedBy: string
 }

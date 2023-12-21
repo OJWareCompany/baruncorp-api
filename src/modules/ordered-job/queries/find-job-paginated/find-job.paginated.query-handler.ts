@@ -12,7 +12,7 @@ export class FindJobPaginatedQuery extends PaginatedQueryBase {
   readonly projectNumber?: string | null
   readonly jobName?: string | null
   readonly propertyFullAddress?: string | null
-  readonly propertyPropertyType?: ProjectPropertyTypeEnum | null
+  readonly projectPropertyType?: ProjectPropertyTypeEnum | null
   readonly jobStatus?: JobStatusEnum | null
   readonly mountingType?: MountingTypeEnum | null
   readonly isExpedited?: boolean | null
@@ -41,7 +41,7 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
       ...(query.jobName && { jobName: { contains: query.jobName } }),
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
-      ...(query.propertyPropertyType && { projectType: query.propertyPropertyType }),
+      ...(query.projectPropertyType && { projectType: query.projectPropertyType }),
       ...(query.jobStatus && { jobStatus: query.jobStatus }),
       ...(query.mountingType && { mountingType: query.mountingType }),
       ...(query.isExpedited && { isExpedited: query.isExpedited }),

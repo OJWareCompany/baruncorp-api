@@ -69,7 +69,7 @@ export class CreateJobService implements ICommandHandler {
       isExpedited: command.isExpedited,
       mountingType: command.mountingType,
       totalOfJobs: project.totalOfJobs,
-      projectType: project.projectPropertyType as ProjectPropertyTypeEnum,
+      projectPropertyType: project.projectPropertyType as ProjectPropertyTypeEnum,
     })
     await this.jobRepository.insert(job)
     return {

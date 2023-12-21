@@ -138,7 +138,7 @@ export class JobResponseDto {
   isContainsRevisionTask: boolean
 
   @ApiProperty({ enum: ProjectPropertyTypeEnum })
-  propertyType: ProjectPropertyTypeEnum
+  projectPropertyType: ProjectPropertyTypeEnum
 
   @ApiProperty()
   billingCodes: string[]
@@ -173,9 +173,6 @@ export class JobResponseDto {
 
   @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
   jobStatus: JobStatus
-
-  @ApiProperty({ example: 'Residential' })
-  projectType: string
 
   @ApiProperty({ example: AssignedTaskResponseFields, type: AssignedTaskResponseFields, isArray: true })
   assignedTasks: AssignedTaskResponseFields[]

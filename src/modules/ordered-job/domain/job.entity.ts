@@ -47,7 +47,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
         mountingType: create.mountingType as MountingTypeEnum, // TODO: status any
-        projectType: create.projectType as ProjectPropertyTypeEnum,
+        projectType: create.projectPropertyType as ProjectPropertyTypeEnum,
       }),
     )
     return job
@@ -74,7 +74,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   get projectPropertyType() {
-    return this.props.projectType
+    return this.props.projectPropertyType
   }
 
   get mountingType() {

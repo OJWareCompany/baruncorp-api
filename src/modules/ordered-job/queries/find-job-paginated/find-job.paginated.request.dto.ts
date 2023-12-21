@@ -27,7 +27,7 @@ export class FindJobPaginatedRequestDto {
   @ApiProperty({ default: ProjectPropertyTypeEnum.Commercial, enum: ProjectPropertyTypeEnum })
   @IsEnum(ProjectPropertyTypeEnum)
   @IsOptional()
-  readonly propertyPropertyType?: ProjectPropertyTypeEnum | null
+  readonly projectPropertyType?: ProjectPropertyTypeEnum | null
 
   @ApiProperty({ default: JobStatusEnum.Completed, enum: JobStatusEnum })
   @IsEnum(JobStatusEnum)
