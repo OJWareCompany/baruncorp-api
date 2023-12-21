@@ -3,7 +3,7 @@ import { ConnectedSocket, WebSocketGateway, WebSocketServer, WsException } from 
 import { Server, Socket } from 'socket.io'
 import { PrismaService } from '../database/prisma.service'
 import { JwtService } from '@nestjs/jwt'
-import { jwtConstants } from '../auth/constants'
+import { config, jwtConstants } from '../auth/constants'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { HttpStatus } from '@nestjs/common'
 import { instanceToPlain } from 'class-transformer'
@@ -43,7 +43,7 @@ class UserNotFoundWsException extends WsException {
   }
 }
 
-@WebSocketGateway({ namespace: 'assigning-task', cors: true })
+@WebSocketGateway({ path: config.socketPort, namespace: 'assigning-task', cors: true })
 export class AssigningTaskAlertGateway {
   constructor(private readonly prismaService: PrismaService, private readonly jwtService: JwtService) {}
   @WebSocketServer()
@@ -60,7 +60,6 @@ export class AssigningTaskAlertGateway {
       if (!user) {
         throw new UserNotFoundWsException()
       }
-
       client.join(user.id)
     } catch (error) {
       if ((error as any).message === 'invalid signature') {
