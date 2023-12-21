@@ -43,7 +43,12 @@ class UserNotFoundWsException extends WsException {
   }
 }
 
-@WebSocketGateway({ path: config.socketPort, namespace: 'assigning-task', cors: true })
+@WebSocketGateway({
+  path: config.socketPort,
+  namespace: 'assigning-task',
+  cors: true,
+  credentials: true,
+})
 export class AssigningTaskAlertGateway {
   constructor(private readonly prismaService: PrismaService, private readonly jwtService: JwtService) {}
   @WebSocketServer()
