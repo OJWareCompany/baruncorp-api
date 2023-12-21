@@ -13,6 +13,7 @@ export class FindOrganizationPaginatedQuery extends PaginatedQueryBase {
   readonly organizationType?: string | null
   readonly projectPropertyTypeDefaultValue?: string | null
   readonly mountingTypeDefaultValue?: string | null
+  readonly isVendor?: boolean | null
 
   constructor(props: PaginatedParams<FindOrganizationPaginatedQuery>) {
     super(props)
@@ -34,6 +35,7 @@ export class FindOrganizationPaginatedQueryHandler implements IQueryHandler {
         projectPropertyTypeDefaultValue: query.projectPropertyTypeDefaultValue,
       }),
       ...(query.mountingTypeDefaultValue && { mountingTypeDefaultValue: query.mountingTypeDefaultValue }),
+      ...(query.isVendor && { isVendor: query.isVendor }),
     }
 
     const records = await this.prismaService.organizations.findMany({
