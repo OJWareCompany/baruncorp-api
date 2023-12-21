@@ -10,7 +10,7 @@ import { UnassignTaskParamRequestDto } from './unassign-assigned-task.request.dt
 export class UnassignAssignedTaskHttpController {
   constructor(private readonly commandBus: CommandBus) {}
 
-  @Patch(':assignedTaskId/unaasign')
+  @Patch(':assignedTaskId/unassign')
   @UseGuards(AuthGuard)
   async patch(@User() user: UserEntity, @Param() param: UnassignTaskParamRequestDto): Promise<void> {
     const command = new UnassignAssignedTaskCommand({ assignedTaskId: param.assignedTaskId })

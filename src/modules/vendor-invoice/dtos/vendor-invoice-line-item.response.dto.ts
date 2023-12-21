@@ -42,7 +42,8 @@ export class VendorInvoiceLineItemResponse {
 
   @ApiProperty()
   @IsString()
-  propertyOwnerName: string
+  @IsOptional()
+  propertyOwnerName: string | null
 
   @ApiProperty()
   @IsString()

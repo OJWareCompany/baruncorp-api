@@ -27,7 +27,7 @@ export interface CreateOrderedServiceProps {
   organizationId: string
   organizationName: string
   projectNumber: string | null
-  projectPropertyOwnerName: string
+  projectPropertyOwnerName: string | null
   jobName: string
 }
 

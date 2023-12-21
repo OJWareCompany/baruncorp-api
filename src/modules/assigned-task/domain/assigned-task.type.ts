@@ -27,7 +27,7 @@ export interface CreateAssignedTaskProps {
   description: string | null
   isRevision: boolean
   projectNumber: string | null
-  projectPropertyOwnerName: string
+  projectPropertyOwnerName: string | null
   jobName: string
 }
 
