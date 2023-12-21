@@ -78,6 +78,7 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
     response.fullAhjName = model.fullAhjName
     response.updatedBy = model.updatedBy
     response.updatedAt = model.updatedAt.toISOString()
+    response.type = model.type
     return response
   }
 }

@@ -205,6 +205,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
         fullAhjName: true,
         updatedBy: true,
         updatedAt: true,
+        type: true,
       },
       where: whereInput,
       orderBy: {

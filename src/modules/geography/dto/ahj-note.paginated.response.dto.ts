@@ -16,6 +16,9 @@ export class AhjNoteListResponseDto {
 
   @ApiProperty()
   updatedAt: string
+
+  @ApiProperty()
+  type: string | null
 }
 
 /**
