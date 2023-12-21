@@ -100,6 +100,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   setAssigneeId(user: UserEntity): this {
     this.props.assigneeId = user.id
+    this.props.assigneeName = user.getProps().userName.getFullName()
     this.props.status = 'In Progress'
     this.props.startedAt = new Date()
     if (user.isVendor) {
@@ -111,6 +112,12 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
         organizationId: this.props.organizationId,
         jobId: this.props.jobId,
         taskId: this.props.taskId,
+        projectPropertyType: this.props.projectPropertyType,
+        mountingType: this.props.mountingType,
+        taskName: this.props.taskName,
+        isRevision: this.props.isRevision,
+        note: this.props.description,
+        assigneeUserId: this.props.assigneeId,
       }),
     )
     return this
