@@ -97,7 +97,7 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     return this
   }
 
-  cleanResidentialnewServiceTiers() {
+  cleanResidentialNewServiceTiers() {
     this.props.residentialNewServiceTiers = []
     return this
   }
@@ -105,7 +105,7 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   setResidentialNewServiceTiers(
     tiers: {
       startingPoint: number
-      finishingPoint: number
+      finishingPoint: number | null
       price: number
       gmPrice: number
     }[],
@@ -127,7 +127,7 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   setCommercialNewServiceTiers(
     tiers: {
       startingPoint: number
-      finishingPoint: number
+      finishingPoint: number | null
       price: number
       gmPrice: number
     }[],
@@ -231,7 +231,9 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   private calculateCommercialPrice(systemSize: number, mountingType: MountingTypeEnum) {
     const commercialTier = this.getProps().commercialNewServiceTiers.find((tier) => {
       if (!systemSize) return
-      return tier.startingPoint <= systemSize && tier.finishingPoint >= systemSize
+      const isWithinStart = tier.startingPoint <= systemSize
+      const isWithinEnd = !tier.finishingPoint || tier.finishingPoint >= systemSize
+      return isWithinStart && isWithinEnd
     })
     if (!commercialTier) return null
     return mountingType === MountingTypeEnum.Ground_Mount ? commercialTier.gmPrice : commercialTier.price

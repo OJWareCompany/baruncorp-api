@@ -2,7 +2,7 @@ import { ValueObject } from '../../../../libs/ddd/value-object.base'
 
 interface CustomCommercialNewServicePricingTierProps {
   startingPoint: number
-  finishingPoint: number
+  finishingPoint: number | null
   price: number
   gmPrice: number
 }
@@ -12,7 +12,7 @@ export class CustomCommercialNewServicePricingTier extends ValueObject<CustomCom
     return this.props.startingPoint
   }
 
-  get finishingPoint(): number {
+  get finishingPoint(): number | null {
     return this.props.finishingPoint
   }
 

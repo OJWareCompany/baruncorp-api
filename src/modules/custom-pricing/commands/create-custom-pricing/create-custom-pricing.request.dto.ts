@@ -9,7 +9,8 @@ export class Tier {
 
   @ApiProperty({ default: 100 })
   @IsNumber()
-  finishingPoint: number
+  @IsOptional()
+  finishingPoint: number | null = null
 
   @ApiProperty({ default: 10 })
   @IsNumber()

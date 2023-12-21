@@ -19,7 +19,7 @@ export class CreateCustomPricingCommand {
   readonly residentialNewServiceFlatGmPrice: number | null
   readonly residentialNewServiceTiers: {
     readonly startingPoint: number
-    readonly finishingPoint: number
+    readonly finishingPoint: number | null
     readonly price: number
     readonly gmPrice: number
   }[]
@@ -27,7 +27,7 @@ export class CreateCustomPricingCommand {
   readonly residentialRevisionGmPrice: number | null
   readonly commercialNewServiceTiers: {
     readonly startingPoint: number
-    readonly finishingPoint: number
+    readonly finishingPoint: number | null
     readonly price: number
     readonly gmPrice: number
   }[]
