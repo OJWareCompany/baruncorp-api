@@ -13,7 +13,7 @@ import { initialize } from '../../libs/utils/constructor-initializer'
 // @Exclude()
 export class TaskAlert {
   @ApiProperty()
-  readonly taskId: string
+  readonly assignedTaskId: string
   @ApiProperty()
   readonly taskName: string
   @ApiProperty()

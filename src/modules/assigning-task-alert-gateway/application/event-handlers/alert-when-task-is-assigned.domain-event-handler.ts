@@ -10,11 +10,11 @@ export class AlertAssigningTaskWhenTaskIsAssignedDomainEventHandler {
   handle(event: AssignedTaskAssignedDomainEvent) {
     this.assigningTaskAlertService.emitTaskAssignedEvent(event.assigneeUserId, {
       jobId: event.jobId,
-      projectPropertyType: event.projectPropertyType,
-      mountingType: event.mountingType,
-      taskId: event.taskId,
       taskName: event.taskName,
+      assignedTaskId: event.taskId,
       isRevision: event.isRevision,
+      mountingType: event.mountingType,
+      projectPropertyType: event.projectPropertyType,
       note: event.note,
     })
   }
