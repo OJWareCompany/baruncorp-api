@@ -1,0 +1,40 @@
+<script type="module">
+  import { io } from "https://cdn.socket.io/4.7.2/socket.io.esm.min.js";
+
+  const host = 'https://makevalue.net'
+  const namespace = '/assigning-task'
+  const jwt = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6Ijk2ZDM5MDYxLWE0ZDctNGRlOS1hMTQ3LWY2Mjc0NjdlMTFkNSIsImlhdCI6MTcwMzE3MDI5MCwiZXhwIjoxNzAzMTczODkwfQ.nggKEAWnM20a_iiuokwQHwe25omRfVcqWwxEIbE3JJo'
+
+  const socket = io(`${host}${namespace}?token=${jwt}`,{
+    path: '/socket.dev', // OR /socket.pub
+  });
+
+  /**
+   * listen to alert
+   * 
+   * response:
+   * {
+   *   jobId:  "670677eb-9fd6-43ae-ba21-0958862ecfd0",
+   *   assignedTaskId: "b4d87a00-2049-4f26-86dc-d23b2891c4a3",
+   *   taskName: "Electrical Wet Stamp"
+   *   isRevision: false,
+   *   mountingType: "Roof Mount",
+   *   projectPropertyType: "Commercial",
+   *   note: null,
+   * } 
+   */
+  socket.on('task-assigned', (data) => { console.log(data) })
+
+  /**
+   * listen to error
+   * 
+   * response:
+   * {
+   *   errorCode: '10023',
+   *   message: 'invalid signature',
+   *   statusCode: 401,
+   * } 
+   */
+  socket.on('error', (data) => { console.log(data) })
+</script>
+
