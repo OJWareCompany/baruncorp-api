@@ -26,7 +26,6 @@ export class CreateTaskService implements ICommandHandler {
       serviceId: command.serviceId,
       name: command.name,
       serviceName: service.name,
-      isAutoAssignment: command.isAutoAssignment,
     })
 
     await this.taskRepo.insert(entity)

@@ -14,7 +14,6 @@ export class TaskMapper implements Mapper<TaskEntity, Tasks, TaskResponseDto> {
       name: props.name,
       serviceId: props.serviceId,
       serviceName: props.serviceName,
-      isAutoAssignment: props.isAutoAssignment,
     }
     return record
   }
@@ -26,7 +25,6 @@ export class TaskMapper implements Mapper<TaskEntity, Tasks, TaskResponseDto> {
         name: record.name,
         serviceId: record.serviceId,
         serviceName: record.serviceName,
-        isAutoAssignment: record.isAutoAssignment,
       },
     })
     return entity

@@ -923,7 +923,7 @@ export interface OrderedServiceResponseDto {
   organizationName: string
   jobName: string
   price: number | null
-  priceOrverride: number | null
+  priceOverride: number | null
   jobId: string
   /** @default "Completed" */
   status: 'Pending' | 'Completed' | 'Canceled'
@@ -964,8 +964,6 @@ export interface CreateTaskRequestDto {
   name: string
   /** @default "Structural" */
   licenseRequired: 'Structural' | 'Electrical' | null
-  /** @default true */
-  isAutoAssignment: boolean
 }
 
 export interface UpdateTaskRequestDto {
@@ -973,8 +971,6 @@ export interface UpdateTaskRequestDto {
   name: string
   /** @default "Structural" */
   licenseRequired: 'Structural' | 'Electrical' | null
-  /** @default true */
-  isAutoAssignment: boolean
 }
 
 export interface TaskPaginatedResponseFields {
@@ -1246,7 +1242,7 @@ export interface Tier {
   /** @default 0.01 */
   startingPoint: number
   /** @default 100 */
-  finishingPoint: number
+  finishingPoint: number | null
   /** @default 10 */
   price: number
   /** @default 10 */
@@ -1520,7 +1516,7 @@ export interface VendorInvoiceLineItemResponse {
   projectId: string
   projectNumber: string | null
   jobDescription: string | null
-  propertyOwnerName: string
+  propertyOwnerName: string | null
   serviceName: string
   serviceDescription: string | null
   taskExpenseTotal: number
@@ -3796,15 +3792,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindAvailableWorkersHttpControllerGet
-     * @request GET:/assigned-tasks/{assigendTaskId}/available-tasks
+     * @request GET:/assigned-tasks/{assignedTaskId}/available-tasks
      */
-    findAvailableWorkersHttpControllerGet: (
-      assignedTaskId: string,
-      assigendTaskId: string,
-      params: RequestParams = {},
-    ) =>
+    findAvailableWorkersHttpControllerGet: (assignedTaskId: string, params: RequestParams = {}) =>
       this.request<AvailableWorkerResponseDto[], any>({
-        path: `/assigned-tasks/${assigendTaskId}/available-tasks`,
+        path: `/assigned-tasks/${assignedTaskId}/available-tasks`,
         method: 'GET',
         format: 'json',
         ...params,
@@ -3814,11 +3806,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name UnassignAssignedTaskHttpControllerPatch
-     * @request PATCH:/assigned-tasks/{assignedTaskId}/unaasign
+     * @request PATCH:/assigned-tasks/{assignedTaskId}/unassign
      */
     unassignAssignedTaskHttpControllerPatch: (assignedTaskId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/assigned-tasks/${assignedTaskId}/unaasign`,
+        path: `/assigned-tasks/${assignedTaskId}/unassign`,
         method: 'PATCH',
         ...params,
       }),

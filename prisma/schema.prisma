@@ -655,13 +655,12 @@ model ClientAccounts {
 }
 
 model Tasks {
-  id               String          @id @map("id") @db.VarChar(255)
-  serviceId        String          @map("service_id") @db.VarChar(255)
-  name             String          @map("name") @db.VarChar(255)
-  serviceName      String          @map("service_name") @db.VarChar(255)
-  isAutoAssignment Boolean         @map("is_auto_assignment")
-  service          Service         @relation(fields: [serviceId], references: [id])
-  assignedTasks    AssignedTasks[]
+  id            String          @id @map("id") @db.VarChar(255)
+  serviceId     String          @map("service_id") @db.VarChar(255)
+  name          String          @map("name") @db.VarChar(255)
+  serviceName   String          @map("service_name") @db.VarChar(255)
+  service       Service         @relation(fields: [serviceId], references: [id])
+  assignedTasks AssignedTasks[]
 
   @@map("tasks")
 }

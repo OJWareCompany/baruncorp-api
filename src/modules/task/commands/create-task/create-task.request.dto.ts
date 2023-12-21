@@ -15,8 +15,4 @@ export class CreateTaskRequestDto {
   @IsEnum(LicenseRequiredEnum)
   @IsOptional()
   readonly licenseRequired: LicenseRequiredEnum | null
-
-  @ApiProperty({ default: true })
-  @IsBoolean()
-  readonly isAutoAssignment: boolean
 }
