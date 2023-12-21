@@ -102,6 +102,10 @@ export class AssignedTaskResponseFields {
   @IsOptional()
   description: string | null
 
+  @ApiProperty()
+  @IsOptional()
+  duration: number | null
+
   constructor(props: AssignedTaskResponseFields) {
     initialize(this, props)
   }

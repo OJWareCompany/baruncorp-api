@@ -537,6 +537,7 @@ export interface AssignedTaskResponseFields {
   assigneeId: string | null
   doneAt: string | null
   description: string | null
+  duration: number | null
 }
 
 export interface OrderedServiceResponseFields {
@@ -3792,11 +3793,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindAvailableWorkersHttpControllerGet
-     * @request GET:/assigned-tasks/{assignedTaskId}/available-tasks
+     * @request GET:/assigned-tasks/{assignedTaskId}/available-workers
      */
     findAvailableWorkersHttpControllerGet: (assignedTaskId: string, params: RequestParams = {}) =>
       this.request<AvailableWorkerResponseDto[], any>({
-        path: `/assigned-tasks/${assignedTaskId}/available-tasks`,
+        path: `/assigned-tasks/${assignedTaskId}/available-workers`,
         method: 'GET',
         format: 'json',
         ...params,

@@ -27,7 +27,8 @@ export class UpdateManualPriceService implements ICommandHandler {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
 
-    if (orderedService.getProps().sizeForRevision !== 'Major')
+    // TODO: 코드를 보고 manual price를 입력할때 필요한 도메인 프로세스를 쉽게 파악할수 있도록 문서같은 코드가 되어야한다.
+    if (orderedService.isRevision && orderedService.sizeForRevision !== 'Major')
       throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()
 
     const project = await this.prismaService.orderedProjects.findUnique({

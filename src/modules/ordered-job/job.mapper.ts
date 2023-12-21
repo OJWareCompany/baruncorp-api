@@ -139,6 +139,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
             assigneeId: assignedTask.assigneeId,
             doneAt: assignedTask.doneAt,
             description: orderedService.description,
+            duration: assignedTask.duration,
           }),
         )
       })
@@ -266,6 +267,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       isCurrentJob: props.isCurrentJob,
       assignedTasks: props.assignedTasks.map((assignedTask) => ({
         ...assignedTask.unpack(),
+        duration: assignedTask.duration,
         startedAt: assignedTask.startedAt?.toISOString() || null,
         doneAt: assignedTask.doneAt?.toISOString() || null,
       })),

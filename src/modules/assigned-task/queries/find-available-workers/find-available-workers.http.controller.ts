@@ -11,7 +11,7 @@ import { AvailableWorkerResponseDto } from '../../dtos/available-worker.response
 export class FindAvailableWorkersHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get(':assignedTaskId/available-tasks')
+  @Get(':assignedTaskId/available-workers')
   @UseGuards(AuthGuard)
   async get(
     @User() user: UserEntity,

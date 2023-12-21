@@ -23,6 +23,7 @@ interface AssignedTaskProps {
   assigneeId: string | null
   doneAt: Date | null
   description: string | null
+  duration: number | null
 }
 
 export class AssignedTask extends ValueObject<AssignedTaskProps> {
@@ -68,6 +69,10 @@ export class AssignedTask extends ValueObject<AssignedTaskProps> {
 
   get description(): string | null {
     return this.props.description
+  }
+
+  get duration(): number | null {
+    return this.props.duration
   }
 
   protected validate(props: AssignedTask): void {
