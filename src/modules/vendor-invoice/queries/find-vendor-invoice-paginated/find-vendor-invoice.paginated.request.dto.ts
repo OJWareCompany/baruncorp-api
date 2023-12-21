@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsEnum, IsOptional, IsString } from 'class-validator'
 import { InvoiceStatusEnum } from '../../../invoice/domain/invoice.type'
-import { USING_LIKE } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
+import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 
 export class FindVendorInvoicePaginatedRequestDto {
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly organizationName?: string | null

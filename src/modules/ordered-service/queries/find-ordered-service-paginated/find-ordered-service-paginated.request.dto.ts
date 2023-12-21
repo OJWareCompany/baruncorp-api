@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
-import { USING_LIKE } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
+import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { Transform } from 'class-transformer'
 
@@ -30,17 +30,17 @@ export class FindOrderedServicePaginatedRequestDto {
   @IsOptional()
   readonly isRevision?: boolean | null
 
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly serviceName?: string | null
 
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly organizationName?: string | null
 
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly jobName?: string | null

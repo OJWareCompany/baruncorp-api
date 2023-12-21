@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsBoolean, IsEmail, IsOptional, IsString } from 'class-validator'
+import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 
 export class FindUserRqeustDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
@@ -18,7 +19,7 @@ export class FindUserRqeustDto {
   @IsString()
   readonly organizationName?: string | null
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: null, description: DESCRIPTION.using_like })
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => {
@@ -27,7 +28,7 @@ export class FindUserRqeustDto {
   })
   readonly isContractor?: boolean | null
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: null, description: DESCRIPTION.using_like })
   @IsOptional()
   @IsString()
   readonly userName?: string | null

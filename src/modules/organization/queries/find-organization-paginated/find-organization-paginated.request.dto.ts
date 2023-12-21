@@ -1,24 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 
 export class FindOrganizationPaginatedRequestDto {
-  @ApiProperty()
+  @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   name?: string | null
 
-  @ApiProperty()
+  @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   fullAddress?: string | null
 
-  @ApiProperty()
+  @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   email?: string | null
 
-  @ApiProperty()
+  @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   phoneNumber?: string | null

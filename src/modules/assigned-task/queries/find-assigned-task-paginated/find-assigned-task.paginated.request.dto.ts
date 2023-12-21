@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { USING_LIKE } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
+import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 import { Transform } from 'class-transformer'
 
 export class FindAssignedTaskPaginatedRequestDto {
@@ -10,25 +10,25 @@ export class FindAssignedTaskPaginatedRequestDto {
   @IsString()
   @IsOptional()
   readonly projectNumber?: string | null
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly jobName?: string | null
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly assigneeName?: string | null
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly taskName?: string | null
 
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly serviceName?: string | null
 
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly organizationName?: string | null

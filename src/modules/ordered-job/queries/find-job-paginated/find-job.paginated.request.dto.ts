@@ -4,22 +4,22 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/doma
 import { JobStatusEnum } from '../../domain/job.type'
 import { Transform, Type } from 'class-transformer'
 
-export enum USING_LIKE {
-  description = 'Using LIKE (중간 값 검색)',
+export enum DESCRIPTION {
+  using_like = 'Using LIKE (중간 값 검색)',
 }
 
 export class FindJobPaginatedRequestDto {
-  @ApiProperty({ default: '3480 Northwest 33rd Court', description: USING_LIKE.description })
+  @ApiProperty({ default: '3480 Northwest 33rd Court', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly jobName?: string | null
 
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly projectNumber?: string | null
 
-  @ApiProperty({ default: '', description: USING_LIKE.description })
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly propertyFullAddress?: string | null

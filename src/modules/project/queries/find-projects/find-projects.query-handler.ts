@@ -7,8 +7,10 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 
 export class FindProjectsQuery extends PaginatedQueryBase {
+  readonly organizationId?: string | null
   readonly organizationName?: string | null
   readonly projectNumber?: string | null
+  readonly projectPropertyOwner?: string | null
   readonly propertyFullAddress?: string | null
   readonly propertyType?: ProjectPropertyTypeEnum | null
 
@@ -35,7 +37,9 @@ export class FindProjectsQueryHandler implements IQueryHandler {
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
       ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
+      ...(query.projectPropertyOwner && { projectPropertyOwner: { contains: query.projectPropertyOwner } }),
       ...(query.propertyType && { projectPropertyType: query.propertyType }),
+      ...(query.organizationId && { organizationId: query.organizationId }),
     }
 
     const records: ({

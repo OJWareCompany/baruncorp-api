@@ -30,7 +30,7 @@ export class FindOrganizationPaginatedQueryHandler implements IQueryHandler {
       ...(query.fullAddress && { fullAddress: { contains: query.fullAddress } }),
       ...(query.email && { email: { contains: query.email } }),
       ...(query.phoneNumber && { phoneNumber: { contains: query.phoneNumber } }),
-      ...(query.organizationType && { organizationType: { contains: query.organizationType } }),
+      ...(query.organizationType && { organizationType: query.organizationType }),
       ...(query.projectPropertyTypeDefaultValue && {
         projectPropertyTypeDefaultValue: query.projectPropertyTypeDefaultValue,
       }),

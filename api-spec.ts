@@ -1711,9 +1711,15 @@ export interface FindUsersHttpControllerGetFindUsersParams {
   organizationId?: string | null
   /** @default "BarunCorp" */
   organizationName?: string | null
-  /** @default null */
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default null
+   */
   isContractor?: boolean | null
-  /** @default null */
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default null
+   */
   userName?: string | null
   /**
    * Specifies a limit of returned records
@@ -1737,13 +1743,18 @@ export interface FindLicenseHttpControllerGetParams {
 }
 
 export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams {
+  /** Using LIKE (중간 값 검색) */
   name?: string | null
+  /** Using LIKE (중간 값 검색) */
   fullAddress?: string | null
+  /** Using LIKE (중간 값 검색) */
   email?: string | null
+  /** Using LIKE (중간 값 검색) */
   phoneNumber?: string | null
   organizationType?: string | null
   projectPropertyTypeDefaultValue?: string | null
   mountingTypeDefaultValue?: string | null
+  isVendor?: boolean | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -1828,6 +1839,8 @@ export interface GeographyControllerGetFindNoteUpdateHistoryParams {
 }
 
 export interface FindProjectsHttpControllerFindUsersParams {
+  /** @default "" */
+  organizationId?: string | null
   /**
    * Using LIKE (중간 값 검색)
    * @default ""
@@ -1838,6 +1851,11 @@ export interface FindProjectsHttpControllerFindUsersParams {
    * @default null
    */
   projectNumber?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default null
+   */
+  projectPropertyOwner?: string | null
   /**
    * Using LIKE (중간 값 검색)
    * @default "3480 Northwest 33rd Court"
