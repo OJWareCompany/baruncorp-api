@@ -44,7 +44,7 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.projectPropertyType && { projectType: query.projectPropertyType }),
       ...(query.jobStatus && { jobStatus: query.jobStatus }),
       ...(query.mountingType && { mountingType: query.mountingType }),
-      ...(query.isExpedited && { isExpedited: query.isExpedited }),
+      ...(query.isExpedited !== undefined && query.isExpedited !== null && { isExpedited: query.isExpedited }),
     }
 
     const records: (OrderedJobs & {
@@ -71,7 +71,9 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       take: query.limit,
       skip: query.offset,
     })
-
+    console.log(records.length)
+    const test = await this.prismaService.orderedJobs.findMany()
+    console.log(test.length)
     // TODO: totalcount때문에 풀스캔하게됨
     const totalCount = await this.prismaService.orderedJobs.count({ where: condition })
 

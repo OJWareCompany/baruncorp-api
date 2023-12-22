@@ -36,9 +36,9 @@ export class FindOrderedServicePaginatedQueryHandler implements IQueryHandler {
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
       ...(query.jobName && { jobName: { contains: query.jobName } }),
       ...(query.orderedServiceStatus && { status: query.orderedServiceStatus }),
-      ...(query.isRevision && { isRevision: query.isRevision }),
       ...(query.projectPropertyType && { projectPropertyType: query.projectPropertyType }),
       ...(query.mountingType && { mountingType: query.mountingType }),
+      ...(query.isRevision !== null && query.isRevision !== undefined && { isRevision: query.isRevision }),
     }
 
     const result: FindOrderedServiceQueryReturnType[] | null = await this.prismaService.orderedServices.findMany({

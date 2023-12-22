@@ -40,11 +40,11 @@ export class FindAssignedTaskPaginatedQueryHandler implements IQueryHandler {
       ...(query.taskName && { taskName: query.taskName }),
       ...(query.serviceName && { serviceName: query.serviceName }),
       ...(query.organizationName && { organizationName: query.organizationName }),
-      ...(query.isRevision && { isRevision: query.isRevision }),
       ...(query.status && { status: query.status }),
       ...(query.projectPropertyType && { projectPropertyType: query.projectPropertyType }),
       ...(query.mountingType && { mountingType: query.mountingType }),
-      ...(query.isVendor && { isVendor: query.isVendor }),
+      ...(query.isRevision !== undefined && query.isRevision !== null && { isRevision: query.isRevision }),
+      ...(query.isVendor !== undefined && query.isVendor !== null && { isVendor: query.isVendor }),
     }
     const result = await this.prismaService.assignedTasks.findMany({
       where: condition,
