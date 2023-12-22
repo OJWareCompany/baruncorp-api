@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { OrderedProjects, Organizations } from '@prisma/client'
+import { OrderedProjects, Organizations, Prisma } from '@prisma/client'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { Paginated } from '../../../../libs/ddd/repository.port'
@@ -33,13 +33,13 @@ export class FindProjectsQueryHandler implements IQueryHandler {
   async execute(
     query: FindProjectsQuery,
   ): Promise<Paginated<{ organization: Organizations | null } & OrderedProjects>> {
-    const condition = {
+    const condition: Prisma.OrderedProjectsWhereInput = {
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
       ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
-      ...(query.projectPropertyOwner && { projectPropertyOwner: { contains: query.projectPropertyOwner } }),
+      ...(query.projectPropertyOwner && { propertyOwnerName: { contains: query.projectPropertyOwner } }),
       ...(query.propertyType && { projectPropertyType: query.propertyType }),
-      ...(query.organizationId && { organizationId: query.organizationId }),
+      ...(query.organizationId && { clientOrganizationId: query.organizationId }),
     }
 
     const records: ({
