@@ -67,13 +67,14 @@ export interface AvailableTaskResponseDto {
   autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
 }
 
-export interface LincenseResponseDto {
-  type: 'Electrical' | 'Structural'
-  ownerName: string
-  issuingCountryName: string
+export interface LicenseResponseDto {
+  /** @default "Structural" */
+  type: 'Structural' | 'Electrical'
+  /** @default "ALASKA" */
+  state: string
+  /** @default "AK" */
   abbreviation: string
-  priority: number | null
-  expiryDate: string | null
+  workers: LicensedWorker[]
 }
 
 export interface UserResponseDto {
@@ -87,7 +88,7 @@ export interface UserResponseDto {
   organizationId: string
   position: UserPositionResponseDto | null
   availableTasks: AvailableTaskResponseDto[]
-  licenses: LincenseResponseDto[]
+  licenses: LicenseResponseDto[]
   role: string
   deliverablesEmails: string[]
   isVendor: boolean
@@ -1673,16 +1674,6 @@ export interface LicensedWorker {
   expiryDate: string | null
   updatedAt: string
   createdAt: string
-}
-
-export interface LicenseResponseDto {
-  /** @default "Structural" */
-  type: 'Structural' | 'Electrical'
-  /** @default "ALASKA" */
-  state: string
-  /** @default "AK" */
-  abbreviation: string
-  workers: LicensedWorker[]
 }
 
 export interface LicensePaginatedResponseDto {
