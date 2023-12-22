@@ -194,8 +194,8 @@ export class GeographyRepository implements GeographyRepositoryPort {
 
     const whereInput: Prisma.AHJNotesWhereInput = {
       ...(searchQuery.geoId && { geoId: searchQuery.geoId }),
-      ...(searchQuery.fullAhjName && { fullAhjName: searchQuery.fullAhjName }),
-      ...(searchQuery.name && { name: searchQuery.name }),
+      ...(searchQuery.fullAhjName && { fullAhjName: { contains: searchQuery.fullAhjName } }),
+      ...(searchQuery.name && { name: { contains: searchQuery.name } }),
     }
 
     const result: Pick<AHJNotesModel, keyof AhjNoteListResponseDto>[] = await this.prismaService.aHJNotes.findMany({

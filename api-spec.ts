@@ -1815,9 +1815,9 @@ export interface GeographyControllerGetFindNotesParams {
   page?: number
   /** @default "1239525" */
   geoId?: string | null
-  /** @default "city" */
+  /** Using LIKE (중간 값 검색) */
   fullAhjName?: string | null
-  /** @default "city" */
+  /** Using LIKE (중간 값 검색) */
   name?: string | null
 }
 
