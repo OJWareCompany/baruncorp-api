@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateUserProps, UserProps } from './user.types'
+import { CreateUserProps, UserProps, UserStatusEnum } from './user.types'
 import { UserName } from './value-objects/user-name.vo'
 import { Phone } from './value-objects/phone-number.value-object'
 import { UserRoleNameEnum } from './value-objects/user-role.vo'
@@ -26,6 +26,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
       licenses: [],
       services: [],
       isHandRaisedForTask: false,
+      status: UserStatusEnum.SIGN_UP_NOT_COMPLETED,
     }
     return new UserEntity({ id, props })
   }

@@ -102,6 +102,7 @@ model Users {
   firstName                  String          @map("first_name")
   lastName                   String          @map("last_name")
   full_name                  String          @db.VarChar(255)
+  status                     String          @default("sign up not completed") @db.VarChar(255)
   organizationId             String          @map("organization_id")
   updatedAt                  DateTime        @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt                  DateTime        @default(now()) @map("created_at") @db.DateTime(0)
@@ -964,7 +965,7 @@ model AssigningTaskAlerts {
   isRevision          Boolean  @map("is_revision")
   note                String?  @map("note") @db.VarChar(255)
   createdAt           DateTime @map("created_at") @db.DateTime(0)
-  isCheckedOut      Boolean  @map("is_checked_out")
+  isCheckedOut        Boolean  @map("is_checked_out")
 
   @@map("assigning_task_alerts")
 }

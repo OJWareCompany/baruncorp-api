@@ -26,4 +26,12 @@ export interface UserProps extends CreateUserProps {
   role: UserRoleNameEnum
   type: string
   isHandRaisedForTask: boolean
+  status: UserStatusEnum
+}
+
+export enum UserStatusEnum {
+  SIGN_UP_NOT_COMPLETED = 'Sign Up Not Completed',
+  INVITATION_SENT = 'Invitation Sent',
+  INACTIVE = 'Inactive',
+  ACTIVE = 'Active',
 }

@@ -7,12 +7,9 @@ import { UserResponseDto } from './dtos/user.response.dto'
 import { Phone } from './domain/value-objects/phone-number.value-object'
 import { Organization } from './domain/value-objects/organization.value-object'
 import { Position } from './domain/value-objects/position.value-object'
-import { License } from './domain/value-objects/license.value-object'
-import { Service } from './domain/value-objects/service.value-object'
-import { Task } from './domain/value-objects/task.value-object'
-import { LicenseTypeEnum } from './user-license.type'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 import { AutoAssignmentTypeEnum } from '../position/domain/position.type'
+import { UserStatusEnum } from './domain/user.types'
 
 @Injectable()
 export default class UserMapper implements Mapper<UserEntity, UserModel, UserResponseDto> {
@@ -39,6 +36,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       revisionRevenueShare: null,
       isVendor: copy.isVendor,
       isHandRaisedForTask: copy.isHandRaisedForTask,
+      status: copy.status,
     }
     return record
   }
@@ -48,6 +46,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       id: record.id,
       props: {
         email: record.email,
+        status: record.status as UserStatusEnum,
         userName: new UserName({ firstName: record.firstName, lastName: record.lastName }),
         organization: new Organization({
           id: record.organizationId,
