@@ -44,15 +44,6 @@ export class UserRepository implements UserRepositoryPort {
     throw new Error('Method not implemented.')
   }
 
-  async findOneById(id: string): Promise<UserEntity> {
-    const user: UserQueryModel | null = await this.prismaService.users.findUnique({
-      where: { id },
-      include: UserRepository.userQueryIncludeInput,
-    })
-    if (!user) throw new UserNotFoundException()
-    return this.userMapper.toDomain(user)
-  }
-
   async findOneByIdOrThrow(id: string): Promise<UserEntity> {
     const user: UserQueryModel | null = await this.prismaService.users.findUnique({
       where: { id },
@@ -88,35 +79,19 @@ export class UserRepository implements UserRepositoryPort {
   }
 
   // TODO: Check a transaction
-  async insertUser(entity: UserEntity, password: InputPasswordVO): Promise<void> {
-    const record = this.userMapper.toPersistence(entity)
-    await this.prismaService.users.create({
-      data: {
-        ...record,
-        passwordEntity: {
-          create: {
-            password: await password.hash(),
-          },
-        },
-      },
-    })
-    await this.prismaService.userRole.create({
-      data: {
-        userId: entity.id,
-        roleName: entity.role,
-      },
+  async insertUserPassword(entity: UserEntity, password: InputPasswordVO): Promise<void> {
+    await this.prismaService.passwords.create({
+      data: { password: await password.hash(), userId: entity.id },
     })
   }
 
-  async findUserIdByEmail({ email }: EmailVO): Promise<Pick<UserEntity, 'id'> | null> {
+  async findUserByEmailOrThrow({ email }: EmailVO): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({
       where: { email },
+      include: UserRepository.userQueryIncludeInput,
     })
     if (!user) throw new UserNotFoundException()
-    return await this.prismaService.users.findUnique({
-      select: { id: true },
-      where: { email },
-    })
+    return this.userMapper.toDomain(user)
   }
 
   // TODO: transfer Prisma Class to Entity Class
@@ -154,84 +129,4 @@ export class UserRepository implements UserRepositoryPort {
   async transaction(...args: any[]): Promise<any> {
     return await this.prismaService.$transaction([...args])
   }
-
-  // async findAllLicenses(): Promise<LicenseEntity[]> {
-  //   const electricalLicenses = await this.prismaService.userElectricalLicenses.findMany({
-  //     include: {
-  //       user: {
-  //         include: UserRepository.userQueryIncludeInput,
-  //       },
-  //     },
-  //   })
-  //   const structuralLicenses = await this.prismaService.userStructuralLicenses.findMany({
-  //     include: {
-  //       user: {
-  //         include: UserRepository.userQueryIncludeInput,
-  //       },
-  //     },
-  //   })
-
-  //   return [
-  //     ...electricalLicenses.map((license) =>
-  //       this.licenseMapper.toDomain(license, LicenseType.Electrical, this.userMapper.toDomain(license.user)),
-  //     ),
-
-  //     ...structuralLicenses.map((license) =>
-  //       this.licenseMapper.toDomain(license, LicenseType.Structural, this.userMapper.toDomain(license.user)),
-  //     ),
-  //   ]
-  // }
-
-  // this should be in user repository?, 여기에 있으면 유저 모듈에 department repository가 종속성으로 주입된다.
-  // userEntity가 아니라 userId면 더 좋은점이 있나
-  // async findLicensesByUser(user: UserEntity): Promise<LicenseEntity[]> {
-  //   const electricalLicenses: LicenseModel[] = await this.prismaService.userElectricalLicenses.findMany({
-  //     where: { userId: user.getProps().id },
-  //   })
-  //   const structuralLicenses: LicenseModel[] = await this.prismaService.userStructuralLicenses.findMany({
-  //     where: { userId: user.getProps().id },
-  //   })
-
-  //   return [
-  //     ...electricalLicenses.map((license) => this.licenseMapper.toDomain(license, LicenseType.Electrical, user)),
-  //     ...structuralLicenses.map((license) => this.licenseMapper.toDomain(license, LicenseType.Structural, user)),
-  //   ]
-  // }
-
-  // async registerLicense(entity: LicenseEntity): Promise<void> {
-  //   const record = this.licenseMapper.toPersistence(entity)
-  //   if (entity.getProps().type === 'Electrical') {
-  //     await this.prismaService.userElectricalLicenses.create({
-  //       data: { ...record },
-  //     })
-  //   } else if (entity.getProps().type === 'Structural') {
-  //     await this.prismaService.userStructuralLicenses.create({
-  //       data: { ...record },
-  //     })
-  //   }
-  // }
-
-  // async revokeLicense(userId: string, type: LicenseType, issuingCountryName: string): Promise<void> {
-  //   if (type === 'Electrical') {
-  //     await this.prismaService.userElectricalLicenses.create({
-  //       data: {
-  //         expiryDate: null,
-  //         issuedDate: null,
-  //         priority: null,
-  //         updatedAt: new Date(),
-  //         createdAt: new Date(),
-  //         userId: '',
-  //         abbreviation: '',
-  //         issuingCountryName: '',
-  //       },
-  //     })
-  //     await this.prismaService.userElectricalLicenses.delete({
-  //       where: { userId_issuingCountryName: { userId, issuingCountryName } },
-  //     })
-  //   } else if (type === 'Structural') {
-  //     await this.prismaService.userStructuralLicenses.delete({
-  //       where: { userId_issuingCountryName: { userId, issuingCountryName } },
-  //     })
-  //   }
-  // }
 }

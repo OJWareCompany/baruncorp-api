@@ -1,11 +1,11 @@
 import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { jwtConstants } from './constants'
+import { jwtConstants } from '../constants'
 import { Request } from 'express'
-import { PrismaService } from '../database/prisma.service'
-import UserMapper from '../users/user.mapper'
-import { UserNotFoundException } from '../users/user.error'
-import { TokenExpiredException, TokenNotFoundException } from './auth.error'
+import { PrismaService } from '../../database/prisma.service'
+import UserMapper from '../../users/user.mapper'
+import { UserNotFoundException } from '../../users/user.error'
+import { TokenExpiredException, TokenNotFoundException } from '../auth.error'
 
 @Injectable()
 export class AuthGuard implements CanActivate {

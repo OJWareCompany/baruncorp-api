@@ -32,7 +32,7 @@ export class AssignTaskService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: AssignTaskCommand): Promise<void> {
-    const userEntity = await this.userRepo.findOneById(command.assigneeId)
+    const userEntity = await this.userRepo.findOneByIdOrThrow(command.assigneeId)
     const assignedTaskEntity = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!assignedTaskEntity) throw new AssignedTaskNotFoundException()
     assignedTaskEntity //

@@ -9,12 +9,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
-import { jwtConstants } from './constants'
+import { jwtConstants } from '../constants'
 import { Request } from 'express'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRepository } from '../users/database/user.repository'
-import { UserRoleNameEnum } from '../users/domain/value-objects/user-role.vo'
-import { AdminOnlyException, ProperAuthForbiddenException, TokenNotFoundException } from './auth.error'
+import { USER_REPOSITORY } from '../../users/user.di-tokens'
+import { UserRepository } from '../../users/database/user.repository'
+import { UserRoleNameEnum } from '../../users/domain/value-objects/user-role.vo'
+import { AdminOnlyException, ProperAuthForbiddenException, TokenNotFoundException } from '../auth.error'
 
 @Injectable()
 export class AdminGuard implements CanActivate {
@@ -37,7 +37,7 @@ export class AdminGuard implements CanActivate {
         secret: jwtConstants.secret,
       })
       // TODO: what data needed
-      const user = await this.userRepository.findOneById(payload.id)
+      const user = await this.userRepository.findOneByIdOrThrow(payload.id)
       if (user.role !== UserRoleNameEnum.admin) throw new AdminOnlyException()
 
       request['user'] = user

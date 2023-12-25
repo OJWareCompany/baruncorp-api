@@ -33,7 +33,7 @@ export class FindMyMemberPaginatedQueryHandler implements IQueryHandler {
     private readonly userMapper: UserMapper,
   ) {}
   async execute(query: FindMyMemberPaginatedQuery): Promise<Paginated<UserResponseDto>> {
-    const user = await this.userRepository.findOneById(query.userId)
+    const user = await this.userRepository.findOneByIdOrThrow(query.userId)
 
     if (!user) throw new UserNotFoundException()
 

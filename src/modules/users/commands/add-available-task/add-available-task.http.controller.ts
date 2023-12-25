@@ -4,7 +4,7 @@ import { UserEntity } from '../../domain/user.entity'
 import { AddAvailableTaskRequestDto, AddAvailableTaskRequestParamDto } from './add-available-task.request'
 import { CommandBus } from '@nestjs/cqrs'
 import { AddAvailableTaskCommand } from './add-available-task.commnad'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 
 @Controller('users')
 export class AddAvailableTaskHttpController {

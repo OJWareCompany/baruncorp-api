@@ -9,7 +9,7 @@ import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find
 import { AhjNoteListResponseDto, AhjNotePaginatedResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { AhjNoteHistoryPaginatedResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { FindAhjNotesHistorySearchQueryRequestDto } from './queries/find-ahj-history/find-ahj-notes-history-search-query.request.dto'
-import { AuthGuard } from '../auth/authentication.guard'
+import { AuthGuard } from '../auth/guards/authentication.guard'
 import { UserEntity } from '../users/domain/user.entity'
 import { User } from '../../libs/decorators/requests/logged-in-user.decorator'
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger'

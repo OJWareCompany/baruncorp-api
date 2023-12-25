@@ -7,7 +7,7 @@ import {
 } from './delete-prerequisite-task.request.dto'
 import { CommandBus } from '@nestjs/cqrs'
 import { DeletePrerequisiteTaskCommand } from './delete-prerequisite-task.command'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 
 @Controller('tasks')
 export class DeletePrerequisiteTaskHttpController {

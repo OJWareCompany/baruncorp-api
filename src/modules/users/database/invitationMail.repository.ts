@@ -9,20 +9,20 @@ import { InvitationEmails } from '@prisma/client'
 export class InvitationMailRepository implements InvitationMailRepositoryPort {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async deleteOne(code: string): Promise<void> {
-    await this.prismaService.invitationEmails.delete({ where: { code } })
-  }
-
   async insertOne(props: CreateInvitationMailProp): Promise<InvitationEmailProp> {
     return await this.prismaService.invitationEmails.create({
-      data: props,
+      data: {
+        email: props.email,
+        organizationId: props.organizationId,
+        role: props.role,
+        updated_at: new Date(),
+      },
     })
   }
 
-  async findOne(code: string, email: EmailVO): Promise<InvitationEmails | null> {
+  async findOne(email: EmailVO): Promise<InvitationEmails | null> {
     return await this.prismaService.invitationEmails.findFirst({
       where: {
-        code,
         email: email.email,
       },
     })

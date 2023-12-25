@@ -21,34 +21,6 @@ export interface TokenResponseDto {
   refreshToken: string
 }
 
-export interface SignUpRequestDto {
-  /** @default "Emma" */
-  firstName: string
-  /** @default "Smith" */
-  lastName: string
-  /** @default "hyomin@ojware.com" */
-  email: string
-  /** @default false */
-  isVendor: boolean
-  /** @default "hyomin@ojware.com" */
-  deliverablesEmails: string[]
-  /** @default "thisistestPass123!" */
-  password: string
-  /** @default "AE2DE" */
-  code: string
-  /** @default "176 Morningmist Road, Naugatuck, Connecticut 06770" */
-  address: string | null
-  /** @default "857-250-4567" */
-  phoneNumber: string
-}
-
-export interface SignUpTestRequestDto {
-  /** @default "Emma" */
-  name: string
-  /** @default "hyomin@ojware.com" */
-  email: string
-}
-
 export interface AccessTokenResponseDto {
   accessToken: string
 }
@@ -110,13 +82,6 @@ export interface UpdateUserRequestDto {
 export interface GiveRoleRequestDto {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
-}
-
-export interface CreateInvitationMailRequestDto {
-  /** @default "OJ Tech" */
-  organizationName: string
-  /** @default "hyomin@ojware.com" */
-  email: string
 }
 
 export interface CreateUserRequestDto {
@@ -2447,36 +2412,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name AuthenticationControllerPostSignUp
-     * @request POST:/auth/signup
-     */
-    authenticationControllerPostSignUp: (data: SignUpRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/auth/signup`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name AuthenticationControllerPostSignUpTest
-     * @request POST:/auth/signup-test
-     */
-    authenticationControllerPostSignUpTest: (data: SignUpTestRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/auth/signup-test`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @name AuthenticationControllerGetMe
      * @request GET:/auth/me
      */
@@ -2585,22 +2520,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'POST',
         body: data,
         type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UsersControllerPostSendInvitationMail
-     * @request POST:/users/invitations
-     */
-    usersControllerPostSendInvitationMail: (data: CreateInvitationMailRequestDto, params: RequestParams = {}) =>
-      this.request<object, any>({
-        path: `/users/invitations`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
         ...params,
       }),
 

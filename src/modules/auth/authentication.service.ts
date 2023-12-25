@@ -1,21 +1,14 @@
-import { Injectable, NotFoundException, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { UserService } from '../users/users.service'
 import { JwtService } from '@nestjs/jwt'
 import { CookieOptions, Response } from 'express'
-import { SignUpRequestDto } from './dto/request/signup.request.dto'
 import { EmailVO } from '../users/domain/value-objects/email.vo'
 import { InputPasswordVO } from '../users/domain/value-objects/password.vo'
 import { OrganizationService } from '../organization/organization.service'
 import { TokenResponseDto } from './dto/response/token.response.dto'
-import { UserName } from '../users/domain/value-objects/user-name.vo'
-import { UserEntity } from '../users/domain/user.entity'
 import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
-import { Phone } from '../users/domain/value-objects/phone-number.value-object'
-import { Organization } from '../users/domain/value-objects/organization.value-object'
-import { OrganizationNotFoundException } from '../organization/domain/organization.error'
-import { InvitationNotFoundException, UserNotFoundException } from '../users/user.error'
 import { LoginException } from './auth.error'
-import { SignUpTestRequestDto } from './dto/request/signup-test.request.dto'
+import { UserNotFoundException } from '../users/user.error'
 
 const { JWT_REFRESH_EXPIRED_TIME, JWT_REFRESH_SECRET, JWT_EXPIRED_TIME } = process.env
 
@@ -24,7 +17,6 @@ export class AuthenticationService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly usersService: UserService, // ?
-    private readonly organizationService: OrganizationService,
   ) {}
 
   async signIn(email: EmailVO, password: InputPasswordVO, response: Response): Promise<TokenResponseDto> {
@@ -87,59 +79,6 @@ export class AuthenticationService {
       accessToken,
       refreshToken,
     }
-  }
-
-  async signUp(signUpReq: SignUpRequestDto) {
-    // TODO: Validate Code in DTO
-    const { code, password, ...rest } = signUpReq
-
-    const invitationMail = await this.usersService.findInvitationMail(code, new EmailVO(signUpReq.email))
-    if (!invitationMail) throw new InvitationNotFoundException()
-
-    const organization = await this.organizationService.findOrganizationById(invitationMail.organizationId)
-    if (!organization) throw new OrganizationNotFoundException()
-
-    const userEntity = UserEntity.create({
-      email: rest.email,
-      deliverablesEmails: rest.deliverablesEmails,
-      userName: new UserName({ firstName: rest.firstName, lastName: rest.lastName }),
-      organization: new Organization({
-        id: organization.id,
-        name: organization.getProps().name,
-        organizationType: organization.getProps().organizationType,
-      }),
-      phone: rest.phoneNumber ? new Phone({ number: rest.phoneNumber }) : null,
-      updatedBy: 'system',
-      isVendor: rest.isVendor,
-    })
-
-    await this.usersService.insertUser(userEntity, new InputPasswordVO(password))
-
-    await this.usersService.deleteInvitationMail(code)
-  }
-
-  async testMemberSignup(signUpReq: SignUpTestRequestDto) {
-    // TODO: Validate Code in DTO
-    const { email, name } = signUpReq
-
-    const organization = await this.organizationService.findOrganizationById('asda')
-    if (!organization) throw new OrganizationNotFoundException()
-
-    const userEntity = UserEntity.create({
-      email: email,
-      deliverablesEmails: [email],
-      userName: new UserName({ firstName: name.split(' ')[0], lastName: name.split(' ')[1] }),
-      organization: new Organization({
-        id: organization.id,
-        name: organization.getProps().name,
-        organizationType: organization.getProps().organizationType,
-      }),
-      phone: null,
-      updatedBy: 'system',
-      isVendor: true,
-    })
-
-    await this.usersService.insertUser(userEntity, new InputPasswordVO('Test123123!@#'))
   }
 
   async refreshAccessToken(id: string, response: Response): Promise<AccessTokenResponseDto> {

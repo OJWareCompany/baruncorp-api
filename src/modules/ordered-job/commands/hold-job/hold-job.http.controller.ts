@@ -1,7 +1,7 @@
 import { Controller, Param, Patch, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { HoldJobCommand } from './hold-job.command'
 import { HoldJobParamRequestDto } from './hold-job.param.request.dto'

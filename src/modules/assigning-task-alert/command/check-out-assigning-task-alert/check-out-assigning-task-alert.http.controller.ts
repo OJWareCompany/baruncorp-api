@@ -1,5 +1,5 @@
 import { Controller, Param, Patch, UseGuards } from '@nestjs/common'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { CommandBus } from '@nestjs/cqrs'
 import { CheckOutAssigningTaskAlertCommand } from './check-out-assigning-task-alert.command'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'

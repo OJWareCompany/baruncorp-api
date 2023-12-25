@@ -7,7 +7,7 @@ import {
 } from './modify-assignment-type-of-available-task.request'
 import { CommandBus } from '@nestjs/cqrs'
 import { ModifyAssignmentTypeOfAvailableTaskCommand } from './modify-assignment-type-of-available-task.commnad'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 
 @Controller('users')
 export class ModifyAssignmentTypeOfAvailableTaskHttpController {

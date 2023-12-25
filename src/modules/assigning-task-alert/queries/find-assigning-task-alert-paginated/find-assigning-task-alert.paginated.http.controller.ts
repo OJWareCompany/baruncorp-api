@@ -4,7 +4,7 @@ import { QueryBus } from '@nestjs/cqrs'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { FindAssigningTaskAlertPaginatedQuery } from './find-assigning-task-alert.paginated.query-handler'
 

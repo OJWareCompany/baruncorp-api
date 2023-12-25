@@ -1,10 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsString } from 'class-validator'
 
-export class CreateInvitationMailRequestDto {
-  @ApiProperty({ default: 'OJ Tech' })
+export class InviteRequestDto {
+  @ApiProperty({ default: '' })
   @IsString()
-  readonly organizationName: string
+  readonly organizationId: string
 
   @ApiProperty({ default: 'hyomin@ojware.com' })
   @IsString()

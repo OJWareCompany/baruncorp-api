@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Patch, UseGuards } from '@nestjs/common'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { CommandBus } from '@nestjs/cqrs'

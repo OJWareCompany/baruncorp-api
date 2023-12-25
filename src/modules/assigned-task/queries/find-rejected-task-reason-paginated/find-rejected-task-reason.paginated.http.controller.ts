@@ -1,7 +1,7 @@
 import { Controller, Get, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { UserEntity } from '../../../users/domain/user.entity'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { PrismaService } from '../../../database/prisma.service'
 import { RejectedTaskReasonPaginatedResponseDto } from '../../dtos/rejected-task-reason.response.dto'
 

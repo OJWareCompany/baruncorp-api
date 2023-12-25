@@ -1,7 +1,7 @@
 import { CommandBus } from '@nestjs/cqrs'
 import { Body, Param, Controller, Delete, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { DeletePositionTaskCommand } from './delete-position-task.command'
 import { DeletePositionTaskParamRequestDto } from './delete-position-task.request.dto'

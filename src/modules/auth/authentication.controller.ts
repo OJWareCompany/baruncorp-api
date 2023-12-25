@@ -11,19 +11,17 @@ import {
   Query,
   BadRequestException,
 } from '@nestjs/common'
-import { AuthGuard } from './authentication.guard'
+import { AuthGuard } from './guards/authentication.guard'
 import { AuthenticationService } from './authentication.service'
 import { SignInRequestDto } from './dto/request/login.reqeust.dto'
-import { SignUpRequestDto } from './dto/request/signup.request.dto'
 import { EmailVO } from '../users/domain/value-objects/email.vo'
 import { InputPasswordVO } from '../users/domain/value-objects/password.vo'
 import { TokenResponseDto } from './dto/response/token.response.dto'
-import { AuthRefreshGuard } from './authentication.refresh.guard'
+import { AuthRefreshGuard } from './guards/authentication.refresh.guard'
 import { User } from '../../libs/decorators/requests/logged-in-user.decorator'
 import { AccessTokenResponseDto } from './dto/response/access-token.response.dto copy'
 import { ApiResponse } from '@nestjs/swagger'
 import { SignInTimeRequestDto } from './dto/request/sign-in-time.request.dto'
-import { SignUpTestRequestDto } from './dto/request/signup-test.request.dto'
 
 @Controller('auth')
 export class AuthenticationController {
@@ -65,18 +63,6 @@ export class AuthenticationController {
   async postSignout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('token')
     response.clearCookie('refreshToken')
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Post('signup')
-  async postSignUp(@Body() signUpDto: SignUpRequestDto) {
-    return await this.authService.signUp(signUpDto)
-  }
-
-  @HttpCode(HttpStatus.OK)
-  @Post('signup-test')
-  async postSignUpTest(@Body() signUpDto: SignUpTestRequestDto) {
-    return await this.authService.testMemberSignup(signUpDto)
   }
 
   @HttpCode(HttpStatus.OK)

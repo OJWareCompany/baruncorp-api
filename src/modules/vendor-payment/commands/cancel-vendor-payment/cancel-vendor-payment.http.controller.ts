@@ -1,7 +1,7 @@
 import { CommandBus } from '@nestjs/cqrs'
 import { Param, Controller, UseGuards, Patch } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { CancelVendorPaymentCommand } from './cancel-vendor-payment.command'
 import { CancelVendorPaymentParamRequestDto } from './cancel-vendor-payment.request.dto'

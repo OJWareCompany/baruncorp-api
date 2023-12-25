@@ -5,6 +5,7 @@ import { UserName } from './value-objects/user-name.vo'
 import { Phone } from './value-objects/phone-number.value-object'
 import { UserRoleNameEnum } from './value-objects/user-role.vo'
 import { PhoneNumberFormatException } from '../user.error'
+import { InputPasswordVO } from './value-objects/password.vo'
 
 // where should it be 'id'? Entity or Prop?
 // 'id' should be in base entity
@@ -64,6 +65,19 @@ export class UserEntity extends AggregateRoot<UserProps> {
 
   revokeLicense() {
     //
+  }
+
+  invite() {
+    this.props.status = UserStatusEnum.INVITATION_SENT
+    return this
+  }
+
+  signUp(name: UserName, phone: Phone, deliverablesEmails: string[]) {
+    this.props.userName = name
+    this.props.phone = phone
+    this.props.deliverablesEmails = deliverablesEmails
+    this.props.status = UserStatusEnum.ACTIVE
+    return this
   }
 
   updateName(userName: UserName): this {

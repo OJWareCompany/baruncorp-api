@@ -4,7 +4,7 @@ import { User } from '../../../../libs/decorators/requests/logged-in-user.decora
 import { UserEntity } from '../../../users/domain/user.entity'
 import { CreateJobRequestDto } from './create-job.request.dto'
 import { CreateJobCommand } from './create-job.command'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { IdResponse } from '../../../../libs/api/id.response.dto'
 
 @Controller('jobs')

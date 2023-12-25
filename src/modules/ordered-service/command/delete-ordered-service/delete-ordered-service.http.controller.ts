@@ -1,7 +1,7 @@
 import { CommandBus } from '@nestjs/cqrs'
 import { Controller, Delete, Param, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { DeleteOrderedServiceCommand } from './delete-ordered-service.command'
 import { DeleteOrderedServiceRequestDto } from './delete-ordered-service.request.dto'

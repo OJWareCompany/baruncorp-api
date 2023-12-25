@@ -6,7 +6,7 @@ import { InputPasswordVO } from './domain/value-objects/password.vo'
 import { InvitationEmailProp } from './domain/invitationMail.types'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
-import { CreateInvitationMailRequestDto } from './commands/create-invitation-mail/create-invitation-mail.request.dto'
+import { InviteRequestDto } from './commands/invite/invite.request.dto'
 import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../organization/database/organization.repository.port'
 import { UserResponseDto } from './dtos/user.response.dto'
@@ -38,7 +38,7 @@ export class UserService {
 
   async makeAdmin(userId: string) {
     // TODO: Consider an Aggregate Pattern
-    const user = await this.userRepository.findOneById(userId)
+    const user = await this.userRepository.findOneByIdOrThrow(userId)
     const organizationEntity = await this.organizationRepository.findOneOrThrow(user.getProps().organization.id)
     if (!organizationEntity || organizationEntity?.getProps().organizationType !== 'Administration') {
       throw new OnlyMemberCanBeAdminException()
@@ -53,7 +53,7 @@ export class UserService {
 
   async getUserProfile(userId: string): Promise<UserResponseDto> {
     // TODO: Consider an Aggregate Pattern
-    const userEntity = await this.userRepository.findOneById(userId)
+    const userEntity = await this.userRepository.findOneByIdOrThrow(userId)
     const organizationEntity = await this.organizationRepository.findOneOrThrow(userEntity.getProps().organization.id)
     if (!organizationEntity) throw new OrganizationNotFoundException()
     return this.userMapper.toResponse(userEntity)
@@ -66,7 +66,7 @@ export class UserService {
     deliverablesEmails: string[],
     isVendor?: boolean,
   ): Promise<void> {
-    const user = await this.userRepository.findOneById(userId)
+    const user = await this.userRepository.findOneByIdOrThrow(userId)
     if (!user) throw new UserNotFoundException()
 
     user
@@ -80,7 +80,7 @@ export class UserService {
   }
 
   async findUserIdByEmail(email: EmailVO): Promise<Pick<UserEntity, 'id'>> {
-    const result = await this.userRepository.findUserIdByEmail(email)
+    const result = await this.userRepository.findUserByEmailOrThrow(email)
     if (!result) throw new UserNotFoundException()
     return result
   }
@@ -89,55 +89,13 @@ export class UserService {
     return await this.userRepository.findPasswordByUserId(id)
   }
 
-  // 뭔가 service to service로 사용되는 메서드여서 그런지 구현이 이상한 느낌?
-  async insertUser(entity: UserEntity, password: InputPasswordVO) {
-    return await this.userRepository.insertUser(entity, password)
-  }
-
-  async deleteInvitationMail(code: string): Promise<void> {
-    await this.invitationMailRepository.deleteOne(code)
-  }
-
   async transaction(...args: any[]): Promise<void> {
     return await this.userRepository.transaction(args)
   }
 
-  async findInvitationMail(code: string, email: EmailVO): Promise<InvitationEmailProp> {
-    const result = await this.invitationMailRepository.findOne(code, email)
+  async findInvitationMail(email: EmailVO): Promise<InvitationEmailProp> {
+    const result = await this.invitationMailRepository.findOne(email)
     if (!result) throw new InvitationNotFoundException()
     return result
-  }
-
-  async sendInvitationMail(dto: CreateInvitationMailRequestDto, code: string): Promise<InvitationEmailProp> {
-    try {
-      const user = await this.prismaService.users.findUnique({
-        where: { email: dto.email },
-      })
-      if (user) throw new UserConflictException()
-
-      // What if organizationId is provided by parameter?
-      const organization = await this.organizationRepository.findOneByName(dto.organizationName)
-      if (!organization) throw new OrganizationNotFoundException()
-
-      await this.invitationMailRepository.insertOne({
-        email: dto.email,
-        code: code,
-        role: UserRoleNameEnum.guest,
-        organizationId: organization.id,
-      })
-      return {
-        email: dto.email,
-        code: code,
-        role: UserRoleNameEnum.guest,
-        organizationId: organization.id,
-        updatedAt: new Date(),
-        createdAt: new Date(),
-      }
-    } catch (error) {
-      if (error instanceof ConflictException) {
-        throw error
-      }
-      throw new InternalServerErrorException()
-    }
   }
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UpdateOrganizationParamRequestDto, UpdateOrganizationRequestDto } from './update-organization.request.dto'
 import { UpdateOrganizationCommand } from './update-organization.command'
 

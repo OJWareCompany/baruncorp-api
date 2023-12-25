@@ -1,6 +1,6 @@
 import { Body, Controller, HttpStatus, Post, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
-import { AuthGuard } from '../../../auth/authentication.guard'
+import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { CreateOrganizationRequestDto } from './create-organization.request.dto'
 import { CreateOrganizationCommand } from './create-organization.command'
 import { IdResponse } from '../../../../libs/api/id.response.dto'

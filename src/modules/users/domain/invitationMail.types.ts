@@ -9,16 +9,10 @@ import { InvitationEmails } from '@prisma/client'
  * Entity전용 Create Prop은.. ReqDTO랑 다르니까
  */
 
-export interface InvitationEmailProp extends InvitationEmails {
-  code: string
-  organizationId: string
+export interface CreateInvitationMailProp {
   email: string
   role: string
+  organizationId: string
 }
 
-export interface CreateInvitationMailProp {
-  code: string
-  email: string
-  role: string
-  organizationId: string
-}
+export type InvitationEmailProp = CreateInvitationMailProp
