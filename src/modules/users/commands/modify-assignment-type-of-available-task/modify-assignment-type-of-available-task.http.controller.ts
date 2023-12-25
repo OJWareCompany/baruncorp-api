@@ -26,6 +26,6 @@ export class ModifyAssignmentTypeOfAvailableTaskHttpController {
       autoAssignmentType: request.autoAssignmentType,
     })
 
-    const result = await this.commandBus.execute(command)
+    await this.commandBus.execute(command)
   }
 }

@@ -5,7 +5,11 @@ import { Inject } from '@nestjs/common'
 import { USER_REPOSITORY } from '../../user.di-tokens'
 import { UserRepositoryPort } from '../../database/user.repository.port'
 import { PrismaService } from '../../../database/prisma.service'
-import { AvailableTaskDeleteNoLicenseException, TaskNotFoundException } from '../../../task/domain/task.error'
+import {
+  AvailableTaskDeleteNoLicenseException,
+  AvailableTaskNotFoundException,
+  TaskNotFoundException,
+} from '../../../task/domain/task.error'
 
 @CommandHandler(DeleteAvailableTaskCommand)
 export class DeleteAvailableTaskService implements ICommandHandler {
@@ -29,7 +33,7 @@ export class DeleteAvailableTaskService implements ICommandHandler {
       },
     })
 
-    if (!availableTask) return
+    if (!availableTask) throw new AvailableTaskNotFoundException()
 
     await this.prismaService.userAvailableTasks.delete({
       where: {

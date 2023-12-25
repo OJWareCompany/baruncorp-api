@@ -25,7 +25,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
       role: role,
       position: null,
       licenses: [],
-      services: [],
+      availableTasks: [],
       isHandRaisedForTask: false,
       status: UserStatusEnum.SIGN_UP_NOT_COMPLETED,
     }

@@ -29,3 +29,9 @@ export class AvailableTaskDeleteNoLicenseException extends BadRequestException {
     super('This task can only be deleted through license registration.', '20304')
   }
 }
+
+export class AvailableTaskNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not available task found.', '20305')
+  }
+}

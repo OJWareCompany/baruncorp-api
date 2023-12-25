@@ -93,32 +93,34 @@ model UserRole {
 }
 
 model Users {
-  id                         String          @id @default(uuid())
-  type                       String          @db.VarChar(255)
-  deliverables_emails        String?         @db.Text
-  email                      String          @unique
-  firstName                  String          @map("first_name")
-  lastName                   String          @map("last_name")
-  full_name                  String          @db.VarChar(255)
-  status                     String          @default("sign up not completed") @db.VarChar(255)
-  organizationId             String          @map("organization_id")
-  updatedAt                  DateTime        @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt                  DateTime        @default(now()) @map("created_at") @db.DateTime(0)
-  isHandRaisedForTask        Boolean         @map("is_hand_raised_for_task")
-  address                    String?         @db.Text
-  phoneNumber                String?         @map("phone_number") @db.VarChar(20)
-  isActiveWorkResource       Boolean?        @map("is_active_work_resource")
-  isCurrentUser              Boolean?        @map("is_current_user")
-  isInactiveOrganizationUser Boolean?        @map("is_inactive_organization_user")
-  revenueShare               Boolean?        @map("revenue_share")
-  revisionRevenueShare       Boolean?        @map("revision_revenue_share")
-  updatedBy                  String          @map("updated_by") @db.VarChar(255)
-  isVendor                   Boolean         @default(false) @map("is_vendor")
+  id                         String               @id @default(uuid())
+  type                       String               @db.VarChar(255)
+  deliverables_emails        String?              @db.Text
+  email                      String               @unique
+  firstName                  String               @map("first_name")
+  lastName                   String               @map("last_name")
+  full_name                  String               @db.VarChar(255)
+  status                     String               @default("sign up not completed") @db.VarChar(255)
+  organizationId             String               @map("organization_id")
+  updatedAt                  DateTime             @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                  DateTime             @default(now()) @map("created_at") @db.DateTime(0)
+  isHandRaisedForTask        Boolean              @map("is_hand_raised_for_task")
+  address                    String?              @db.Text
+  phoneNumber                String?              @map("phone_number") @db.VarChar(20)
+  isActiveWorkResource       Boolean?             @map("is_active_work_resource")
+  isCurrentUser              Boolean?             @map("is_current_user")
+  isInactiveOrganizationUser Boolean?             @map("is_inactive_organization_user")
+  revenueShare               Boolean?             @map("revenue_share")
+  revisionRevenueShare       Boolean?             @map("revision_revenue_share")
+  updatedBy                  String               @map("updated_by") @db.VarChar(255)
+  isVendor                   Boolean              @default(false) @map("is_vendor")
   passwordEntity             Passwords?
   userRole                   UserRole?
   userPosition               UserPosition?
-  organization               Organizations   @relation(fields: [organizationId], references: [id])
+  organization               Organizations        @relation(fields: [organizationId], references: [id])
   assignedTasks              AssignedTasks[]
+  availableTasks             UserAvailableTasks[]
+  licenses                   UserLicense[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -913,6 +915,7 @@ model UserAvailableTasks {
   isHandRaised       Boolean   @map("is_hand_raised")
   raisedAt           DateTime? @map("raised_at") @db.DateTime(0)
   userPositionId     String    @map("user_position_id") @db.VarChar(255)
+  user               Users?    @relation(fields: [userId], references: [id])
 
   @@map("user_available_tasks")
 }
@@ -926,6 +929,7 @@ model UserLicense {
   expiryDate         DateTime? @map("expiry_date")
   updatedAt          DateTime  @map("updated_at") @db.DateTime(0)
   createdAt          DateTime  @default(now()) @map("created_at") @db.DateTime(0)
+  user               Users?    @relation(fields: [userId], references: [id])
 
   @@unique([userId, abbreviation, type], map: "user_id_2")
   @@map("user_license")

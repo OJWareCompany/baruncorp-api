@@ -10,6 +10,8 @@ import { Position } from './domain/value-objects/position.value-object'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 import { AutoAssignmentTypeEnum } from '../position/domain/position.type'
 import { UserStatusEnum } from './domain/user.types'
+import { License } from './domain/value-objects/license.value-object'
+import { LicenseTypeEnum } from '../license/dtos/license.response.dto'
 
 @Injectable()
 export default class UserMapper implements Mapper<UserEntity, UserModel, UserResponseDto> {
@@ -60,8 +62,23 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         position: record.userPosition
           ? new Position({ id: record.userPosition.positionId, name: record.userPosition.position.name })
           : null,
-        licenses: [],
-        services: [],
+        licenses: record.licenses.map(
+          (license) =>
+            new License({
+              type: license.type as LicenseTypeEnum,
+              abbreviation: license.abbreviation,
+              expiryDate: license.expiryDate,
+              issuingCountryName: license.issuingCountryName,
+              ownerName: license.userName,
+            }),
+        ),
+        availableTasks: record.availableTasks.map((task) => {
+          return {
+            id: task.taskId,
+            name: task.taskName,
+            autoAssignmentType: task.autoAssignmentType as AutoAssignmentTypeEnum,
+          }
+        }),
         role: record.userRole?.roleName as UserRoleNameEnum,
         isVendor: record.isVendor,
         isHandRaisedForTask: record.isHandRaisedForTask,
@@ -91,13 +108,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     }))
     response.role = props.role
     response.isVendor = props.isVendor
-    response.availableTasks = [
-      {
-        id: 'asdas',
-        name: 'PV Design',
-        autoAssignmentType: AutoAssignmentTypeEnum.all,
-      },
-    ]
+    response.availableTasks = props.availableTasks
     return response
   }
 }

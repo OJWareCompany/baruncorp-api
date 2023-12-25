@@ -131,6 +131,7 @@ export interface AppointUserLicenseRequestDto {
 }
 
 export interface AddAvailableTaskRequestDto {
+  /** @default "b2ccaea3-20c2-4563-9025-9571c7e9776d" */
   taskId: string
   /** @default "Residential" */
   autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'

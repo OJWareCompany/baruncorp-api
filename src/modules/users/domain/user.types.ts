@@ -1,8 +1,8 @@
+import { AvailableTaskResponseDto } from '../dtos/available-task.response.dto'
 import { License } from './value-objects/license.value-object'
 import { Organization } from './value-objects/organization.value-object'
 import { Phone } from './value-objects/phone-number.value-object'
 import { Position } from './value-objects/position.value-object'
-import { Service } from './value-objects/service.value-object'
 import { UserName } from './value-objects/user-name.vo'
 import { UserRoleNameEnum } from './value-objects/user-role.vo'
 
@@ -22,7 +22,7 @@ export interface CreateUserProps {
 export interface UserProps extends CreateUserProps {
   position: Position | null
   licenses: License[]
-  services: Service[]
+  availableTasks: AvailableTaskResponseDto[]
   role: UserRoleNameEnum
   type: string
   isHandRaisedForTask: boolean

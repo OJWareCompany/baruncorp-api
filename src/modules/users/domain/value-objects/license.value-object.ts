@@ -6,7 +6,6 @@ export interface LicenseProps {
   ownerName: string
   issuingCountryName: string
   abbreviation: string
-  priority: number | null
   expiryDate: Date | null
 }
 
@@ -25,10 +24,6 @@ export class License extends ValueObject<LicenseProps> {
 
   get abbreviation(): string {
     return this.props.abbreviation
-  }
-
-  get priority(): number | null {
-    return this.props.priority
   }
 
   get expiryDate(): Date | null {
