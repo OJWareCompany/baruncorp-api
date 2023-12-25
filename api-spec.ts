@@ -809,7 +809,7 @@ export interface TaskWorker {
   userId: string
   userName: string
   email: string
-  position: string
+  position: string | null
   organizationName: string
   organizationId: string
 }
@@ -824,7 +824,7 @@ export interface TaskResponseDto {
   /** @default "" */
   serviceName: string
   /** @default "Structural" */
-  licenseRequired: 'Structural' | 'Electrical' | null
+  licenseType: 'Structural' | 'Electrical' | null
   taskPositions: TaskPosition[]
   prerequisiteTask: PrerequisiteTask[]
   taskWorker: TaskWorker[]
@@ -944,7 +944,7 @@ export interface TaskPaginatedResponseFields {
   /** @default "" */
   serviceName: string
   /** @default "Structural" */
-  licenseRequired: 'Structural' | 'Electrical' | null
+  licenseType: 'Structural' | 'Electrical' | null
   taskPositions: TaskPosition[]
   prerequisiteTask: PrerequisiteTask[]
 }
