@@ -22,7 +22,7 @@ export class UpdatePositionTaskAutoAssignmentTypeHttpController {
     const command = new UpdatePositionTaskAutoAssignmentTypeCommand({
       positionId: param.positionId,
       taskId: param.taskId,
-      ...request,
+      autoAssignmentType: request.autoAssignmentType,
     })
     await this.commandBus.execute(command)
   }

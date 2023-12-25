@@ -3,11 +3,11 @@ import { IsEnum, IsString } from 'class-validator'
 import { AutoAssignmentTypeEnum } from '../../domain/position.type'
 
 export class UpdatePositionTaskAutoAssignmentTypeParamRequestDto {
-  @ApiProperty({ default: '' })
+  @ApiProperty({ default: '8d636d48-3a86-4121-bb19-bce0991a862e' })
   @IsString()
   readonly positionId: string
 
-  @ApiProperty({ default: '' })
+  @ApiProperty({ default: '911fe9ac-94b8-4a0e-b478-56e88f4aa7d7' })
   @IsString()
   readonly taskId: string
 }
