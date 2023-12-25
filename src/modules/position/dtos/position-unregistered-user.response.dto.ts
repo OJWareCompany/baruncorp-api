@@ -13,10 +13,6 @@ export class PositionUnregisteredUserResponseFields {
   @ApiProperty()
   @IsString()
   email: string
-
-  @ApiProperty()
-  @IsString()
-  position: string
 }
 
 export class PositionUnregisteredUserResponseDto {
