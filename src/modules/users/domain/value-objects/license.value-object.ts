@@ -1,5 +1,5 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
-import { LicenseTypeEnum } from '../../user-license.type'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 export interface LicenseProps {
   type: LicenseTypeEnum

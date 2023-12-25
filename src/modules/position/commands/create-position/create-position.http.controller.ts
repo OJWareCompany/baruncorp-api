@@ -18,6 +18,7 @@ export class CreatePositionHttpController {
       name: request.name,
       description: request.description,
       maxAssignedTasksLimit: request.maxAssignedTasksLimit,
+      licenseType: request.licenseType,
     })
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)

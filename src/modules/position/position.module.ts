@@ -27,6 +27,9 @@ import { FindPositionUnRegisteredUsersHttpController } from './queries/find-posi
 import { FindPositionUnRegisteredUsersQueryHandler } from './queries/find-position-unregistered-users/find-position-unregistered-users.query-handler'
 import { AddPositionWorkerService } from './commands/add-worker/add-position-worker.service'
 import { DeletePositionWorkerService } from './commands/delete-position-worker/delete-position-worker.service'
+import { UserRepository } from '../users/database/user.repository'
+import { USER_REPOSITORY } from '../users/user.di-tokens'
+import { UserRoleMapper } from '../users/user-role.mapper'
 
 const httpControllers = [
   CreatePositionHttpController,
@@ -61,9 +64,13 @@ const repositories: Provider[] = [
     provide: POSITION_REPOSITORY,
     useClass: PositionRepository,
   },
+  {
+    provide: USER_REPOSITORY,
+    useClass: UserRepository,
+  },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [PositionMapper, UserMapper]
+const mappers: Provider[] = [PositionMapper, UserMapper, UserRoleMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

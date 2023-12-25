@@ -1,10 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { POSITION_REPOSITORY } from '../../position.di-token'
 import { AddPositionWorkerCommand as AddPositionWorkerCommand } from './add-position-worker.command'
 import { PositionRepositoryPort } from '../../database/position.repository.port'
+import { PrismaService } from '../../../database/prisma.service'
+import { PositionNotFoundException, PositionWorkerLicenseInvalidException } from '../../domain/position.error'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 
 /**
  * position task를 추가할때..
@@ -20,12 +23,39 @@ export class AddPositionWorkerService implements ICommandHandler {
     // @ts-ignore
     @Inject(POSITION_REPOSITORY)
     private readonly positionRepo: PositionRepositoryPort,
+    // @ts-ignore
+    @Inject(USER_REPOSITORY)
+    private readonly userRepo: UserRepositoryPort,
+    private readonly prismaService: PrismaService,
   ) {}
-  async execute(command: AddPositionWorkerCommand): Promise<AggregateID> {
-    // const entity = PositionEntity.create({
-    //   ...command,
-    // })
-    // await this.positionRepo.insert(entity)
-    return '911fe9ac-94b8-4a0e-b478-56e88f4aa7d7'
+  async execute(command: AddPositionWorkerCommand): Promise<void> {
+    const entity = await this.positionRepo.findOne(command.positionId)
+    if (!entity) throw new PositionNotFoundException()
+
+    const user = await this.userRepo.findOneByIdOrThrow(command.userId)
+    if (user.getProps().position?.id === command.positionId) return
+
+    const licenseType = entity.getProps().licenseType
+    if (!!licenseType) {
+      const matchLicense = user.getProps().licenses.filter((license) => license.type === entity.getProps().licenseType)
+      if (!matchLicense.length) throw new PositionWorkerLicenseInvalidException()
+    }
+
+    const userPosition = await this.prismaService.userPosition.findFirst({ where: { userId: command.userId } })
+    if (userPosition) {
+      await this.prismaService.userPosition.delete({
+        where: { userId: user.id },
+      })
+    }
+
+    await this.prismaService.userPosition.create({
+      data: {
+        userId: user.id,
+        positionId: entity.id,
+        positionName: entity.getProps().name,
+        userName: user.getProps().userName.getFullName(),
+        user_email: user.getProps().email,
+      },
+    })
   }
 }

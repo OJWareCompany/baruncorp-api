@@ -25,7 +25,7 @@ export class AddPositionTaskService implements ICommandHandler {
     private readonly positionRepo: PositionRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
-  async execute(command: AddPositionTaskCommand): Promise<AggregateID> {
+  async execute(command: AddPositionTaskCommand): Promise<void> {
     const entity = await this.positionRepo.findOne(command.positionId)
     if (!entity) throw new PositionNotFoundException()
 
@@ -56,7 +56,5 @@ export class AddPositionTaskService implements ICommandHandler {
         order: ++taskOrder,
       },
     })
-
-    return entity.id
   }
 }

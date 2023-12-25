@@ -41,3 +41,9 @@ export class PositionWorkerNotFoundException extends NotFoundException {
     super('Position Worker Not Found', '20207')
   }
 }
+
+export class PositionWorkerLicenseInvalidException extends BadRequestException {
+  constructor() {
+    super('User License Invalid', '20208')
+  }
+}

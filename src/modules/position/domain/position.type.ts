@@ -1,3 +1,5 @@
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
+
 export enum AutoAssignmentTypeEnum {
   none = 'None',
   residential = 'Residential',
@@ -9,6 +11,7 @@ export interface CreatePositionProps {
   name: string
   description?: string | null
   maxAssignedTasksLimit: number | null
+  licenseType: LicenseTypeEnum | null
 }
 
 export type PositionProps = CreatePositionProps

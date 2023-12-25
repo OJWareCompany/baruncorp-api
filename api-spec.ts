@@ -1541,6 +1541,11 @@ export interface CreatePositionRequestDto {
   name: string
   /** @default 5 */
   maxAssignedTasksLimit: number | null
+  /**
+   * TODO: UPDATE license type (워커와 태스크가 등록된경우 변경 불가하도록)
+   * @default null
+   */
+  licenseType: 'Structural' | 'Electrical' | null
   /** @default null */
   description?: string | null
 }
@@ -1616,7 +1621,7 @@ export interface UpdatePositionTaskAutoAssignmentTypeRequestDto {
 }
 
 export interface AddPositionWorkerRequestDto {
-  /** @default "" */
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
   userId: string
 }
 
@@ -4460,12 +4465,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: AddPositionTaskRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<IdResponse, any>({
+      this.request<void, any>({
         path: `/positions/${positionId}/tasks`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
-        format: 'json',
         ...params,
       }),
 
@@ -4513,12 +4517,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: AddPositionWorkerRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<IdResponse, any>({
+      this.request<void, any>({
         path: `/positions/${positionId}/users`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
-        format: 'json',
         ...params,
       }),
 

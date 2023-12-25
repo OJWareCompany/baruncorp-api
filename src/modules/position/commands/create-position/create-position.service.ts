@@ -23,6 +23,7 @@ export class CreatePositionService implements ICommandHandler {
       name: command.name,
       description: command.description,
       maxAssignedTasksLimit: command.maxAssignedTasksLimit,
+      licenseType: command.licenseType,
     })
     await this.positionRepo.insert(entity)
     return entity.id

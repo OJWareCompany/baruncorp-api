@@ -141,6 +141,7 @@ model Positions {
   updatedAt             DateTime       @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt             DateTime       @default(now()) @map("created_at") @db.DateTime(0)
   maxAssignedTasksLimit Int?           @map("max_assigned_tasks_limit") @db.UnsignedTinyInt
+  license_type          String?        @db.VarChar(255)
   UserPosition          UserPosition[]
 
   @@map("positions")

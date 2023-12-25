@@ -1,8 +1,6 @@
 import { CommandBus } from '@nestjs/cqrs'
 import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { IdResponse } from '../../../../libs/api/id.response.dto'
-import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { AddPositionWorkerCommand } from './add-position-worker.command'
@@ -17,12 +15,11 @@ export class AddPositionWorkerHttpController {
     @User() user: UserEntity,
     @Body() request: AddPositionWorkerRequestDto,
     @Param() param: AddPositionWorkerParamRequestDto,
-  ): Promise<IdResponse> {
+  ): Promise<void> {
     const command = new AddPositionWorkerCommand({
       positionId: param.positionId,
       userId: request.userId,
     })
-    const result: AggregateID = await this.commandBus.execute(command)
-    return new IdResponse(result)
+    await this.commandBus.execute(command)
   }
 }

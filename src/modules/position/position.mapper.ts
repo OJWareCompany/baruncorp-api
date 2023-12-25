@@ -3,8 +3,10 @@ import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { PositionResponseDto } from './dtos/position.response.dto'
 import { PositionEntity } from './domain/position.entity'
+import { LicenseTypeEnum } from '../license/dtos/license.response.dto'
 
 class Fields implements Positions {
+  license_type: string | null
   id: string
   name: string
   description: string | null
@@ -21,6 +23,7 @@ export class PositionMapper implements Mapper<PositionEntity, Positions, Positio
       id: props.id,
       name: props.name,
       description: props.description || null,
+      license_type: props.licenseType,
       maxAssignedTasksLimit: props.maxAssignedTasksLimit,
       updatedAt: props.updatedAt,
       createdAt: props.createdAt,
@@ -35,6 +38,7 @@ export class PositionMapper implements Mapper<PositionEntity, Positions, Positio
         name: record.name,
         description: record.description,
         maxAssignedTasksLimit: record.maxAssignedTasksLimit,
+        licenseType: record.license_type as LicenseTypeEnum | null,
       },
     })
     return entity

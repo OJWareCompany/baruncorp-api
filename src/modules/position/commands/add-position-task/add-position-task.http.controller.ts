@@ -17,13 +17,12 @@ export class AddPositionTaskHttpController {
     @User() user: UserEntity,
     @Body() request: AddPositionTaskRequestDto,
     @Param() param: AddPositionTaskParamRequestDto,
-  ): Promise<IdResponse> {
+  ): Promise<void> {
     const command = new AddPositionTaskCommand({
       positionId: param.positionId,
       taskId: request.taskId,
       autoAssignmentType: request.autoAssignmentType,
     })
-    const result: AggregateID = await this.commandBus.execute(command)
-    return new IdResponse(result)
+    await this.commandBus.execute(command)
   }
 }
