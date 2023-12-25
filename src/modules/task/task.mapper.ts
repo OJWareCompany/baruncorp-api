@@ -39,7 +39,7 @@ export class TaskMapper implements Mapper<TaskEntity, Tasks, TaskResponseDto> {
       name: props.name,
       serviceId: props.serviceId,
       serviceName: 'string',
-      licenseRequired: LicenseTypeEnum.structural,
+      licenseType: LicenseTypeEnum.structural,
       taskPositions: [],
       prerequisiteTask: [],
       taskWorker: [],

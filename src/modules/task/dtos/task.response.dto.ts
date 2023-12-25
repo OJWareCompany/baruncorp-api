@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEnum, IsString, ValidateNested } from 'class-validator'
+import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { TaskPaginatedResponseFields } from './task.paginated.response.dto'
 
@@ -18,7 +18,8 @@ export class TaskWorker {
 
   @ApiProperty()
   @IsString()
-  position: string
+  @IsOptional()
+  position: string | null
 
   @ApiProperty()
   @IsString()

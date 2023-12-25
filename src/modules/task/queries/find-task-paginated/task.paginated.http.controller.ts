@@ -1,6 +1,6 @@
 import { Controller, Get, Body, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { Tasks } from '@prisma/client'
+import { PositionTasks, Tasks, prerequisiteTasks } from '@prisma/client'
 import { TaskResponseDto } from '../../dtos/task.response.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { TaskPaginatedResponseDto } from '../../dtos/task.paginated.response.dto'
@@ -24,43 +24,36 @@ export class FindTaskPaginatedHttpController {
       // ...request,
     })
 
-    const result: Paginated<Tasks> = await this.queryBus.execute(command)
+    const result: Paginated<{
+      task: Tasks
+      positions: PositionTasks[]
+      prerequisiteTasks: prerequisiteTasks[]
+    }> = await this.queryBus.execute(command)
 
     return new TaskPaginatedResponseDto({
       ...result,
-      items: result.items.map((task) => {
-        return new TaskResponseDto({
-          id: task.id,
-          name: task.name,
-          serviceId: task.serviceId,
-          serviceName: 'PV Design',
-          licenseRequired: LicenseTypeEnum.structural,
-          taskPositions: [
-            {
-              order: 1,
-              positionId: 'vdscasdsazx',
-              positionName: 'Sr. Designer',
-              autoAssignmentType: AutoAssignmentTypeEnum.all,
-            },
-            {
-              order: 2,
-              positionId: 'vdscasdsazx',
-              positionName: 'Jr. Designer',
-              autoAssignmentType: AutoAssignmentTypeEnum.all,
-            },
-          ],
-          prerequisiteTask: [{ taskId: 'asd', taskName: 'Something' }],
-          taskWorker: [
-            {
-              email: 'asd@naver.com',
-              organizationId: 'asda',
-              organizationName: 'BarunCorp',
-              position: 'Sr. Designer',
-              userId: 'as',
-              userName: 'chris k',
-            },
-          ],
-        })
+      items: result.items.map((item) => {
+        return {
+          id: item.task.id,
+          name: item.task.name,
+          serviceId: item.task.serviceId,
+          serviceName: item.task.serviceName,
+          licenseType: item.task.license_type as LicenseTypeEnum,
+          taskPositions: item.positions.map((position) => {
+            return {
+              order: position.order,
+              positionId: position.positionId,
+              positionName: position.positionName,
+              autoAssignmentType: position.autoAssignmentType as AutoAssignmentTypeEnum,
+            }
+          }),
+          prerequisiteTask: item.prerequisiteTasks.map((pre) => {
+            return {
+              taskId: pre.taskId,
+              taskName: pre.taskName,
+            }
+          }),
+        }
       }),
     })
   }

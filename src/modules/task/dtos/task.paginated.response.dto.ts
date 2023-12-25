@@ -53,7 +53,7 @@ export class TaskPaginatedResponseFields {
   @ApiProperty({ default: LicenseTypeEnum.structural, enum: LicenseTypeEnum })
   @IsEnum(LicenseTypeEnum)
   @IsOptional()
-  readonly licenseRequired: LicenseTypeEnum | null
+  readonly licenseType: LicenseTypeEnum | null
 
   @ApiProperty({ type: TaskPosition, isArray: true })
   @ValidateNested()

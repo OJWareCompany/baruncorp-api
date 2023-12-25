@@ -1,11 +1,12 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { Tasks } from '@prisma/client'
+import { PositionTasks, Tasks, UserAvailableTasks, Users, prerequisiteTasks } from '@prisma/client'
 import { TaskResponseDto } from '../../dtos/task.response.dto'
 import { FindTaskRequestDto } from './find-task.request.dto'
 import { FindTaskQuery } from './find-task.query-handler'
 import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
 import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
+import { UserEntity } from '../../../users/domain/user.entity'
 
 @Controller('tasks')
 export class FindTaskHttpController {
@@ -15,39 +16,43 @@ export class FindTaskHttpController {
   async get(@Param() request: FindTaskRequestDto): Promise<TaskResponseDto> {
     const command = new FindTaskQuery(request)
 
-    const result: Tasks = await this.queryBus.execute(command)
+    const result: {
+      task: Tasks
+      positions: PositionTasks[]
+      prerequisiteTasks: prerequisiteTasks[]
+      workers: UserEntity[]
+    } = await this.queryBus.execute(command)
 
     return new TaskResponseDto({
-      id: result.id,
-      name: result.name,
-      serviceId: result.serviceId,
-      serviceName: 'PV Designe',
-      licenseRequired: LicenseTypeEnum.structural,
-      taskPositions: [
-        {
-          order: 1,
-          positionId: 'vdscasdsazx',
-          positionName: 'Sr. Designer',
-          autoAssignmentType: AutoAssignmentTypeEnum.all,
-        },
-        {
-          order: 2,
-          positionId: 'vdscasdsazx',
-          positionName: 'Jr. Designer',
-          autoAssignmentType: AutoAssignmentTypeEnum.all,
-        },
-      ],
-      prerequisiteTask: [{ taskId: 'asd', taskName: 'Something' }],
-      taskWorker: [
-        {
-          email: 'asd@naver.com',
-          organizationId: 'asda',
-          organizationName: 'BarunCorp',
-          position: 'Sr. Designer',
-          userId: 'as',
-          userName: 'chris k',
-        },
-      ],
+      id: result.task.id,
+      name: result.task.name,
+      serviceId: result.task.serviceId,
+      serviceName: result.task.serviceName,
+      licenseType: result.task.license_type as LicenseTypeEnum,
+      taskPositions: result.positions.map((position) => {
+        return {
+          order: position.order,
+          positionId: position.positionId,
+          positionName: position.positionName,
+          autoAssignmentType: position.autoAssignmentType as AutoAssignmentTypeEnum,
+        }
+      }),
+      prerequisiteTask: result.prerequisiteTasks.map((pre) => {
+        return {
+          taskId: pre.taskId,
+          taskName: pre.taskName,
+        }
+      }),
+      taskWorker: result.workers.map((user) => {
+        return {
+          email: user.getProps().email,
+          organizationId: user.getProps().organization.id,
+          organizationName: user.getProps().organization.name,
+          position: user.getProps().position?.name || null,
+          userId: user.id,
+          userName: user.getProps().userName.getFullName(),
+        }
+      }),
     })
   }
 }

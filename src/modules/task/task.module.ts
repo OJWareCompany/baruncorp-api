@@ -23,6 +23,9 @@ import { UpdatePositionOrderHttpController } from './commands/update-position-or
 import { UpdatePositionOrderService } from './commands/update-position-order/update-position-order.service'
 import { FindUnregisteredUsersForTaskHttpController } from './queries/find-unregistered-users-for-task/find-unregistered-users-for-task.http.controller'
 import { FindUnregisteredUsersForTaskPaginatedQueryHandler } from './queries/find-unregistered-users-for-task/find-unregistered-users-for-task.query-handler'
+import { USER_REPOSITORY } from '../users/user.di-tokens'
+import { UserRepository } from '../users/database/user.repository'
+import { UserRoleMapper } from '../users/user-role.mapper'
 
 const httpControllers = [
   CreateTaskHttpController,
@@ -53,9 +56,13 @@ const repositories: Provider[] = [
     provide: TASK_REPOSITORY,
     useClass: TaskRepository,
   },
+  {
+    provide: USER_REPOSITORY,
+    useClass: UserRepository,
+  },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [TaskMapper, UserMapper]
+const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],
