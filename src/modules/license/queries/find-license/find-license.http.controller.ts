@@ -9,32 +9,18 @@ import { FindLicenseQuery } from './find-license.query-handler'
 export class FindLicenseHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
-  @Get(':stateName')
+  @Get(':abbreviation')
   async get(
     @Param() request: FindLicenseRequestParamDto,
     @Query() query: FindLicenseRequestQueryDto,
   ): Promise<LicenseResponseDto> {
     const command = new FindLicenseQuery({
-      stateName: request.stateName,
+      abbreviation: request.abbreviation,
       type: query.type,
     })
 
-    // const result: Licenses = await this.queryBus.execute(command)
+    const result: LicenseResponseDto = await this.queryBus.execute(command)
 
-    return {
-      type: LicenseTypeEnum.structural,
-      state: 'ALASKA',
-      abbreviation: 'AK',
-      workers: [
-        {
-          userId: 'asda',
-          userName: 'hyomin kim',
-          type: LicenseTypeEnum.structural,
-          expiryDate: new Date().toISOString(),
-          updatedAt: new Date().toISOString(),
-          createdAt: new Date().toISOString(),
-        },
-      ],
-    }
+    return result
   }
 }

@@ -122,19 +122,12 @@ export interface AppointUserLicenseRequestDto {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
   /** @default "Structural" */
-  type: 'Electrical' | 'Structural'
-  /** @default "ALASKA" */
-  stateName: string
+  type: 'Structural' | 'Electrical'
   /**
    * @format date-time
    * @default "2023-09-04T07:31:27.217Z"
    */
   expiryDate: string | null
-}
-
-export interface RevokeUserLicenseRequestDto {
-  /** @default "Electrical" */
-  type: 'Electrical' | 'Structural'
 }
 
 export interface AddAvailableTaskRequestDto {
@@ -1629,7 +1622,6 @@ export interface PositionUnregisteredUserResponseFields {
   userId: string
   userName: string
   email: string
-  position: string
 }
 
 export interface PositionUnregisteredUserResponseDto {
@@ -1700,7 +1692,16 @@ export interface FindLicenseHttpControllerGetParams {
   /** @default "Structural" */
   type: 'Structural' | 'Electrical'
   /** @default "" */
-  stateName: string
+  abbreviation: string
+}
+
+export interface RevokeUserLicenseHttpControllerPostParams {
+  /** @default "Electrical" */
+  type: 'Structural' | 'Electrical'
+  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
+  userId: string
+  /** @default "ALASKA" */
+  abbreviation: string
 }
 
 export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams {
@@ -2659,19 +2660,18 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name AppointUserLicenseHttpControllerPost
-     * @request POST:/licenses/{stateName}
+     * @request POST:/licenses/{abbreviation}
      */
     appointUserLicenseHttpControllerPost: (
-      stateName: string,
+      abbreviation: string,
       data: AppointUserLicenseRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<IdResponse, any>({
-        path: `/licenses/${stateName}`,
+      this.request<void, any>({
+        path: `/licenses/${abbreviation}`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
-        format: 'json',
         ...params,
       }),
 
@@ -2679,14 +2679,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindLicenseHttpControllerGet
-     * @request GET:/licenses/{stateName}
+     * @request GET:/licenses/{abbreviation}
      */
     findLicenseHttpControllerGet: (
-      { stateName, ...query }: FindLicenseHttpControllerGetParams,
+      { abbreviation, ...query }: FindLicenseHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
       this.request<LicenseResponseDto, any>({
-        path: `/licenses/${stateName}`,
+        path: `/licenses/${abbreviation}`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -2697,19 +2697,16 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name RevokeUserLicenseHttpControllerPost
-     * @request POST:/licenses/{stateName}/users/{userId}
+     * @request DELETE:/licenses/{abbreviation}/users/{userId}
      */
     revokeUserLicenseHttpControllerPost: (
-      userId: string,
-      stateName: string,
-      data: RevokeUserLicenseRequestDto,
+      { userId, abbreviation, ...query }: RevokeUserLicenseHttpControllerPostParams,
       params: RequestParams = {},
     ) =>
       this.request<IdResponse, any>({
-        path: `/licenses/${stateName}/users/${userId}`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
+        path: `/licenses/${abbreviation}/users/${userId}`,
+        method: 'DELETE',
+        query: query,
         format: 'json',
         ...params,
       }),

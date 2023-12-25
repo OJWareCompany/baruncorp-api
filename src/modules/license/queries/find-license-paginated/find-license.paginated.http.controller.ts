@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { UserLicense } from '@prisma/client'
+import { States, UserLicense } from '@prisma/client'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { LicensePaginatedResponseDto } from '../../dtos/license.paginated.response.dto'
@@ -22,28 +22,29 @@ export class FindLicensePaginatedHttpController {
       ...queryParams,
     })
 
-    const result: Paginated<UserLicense> = await this.queryBus.execute(command)
+    const result: Paginated<{ state: States; licenses: UserLicense[] }> = await this.queryBus.execute(command)
 
     return new LicensePaginatedResponseDto({
-      ...queryParams,
-      ...result,
-      items: [
-        {
-          type: LicenseTypeEnum.structural,
-          state: 'ALASKA',
-          abbreviation: 'AK',
-          workers: [
-            {
-              userId: 'asda',
-              userName: 'hyomin kim',
-              type: LicenseTypeEnum.structural,
-              expiryDate: new Date().toISOString(),
-              updatedAt: new Date().toISOString(),
-              createdAt: new Date().toISOString(),
-            },
-          ],
-        },
-      ],
+      page: queryParams.page,
+      pageSize: queryParams.limit,
+      totalCount: result.totalCount,
+      items: result.items.map((item) => {
+        return {
+          state: item.state.stateName,
+          abbreviation: item.state.abbreviation,
+          type: request.type,
+          workers: item.licenses.map((license) => {
+            return {
+              userId: license.userId,
+              userName: license.userName,
+              type: license.type,
+              expiryDate: license.expiryDate ? license.expiryDate.toISOString() : null,
+              updatedAt: license.updatedAt.toISOString(),
+              createdAt: license.createdAt.toISOString(),
+            }
+          }),
+        }
+      }),
     })
   }
 }

@@ -5,7 +5,7 @@ import { LicenseTypeEnum } from '../../dtos/license.response.dto'
 export class FindLicenseRequestParamDto {
   @ApiProperty({ default: '' })
   @IsString()
-  readonly stateName: string
+  readonly abbreviation: string
 }
 
 export class FindLicenseRequestQueryDto {
