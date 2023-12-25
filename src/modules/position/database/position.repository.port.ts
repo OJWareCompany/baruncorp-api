@@ -7,4 +7,5 @@ export interface PositionRepositoryPort {
   delete(id: string): Promise<void>
   findOne(id: string): Promise<PositionEntity | null>
   find(): Promise<Paginated<PositionEntity>>
+  findByName(name: string): Promise<PositionEntity | null>
 }

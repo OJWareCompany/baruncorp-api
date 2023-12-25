@@ -6,6 +6,7 @@ import { POSITION_REPOSITORY } from '../../position.di-token'
 import { PositionEntity } from '../../domain/position.entity'
 import { CreatePositionCommand } from './create-position.command'
 import { PositionRepositoryPort } from '../../database/position.repository.port'
+import { PositionNameConflictException } from '../../domain/position.error'
 
 @CommandHandler(CreatePositionCommand)
 export class CreatePositionService implements ICommandHandler {
@@ -15,11 +16,15 @@ export class CreatePositionService implements ICommandHandler {
     private readonly positionRepo: PositionRepositoryPort,
   ) {}
   async execute(command: CreatePositionCommand): Promise<AggregateID> {
-    // const entity = PositionEntity.create({
-    //   ...command,
-    // })
-    // await this.positionRepo.insert(entity)
-    // return entity.id
-    return '911fe9ac-94b8-4a0e-b478-56e88f4aa7d7'
+    const isExisted = await this.positionRepo.findByName(command.name)
+    if (isExisted) throw new PositionNameConflictException()
+
+    const entity = PositionEntity.create({
+      name: command.name,
+      description: command.description,
+      maxAssignedTasksLimit: command.maxAssignedTasksLimit,
+    })
+    await this.positionRepo.insert(entity)
+    return entity.id
   }
 }

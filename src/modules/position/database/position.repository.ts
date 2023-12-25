@@ -13,6 +13,11 @@ export class PositionRepository implements PositionRepositoryPort {
     throw new Error('Method not implemented.')
   }
 
+  async findByName(name: string): Promise<PositionEntity | null> {
+    const record = await this.prismaService.positions.findFirst({ where: { name: name } })
+    return record ? this.positionMapper.toDomain(record) : null
+  }
+
   async insert(entity: PositionEntity): Promise<void> {
     const record = this.positionMapper.toPersistence(entity)
     await this.prismaService.positions.create({ data: record })

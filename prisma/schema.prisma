@@ -216,6 +216,7 @@ model UserPosition {
   positionName String    @map("position_name") @db.VarChar(255)
   updatedAt    DateTime  @updatedAt @map("updated_at") @db.DateTime(0)
   createdAt    DateTime  @default(now()) @map("created_at") @db.DateTime(0)
+  user_email   String    @db.VarChar(255)
   position     Positions @relation(fields: [positionId], references: [id])
   user         Users     @relation(fields: [userId], references: [id])
 

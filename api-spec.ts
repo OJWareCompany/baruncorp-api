@@ -1537,7 +1537,7 @@ export interface VendorPaymentPaginatedResponseDto {
 }
 
 export interface CreatePositionRequestDto {
-  /** @default "Sr. Designer" */
+  /** @default "Sr. Designer Test" */
   name: string
   /** @default 5 */
   maxAssignedTasksLimit: number | null
@@ -1546,9 +1546,9 @@ export interface CreatePositionRequestDto {
 }
 
 export interface UpdatePositionRequestDto {
-  /** @default "Sr. Designer" */
+  /** @default "Sr. Designer Update Test" */
   name: string
-  /** @default 5 */
+  /** @default 777 */
   maxAssignedTasksLimit: number | null
   /** @default null */
   description?: string | null

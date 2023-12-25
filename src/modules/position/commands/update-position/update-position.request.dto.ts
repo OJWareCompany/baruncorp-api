@@ -8,11 +8,11 @@ export class UpdatePositionParamRequestDto {
 }
 
 export class UpdatePositionRequestDto {
-  @ApiProperty({ default: 'Sr. Designer' })
+  @ApiProperty({ default: 'Sr. Designer Update Test' })
   @IsString()
   readonly name: string
 
-  @ApiProperty({ default: 5 })
+  @ApiProperty({ default: 777 })
   @IsNumber()
   readonly maxAssignedTasksLimit: number | null
 

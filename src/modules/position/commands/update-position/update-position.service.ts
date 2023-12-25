@@ -16,9 +16,11 @@ export class UpdatePositionService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: UpdatePositionCommand): Promise<void> {
-    // const entity = await this.positionRepo.findOne(command.positionId)
-    // if (!entity) throw new PositionNotFoundException()
-    // await this.positionRepo.update(entity)
-    return
+    const entity = await this.positionRepo.findOne(command.positionId)
+    if (!entity) throw new PositionNotFoundException()
+
+    entity.updateName(command.name)
+    entity.updateMaxAssignedTasksLimit(command.maxAssignedTasksLimit)
+    await this.positionRepo.update(entity)
   }
 }

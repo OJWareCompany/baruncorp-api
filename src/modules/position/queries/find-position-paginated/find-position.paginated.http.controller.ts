@@ -1,6 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { Positions } from '@prisma/client'
+import { PositionTasks, Positions } from '@prisma/client'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PositionPaginatedResponseDto } from '../../dtos/position.paginated.response.dto'
@@ -21,17 +21,24 @@ export class FindPositionPaginatedHttpController {
       ...queryParams,
     })
 
-    const result: Paginated<Positions> = await this.queryBus.execute(command)
+    const result: Paginated<{ position: Positions; tasks: PositionTasks[] }> = await this.queryBus.execute(command)
 
     return new PositionPaginatedResponseDto({
-      ...queryParams,
-      ...result,
-      items: result.items.map((item) => ({
-        id: 'sa22-4a33-11ra-3rdw-403a',
-        name: 'Sr. Designer',
-        maxAssignedTasksLimit: 0,
-        description: null,
-        tasks: [{ taskId: 'asd', taskName: 'PV Design', order: 1, autoAssignmentType: 'Commercial' }],
+      page: result.page,
+      pageSize: result.pageSize,
+      totalCount: result.totalCount,
+      items: result.items.map(({ position, tasks }) => ({
+        id: position.id,
+        name: position.name,
+        maxAssignedTasksLimit: position.maxAssignedTasksLimit,
+        description: position.description,
+        tasks: tasks.map((task) => {
+          return {
+            taskId: task.taskId,
+            taskName: task.taskName,
+            autoAssignmentType: task.autoAssignmentType,
+          }
+        }),
       })),
     })
   }

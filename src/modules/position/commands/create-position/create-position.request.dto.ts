@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsNumber, IsOptional, IsString } from 'class-validator'
 
 export class CreatePositionRequestDto {
-  @ApiProperty({ default: 'Sr. Designer' })
+  @ApiProperty({ default: 'Sr. Designer Test' })
   @IsString()
   readonly name: string
 

@@ -16,9 +16,9 @@ export class DeletePositionService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: DeletePositionCommand): Promise<void> {
-    // const entity = await this.positionRepo.findOne(command.positionId)
-    // if (!entity) throw new PositionNotFoundException()
-    // await this.positionRepo.update(entity)
+    const entity = await this.positionRepo.findOne(command.positionId)
+    if (!entity) throw new PositionNotFoundException()
+    await this.positionRepo.delete(entity.id)
     return
   }
 }

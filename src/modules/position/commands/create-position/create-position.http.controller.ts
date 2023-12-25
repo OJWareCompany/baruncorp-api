@@ -14,7 +14,11 @@ export class CreatePositionHttpController {
   @Post('')
   @UseGuards(AuthGuard)
   async post(@User() user: UserEntity, @Body() request: CreatePositionRequestDto): Promise<IdResponse> {
-    const command = new CreatePositionCommand(request)
+    const command = new CreatePositionCommand({
+      name: request.name,
+      description: request.description,
+      maxAssignedTasksLimit: request.maxAssignedTasksLimit,
+    })
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)
   }

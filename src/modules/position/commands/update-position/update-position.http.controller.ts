@@ -18,7 +18,9 @@ export class UpdatePositionHttpController {
   ): Promise<void> {
     const command = new UpdatePositionCommand({
       positionId: param.positionId,
-      ...request,
+      name: request.name,
+      maxAssignedTasksLimit: request.maxAssignedTasksLimit,
+      description: request.description,
     })
     await this.commandBus.execute(command)
   }
