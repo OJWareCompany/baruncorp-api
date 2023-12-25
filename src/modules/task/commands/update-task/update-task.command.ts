@@ -1,10 +1,10 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { LicenseRequiredEnum } from '../../domain/task.type'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 export class UpdateTaskCommand {
   readonly taskId: string
   readonly name: string
-  readonly licenseRequired: LicenseRequiredEnum | null
+  readonly licenseType: LicenseTypeEnum | null
   constructor(props: UpdateTaskCommand) {
     initialize(this, props)
   }

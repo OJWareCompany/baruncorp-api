@@ -5,9 +5,7 @@ export class DeletePrerequisiteTaskRequestParamDto {
   @ApiProperty({ default: '618d6167-0cff-4c0f-bbf6-ed7d6e14e2f1' })
   @IsString()
   readonly taskId: string
-}
 
-export class DeletePrerequisiteTaskRequestDto {
   @ApiProperty({ default: '618d6167-0cff-4c0f-bbf6-ed7d6e14e2f1' })
   @IsString()
   readonly prerequisiteTaskId: string

@@ -7,8 +7,8 @@ import { TaskPaginatedResponseDto } from '../../dtos/task.paginated.response.dto
 // import { FindTaskPaginatedRequestDto } from './task.paginated.request.dto'
 import { FindTaskPaginatedQuery } from './task.paginated.query-handler'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
-import { LicenseRequiredEnum } from '../../domain/task.type'
 import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 @Controller('tasks')
 export class FindTaskPaginatedHttpController {
@@ -34,7 +34,7 @@ export class FindTaskPaginatedHttpController {
           name: task.name,
           serviceId: task.serviceId,
           serviceName: 'PV Design',
-          licenseRequired: LicenseRequiredEnum.structural,
+          licenseRequired: LicenseTypeEnum.structural,
           taskPositions: [
             {
               order: 1,

@@ -923,14 +923,14 @@ export interface CreateTaskRequestDto {
   /** @default "PV Design QA/QC" */
   name: string
   /** @default "Structural" */
-  licenseRequired: 'Structural' | 'Electrical' | null
+  licenseType: 'Structural' | 'Electrical' | null
 }
 
 export interface UpdateTaskRequestDto {
   /** @default "" */
   name: string
   /** @default "Structural" */
-  licenseRequired: 'Structural' | 'Electrical' | null
+  licenseTyp: 'Structural' | 'Electrical' | null
 }
 
 export interface TaskPaginatedResponseFields {
@@ -961,12 +961,7 @@ export interface TaskPaginatedResponseDto {
 }
 
 export interface AddPrerequisiteTaskRequestDto {
-  /** @default "618d6167-0cff-4c0f-bbf6-ed7d6e14e2f1" */
-  prerequisiteTaskId: string
-}
-
-export interface DeletePrerequisiteTaskRequestDto {
-  /** @default "618d6167-0cff-4c0f-bbf6-ed7d6e14e2f1" */
+  /** @default "911fe9ac-94b8-4a0e-b478-56e88f4aa7d7" */
   prerequisiteTaskId: string
 }
 
@@ -3524,19 +3519,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name DeleteTaskHttpControllerDelete
-     * @request DELETE:/tasks/{taskId}
-     */
-    deleteTaskHttpControllerDelete: (taskId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/tasks/${taskId}`,
-        method: 'DELETE',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @name FindTaskHttpControllerGet
      * @request GET:/tasks/{taskId}
      */
@@ -3559,12 +3541,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       data: AddPrerequisiteTaskRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<IdResponse, any>({
+      this.request<void, any>({
         path: `/tasks/${taskId}/pre-tasks`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
-        format: 'json',
         ...params,
       }),
 
@@ -3577,15 +3558,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     deletePrerequisiteTaskHttpControllerDelete: (
       taskId: string,
       prerequisiteTaskId: string,
-      data: DeletePrerequisiteTaskRequestDto,
       params: RequestParams = {},
     ) =>
-      this.request<string, any>({
+      this.request<void, any>({
         path: `/tasks/${taskId}/pre-task/${prerequisiteTaskId}`,
         method: 'DELETE',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
         ...params,
       }),
 

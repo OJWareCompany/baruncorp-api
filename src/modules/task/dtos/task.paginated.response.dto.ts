@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
-import { TaskResponseDto } from './task.response.dto'
 import { IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { AutoAssignmentTypeEnum } from '../../position/domain/position.type'
-import { LicenseRequiredEnum } from '../domain/task.type'
 import { initialize } from '../../../libs/utils/constructor-initializer'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 
 export class TaskPosition {
   @ApiProperty()
@@ -51,10 +50,10 @@ export class TaskPaginatedResponseFields {
   @IsString()
   readonly serviceName: string
 
-  @ApiProperty({ default: LicenseRequiredEnum.structural, enum: LicenseRequiredEnum })
-  @IsEnum(LicenseRequiredEnum)
+  @ApiProperty({ default: LicenseTypeEnum.structural, enum: LicenseTypeEnum })
+  @IsEnum(LicenseTypeEnum)
   @IsOptional()
-  readonly licenseRequired: LicenseRequiredEnum | null
+  readonly licenseRequired: LicenseTypeEnum | null
 
   @ApiProperty({ type: TaskPosition, isArray: true })
   @ValidateNested()

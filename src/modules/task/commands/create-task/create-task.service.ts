@@ -26,6 +26,7 @@ export class CreateTaskService implements ICommandHandler {
       serviceId: command.serviceId,
       name: command.name,
       serviceName: service.name,
+      licenseType: command.licenseType,
     })
 
     await this.taskRepo.insert(entity)

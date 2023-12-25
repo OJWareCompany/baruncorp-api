@@ -4,8 +4,8 @@ import { Tasks } from '@prisma/client'
 import { TaskResponseDto } from '../../dtos/task.response.dto'
 import { FindTaskRequestDto } from './find-task.request.dto'
 import { FindTaskQuery } from './find-task.query-handler'
-import { LicenseRequiredEnum } from '../../domain/task.type'
 import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 @Controller('tasks')
 export class FindTaskHttpController {
@@ -22,7 +22,7 @@ export class FindTaskHttpController {
       name: result.name,
       serviceId: result.serviceId,
       serviceName: 'PV Designe',
-      licenseRequired: LicenseRequiredEnum.structural,
+      licenseRequired: LicenseTypeEnum.structural,
       taskPositions: [
         {
           order: 1,

@@ -3,6 +3,7 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateTaskProps, TaskProps } from './task.type'
 import { Guard } from '../../../libs/guard'
 import { StringIsEmptyException } from '../../../libs/exceptions/exceptions'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 
 export class TaskEntity extends AggregateRoot<TaskProps> {
   protected _id: string
@@ -16,6 +17,11 @@ export class TaskEntity extends AggregateRoot<TaskProps> {
   setName(name: string): this {
     if (Guard.isEmpty(name)) throw new StringIsEmptyException('name')
     this.props.name = name
+    return this
+  }
+
+  setLicenseRequired(licenseRequired: LicenseTypeEnum | null) {
+    this.props.licenseType = licenseRequired
     return this
   }
 

@@ -18,7 +18,8 @@ export class UpdateTaskHttpController {
   ): Promise<void> {
     const command = new UpdateTaskCommand({
       taskId: param.taskId,
-      ...request,
+      name: request.name,
+      licenseType: request.licenseTyp,
     })
     await this.commandBus.execute(command)
   }

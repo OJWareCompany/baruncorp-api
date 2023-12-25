@@ -1,5 +1,5 @@
 import { CommandBus } from '@nestjs/cqrs'
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
+import { BadRequestException, Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { IdResponse } from '../../../../libs/api/id.response.dto'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
@@ -17,13 +17,16 @@ export class AddPrerequisiteTaskHttpController {
     @User() user: UserEntity,
     @Body() request: AddPrerequisiteTaskRequestDto,
     @Param() param: AddPrerequisiteTaskRequestParamDto,
-  ): Promise<IdResponse> {
+  ): Promise<void> {
+    if (param.taskId === request.prerequisiteTaskId) {
+      throw new BadRequestException()
+    }
+
     const command = new AddPrerequisiteTaskCommand({
       taskId: param.taskId,
       prerequisiteTaskId: request.prerequisiteTaskId,
     })
 
-    const result: AggregateID = await this.commandBus.execute(command)
-    return new IdResponse(result)
+    await this.commandBus.execute(command)
   }
 }

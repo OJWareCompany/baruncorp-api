@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
-import { LicenseRequiredEnum } from '../../domain/task.type'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 export class UpdateTaskParamRequestDto {
   @ApiProperty({ default: '' })
@@ -13,8 +13,8 @@ export class UpdateTaskRequestDto {
   @IsString()
   readonly name: string
 
-  @ApiProperty({ default: LicenseRequiredEnum.structural, enum: LicenseRequiredEnum })
-  @IsEnum(LicenseRequiredEnum)
+  @ApiProperty({ default: LicenseTypeEnum.structural, enum: LicenseTypeEnum })
+  @IsEnum(LicenseTypeEnum)
   @IsOptional()
-  readonly licenseRequired: LicenseRequiredEnum | null
+  readonly licenseTyp: LicenseTypeEnum | null
 }

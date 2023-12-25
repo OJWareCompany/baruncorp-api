@@ -19,6 +19,7 @@ export class UpdateTaskService implements ICommandHandler {
     const entity = await this.taskRepo.findOne(command.taskId)
     if (!entity) throw new TaskNotFoundException()
     entity.setName(command.name)
+    entity.setLicenseRequired(command.licenseType)
     await this.taskRepo.update(entity)
   }
 }

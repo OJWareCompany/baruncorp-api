@@ -27,7 +27,7 @@ import { FindUnregisteredUsersForTaskPaginatedQueryHandler } from './queries/fin
 const httpControllers = [
   CreateTaskHttpController,
   UpdateTaskHttpController,
-  DeleteTaskHttpController,
+  // DeleteTaskHttpController,
   FindTaskHttpController,
   FindTaskPaginatedHttpController,
   AddPrerequisiteTaskHttpController,
