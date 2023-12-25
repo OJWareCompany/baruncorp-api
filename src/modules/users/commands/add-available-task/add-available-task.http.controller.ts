@@ -3,7 +3,7 @@ import { User } from '../../../../libs/decorators/requests/logged-in-user.decora
 import { UserEntity } from '../../domain/user.entity'
 import { AddAvailableTaskRequestDto, AddAvailableTaskRequestParamDto } from './add-available-task.request'
 import { CommandBus } from '@nestjs/cqrs'
-import { AddAvailableTaskCommand } from './add-available-task.commnad'
+import { AddAvailableTaskCommand } from './add-available-task.command'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 
 @Controller('users')
@@ -23,6 +23,6 @@ export class AddAvailableTaskHttpController {
       autoAssignmentType: request.autoAssignmentType,
     })
 
-    const result = await this.commandBus.execute(command)
+    await this.commandBus.execute(command)
   }
 }

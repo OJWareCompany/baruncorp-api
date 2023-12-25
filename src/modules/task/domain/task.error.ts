@@ -17,3 +17,15 @@ export class PreTaskNotFoundException extends NotFoundException {
     super('Not pre task found.', '20302')
   }
 }
+
+export class AvailableTaskAddNoLicenseException extends BadRequestException {
+  constructor() {
+    super('This task can only be added through license registration.', '20303')
+  }
+}
+
+export class AvailableTaskDeleteNoLicenseException extends BadRequestException {
+  constructor() {
+    super('This task can only be deleted through license registration.', '20304')
+  }
+}
