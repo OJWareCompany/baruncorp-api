@@ -118,6 +118,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
         isRevision: this.props.isRevision,
         note: this.props.description,
         assigneeUserId: this.props.assigneeId,
+        assigneeName: this.props.assigneeName,
       }),
     )
     return this

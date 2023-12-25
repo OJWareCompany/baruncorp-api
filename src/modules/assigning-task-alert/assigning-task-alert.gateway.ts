@@ -1,36 +1,11 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { ConnectedSocket, WebSocketGateway, WebSocketServer, WsException } from '@nestjs/websockets'
 import { Server, Socket } from 'socket.io'
 import { PrismaService } from '../database/prisma.service'
 import { JwtService } from '@nestjs/jwt'
 import { config, jwtConstants } from '../auth/constants'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { HttpStatus } from '@nestjs/common'
 import { instanceToPlain } from 'class-transformer'
-import { initialize } from '../../libs/utils/constructor-initializer'
-
-// TODO: class-transfer 사용해서 넘어온 데이터에서 정의된 필드만 걸러내기
-// @Exclude()
-export class TaskAlert {
-  @ApiProperty()
-  readonly assignedTaskId: string
-  @ApiProperty()
-  readonly taskName: string
-  @ApiProperty()
-  readonly jobId: string
-  @ApiProperty()
-  readonly projectPropertyType: ProjectPropertyTypeEnum
-  @ApiProperty()
-  readonly mountingType: MountingTypeEnum
-  @ApiProperty()
-  readonly isRevision: boolean
-  @ApiProperty()
-  readonly note: string | null
-
-  constructor(props: TaskAlert) {
-    initialize(this, props)
-  }
-}
+import { AssigningTaskAlertResponse } from './dto/assigning-task-alert.response.dto'
 
 class InvalidSignatureWsException extends WsException {
   constructor() {
@@ -84,7 +59,7 @@ export class AssigningTaskAlertGateway {
     }
   }
 
-  async emitTaskAssignedEvent(userId: any, task: TaskAlert) {
+  async emitTaskAssignedEvent(userId: any, task: AssigningTaskAlertResponse) {
     this.server.to(userId).emit('task-assigned', instanceToPlain(task))
   }
 }

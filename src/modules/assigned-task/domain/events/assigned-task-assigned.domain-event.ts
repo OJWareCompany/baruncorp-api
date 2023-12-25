@@ -12,6 +12,7 @@ export class AssignedTaskAssignedDomainEvent extends DomainEvent {
   readonly isRevision: boolean
   readonly note: string | null
   readonly assigneeUserId: string
+  readonly assigneeName: string
 
   constructor(props: DomainEventProps<AssignedTaskAssignedDomainEvent>) {
     super(props)

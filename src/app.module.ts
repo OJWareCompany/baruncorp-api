@@ -21,7 +21,7 @@ import { VendorInvoiceModule } from './modules/vendor-invoice/vendor-invoice.mod
 import { VendorPaymentModule } from './modules/vendor-payment/vendor-payment.module'
 import { PositionModule } from './modules/position/position.module'
 import { LicenseModule } from './modules/license/license.module'
-import { AssigningTaskAlertModule } from './modules/assigning-task-alert-gateway/assigning-task-alert.module'
+import { AssigningTaskAlertModule } from './modules/assigning-task-alert/assigning-task-alert.module'
 
 @Module({
   imports: [

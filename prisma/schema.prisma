@@ -952,6 +952,23 @@ model RejectedTaskReasons {
   @@map("rejected_task_reasons")
 }
 
+model AssigningTaskAlerts {
+  id                  String   @id @map("id") @db.VarChar(255)
+  userId              String   @map("user_id") @db.VarChar(255)
+  userName            String   @map("user_name") @db.VarChar(255)
+  jobId               String   @map("job_id") @db.VarChar(255)
+  assignedTaskId      String   @map("assigned_task_id") @db.VarChar(255)
+  taskName            String   @map("task_name") @db.VarChar(255)
+  projectPropertyType String   @map("project_property_type") @db.VarChar(255)
+  mountingType        String   @map("mounting_type") @db.VarChar(255)
+  isRevision          Boolean  @map("is_revision")
+  note                String?  @map("note") @db.VarChar(255)
+  createdAt           DateTime @map("created_at") @db.DateTime(0)
+  isCheckedOut      Boolean  @map("is_checked_out")
+
+  @@map("assigning_task_alerts")
+}
+
 enum InvoicesStatus {
   Unissued
   Issued
