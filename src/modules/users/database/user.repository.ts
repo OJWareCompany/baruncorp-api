@@ -9,7 +9,6 @@ import { InputPasswordVO } from '../domain/value-objects/password.vo'
 import UserMapper from '../user.mapper'
 import { UserEntity } from '../domain/user.entity'
 import { UserRoleMapper } from '../user-role.mapper'
-import { LicenseEntity } from '../user-license.entity'
 import { UserNotFoundException } from '../user.error'
 
 export type UserModel = Users
@@ -40,10 +39,6 @@ export class UserRepository implements UserRepositoryPort {
     // private readonly licenseMapper: LicenseMapper,
     protected readonly eventEmitter: EventEmitter2,
   ) {}
-  findAllLicenses(): Promise<LicenseEntity[]> {
-    throw new Error('Method not implemented.')
-  }
-
   async findOneByIdOrThrow(id: string): Promise<UserEntity> {
     const user: UserQueryModel | null = await this.prismaService.users.findUnique({
       where: { id },

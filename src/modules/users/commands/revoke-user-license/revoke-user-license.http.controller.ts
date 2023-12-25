@@ -1,5 +1,5 @@
 import { CommandBus } from '@nestjs/cqrs'
-import { Body, Controller, Param, Post, UseGuards } from '@nestjs/common'
+import { Controller, Delete, Param, Query, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { IdResponse } from '../../../../libs/api/id.response.dto'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
@@ -11,16 +11,16 @@ import { RevokeUserLicenseRequestDto, RevokeUserLicenseRequestParamDto } from '.
 @Controller('licenses')
 export class RevokeUserLicenseHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Post(':stateName/users/:userId')
+  @Delete(':abbreviation/users/:userId')
   @UseGuards(AuthGuard)
   async post(
     @User() user: UserEntity,
-    @Body() request: RevokeUserLicenseRequestDto,
+    @Query() request: RevokeUserLicenseRequestDto,
     @Param() param: RevokeUserLicenseRequestParamDto,
   ): Promise<IdResponse> {
     const command = new RevokeUserLicenseCommand({
       type: request.type,
-      stateName: param.stateName,
+      abbreviation: param.abbreviation,
       userId: param.userId,
     })
     const result: AggregateID = await this.commandBus.execute(command)

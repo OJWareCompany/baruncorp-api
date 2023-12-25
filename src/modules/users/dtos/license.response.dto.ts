@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { LicenseTypeEnum } from '../../users/user-license.type'
 import { initialize } from '../../../libs/utils/constructor-initializer'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 
 export class LicenseResponseDto {
   @ApiProperty({ enum: LicenseTypeEnum })
@@ -14,9 +14,6 @@ export class LicenseResponseDto {
 
   @ApiProperty()
   readonly abbreviation: string
-
-  @ApiProperty()
-  readonly priority: number | null
 
   @ApiProperty()
   readonly expiryDate: string | null

@@ -37,7 +37,8 @@ export class AddPositionWorkerService implements ICommandHandler {
 
     const licenseType = entity.getProps().licenseType
     if (!!licenseType) {
-      const matchLicense = user.getProps().licenses.filter((license) => license.type === entity.getProps().licenseType)
+      const licenses = await this.prismaService.userLicense.findMany({ where: { userId: user.id } })
+      const matchLicense = licenses.filter((license) => license.type === entity.getProps().licenseType)
       if (!matchLicense.length) throw new PositionWorkerLicenseInvalidException()
     }
 

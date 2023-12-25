@@ -1,10 +1,10 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { LicenseTypeEnum } from '../../user-license.type'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 export class RevokeUserLicenseCommand {
   readonly userId: string
   readonly type: LicenseTypeEnum
-  readonly stateName: string
+  readonly abbreviation: string
   constructor(props: RevokeUserLicenseCommand) {
     initialize(this, props)
   }
