@@ -32,6 +32,11 @@ import { HandsDownService } from './commands/hands-down/hands-down.service'
 import { HandsUpService } from './commands/hands-up/hands-up.service'
 import { InviteHttpController } from './commands/invite/invite.http.controller'
 import { InviteService } from './commands/invite/invite.service'
+import { ResetDefaultTasksHttpController } from './commands/reset-default-tasks/reset-default-tasks.http.controller'
+import { ResetDefaultTasksService } from './commands/reset-default-tasks/reset-default-tasks.service'
+import { PositionRepository } from '../position/database/position.repository'
+import { PositionMapper } from '../position/position.mapper'
+import { POSITION_REPOSITORY } from '../position/position.di-token'
 
 const httpControllers = [
   UsersController,
@@ -46,6 +51,7 @@ const httpControllers = [
   HandsUpHttpController,
   CheckHandsStatusHttpController,
   InviteHttpController,
+  ResetDefaultTasksHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateUserService,
@@ -57,6 +63,7 @@ const commandHandlers: Provider[] = [
   HandsDownService,
   HandsUpService,
   InviteService,
+  ResetDefaultTasksService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
 
@@ -64,9 +71,10 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
   { provide: INVITATION_MAIL_REPOSITORY, useClass: InvitationMailRepository },
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
+  { provide: POSITION_REPOSITORY, useClass: PositionRepository },
 ]
 
-const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper, PositionMapper]
 
 @Module({
   imports: [PrismaModule, CqrsModule],

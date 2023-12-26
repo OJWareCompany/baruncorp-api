@@ -2698,6 +2698,19 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: 'json',
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @name ResetDefaultTasksHttpControllerPost
+     * @request POST:/users/{userId}/reset-default-tasks
+     */
+    resetDefaultTasksHttpControllerPost: (userId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/${userId}/reset-default-tasks`,
+        method: 'POST',
+        ...params,
+      }),
   }
   licenses = {
     /**
