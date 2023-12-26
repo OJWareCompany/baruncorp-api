@@ -109,6 +109,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.role = props.role
     response.isVendor = props.isVendor
     response.availableTasks = props.availableTasks
+    response.status = props.status
     return response
   }
 }

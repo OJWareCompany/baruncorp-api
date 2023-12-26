@@ -30,6 +30,8 @@ import { HandsUpHttpController } from './commands/hands-up/hands-up.http.control
 import { CheckHandsStatusHttpController } from './queries/check-hands-state/check-hands-state.http.controller'
 import { HandsDownService } from './commands/hands-down/hands-down.service'
 import { HandsUpService } from './commands/hands-up/hands-up.service'
+import { InviteHttpController } from './commands/invite/invite.http.controller'
+import { InviteService } from './commands/invite/invite.service'
 
 const httpControllers = [
   UsersController,
@@ -43,6 +45,7 @@ const httpControllers = [
   HandsDownHttpController,
   HandsUpHttpController,
   CheckHandsStatusHttpController,
+  InviteHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateUserService,
@@ -53,6 +56,7 @@ const commandHandlers: Provider[] = [
   ModifyAssignmentTypeOfAvailableTaskService,
   HandsDownService,
   HandsUpService,
+  InviteService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
 

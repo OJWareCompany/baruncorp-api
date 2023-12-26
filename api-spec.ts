@@ -25,6 +25,21 @@ export interface AccessTokenResponseDto {
   accessToken: string
 }
 
+export interface SignUpRequestDto {
+  /** @default "hyomin@ojware.com" */
+  email: string
+  /** @default "Emma" */
+  firstName: string
+  /** @default "Smith" */
+  lastName: string
+  /** @default "hyomin@ojware.com" */
+  deliverablesEmails: string[]
+  /** @default "thisistestPass123!" */
+  password: string
+  /** @default "857-250-4567" */
+  phoneNumber: string
+}
+
 export interface UserPositionResponseDto {
   id: string
   name: string
@@ -64,6 +79,8 @@ export interface UserResponseDto {
   role: string
   deliverablesEmails: string[]
   isVendor: boolean
+  /** @default "Active" */
+  status: 'Sign Up Not Completed' | 'Invitation Sent' | 'Inactive' | 'Active'
 }
 
 export interface UpdateUserRequestDto {
@@ -144,6 +161,13 @@ export interface ModifyAssignmentTypeOfAvailableTaskRequestDto {
 
 export interface HandsStatusResponseDto {
   status: boolean
+}
+
+export interface InviteRequestDto {
+  /** @default "" */
+  organizationId: string
+  /** @default "hyomin@ojware.com" */
+  email: string
 }
 
 export interface AddressDto {
@@ -2438,6 +2462,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
+  signUp = {
+    /**
+     * No description
+     *
+     * @name SignUpHttpControllerPost
+     * @request POST:/sign-up/{userId}
+     */
+    signUpHttpControllerPost: (userId: string, data: SignUpRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/sign-up/${userId}`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
   users = {
     /**
      * @description is it need a member table? since different between user and member.
@@ -2722,6 +2762,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         query: query,
         format: 'json',
+        ...params,
+      }),
+  }
+  invitations = {
+    /**
+     * No description
+     *
+     * @name InviteHttpControllerPost
+     * @request POST:/invitations
+     */
+    inviteHttpControllerPost: (data: InviteRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invitations`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }
