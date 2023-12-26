@@ -2258,6 +2258,13 @@ export interface FindLicensePaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindWorkersForLicenseHttpControllerGetParams {
+  /** @default "Structural" */
+  type: 'Structural' | 'Electrical'
+  /** @default "AK" */
+  abbreviation: string
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 import axios from 'axios'
 
@@ -2785,6 +2792,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<LicensePaginatedResponseDto, any>({
         path: `/licenses`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindWorkersForLicenseHttpControllerGet
+     * @request GET:/licenses/{abbreviation}/workers
+     */
+    findWorkersForLicenseHttpControllerGet: (
+      { abbreviation, ...query }: FindWorkersForLicenseHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<PositionUnregisteredUserResponseDto, any>({
+        path: `/licenses/${abbreviation}/workers`,
         method: 'GET',
         query: query,
         format: 'json',

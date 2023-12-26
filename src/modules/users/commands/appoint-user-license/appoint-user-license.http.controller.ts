@@ -5,7 +5,6 @@ import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../domain/user.entity'
 import { AppointUserLicenseCommand } from './appoint-user-license.command'
 import { AppointUserLicenseRequestDto, AppointUserLicenseRequestParamDto } from './appoint-user-license.request.dto'
-import { AddPositionWorkerCommand } from '../../../position/commands/add-worker/add-position-worker.command'
 
 @Controller('licenses')
 export class AppointUserLicenseHttpController {
