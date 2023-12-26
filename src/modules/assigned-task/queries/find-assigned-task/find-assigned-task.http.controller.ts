@@ -40,6 +40,7 @@ export class FindAssignedTaskHttpController {
       isVendor: result.isVendor,
       vendorInvoiceId: result.vendorInvoiceId,
       serviceId: result.serviceId,
+      createdAt: result.created_at,
     })
   }
 }

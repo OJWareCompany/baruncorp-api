@@ -91,6 +91,11 @@ export class AssignedTaskResponseDto {
   readonly doneAt: Date | null
 
   @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly createdAt: Date | null
+
+  @ApiProperty()
   @IsNumber()
   @IsOptional()
   readonly duration: number | null

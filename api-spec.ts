@@ -1038,6 +1038,8 @@ export interface AssignedTaskResponseDto {
   startedAt: string | null
   /** @format date-time */
   doneAt: string | null
+  /** @format date-time */
+  createdAt: string | null
   duration: number | null
   cost: number | null
 }

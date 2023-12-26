@@ -700,6 +700,7 @@ model AssignedTasks {
   mountingType             String          @map("mounting_type") @db.VarChar(255)
   organizationId           String          @map("organization_id") @db.VarChar(255)
   organizationName         String          @map("organization_name") @db.VarChar(255)
+  created_at               DateTime        @db.DateTime(0)
   task                     Tasks           @relation(fields: [taskId], references: [id])
   orderedService           OrderedServices @relation(fields: [orderedServiceId], references: [id])
   job                      OrderedJobs     @relation(fields: [jobId], references: [id])

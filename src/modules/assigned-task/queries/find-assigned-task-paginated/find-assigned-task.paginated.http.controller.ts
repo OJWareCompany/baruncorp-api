@@ -52,6 +52,7 @@ export class FindAssignedTaskPaginatedHttpController {
         isVendor: item.isVendor,
         vendorInvoiceId: item.vendorInvoiceId,
         serviceId: item.serviceId,
+        createdAt: item.created_at,
       })),
     })
   }
