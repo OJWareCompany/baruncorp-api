@@ -6,6 +6,7 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PositionPaginatedResponseDto } from '../../dtos/position.paginated.response.dto'
 import { FindPositionPaginatedRequestDto } from './find-position.paginated.request.dto'
 import { FindPositionPaginatedQuery } from './find-position.paginated.query-handler'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 @Controller('positions')
 export class FindPositionPaginatedHttpController {
@@ -32,6 +33,7 @@ export class FindPositionPaginatedHttpController {
         name: position.name,
         maxAssignedTasksLimit: position.maxAssignedTasksLimit,
         description: position.description,
+        licenseType: position.license_type as LicenseTypeEnum | null,
         tasks: tasks.map((task) => {
           return {
             taskId: task.taskId,

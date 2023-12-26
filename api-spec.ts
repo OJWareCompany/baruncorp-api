@@ -1592,6 +1592,7 @@ export interface PositionResponseDto {
   /** @default null */
   maxAssignedTasksLimit: number | null
   tasks: PositionTask[]
+  licenseType: 'Structural' | 'Electrical' | null
   workers: Worker[]
 }
 
@@ -1605,6 +1606,7 @@ export interface PositionPaginatedResponseFields {
   /** @default null */
   maxAssignedTasksLimit: number | null
   tasks: PositionTask[]
+  licenseType: 'Structural' | 'Electrical' | null
 }
 
 export interface PositionPaginatedResponseDto {

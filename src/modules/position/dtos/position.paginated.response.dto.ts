@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 import { PositionResponseDto } from './position.response.dto'
-import { IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
+import { IsEnum, IsNumber, IsOptional, IsString, ValidateNested } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 
 export class PositionTask {
   @ApiProperty()
@@ -39,6 +40,11 @@ export class PositionPaginatedResponseFields {
   @ApiProperty()
   @ValidateNested()
   readonly tasks: PositionTask[]
+
+  @ApiProperty()
+  @IsEnum(LicenseTypeEnum)
+  @IsOptional()
+  readonly licenseType: LicenseTypeEnum | null
 
   constructor(props: PositionResponseDto) {
     initialize(this, props)

@@ -51,6 +51,7 @@ export class PositionMapper implements Mapper<PositionEntity, Positions, Positio
       name: props.name,
       description: props.description || null,
       maxAssignedTasksLimit: props.maxAssignedTasksLimit,
+      licenseType: props.licenseType,
       tasks: [],
       workers: [],
     })

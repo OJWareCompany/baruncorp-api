@@ -4,6 +4,7 @@ import { PositionTasks, Positions, UserPosition } from '@prisma/client'
 import { PositionResponseDto } from '../../dtos/position.response.dto'
 import { FindPositionRequestDto } from './find-position.request.dto'
 import { FindPositionQuery } from './find-position.query-handler'
+import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 @Controller('positions')
 export class FindPositionHttpController {
@@ -31,6 +32,7 @@ export class FindPositionHttpController {
       name: position.name,
       maxAssignedTasksLimit: position.maxAssignedTasksLimit,
       description: position.description,
+      licenseType: position.license_type as LicenseTypeEnum | null,
       tasks: tasks.map((task) => {
         return {
           taskId: task.taskId,
