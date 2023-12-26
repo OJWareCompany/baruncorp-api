@@ -2760,11 +2760,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       { userId, abbreviation, ...query }: RevokeUserLicenseHttpControllerPostParams,
       params: RequestParams = {},
     ) =>
-      this.request<IdResponse, any>({
+      this.request<void, any>({
         path: `/licenses/${abbreviation}/users/${userId}`,
         method: 'DELETE',
         query: query,
-        format: 'json',
         ...params,
       }),
 

@@ -17,13 +17,12 @@ export class RevokeUserLicenseHttpController {
     @User() user: UserEntity,
     @Query() request: RevokeUserLicenseRequestDto,
     @Param() param: RevokeUserLicenseRequestParamDto,
-  ): Promise<IdResponse> {
+  ): Promise<void> {
     const command = new RevokeUserLicenseCommand({
       type: request.type,
       abbreviation: param.abbreviation,
       userId: param.userId,
     })
-    const result: AggregateID = await this.commandBus.execute(command)
-    return new IdResponse(result)
+    await this.commandBus.execute(command)
   }
 }

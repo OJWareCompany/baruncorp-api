@@ -6,6 +6,8 @@ import { Phone } from './value-objects/phone-number.value-object'
 import { UserRoleNameEnum } from './value-objects/user-role.vo'
 import { PhoneNumberFormatException } from '../user.error'
 import { InputPasswordVO } from './value-objects/password.vo'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
+import { License } from './value-objects/license.value-object'
 
 // where should it be 'id'? Entity or Prop?
 // 'id' should be in base entity
@@ -63,8 +65,12 @@ export class UserEntity extends AggregateRoot<UserProps> {
     //         issuingCountryName: '',
   }
 
-  revokeLicense() {
-    //
+  revokeLicense(props: { abbreviation: string; type: LicenseTypeEnum }) {
+    const origin = this.props.licenses
+    this.props.licenses = origin.filter((license) => {
+      return !(license.abbreviation === props.abbreviation && license.type === props.type)
+    })
+    return this
   }
 
   invite() {
