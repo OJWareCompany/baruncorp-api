@@ -36,7 +36,7 @@ export class AssignTaskService implements ICommandHandler {
     const assignedTaskEntity = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!assignedTaskEntity) throw new AssignedTaskNotFoundException()
     assignedTaskEntity //
-      .setAssigneeId(userEntity)
+      .assign(userEntity)
 
     // TODO: REFACTOR
     const job = await this.jobRepo.findJobOrThrow(assignedTaskEntity.getProps().jobId)

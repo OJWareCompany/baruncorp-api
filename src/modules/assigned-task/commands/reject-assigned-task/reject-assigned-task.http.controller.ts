@@ -22,7 +22,6 @@ export class RejectAssignedTaskHttpController {
       reason: request.reason,
       userId: user.id,
     })
-    const result = await this.commandBus.execute(command)
-    return Promise.resolve()
+    await this.commandBus.execute(command)
   }
 }

@@ -1,6 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateAssignedTaskProps, AssignedTaskProps } from './assigned-task.type'
+import { CreateAssignedTaskProps, AssignedTaskProps, AssignedTaskStatusEnum } from './assigned-task.type'
 import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned.domain-event'
 import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
 import { AssignedTaskReopenedDomainEvent } from './events/assigned-task-reopened.domain-event'
@@ -9,6 +9,7 @@ import { UserEntity } from '../../users/domain/user.entity'
 import { CalculateVendorCostDomainService } from './calculate-vendor-cost.domain-service'
 import { ExpensePricingEntity } from '../../expense-pricing/domain/expense-pricing.entity'
 import { OrderedServiceEntity } from '../../ordered-service/domain/ordered-service.entity'
+import { AssignedTaskUnassignedDomainEvent } from './events/assigned-task-unassigned.domain-event'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -43,6 +44,10 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   get projectPropertyType() {
     return this.props.projectPropertyType
+  }
+
+  get isCompleted() {
+    return this.props.status === AssignedTaskStatusEnum.Completed
   }
 
   invoice(vendorInvoiceId: string) {
@@ -89,6 +94,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     this.props.status = 'Not Started'
     this.props.doneAt = null
     this.props.assigneeId = null
+    this.props.assigneeName = null
+    this.props.startedAt = null
     this.addEvent(
       new AssignedTaskReopenedDomainEvent({
         aggregateId: this.id,
@@ -98,7 +105,22 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  setAssigneeId(user: UserEntity): this {
+  unassign() {
+    this.props.assigneeId = null
+    this.props.assigneeName = null
+    this.props.status = 'Not Started'
+    this.props.startedAt = null
+    this.props.doneAt = null
+    this.addEvent(
+      new AssignedTaskUnassignedDomainEvent({
+        aggregateId: this.id,
+        jobId: this.props.jobId,
+      }),
+    )
+    return this
+  }
+
+  assign(user: UserEntity): this {
     this.props.assigneeId = user.id
     this.props.assigneeName = user.getProps().userName.getFullName()
     this.props.status = 'In Progress'

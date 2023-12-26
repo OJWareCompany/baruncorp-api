@@ -1,8 +1,6 @@
 import { CommandBus } from '@nestjs/cqrs'
 import { Controller, Delete, Param, Query, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
-import { IdResponse } from '../../../../libs/api/id.response.dto'
-import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../domain/user.entity'
 import { RevokeUserLicenseCommand } from './revoke-user-license.command'
