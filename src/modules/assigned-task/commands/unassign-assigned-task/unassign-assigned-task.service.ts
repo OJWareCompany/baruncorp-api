@@ -12,7 +12,7 @@ import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.
 import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
-import { AssignedTaskAlreadyCompletedException, AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
+import { AssignedTaskAlreadyCompletedException } from '../../domain/assigned-task.error'
 
 @CommandHandler(UnassignAssignedTaskCommand)
 export class UnassignAssignedTaskService implements ICommandHandler {

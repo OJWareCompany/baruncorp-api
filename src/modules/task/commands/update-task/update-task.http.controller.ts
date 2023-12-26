@@ -19,7 +19,7 @@ export class UpdateTaskHttpController {
     const command = new UpdateTaskCommand({
       taskId: param.taskId,
       name: request.name,
-      licenseType: request.licenseTyp,
+      licenseType: request.licenseType,
     })
     await this.commandBus.execute(command)
   }

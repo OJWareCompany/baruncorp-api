@@ -953,7 +953,7 @@ export interface UpdateTaskRequestDto {
   /** @default "" */
   name: string
   /** @default "Structural" */
-  licenseTyp: 'Structural' | 'Electrical' | null
+  licenseType: 'Structural' | 'Electrical' | null
 }
 
 export interface TaskPaginatedResponseFields {

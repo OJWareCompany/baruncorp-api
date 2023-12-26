@@ -16,5 +16,5 @@ export class UpdateTaskRequestDto {
   @ApiProperty({ default: LicenseTypeEnum.structural, enum: LicenseTypeEnum })
   @IsEnum(LicenseTypeEnum)
   @IsOptional()
-  readonly licenseTyp: LicenseTypeEnum | null
+  readonly licenseType: LicenseTypeEnum | null
 }
