@@ -21,6 +21,7 @@ export class UpdatePositionService implements ICommandHandler {
 
     entity.updateName(command.name)
     entity.updateMaxAssignedTasksLimit(command.maxAssignedTasksLimit)
+    entity.updateDescription(command?.description || null)
     await this.positionRepo.update(entity)
   }
 }

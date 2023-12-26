@@ -17,6 +17,11 @@ export class PositionEntity extends AggregateRoot<PositionProps> {
     return this
   }
 
+  updateDescription(description: string | null) {
+    this.props.description = description
+    return this
+  }
+
   updateMaxAssignedTasksLimit(maxAssignedTasksLimit: number | null) {
     if (maxAssignedTasksLimit && maxAssignedTasksLimit > 255) {
       throw new MaximumInvalidException()
