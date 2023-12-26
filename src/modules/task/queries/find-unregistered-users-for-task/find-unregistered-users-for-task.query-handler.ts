@@ -5,6 +5,7 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
+import { UserRoleNameEnum } from '../../../users/domain/value-objects/user-role.vo'
 
 export class FindUnregisteredUsersForTaskPaginatedQuery extends PaginatedQueryBase {
   readonly taskId: string
@@ -25,13 +26,23 @@ export class FindUnregisteredUsersForTaskPaginatedQueryHandler implements IQuery
       take: query.limit,
       where: {
         id: { notIn: userTasks.map((task) => task.userId) },
+        OR: [
+          { type: { in: [UserRoleNameEnum.admin, UserRoleNameEnum.member, UserRoleNameEnum.special_admin] } },
+          { isVendor: true },
+        ],
       },
     })
-    const totalCount = await this.prismaService.tasks.count({
+
+    const totalCount = await this.prismaService.users.count({
       where: {
         id: { notIn: userTasks.map((task) => task.userId) },
+        OR: [
+          { type: { in: [UserRoleNameEnum.admin, UserRoleNameEnum.member, UserRoleNameEnum.special_admin] } },
+          { isVendor: true },
+        ],
       },
     })
+
     return new Paginated<Users>({
       page: query.page,
       pageSize: query.limit,
