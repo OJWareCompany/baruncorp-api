@@ -20,7 +20,7 @@ export class PositionMapper implements Mapper<PositionEntity, Positions, Positio
   toPersistence(entity: PositionEntity): Positions {
     const props = entity.getProps()
     const record: Positions = {
-      id: props.id,
+      id: entity.id,
       name: props.name,
       description: props.description || null,
       license_type: props.licenseType,
@@ -47,7 +47,7 @@ export class PositionMapper implements Mapper<PositionEntity, Positions, Positio
   toResponse(entity: PositionEntity): PositionResponseDto {
     const props = entity.getProps()
     const response = new PositionResponseDto({
-      id: props.id,
+      id: entity.id,
       name: props.name,
       description: props.description || null,
       maxAssignedTasksLimit: props.maxAssignedTasksLimit,

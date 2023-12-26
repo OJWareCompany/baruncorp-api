@@ -37,6 +37,9 @@ import { ResetDefaultTasksService } from './commands/reset-default-tasks/reset-d
 import { PositionRepository } from '../position/database/position.repository'
 import { PositionMapper } from '../position/position.mapper'
 import { POSITION_REPOSITORY } from '../position/position.di-token'
+import { ASSIGNED_TASK_REPOSITORY } from '../assigned-task/assigned-task.di-token'
+import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.repository'
+import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
 
 const httpControllers = [
   UsersController,
@@ -72,9 +75,10 @@ const repositories: Provider[] = [
   { provide: INVITATION_MAIL_REPOSITORY, useClass: InvitationMailRepository },
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
   { provide: POSITION_REPOSITORY, useClass: PositionRepository },
+  { provide: ASSIGNED_TASK_REPOSITORY, useClass: AssignedTaskRepository },
 ]
 
-const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper, PositionMapper]
+const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper, PositionMapper, AssignedTaskMapper]
 
 @Module({
   imports: [PrismaModule, CqrsModule],

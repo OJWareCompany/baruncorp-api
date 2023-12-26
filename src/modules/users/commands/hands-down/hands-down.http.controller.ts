@@ -12,6 +12,6 @@ export class HandsDownHttpController {
   @UseGuards(AuthGuard)
   async patch(@User() user: UserEntity) {
     const command = new HandsDownCommand({ userId: user.id })
-    const result = await this.commandBus.execute(command)
+    await this.commandBus.execute(command)
   }
 }
