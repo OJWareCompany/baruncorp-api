@@ -23,7 +23,7 @@ export class FindAvailableWorkersHttpController {
     return result.map((user) => {
       return {
         id: user.id,
-        name: user.firstName + ' ' + user.lastName,
+        name: user.full_name,
         position: user.userPosition ? user.userPosition.positionName : null,
       }
     })

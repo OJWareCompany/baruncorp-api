@@ -59,7 +59,7 @@ export class CreateJobService implements ICommandHandler {
         clientOrganizationId: clientUser.organizationId,
         clientOrganizationName: organization.name,
         clientUserId: command.clientUserId,
-        clientUserName: clientUser.firstName + ' ' + clientUser.lastName,
+        clientUserName: clientUser.full_name,
         clientContactEmail: clientUser.email,
         deliverablesEmail: command.deliverablesEmails,
       }),

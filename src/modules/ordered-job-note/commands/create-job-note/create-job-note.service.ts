@@ -15,7 +15,7 @@ export class CreateJobNoteService implements ICommandHandler {
     const entity = JobNoteEntity.create({
       jobId: command.jobId,
       content: command.content,
-      commenterName: clientUser.firstName + ' ' + clientUser.lastName,
+      commenterName: clientUser.full_name,
       commenterUserId: command.commenterUserId,
     })
 

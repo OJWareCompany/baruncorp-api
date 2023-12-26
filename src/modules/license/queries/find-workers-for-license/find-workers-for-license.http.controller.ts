@@ -29,7 +29,7 @@ export class FindWorkersForLicenseHttpController {
         return {
           userId: user.id,
           email: user.email,
-          userName: user.firstName + ' ' + user.lastName,
+          userName: user.full_name,
         }
       }),
     }

@@ -35,7 +35,7 @@ export class FindAvailableWorkersQueryHandler implements IQueryHandler {
 
     const state = await this.prismaService.states.findFirst({ where: { geoId: project.stateId } })
     if (!state) throw new StateNotFoundException()
-    console.log(state)
+
     if (task.license_type) {
       const userLicenses = await this.prismaService.userLicense.findMany({
         where: {

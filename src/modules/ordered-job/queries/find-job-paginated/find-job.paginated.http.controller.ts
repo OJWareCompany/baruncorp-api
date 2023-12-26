@@ -28,7 +28,7 @@ export class FindJobPaginatedHttpController {
       page: queryParams.page,
       limit: queryParams.limit,
     })
-    console.log(request)
+
     const result: Paginated<
       OrderedJobs & {
         orderedServices: (OrderedServices & {

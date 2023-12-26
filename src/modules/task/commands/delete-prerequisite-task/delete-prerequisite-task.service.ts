@@ -20,7 +20,6 @@ export class DeletePrerequisiteTaskService implements ICommandHandler {
     if (!task) throw new TaskNotFoundException()
 
     const forPreTask = await this.taskRepo.findOne(command.prerequisiteTaskId)
-    console.log(command.prerequisiteTaskId)
     if (!forPreTask) throw new TaskNotFoundException()
 
     const preTask = await this.prismaService.prerequisiteTasks.findFirst({

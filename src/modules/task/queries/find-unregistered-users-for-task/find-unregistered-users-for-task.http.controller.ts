@@ -26,7 +26,7 @@ export class FindUnregisteredUsersForTaskHttpController {
       items: result.items.map((user) => {
         return {
           userId: user.id,
-          userName: user.firstName + ' ' + user.lastName,
+          userName: user.full_name,
         }
       }),
     })
