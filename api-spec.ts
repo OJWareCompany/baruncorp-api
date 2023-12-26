@@ -1067,7 +1067,7 @@ export interface UpdateTaskCostRequestDto {
 export interface AvailableWorkerResponseDto {
   id: string
   name: string
-  position: string
+  position: string | null
 }
 
 export interface RejectedTaskReasonResponseDto {

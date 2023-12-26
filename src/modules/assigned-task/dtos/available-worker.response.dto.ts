@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
 
 export class AvailableWorkerResponseDto {
@@ -13,7 +13,8 @@ export class AvailableWorkerResponseDto {
 
   @ApiProperty()
   @IsString()
-  position: string
+  @IsOptional()
+  position: string | null
 }
 
 export class AvailableWorkerPaginatedResponseDto extends PaginatedResponseDto<AvailableWorkerResponseDto> {
