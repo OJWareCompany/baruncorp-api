@@ -1,4 +1,5 @@
 import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 
 export class PositionNotFoundException extends NotFoundException {
   constructor() {
@@ -43,7 +44,10 @@ export class PositionWorkerNotFoundException extends NotFoundException {
 }
 
 export class PositionWorkerLicenseInvalidException extends BadRequestException {
-  constructor() {
-    super('User License Invalid', '20208')
+  constructor(licenseType: LicenseTypeEnum) {
+    super(
+      `User License Invalid, it is needed ${licenseType} License.`,
+      licenseType === LicenseTypeEnum.electrical ? '20208' : '20209',
+    )
   }
 }
