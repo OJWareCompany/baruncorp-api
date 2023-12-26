@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, ValidateNested } from 'class-validator'
+import { IsArray, IsString, ValidateNested } from 'class-validator'
 import { TaskPosition } from '../../dtos/task.paginated.response.dto'
 
 export class UpdatePositionOrderParamRequestDto {
@@ -10,6 +10,6 @@ export class UpdatePositionOrderParamRequestDto {
 
 export class UpdatePositionOrderRequestDto {
   @ApiProperty({ type: TaskPosition, isArray: true })
-  @ValidateNested()
+  @IsArray()
   readonly taskPositions: TaskPosition[]
 }

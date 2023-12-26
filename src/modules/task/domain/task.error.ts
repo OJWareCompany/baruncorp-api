@@ -35,3 +35,9 @@ export class AvailableTaskNotFoundException extends NotFoundException {
     super('Not available task found.', '20305')
   }
 }
+
+export class TaskPositionInvalidException extends BadRequestException {
+  constructor() {
+    super('The array to be sorted includes a position that is not part of the task.', '20306')
+  }
+}

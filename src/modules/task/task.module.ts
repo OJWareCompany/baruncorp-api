@@ -26,6 +26,9 @@ import { FindUnregisteredUsersForTaskPaginatedQueryHandler } from './queries/fin
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
+import { PositionRepository } from '../position/database/position.repository'
+import { POSITION_REPOSITORY } from '../position/position.di-token'
+import { PositionMapper } from '../position/position.mapper'
 
 const httpControllers = [
   CreateTaskHttpController,
@@ -60,9 +63,13 @@ const repositories: Provider[] = [
     provide: USER_REPOSITORY,
     useClass: UserRepository,
   },
+  {
+    provide: POSITION_REPOSITORY,
+    useClass: PositionRepository,
+  },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper]
+const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper, PositionMapper]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

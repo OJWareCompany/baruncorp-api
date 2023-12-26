@@ -42,7 +42,7 @@ export class AddPositionTaskService implements ICommandHandler {
 
     let taskOrder = await this.prismaService.positionTasks.count({
       where: {
-        positionId: command.positionId,
+        taskId: command.taskId,
       },
     })
 
