@@ -1,32 +1,46 @@
-import { Controller, Get, UseGuards } from '@nestjs/common'
+import { Controller, Get, Param, Query, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
-import { PrismaService } from '../../../database/prisma.service'
 import { RejectedTaskReasonPaginatedResponseDto } from '../../dtos/rejected-task-reason.response.dto'
+import { QueryBus } from '@nestjs/cqrs'
+import { FindRejectedTaskReasonPaginatedQuery } from './find-rejected-task-reason.paginated.query-handler'
+import { Paginated, PaginatedQueryParams } from '../../../../libs/ddd/repository.port'
+import { FindRejectedTaskReasonPaginatedRequestDto } from './find-rejected-task-reason.paginated.request.dto'
+import { RejectedTaskReasons } from '@prisma/client'
 
 @Controller('rejected-task-reasons')
 export class FindRejectedTaskReasonHttpController {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly queryBus: QueryBus) {}
 
   @Get('')
   @UseGuards(AuthGuard)
-  async get(@User() user: UserEntity): Promise<RejectedTaskReasonPaginatedResponseDto> {
-    // const result = await this.prismaService.
+  async get(
+    @User() user: UserEntity,
+    @Param() queryParams: PaginatedQueryParams,
+    @Query() request: FindRejectedTaskReasonPaginatedRequestDto,
+  ): Promise<RejectedTaskReasonPaginatedResponseDto> {
+    const query = new FindRejectedTaskReasonPaginatedQuery({
+      limit: queryParams.limit,
+      page: queryParams.page,
+      username: request.userName,
+    })
+    const result: Paginated<RejectedTaskReasons> = await this.queryBus.execute(query)
+
     return new RejectedTaskReasonPaginatedResponseDto({
-      page: 1,
-      pageSize: 10,
-      totalCount: 20,
-      items: [
-        {
-          userId: user.id,
-          userName: user.getProps().userName.getFullName(),
-          taskName: 'PV Design',
-          rejectedTaskId: user.id,
-          rejectedAt: new Date(),
-          reason: 'no no',
-        },
-      ],
+      page: result.page,
+      pageSize: result.pageSize,
+      totalCount: result.totalCount,
+      items: result.items.map((item) => {
+        return {
+          userId: item.assigneeUserId,
+          userName: item.assigneeUserName,
+          taskName: item.taskName,
+          rejectedTaskId: item.assignedTaskId,
+          rejectedAt: item.rejectedAt,
+          reason: item.reason,
+        }
+      }),
     })
   }
 }

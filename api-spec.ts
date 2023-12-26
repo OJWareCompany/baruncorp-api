@@ -2066,6 +2066,10 @@ export interface FindAssignedTaskPaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindRejectedTaskReasonHttpControllerGetParams {
+  userName?: string | null
+}
+
 export interface FindInvoicePaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
@@ -3832,10 +3836,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name FindRejectedTaskReasonHttpControllerGet
      * @request GET:/rejected-task-reasons
      */
-    findRejectedTaskReasonHttpControllerGet: (params: RequestParams = {}) =>
+    findRejectedTaskReasonHttpControllerGet: (
+      query: FindRejectedTaskReasonHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
       this.request<RejectedTaskReasonPaginatedResponseDto, any>({
         path: `/rejected-task-reasons`,
         method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),

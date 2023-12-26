@@ -46,6 +46,7 @@ import { UnassignAssignedTaskHttpController } from './commands/unassign-assigned
 import { UnassignAssignedTaskService } from './commands/unassign-assigned-task/unassign-assigned-task.service'
 import { RejectAssignedTaskHttpController } from './commands/reject-assigned-task/reject-assigned-task.http.controller'
 import { RejectAssignedTaskService } from './commands/reject-assigned-task/reject-assigned-task.service'
+import { FindRejectedTaskReasonPaginatedQueryHandler } from './queries/find-rejected-task-reason-paginated/find-rejected-task-reason.paginated.query-handler'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -71,6 +72,7 @@ const queryHandlers: Provider[] = [
   FindAssignedTaskQueryHandler,
   FindAssignedTaskPaginatedQueryHandler,
   FindAvailableWorkersQueryHandler,
+  FindRejectedTaskReasonPaginatedQueryHandler,
 ]
 const repositories: Provider[] = [
   {
