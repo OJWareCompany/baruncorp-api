@@ -103,7 +103,11 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.organizationId = props.organization.id
     response.position = props.position ? props.position.unpack() : null
     response.licenses = props.licenses.map((license) => ({
-      ...license.unpack(),
+      // ...license.unpack(),
+      abbreviation: license.abbreviation,
+      issuingCountryName: license.issuingCountryName,
+      ownerName: license.ownerName,
+      type: license.type,
       expiryDate: license.expiryDate?.toISOString() || null,
     }))
     response.role = props.role

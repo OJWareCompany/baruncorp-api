@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 
-export class LicenseResponseDto {
+export class UserLicenseResponseDto {
   @ApiProperty({ enum: LicenseTypeEnum })
   readonly type: string
 
@@ -18,7 +18,7 @@ export class LicenseResponseDto {
   @ApiProperty()
   readonly expiryDate: string | null
 
-  constructor(create: LicenseResponseDto) {
+  constructor(create: UserLicenseResponseDto) {
     initialize(this, create)
   }
 }

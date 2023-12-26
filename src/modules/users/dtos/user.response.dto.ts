@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { LicenseResponseDto } from './license.response.dto'
+import { UserLicenseResponseDto } from './user-license.response.dto'
 import { UserPositionResponseDto } from './user-position.response.dto'
 import { AvailableTaskResponseDto } from './available-task.response.dto'
 import { UserStatusEnum } from '../domain/user.types'
@@ -37,7 +37,7 @@ export class UserResponseDto {
   availableTasks: AvailableTaskResponseDto[]
 
   @ApiProperty()
-  licenses: LicenseResponseDto[]
+  licenses: UserLicenseResponseDto[]
 
   @ApiProperty()
   role: string
