@@ -41,6 +41,7 @@ export class CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler {
         projectNumber: event.projectNumber,
         projectPropertyOwnerName: event.projectPropertyOwnerName,
         jobName: event.jobName,
+        isExpedited: event.isExpedited,
       })
       return entity
     })

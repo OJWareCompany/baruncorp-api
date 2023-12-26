@@ -29,6 +29,7 @@ export interface CreateAssignedTaskProps {
   projectNumber: string | null
   projectPropertyOwnerName: string | null
   jobName: string
+  isExpedited: boolean
 }
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {
@@ -39,4 +40,5 @@ export interface AssignedTaskProps extends CreateAssignedTaskProps {
   duration: number | null
   startedAt: Date | null
   doneAt: Date | null
+  isActive: boolean
 }

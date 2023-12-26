@@ -25,6 +25,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
       cost: null,
       isVendor: false,
       vendorInvoiceId: null,
+      isActive: false,
     }
     const entity = new AssignedTaskEntity({ id: id, props })
     return entity

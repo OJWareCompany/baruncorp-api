@@ -38,6 +38,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       projectNumber: props.projectNumber,
       projectPropertyOwnerName: props.projectPropertyOwnerName,
       jobName: props.jobName,
+      is_expedited: props.isExpedited,
+      is_active: props.isActive,
     }
     return record
   }
@@ -71,6 +73,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         projectNumber: record.projectNumber,
         projectPropertyOwnerName: record.projectPropertyOwnerName,
         jobName: record.jobName,
+        isExpedited: record.is_expedited,
+        isActive: record.is_active,
       },
     })
     return entity
@@ -108,8 +112,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
     const response = new VendorInvoiceLineItemResponse()
     response.vendorInvoiceId = entity.getProps().vendorInvoiceId!
     response.taskId = entity.getProps().taskId
-    response.assgineeId = entity.getProps().assigneeId!
-    response.assgineeName = entity.getProps().assigneeName!
+    response.assigneeId = entity.getProps().assigneeId!
+    response.assigneeName = entity.getProps().assigneeName!
     response.clientOrganizationId = entity.getProps().organizationId
     response.clientOrganizationName = entity.getProps().organizationName
     response.projectId = entity.getProps().projectId

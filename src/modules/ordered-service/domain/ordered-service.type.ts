@@ -29,6 +29,7 @@ export interface CreateOrderedServiceProps {
   projectNumber: string | null
   projectPropertyOwnerName: string | null
   jobName: string
+  isExpedited: boolean
 }
 
 export interface OrderedServiceProps extends CreateOrderedServiceProps {

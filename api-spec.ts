@@ -1487,8 +1487,8 @@ export interface VendorToInvoiceResponseDto {
 export interface VendorInvoiceLineItemResponse {
   vendorInvoiceId: string
   taskId: string
-  assgineeId: string
-  assgineeName: string
+  assigneeId: string
+  assigneeName: string
   clientOrganizationId: string
   clientOrganizationName: string
   projectId: string

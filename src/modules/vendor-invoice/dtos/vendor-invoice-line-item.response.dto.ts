@@ -12,11 +12,11 @@ export class VendorInvoiceLineItemResponse {
 
   @ApiProperty()
   @IsString()
-  assgineeId: string
+  assigneeId: string
 
   @ApiProperty()
   @IsString()
-  assgineeName: string
+  assigneeName: string
 
   @ApiProperty()
   @IsString()

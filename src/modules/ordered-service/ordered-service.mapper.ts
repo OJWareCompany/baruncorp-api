@@ -36,6 +36,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       projectNumber: props.projectNumber,
       projectPropertyOwnerName: props.projectPropertyOwnerName,
       jobName: props.jobName,
+      is_expedited: props.isExpedited,
     }
   }
 
@@ -66,6 +67,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
         projectNumber: record.projectNumber,
         projectPropertyOwnerName: record.projectPropertyOwnerName,
         jobName: record.jobName,
+        isExpedited: record.is_expedited,
       },
     })
     return entity

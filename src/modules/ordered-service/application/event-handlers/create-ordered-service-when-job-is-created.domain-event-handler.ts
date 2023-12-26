@@ -61,8 +61,9 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
         organizationId: event.organizationId,
         organizationName: event.organizationName,
         projectNumber: project.projectNumber,
-        projectPropertyOwnerName: project.projectPropertyOwnerName!,
+        projectPropertyOwnerName: project.projectPropertyOwnerName,
         jobName: job.jobName,
+        isExpedited: job.getProps().isExpedited,
       })
 
       const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)

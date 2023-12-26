@@ -85,6 +85,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
       projectNumber: project.projectNumber,
       projectPropertyOwnerName: project.projectPropertyOwnerName!,
       jobName: job.jobName,
+      isExpedited: job.getProps().isExpedited,
     })
 
     const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
