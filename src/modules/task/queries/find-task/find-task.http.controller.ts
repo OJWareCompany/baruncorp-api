@@ -1,6 +1,6 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { PositionTasks, Tasks, UserAvailableTasks, Users, prerequisiteTasks } from '@prisma/client'
+import { PositionTasks, Tasks, prerequisiteTasks } from '@prisma/client'
 import { TaskResponseDto } from '../../dtos/task.response.dto'
 import { FindTaskRequestDto } from './find-task.request.dto'
 import { FindTaskQuery } from './find-task.query-handler'
@@ -39,8 +39,8 @@ export class FindTaskHttpController {
       }),
       prerequisiteTask: result.prerequisiteTasks.map((pre) => {
         return {
-          taskId: pre.taskId,
-          taskName: pre.taskName,
+          taskId: pre.prerequisiteTaskId,
+          taskName: pre.prerequisiteTaskName,
         }
       }),
       taskWorker: result.workers.map((user) => {

@@ -49,8 +49,8 @@ export class FindTaskPaginatedHttpController {
           }),
           prerequisiteTask: item.prerequisiteTasks.map((pre) => {
             return {
-              taskId: pre.taskId,
-              taskName: pre.taskName,
+              taskId: pre.prerequisiteTaskId,
+              taskName: pre.prerequisiteTaskName,
             }
           }),
         }
