@@ -5,7 +5,11 @@ import { Inject } from '@nestjs/common'
 import { USER_REPOSITORY } from '../../user.di-tokens'
 import { UserRepositoryPort } from '../../database/user.repository.port'
 import { PrismaService } from '../../../database/prisma.service'
-import { AvailableTaskAddNoLicenseException, TaskNotFoundException } from '../../../task/domain/task.error'
+import {
+  AvailableTaskAddNoLicenseException,
+  AvailableTaskConflictException,
+  TaskNotFoundException,
+} from '../../../task/domain/task.error'
 
 @CommandHandler(AddAvailableTaskCommand)
 export class AddAvailableTaskService implements ICommandHandler {
@@ -29,7 +33,7 @@ export class AddAvailableTaskService implements ICommandHandler {
       },
     })
 
-    if (availableTask) return
+    if (availableTask) throw new AvailableTaskConflictException()
 
     await this.prismaService.userAvailableTasks.create({
       data: {
