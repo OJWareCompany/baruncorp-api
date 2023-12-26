@@ -19,7 +19,6 @@ export class FindPositionUnRegisteredUsersQueryHandler implements IQueryHandler 
     const position = await this.prismaService.positions.findUnique({ where: { id: query.positionId } })
     if (!position) throw new PositionNotFoundException()
     const positionWorkers = await this.prismaService.userPosition.findMany({ where: { positionId: query.positionId } })
-    console.log(positionWorkers)
     const users = await this.prismaService.users.findMany({
       where: {
         id: { notIn: positionWorkers.map((worker) => worker.userId) },

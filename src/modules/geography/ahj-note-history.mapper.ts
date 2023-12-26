@@ -3,7 +3,9 @@ import { AHJNoteHistoryModel } from './database/geography.repository'
 import { AHJType } from './dto/ahj-note.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, AhjNoteHistoryResponseDto> {
   toPersistence(entity: any): AHJNoteHistoryModel {
     throw new Error('Method not implemented.')

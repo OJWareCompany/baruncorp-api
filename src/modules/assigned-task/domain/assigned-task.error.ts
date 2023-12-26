@@ -11,3 +11,9 @@ export class AssignedTaskAlreadyCompletedException extends BadRequestException {
     super('Assigned task is already completed', '30201')
   }
 }
+
+export class AssigneeNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not assignee found', '30202')
+  }
+}

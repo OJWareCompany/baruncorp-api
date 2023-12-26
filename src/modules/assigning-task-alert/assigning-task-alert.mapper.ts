@@ -3,7 +3,9 @@ import { Mapper } from '../../libs/ddd/mapper.interface'
 import { AssigningTaskAlertEntity } from './domain/assigning-task-alert.entity'
 import { AssigningTaskAlertProps } from './domain/assigning-task-alert.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class AssigningTaskAlertsMapper implements Mapper<AssigningTaskAlertEntity, AssigningTaskAlerts, any> {
   toPersistence(entity: AssigningTaskAlertEntity): AssigningTaskAlerts {
     const props = entity.getProps()

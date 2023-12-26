@@ -4,7 +4,9 @@ import { AssigningTaskAlertsMapper } from '../assigning-task-alert.mapper'
 import { AssigningTaskAlertEntity } from '../domain/assigning-task-alert.entity'
 import { AssigningTaskAlertRepositoryPort } from './assigning-task-alert.repository.port'
 import { AssigningTaskAlertNotFoundException } from '../domain/assigning-task-alert.error'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class AssigningTaskAlertRepository implements AssigningTaskAlertRepositoryPort {
   constructor(
     private readonly prismaService: PrismaService,

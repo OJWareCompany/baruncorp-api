@@ -2,7 +2,9 @@ import { OrderedJobNotes } from '@prisma/client'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { JobNoteEntity, JobNoteProps } from './domain/job-note.entity'
 import { JobNoteListResponseDto, JobNoteResponseDto } from './dtos/job-note.response.dto'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class JobNoteMapper implements Mapper<JobNoteEntity, OrderedJobNotes, JobNoteListResponseDto> {
   toPersistence(entity: JobNoteEntity): OrderedJobNotes {
     const props: JobNoteProps = entity.getProps()

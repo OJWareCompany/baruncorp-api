@@ -5,12 +5,14 @@ import { ProjectResponseDto } from './dtos/project.response.dto'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { ProjectAssociatedRegulatoryBody } from './domain/value-objects/project-associated-regulatory-body.value-object'
 import { MountingType, ProjectPropertyType } from './domain/project.type'
+import { Injectable } from '@nestjs/common'
 
 /**
  * Entity, DB Record, Response DTO의 변환을 책임지는 클래스.
  * 변환을 한 곳에 묶어 관리하기 용이하다.
  */
 
+@Injectable()
 export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, ProjectResponseDto> {
   toPersistence(entity: ProjectEntity): OrderedProjects {
     const props = entity.getProps()

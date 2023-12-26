@@ -2,7 +2,9 @@ import { Mapper } from '@libs/ddd/mapper.interface'
 import { AHJNotesModel } from './database/geography.repository'
 import { AHJType, AhjNoteResponseDto } from './dto/ahj-note.response.dto'
 import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
+import { Injectable } from '@nestjs/common'
 
+@Injectable()
 export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponseDto> {
   toPersistence(entity: any): AHJNotesModel {
     throw new Error('Method not implemented.')

@@ -46,7 +46,6 @@ export class UnassignAssignedTaskService implements ICommandHandler {
      * Job이 completed인데, canceled인 태스크를 풀었다. => 따로 서비스의 reactive 이벤트 있어서 잡, 태스크의 status가 pending으로 됨, 즉 여기서 바꿀필요 없음
      * Job이 Inprogress인 경우 -> 상태 업데이트 필요
      */
-    console.log(command)
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
 
     if (assignedTask.isCompleted) throw new AssignedTaskAlreadyCompletedException()
