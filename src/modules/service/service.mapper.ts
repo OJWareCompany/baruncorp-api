@@ -149,7 +149,12 @@ export class ServiceMapper
           }
         : null,
       fixedPrice: props.pricing.fixedPrice,
-      relatedTasks: [],
+      relatedTasks: props.tasks.map((task) => {
+        return {
+          id: task.id,
+          name: task.name,
+        }
+      }),
     })
 
     return response

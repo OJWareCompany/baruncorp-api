@@ -26,6 +26,13 @@
   socket.on('task-assigned', (data) => { console.log(data) })
 
   /**
+   * listen to alert
+   * 
+   * response: true
+   */
+  socket.on('hand-lowered', (data) => { console.log(data) })
+
+  /**
    * listen to error
    * 
    * response:

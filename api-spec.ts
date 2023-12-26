@@ -815,41 +815,9 @@ export interface UpdateServiceRequestDto {
   fixedPrice: number | null
 }
 
-export interface TaskPosition {
-  positionId: string
-  positionName: string
-  order: number
-  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
-}
-
-export interface PrerequisiteTask {
-  taskId: string
-  taskName: string
-}
-
-export interface TaskWorker {
-  userId: string
-  userName: string
-  email: string
-  position: string | null
-  organizationName: string
-  organizationId: string
-}
-
-export interface TaskResponseDto {
-  /** @default "" */
+export interface ServiceTaskResponseDto {
   id: string
-  /** @default "" */
   name: string
-  /** @default "" */
-  serviceId: string
-  /** @default "" */
-  serviceName: string
-  /** @default "Structural" */
-  licenseType: 'Structural' | 'Electrical' | null
-  taskPositions: TaskPosition[]
-  prerequisiteTask: PrerequisiteTask[]
-  taskWorker: TaskWorker[]
 }
 
 export interface ServiceResponseDto {
@@ -861,7 +829,7 @@ export interface ServiceResponseDto {
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
-  relatedTasks: TaskResponseDto[]
+  relatedTasks: ServiceTaskResponseDto[]
 }
 
 export interface ServicePaginatedResponseDto {
@@ -954,6 +922,43 @@ export interface UpdateTaskRequestDto {
   name: string
   /** @default "Structural" */
   licenseType: 'Structural' | 'Electrical' | null
+}
+
+export interface TaskPosition {
+  positionId: string
+  positionName: string
+  order: number
+  autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
+}
+
+export interface PrerequisiteTask {
+  taskId: string
+  taskName: string
+}
+
+export interface TaskWorker {
+  userId: string
+  userName: string
+  email: string
+  position: string | null
+  organizationName: string
+  organizationId: string
+}
+
+export interface TaskResponseDto {
+  /** @default "" */
+  id: string
+  /** @default "" */
+  name: string
+  /** @default "" */
+  serviceId: string
+  /** @default "" */
+  serviceName: string
+  /** @default "Structural" */
+  licenseType: 'Structural' | 'Electrical' | null
+  taskPositions: TaskPosition[]
+  prerequisiteTask: PrerequisiteTask[]
+  taskWorker: TaskWorker[]
 }
 
 export interface TaskPaginatedResponseFields {

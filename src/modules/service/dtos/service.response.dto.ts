@@ -1,9 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { TaskResponseDto } from '../../task/dtos/task.response.dto'
 import { ServicePricingTypeEnum } from '../domain/service.type'
 import { StandardPricingRequestDtoFields } from '../commands/create-service/create-service.request.dto'
+
+export class ServiceTaskResponseDto {
+  @ApiProperty()
+  @IsString()
+  id: string
+
+  @ApiProperty()
+  @IsString()
+  name: string
+}
 
 export class ServiceResponseDto {
   @ApiProperty()
@@ -33,7 +42,7 @@ export class ServiceResponseDto {
 
   @ApiProperty()
   @IsObject()
-  relatedTasks: TaskResponseDto[]
+  relatedTasks: ServiceTaskResponseDto[]
 
   constructor(props: ServiceResponseDto) {
     initialize(this, props)
