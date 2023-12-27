@@ -2267,6 +2267,21 @@ export interface FindLicensePaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindAssigningTaskAlertPaginatedHttpControllerFindParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 import axios from 'axios'
 
@@ -4633,6 +4648,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/positions/${positionId}/unregistered-users`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+  }
+  assigningTaskAlerts = {
+    /**
+     * No description
+     *
+     * @name FindAssigningTaskAlertPaginatedHttpControllerFind
+     * @request GET:/assigning-task-alerts
+     */
+    findAssigningTaskAlertPaginatedHttpControllerFind: (
+      query: FindAssigningTaskAlertPaginatedHttpControllerFindParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/assigning-task-alerts`,
+        method: 'GET',
+        query: query,
         ...params,
       }),
   }
