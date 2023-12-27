@@ -24,8 +24,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       lastName: copy.userName.getLastName(),
       full_name: copy.userName.getFullName(),
       organizationId: copy.organization.id,
-      updatedAt: new Date(),
-      createdAt: new Date(),
+      updatedAt: entity.updatedAt,
+      createdAt: entity.createdAt,
       address: null,
       phoneNumber: copy.phone?.number || null,
       updatedBy: copy.updatedBy,
@@ -46,6 +46,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
   toDomain(record: UserQueryModel): UserEntity {
     const entity = new UserEntity({
       id: record.id,
+      updatedAt: record.updatedAt,
+      createdAt: record.createdAt,
       props: {
         email: record.email,
         status: record.status as UserStatusEnum,
