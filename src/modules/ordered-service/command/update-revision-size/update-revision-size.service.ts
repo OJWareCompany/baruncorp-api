@@ -53,12 +53,12 @@ export class UpdateRevisionSizeService implements ICommandHandler {
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
+    const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
+
+    const isFixedPricing = this.serviceInitialPriceManager.isFixedPricing(service, customPricing)
+    if (isFixedPricing) return
+
     if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
-      const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
-
-      const isFixedPricing = this.serviceInitialPriceManager.isFixedPricing(service, customPricing)
-      if (isFixedPricing) return
-
       const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
         job.projectId,
         service.id,
