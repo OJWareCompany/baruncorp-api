@@ -2,9 +2,8 @@ import { DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { DomainEvent } from '../../../../libs/ddd/domain-event.base'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
-export class AssignedTaskCreatedDomainEvent extends DomainEvent {
-  readonly jobId: string
-  constructor(props: DomainEventProps<AssignedTaskCreatedDomainEvent>) {
+export class AssignedTaskActivatedDomainEvent extends DomainEvent {
+  constructor(props: DomainEventProps<AssignedTaskActivatedDomainEvent>) {
     super(props)
     initialize(this, props)
   }
