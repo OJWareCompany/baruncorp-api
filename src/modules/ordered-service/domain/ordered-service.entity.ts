@@ -239,7 +239,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   private freeCost() {
     const NO_COST = 0
-    if (this.isCanceledOrMinorCompleted) this.setPrice(NO_COST)
+    // 왜 Minor Completed로 했었을까? 도메인 정보를 문서화 할 필요가 있다.
+    // if (this.isCanceledOrMinorCompleted) this.setPrice(NO_COST)
+    if (this.props.sizeForRevision !== OrderedServiceSizeForRevisionEnum.Major) this.setPrice(NO_COST)
   }
 
   private setPrice(price: number | null): void {
