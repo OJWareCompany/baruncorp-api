@@ -6,18 +6,18 @@ import { FindLicenseHttpController } from './queries/find-license/find-license.h
 import { FindLicensePaginatedHttpController } from './queries/find-license-paginated/find-license.paginated.http.controller'
 import { FindLicenseQueryHandler } from './queries/find-license/find-license.query-handler'
 import { FindLicensePaginatedQueryHandler } from './queries/find-license-paginated/find-license.paginated.query-handler'
-import { FindWorkersForLicenseHttpController } from './queries/find-workers-for-license/find-workers-for-license.http.controller'
-import { FindWorkersForLicenseQueryHandler } from './queries/find-workers-for-license/find-workers-for-license.query-handler'
+import { FindLicensableWorkersHttpController } from './queries/find-licensable-workers/find-licensable-workers.http.controller'
+import { FindLicensableWorkersQueryHandler } from './queries/find-licensable-workers/find-licensable-workers.query-handler'
 
 const httpControllers = [
   FindLicenseHttpController,
   FindLicensePaginatedHttpController,
-  FindWorkersForLicenseHttpController,
+  FindLicensableWorkersHttpController,
 ]
 const queryHandlers: Provider[] = [
   FindLicenseQueryHandler,
   FindLicensePaginatedQueryHandler,
-  FindWorkersForLicenseQueryHandler,
+  FindLicensableWorkersQueryHandler,
 ]
 const eventHandlers: Provider[] = []
 const mappers: Provider[] = [UserMapper]
