@@ -10,6 +10,10 @@ import { CalculateVendorCostDomainService } from './calculate-vendor-cost.domain
 import { ExpensePricingEntity } from '../../expense-pricing/domain/expense-pricing.entity'
 import { OrderedServiceEntity } from '../../ordered-service/domain/ordered-service.entity'
 import { AssignedTaskUnassignedDomainEvent } from './events/assigned-task-unassigned.domain-event'
+import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.domain-event'
+import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activated.domain-event'
+import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
+import { PrismaService } from '../../database/prisma.service'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -25,9 +29,15 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
       cost: null,
       isVendor: false,
       vendorInvoiceId: null,
-      isActive: true,
+      isActive: false,
     }
     const entity = new AssignedTaskEntity({ id: id, props })
+    entity.addEvent(
+      new AssignedTaskCreatedDomainEvent({
+        aggregateId: entity.id,
+        jobId: entity.getProps().jobId,
+      }),
+    )
     return entity
   }
 
@@ -51,6 +61,50 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this.props.status === AssignedTaskStatusEnum.Completed
   }
 
+  /**
+   * 취소/보류 되었을때 필요한가?
+   * 취소/보류가 풀리면 active 이벤트가 발생해야하나?
+   * 1. 취소/보류가 풀렸을때 자동 할당 필요 여부에 따라서, 일단은 X
+   * 2. 필요하다면 이미 담당자가 있었을 경우에는 재배정 안하는것을 고려
+   *
+   * 특정 도메인 로직에 의해서만 호출되는 메서드
+   */
+  private deActive() {
+    this.props.isActive = false
+    return this
+  }
+
+  /**
+   * Not Started, In Progress인 pre task가 없으면 활성화
+   *
+   * 태스크 생성 이벤트 -> 해당 태스크의 활성화 판별 -> 활성화 이벤트 -> 담당자 배정
+   *   - job에서 활성화하면같은 태스크가 여러번 업데이트됨
+   *   - task 각각이 하자. (자신의 활성화 판별 후 활성화)
+   *
+   * 태스크 완료 이벤트 -> 활성화될 태스크들 판별 -> 활성화 이벤트 -> 담당자 배정
+   *    - 완료 되었을때 활성화될 태스크들을 판별 (전체)
+   *
+   * 활성화 이벤트는 한번에 하나씩 뿌리기, 한번에 두개가 할당될수있으니까.
+   */
+  private active() {
+    this.props.isActive = true
+    this.addEvent(
+      new AssignedTaskActivatedDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  async determineActiveStatus(activeStatusService: DetermineActiveStatusDomainService, prismaService: PrismaService) {
+    const isActive = await activeStatusService.isActive(this, prismaService)
+
+    // active 메서드를 사용하기 위해서는 위의 isActive 로직이 필수임
+    if (isActive) this.active()
+    else this.deActive() // 이미 activated인 task를 deActive를 해야하는가?
+    return this
+  }
+
   invoice(vendorInvoiceId: string) {
     this.props.vendorInvoiceId = vendorInvoiceId
     return this
@@ -71,6 +125,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
       new AssignedTaskCompletedDomainEvent({
         aggregateId: this.id,
         orderedServiceId: this.props.orderedServiceId,
+        jobId: this.props.jobId,
       }),
     )
     return this
@@ -80,6 +135,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     if (this.props.status === 'Completed') return this
     this.props.status = 'Canceled'
     this.props.doneAt = new Date()
+    // this.deActive()
     return this
   }
 
@@ -87,6 +143,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     if (this.props.status === 'Completed' || this.props.status === 'Canceled') return this
     this.props.status = 'On Hold'
     this.props.doneAt = new Date()
+    // this.deActive()
     return this
   }
 

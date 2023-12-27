@@ -47,6 +47,9 @@ import { UnassignAssignedTaskService } from './commands/unassign-assigned-task/u
 import { RejectAssignedTaskHttpController } from './commands/reject-assigned-task/reject-assigned-task.http.controller'
 import { RejectAssignedTaskService } from './commands/reject-assigned-task/reject-assigned-task.service'
 import { FindRejectedTaskReasonPaginatedQueryHandler } from './queries/find-rejected-task-reason-paginated/find-rejected-task-reason.paginated.query-handler'
+import { ActivateTaskWhenTaskIsCreatedDomainEventHandler } from './application/event-handlers/activate-task-when-task-is-created.domain-event-handler'
+import { ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/activate-other-tasks-when-task-is-completed.domain-event-handler'
+import { DetermineActiveStatusDomainService } from './domain/domain-services/determine-active-status.domain-service'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -107,8 +110,14 @@ const eventHandlers: Provider[] = [
   HoldAssignedTaskWhenJobIsHeldDomainEventHandler,
   UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler,
   UpdateCostWhenTaskIsAssignedDomainEventHandler,
+  ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler,
+  ActivateTaskWhenTaskIsCreatedDomainEventHandler,
 ]
-const domainServices: Provider[] = [CalculateVendorCostDomainService, UpdateTaskCostService]
+const domainServices: Provider[] = [
+  CalculateVendorCostDomainService,
+  UpdateTaskCostService,
+  DetermineActiveStatusDomainService,
+]
 const mappers: Provider[] = [
   AssignedTaskMapper,
   UserMapper,

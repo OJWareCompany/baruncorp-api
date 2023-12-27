@@ -3,6 +3,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export class AssignedTaskCompletedDomainEvent extends DomainEvent {
   readonly orderedServiceId: string
+  readonly jobId: string
   constructor(props: DomainEventProps<AssignedTaskCompletedDomainEvent>) {
     super(props)
     initialize(this, props)
