@@ -42,6 +42,7 @@ export class AlertAssigningTaskWhenTaskIsAssignedDomainEventHandler {
       isRevision: event.isRevision,
       note: event.note,
       createdAt: entity.createdAt,
+      isCheckedOut: false,
     })
   }
 }

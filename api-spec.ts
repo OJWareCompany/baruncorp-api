@@ -1689,6 +1689,34 @@ export interface LicensePaginatedResponseDto {
   items: LicenseResponseDto[]
 }
 
+export interface AssigningTaskAlertResponse {
+  id: string
+  userId: string
+  userName: string
+  assignedTaskId: string
+  taskName: string
+  jobId: string
+  projectPropertyType: 'Residential' | 'Commercial'
+  mountingType: 'Roof Mount' | 'Ground Mount'
+  isRevision: boolean
+  note: string | null
+  /** @format date-time */
+  createdAt: string
+  isCheckedOut: boolean
+}
+
+export interface AssigningTaskAlertPaginatedResponse {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: AssigningTaskAlertResponse[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -4662,10 +4690,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       query: FindAssigningTaskAlertPaginatedHttpControllerFindParams,
       params: RequestParams = {},
     ) =>
-      this.request<void, any>({
+      this.request<AssigningTaskAlertPaginatedResponse, any>({
         path: `/assigning-task-alerts`,
         method: 'GET',
         query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CheckOutAssigningTaskAlertHttpControllerCheckOut
+     * @request PATCH:/assigning-task-alerts/{assigningTaskAlertId}/check-out
+     */
+    checkOutAssigningTaskAlertHttpControllerCheckOut: (assigningTaskAlertId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/assigning-task-alerts/${assigningTaskAlertId}/check-out`,
+        method: 'PATCH',
         ...params,
       }),
   }

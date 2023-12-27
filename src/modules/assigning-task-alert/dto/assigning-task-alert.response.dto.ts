@@ -49,6 +49,10 @@ export class AssigningTaskAlertResponse {
   @ApiProperty()
   @IsString()
   createdAt: Date
+
+  @ApiProperty()
+  @IsBoolean()
+  isCheckedOut: boolean
 }
 
 export class AssigningTaskAlertPaginatedResponse extends PaginatedResponseDto<AssigningTaskAlertResponse> {
