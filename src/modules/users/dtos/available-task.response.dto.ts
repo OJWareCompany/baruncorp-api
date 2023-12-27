@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { AutoAssignmentTypeEnum } from '../../position/domain/position.type'
-import { IsEnum } from 'class-validator'
+import { IsEnum, IsOptional } from 'class-validator'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 
 export class AvailableTaskResponseDto {
   @ApiProperty({ default: '' })
@@ -12,4 +13,9 @@ export class AvailableTaskResponseDto {
   @ApiProperty({ default: AutoAssignmentTypeEnum.all, enum: AutoAssignmentTypeEnum })
   @IsEnum(AutoAssignmentTypeEnum)
   readonly autoAssignmentType: AutoAssignmentTypeEnum
+
+  @ApiProperty({ default: LicenseTypeEnum.structural, enum: LicenseTypeEnum })
+  @IsEnum(LicenseTypeEnum)
+  @IsOptional()
+  readonly licenseType: LicenseTypeEnum | null
 }

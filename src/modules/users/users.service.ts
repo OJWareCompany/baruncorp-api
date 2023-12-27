@@ -1,12 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { ConflictException, Inject, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
 import { EmailVO } from './domain/value-objects/email.vo'
-import { InputPasswordVO } from './domain/value-objects/password.vo'
 import { InvitationEmailProp } from './domain/invitationMail.types'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
-import { InviteRequestDto } from './commands/invite/invite.request.dto'
 import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../organization/database/organization.repository.port'
 import { UserResponseDto } from './dtos/user.response.dto'
@@ -14,12 +12,7 @@ import { UserEntity } from './domain/user.entity'
 import UserMapper from './user.mapper'
 import { UserName } from './domain/value-objects/user-name.vo'
 import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
-import {
-  InvitationNotFoundException,
-  OnlyMemberCanBeAdminException,
-  UserConflictException,
-  UserNotFoundException,
-} from './user.error'
+import { InvitationNotFoundException, OnlyMemberCanBeAdminException, UserNotFoundException } from './user.error'
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 import { PrismaService } from '../database/prisma.service'
 
@@ -59,7 +52,7 @@ export class UserService {
     return this.userMapper.toResponse(userEntity)
   }
 
-  async upadteProfile(
+  async updateProfile(
     userId: string,
     userName: UserName,
     phoneNumber: string | null,

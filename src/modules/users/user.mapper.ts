@@ -77,6 +77,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
             id: task.taskId,
             name: task.taskName,
             autoAssignmentType: task.autoAssignmentType as AutoAssignmentTypeEnum,
+            licenseType: (task.task?.license_type as LicenseTypeEnum) || null,
           }
         }),
         role: record.userRole?.roleName as UserRoleNameEnum,

@@ -7,9 +7,9 @@ import {
   UserRole,
   UserPosition,
   Roles,
-  Prisma,
   UserLicense,
   UserAvailableTasks,
+  Tasks,
 } from '@prisma/client'
 import { UserRepositoryPort } from './user.repository.port'
 import { PrismaService } from '../../database/prisma.service'
@@ -27,7 +27,7 @@ export type UserQueryModel = Users & {
   userRole: (UserRole & { role: Roles }) | null
   userPosition: (UserPosition & { position: Positions }) | null
   licenses: UserLicense[]
-  availableTasks: UserAvailableTasks[]
+  availableTasks: (UserAvailableTasks & { task: Tasks | null })[]
 }
 
 @Injectable()
@@ -37,7 +37,7 @@ export class UserRepository implements UserRepositoryPort {
     userRole: { include: { role: true } },
     userPosition: { include: { position: true } },
     licenses: true,
-    availableTasks: true,
+    availableTasks: { include: { task: true } },
   }
 
   constructor(
@@ -91,9 +91,7 @@ export class UserRepository implements UserRepositoryPort {
   async findUserByEmailOrThrow({ email }: EmailVO): Promise<UserEntity> {
     const user = await this.prismaService.users.findUnique({
       where: { email },
-      include: {
-        ...UserRepository.userQueryIncludeInput,
-      },
+      include: UserRepository.userQueryIncludeInput,
     })
     if (!user) throw new UserNotFoundException()
     return this.userMapper.toDomain(user)

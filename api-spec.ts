@@ -52,6 +52,8 @@ export interface AvailableTaskResponseDto {
   name: string
   /** @default "Residential / Commercial" */
   autoAssignmentType: 'None' | 'Residential' | 'Commercial' | 'Residential / Commercial'
+  /** @default "Structural" */
+  licenseType: 'Structural' | 'Electrical' | null
 }
 
 export interface UserLicenseResponseDto {

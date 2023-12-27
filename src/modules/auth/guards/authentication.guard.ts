@@ -35,10 +35,7 @@ export class AuthGuard implements CanActivate {
           userRole: { include: { role: true } },
           userPosition: { include: { position: true } },
           licenses: true,
-          availableTasks: true,
-          // userServices: { include: { service: { include: { tasks: true } } } },
-          // userElectricalLicenses: { include: { state: true } },
-          // userStructuralLicenses: { include: { state: true } },
+          availableTasks: { include: { task: true } },
         },
       })
       if (!user) throw new UserNotFoundException()
