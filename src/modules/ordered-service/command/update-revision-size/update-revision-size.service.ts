@@ -16,6 +16,7 @@ import { OrderedServiceRepositoryPort } from '../../database/ordered-service.rep
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { UpdateRevisionSizeCommand as UpdateRevisionSizeCommand } from './update-revision-size.command'
+import { OrderedServiceSizeForRevisionEnum } from '../../domain/ordered-service.type'
 
 @CommandHandler(UpdateRevisionSizeCommand)
 export class UpdateRevisionSizeService implements ICommandHandler {
@@ -52,24 +53,30 @@ export class UpdateRevisionSizeService implements ICommandHandler {
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
-    const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
+    if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
+      const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
 
-    const isFixedPricing = this.serviceInitialPriceManager.isFixedPricing(service, customPricing)
-    if (isFixedPricing) return
+      const isFixedPricing = this.serviceInitialPriceManager.isFixedPricing(service, customPricing)
+      if (isFixedPricing) return
 
-    const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
-      job.projectId,
-      service.id,
-    )
+      const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
+        job.projectId,
+        service.id,
+      )
 
-    orderedService.updateRevisionSizeToMajor(
-      this.serviceInitialPriceManager,
-      service,
-      organization,
-      job,
-      previouslyOrderedServices,
-      customPricing,
-    )
+      orderedService.updateRevisionSizeToMajor(
+        this.serviceInitialPriceManager,
+        service,
+        organization,
+        job,
+        previouslyOrderedServices,
+        customPricing,
+      )
+    } else if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
+      orderedService.updateRevisionSizeToMinor()
+    } else {
+      orderedService.cleanRevisionSize()
+    }
     await this.orderedServiceRepo.update(orderedService)
   }
 }

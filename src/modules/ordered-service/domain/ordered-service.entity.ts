@@ -131,10 +131,28 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
+  cleanRevisionSize() {
+    this.props.sizeForRevision = null
+    this.props.price = null
+    this.addEvent(
+      new OrderedServiceUpdatedRevisionSizeDomainEvent({
+        aggregateId: this.id,
+        jobId: this.props.jobId,
+      }),
+    )
+    return this
+  }
+
   updateRevisionSizeToMinor() {
     if (!this.props.isRevision) throw new OrderedServiceInvalidRevisionStateException()
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Minor
     this.freeCost()
+    this.addEvent(
+      new OrderedServiceUpdatedRevisionSizeDomainEvent({
+        aggregateId: this.id,
+        jobId: this.props.jobId,
+      }),
+    )
     return this
   }
 
