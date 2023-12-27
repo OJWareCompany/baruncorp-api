@@ -43,7 +43,7 @@ export class AddAvailableTaskService implements ICommandHandler {
         taskName: task.name,
         autoAssignmentType: command.autoAssignmentType,
         isHandRaised: false,
-        userPositionId: user.getProps().position!.id,
+        userPositionId: user.getProps().position?.id || null,
       },
     })
   }
