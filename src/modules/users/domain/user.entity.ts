@@ -73,6 +73,15 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return this
   }
 
+  isWorker() {
+    return (
+      this.isVendor ||
+      this.role === UserRoleNameEnum.admin ||
+      this.role === UserRoleNameEnum.member ||
+      this.role === UserRoleNameEnum.special_admin
+    )
+  }
+
   invite() {
     this.props.status = UserStatusEnum.INVITATION_SENT
     return this

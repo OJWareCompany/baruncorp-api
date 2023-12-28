@@ -49,6 +49,14 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this.props.organizationId
   }
 
+  get projectId() {
+    return this.props.projectId
+  }
+
+  get jobId() {
+    return this.props.jobId
+  }
+
   get taskId() {
     return this.props.taskId
   }
@@ -59,6 +67,14 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   get isCompleted() {
     return this.props.status === AssignedTaskStatusEnum.Completed
+  }
+
+  get isRevision() {
+    return this.props.isRevision
+  }
+
+  get status() {
+    return this.props.status
   }
 
   /**
@@ -186,6 +202,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     if (user.isVendor) {
       this.props.isVendor = true
     }
+
     this.addEvent(
       new AssignedTaskAssignedDomainEvent({
         aggregateId: this.id,

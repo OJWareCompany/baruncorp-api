@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
+import { BadRequestException, ForbiddenException, Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { HandsUpCommand } from './hands-up.command'
 import { PrismaService } from '../../../database/prisma.service'
@@ -29,7 +29,8 @@ export class HandsUpService implements ICommandHandler {
     const availableTasks = await this.prismaService.userAvailableTasks.findMany({ where: { userId: command.userId } })
     if (!availableTasks.length) throw new AvailableTaskNotFoundException()
     const user = await this.userRepo.findOneByIdOrThrow(command.userId)
-    if (user.getProps().isHandRaisedForTask) return
+    if (user.getProps().isHandRaisedForTask) throw new BadRequestException('already hand raised ', '77002')
+    if (user.getProps().isVendor) throw new ForbiddenException('vendor can not raise a hand', '77001')
 
     const assignedTasks = await this.prismaService.assignedTasks.findMany({
       where: {

@@ -50,6 +50,7 @@ import { FindRejectedTaskReasonPaginatedQueryHandler } from './queries/find-reje
 import { ActivateTaskWhenTaskIsCreatedDomainEventHandler } from './application/event-handlers/activate-task-when-task-is-created.domain-event-handler'
 import { ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/activate-other-tasks-when-task-is-completed.domain-event-handler'
 import { DetermineActiveStatusDomainService } from './domain/domain-services/determine-active-status.domain-service'
+import { AssignTaskWhenTaskIsActivatedDomainEventHandler } from './application/event-handlers/assign-task-when-task-is-activated.domain-event-handler'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -112,6 +113,7 @@ const eventHandlers: Provider[] = [
   UpdateCostWhenTaskIsAssignedDomainEventHandler,
   ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler,
   ActivateTaskWhenTaskIsCreatedDomainEventHandler,
+  AssignTaskWhenTaskIsActivatedDomainEventHandler,
 ]
 const domainServices: Provider[] = [
   CalculateVendorCostDomainService,
