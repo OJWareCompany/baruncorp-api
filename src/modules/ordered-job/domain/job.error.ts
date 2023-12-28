@@ -34,3 +34,9 @@ export class IssuedJobUpdateException extends BadRequestException {
     super('Job can not be updated after invoice is issued.', '40002')
   }
 }
+
+export class JobIsNotCompletedUpdateException extends BadRequestException {
+  constructor() {
+    super("incomplete job can't send deliverables", '40008')
+  }
+}

@@ -31,6 +31,8 @@ import { UpdateJobWhenTaskIsReopenedDomainEventHandler } from './application/eve
 import { UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler } from './application/event-handlers/update-job-revision-size-when-ordered-service-revision-size-updated.domain-event-handler'
 import { UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler } from './application/event-handlers/update-pricing-type-when-ordered-service-applied.domain-event-handler'
 import { UpdateJobWhenTaskIsUnassignedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-unassigned.domain-event-handler'
+import { SendDeliverablesHttpController } from './commands/send-deliverables/send-deliverables.http.controller'
+import { SendDeliverablesService } from './commands/send-deliverables/send-deliverables.service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -42,6 +44,7 @@ const httpControllers = [
   CancelJobHttpController,
   HoldJobHttpController,
   FindJobToInvoiceHttpController,
+  SendDeliverablesHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateJobService,
@@ -49,6 +52,7 @@ const commandHandlers: Provider[] = [
   DeleteJobService,
   CancelJobService,
   HoldJobService,
+  SendDeliverablesService,
 ]
 const queryHandlers: Provider[] = [
   FindJobQueryHandler,
