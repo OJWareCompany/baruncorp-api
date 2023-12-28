@@ -1973,6 +1973,44 @@ export interface FindJobToInvoiceHttpControllerFindJobParams {
   serviceMonth: string
 }
 
+export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default "3480 Northwest 33rd Court"
+   */
+  jobName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  projectNumber?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  propertyFullAddress?: string | null
+  /** @default "Commercial" */
+  projectPropertyType?: 'Residential' | 'Commercial' | null
+  /** @default "Completed" */
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  /** @default "Ground Mount" */
+  mountingType?: 'Roof Mount' | 'Ground Mount' | null
+  /** @default false */
+  isExpedited?: boolean | null
+}
+
 export interface FindServicePaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
@@ -3348,6 +3386,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<JobToInvoiceResponseDto, any>({
         path: `/jobs-to-invoice`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
+  myOrderedJobs = {
+    /**
+     * No description
+     *
+     * @name FindMyOrderedJobPaginatedHttpControllerFindJob
+     * @summary Find My ordered jobs.
+     * @request GET:/my-ordered-jobs
+     */
+    findMyOrderedJobPaginatedHttpControllerFindJob: (
+      query: FindMyOrderedJobPaginatedHttpControllerFindJobParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<JobPaginatedResponseDto, any>({
+        path: `/my-ordered-jobs`,
         method: 'GET',
         query: query,
         format: 'json',

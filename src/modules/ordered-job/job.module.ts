@@ -33,6 +33,8 @@ import { UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler } from './
 import { UpdateJobWhenTaskIsUnassignedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-unassigned.domain-event-handler'
 import { SendDeliverablesHttpController } from './commands/send-deliverables/send-deliverables.http.controller'
 import { SendDeliverablesService } from './commands/send-deliverables/send-deliverables.service'
+import { FindMyOrderedJobPaginatedHttpController } from './queries/find-my-ordered-jobs/find-my-ordered-jobs.paginated.http.controller'
+import { FindMyOrderedJobPaginatedQueryHandler } from './queries/find-my-ordered-jobs/find-my-ordered-jobs.paginated.query-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -45,6 +47,7 @@ const httpControllers = [
   HoldJobHttpController,
   FindJobToInvoiceHttpController,
   SendDeliverablesHttpController,
+  FindMyOrderedJobPaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateJobService,
@@ -59,6 +62,7 @@ const queryHandlers: Provider[] = [
   FindJobPaginatedQueryHandler,
   FindMyActiveJobPaginatedQueryHandler,
   FindJobToInvoiceQueryHandler,
+  FindMyOrderedJobPaginatedQueryHandler,
 ]
 const eventHandlers: Provider[] = [
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
