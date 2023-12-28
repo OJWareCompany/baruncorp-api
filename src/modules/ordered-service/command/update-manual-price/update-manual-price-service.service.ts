@@ -6,6 +6,7 @@ import { UpdateManualPriceCommand } from './update-manual-price.command'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import {
+  OrderedServiceCommercialRevisionManualPriceUpdateException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
   OrderedServiceNotFoundException,
 } from '../../domain/ordered-service.error'
@@ -14,6 +15,7 @@ import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
 import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
+import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 @CommandHandler(UpdateManualPriceCommand)
 export class UpdateManualPriceService implements ICommandHandler {
@@ -27,6 +29,9 @@ export class UpdateManualPriceService implements ICommandHandler {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
 
+    if (orderedService.isRevision && orderedService.projectPropertyType === ProjectPropertyTypeEnum.Commercial) {
+      throw new OrderedServiceCommercialRevisionManualPriceUpdateException()
+    }
     // TODO: 코드를 보고 manual price를 입력할때 필요한 도메인 프로세스를 쉽게 파악할수 있도록 문서같은 코드가 되어야한다.
     if (orderedService.isRevision && orderedService.sizeForRevision !== 'Major')
       throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()

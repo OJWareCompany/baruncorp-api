@@ -23,3 +23,12 @@ export class OrderedServiceInvalidRevisionStateException extends BadRequestExcep
     super('Invalid Revision State For Update Revision Size.', '40303')
   }
 }
+
+export class OrderedServiceCommercialRevisionManualPriceUpdateException extends BadRequestException {
+  constructor() {
+    super(
+      `The manual price for commercial revision is not modifiable, and the price is automatically set when the duration of the task is entered.`,
+      '40304',
+    )
+  }
+}
