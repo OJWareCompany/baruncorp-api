@@ -30,6 +30,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
       availableTasks: [],
       isHandRaisedForTask: false,
       status: UserStatusEnum.SIGN_UP_NOT_COMPLETED,
+      isVendor: create.organization.organizationType === 'administration' ? false : create.isVendor,
     }
     return new UserEntity({ id, props })
   }
@@ -113,7 +114,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
 
   // update, set은 도메인 용어를 사용하지 않으므로 좋지 않은 예시 (어떤 행위를 했을때 그 안에서 아래의 업데이트가 따라와야함)
   updateVendor(isVendor: boolean): this {
-    this.props.isVendor = isVendor
+    this.props.isVendor = this.props.organization.organizationType === 'administration' ? false : isVendor
     return this
   }
 
