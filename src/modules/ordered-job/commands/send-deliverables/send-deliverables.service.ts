@@ -27,7 +27,7 @@ export class SendDeliverablesService implements ICommandHandler {
 
   async execute(command: SendDeliverablesCommand): Promise<void> {
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
-    if (!job.isCompleted()) throw new JobIsNotCompletedUpdateException()
+    // if (!job.isCompleted()) throw new JobIsNotCompletedUpdateException()
 
     // TODO: updated by 로직 모듈화하기
     const editor = await this.prismaService.users.findUnique({ where: { id: command.updatedByUserId } })
@@ -40,7 +40,7 @@ export class SendDeliverablesService implements ICommandHandler {
     })
 
     if (!organization) throw new OrganizationNotFoundException()
-    if (organization.email)
+    if (!organization.email)
       throw new NotFoundException('organization has no email, TODO: use deliverables email', '97779')
 
     const transporter = nodemailer.createTransport({
@@ -54,10 +54,10 @@ export class SendDeliverablesService implements ICommandHandler {
       },
     })
 
+    console.log([...job.getProps().deliverablesEmails, 'bs_khm@naver.com'], 'email!')
     const mailOptions = {
       from: EMAIL_USER,
-      // to: 'bs_khm@naver.com',
-      to: organization?.email || 'bs_khm@naver.com',
+      to: [...job.getProps().deliverablesEmails, 'bs_khm@naver.com'],
       subject: `BarunCorp Deliverables`,
       text: `deliverables link: ${command.deliverablesLink}`,
     }
