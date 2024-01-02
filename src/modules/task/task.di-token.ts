@@ -1,1 +1,1 @@
-export const TASK_REPOSITORY = Symbol('TASK_RPOSITORY')
+export const TASK_REPOSITORY = Symbol('TASK_REPOSITORY')

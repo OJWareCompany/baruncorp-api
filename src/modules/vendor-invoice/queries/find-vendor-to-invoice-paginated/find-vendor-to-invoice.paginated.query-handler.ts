@@ -37,12 +37,12 @@ export class FindVendorToInvoicePaginatedQueryHandler implements IQueryHandler {
     `
 
     return {
-      vendorsToInvoice: vendors.map((lineitem) => {
+      vendorsToInvoice: vendors.map((lineItem) => {
         return {
-          organizationName: lineitem.organization_name,
-          organizationId: lineitem.organization_id,
+          organizationName: lineItem.organization_name,
+          organizationId: lineItem.organization_id,
           dates: vendorsLineItems
-            .filter((item) => item.organization_id === lineitem.organization_id)
+            .filter((item) => item.organization_id === lineItem.organization_id)
             .map((item) => item.started_at),
         }
       }),
