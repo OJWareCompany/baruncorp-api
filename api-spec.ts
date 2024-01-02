@@ -37,7 +37,7 @@ export interface SignUpRequestDto {
   /** @default "thisistestPass123!" */
   password: string
   /** @default "857-250-4567" */
-  phoneNumber: string
+  phoneNumber: string | null
 }
 
 export interface UserPositionResponseDto {
