@@ -31,14 +31,14 @@ export class SignUpService implements ICommandHandler {
 
     const user = await this.userRepo.findOneByIdOrThrow(command.userId)
 
+    const phoneNumber = command.phoneNumber ? new Phone({ number: command.phoneNumber }) : null
+
     user.signUp(
       new UserName({
         firstName: command.firstName,
         lastName: command.lastName,
       }),
-      new Phone({
-        number: command.phoneNumber,
-      }),
+      phoneNumber,
       command.deliverablesEmails,
     )
 

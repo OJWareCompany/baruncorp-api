@@ -88,7 +88,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return this
   }
 
-  signUp(name: UserName, phone: Phone, deliverablesEmails: string[]) {
+  signUp(name: UserName, phone: Phone | null, deliverablesEmails: string[]) {
     this.props.userName = name
     this.props.phone = phone
     this.props.deliverablesEmails = deliverablesEmails

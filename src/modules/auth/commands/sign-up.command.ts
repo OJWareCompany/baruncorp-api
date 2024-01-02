@@ -7,7 +7,7 @@ export class SignUpCommand {
   readonly lastName: string
   readonly deliverablesEmails: string[]
   readonly password: string
-  readonly phoneNumber: string
+  readonly phoneNumber: string | null
   constructor(props: SignUpCommand) {
     initialize(this, props)
   }
