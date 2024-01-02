@@ -2,7 +2,7 @@ import { Passwords } from '@prisma/client'
 import * as bcrypt from 'bcryptjs'
 
 export const PasswordOption = {
-  minLength: 12,
+  minLength: 8,
   minNumbers: 1,
   minLowercase: 1,
   minSymbols: 1,
