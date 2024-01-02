@@ -40,6 +40,7 @@ import { POSITION_REPOSITORY } from '../position/position.di-token'
 import { ASSIGNED_TASK_REPOSITORY } from '../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.repository'
 import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
+import { CheckInvitedUserHttpController } from './queries/check-invited-user/check-invited-user.http.controller'
 
 const httpControllers = [
   UsersController,
@@ -55,6 +56,7 @@ const httpControllers = [
   CheckHandsStatusHttpController,
   InviteHttpController,
   ResetDefaultTasksHttpController,
+  CheckInvitedUserHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateUserService,

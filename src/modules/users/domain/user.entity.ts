@@ -29,7 +29,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
       licenses: [],
       availableTasks: [],
       isHandRaisedForTask: false,
-      status: UserStatusEnum.SIGN_UP_NOT_COMPLETED,
+      status: UserStatusEnum.INVITATION_NOT_SENT,
       isVendor: create.organization.organizationType === 'administration' ? false : create.isVendor,
     }
     return new UserEntity({ id, props })

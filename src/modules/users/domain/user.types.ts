@@ -30,7 +30,7 @@ export interface UserProps extends CreateUserProps {
 }
 
 export enum UserStatusEnum {
-  SIGN_UP_NOT_COMPLETED = 'Sign Up Not Completed',
+  INVITATION_NOT_SENT = 'Invitation Not Sent',
   INVITATION_SENT = 'Invitation Sent',
   INACTIVE = 'Inactive',
   ACTIVE = 'Active',

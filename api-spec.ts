@@ -80,7 +80,7 @@ export interface UserResponseDto {
   deliverablesEmails: string[]
   isVendor: boolean
   /** @default "Active" */
-  status: 'Sign Up Not Completed' | 'Invitation Sent' | 'Inactive' | 'Active'
+  status: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active'
 }
 
 export interface UpdateUserRequestDto {
@@ -639,7 +639,7 @@ export interface CreateOrderedTaskWhenJobIsCreatedRequestDto {
 export interface CreateJobRequestDto {
   /** @default "chris@barun.com" */
   deliverablesEmails: string[]
-  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   clientUserId: string
   /** @default "please, check this out." */
   additionalInformationFromClient: string | null
@@ -2809,6 +2809,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/users/${userId}/reset-default-tasks`,
         method: 'POST',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CheckInvitedUserHttpControllerGet
+     * @request GET:/users/{userId}/invitations
+     */
+    checkInvitedUserHttpControllerGet: (userId: string, params: RequestParams = {}) =>
+      this.request<UserResponseDto, any>({
+        path: `/users/${userId}/invitations`,
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   }
