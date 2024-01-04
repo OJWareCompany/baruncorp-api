@@ -1948,7 +1948,9 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   page?: number
 }
 
-export interface FindMyActiveJobPaginatedHttpControllerFindJobParams {
+export interface FindMyJobPaginatedHttpControllerFindJobParams {
+  /** @default "In Progress" */
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -3367,20 +3369,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
-  myActiveJobs = {
+  myJobs = {
     /**
      * No description
      *
-     * @name FindMyActiveJobPaginatedHttpControllerFindJob
-     * @summary Find My active jobs.
-     * @request GET:/my-active-jobs
+     * @name FindMyJobPaginatedHttpControllerFindJob
+     * @summary Find My jobs.
+     * @request GET:/my-jobs
      */
-    findMyActiveJobPaginatedHttpControllerFindJob: (
-      query: FindMyActiveJobPaginatedHttpControllerFindJobParams,
+    findMyJobPaginatedHttpControllerFindJob: (
+      query: FindMyJobPaginatedHttpControllerFindJobParams,
       params: RequestParams = {},
     ) =>
       this.request<JobPaginatedResponseDto, any>({
-        path: `/my-active-jobs`,
+        path: `/my-jobs`,
         method: 'GET',
         query: query,
         format: 'json',

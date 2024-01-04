@@ -9,14 +9,15 @@ import { UserEntity } from '../../../users/domain/user.entity'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { JobPaginatedResponseDto } from '../../dtos/job.paginated.response.dto'
 import { JobMapper } from '../../job.mapper'
-import { FindMyActiveJobPaginatedQuery } from './find-my-active-job.paginated.query-handler'
+import { FindMyJobPaginatedQuery } from './find-my-job.paginated.query-handler'
+import { FindMyJobPaginatedRequestDto } from './find-my-job.paginated.request.dto'
 
-@Controller('my-active-jobs')
-export class FindMyActiveJobPaginatedHttpController {
+@Controller('my-jobs')
+export class FindMyJobPaginatedHttpController {
   constructor(private readonly queryBus: QueryBus, private readonly mapper: JobMapper) {}
 
   @Get('')
-  @ApiOperation({ summary: 'Find My active jobs.' })
+  @ApiOperation({ summary: 'Find My jobs.' })
   @ApiResponse({
     status: HttpStatus.OK,
     type: JobPaginatedResponseDto,
@@ -24,12 +25,14 @@ export class FindMyActiveJobPaginatedHttpController {
   @UseGuards(AuthGuard)
   async findJob(
     @User() user: UserEntity,
+    @Query() request: FindMyJobPaginatedRequestDto,
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<JobPaginatedResponseDto> {
-    const query = new FindMyActiveJobPaginatedQuery({
-      userId: user.id,
+    const query = new FindMyJobPaginatedQuery({
       page: queryParams.page,
       limit: queryParams.limit,
+      userId: user.id,
+      jobStatus: request.jobStatus,
     })
 
     const result: Paginated<

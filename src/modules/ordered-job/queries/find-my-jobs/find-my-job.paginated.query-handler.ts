@@ -7,30 +7,25 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JobProps } from '../../domain/job.type'
 import { JobMapper } from '../../job.mapper'
-import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
 import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users } from '@prisma/client'
+import { JobStatusEnum } from '../../domain/job.type'
 
-export class FindMyActiveJobPaginatedQuery extends PaginatedQueryBase {
+export class FindMyJobPaginatedQuery extends PaginatedQueryBase {
   readonly userId: string
+  readonly jobStatus?: JobStatusEnum | null
 
-  constructor(props: PaginatedParams<FindMyActiveJobPaginatedQuery>) {
+  constructor(props: PaginatedParams<FindMyJobPaginatedQuery>) {
     super(props)
     initialize(this, props)
   }
 }
 
-@QueryHandler(FindMyActiveJobPaginatedQuery)
-export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
-  constructor(
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
-    private readonly prismaService: PrismaService,
-    private readonly jobMapper: JobMapper,
-  ) {}
+@QueryHandler(FindMyJobPaginatedQuery)
+export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindMyActiveJobPaginatedQuery): Promise<
+  async execute(query: FindMyJobPaginatedQuery): Promise<
     Paginated<
       OrderedJobs & {
         orderedServices: (OrderedServices & {
@@ -40,28 +35,18 @@ export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
       }
     >
   > {
-    // TODO: totalcount때문에 풀스캔하게됨
-    const myActiveTasks = await this.prismaService.assignedTasks.findMany({
-      where: {
-        assigneeId: query.userId,
-        status: { in: [AssignedTaskStatusEnum.Not_Started, AssignedTaskStatusEnum.In_Progress] },
+    // TODO: totalCount때문에 풀스캔하게됨
+    const condition = {
+      ...(query.jobStatus && { jobStatus: query.jobStatus }),
+      assignedTasks: {
+        some: {
+          assigneeId: query.userId,
+        },
       },
-      include: {
-        job: true,
-      },
-      orderBy: { startedAt: 'desc' },
-      take: query.limit,
-      skip: query.offset,
-    })
+    }
 
-    const jobIds = new Set<string>()
-    myActiveTasks.map((task) => jobIds.add(task.jobId))
-
-    // TODO: totalcount때문에 풀스캔하게됨
-    const myActiveJobs = await this.prismaService.orderedJobs.findMany({
-      where: {
-        id: { in: [...jobIds] },
-      },
+    const myJobs = await this.prismaService.orderedJobs.findMany({
+      where: condition,
       include: {
         orderedServices: {
           include: {
@@ -80,10 +65,10 @@ export class FindMyActiveJobPaginatedQueryHandler implements IQueryHandler {
       skip: query.offset,
     })
 
-    const totalCount = await this.prismaService.orderedJobs.count({ where: { id: { in: [...jobIds] } } })
+    const totalCount = await this.prismaService.orderedJobs.count({ where: condition })
 
     return new Paginated({
-      items: myActiveJobs,
+      items: myJobs,
       totalCount: totalCount,
       pageSize: query.limit,
       page: query.page,

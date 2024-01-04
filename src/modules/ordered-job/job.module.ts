@@ -16,8 +16,8 @@ import { FindJobPaginatedQueryHandler } from './queries/find-job-paginated/find-
 import { DeleteJobHttpController } from './commands/delete-job/delete-job.http.controller'
 import { DeleteJobService } from './commands/delete-job/delete-job.service'
 import UserMapper from '../users/user.mapper'
-import { FindMyActiveJobPaginatedHttpController } from './queries/find-my-active-jobs/find-my-active-job.paginated.http.controller'
-import { FindMyActiveJobPaginatedQueryHandler } from './queries/find-my-active-jobs/find-my-active-job.paginated.query-handler'
+import { FindMyJobPaginatedHttpController } from './queries/find-my-jobs/find-my-job.paginated.http.controller'
+import { FindMyJobPaginatedQueryHandler } from './queries/find-my-jobs/find-my-job.paginated.query-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
 import { StartJobWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-job-when-task-is-assigned.domain-event-handler'
 import { CompleteJobWhenServiceIsCompletedDomainEventHandler } from './application/event-handlers/complete-job-when-service-is-completed.domain-event-handler'
@@ -42,7 +42,7 @@ const httpControllers = [
   DeleteJobHttpController,
   FindJobHttpController,
   FindJobPaginatedHttpController,
-  FindMyActiveJobPaginatedHttpController,
+  FindMyJobPaginatedHttpController,
   CancelJobHttpController,
   HoldJobHttpController,
   FindJobToInvoiceHttpController,
@@ -60,7 +60,7 @@ const commandHandlers: Provider[] = [
 const queryHandlers: Provider[] = [
   FindJobQueryHandler,
   FindJobPaginatedQueryHandler,
-  FindMyActiveJobPaginatedQueryHandler,
+  FindMyJobPaginatedQueryHandler,
   FindJobToInvoiceQueryHandler,
   FindMyOrderedJobPaginatedQueryHandler,
 ]
