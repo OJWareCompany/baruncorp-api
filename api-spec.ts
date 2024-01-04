@@ -509,6 +509,11 @@ export interface ProjectAssociatedRegulatoryBodyDto {
   ahjId: string
 }
 
+export interface PrerequisiteTaskVO {
+  prerequisiteTaskId: string
+  prerequisiteTaskName: string
+}
+
 export interface AssignedTaskResponseFields {
   assignTaskId: string
   /** @example "Not Started" */
@@ -522,6 +527,7 @@ export interface AssignedTaskResponseFields {
   doneAt: string | null
   description: string | null
   duration: number | null
+  prerequisiteTasks: PrerequisiteTaskVO[]
 }
 
 export interface OrderedServiceResponseFields {

@@ -10,6 +10,7 @@ import {
 } from '../../ordered-service/domain/ordered-service.type'
 import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { TaskSize, TaskSizeEnum } from '../../invoice/dtos/invoice.response.dto'
+import { PrerequisiteTaskVO } from '../domain/value-objects/assigned-task.value-object'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -105,6 +106,9 @@ export class AssignedTaskResponseFields {
   @ApiProperty()
   @IsOptional()
   duration: number | null
+
+  @ApiProperty()
+  prerequisiteTasks: PrerequisiteTaskVO[]
 
   constructor(props: AssignedTaskResponseFields) {
     initialize(this, props)
