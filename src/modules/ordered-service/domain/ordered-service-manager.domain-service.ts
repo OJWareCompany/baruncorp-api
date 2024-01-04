@@ -18,32 +18,39 @@ export class ServiceInitialPriceManager {
     job: JobEntity,
     customPricing: CustomPricingEntity | null,
   ) {
+    const isFreeRevision = this.isFreeRevision(organization, previouslyOrderedServices)
+    if (isFreeRevision) return 0 // Free
+
     const isRevision = !!previouslyOrderedServices.length
 
-    const standardPrice = service.pricing.calcPrice(
+    if (customPricing) {
+      return customPricing.calcPrice(
+        isRevision,
+        job.projectPropertyType,
+        job.mountingType,
+        job.systemSize,
+        revisionSize,
+      )
+    }
+
+    // Standard Pricing
+    return service.pricing.calcPrice(
       isRevision,
       job.projectPropertyType,
       job.mountingType,
       job.systemSize,
       revisionSize,
     )
+  }
 
-    const customPrice = customPricing
-      ? customPricing.calcPrice(isRevision, job.projectPropertyType, job.mountingType, job.systemSize, revisionSize)
-      : null
+  isFreeRevision(organization: OrganizationEntity, previouslyOrderedServices: OrderedServiceEntity[]): boolean {
+    const isRevision = !!previouslyOrderedServices.length
 
-    const isFreeRevision =
+    return (
       isRevision &&
       organization.isSpecialRevisionPricing &&
       this.hasRemainingFreeRevisions(previouslyOrderedServices, organization)
-
-    const initialPrice = isFreeRevision
-      ? 0
-      : !!customPricing && customPricing.hasNewResidentialTieredPricing //
-      ? customPrice
-      : customPrice ?? standardPrice
-
-    return initialPrice
+    )
   }
 
   isFixedPricing(service: ServiceEntity, customPricing: CustomPricingEntity | null) {
