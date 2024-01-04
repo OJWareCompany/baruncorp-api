@@ -3,10 +3,8 @@ import { BadRequestException, ForbiddenException, Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { HandsUpCommand } from './hands-up.command'
 import { PrismaService } from '../../../database/prisma.service'
-import { AvailableTaskNotFoundException, TaskNotFoundException } from '../../../task/domain/task.error'
+import { AvailableTaskNotFoundException } from '../../../task/domain/task.error'
 import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
-import { StateNotFoundException } from '../../../license/domain/license.error'
 import { AssignedTaskMapper } from '../../../assigned-task/assigned-task.mapper'
 import { USER_REPOSITORY } from '../../user.di-tokens'
 import { UserRepositoryPort } from '../../database/user.repository.port'
@@ -32,7 +30,7 @@ export class HandsUpService implements ICommandHandler {
     if (user.getProps().isHandRaisedForTask) throw new BadRequestException('already hand raised ', '77002')
     if (user.getProps().isVendor) throw new ForbiddenException('vendor can not raise a hand', '77001')
 
-    const assignedTasks = await this.prismaService.assignedTasks.findMany({
+    const pendingTasks = await this.prismaService.assignedTasks.findMany({
       where: {
         is_active: true,
         status: AssignedTaskStatusEnum.Not_Started,
@@ -41,14 +39,14 @@ export class HandsUpService implements ICommandHandler {
       orderBy: [{ is_expedited: 'desc' }, { created_at: 'asc' }],
     })
 
-    for (const assignedTask of assignedTasks) {
-      const task = await this.prismaService.tasks.findUnique({ where: { id: assignedTask.taskId } })
-      if (!task) throw new TaskNotFoundException()
+    for (const pendingTask of pendingTasks) {
+      const task = await this.prismaService.tasks.findUnique({ where: { id: pendingTask.taskId } })
+      if (!task) continue // TODO: 관리자에게 알람?
       if (task.license_type) {
-        const project = await this.prismaService.orderedProjects.findUnique({ where: { id: assignedTask.projectId } })
-        if (!project) throw new ProjectNotFoundException()
+        const project = await this.prismaService.orderedProjects.findUnique({ where: { id: pendingTask.projectId } })
+        if (!project) continue // TODO: 관리자에게 알람?
         const state = await this.prismaService.states.findFirst({ where: { geoId: project.stateId } })
-        if (!state) throw new StateNotFoundException()
+        if (!state) continue // TODO: 관리자에게 알람?
 
         const userLicenses = await this.prismaService.userLicense.findMany({
           where: {
@@ -62,7 +60,7 @@ export class HandsUpService implements ICommandHandler {
       }
 
       // 할당한다.
-      const assignedTaskEntity = this.assignedTaskMapper.toDomain(assignedTask)
+      const assignedTaskEntity = this.assignedTaskMapper.toDomain(pendingTask)
       assignedTaskEntity.assign(user)
       await this.assignedTaskRepo.update(assignedTaskEntity)
       return
