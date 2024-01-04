@@ -14,6 +14,7 @@ import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.d
 import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activated.domain-event'
 import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
 import { PrismaService } from '../../database/prisma.service'
+import { AssignedTaskDurationExceededException } from './assigned-task.error'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -134,6 +135,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     this.props.cost = calcService.calcVendorCost(expensePricing, orderedService)
   }
 
+  // residential revision은 size가 정해지지 않은 경우 complete 될 수 없음
   complete(): this {
     this.props.status = 'Completed'
     this.props.doneAt = new Date()
@@ -222,6 +224,9 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   }
 
   setDuration(duration: number | null): this {
+    if (duration && duration > 127) {
+      throw new AssignedTaskDurationExceededException()
+    }
     this.props.duration = duration
     this.addEvent(
       new AssignedTaskDurationUpdatedDomainEvent({

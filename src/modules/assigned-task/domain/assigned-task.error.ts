@@ -17,3 +17,9 @@ export class AssigneeNotFoundException extends NotFoundException {
     super('Not assignee found', '30202')
   }
 }
+
+export class AssignedTaskDurationExceededException extends BadRequestException {
+  constructor() {
+    super('The duration of the task is too long. Please enter a value less than or equal to 127.', '30203')
+  }
+}
