@@ -8,10 +8,15 @@ import { ProjectResponseDto } from '../../dtos/project.response.dto'
 import { ProjectPropertyType } from '../../domain/project.type'
 import { FindProjectDetailQuery, FindProjectDetailReturnType } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
+import { PrismaService } from '../../../database/prisma.service'
 
 @Controller('projects')
 export class FindProjectDetailHttpController {
-  constructor(private readonly queryBus: QueryBus, private readonly jobMapper: JobMapper) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly prismaService: PrismaService,
+    private readonly jobMapper: JobMapper,
+  ) {}
 
   @Get(':projectId')
   @ApiOperation({ summary: 'Find projects' })
@@ -25,8 +30,9 @@ export class FindProjectDetailHttpController {
     })
 
     const result: FindProjectDetailReturnType = await this.queryBus.execute(query)
+    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
 
-    const jobEntities = result.jobs.map(this.jobMapper.toDomain)
+    const jobEntities = result.jobs.map((job) => this.jobMapper.toDomain({ ...job, prerequisiteTasks }))
     const jobHasCurrentMailingAddress = jobEntities.find((entity) => entity.hasCurrentMailingAddress())
     const mailingAddressForWetStamp = jobHasCurrentMailingAddress?.getProps().mailingAddressForWetStamp || null
     const currentMailingAddress: Address | null = mailingAddressForWetStamp
@@ -42,7 +48,9 @@ export class FindProjectDetailHttpController {
         })
       : null
 
-    const jobsResponse = result.jobs.map(this.jobMapper.toDomain).map(this.jobMapper.toResponse)
+    const jobsResponse = result.jobs
+      .map((job) => this.jobMapper.toDomain({ ...job, prerequisiteTasks }))
+      .map(this.jobMapper.toResponse)
 
     const response = new ProjectResponseDto()
     response.projectId = result.id

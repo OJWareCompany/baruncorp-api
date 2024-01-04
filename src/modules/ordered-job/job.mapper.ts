@@ -1,5 +1,15 @@
 import { JobEntity } from './domain/job.entity'
-import { AssignedTasks, OrderedJobs, OrderedServices, Prisma, Service, Tasks, Users } from '@prisma/client'
+import {
+  AssignedTasks,
+  OrderedJobs,
+  OrderedServices,
+  Prisma,
+  Service,
+  Tasks,
+  UserLicense,
+  Users,
+  prerequisiteTasks,
+} from '@prisma/client'
 import { JobResponseDto } from './dtos/job.response.dto'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
@@ -121,6 +131,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
       })[]
       isCurrentJob?: boolean
+      prerequisiteTasks: prerequisiteTasks[]
     },
   ): JobEntity {
     const assignedTasks: AssignedTask[] = []
@@ -141,6 +152,16 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
             description: orderedService.description,
             duration: assignedTask.duration,
             isActive: assignedTask.is_active,
+            prerequisiteTasks: record.prerequisiteTasks
+              ? record.prerequisiteTasks
+                  .filter((pre) => pre.taskId === assignedTask.taskId)
+                  .map((pre) => {
+                    return {
+                      prerequisiteTaskId: pre.prerequisiteTaskId,
+                      prerequisiteTaskName: pre.prerequisiteTaskName,
+                    }
+                  })
+              : [],
           }),
         )
       })
@@ -272,6 +293,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         startedAt: assignedTask.startedAt?.toISOString() || null,
         doneAt: assignedTask.doneAt?.toISOString() || null,
         isActive: assignedTask.isActive,
+        prerequisiteTasks: assignedTask.prerequisiteTasks,
       })),
 
       orderedServices: props.orderedServices.map((service) => ({

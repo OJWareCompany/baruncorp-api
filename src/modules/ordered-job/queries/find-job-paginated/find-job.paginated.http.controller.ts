@@ -8,10 +8,15 @@ import { FindJobPaginatedQuery } from './find-job.paginated.query-handler'
 import { FindJobPaginatedRequestDto } from './find-job.paginated.request.dto'
 import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users } from '@prisma/client'
 import { JobMapper } from '../../job.mapper'
+import { PrismaService } from '../../../database/prisma.service'
 
 @Controller('jobs')
 export class FindJobPaginatedHttpController {
-  constructor(private readonly queryBus: QueryBus, private readonly mapper: JobMapper) {}
+  constructor(
+    private readonly queryBus: QueryBus,
+    private readonly prismaService: PrismaService,
+    private readonly mapper: JobMapper,
+  ) {}
 
   @Get()
   @ApiOperation({ summary: 'Find job' })
@@ -38,10 +43,12 @@ export class FindJobPaginatedHttpController {
       }
     > = await this.queryBus.execute(query)
 
+    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
+
     return new JobPaginatedResponseDto({
       ...result,
       items: result.items.map((job) => {
-        const entity = this.mapper.toDomain(job)
+        const entity = this.mapper.toDomain({ ...job, prerequisiteTasks })
         return this.mapper.toResponse(entity)
       }),
     })

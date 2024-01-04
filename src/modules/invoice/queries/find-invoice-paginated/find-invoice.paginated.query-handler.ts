@@ -32,7 +32,7 @@ export class FindInvoicePaginatedQueryHandler implements IQueryHandler {
       // ...(query.invoiceDate && { invoiceDate: query.invoiceDate }),
       // ...(query.servicePeriodDate && { servicePeriodDate: query.servicePeriodDate }),
     }
-
+    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const invoices = await this.prismaService.invoices.findMany({
       where: condition,
       include: {
@@ -68,7 +68,7 @@ export class FindInvoicePaginatedQueryHandler implements IQueryHandler {
       totalCount: totalCount,
       items: invoices.map((invoice) => ({
         ...invoice,
-        jobs: invoice.jobs.map(this.jobMapper.toDomain),
+        jobs: invoice.jobs.map((job) => this.jobMapper.toDomain({ ...job, prerequisiteTasks })),
       })),
     })
   }

@@ -1,5 +1,6 @@
 import { AssignedTaskStatus } from '../../../assigned-task/domain/assigned-task.type'
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
+import { prerequisiteTasks } from '@prisma/client'
 
 export class NewOrderedServices {
   serviceId: string
@@ -25,9 +26,19 @@ interface AssignedTaskProps {
   description: string | null
   duration: number | null
   isActive: boolean
+  prerequisiteTasks: {
+    prerequisiteTaskId: string
+    prerequisiteTaskName: string
+  }[]
 }
 
 export class AssignedTask extends ValueObject<AssignedTaskProps> {
+  get prerequisiteTasks(): {
+    prerequisiteTaskId: string
+    prerequisiteTaskName: string
+  }[] {
+    return this.props.prerequisiteTasks
+  }
   get assignTaskId(): string {
     return this.props.assignTaskId
   }

@@ -61,6 +61,7 @@ export class JobRepository implements JobRepositoryPort {
   }
 
   async findJobOrThrow(id: string): Promise<JobEntity> {
+    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const record: JobModel | null = await this.prismaService.orderedJobs.findUnique({
       where: { id },
       include: {
@@ -87,10 +88,12 @@ export class JobRepository implements JobRepositoryPort {
     return this.jobMapper.toDomain({
       ...record,
       isCurrentJob: record.id === currentJob?.id,
+      prerequisiteTasks: prerequisiteTasks,
     })
   }
 
   async findManyBy(property: keyof OrderedJobs, value: OrderedJobs[typeof property]): Promise<JobEntity[]> {
+    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const records: JobModel[] = await this.prismaService.orderedJobs.findMany({
       where: { [property]: value },
       include: {
@@ -108,10 +111,11 @@ export class JobRepository implements JobRepositoryPort {
       },
     })
 
-    return records.map(this.jobMapper.toDomain)
+    return records.map((rec) => this.jobMapper.toDomain({ ...rec, prerequisiteTasks }))
   }
 
   async findJobsToInvoice(clientOrganizationId: string, serviceMonth: Date): Promise<JobEntity[]> {
+    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const records = await this.prismaService.orderedJobs.findMany({
       where: {
         clientOrganizationId: clientOrganizationId,
@@ -137,6 +141,6 @@ export class JobRepository implements JobRepositoryPort {
         },
       },
     })
-    return records.map(this.jobMapper.toDomain)
+    return records.map((rec) => this.jobMapper.toDomain({ ...rec, prerequisiteTasks }))
   }
 }
