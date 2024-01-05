@@ -22,7 +22,7 @@ export class FindVendorToInvoicePaginatedQueryHandler implements IQueryHandler {
     AND at.is_vendor = 1
     AND at.vendor_invoice_id IS NULL
     AND at.cost IS NOT NULL
-    GROUP BY organization_id
+    GROUP BY assignee_organization_id
     ORDER BY started_at DESC;
     `
 
@@ -32,17 +32,17 @@ export class FindVendorToInvoicePaginatedQueryHandler implements IQueryHandler {
     AND at.is_vendor = 1
     AND at.vendor_invoice_id IS NULL
     AND at.cost IS NOT NULL
-    GROUP BY organization_id, DATE_FORMAT(at.started_at,'%Y-%m')
+    GROUP BY assignee_organization_id, DATE_FORMAT(at.started_at,'%Y-%m')
     ORDER BY started_at DESC;
     `
 
     return {
-      vendorsToInvoice: vendors.map((lineItem) => {
+      vendorsToInvoice: vendors.map((organization) => {
         return {
-          organizationName: lineItem.organization_name,
-          organizationId: lineItem.organization_id,
+          organizationName: organization.name,
+          organizationId: organization.assignee_organization_id,
           dates: vendorsLineItems
-            .filter((item) => item.organization_id === lineItem.organization_id)
+            .filter((item) => item.assignee_organization_id === organization.assignee_organization_id)
             .map((item) => item.started_at),
         }
       }),
