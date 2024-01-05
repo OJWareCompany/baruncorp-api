@@ -44,7 +44,6 @@ export class UserRepository implements UserRepositoryPort {
     private readonly prismaService: PrismaService,
     private readonly userMapper: UserMapper,
     private readonly userRoleMapper: UserRoleMapper,
-    // private readonly licenseMapper: LicenseMapper,
     protected readonly eventEmitter: EventEmitter2,
   ) {}
   async findOneByIdOrThrow(id: string): Promise<UserEntity> {

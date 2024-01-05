@@ -2858,6 +2858,34 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: 'json',
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @name ReactivateUserHttpControllerPost
+     * @request PATCH:/users/{userId}/activate
+     */
+    reactivateUserHttpControllerPost: (userId: string, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/users/${userId}/activate`,
+        method: 'PATCH',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeactivateUserHttpControllerPost
+     * @request PATCH:/users/{userId}/deactivate
+     */
+    deactivateUserHttpControllerPost: (userId: string, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/users/${userId}/deactivate`,
+        method: 'PATCH',
+        format: 'json',
+        ...params,
+      }),
   }
   licenses = {
     /**

@@ -54,6 +54,16 @@ export class UserEntity extends AggregateRoot<UserProps> {
     this.props.role = newRole
   }
 
+  reactivate() {
+    this.props.status = UserStatusEnum.ACTIVE
+    return this
+  }
+
+  deactivate() {
+    this.props.status = UserStatusEnum.INACTIVE
+    return this
+  }
+
   makeAdmin(): void {
     this.changeRole(UserRoleNameEnum.admin)
   }

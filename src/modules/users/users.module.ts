@@ -41,6 +41,10 @@ import { ASSIGNED_TASK_REPOSITORY } from '../assigned-task/assigned-task.di-toke
 import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.repository'
 import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
 import { CheckInvitedUserHttpController } from './queries/check-invited-user/check-invited-user.http.controller'
+import { ReactivateUserHttpController } from './commands/reactivate-user/reactivate-user.http.controller'
+import { DeactivateUserHttpController } from './commands/deactivate-user/deactivate-user.http.controller'
+import { ReactivateUserService } from './commands/reactivate-user/reactivate-user.service'
+import { DeactivateUserService } from './commands/deactivate-user/deactivate-user.service'
 
 const httpControllers = [
   UsersController,
@@ -57,6 +61,8 @@ const httpControllers = [
   InviteHttpController,
   ResetDefaultTasksHttpController,
   CheckInvitedUserHttpController,
+  ReactivateUserHttpController,
+  DeactivateUserHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateUserService,
@@ -69,6 +75,8 @@ const commandHandlers: Provider[] = [
   HandsUpService,
   InviteService,
   ResetDefaultTasksService,
+  ReactivateUserService,
+  DeactivateUserService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
 
