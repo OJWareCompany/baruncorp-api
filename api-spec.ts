@@ -1959,8 +1959,29 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
 }
 
 export interface FindMyJobPaginatedHttpControllerFindJobParams {
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default "3480 Northwest 33rd Court"
+   */
+  jobName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  projectNumber?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  propertyFullAddress?: string | null
+  /** @default "Commercial" */
+  projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "In Progress" */
   jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  /** @default "Ground Mount" */
+  mountingType?: 'Roof Mount' | 'Ground Mount' | null
+  /** @default false */
+  isExpedited?: boolean | null
   /**
    * Specifies a limit of returned records
    * @default 20

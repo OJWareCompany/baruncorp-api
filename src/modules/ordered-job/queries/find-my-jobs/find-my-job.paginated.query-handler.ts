@@ -10,10 +10,17 @@ import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JobMapper } from '../../job.mapper'
 import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users } from '@prisma/client'
 import { JobStatusEnum } from '../../domain/job.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 export class FindMyJobPaginatedQuery extends PaginatedQueryBase {
   readonly userId: string
   readonly jobStatus?: JobStatusEnum | null
+  readonly projectNumber?: string | null
+  readonly jobName?: string | null
+  readonly propertyFullAddress?: string | null
+  readonly projectPropertyType?: ProjectPropertyTypeEnum | null
+  readonly mountingType?: MountingTypeEnum | null
+  readonly isExpedited?: boolean | null
 
   constructor(props: PaginatedParams<FindMyJobPaginatedQuery>) {
     super(props)
@@ -38,6 +45,12 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
     // TODO: totalCount때문에 풀스캔하게됨
     const condition = {
       ...(query.jobStatus && { jobStatus: query.jobStatus }),
+      ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
+      ...(query.jobName && { jobName: { contains: query.jobName } }),
+      ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
+      ...(query.projectPropertyType && { projectType: query.projectPropertyType }),
+      ...(query.mountingType && { mountingType: query.mountingType }),
+      ...(query.isExpedited !== undefined && query.isExpedited !== null && { isExpedited: query.isExpedited }),
       assignedTasks: {
         some: {
           assigneeId: query.userId,
