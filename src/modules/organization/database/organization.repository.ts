@@ -19,6 +19,9 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     private readonly userRoleMapper: UserRoleMapper,
     private readonly organizationMapper: OrganizationMapper,
   ) {}
+  findByName(name: string): Promise<OrganizationEntity[]> {
+    throw new Error('Method not implemented.')
+  }
 
   async update(entity: OrganizationEntity): Promise<void> {
     const record = this.organizationMapper.toPersistence(entity)
@@ -36,20 +39,11 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     return this.organizationMapper.toDomain(record)
   }
 
-  async findByName(name: string): Promise<OrganizationEntity[]> {
-    const records = await this.prismaService.organizations.findMany({ where: { name: { contains: name } } })
-    return records.map(this.organizationMapper.toDomain)
-  }
-
   async findOneByName(name: string): Promise<OrganizationEntity | null> {
-    const record = await this.prismaService.organizations.findFirst({ where: { name: { contains: name } } })
+    const record = await this.prismaService.organizations.findFirst({ where: { name: name } })
     if (!record) null
     return record && this.organizationMapper.toDomain(record)
   }
-
-  // async isExisteByName(name: string): Promise<CompanyProp[]> {
-  //   // return await this.prismaService.companies
-  // }
 
   async insertOrganization(entity: OrganizationEntity): Promise<void> {
     const record = this.organizationMapper.toPersistence(entity)
