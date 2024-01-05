@@ -19,10 +19,6 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     private readonly userRoleMapper: UserRoleMapper,
     private readonly organizationMapper: OrganizationMapper,
   ) {}
-  findByName(name: string): Promise<OrganizationEntity[]> {
-    throw new Error('Method not implemented.')
-  }
-
   async update(entity: OrganizationEntity): Promise<void> {
     const record = this.organizationMapper.toPersistence(entity)
     await this.prismaService.organizations.update({ where: { id: record.id }, data: record })
