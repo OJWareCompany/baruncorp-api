@@ -9,6 +9,9 @@ import {
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import {
   OrderedServiceAlreadyCompletedException,
+  OrderedServiceCommercialRevisionManualPriceUpdateException,
+  OrderedServiceFreeRevisionManualPriceUpdateException,
+  OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
   OrderedServiceInvalidRevisionStateException,
 } from './ordered-service.error'
 import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
@@ -26,6 +29,9 @@ import { JobEntity } from '../../ordered-job/domain/job.entity'
 import { OrganizationEntity } from '../../organization/domain/organization.entity'
 import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
+import { InvoiceEntity } from '../../invoice/domain/invoice.entity'
+import { IssuedJobUpdateException } from '../../ordered-job/domain/job.error'
+import { InvoiceStatusEnum } from '../../invoice/domain/invoice.type'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -91,6 +97,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   get isRevision() {
     return this.props.isRevision
+  }
+
+  get isResidentialRevision() {
+    return this.props.isRevision && this.props.projectPropertyType === ProjectPropertyTypeEnum.Residential
   }
 
   get projectPropertyType() {
@@ -227,7 +237,27 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  setManualPrice(price: number) {
+  /**
+   * 코드를 보고 manual price를 입력할때 필요한 도메인 프로세스를 쉽게 파악할수 있도록 문서같은 코드가 되어야한다.
+   */
+  async setManualPrice(
+    organization: OrganizationEntity,
+    preOrderedServices: OrderedServiceEntity[],
+    serviceInitialPriceManager: ServiceInitialPriceManager,
+    invoice: InvoiceEntity | null,
+    price: number,
+  ) {
+    if (this.isResidentialRevision && this.sizeForRevision !== 'Major') {
+      throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()
+    }
+
+    const isFreeRevision = serviceInitialPriceManager.isFreeRevision(organization, preOrderedServices)
+    if (isFreeRevision) {
+      throw new OrderedServiceFreeRevisionManualPriceUpdateException()
+    }
+
+    if (invoice?.isUnissued) throw new IssuedJobUpdateException()
+
     this.props.isManualPrice = true
     this.setPrice(price)
   }

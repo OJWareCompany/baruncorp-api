@@ -28,6 +28,10 @@ export class AssignedTaskResponseDto {
   @IsString()
   readonly jobId: string
 
+  // @ApiProperty({ example: 5 })
+  // @IsString()
+  // readonly jobRequestNumber: number
+
   @ApiProperty({ default: AssignedTaskStatusEnum.Not_Started, enum: AssignedTaskStatusEnum })
   @IsString()
   readonly status: string

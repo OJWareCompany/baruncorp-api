@@ -32,3 +32,8 @@ export class OrderedServiceCommercialRevisionManualPriceUpdateException extends 
     )
   }
 }
+export class OrderedServiceFreeRevisionManualPriceUpdateException extends BadRequestException {
+  constructor() {
+    super(`Free revisions cannot have a manual price set.`, '40305')
+  }
+}

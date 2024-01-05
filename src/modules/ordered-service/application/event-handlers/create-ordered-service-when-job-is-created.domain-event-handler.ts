@@ -44,6 +44,8 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
 
     const makeEntities = event.services.map(async (orderedService) => {
       const service = await this.serviceRepo.findOneOrThrow(orderedService.serviceId)
+
+      // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
       const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
         event.projectId,
         orderedService.serviceId,

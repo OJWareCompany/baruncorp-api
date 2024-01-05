@@ -1,82 +1,56 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PrismaService } from '../../../database/prisma.service'
 import { UpdateManualPriceCommand } from './update-manual-price.command'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
-import {
-  OrderedServiceCommercialRevisionManualPriceUpdateException,
-  OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
-  OrderedServiceNotFoundException,
-} from '../../domain/ordered-service.error'
-import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
-import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
-import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
-import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
-import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
+import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
+import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
 
+/**
+ * 나름 잘 리팩토링된 케이스
+ * Application Service에서는 의존성을 제공하는 역할만 하고 주요 로직은 Domain method에 있다.
+ */
 @CommandHandler(UpdateManualPriceCommand)
 export class UpdateManualPriceService implements ICommandHandler {
   constructor(
     // @ts-ignore
-    @Inject(ORDERED_SERVICE_REPOSITORY)
-    private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
-    private readonly prismaService: PrismaService,
+    @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort, // @ts-ignore
+    @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort, // @ts-ignore
+    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort, // @ts-ignore
+    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort, // @ts-ignore
+    @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort,
+    private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
   ) {}
   async execute(command: UpdateManualPriceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
 
-    if (orderedService.isRevision && orderedService.projectPropertyType === ProjectPropertyTypeEnum.Commercial) {
-      throw new OrderedServiceCommercialRevisionManualPriceUpdateException()
-    }
-    // TODO: 코드를 보고 manual price를 입력할때 필요한 도메인 프로세스를 쉽게 파악할수 있도록 문서같은 코드가 되어야한다.
-    if (orderedService.isRevision && orderedService.sizeForRevision !== 'Major')
-      throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()
+    const project = await this.projectRepo.findProjectOrThrow(orderedService.projectId)
+    const organization = await this.organizationRepo.findOneOrThrow(project.clientOrganizationId)
+    const job = await this.jobRepo.findJobOrThrow(orderedService.jobId)
+    const invoice = await this.invoiceRepo.findOne(job.invoiceId || '') // TODO: REFACTOR
 
-    const project = await this.prismaService.orderedProjects.findUnique({
-      where: { id: orderedService.getProps().projectId },
-    })
-    if (!project) throw new ProjectNotFoundException()
+    const preOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
+      project.id,
+      orderedService.getProps().serviceId,
+    )
 
-    const organization = await this.prismaService.organizations.findUnique({
-      where: { id: project.clientOrganizationId },
-    })
-    if (!organization) throw new OrganizationNotFoundException()
-
-    // Free Revision
-    const preOrderedServices = await this.prismaService.orderedServices.findMany({
-      where: {
-        projectId: project.id,
-        serviceId: orderedService.getProps().serviceId,
-        status: { notIn: [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold] },
-      },
-    })
-
-    const freeRevisionCount = organization.numberOfFreeRevisionCount
-    const receivedFreeRevisionsCount = preOrderedServices.filter((service) => {
-      return Number(service.price) === 0
-    }).length
-    const hasRemainingFreeRevisions = Number(freeRevisionCount) > receivedFreeRevisionsCount
-    const isFreeRevision =
-      orderedService.getProps().isRevision && organization.isSpecialRevisionPricing && hasRemainingFreeRevisions
-
-    if (isFreeRevision) return
-
-    // TODO: REFACTOR
-    const job = await this.prismaService.orderedJobs.findUnique({ where: { id: orderedService.getProps().jobId } })
-    if (!job) throw new JobNotFoundException()
-    const invoiceId = job.invoiceId
-
-    if (invoiceId !== null) {
-      const invoice = await this.prismaService.invoices.findUnique({ where: { id: invoiceId } })
-      if (!invoice) throw new InvoiceNotFoundException()
-      if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
-    }
-
-    orderedService.setManualPrice(command.price)
+    orderedService.setManualPrice(
+      organization,
+      preOrderedServices,
+      this.serviceInitialPriceManager,
+      invoice,
+      command.price,
+    )
 
     await this.orderedServiceRepo.update(orderedService)
   }

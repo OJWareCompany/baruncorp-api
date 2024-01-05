@@ -21,6 +21,7 @@ export class ServiceInitialPriceManager {
     const isFreeRevision = this.isFreeRevision(organization, previouslyOrderedServices)
     if (isFreeRevision) return 0 // Free
 
+    // TODO: previouslyOrderedServices에 자신이 포함되어있을것임. 추후 수정 필요. (update revision Size에서 사용하는데 이미 revision 대상이므로 상관은 없지만 로직에 모순있음)
     const isRevision = !!previouslyOrderedServices.length
 
     if (customPricing) {

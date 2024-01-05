@@ -66,6 +66,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
+    // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
     const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
       job.projectId,
       command.serviceId,
@@ -83,7 +84,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
       organizationId: job.organizationId,
       organizationName: job.organizationName,
       projectNumber: project.projectNumber,
-      projectPropertyOwnerName: project.projectPropertyOwnerName!,
+      projectPropertyOwnerName: project.projectPropertyOwnerName,
       jobName: job.jobName,
       isExpedited: job.getProps().isExpedited,
     })
