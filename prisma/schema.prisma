@@ -51,6 +51,7 @@ model Organizations {
   projects                        OrderedProjects[]
   invoices                        Invoices[]
   vendorInvoices                  VendorInvoices[]
+  assignedTasks                   AssignedTasks[]
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
@@ -513,13 +514,14 @@ model OrderedJobs {
 
 model OrderedProjects {
   id                                            String         @id @map("id") @db.VarChar(255)
-  hasHistoryStructuralPEStamp                   Boolean        @default(false) @map("has_history_structural_pe_stamp")
-  hasHistoryElectricalPEStamp                   Boolean        @default(false) @map("has_history_electrical_pe_stamp")
   propertyAddressCoordinates                    String         @map("property_address_coordinates") @db.VarChar(255)
+  projectPropertyType                           String         @map("project_property_type") @db.VarChar(255)
   mountingType                                  String?        @map("mounting_type") @db.VarChar(255)
   mailingAddressForWetStamps                    String?        @map("mailing_address_for_wet_stamps") @db.VarChar(255)
   systemSize                                    Decimal?       @map("system_size") @db.Decimal(10, 2)
   dateCreated                                   DateTime       @map("date_created") @db.DateTime(0)
+  hasHistoryStructuralPEStamp                   Boolean        @default(false) @map("has_history_structural_pe_stamp")
+  hasHistoryElectricalPEStamp                   Boolean        @default(false) @map("has_history_electrical_pe_stamp")
   projectFolder                                 String?        @map("project_folder") @db.VarChar(255)
   projectNumber                                 String?        @map("project_number") @db.VarChar(255)
   propertyFullAddress                           String         @map("property_full_address") @db.VarChar(255)
@@ -552,7 +554,6 @@ model OrderedProjects {
   countySubdivisionsId                          String?        @map("county_subdivisions_id") @db.VarChar(255)
   placeId                                       String?        @map("place_id") @db.VarChar(255)
   ahjId                                         String?        @map("ahj_id") @db.VarChar(255)
-  projectPropertyType                           String         @map("project_property_type") @db.VarChar(255)
   isGroundMount                                 Boolean?       @map("is_ground_mount")
   mailingAddressForStructuralWetStamp           String?        @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
   mailingAddressForElectricalWetStamp           String?        @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
@@ -689,6 +690,8 @@ model AssignedTasks {
   vendorInvoiceId          String?         @map("vendor_invoice_id") @db.VarChar(255)
   assigneeId               String?         @map("assignee_id") @db.VarChar(255)
   assigneeName             String?         @map("assignee_name") @db.VarChar(255)
+  assigneeOrganizationId   String?         @map("assignee_organization_id") @db.VarChar(255)
+  assigneeOrganizationName String?         @map("assignee_organization_name") @db.VarChar(255)
   orderedServiceId         String          @map("ordered_service_id") @db.VarChar(255)
   serviceId                String          @map("service_id") @db.VarChar(255)
   serviceName              String          @map("service_name") @db.VarChar(255)
@@ -706,6 +709,7 @@ model AssignedTasks {
   orderedService           OrderedServices @relation(fields: [orderedServiceId], references: [id])
   job                      OrderedJobs     @relation(fields: [jobId], references: [id])
   user                     Users?          @relation(fields: [assigneeId], references: [id])
+  assigneeOrganization     Organizations?  @relation(fields: [assigneeOrganizationId], references: [id])
 
   @@map("assigned_tasks")
 }

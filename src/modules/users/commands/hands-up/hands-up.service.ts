@@ -61,7 +61,7 @@ export class HandsUpService implements ICommandHandler {
 
       // 할당한다.
       const assignedTaskEntity = this.assignedTaskMapper.toDomain(pendingTask)
-      assignedTaskEntity.assign(user)
+      assignedTaskEntity.assign(user, null) // OK?
       await this.assignedTaskRepo.update(assignedTaskEntity)
       return
     }

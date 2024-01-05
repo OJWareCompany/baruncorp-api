@@ -56,7 +56,7 @@ export class RejectAssignedTaskService implements ICommandHandler {
       data: {
         id: v4(),
         assigneeUserId: user.id,
-        assigneeUserName: user.getProps().userName.getFullName(),
+        assigneeUserName: user.getProps().userName.fullName,
         reason: command.reason,
         taskName: assignedTask.getProps().taskName,
         assignedTaskId: command.assignedTaskId,

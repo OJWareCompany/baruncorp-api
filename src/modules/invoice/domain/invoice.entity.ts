@@ -17,8 +17,8 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     return new InvoiceEntity({ id, props })
   }
 
-  get isUnissued() {
-    return this.props.status === InvoiceStatusEnum.Unissued
+  get isIssuedOrPaid() {
+    return this.props.status === InvoiceStatusEnum.Issued || this.props.status === InvoiceStatusEnum.Paid
   }
 
   get status() {

@@ -79,7 +79,7 @@ export class RevokeUserLicenseService implements ICommandHandler {
           userId: user.id,
           positionId: position.id,
           positionName: position.name,
-          userName: user.getProps().userName.getFullName(),
+          userName: user.userName.fullName,
           user_email: user.getProps().email,
         },
       })

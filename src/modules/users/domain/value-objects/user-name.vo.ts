@@ -10,15 +10,15 @@ export class UserName {
     this.props = props
   }
 
-  getFirstName() {
+  get firstName() {
     return this.props.firstName
   }
 
-  getLastName() {
+  get lastName() {
     return this.props.lastName
   }
 
-  getFullName() {
+  get fullName() {
     return `${this.props.firstName} ${this.props.lastName}`
   }
 }

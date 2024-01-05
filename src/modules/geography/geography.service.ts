@@ -55,6 +55,6 @@ export class GeographyService {
   async updateNote(user: UserEntity, geoId: string, dto: UpdateAhjNoteDto): Promise<void> {
     const note = await this.geographyRepository.findNoteByGeoId(geoId)
     if (!note) throw new AhjNoteNotFoundException()
-    await this.geographyRepository.updateNote(user.getProps().userName.getFullName(), geoId, dto)
+    await this.geographyRepository.updateNote(user.userName.fullName, geoId, dto)
   }
 }

@@ -20,9 +20,9 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     const record: UserModel = {
       id: copy.id,
       email: copy.email,
-      firstName: copy.userName.getFirstName(),
-      lastName: copy.userName.getLastName(),
-      full_name: copy.userName.getFullName(),
+      firstName: copy.userName.firstName,
+      lastName: copy.userName.lastName,
+      full_name: copy.userName.fullName,
       organizationId: copy.organization.id,
       updatedAt: entity.updatedAt,
       createdAt: entity.createdAt,
@@ -97,9 +97,9 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     const response = new UserResponseDto()
     response.id = props.id
     response.email = props.email
-    response.firstName = props.userName.getFirstName()
-    response.lastName = props.userName.getLastName()
-    response.fullName = props.userName.getFullName()
+    response.firstName = props.userName.firstName
+    response.lastName = props.userName.lastName
+    response.fullName = props.userName.fullName
     response.phoneNumber = props.phone?.number || null
     response.deliverablesEmails = props.deliverablesEmails
     response.organization = props.organization.name

@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PrismaService } from '../../../database/prisma.service'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
-import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
@@ -29,23 +26,14 @@ export class AssignTaskService implements ICommandHandler {
     // @ts-ignore
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepo: InvoiceRepositoryPort,
-    private readonly prismaService: PrismaService,
   ) {}
   async execute(command: AssignTaskCommand): Promise<void> {
     const userEntity = await this.userRepo.findOneByIdOrThrow(command.assigneeId)
-    const assignedTaskEntity = await this.assignedTaskRepo.findOne(command.assignedTaskId)
-    if (!assignedTaskEntity) throw new AssignedTaskNotFoundException()
-    assignedTaskEntity //
-      .assign(userEntity)
-
-    // TODO: REFACTOR
+    const assignedTaskEntity = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
     const job = await this.jobRepo.findJobOrThrow(assignedTaskEntity.getProps().jobId)
+    const invoice = await this.invoiceRepo.findOne(job.invoiceId || '')
 
-    if (job.invoiceId !== null) {
-      const invoice = await this.invoiceRepo.findOneOrThrow(job.invoiceId)
-      if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
-    }
-
+    assignedTaskEntity.assign(userEntity, invoice)
     await this.assignedTaskRepo.update(assignedTaskEntity)
   }
 }

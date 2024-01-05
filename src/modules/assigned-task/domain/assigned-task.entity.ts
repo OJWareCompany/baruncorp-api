@@ -15,6 +15,8 @@ import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activat
 import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
 import { PrismaService } from '../../database/prisma.service'
 import { AssignedTaskDurationExceededException } from './assigned-task.error'
+import { InvoiceEntity } from '../../invoice/domain/invoice.entity'
+import { IssuedJobUpdateException } from '../../ordered-job/domain/job.error'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -24,6 +26,10 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     const props: AssignedTaskProps = {
       ...create,
       status: 'Not Started',
+      assigneeId: null,
+      assigneeName: null,
+      assigneeOrganizationId: null,
+      assigneeOrganizationName: null,
       duration: null,
       startedAt: null,
       doneAt: null,
@@ -184,6 +190,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   unassign() {
     this.props.assigneeId = null
     this.props.assigneeName = null
+    this.props.assigneeOrganizationId = null
+    this.props.assigneeOrganizationName = null
     this.props.status = 'Not Started'
     this.props.startedAt = null
     this.props.doneAt = null
@@ -196,9 +204,12 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  assign(user: UserEntity): this {
+  assign(user: UserEntity, invoice: InvoiceEntity | null): this {
+    if (invoice && invoice.isIssuedOrPaid) throw new IssuedJobUpdateException()
     this.props.assigneeId = user.id
-    this.props.assigneeName = user.getProps().userName.getFullName()
+    this.props.assigneeName = user.userName.fullName
+    this.props.assigneeOrganizationId = user.organization.id
+    this.props.assigneeOrganizationName = user.organization.name
     this.props.status = 'In Progress'
     this.props.startedAt = new Date()
     if (user.isVendor) {

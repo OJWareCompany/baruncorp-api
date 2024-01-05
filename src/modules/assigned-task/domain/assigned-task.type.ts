@@ -18,8 +18,6 @@ export interface CreateAssignedTaskProps {
   serviceName: string
   projectId: string
   jobId: string
-  assigneeId: string | null
-  assigneeName: string | null
   organizationId: string
   organizationName: string
   projectPropertyType: ProjectPropertyTypeEnum
@@ -36,6 +34,10 @@ export interface AssignedTaskProps extends CreateAssignedTaskProps {
   status: AssignedTaskStatus
   cost: number | null
   isVendor: boolean
+  assigneeId: string | null
+  assigneeName: string | null
+  assigneeOrganizationId: string | null
+  assigneeOrganizationName: string | null
   vendorInvoiceId: string | null
   duration: number | null
   startedAt: Date | null

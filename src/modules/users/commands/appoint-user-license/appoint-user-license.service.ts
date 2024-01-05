@@ -55,7 +55,7 @@ export class AppointUserLicenseService implements ICommandHandler {
     await this.prismaService.userLicense.create({
       data: {
         userId: user.id,
-        userName: user.getProps().userName.getFullName(),
+        userName: user.userName.fullName,
         abbreviation: state.abbreviation,
         type: command.type,
         issuingCountryName: state.stateName,
@@ -85,7 +85,7 @@ export class AppointUserLicenseService implements ICommandHandler {
         userId: user.id,
         positionId: position.id,
         positionName: position.name,
-        userName: user.getProps().userName.getFullName(),
+        userName: user.userName.fullName,
         user_email: user.getProps().email,
       },
     })
@@ -108,7 +108,7 @@ export class AppointUserLicenseService implements ICommandHandler {
       licensedTasks.map(async (pt) => {
         await this.prismaService.userAvailableTasks.create({
           data: {
-            userName: user.getProps().userName.getFullName(),
+            userName: user.userName.fullName,
             userId: user.id,
             taskId: pt.id,
             taskName: pt.name,

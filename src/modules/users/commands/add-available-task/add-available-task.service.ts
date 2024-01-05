@@ -37,7 +37,7 @@ export class AddAvailableTaskService implements ICommandHandler {
 
     await this.prismaService.userAvailableTasks.create({
       data: {
-        userName: user.getProps().userName.getFullName(),
+        userName: user.userName.fullName,
         userId: user.id,
         taskId: task.id,
         taskName: task.name,

@@ -50,7 +50,7 @@ export class ResetDefaultTasksService implements ICommandHandler {
       positionTasks.map(async (pt) => {
         await this.prismaService.userAvailableTasks.create({
           data: {
-            userName: user.getProps().userName.getFullName(),
+            userName: user.userName.fullName,
             userId: user.id,
             taskId: pt.taskId,
             taskName: pt.taskName,

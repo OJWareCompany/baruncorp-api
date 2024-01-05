@@ -50,7 +50,7 @@ export class FindTaskHttpController {
           organizationName: user.getProps().organization.name,
           position: user.getProps().position?.name || null,
           userId: user.id,
-          userName: user.getProps().userName.getFullName(),
+          userName: user.userName.fullName,
         }
       }),
     })

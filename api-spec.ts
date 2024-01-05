@@ -1043,6 +1043,8 @@ export interface AssignedTaskResponseDto {
   description: string | null
   assigneeId: string | null
   assigneeName: string | null
+  assigneeOrganizationId: string | null
+  assigneeOrganizationName: string | null
   projectId: string
   organizationId: string
   organizationName: string
@@ -1508,6 +1510,8 @@ export interface VendorInvoiceLineItemResponse {
   taskId: string
   assigneeId: string
   assigneeName: string
+  assigneeOrganizationId: string
+  assigneeOrganizationName: string
   clientOrganizationId: string
   clientOrganizationName: string
   projectId: string
@@ -4509,7 +4513,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
   }
   vendorToInvoices = {
     /**
-     * No description
+     * @description 바른코프에서 외주 비용을 지불해야할 외주 회사 리스트 조회
      *
      * @name FindVendorToInvoicePaginatedHttpControllerGet
      * @request GET:/vendor-to-invoices

@@ -256,7 +256,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       throw new OrderedServiceFreeRevisionManualPriceUpdateException()
     }
 
-    if (invoice?.isUnissued) throw new IssuedJobUpdateException()
+    if (invoice && invoice.isIssuedOrPaid) throw new IssuedJobUpdateException()
 
     this.props.isManualPrice = true
     this.setPrice(price)

@@ -20,6 +20,14 @@ export class VendorInvoiceLineItemResponse {
 
   @ApiProperty()
   @IsString()
+  assigneeOrganizationId: string
+
+  @ApiProperty()
+  @IsString()
+  assigneeOrganizationName: string
+
+  @ApiProperty()
+  @IsString()
   clientOrganizationId: string
 
   @ApiProperty()

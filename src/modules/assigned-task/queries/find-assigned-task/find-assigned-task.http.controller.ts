@@ -26,6 +26,8 @@ export class FindAssignedTaskHttpController {
       description: result.orderedService.description,
       assigneeId: result.assigneeId,
       assigneeName: result.assigneeName,
+      assigneeOrganizationId: result.assigneeOrganizationId,
+      assigneeOrganizationName: result.assigneeOrganizationName,
       duration: result.duration,
       startedAt: result.startedAt,
       doneAt: result.doneAt,

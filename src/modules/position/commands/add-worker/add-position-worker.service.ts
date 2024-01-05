@@ -54,7 +54,7 @@ export class AddPositionWorkerService implements ICommandHandler {
         userId: user.id,
         positionId: entity.id,
         positionName: entity.getProps().name,
-        userName: user.getProps().userName.getFullName(),
+        userName: user.userName.fullName,
         user_email: user.getProps().email,
       },
     })

@@ -5,9 +5,8 @@ import { UserName } from './value-objects/user-name.vo'
 import { Phone } from './value-objects/phone-number.value-object'
 import { UserRoleNameEnum } from './value-objects/user-role.vo'
 import { PhoneNumberFormatException } from '../user.error'
-import { InputPasswordVO } from './value-objects/password.vo'
 import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
-import { License } from './value-objects/license.value-object'
+import { Organization } from './value-objects/organization.value-object'
 
 // where should it be 'id'? Entity or Prop?
 // 'id' should be in base entity
@@ -35,12 +34,20 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return new UserEntity({ id, props })
   }
 
-  get isVendor() {
+  get userName(): UserName {
+    return this.props.userName
+  }
+
+  get isVendor(): boolean {
     return this.props.isVendor
   }
 
   get role(): UserRoleNameEnum {
     return this.props.role
+  }
+
+  get organization(): Organization {
+    return this.props.organization
   }
 
   private changeRole(newRole: UserRoleNameEnum): void {

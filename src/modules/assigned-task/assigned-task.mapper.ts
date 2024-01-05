@@ -1,5 +1,5 @@
 import { AssignedTasks, Prisma } from '@prisma/client'
-import { BadRequestException, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { AssignedTaskResponseDto } from './dtos/assigned-task.response.dto'
 import { AssignedTaskEntity } from './domain/assigned-task.entity'
@@ -20,6 +20,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       status: props.status,
       assigneeId: props.assigneeId,
       assigneeName: props.assigneeName,
+      assigneeOrganizationId: props.assigneeOrganizationId,
+      assigneeOrganizationName: props.assigneeOrganizationName,
       startedAt: props.startedAt,
       doneAt: props.doneAt,
       taskName: props.taskName,
@@ -56,6 +58,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         status: record.status as AssignedTaskStatus,
         assigneeId: record.assigneeId,
         assigneeName: record.assigneeName,
+        assigneeOrganizationId: record.assigneeOrganizationId,
+        assigneeOrganizationName: record.assigneeOrganizationName,
         duration: record.duration,
         startedAt: record.startedAt,
         doneAt: record.doneAt,
@@ -83,31 +87,33 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
   }
 
   toResponse(entity: AssignedTaskEntity): AssignedTaskResponseDto {
-    const result = entity.getProps()
+    const props = entity.getProps()
     return new AssignedTaskResponseDto({
-      id: result.id,
-      taskId: result.taskId,
-      orderedServiceId: result.orderedServiceId,
-      jobId: result.jobId,
-      status: result.status,
-      description: result.description,
-      assigneeId: result.assigneeId,
-      assigneeName: result.assigneeName,
-      duration: result.duration,
-      startedAt: result.startedAt,
-      doneAt: result.doneAt,
-      taskName: result.taskName,
-      serviceName: result.serviceName,
-      projectId: result.projectId,
-      organizationId: result.organizationId,
-      organizationName: result.organizationName,
-      projectPropertyType: result.projectPropertyType,
-      mountingType: result.mountingType,
-      cost: result.cost ? Number(result.cost) : null,
-      isVendor: result.isVendor,
-      vendorInvoiceId: result.vendorInvoiceId,
-      serviceId: result.serviceId,
-      createdAt: result.createdAt,
+      id: props.id,
+      taskId: props.taskId,
+      orderedServiceId: props.orderedServiceId,
+      jobId: props.jobId,
+      status: props.status,
+      description: props.description,
+      assigneeId: props.assigneeId,
+      assigneeName: props.assigneeName,
+      assigneeOrganizationId: props.assigneeOrganizationId,
+      assigneeOrganizationName: props.assigneeOrganizationName,
+      duration: props.duration,
+      startedAt: props.startedAt,
+      doneAt: props.doneAt,
+      taskName: props.taskName,
+      serviceName: props.serviceName,
+      projectId: props.projectId,
+      organizationId: props.organizationId,
+      organizationName: props.organizationName,
+      projectPropertyType: props.projectPropertyType,
+      mountingType: props.mountingType,
+      cost: props.cost ? Number(props.cost) : null,
+      isVendor: props.isVendor,
+      vendorInvoiceId: props.vendorInvoiceId,
+      serviceId: props.serviceId,
+      createdAt: props.createdAt,
     })
   }
 
@@ -117,6 +123,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
     response.taskId = entity.getProps().taskId
     response.assigneeId = entity.getProps().assigneeId!
     response.assigneeName = entity.getProps().assigneeName!
+    response.assigneeOrganizationId = entity.getProps().assigneeOrganizationId!
+    response.assigneeOrganizationName = entity.getProps().assigneeOrganizationName!
     response.clientOrganizationId = entity.getProps().organizationId
     response.clientOrganizationName = entity.getProps().organizationName
     response.projectId = entity.getProps().projectId

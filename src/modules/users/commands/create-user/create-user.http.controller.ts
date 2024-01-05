@@ -17,7 +17,7 @@ export class CreateUserHttpContoller {
   @UseGuards(AuthGuard)
   async createUnregisteredUser(@User() user: UserEntity, @Body() request: CreateUserRequestDto): Promise<IdResponse> {
     const command = new CreateUserCommand({
-      updatedBy: user.getProps().userName.getFullName(),
+      updatedBy: user.userName.fullName,
       ...request,
     })
 

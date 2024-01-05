@@ -53,6 +53,16 @@ export class AssignedTaskResponseDto {
 
   @ApiProperty()
   @IsString()
+  @IsOptional()
+  readonly assigneeOrganizationId: string | null
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly assigneeOrganizationName: string | null
+
+  @ApiProperty()
+  @IsString()
   readonly projectId: string
 
   @ApiProperty()
