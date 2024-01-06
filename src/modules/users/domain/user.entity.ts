@@ -7,6 +7,7 @@ import { UserRoleNameEnum } from './value-objects/user-role.vo'
 import { PhoneNumberFormatException } from '../user.error'
 import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 import { Organization } from './value-objects/organization.value-object'
+import { UserManager } from './domain-services/user-manager.domain-service'
 
 // where should it be 'id'? Entity or Prop?
 // 'id' should be in base entity
@@ -54,8 +55,8 @@ export class UserEntity extends AggregateRoot<UserProps> {
     this.props.role = newRole
   }
 
-  reactivate() {
-    this.props.status = UserStatusEnum.ACTIVE
+  async reactivate(userManager: UserManager) {
+    this.props.status = await userManager.determineUserStatus(this)
     return this
   }
 

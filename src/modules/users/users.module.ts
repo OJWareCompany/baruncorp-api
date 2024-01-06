@@ -45,6 +45,7 @@ import { ReactivateUserHttpController } from './commands/reactivate-user/reactiv
 import { DeactivateUserHttpController } from './commands/deactivate-user/deactivate-user.http.controller'
 import { ReactivateUserService } from './commands/reactivate-user/reactivate-user.service'
 import { DeactivateUserService } from './commands/deactivate-user/deactivate-user.service'
+import { UserManager } from './domain/domain-services/user-manager.domain-service'
 
 const httpControllers = [
   UsersController,
@@ -79,6 +80,7 @@ const commandHandlers: Provider[] = [
   DeactivateUserService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
+const domainServices: Provider[] = [UserManager]
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
@@ -92,7 +94,7 @@ const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper, Pos
 
 @Module({
   imports: [PrismaModule, CqrsModule],
-  providers: [UserService, ...commandHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [UserService, ...commandHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
   exports: [UserService],
 })
