@@ -91,13 +91,12 @@ export class AuthenticationService {
     }
   }
 
-  // TODO: turn secure on after setup https
   private setToken(name: 'token' | 'refreshToken', token: string, res: Response) {
     const options: CookieOptions = {
       maxAge: 24 * 60 * 60 * 1000, //1 day
       httpOnly: true,
+      secure: true,
       // sameSite: 'none',
-      // secure: true,
     }
     res.cookie(name, token, options)
   }
