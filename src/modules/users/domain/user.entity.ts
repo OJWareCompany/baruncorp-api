@@ -4,13 +4,16 @@ import { CreateUserProps, UserProps, UserStatusEnum } from './user.types'
 import { UserName } from './value-objects/user-name.vo'
 import { Phone } from './value-objects/phone-number.value-object'
 import { UserRoleNameEnum } from './value-objects/user-role.vo'
-import { PhoneNumberFormatException } from '../user.error'
+import {
+  InvalidClientRoleAssignmentException,
+  InvalidMemberRoleAssignmentException,
+  PhoneNumberFormatException,
+  SpecialAdminExistsException,
+} from '../user.error'
 import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 import { Organization } from './value-objects/organization.value-object'
 import { UserManager } from './domain-services/user-manager.domain-service'
 
-// where should it be 'id'? Entity or Prop?
-// 'id' should be in base entity
 export class UserEntity extends AggregateRoot<UserProps> {
   protected _id: string
 
@@ -51,8 +54,26 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return this.props.organization
   }
 
-  private changeRole(newRole: UserRoleNameEnum): void {
+  get isAdministrationMember() {
+    return this.props.organization.organizationType === 'administration'
+  }
+
+  changeRole(newRole: UserRoleNameEnum): UserEntity {
+    if (UserRoleNameEnum.special_admin === newRole) throw new SpecialAdminExistsException()
+
+    if (!this.isAdministrationMember && [UserRoleNameEnum.member, UserRoleNameEnum.admin].includes(newRole)) {
+      throw new InvalidClientRoleAssignmentException()
+    }
+
+    if (
+      this.isAdministrationMember &&
+      [UserRoleNameEnum.client_company_employee, UserRoleNameEnum.client_company_manager].includes(newRole)
+    ) {
+      throw new InvalidMemberRoleAssignmentException()
+    }
+
     this.props.role = newRole
+    return this
   }
 
   async reactivate(userManager: UserManager) {

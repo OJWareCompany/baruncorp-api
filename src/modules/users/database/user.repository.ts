@@ -67,10 +67,7 @@ export class UserRepository implements UserRepositoryPort {
 
     await this.prismaService.userRole.update({
       where: {
-        userId_roleName: {
-          userId: entity.id,
-          roleName: entity.role,
-        },
+        userId: entity.id,
       },
       data: {
         userId: entity.id,

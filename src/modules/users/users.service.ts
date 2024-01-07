@@ -11,10 +11,10 @@ import { UserResponseDto } from './dtos/user.response.dto'
 import { UserEntity } from './domain/user.entity'
 import UserMapper from './user.mapper'
 import { UserName } from './domain/value-objects/user-name.vo'
-import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 import { InvitationNotFoundException, OnlyMemberCanBeAdminException, UserNotFoundException } from './user.error'
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 import { PrismaService } from '../database/prisma.service'
+import { Roles } from '@prisma/client'
 
 @Injectable()
 export class UserService {
@@ -40,8 +40,8 @@ export class UserService {
     await this.userRepository.update(user)
   }
 
-  async getRoles(): Promise<UserRoleNameEnum[]> {
-    return [UserRoleNameEnum.guest, UserRoleNameEnum.member]
+  async getRoles(): Promise<Roles[]> {
+    return await this.prismaService.roles.findMany()
   }
 
   async getUserProfile(userId: string): Promise<UserResponseDto> {

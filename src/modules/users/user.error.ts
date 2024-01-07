@@ -29,3 +29,21 @@ export class PhoneNumberFormatException extends BadRequestException {
     super('Invalid phone number format', '10111')
   }
 }
+
+export class SpecialAdminExistsException extends ConflictException {
+  constructor() {
+    super('A special admin already exists. Only one special admin is allowed.', '10112')
+  }
+}
+
+export class InvalidMemberRoleAssignmentException extends BadRequestException {
+  constructor() {
+    super('Invalid role assignment. Only client organization members can be assigned client roles.', '10113')
+  }
+}
+
+export class InvalidClientRoleAssignmentException extends BadRequestException {
+  constructor() {
+    super('Invalid role assignment. Only administration members can be assigned Admin or Member roles.', '10114')
+  }
+}

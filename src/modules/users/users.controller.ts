@@ -1,22 +1,13 @@
 import { Body, Controller, Get, Param, Patch, Post, UseGuards } from '@nestjs/common'
 import { UserService } from './users.service'
-import { InviteRequestDto } from './commands/invite/invite.request.dto'
 import { User } from '../../libs/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../auth/guards/authentication.guard'
-import { randomBytes } from 'crypto'
-import nodemailer from 'nodemailer'
-import { ConfigModule } from '@nestjs/config'
 import { UserResponseDto } from './dtos/user.response.dto'
 import { UserName } from './domain/value-objects/user-name.vo'
 import { GiveRoleRequestDto } from './commands/give-role/give-role.request.dto'
 import { UpdateUserRequestDto } from './commands/update-user/update-user.request.dto'
-import { UserRoleNameEnum } from './domain/value-objects/user-role.vo'
 import { UserRequestDto } from './user-param.request.dto'
-import { InvitationEmailProp } from './domain/invitationMail.types'
-
-ConfigModule.forRoot()
-
-const { EMAIL_USER, EMAIL_PASS } = process.env
+import { RoleResponseDto } from './dtos/role.response.dto'
 
 @Controller('users')
 export class UsersController {
@@ -57,8 +48,9 @@ export class UsersController {
 
   @Get('roles')
   @UseGuards(AuthGuard)
-  async getRoles(): Promise<UserRoleNameEnum[]> {
-    return await this.userService.getRoles()
+  async getRoles(): Promise<RoleResponseDto[]> {
+    const roles = await this.userService.getRoles()
+    return roles.map((role) => new RoleResponseDto({ name: role.role }))
   }
 
   @Post('make/admin')

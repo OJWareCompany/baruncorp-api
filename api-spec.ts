@@ -96,6 +96,10 @@ export interface UpdateUserRequestDto {
   phoneNumber: string | null
 }
 
+export interface RoleResponseDto {
+  name: string
+}
+
 export interface GiveRoleRequestDto {
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   userId: string
@@ -2685,9 +2689,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/users/roles
      */
     usersControllerGetRoles: (params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<RoleResponseDto[], any>({
         path: `/users/roles`,
         method: 'GET',
+        format: 'json',
         ...params,
       }),
 

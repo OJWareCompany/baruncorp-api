@@ -46,6 +46,8 @@ import { DeactivateUserHttpController } from './commands/deactivate-user/deactiv
 import { ReactivateUserService } from './commands/reactivate-user/reactivate-user.service'
 import { DeactivateUserService } from './commands/deactivate-user/deactivate-user.service'
 import { UserManager } from './domain/domain-services/user-manager.domain-service'
+import { ChangeUserRoleService } from './commands/change-user-role/change-user-role.service'
+import { ChangeUserRoleHttpController } from './commands/change-user-role/change-user-role.http.controller'
 
 const httpControllers = [
   UsersController,
@@ -64,6 +66,7 @@ const httpControllers = [
   CheckInvitedUserHttpController,
   ReactivateUserHttpController,
   DeactivateUserHttpController,
+  ChangeUserRoleHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateUserService,
@@ -78,6 +81,7 @@ const commandHandlers: Provider[] = [
   ResetDefaultTasksService,
   ReactivateUserService,
   DeactivateUserService,
+  ChangeUserRoleService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
 const domainServices: Provider[] = [UserManager]
