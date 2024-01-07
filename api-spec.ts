@@ -174,6 +174,11 @@ export interface InviteRequestDto {
   email: string
 }
 
+export interface ChangeUserRoleRequestDto {
+  /** @default "Viewer" */
+  newRole: 'Special Admin' | 'Admin' | 'Member' | 'Client Company Manager' | 'Client Company Employee' | 'Viewer'
+}
+
 export interface AddressDto {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
@@ -206,6 +211,7 @@ export interface OrganizationResponseDto {
   isSpecialRevisionPricing: boolean
   numberOfFreeRevisionCount: number | null
   isVendor: boolean
+  invoiceRecipientEmail: string | null
 }
 
 export interface OrganizationPaginatedResponseFields {
@@ -216,6 +222,7 @@ export interface OrganizationPaginatedResponseFields {
   email: string | null
   phoneNumber: string | null
   organizationType: string
+  invoiceRecipientEmail: string | null
   projectPropertyTypeDefaultValue: string | null
   mountingTypeDefaultValue: string | null
   isSpecialRevisionPricing: boolean
@@ -245,6 +252,8 @@ export interface CreateOrganizationRequestDto {
   phoneNumber: string | null
   /** @default "OJ Tech" */
   name: string
+  /** @default "test123@baruncorp.com" */
+  invoiceRecipientEmail: string | null
   /** @default "Commercial" */
   projectPropertyTypeDefaultValue: 'Residential' | 'Commercial' | null
   /** @default "Roof Mount" */
@@ -2888,6 +2897,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<IdResponse, any>({
         path: `/users/${userId}/deactivate`,
         method: 'PATCH',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ChangeUserRoleHttpControllerPost
+     * @request POST:/users/{userId}/roles
+     */
+    changeUserRoleHttpControllerPost: (userId: string, data: ChangeUserRoleRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/users/${userId}/roles`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         format: 'json',
         ...params,
       }),
