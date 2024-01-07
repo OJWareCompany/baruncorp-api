@@ -38,6 +38,9 @@ export class OrganizationPaginatedResponseFields {
   isSpecialRevisionPricing: boolean
 
   @ApiProperty()
+  isDelinquent: boolean
+
+  @ApiProperty()
   numberOfFreeRevisionCount: number | null
 
   @ApiProperty()

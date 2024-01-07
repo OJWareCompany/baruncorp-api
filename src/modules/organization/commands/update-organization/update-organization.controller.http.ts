@@ -17,7 +17,6 @@ export class UpdateOrganizationHttpController {
     const command = new UpdateOrganizationCommand({
       ...param,
       ...request,
-      description: null,
     })
     await this.commandBus.execute(command)
   }

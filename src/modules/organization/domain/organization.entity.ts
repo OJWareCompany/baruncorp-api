@@ -10,6 +10,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     const props: OrganizationProps = {
       ...create,
       organizationType: 'client',
+      isDelinquent: false,
     }
     return new OrganizationEntity({ id, props })
   }
@@ -29,8 +30,8 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
   update(data: {
     email: string | null
     isVendor: boolean
+    isDelinquent: boolean
     phoneNumber: string | null
-    description: string | null
     address: {
       street1: string
       street2: string | null
@@ -48,6 +49,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
   }) {
     this.props.email = data.email
     this.props.isVendor = data.isVendor
+    this.props.isDelinquent = data.isDelinquent
     this.props.phoneNumber = data.phoneNumber
     // this.props.description = data.description
     this.props.address = data.address

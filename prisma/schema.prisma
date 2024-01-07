@@ -23,6 +23,7 @@ model Organizations {
   description                     String?
   organizationType                String             @map("organization_type")
   isVendor                        Boolean            @default(false) @map("is_vendor")
+  isDelinquent                   Boolean            @default(false) @map("is_delinquent")
   city                            String
   country                         String?
   street1                         String

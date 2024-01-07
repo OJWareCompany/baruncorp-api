@@ -211,6 +211,7 @@ export interface OrganizationResponseDto {
   isSpecialRevisionPricing: boolean
   numberOfFreeRevisionCount: number | null
   isVendor: boolean
+  isDelinquent: boolean
   invoiceRecipientEmail: string | null
 }
 
@@ -226,6 +227,7 @@ export interface OrganizationPaginatedResponseFields {
   projectPropertyTypeDefaultValue: string | null
   mountingTypeDefaultValue: string | null
   isSpecialRevisionPricing: boolean
+  isDelinquent: boolean
   numberOfFreeRevisionCount: number | null
   isVendor: boolean
 }
@@ -269,6 +271,8 @@ export interface UpdateOrganizationRequestDto {
   email: string | null
   /** @default true */
   isVendor: boolean
+  /** @default true */
+  isDelinquent: boolean
   address: AddressDto
   /** @default "01012341234" */
   phoneNumber: string | null

@@ -5,8 +5,8 @@ export class UpdateOrganizationCommand {
   readonly organizationId: string
   readonly email: string | null
   readonly isVendor: boolean
+  readonly isDelinquent: boolean
   readonly phoneNumber: string | null
-  readonly description: string | null
   readonly address: {
     readonly street1: string
     readonly street2: string | null

@@ -34,6 +34,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     const record: OrganizationModel = {
       id: props.id,
       name: props.name,
+      isDelinquent: props.isDelinquent,
       fullAddress: props.address.fullAddress.toString(),
       addressCoordinates: props.address.coordinates.toString(),
       description: null,
@@ -66,6 +67,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
   toDomain(record: OrganizationModel): OrganizationEntity {
     const props: OrganizationProps = {
       name: record.name,
+      isDelinquent: record.isDelinquent,
       // description: record.description,
       mountingTypeDefaultValue: record.mountingTypeDefaultValue
         ? (record.mountingTypeDefaultValue as MountingTypeEnum)
@@ -123,6 +125,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
     response.isVendor = entity.getProps().isVendor
+    response.isDelinquent = entity.getProps().isDelinquent
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare
@@ -146,6 +149,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
     response.isVendor = entity.getProps().isVendor
+    response.isDelinquent = entity.getProps().isDelinquent
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare

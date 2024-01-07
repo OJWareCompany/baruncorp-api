@@ -19,6 +19,10 @@ export class UpdateOrganizationRequestDto {
   @IsBoolean()
   readonly isVendor: boolean
 
+  @ApiProperty({ default: true })
+  @IsBoolean()
+  readonly isDelinquent: boolean
+
   @ApiProperty({ default: AddressDto })
   @IsObject()
   readonly address: AddressDto
@@ -27,11 +31,6 @@ export class UpdateOrganizationRequestDto {
   @IsString()
   @IsOptional()
   readonly phoneNumber: string | null
-
-  // @ApiProperty({ default: 'This is about organization...' })
-  // @IsString()
-  // @IsOptional()
-  // readonly description: string | null
 
   @ApiProperty({ default: 'Commercial' })
   @IsEnum(ProjectPropertyTypeEnum)
