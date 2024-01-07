@@ -23,7 +23,7 @@ export class CreateOrganizationCommand {
   // readonly isRevenueShare: boolean | null
   // readonly isRevisionRevenueShare: boolean | null
   // readonly invoiceRecipient: string | null
-  // readonly invoiceRecipientEmail: string | null
+  readonly invoiceRecipientEmail: string | null
   readonly projectPropertyTypeDefaultValue: ProjectPropertyTypeEnum | null
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
   readonly isSpecialRevisionPricing: boolean

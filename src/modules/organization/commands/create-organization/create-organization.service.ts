@@ -33,7 +33,7 @@ export class CreateOrganizationService implements ICommandHandler {
       isRevenueShare: null,
       isRevisionRevenueShare: null,
       invoiceRecipient: null,
-      invoiceRecipientEmail: null,
+      invoiceRecipientEmail: command.invoiceRecipientEmail,
       isSpecialRevisionPricing: command.isSpecialRevisionPricing,
       numberOfFreeRevisionCount: command.numberOfFreeRevisionCount,
       isVendor: command.isVendor,

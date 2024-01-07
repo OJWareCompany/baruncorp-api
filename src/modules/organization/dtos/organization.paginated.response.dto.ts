@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
+import { IsOptional } from 'class-validator'
 
 export class OrganizationPaginatedResponseFields {
   @ApiProperty()
@@ -22,6 +23,10 @@ export class OrganizationPaginatedResponseFields {
 
   @ApiProperty()
   organizationType: string
+
+  @ApiProperty()
+  @IsOptional()
+  invoiceRecipientEmail: string | null
 
   @ApiProperty()
   projectPropertyTypeDefaultValue: string | null

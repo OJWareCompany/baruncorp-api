@@ -26,6 +26,11 @@ export class CreateOrganizationRequestDto {
   @IsString()
   readonly name: string
 
+  @ApiProperty({ default: 'test123@baruncorp.com' })
+  @IsString()
+  @IsOptional()
+  readonly invoiceRecipientEmail: string | null
+
   // @ApiProperty({ default: 'This is about organization...' })
   // @IsString()
   // @IsOptional()

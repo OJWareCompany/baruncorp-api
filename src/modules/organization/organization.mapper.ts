@@ -128,7 +128,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     // response.isRevenueShare = entity.getProps().isRevenueShare
     // response.isRevisionRevenueShare = entity.getProps().isRevisionRevenueShare
     // response.invoiceRecipient = entity.getProps().invoiceRecipient
-    // response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
+    response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
     return response
   }
 
@@ -151,7 +151,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     // response.isRevenueShare = entity.getProps().isRevenueShare
     // response.isRevisionRevenueShare = entity.getProps().isRevisionRevenueShare
     // response.invoiceRecipient = entity.getProps().invoiceRecipient
-    // response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
+    response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
     return response
   }
 }

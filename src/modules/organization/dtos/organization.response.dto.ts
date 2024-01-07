@@ -40,6 +40,9 @@ export class OrganizationResponseDto {
   @ApiProperty()
   isVendor: boolean
 
+  @ApiProperty()
+  invoiceRecipientEmail: string | null
+
   // @ApiProperty({ description: '필요한지 확인 필요' })
   // isActiveContractor: boolean | null
 
@@ -54,7 +57,4 @@ export class OrganizationResponseDto {
 
   // @ApiProperty({ description: '필요한지 확인 필요' })
   // invoiceRecipient: string | null
-
-  // @ApiProperty({ description: '필요한지 확인 필요' })
-  // invoiceRecipientEmail: string | null
 }

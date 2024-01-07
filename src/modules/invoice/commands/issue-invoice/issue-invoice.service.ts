@@ -9,6 +9,7 @@ import { IssueInvoiceCommand } from './issue-invoice.command'
 import { ConfigModule } from '@nestjs/config'
 import nodemailer from 'nodemailer'
 import { formatDate } from '../../../../libs/utils/formatDate'
+import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 
 ConfigModule.forRoot()
 
@@ -49,6 +50,8 @@ export class IssueInvoiceService implements ICommandHandler {
       where: { id: invoice.clientOrganizationId },
     })
 
+    if (!organization) throw new OrganizationNotFoundException()
+
     let subtotal = 0
     jobs.map((job) => {
       job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.service.basePrice ?? 0)))
@@ -74,7 +77,7 @@ export class IssueInvoiceService implements ICommandHandler {
 
     const mailOptions = {
       from: EMAIL_USER,
-      to: organization?.email || 'bs_khm@naver.com',
+      to: organization.invoiceRecipientEmail || 'bs_khm@naver.com',
       subject: `BarunCorp ${formatDate(invoice.serviceMonth)} Invoice mail`,
       text: `
       subtotal: $${subtotal}
