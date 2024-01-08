@@ -135,3 +135,6 @@ db
 mariadb/data
 
 (example)*
+
+# .idea
+.idea/

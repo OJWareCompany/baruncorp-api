@@ -22,6 +22,7 @@ import { VendorPaymentModule } from './modules/vendor-payment/vendor-payment.mod
 import { PositionModule } from './modules/position/position.module'
 import { LicenseModule } from './modules/license/license.module'
 import { AssigningTaskAlertModule } from './modules/assigning-task-alert/assigning-task-alert.module'
+import { PtoModule } from './modules/pto/pto.module'
 
 @Module({
   imports: [
@@ -46,6 +47,7 @@ import { AssigningTaskAlertModule } from './modules/assigning-task-alert/assigni
     PositionModule,
     LicenseModule,
     AssigningTaskAlertModule,
+    PtoModule,
   ],
   controllers: [],
   providers: [

@@ -121,6 +121,8 @@ model Users {
   assignedTasks              AssignedTasks[]
   availableTasks             UserAvailableTasks[]
   licenses                   UserLicense[]
+  ptoRecords                 PtoRecords[]
+  ptoTenureResults           PtoTenureResults[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -979,6 +981,71 @@ model AssigningTaskAlerts {
   isCheckedOut        Boolean  @map("is_checked_out")
 
   @@map("assigning_task_alerts")
+}
+
+model Ptos {
+  id              String             @id @db.VarChar(255)
+  name            String             @map("name")       @unique
+  createdAt       DateTime           @map("created_at") @db.DateTime(0) @default(now()) 
+  updatedAt       DateTime           @map("updated_at") @db.DateTime(0)
+  availableValues PtoAvailableValues[] 
+  ptoRecords      PtoRecords[] 
+  tenureResults   PtoTenureResults[] 
+
+  @@map("ptos")
+}
+
+model PtoAvailableValues {
+  id        String   @id @db.VarChar(255)
+  ptoId     String   @map("pto_id")     @db.VarChar(255)
+  value     Float    @map("value")      @db.Float
+  createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
+  updatedAt DateTime @map("updated_at") @db.DateTime(0)
+  pto       Ptos     @relation(fields: [ptoId], references: [id])
+
+  @@map("pto_available_values")
+}
+
+model PtoRecords {
+  id        String   @id                @db.VarChar(255)
+  userId    String   @map("user_id")    @db.VarChar(255)
+  ptoId     String   @map("pto_id")     @db.VarChar(255)
+  value     Float    @map("value")      @db.Float
+  startedAt DateTime @map("started_at") @db.DateTime(0)
+  endedAt   DateTime @map("ended_at")   @db.DateTime(0)
+  createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
+  updatedAt DateTime @map("updated_at") @db.DateTime(0)
+  user      Users    @relation(fields: [userId], references: [id])
+  pto       Ptos     @relation(fields: [ptoId], references: [id])
+
+  @@map("pto_records")
+}
+
+model PtoTenureProlicies {
+  id        String   @id                @db.VarChar(255)
+  tenure    Int      @map("tenure")     @db.TinyInt
+  totalPto  Float    @map("total_pto")  @db.Float
+  createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
+  updatedAt DateTime @map("updated_at") @db.DateTime(0)
+
+  @@map("pto_tenure_policies")
+}
+
+model PtoTenureResults {
+  id        String   @id                @db.VarChar(255)
+  userId    String   @map("user_id")    @db.VarChar(255)
+  ptoId     String   @map("pto_id")     @db.VarChar(255)
+  tenure    Int      @map("tenure")     @db.TinyInt
+  totalPto  Float    @map("total_pto")  @db.Float
+  usedPto   Float    @map("used_pto")   @db.Float
+  startedAt DateTime @map("started_at") @db.DateTime(0)
+  endedAt   DateTime @map("ended_at")   @db.DateTime(0)
+  createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
+  updatedAt DateTime @map("updated_at") @db.DateTime(0)
+  user      Users    @relation(fields: [userId], references: [id])
+  pto       Ptos     @relation(fields: [ptoId], references: [id])
+
+  @@map("pto_tenure_results")
 }
 
 enum InvoicesStatus {
