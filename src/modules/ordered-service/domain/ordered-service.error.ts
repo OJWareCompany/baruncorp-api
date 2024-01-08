@@ -18,9 +18,9 @@ export class OrderedServiceInvalidRevisionSizeForManualPriceUpdateException exte
   }
 }
 
-export class OrderedServiceInvalidRevisionStateException extends BadRequestException {
+export class OrderedServiceNonResidentialRevisionTypeUpdateException extends BadRequestException {
   constructor() {
-    super('Invalid Revision State For Update Revision Size.', '40303')
+    super('Revision type update is only allowed for Residential Service.', '40303')
   }
 }
 
@@ -40,6 +40,17 @@ export class OrderedServiceFreeRevisionManualPriceUpdateException extends BadReq
 
 export class FixedPricingRevisionUpdateException extends BadRequestException {
   constructor() {
-    super(`Revision size update is not allowed for fixed pricing.`, '40306')
+    super(`Revision type update is not allowed for fixed pricing.`, '40306')
+  }
+}
+
+export class NewServiceRevisionUpdateException extends BadRequestException {
+  constructor() {
+    super(`Revision type update is not allowed for New Service.`, '40307')
+  }
+}
+export class SpecialRevisionPricingRevisionTypeUpdateException extends BadRequestException {
+  constructor() {
+    super(`Revision type update is not allowed for Special Revision Pricing.`, '40308')
   }
 }

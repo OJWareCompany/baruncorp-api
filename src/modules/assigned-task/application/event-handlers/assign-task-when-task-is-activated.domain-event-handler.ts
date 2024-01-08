@@ -23,7 +23,6 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly prismaService: PrismaService,
-    private readonly mapper: AssignedTaskMapper,
     private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
   ) {}
 

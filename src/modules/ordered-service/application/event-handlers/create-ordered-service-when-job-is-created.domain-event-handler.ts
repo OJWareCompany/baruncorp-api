@@ -5,77 +5,63 @@ import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-cr
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
-import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
-import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
-import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
-import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
+import { TaskStatusChangeValidationDomainService } from '../../../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   constructor(
     // @ts-ignore
-    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
-    // @ts-ignore
     @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
-    // @ts-ignore
-    @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     // @ts-ignore
-    @Inject(CUSTOM_PRICING_REPOSITORY) private readonly customPricingRepo: CustomPricingRepositoryPort,
-    // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
+    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {}
 
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
-    const organization = await this.organizationRepo.findOneOrThrow(event.organizationId)
     const job = await this.jobRepo.findJobOrThrow(event.aggregateId)
     const project = await this.projectRepo.findProjectOrThrow(job.projectId)
 
     const makeEntities = event.services.map(async (orderedService) => {
-      const service = await this.serviceRepo.findOneOrThrow(orderedService.serviceId)
-
       // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
       const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
         event.projectId,
         orderedService.serviceId,
       )
 
-      const orderedServiceEntity = OrderedServiceEntity.create({
-        projectId: event.projectId,
-        jobId: event.aggregateId,
-        isRevision: !!previouslyOrderedServices.length,
-        serviceId: orderedService.serviceId,
-        serviceName: orderedService.serviceName,
-        description: orderedService.description,
-        projectPropertyType: event.projectType as ProjectPropertyTypeEnum,
-        mountingType: event.mountingType as MountingTypeEnum,
-        organizationId: event.organizationId,
-        organizationName: event.organizationName,
-        projectNumber: project.projectNumber,
-        projectPropertyOwnerName: project.projectPropertyOwnerName,
-        jobName: job.jobName,
-        isExpedited: job.getProps().isExpedited,
-      })
-
-      // TODO: determineInitialValues메서드를 create 메서드에 넣고 private으로 변경? 왜냐하면 서비스가 만들어질때 가격 설정은 필수이기도 하니까.
-      orderedServiceEntity.determineInitialValues(
+      const orderedServiceEntity = await OrderedServiceEntity.create(
+        {
+          projectId: event.projectId,
+          jobId: event.aggregateId,
+          isRevision: !!previouslyOrderedServices.length,
+          serviceId: orderedService.serviceId,
+          serviceName: orderedService.serviceName,
+          description: orderedService.description,
+          projectPropertyType: event.projectType as ProjectPropertyTypeEnum,
+          mountingType: event.mountingType as MountingTypeEnum,
+          organizationId: event.organizationId,
+          organizationName: event.organizationName,
+          projectNumber: project.projectNumber,
+          projectPropertyOwnerName: project.projectPropertyOwnerName,
+          jobName: job.jobName,
+          isExpedited: job.getProps().isExpedited,
+        },
         this.serviceInitialPriceManager,
-        service,
-        organization,
-        job,
-        previouslyOrderedServices,
+        this.taskStatusValidator,
+        this.revisionTypeUpdateValidator,
       )
+
       return orderedServiceEntity
     })
 

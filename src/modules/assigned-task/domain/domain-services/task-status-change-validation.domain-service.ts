@@ -6,6 +6,7 @@ import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { AssignedTaskEntity } from '../assigned-task.entity'
 import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
+import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
 
 @Injectable()
 export class TaskStatusChangeValidationDomainService {
@@ -18,7 +19,11 @@ export class TaskStatusChangeValidationDomainService {
     private readonly invoiceRepo: InvoiceRepositoryPort,
   ) {}
 
-  async validate(assignedTask: AssignedTaskEntity): Promise<void> {
+  /**
+   * 인보이스가 전송 되었으면 변경 불가
+   * -> 잡이 전송되었으면 변경 불가되도록 수정
+   */
+  async validate(assignedTask: AssignedTaskEntity | OrderedServiceEntity): Promise<void> {
     const job = await this.jobRepo.findJobOrThrow(assignedTask.getProps().jobId)
     const invoice = await this.invoiceRepo.findOne(job.invoiceId || '')
     if (invoice && invoice.isIssuedOrPaid) throw new IssuedJobUpdateException()
