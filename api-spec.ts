@@ -209,7 +209,6 @@ export interface OrganizationResponseDto {
   id: string
   name: string
   description: string | null
-  email: string | null
   phoneNumber: string | null
   organizationType: string
   address: AddressDto
@@ -227,7 +226,6 @@ export interface OrganizationPaginatedResponseFields {
   fullAddress: string
   name: string
   description: string | null
-  email: string | null
   phoneNumber: string | null
   organizationType: string
   invoiceRecipientEmail: string | null
@@ -252,8 +250,6 @@ export interface OrganizationPaginatedResponseDto {
 }
 
 export interface CreateOrganizationRequestDto {
-  /** @default "hyomin@ojware.com" */
-  email: string | null
   /** @default true */
   isVendor: boolean
   address: AddressDto
@@ -274,8 +270,6 @@ export interface CreateOrganizationRequestDto {
 }
 
 export interface UpdateOrganizationRequestDto {
-  /** @default "hyomin@ojware.com" */
-  email: string | null
   /** @default true */
   isVendor: boolean
   /** @default true */

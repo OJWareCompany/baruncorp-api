@@ -16,9 +16,6 @@ export class OrganizationPaginatedResponseFields {
   description: string | null
 
   @ApiProperty()
-  email: string | null
-
-  @ApiProperty()
   phoneNumber: string | null
 
   @ApiProperty()

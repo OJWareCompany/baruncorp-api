@@ -8,7 +8,6 @@ import UserMapper from '../../../users/user.mapper'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { SendDeliverablesCommand } from './send-deliverables.command'
-import { JobIsNotCompletedUpdateException } from '../../domain/job.error'
 import { ConfigModule } from '@nestjs/config'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 
@@ -40,7 +39,7 @@ export class SendDeliverablesService implements ICommandHandler {
     })
 
     if (!organization) throw new OrganizationNotFoundException()
-    if (!organization.email)
+    if (!job.getProps().deliverablesEmails.length)
       throw new NotFoundException('organization has no email, TODO: use deliverables email', '97779')
 
     const transporter = nodemailer.createTransport({

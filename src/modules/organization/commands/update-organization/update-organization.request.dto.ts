@@ -10,11 +10,6 @@ export class UpdateOrganizationParamRequestDto {
 }
 
 export class UpdateOrganizationRequestDto {
-  @ApiProperty({ default: 'hyomin@ojware.com' })
-  @IsEmail()
-  @IsOptional()
-  readonly email: string | null
-
   @ApiProperty({ default: true })
   @IsBoolean()
   readonly isVendor: boolean

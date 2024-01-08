@@ -2,8 +2,6 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/
 import { Address } from './value-objects/address.vo'
 export interface CreateOrganizationProps {
   name: string
-  // description: string | null
-  email: string | null
   phoneNumber: string | null
   address: Address
   isActiveContractor: boolean | null
