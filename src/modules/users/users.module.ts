@@ -48,6 +48,13 @@ import { DeactivateUserService } from './commands/deactivate-user/deactivate-use
 import { UserManager } from './domain/domain-services/user-manager.domain-service'
 import { ChangeUserRoleService } from './commands/change-user-role/change-user-role.service'
 import { ChangeUserRoleHttpController } from './commands/change-user-role/change-user-role.http.controller'
+import { TaskStatusChangeValidationDomainService } from '../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
+import { JobRepository } from '../ordered-job/database/job.repository'
+import { JobMapper } from '../ordered-job/job.mapper'
+import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
+import { InvoiceRepository } from '../invoice/database/invoice.repository'
+import { InvoiceMapper } from '../invoice/invoice.mapper'
 
 const httpControllers = [
   UsersController,
@@ -84,7 +91,7 @@ const commandHandlers: Provider[] = [
   ChangeUserRoleService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
-const domainServices: Provider[] = [UserManager]
+const domainServices: Provider[] = [UserManager, TaskStatusChangeValidationDomainService]
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
@@ -92,9 +99,19 @@ const repositories: Provider[] = [
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
   { provide: POSITION_REPOSITORY, useClass: PositionRepository },
   { provide: ASSIGNED_TASK_REPOSITORY, useClass: AssignedTaskRepository },
+  { provide: JOB_REPOSITORY, useClass: JobRepository },
+  { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
 ]
 
-const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper, PositionMapper, AssignedTaskMapper]
+const mappers: Provider[] = [
+  UserMapper,
+  UserRoleMapper,
+  OrganizationMapper,
+  PositionMapper,
+  AssignedTaskMapper,
+  JobMapper,
+  InvoiceMapper,
+]
 
 @Module({
   imports: [PrismaModule, CqrsModule],
