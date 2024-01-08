@@ -126,7 +126,7 @@ export interface CreateUserRequestDto {
    * @format date-time
    * @default "2023-09-04T07:31:27.217Z"
    */
-  dateOfJoining: string
+  dateOfJoining?: string | null
 }
 
 export interface IdResponse {

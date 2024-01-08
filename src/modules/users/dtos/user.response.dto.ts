@@ -3,7 +3,7 @@ import { UserLicenseResponseDto } from './user-license.response.dto'
 import { UserPositionResponseDto } from './user-position.response.dto'
 import { AvailableTaskResponseDto } from './available-task.response.dto'
 import { UserStatusEnum } from '../domain/user.types'
-import { IsDate, IsEnum } from 'class-validator'
+import { IsDate, IsEnum, IsOptional } from 'class-validator'
 
 export class UserResponseDto {
   @ApiProperty()
@@ -54,5 +54,6 @@ export class UserResponseDto {
 
   @ApiProperty()
   @IsDate()
-  dateOfJoining: Date
+  @IsOptional()
+  dateOfJoining: Date | null
 }

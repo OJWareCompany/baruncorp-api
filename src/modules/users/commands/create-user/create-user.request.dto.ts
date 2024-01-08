@@ -35,5 +35,6 @@ export class CreateUserRequestDto {
   @ApiProperty({ default: '2023-09-04T07:31:27.217Z' })
   @IsDate()
   @Type(() => Date)
-  readonly dateOfJoining: Date
+  @IsOptional()
+  readonly dateOfJoining?: Date | null
 }
