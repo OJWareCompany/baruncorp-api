@@ -23,7 +23,7 @@ export class CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
 
-    await orderedService.checkAllRelatedTasksCompleted(this.completionChecker)
+    await orderedService.validateAndComplete(this.completionChecker)
     await this.orderedServiceRepo.update(orderedService)
   }
 }

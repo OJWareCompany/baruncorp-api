@@ -8,6 +8,7 @@ import { UpdateRevisionSizeCommand as UpdateRevisionSizeCommand } from './update
 import { OrderedServiceSizeForRevisionEnum } from '../../domain/ordered-service.type'
 import { TaskStatusChangeValidationDomainService } from '../../../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
+import { OrderedServiceCompletionCheckDomainService } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
 
 @CommandHandler(UpdateRevisionSizeCommand)
 export class UpdateRevisionSizeService implements ICommandHandler {
@@ -18,6 +19,7 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    private readonly completionChecker: OrderedServiceCompletionCheckDomainService,
   ) {}
   async execute(command: UpdateRevisionSizeCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(command.orderedServiceId)
@@ -33,6 +35,8 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     } else {
       await orderedService.cleanRevisionSize(this.taskStatusValidator, this.revisionTypeUpdateValidator)
     }
+    // TODO: update revision type 메서드에 validateAndComplete 메서드 넣기
+    await orderedService.validateAndComplete(this.completionChecker)
     await this.orderedServiceRepo.update(orderedService)
   }
 }

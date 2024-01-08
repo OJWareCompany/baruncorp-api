@@ -22,10 +22,7 @@ import { CalculateInvoiceService } from '../../invoice/domain/calculate-invoice-
 import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custom-pricing.repository.port'
 import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-service-invoiced.domain-event'
 import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
-import { OrganizationEntity } from '../../organization/domain/organization.entity'
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
-import { InvoiceEntity } from '../../invoice/domain/invoice.entity'
-import { IssuedJobUpdateException } from '../../ordered-job/domain/job.error'
 import { OrderedServiceCompletionCheckDomainService } from './domain-services/check-all-related-tasks-completed.domain-service'
 import { TaskStatusChangeValidationDomainService } from '../../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain-services/revision-type-update-validation.domain-service'
@@ -229,7 +226,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  async checkAllRelatedTasksCompleted(completionChecker: OrderedServiceCompletionCheckDomainService) {
+  async validateAndComplete(completionChecker: OrderedServiceCompletionCheckDomainService) {
+    if (this.isRevision && !this.isRevisionTypeEntered) return
     const isAllCompleted = await completionChecker.isAllRelatedTasksCompleted(this)
     if (!isAllCompleted) return
     this.complete()
