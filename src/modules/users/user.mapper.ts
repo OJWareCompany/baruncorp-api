@@ -24,6 +24,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       lastName: copy.userName.lastName,
       full_name: copy.userName.fullName,
       organizationId: copy.organization.id,
+      dateOfJoining: copy.dateOfJoining,
       updatedAt: entity.updatedAt,
       createdAt: entity.createdAt,
       address: null,
@@ -85,6 +86,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
         role: record.userRole?.roleName as UserRoleNameEnum,
         isVendor: record.isVendor,
         isHandRaisedForTask: record.isHandRaisedForTask,
+        dateOfJoining: record.dateOfJoining,
       },
     })
     return entity
@@ -117,6 +119,7 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.isVendor = props.isVendor
     response.availableTasks = props.availableTasks
     response.status = props.status
+    response.dateOfJoining = props.dateOfJoining
     return response
   }
 }

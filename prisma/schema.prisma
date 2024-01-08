@@ -23,7 +23,7 @@ model Organizations {
   description                     String?
   organizationType                String             @map("organization_type")
   isVendor                        Boolean            @default(false) @map("is_vendor")
-  isDelinquent                   Boolean            @default(false) @map("is_delinquent")
+  isDelinquent                    Boolean            @default(false) @map("is_delinquent")
   city                            String
   country                         String?
   street1                         String
@@ -96,6 +96,7 @@ model UserRole {
 
 model Users {
   id                         String               @id @default(uuid())
+  dateOfJoining            DateTime             @default(now()) @db.DateTime(0) @map("date_of_joining")
   type                       String               @db.VarChar(255)
   deliverables_emails        String?              @db.Text
   email                      String               @unique

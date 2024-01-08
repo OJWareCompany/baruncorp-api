@@ -9,6 +9,7 @@ export class CreateUserCommand {
   readonly deliverablesEmails: string[]
   readonly phoneNumber: string | null
   readonly updatedBy: string
+  readonly dateOfJoining: Date
 
   constructor(props: CreateUserCommand) {
     initialize(this, props)

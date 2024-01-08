@@ -17,6 +17,7 @@ export interface CreateUserProps {
   updatedBy: string
   isVendor: boolean
   deliverablesEmails: string[]
+  dateOfJoining: Date
 }
 
 export interface UserProps extends CreateUserProps {

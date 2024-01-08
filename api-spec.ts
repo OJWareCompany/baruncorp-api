@@ -81,6 +81,8 @@ export interface UserResponseDto {
   isVendor: boolean
   /** @default "Active" */
   status: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active'
+  /** @format date-time */
+  dateOfJoining: string
 }
 
 export interface UpdateUserRequestDto {
@@ -120,6 +122,11 @@ export interface CreateUserRequestDto {
   deliverablesEmails: string[]
   /** @default "857-250-4567" */
   phoneNumber: string | null
+  /**
+   * @format date-time
+   * @default "2023-09-04T07:31:27.217Z"
+   */
+  dateOfJoining: string
 }
 
 export interface IdResponse {

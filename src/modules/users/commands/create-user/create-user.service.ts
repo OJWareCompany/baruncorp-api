@@ -37,6 +37,7 @@ export class CreateUserService implements ICommandHandler {
       updatedBy: command.updatedBy,
       deliverablesEmails: command.deliverablesEmails,
       isVendor: command.isVendor,
+      dateOfJoining: command.dateOfJoining,
     })
 
     const record = this.userMapper.toPersistence(user)
