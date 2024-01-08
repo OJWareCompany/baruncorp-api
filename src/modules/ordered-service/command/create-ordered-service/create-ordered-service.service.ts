@@ -89,15 +89,12 @@ export class CreateOrderedServiceService implements ICommandHandler {
       isExpedited: job.getProps().isExpedited,
     })
 
-    const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
-
     orderedServiceEntity.determineInitialValues(
       this.serviceInitialPriceManager,
       service,
       organization,
       job,
       previouslyOrderedServices,
-      customPricing,
     )
 
     await this.orderedServiceRepo.insert(orderedServiceEntity)

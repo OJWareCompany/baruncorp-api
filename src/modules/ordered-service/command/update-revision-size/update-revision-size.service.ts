@@ -3,9 +3,7 @@ import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
-import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
-import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
@@ -34,9 +32,6 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     @Inject(SERVICE_REPOSITORY)
     private readonly serviceRepo: ServiceRepositoryPort,
     // @ts-ignore
-    @Inject(CUSTOM_PRICING_REPOSITORY)
-    private readonly customPricingRepo: CustomPricingRepositoryPort,
-    // @ts-ignore
     @Inject(INVOICE_REPOSITORY)
     private readonly invoiceRepo: InvoiceRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
@@ -53,11 +48,6 @@ export class UpdateRevisionSizeService implements ICommandHandler {
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
-    const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
-
-    const isFixedPricing = this.serviceInitialPriceManager.isFixedPricing(service, customPricing)
-    if (isFixedPricing) return
-
     if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
       const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
         job.projectId,
@@ -70,12 +60,11 @@ export class UpdateRevisionSizeService implements ICommandHandler {
         organization,
         job,
         previouslyOrderedServices,
-        customPricing,
       )
     } else if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
-      orderedService.updateRevisionSizeToMinor()
+      orderedService.updateRevisionSizeToMinor(this.serviceInitialPriceManager, organization, service)
     } else {
-      orderedService.cleanRevisionSize()
+      orderedService.cleanRevisionSize(this.serviceInitialPriceManager, organization, service)
     }
     await this.orderedServiceRepo.update(orderedService)
   }

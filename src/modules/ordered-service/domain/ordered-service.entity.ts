@@ -8,8 +8,8 @@ import {
 } from './ordered-service.type'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import {
+  FixedPricingRevisionUpdateException,
   OrderedServiceAlreadyCompletedException,
-  OrderedServiceCommercialRevisionManualPriceUpdateException,
   OrderedServiceFreeRevisionManualPriceUpdateException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
   OrderedServiceInvalidRevisionStateException,
@@ -27,11 +27,9 @@ import { ServiceInitialPriceManager } from './ordered-service-manager.domain-ser
 import { ServiceEntity } from '../../service/domain/service.entity'
 import { JobEntity } from '../../ordered-job/domain/job.entity'
 import { OrganizationEntity } from '../../organization/domain/organization.entity'
-import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
 import { InvoiceEntity } from '../../invoice/domain/invoice.entity'
 import { IssuedJobUpdateException } from '../../ordered-job/domain/job.error'
-import { InvoiceStatusEnum } from '../../invoice/domain/invoice.type'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -107,41 +105,54 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this.props.projectPropertyType
   }
 
-  determineInitialValues(
+  async determineInitialValues(
     calcService: ServiceInitialPriceManager,
     service: ServiceEntity,
     organization: OrganizationEntity,
     job: JobEntity,
     previouslyOrderedServices: OrderedServiceEntity[],
-    customPricing: CustomPricingEntity | null,
   ) {
-    const revisionSize = calcService.determineInitialRevisionSize(
+    const revisionSize = await calcService.determineInitialRevisionSize(
       this,
       previouslyOrderedServices,
       organization,
       service,
-      customPricing,
     )
 
-    const initialPrice = calcService.determinePrice(
+    const initialPrice = await calcService.determinePrice(
       revisionSize,
       previouslyOrderedServices,
       service,
       organization,
       job,
-      customPricing,
     )
 
     this.setPrice(initialPrice)
     if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
-      this.updateRevisionSizeToMajor(calcService, service, organization, job, previouslyOrderedServices, customPricing)
+      this.updateRevisionSizeToMajor(calcService, service, organization, job, previouslyOrderedServices)
     } else if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
-      this.updateRevisionSizeToMinor()
+      this.updateRevisionSizeToMinor(calcService, organization, service)
     }
     return this
   }
 
-  cleanRevisionSize() {
+  async cleanRevisionSize(
+    calcService: ServiceInitialPriceManager,
+    organization: OrganizationEntity,
+    service: ServiceEntity,
+  ) {
+    /**
+     * isFixedPricing라는 도메인 서비스 메서드를 사용하기위해 의존성 3개가 추가됨
+     * organization과 service를 ordered service에서 가지고 있는 것이
+     * 불필요한 매개변수를 줄이고 오류를 방지하기에 더 적절하다.
+     *
+     * 하지만 그렇게 되면 결국에는 ordered service entity안에 (job, service, organization) 등의 필드가 생기는 구조가 될수도있는데
+     * 그러느니 차라리 job Aggregate 하나에서 ordered service, ordered tasks를 관리하는게 더 적절할 수 있다.
+     * 하지만! 그러면! 모듈이 분리가 안되고 너무 커진다! 원래 하나로 합치는게 맞나? 에효
+     */
+    const isFixedPricing = await calcService.isFixedPricing(organization, service)
+    if (isFixedPricing) throw new FixedPricingRevisionUpdateException()
+
     this.props.sizeForRevision = null
     this.props.price = null
     this.addEvent(
@@ -153,7 +164,14 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  updateRevisionSizeToMinor() {
+  async updateRevisionSizeToMinor(
+    calcService: ServiceInitialPriceManager,
+    organization: OrganizationEntity,
+    service: ServiceEntity,
+  ) {
+    const isFixedPricing = await calcService.isFixedPricing(organization, service)
+    if (isFixedPricing) throw new FixedPricingRevisionUpdateException()
+
     if (!this.props.isRevision) throw new OrderedServiceInvalidRevisionStateException()
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Minor
     this.freeCost()
@@ -167,25 +185,26 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   // TODO: 그냥 처음부터 revision price 입력해놓고, 인보이스에서 0원으로 바꾸는게 나을지도 모르겠다.
-  updateRevisionSizeToMajor(
+  async updateRevisionSizeToMajor(
     calcService: ServiceInitialPriceManager,
     service: ServiceEntity,
     organization: OrganizationEntity,
     job: JobEntity,
     previouslyOrderedServices: OrderedServiceEntity[],
-    customPricing: CustomPricingEntity | null,
-  ): this {
+  ): Promise<this> {
     if (!this.props.isRevision || this.props.projectPropertyType !== ProjectPropertyTypeEnum.Residential) {
       throw new OrderedServiceInvalidRevisionStateException()
     }
+    const isFixedPricing = await calcService.isFixedPricing(organization, service)
+    if (isFixedPricing) throw new FixedPricingRevisionUpdateException()
+
     const revisionSize = OrderedServiceSizeForRevisionEnum.Major
-    const initialPrice = calcService.determinePrice(
+    const initialPrice = await calcService.determinePrice(
       revisionSize,
       previouslyOrderedServices,
       service,
       organization,
       job,
-      customPricing,
     )
 
     this.props.sizeForRevision = revisionSize

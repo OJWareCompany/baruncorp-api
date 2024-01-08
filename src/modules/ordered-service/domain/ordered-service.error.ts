@@ -37,3 +37,9 @@ export class OrderedServiceFreeRevisionManualPriceUpdateException extends BadReq
     super(`Free revisions cannot have a manual price set.`, '40305')
   }
 }
+
+export class FixedPricingRevisionUpdateException extends BadRequestException {
+  constructor() {
+    super(`Revision size update is not allowed for fixed pricing.`, '40306')
+  }
+}

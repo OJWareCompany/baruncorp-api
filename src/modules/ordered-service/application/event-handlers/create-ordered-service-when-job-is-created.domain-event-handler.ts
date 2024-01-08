@@ -68,15 +68,13 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
         isExpedited: job.getProps().isExpedited,
       })
 
-      const customPricing = await this.customPricingRepo.findOne(organization.id, service.id)
-
+      // TODO: determineInitialValues메서드를 create 메서드에 넣고 private으로 변경? 왜냐하면 서비스가 만들어질때 가격 설정은 필수이기도 하니까.
       orderedServiceEntity.determineInitialValues(
         this.serviceInitialPriceManager,
         service,
         organization,
         job,
         previouslyOrderedServices,
-        customPricing,
       )
       return orderedServiceEntity
     })
