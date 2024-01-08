@@ -82,7 +82,7 @@ export interface UserResponseDto {
   /** @default "Active" */
   status: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active'
   /** @format date-time */
-  dateOfJoining: string
+  dateOfJoining: string | null
 }
 
 export interface UpdateUserRequestDto {
@@ -270,6 +270,7 @@ export interface CreateOrganizationRequestDto {
 }
 
 export interface UpdateOrganizationRequestDto {
+  invoiceRecipientEmail: string | null
   /** @default true */
   isVendor: boolean
   /** @default true */

@@ -20,6 +20,7 @@ export class UpdateOrganizationCommand {
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
   readonly isSpecialRevisionPricing: boolean
   readonly numberOfFreeRevisionCount: number | null
+  readonly invoiceRecipientEmail: string | null
 
   constructor(props: UpdateOrganizationCommand) {
     initialize(this, props)

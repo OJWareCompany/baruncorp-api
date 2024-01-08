@@ -10,6 +10,10 @@ export class UpdateOrganizationParamRequestDto {
 }
 
 export class UpdateOrganizationRequestDto {
+  @ApiProperty()
+  @IsString()
+  readonly invoiceRecipientEmail: string | null
+
   @ApiProperty({ default: true })
   @IsBoolean()
   readonly isVendor: boolean
