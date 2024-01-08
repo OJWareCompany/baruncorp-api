@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { AssignedTasks } from '@prisma/client'
+import { AssignedTasks, Prisma } from '@prisma/client'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { PrismaService } from '../../database/prisma.service'
 import { AssignedTaskMapper } from '../assigned-task.mapper'
@@ -20,8 +20,9 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  find(): Promise<Paginated<AssignedTaskEntity>> {
-    throw new Error('Method not implemented.')
+  async find(whereInput: Prisma.AssignedTasksWhereInput): Promise<AssignedTaskEntity[]> {
+    const records = await this.prismaService.assignedTasks.findMany({ where: whereInput })
+    return records.map(this.assignedTaskMapper.toDomain)
   }
 
   async insert(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void> {

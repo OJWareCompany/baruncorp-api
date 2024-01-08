@@ -30,6 +30,7 @@ import { OrganizationEntity } from '../../organization/domain/organization.entit
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
 import { InvoiceEntity } from '../../invoice/domain/invoice.entity'
 import { IssuedJobUpdateException } from '../../ordered-job/domain/job.error'
+import { OrderedServiceCompletionCheckDomainService } from './domain-services/check-all-related-tasks-completed.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -95,6 +96,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   get isRevision() {
     return this.props.isRevision
+  }
+
+  get isRevisionTypeEntered() {
+    return this.props.isRevision && this.props.sizeForRevision !== null
   }
 
   get isResidentialRevision() {
@@ -244,7 +249,17 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  complete(): this {
+  async checkAllRelatedTasksCompleted(completionChecker: OrderedServiceCompletionCheckDomainService) {
+    const isAllCompleted = await completionChecker.isAllRelatedTasksCompleted(this)
+    if (!isAllCompleted) return
+    this.complete()
+  }
+
+  private complete(): this {
+    if (!this.isRevisionTypeEntered) {
+      return this
+    }
+
     this.props.status = 'Completed'
     this.props.doneAt = new Date()
     this.addEvent(

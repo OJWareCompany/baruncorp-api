@@ -1,21 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { PrismaService } from '../../../database/prisma.service'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { AssignedTaskCompletedDomainEvent } from '../../../assigned-task/domain/events/assigned-task-completed.domain-event'
 import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
-import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
-import { OrderedServiceMapper } from '../../ordered-service.mapper'
+import { OrderedServiceCompletionCheckDomainService } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
 
 @Injectable()
 export class CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
-    private readonly prismaService: PrismaService,
-    private readonly mapper: OrderedServiceMapper,
+    private readonly completionChecker: OrderedServiceCompletionCheckDomainService,
   ) {}
 
   /**
@@ -23,17 +20,10 @@ export class CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler {
    */
   @OnEvent(AssignedTaskCompletedDomainEvent.name, { async: true, promisify: true })
   async handle(event: AssignedTaskCompletedDomainEvent) {
-    const orderedService = await this.orderedServiceRepo.findOne(event.orderedServiceId)
+    const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
 
-    const relatedTasks = await this.prismaService.assignedTasks.findMany({
-      where: { orderedServiceId: orderedService.id },
-    })
-
-    const isAllCompleted = relatedTasks.every((task) => task.status === AssignedTaskStatusEnum.Completed)
-    if (isAllCompleted) {
-      orderedService.complete()
-      await this.orderedServiceRepo.update(orderedService)
-    }
+    await orderedService.checkAllRelatedTasksCompleted(this.completionChecker)
+    await this.orderedServiceRepo.update(orderedService)
   }
 }
