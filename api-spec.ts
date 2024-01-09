@@ -604,7 +604,7 @@ export interface JobResponseDto {
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client'
   assignedTasks: AssignedTaskResponseFields[]
   orderedServices: OrderedServiceResponseFields[]
   clientInfo: ClientInformationFields
@@ -711,7 +711,7 @@ export interface JobPaginatedResponseFields {
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client'
   /** @example "Ground Mount" */
   mountingType: string
   orderedServices: OrderedServiceResponseFields[]
@@ -1958,7 +1958,7 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -1996,7 +1996,7 @@ export interface FindMyJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "In Progress" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -2056,7 +2056,7 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */

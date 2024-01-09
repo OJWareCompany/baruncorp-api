@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { JobStatus, JobStatusEnum } from '../domain/job.type'
+import { JobStatusEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { IsOptional } from 'class-validator'
@@ -180,7 +180,7 @@ export class JobResponseDto {
   jobRequestNumber: number
 
   @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
-  jobStatus: JobStatus
+  jobStatus: JobStatusEnum
 
   @ApiProperty({ example: AssignedTaskResponseFields, type: AssignedTaskResponseFields, isArray: true })
   assignedTasks: AssignedTaskResponseFields[]

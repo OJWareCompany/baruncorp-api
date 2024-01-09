@@ -1,14 +1,13 @@
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { MountingType } from '../../../project/domain/project.type'
-import { NewOrderedServices } from '../value-objects/assigned-task.value-object'
-import { JobStatus } from '../job.type'
+import { JobStatusEnum } from '../job.type'
 
 export class CurrentJobUpdatedDomainEvent extends DomainEvent {
   public readonly systemSize: number | null
   public readonly mailingFullAddressForWetStamp: string | null
   public readonly projectId: string
-  public readonly jobStatus: JobStatus
+  public readonly jobStatus: JobStatusEnum
   public readonly mountingType: MountingType
   public readonly isCurrentJop: boolean
   // public readonly assignedTasks: NewOrderedServices[]

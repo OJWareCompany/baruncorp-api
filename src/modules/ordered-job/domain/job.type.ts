@@ -10,10 +10,10 @@ export enum JobStatusEnum {
   Not_Started = 'Not Started',
   In_Progress = 'In Progress',
   On_Hold = 'On Hold',
-  Completed = 'Completed',
   Canceled = 'Canceled',
+  Completed = 'Completed',
+  Sent_To_Client = 'Sent To Client',
 }
-export type JobStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
 
 /**
  * 인자로 받지 않아도 만들수 있는 필드는 제외한다.
@@ -42,7 +42,7 @@ export interface CreateJobProps {
 export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
   invoiceId: string | null
   jobName: string
-  jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
+  jobStatus: JobStatusEnum // 인자로 받지 않고 내부에서 값을 생성하는 필드
   jobRequestNumber: number
   assignedTasks: AssignedTask[]
   orderedServices: OrderedService[]
