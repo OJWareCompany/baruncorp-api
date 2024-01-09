@@ -231,13 +231,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     const isAllCompleted = await completionChecker.isAllRelatedTasksCompleted(this)
     if (!isAllCompleted) return
     this.complete()
+    return this
   }
 
   private complete(): this {
-    if (!this.isRevisionTypeEntered) {
-      return this
-    }
-
     this.props.status = 'Completed'
     this.props.doneAt = new Date()
     this.addEvent(
