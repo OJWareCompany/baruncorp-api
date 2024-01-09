@@ -123,8 +123,7 @@ model Users {
   assignedTasks              AssignedTasks[]
   availableTasks             UserAvailableTasks[]
   licenses                   UserLicense[]
-  ptoRecords                 PtoRecords[]
-  ptoTenureResults           PtoTenureResults[]
+  ptos                       Ptos[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -989,68 +988,78 @@ model AssigningTaskAlerts {
 }
 
 model Ptos {
-  id              String             @id @db.VarChar(255)
-  name            String             @map("name")       @unique
-  createdAt       DateTime           @map("created_at") @db.DateTime(0) @default(now()) 
-  updatedAt       DateTime           @map("updated_at") @db.DateTime(0)
-  availableValues PtoAvailableValues[] 
-  ptoRecords      PtoRecords[] 
-  tenureResults   PtoTenureResults[] 
+  id         String   @id                @db.VarChar(255)
+  userId     String   @map("user_id")    @db.VarChar(255)
+  tenure     Int      @map("tenure")     @db.Int
+  total      Float    @map("total")      @db.Float
+  isPaid     Boolean  @map("is_paid")
+  createdAt  DateTime @map("created_at") @db.DateTime(0) @default(now()) 
+  updatedAt  DateTime @map("updated_at") @db.DateTime(0)
+  user       Users    @relation(fields: [userId], references: [id])
+  PtoDetails PtoDetails[]
 
   @@map("ptos")
 }
 
+model PtoTypes {
+  id                      String   @id                  @db.VarChar(255)
+  name                    String   @map("name")         @db.VarChar(30)  @unique
+  abbreviation            String   @map("abbreviation") @db.VarChar(5)
+  createdAt               DateTime @map("created_at")   @db.DateTime(0)  @default(now()) 
+  updatedAt               DateTime @map("updated_at")   @db.DateTime(0)
+  availableValues         PtoAvailableValues[]
+  ptoTypesAvailableValues PtoTypesAvailableValues[]
+  ptoDetails              PtoDetails[]
+
+  @@map("pto_types")
+}
+
 model PtoAvailableValues {
-  id        String   @id @db.VarChar(255)
-  ptoId     String   @map("pto_id")     @db.VarChar(255)
-  value     Float    @map("value")      @db.Float
-  createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
-  updatedAt DateTime @map("updated_at") @db.DateTime(0)
-  pto       Ptos     @relation(fields: [ptoId], references: [id])
+  id                      String   @id @db.VarChar(255)
+  value                   Float    @map("value")       @db.Float
+  createdAt               DateTime @map("created_at")  @db.DateTime(0) @default(now()) 
+  updatedAt               DateTime @map("updated_at")  @db.DateTime(0)
+  ptoTypes                PtoTypes[]
+  ptoTypesAvailableValues PtoTypesAvailableValues[]
 
   @@map("pto_available_values")
 }
 
-model PtoRecords {
-  id        String   @id                @db.VarChar(255)
-  userId    String   @map("user_id")    @db.VarChar(255)
-  ptoId     String   @map("pto_id")     @db.VarChar(255)
-  value     Float    @map("value")      @db.Float
-  startedAt DateTime @map("started_at") @db.DateTime(0)
-  endedAt   DateTime @map("ended_at")   @db.DateTime(0)
-  createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
-  updatedAt DateTime @map("updated_at") @db.DateTime(0)
-  user      Users    @relation(fields: [userId], references: [id])
-  pto       Ptos     @relation(fields: [ptoId], references: [id])
+model PtoTypesAvailableValues {
+  ptoTypeId           String @map("pto_type_id")            @db.VarChar(255)
+  ptoAvailableValueId String @map("pto_available_value_id") @db.VarChar(255)
+  ptoType             PtoTypes           @relation(fields: [ptoTypeId]          , references: [id], onDelete: Cascade)
+  PtoAvailableValue   PtoAvailableValues @relation(fields: [ptoAvailableValueId], references: [id], onDelete: Cascade)
 
-  @@map("pto_records")
+  @@id([ptoTypeId, ptoAvailableValueId])
+  @@index([ptoTypeId])
+  @@index([ptoAvailableValueId])
+  @@map("pto_types_available_values")
 }
 
-model PtoTenureProlicies {
+model PtoDetails {
+  id        String   @id                 @db.VarChar(255)
+  ptoId     String   @map("pto_id")      @db.VarChar(255)
+  ptoTypeId String   @map("pto_type_id") @db.VarChar(255)
+  value     Float    @map("value")       @db.Float
+  startedAt DateTime @map("started_at")  @db.DateTime(0)
+  endedAt   DateTime @map("ended_at")    @db.DateTime(0)
+  createdAt DateTime @map("created_at")  @db.DateTime(0) @default(now()) 
+  updatedAt DateTime @map("updated_at")  @db.DateTime(0)
+  pto       Ptos     @relation(fields: [ptoId], references: [id])
+  ptoType   PtoTypes @relation(fields: [ptoTypeId], references: [id])
+
+  @@map("pto_details")
+}
+
+model PtoTenurePolicies {
   id        String   @id                @db.VarChar(255)
   tenure    Int      @map("tenure")     @db.TinyInt
-  totalPto  Float    @map("total_pto")  @db.Float
+  total     Float    @map("total")      @db.Float
   createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
   updatedAt DateTime @map("updated_at") @db.DateTime(0)
 
   @@map("pto_tenure_policies")
-}
-
-model PtoTenureResults {
-  id        String   @id                @db.VarChar(255)
-  userId    String   @map("user_id")    @db.VarChar(255)
-  ptoId     String   @map("pto_id")     @db.VarChar(255)
-  tenure    Int      @map("tenure")     @db.TinyInt
-  totalPto  Float    @map("total_pto")  @db.Float
-  usedPto   Float    @map("used_pto")   @db.Float
-  startedAt DateTime @map("started_at") @db.DateTime(0)
-  endedAt   DateTime @map("ended_at")   @db.DateTime(0)
-  createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
-  updatedAt DateTime @map("updated_at") @db.DateTime(0)
-  user      Users    @relation(fields: [userId], references: [id])
-  pto       Ptos     @relation(fields: [ptoId], references: [id])
-
-  @@map("pto_tenure_results")
 }
 
 enum InvoicesStatus {

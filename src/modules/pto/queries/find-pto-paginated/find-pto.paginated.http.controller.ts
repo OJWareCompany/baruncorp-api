@@ -13,7 +13,7 @@ export class FindPtoPaginatedHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   async get(@Query() queryParams: PaginatedQueryRequestDto): Promise<PtoPaginatedResponseDto> {
     const query = new FindPtoPaginatedQuery({
       ...queryParams,

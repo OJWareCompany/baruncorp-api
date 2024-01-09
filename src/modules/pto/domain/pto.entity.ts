@@ -9,21 +9,26 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     const id = v4()
     const props: PtoProps = {
       ...create,
-      availableValues: [],
+      details: [],
     }
+
     return new PtoEntity({ id, props })
   }
 
-  get name() {
-    return this.props.name
+  get total(): number {
+    return this.props.total
   }
 
-  set name(name: string) {
-    this.props.name = name
+  set total(total: number) {
+    this.props.total = total
   }
 
-  get availableValues() {
-    return this.props.availableValues
+  get isPaid(): boolean {
+    return this.props.isPaid
+  }
+
+  set isPaid(isPaid: boolean) {
+    this.props.isPaid = isPaid
   }
 
   public validate(): void {

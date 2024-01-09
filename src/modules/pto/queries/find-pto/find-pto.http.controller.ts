@@ -11,7 +11,7 @@ export class FindPtoHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get(':ptoId')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   async get(@Param() request: FindPtoRequestDto): Promise<PtoResponseDto> {
     const query = new FindPtoQuery(request)
     const result: PtoResponseDto = await this.queryBus.execute(query)

@@ -1,11 +1,12 @@
-import { PtoAvailableValues } from '@prisma/client'
-import { PtoAvailableValue } from './value-objects/pto.available-value.vo'
+import { PtoDetail } from './value-objects/pto.detail.vo'
 
 export interface CreatePtoProps {
-  name: string
+  userId: string
+  tenure: number
+  total: number
+  isPaid: boolean
 }
 
 export interface PtoProps extends CreatePtoProps {
-  name: string
-  availableValues: PtoAvailableValue[]
+  details: PtoDetail[]
 }

@@ -23,6 +23,7 @@ import { PositionModule } from './modules/position/position.module'
 import { LicenseModule } from './modules/license/license.module'
 import { AssigningTaskAlertModule } from './modules/assigning-task-alert/assigning-task-alert.module'
 import { PtoModule } from './modules/pto/pto.module'
+import { PtoTenurePolicyModule } from './modules/pto-tenure-policy/pto-tenure-policy.module'
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { PtoModule } from './modules/pto/pto.module'
     LicenseModule,
     AssigningTaskAlertModule,
     PtoModule,
+    PtoTenurePolicyModule,
   ],
   controllers: [],
   providers: [
