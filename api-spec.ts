@@ -81,6 +81,8 @@ export interface UserResponseDto {
   isVendor: boolean
   /** @default "Active" */
   status: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active'
+  /** @format date-time */
+  dateOfJoining: string | null
 }
 
 export interface UpdateUserRequestDto {
@@ -120,6 +122,11 @@ export interface CreateUserRequestDto {
   deliverablesEmails: string[]
   /** @default "857-250-4567" */
   phoneNumber: string | null
+  /**
+   * @format date-time
+   * @default "2023-09-04T07:31:27.217Z"
+   */
+  dateOfJoining?: string | null
 }
 
 export interface IdResponse {
@@ -202,7 +209,6 @@ export interface OrganizationResponseDto {
   id: string
   name: string
   description: string | null
-  email: string | null
   phoneNumber: string | null
   organizationType: string
   address: AddressDto
@@ -220,7 +226,6 @@ export interface OrganizationPaginatedResponseFields {
   fullAddress: string
   name: string
   description: string | null
-  email: string | null
   phoneNumber: string | null
   organizationType: string
   invoiceRecipientEmail: string | null
@@ -245,8 +250,6 @@ export interface OrganizationPaginatedResponseDto {
 }
 
 export interface CreateOrganizationRequestDto {
-  /** @default "hyomin@ojware.com" */
-  email: string | null
   /** @default true */
   isVendor: boolean
   address: AddressDto
@@ -267,8 +270,7 @@ export interface CreateOrganizationRequestDto {
 }
 
 export interface UpdateOrganizationRequestDto {
-  /** @default "hyomin@ojware.com" */
-  email: string | null
+  invoiceRecipientEmail: string | null
   /** @default true */
   isVendor: boolean
   /** @default true */
@@ -602,7 +604,7 @@ export interface JobResponseDto {
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client'
   assignedTasks: AssignedTaskResponseFields[]
   orderedServices: OrderedServiceResponseFields[]
   clientInfo: ClientInformationFields
@@ -709,7 +711,7 @@ export interface JobPaginatedResponseFields {
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled'
+  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client'
   /** @example "Ground Mount" */
   mountingType: string
   orderedServices: OrderedServiceResponseFields[]
@@ -1956,7 +1958,7 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -1994,7 +1996,7 @@ export interface FindMyJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "In Progress" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -2054,7 +2056,7 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Completed' | 'Canceled' | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */

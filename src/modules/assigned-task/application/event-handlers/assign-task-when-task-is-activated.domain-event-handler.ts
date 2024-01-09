@@ -13,6 +13,7 @@ import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
 import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { StateNotFoundException } from '../../../license/domain/license.error'
+import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
@@ -22,7 +23,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly prismaService: PrismaService,
-    private readonly mapper: AssignedTaskMapper,
+    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
   ) {}
 
   /**
@@ -42,7 +43,6 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(event.aggregateId)
     const taskStatus = assignedTask.status
     if (taskStatus !== AssignedTaskStatusEnum.Not_Started) {
-      console.log('taskStatus: ', taskStatus)
       return
     }
 
@@ -110,7 +110,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
           const availableWorker = await this.userRepo.findOneByIdOrThrow(assigneeId)
 
           if (!availableWorker.isWorker()) continue
-          assignedTask.assign(availableWorker, null) // OK?
+          await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
           await this.assignedTaskRepo.update(assignedTask)
           return // 종료
         }
@@ -122,7 +122,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
           const availableWorker = await this.userRepo.findOneByIdOrThrow(userAvailableTask.userId)
 
           if (!availableWorker.isWorker()) continue
-          assignedTask.assign(availableWorker, null) // OK?
+          await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
           await this.assignedTaskRepo.update(assignedTask)
           return // 종료
         }
@@ -170,7 +170,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
           const availableWorker = await this.userRepo.findOneByIdOrThrow(assigneeId)
 
           if (!availableWorker.isWorker()) continue
-          assignedTask.assign(availableWorker, null) // OK?
+          await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
           await this.assignedTaskRepo.update(assignedTask)
           return // 종료
         }
@@ -183,7 +183,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
           const availableWorker = await this.userRepo.findOneByIdOrThrow(userAvailableTask.userId)
 
           if (!availableWorker.isWorker()) continue
-          assignedTask.assign(availableWorker, null) // OK?
+          await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
           await this.assignedTaskRepo.update(assignedTask)
           return // 종료
         }
@@ -222,7 +222,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
         const availableWorker = await this.userRepo.findOneByIdOrThrow(assigneeId)
 
         if (!availableWorker.isWorker()) continue
-        assignedTask.assign(availableWorker, null) // OK?
+        await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
         await this.assignedTaskRepo.update(assignedTask)
         return // 종료
       }
@@ -234,7 +234,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
         const availableWorker = await this.userRepo.findOneByIdOrThrow(userAvailableTask.userId)
 
         if (!availableWorker.isWorker()) continue
-        assignedTask.assign(availableWorker, null) // OK?
+        await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
         await this.assignedTaskRepo.update(assignedTask)
         return // 종료
       }
@@ -281,7 +281,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
         const availableWorker = await this.userRepo.findOneByIdOrThrow(assigneeId)
 
         if (!availableWorker.isWorker()) continue
-        assignedTask.assign(availableWorker, null) // OK?
+        await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
         await this.assignedTaskRepo.update(assignedTask)
         return // 종료
       }
@@ -294,7 +294,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
         const availableWorker = await this.userRepo.findOneByIdOrThrow(userAvailableTask.userId)
 
         if (!availableWorker.isWorker()) continue
-        assignedTask.assign(availableWorker, null) // OK?
+        await assignedTask.assign(availableWorker, this.taskStatusValidator) // OK?
         await this.assignedTaskRepo.update(assignedTask)
         return // 종료
       }

@@ -4,11 +4,6 @@ import { AddressDto } from '../../../ordered-job/dtos/address.dto'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 
 export class CreateOrganizationRequestDto {
-  @ApiProperty({ default: 'hyomin@ojware.com' })
-  @IsEmail()
-  @IsOptional()
-  readonly email: string | null
-
   @ApiProperty({ default: true })
   @IsBoolean()
   readonly isVendor: boolean
@@ -30,11 +25,6 @@ export class CreateOrganizationRequestDto {
   @IsString()
   @IsOptional()
   readonly invoiceRecipientEmail: string | null
-
-  // @ApiProperty({ default: 'This is about organization...' })
-  // @IsString()
-  // @IsOptional()
-  // readonly description: string | null
 
   // @ApiProperty({ default: 'client' })
   // @IsString()

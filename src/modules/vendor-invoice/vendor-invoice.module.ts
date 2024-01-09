@@ -31,6 +31,13 @@ import { PROJECT_REPOSITORY } from '../project/project.di-token'
 import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
 import { FindVendorInvoiceLineItemHttpController } from './queries/find-vendor-invoice-line-item/find-vendor-invoice-line-item.http.controller'
+import { TaskStatusChangeValidationDomainService } from '../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { JobRepository } from '../ordered-job/database/job.repository'
+import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
+import { JobMapper } from '../ordered-job/job.mapper'
+import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
+import { InvoiceRepository } from '../invoice/database/invoice.repository'
+import { InvoiceMapper } from '../invoice/invoice.mapper'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -67,6 +74,14 @@ const repositories: Provider[] = [
     provide: PROJECT_REPOSITORY,
     useClass: ProjectRepository,
   },
+  {
+    provide: JOB_REPOSITORY,
+    useClass: JobRepository,
+  },
+  {
+    provide: INVOICE_REPOSITORY,
+    useClass: InvoiceRepository,
+  },
 ]
 const eventHandlers: Provider[] = []
 const mappers: Provider[] = [
@@ -76,11 +91,14 @@ const mappers: Provider[] = [
   OrganizationMapper,
   AssignedTaskMapper,
   ProjectMapper,
+  JobMapper,
+  InvoiceMapper,
 ]
+const domainServices: Provider[] = [TaskStatusChangeValidationDomainService]
 
 @Module({
   imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })
 export class VendorInvoiceModule {}

@@ -51,6 +51,7 @@ import { ActivateTaskWhenTaskIsCreatedDomainEventHandler } from './application/e
 import { ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/activate-other-tasks-when-task-is-completed.domain-event-handler'
 import { DetermineActiveStatusDomainService } from './domain/domain-services/determine-active-status.domain-service'
 import { AssignTaskWhenTaskIsActivatedDomainEventHandler } from './application/event-handlers/assign-task-when-task-is-activated.domain-event-handler'
+import { TaskStatusChangeValidationDomainService } from './domain/domain-services/task-status-change-validation.domain-service'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -119,6 +120,7 @@ const domainServices: Provider[] = [
   CalculateVendorCostDomainService,
   UpdateTaskCostService,
   DetermineActiveStatusDomainService,
+  TaskStatusChangeValidationDomainService,
 ]
 const mappers: Provider[] = [
   AssignedTaskMapper,

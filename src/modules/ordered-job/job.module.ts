@@ -35,6 +35,10 @@ import { SendDeliverablesHttpController } from './commands/send-deliverables/sen
 import { SendDeliverablesService } from './commands/send-deliverables/send-deliverables.service'
 import { FindMyOrderedJobPaginatedHttpController } from './queries/find-my-ordered-jobs/find-my-ordered-jobs.paginated.http.controller'
 import { FindMyOrderedJobPaginatedQueryHandler } from './queries/find-my-ordered-jobs/find-my-ordered-jobs.paginated.query-handler'
+import { UserRepository } from '../users/database/user.repository'
+import { USER_REPOSITORY } from '../users/user.di-tokens'
+import { UserRoleMapper } from '../users/user-role.mapper'
+import { Mailer } from './infrastructure/mailer.infrastructure'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -73,13 +77,18 @@ const eventHandlers: Provider[] = [
   UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler,
   UpdateJobWhenTaskIsUnassignedDomainEventHandler,
 ]
-const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
+const repositories: Provider[] = [
+  { provide: JOB_REPOSITORY, useClass: JobRepository },
+  { provide: USER_REPOSITORY, useClass: UserRepository },
+]
 
-const mappers: Provider[] = [JobMapper, UserMapper]
+const mappers: Provider[] = [JobMapper, UserMapper, UserRoleMapper]
+
+const infrastructures: Provider[] = [Mailer]
 
 @Module({
   imports: [PrismaModule, CqrsModule, AuthenticationModule],
-  providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...repositories, ...mappers, ...infrastructures],
   controllers: [...httpControllers],
   exports: [],
 })

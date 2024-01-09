@@ -3,12 +3,15 @@ import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingType, MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { Address } from '../../organization/domain/value-objects/address.vo'
-import { CreateJobProps, JobProps } from './job.type'
+import { CreateJobProps, JobProps, JobStatusEnum } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import {
+  JobCompleteException,
   JobCompletedUpdateException,
+  JobIsNotCompletedUpdateException,
+  JobMissingDeliverablesEmailException,
   NumberOfWetStampBadRequestException,
   SystemSizeBadRequestException,
 } from './job.error'
@@ -17,6 +20,7 @@ import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
 import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
+import { Mailer } from '../infrastructure/mailer.infrastructure'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -30,7 +34,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       jobRequestNumber: ++create.totalOfJobs,
       propertyFullAddress: create.propertyFullAddress,
       jobName: `Job #${create.totalOfJobs} ` + create.propertyFullAddress,
-      jobStatus: 'Not Started',
+      jobStatus: JobStatusEnum.Not_Started,
       receivedAt: new Date(),
       assignedTasks: [],
       orderedServices: [],
@@ -111,6 +115,18 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this.props.orderedServices.map((orderedService) => orderedService.billingCode)
   }
 
+  async sendToClient(mailer: Mailer, deliverablesLink: string) {
+    if (this.props.jobStatus !== JobStatusEnum.Sent_To_Client && this.props.jobStatus !== JobStatusEnum.Completed) {
+      throw new JobIsNotCompletedUpdateException()
+    }
+    if (!this.props.deliverablesEmails.length) {
+      throw new JobMissingDeliverablesEmailException()
+    }
+    await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
+    this.props.jobStatus = JobStatusEnum.Sent_To_Client
+    return this
+  }
+
   updateRivisionSize() {
     const sizeForRevision = this.props.orderedServices.find(
       (orderedService) =>
@@ -129,19 +145,19 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   notStart(): this {
     if (this.isCompleted()) throw new JobCompletedUpdateException()
-    this.props.jobStatus = 'Not Started'
+    this.props.jobStatus = JobStatusEnum.Not_Started
     return this
   }
 
   start(): this {
     if (this.isCompleted()) throw new JobCompletedUpdateException()
-    this.props.jobStatus = 'In Progress'
+    this.props.jobStatus = JobStatusEnum.In_Progress
     return this
   }
 
   complete(): this {
-    if (!this.isAllTaskCompleted()) return this
-    this.props.jobStatus = 'Completed'
+    if (!this.isAllTaskCompleted()) throw new JobCompleteException()
+    this.props.jobStatus = JobStatusEnum.Completed
     this.addEvent(
       new JobCompletedDomainEvent({
         aggregateId: this.id,
@@ -150,14 +166,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  isAllTaskCompleted(): boolean {
-    return !this.props.assignedTasks.filter((task) => {
-      return task.status === 'In Progress' || task.status === 'On Hold' || task.status === 'Not Started'
-    }).length
+  private isAllTaskCompleted(): boolean {
+    return this.props.orderedServices.some((service) => {
+      return service.status === 'Completed' || service.status === 'Canceled'
+    })
   }
 
   cancel(): this {
-    this.props.jobStatus = 'Canceled'
+    this.props.jobStatus = JobStatusEnum.Canceled
     this.addEvent(
       new JobCanceledDomainEvent({
         aggregateId: this.id,
@@ -167,7 +183,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   hold(): this {
-    this.props.jobStatus = 'On Hold'
+    this.props.jobStatus = JobStatusEnum.On_Hold
     this.addEvent(
       new JobHeldDomainEvent({
         aggregateId: this.id,

@@ -6,14 +6,12 @@ import {
   Prisma,
   Service,
   Tasks,
-  UserLicense,
   Users,
   prerequisiteTasks,
 } from '@prisma/client'
 import { JobResponseDto } from './dtos/job.response.dto'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
-import { JobStatus } from './domain/job.type'
 import { ClientInformation } from './domain/value-objects/client-information.value-object'
 import { AssignedTask } from './domain/value-objects/assigned-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
@@ -24,8 +22,9 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatus,
 } from '../ordered-service/domain/ordered-service.type'
-import { MountingTypeEnum, ProjectPropertyType, ProjectPropertyTypeEnum } from '../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
+import { JobStatusEnum } from './domain/job.type'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -203,7 +202,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         pricingType: record.pricingType as PricingTypeEnum | null,
         mountingType: record.mountingType as MountingTypeEnum,
         revisionSize: record.revisionSize as OrderedServiceSizeForRevisionEnum | null,
-        jobStatus: record.jobStatus as JobStatus, // TODO: status any
+        jobStatus: record.jobStatus as JobStatusEnum, // TODO: status any
         jobRequestNumber: record.jobRequestNumber,
         propertyFullAddress: record.propertyAddress,
         deliverablesEmails: record.deliverablesEmail?.split(',') || [],

@@ -4,7 +4,6 @@ import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
 import { CreateTaskHttpController } from './commands/create-task/create-task.http.controller'
 import { UpdateTaskHttpController } from './commands/update-task/update-task.http.controller'
-import { DeleteTaskHttpController } from './commands/delete-task/delete-task.http.controller'
 import { FindTaskHttpController } from './queries/find-task/find-task.http.controller'
 import { FindTaskPaginatedHttpController } from './queries/find-task-paginated/task.paginated.http.controller'
 import { CreateTaskService } from './commands/create-task/create-task.service'
@@ -29,6 +28,13 @@ import { UserRoleMapper } from '../users/user-role.mapper'
 import { PositionRepository } from '../position/database/position.repository'
 import { POSITION_REPOSITORY } from '../position/position.di-token'
 import { PositionMapper } from '../position/position.mapper'
+import { TaskStatusChangeValidationDomainService } from '../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
+import { InvoiceRepository } from '../invoice/database/invoice.repository'
+import { InvoiceMapper } from '../invoice/invoice.mapper'
+import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
+import { JobRepository } from '../ordered-job/database/job.repository'
+import { JobMapper } from '../ordered-job/job.mapper'
 
 const httpControllers = [
   CreateTaskHttpController,
@@ -67,13 +73,22 @@ const repositories: Provider[] = [
     provide: POSITION_REPOSITORY,
     useClass: PositionRepository,
   },
+  {
+    provide: INVOICE_REPOSITORY,
+    useClass: InvoiceRepository,
+  },
+  {
+    provide: JOB_REPOSITORY,
+    useClass: JobRepository,
+  },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper, PositionMapper]
+const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper, PositionMapper, InvoiceMapper, JobMapper]
+const domainServices: Provider[] = [TaskStatusChangeValidationDomainService]
 
 @Module({
   imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
   exports: [],
 })

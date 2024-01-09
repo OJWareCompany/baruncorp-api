@@ -3,17 +3,13 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { Inject } from '@nestjs/common'
 import { PrismaService } from '../../../database/prisma.service'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { RejectAssignedTaskCommand } from './reject-assigned-task.command'
 import { AssignedTaskAlreadyCompletedException, AssigneeNotFoundException } from '../../domain/assigned-task.error'
-import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
 import { v4 } from 'uuid'
+import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
 
 @CommandHandler(RejectAssignedTaskCommand)
 export class RejectAssignedTaskService implements ICommandHandler {
@@ -24,13 +20,8 @@ export class RejectAssignedTaskService implements ICommandHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY)
     private readonly userRepo: UserRepositoryPort,
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY)
-    private readonly jobRepo: JobRepositoryPort,
-    // @ts-ignore
-    @Inject(INVOICE_REPOSITORY)
-    private readonly invoiceRepo: InvoiceRepositoryPort,
     private readonly prismaService: PrismaService,
+    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
   ) {}
   async execute(command: RejectAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
@@ -43,14 +34,7 @@ export class RejectAssignedTaskService implements ICommandHandler {
 
     const user = await this.userRepo.findOneByIdOrThrow(assigneeId)
 
-    const job = await this.jobRepo.findJobOrThrow(assignedTask.getProps().jobId)
-
-    if (job.invoiceId !== null) {
-      const invoice = await this.invoiceRepo.findOneOrThrow(job.invoiceId)
-      if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
-    }
-
-    assignedTask.unassign()
+    await assignedTask.unassign(this.taskStatusValidator)
     await this.assignedTaskRepo.update(assignedTask)
     await this.prismaService.rejectedTaskReasons.create({
       data: {

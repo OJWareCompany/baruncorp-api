@@ -45,6 +45,12 @@ import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
 import { FindOrderedServicePaginatedHttpController } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.http.controller'
 import { FindOrderedServicePaginatedQueryHandler } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.query-handler'
+import { OrderedServiceCompletionCheckDomainService } from './domain/domain-services/check-all-related-tasks-completed.domain-service'
+import { ASSIGNED_TASK_REPOSITORY } from '../assigned-task/assigned-task.di-token'
+import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.repository'
+import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
+import { TaskStatusChangeValidationDomainService } from '../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { RevisionTypeUpdateValidationDomainService } from './domain/domain-services/revision-type-update-validation.domain-service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -85,9 +91,15 @@ const repositories: Provider[] = [
   { provide: JOB_REPOSITORY, useClass: JobRepository },
   { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
   { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
+  { provide: ASSIGNED_TASK_REPOSITORY, useClass: AssignedTaskRepository },
 ]
 
-const domainServices: Provider[] = [ServiceInitialPriceManager]
+const domainServices: Provider[] = [
+  ServiceInitialPriceManager,
+  OrderedServiceCompletionCheckDomainService,
+  TaskStatusChangeValidationDomainService,
+  RevisionTypeUpdateValidationDomainService,
+]
 
 const mappers: Provider[] = [
   UserMapper,
@@ -99,6 +111,7 @@ const mappers: Provider[] = [
   OrderedServiceMapper,
   InvoiceMapper,
   ProjectMapper,
+  AssignedTaskMapper,
 ]
 
 @Module({

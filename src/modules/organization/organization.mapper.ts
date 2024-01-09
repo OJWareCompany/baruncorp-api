@@ -41,7 +41,6 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       organizationType: props.organizationType,
       mountingTypeDefaultValue: props.mountingTypeDefaultValue,
       projectPropertyTypeDefaultValue: props.projectPropertyTypeDefaultValue,
-      email: props.email,
       phoneNumber: props.phoneNumber,
       city: props.address.city,
       country: props.address.country,
@@ -75,7 +74,6 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       projectPropertyTypeDefaultValue: record.projectPropertyTypeDefaultValue
         ? (record.projectPropertyTypeDefaultValue as ProjectPropertyTypeEnum)
         : null,
-      email: record.email,
       phoneNumber: record.phoneNumber,
       organizationType: record.organizationType,
       address: new Address({
@@ -106,7 +104,6 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.id = entity.id
     response.name = entity.getProps().name
     // response.description = entity.getProps().description
-    response.email = entity.getProps().email
     response.phoneNumber = entity.getProps().phoneNumber
     response.organizationType = entity.getProps().organizationType
     response.address = new Address({
@@ -139,8 +136,6 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     const response = new OrganizationPaginatedResponseFields()
     response.id = entity.getProps().id
     response.name = entity.getProps().name
-    // response.description = entity.getProps().description
-    response.email = entity.getProps().email
     response.phoneNumber = entity.getProps().phoneNumber
     response.organizationType = entity.getProps().organizationType
     response.fullAddress = entity.getProps().address.fullAddress

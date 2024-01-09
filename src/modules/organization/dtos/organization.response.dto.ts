@@ -13,9 +13,6 @@ export class OrganizationResponseDto {
   description: string | null
 
   @ApiProperty()
-  email: string | null
-
-  @ApiProperty()
   phoneNumber: string | null
 
   @ApiProperty()

@@ -11,6 +11,7 @@ import { ExpensePricingRepositoryPort } from '../../../expense-pricing/database/
 import { AssignedTaskAssignedDomainEvent } from '../../domain/events/assigned-task-assigned.domain-event'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
 
 export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
   constructor(
@@ -23,6 +24,7 @@ export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly calculateVendorCostDomainService: CalculateVendorCostDomainService,
+    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
   ) {}
   @OnEvent([AssignedTaskAssignedDomainEvent.name])
   async handle(event: AssignedTaskAssignedDomainEvent) {
@@ -33,7 +35,12 @@ export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
       user.getProps().organization.id,
       assignedTask.taskId,
     )
-    assignedTask.updateCost(this.calculateVendorCostDomainService, expensePricing, orderedService)
+    await assignedTask.updateCost(
+      this.calculateVendorCostDomainService,
+      expensePricing,
+      orderedService,
+      this.taskStatusValidator,
+    )
     await this.assignedTaskRepo.update(assignedTask)
   }
 }

@@ -14,9 +14,8 @@ import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.d
 import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activated.domain-event'
 import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
 import { PrismaService } from '../../database/prisma.service'
-import { AssignedTaskDurationExceededException } from './assigned-task.error'
-import { InvoiceEntity } from '../../invoice/domain/invoice.entity'
-import { IssuedJobUpdateException } from '../../ordered-job/domain/job.error'
+import { AssignedTaskAlreadyCompletedException, AssignedTaskDurationExceededException } from './assigned-task.error'
+import { TaskStatusChangeValidationDomainService } from './domain-services/task-status-change-validation.domain-service'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -128,21 +127,25 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  invoice(vendorInvoiceId: string) {
+  async invoice(vendorInvoiceId: string, taskStatusChangeValidator: TaskStatusChangeValidationDomainService) {
+    await taskStatusChangeValidator.validate(this)
     this.props.vendorInvoiceId = vendorInvoiceId
     return this
   }
 
-  updateCost(
+  async updateCost(
     calcService: CalculateVendorCostDomainService,
     expensePricing: ExpensePricingEntity,
     orderedService: OrderedServiceEntity,
+    taskStatusChangeValidator: TaskStatusChangeValidationDomainService,
   ) {
+    await taskStatusChangeValidator.validate(this)
     this.props.cost = calcService.calcVendorCost(expensePricing, orderedService)
   }
 
   // residential revision은 size가 정해지지 않은 경우 complete 될 수 없음
-  complete(): this {
+  async complete(taskStatusChangeValidator: TaskStatusChangeValidationDomainService): Promise<this> {
+    await taskStatusChangeValidator.validate(this)
     this.props.status = 'Completed'
     this.props.doneAt = new Date()
     this.addEvent(
@@ -155,7 +158,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  cancel(): this {
+  async cancel(taskStatusValidator: TaskStatusChangeValidationDomainService): Promise<this> {
+    await taskStatusValidator.validate(this)
     if (this.props.status === 'Completed') return this
     this.props.status = 'Canceled'
     this.props.doneAt = new Date()
@@ -163,7 +167,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  hold(): this {
+  async hold(taskStatusValidator: TaskStatusChangeValidationDomainService): Promise<this> {
+    await taskStatusValidator.validate(this)
     if (this.props.status === 'Completed' || this.props.status === 'Canceled') return this
     this.props.status = 'On Hold'
     this.props.doneAt = new Date()
@@ -171,7 +176,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  reopen(): this {
+  async reopen(taskStatusValidator: TaskStatusChangeValidationDomainService): Promise<this> {
+    await taskStatusValidator.validate(this)
     if (this.props.status === 'Completed') return this
     this.props.status = 'Not Started'
     this.props.doneAt = null
@@ -187,7 +193,9 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  unassign() {
+  async unassign(taskStatusValidator: TaskStatusChangeValidationDomainService) {
+    if (this.isCompleted) throw new AssignedTaskAlreadyCompletedException()
+    await taskStatusValidator.validate(this)
     this.props.assigneeId = null
     this.props.assigneeName = null
     this.props.assigneeOrganizationId = null
@@ -204,8 +212,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  assign(user: UserEntity, invoice: InvoiceEntity | null): this {
-    if (invoice && invoice.isIssuedOrPaid) throw new IssuedJobUpdateException()
+  async assign(user: UserEntity, taskStatusValidator: TaskStatusChangeValidationDomainService): Promise<this> {
+    await taskStatusValidator.validate(this)
     this.props.assigneeId = user.id
     this.props.assigneeName = user.userName.fullName
     this.props.assigneeOrganizationId = user.organization.id
@@ -234,7 +242,11 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  setDuration(duration: number | null): this {
+  async setDuration(
+    duration: number | null,
+    taskStatusValidator: TaskStatusChangeValidationDomainService,
+  ): Promise<this> {
+    await taskStatusValidator.validate(this)
     if (duration && duration > 127) {
       throw new AssignedTaskDurationExceededException()
     }

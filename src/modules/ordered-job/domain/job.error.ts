@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { BadRequestException, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 
 export class JobNotFoundException extends NotFoundException {
   constructor() {
@@ -37,6 +37,18 @@ export class IssuedJobUpdateException extends BadRequestException {
 
 export class JobIsNotCompletedUpdateException extends BadRequestException {
   constructor() {
-    super("incomplete job can't send deliverables", '40008')
+    super('Deliverables cannot be sent if the job is incomplete.', '40008')
+  }
+}
+
+export class JobMissingDeliverablesEmailException extends UnprocessableEntityException {
+  constructor() {
+    super('Missing deliverables email address in the request. Please provide a valid email.', '40009')
+  }
+}
+
+export class JobCompleteException extends UnprocessableEntityException {
+  constructor() {
+    super('If there are unfinished services, the job cannot be completed.', '40010')
   }
 }

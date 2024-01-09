@@ -6,6 +6,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { OnEvent } from '@nestjs/event-emitter'
 import { AssignedTaskMapper } from '../../assigned-task.mapper'
 import { OrderedServiceReactivatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-reactivated.domain-event'
+import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
 
 @Injectable()
 export class ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler {
@@ -14,6 +15,7 @@ export class ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler {
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly mapper: AssignedTaskMapper,
+    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
   ) {}
 
   @OnEvent(OrderedServiceReactivatedDomainEvent.name, { async: true, promisify: true })
@@ -23,7 +25,8 @@ export class ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler {
     })
 
     const assignedTaskEntities = assignedTasks.map(this.mapper.toDomain)
-    assignedTaskEntities.map((assignedTask) => assignedTask.reopen())
+    const loop = assignedTaskEntities.map(async (assignedTask) => await assignedTask.reopen(this.taskStatusValidator))
+    await Promise.all(loop)
     await this.assignedTaskRepo.update(assignedTaskEntities)
   }
 }

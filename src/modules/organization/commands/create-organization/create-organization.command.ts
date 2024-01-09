@@ -2,7 +2,6 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 
 export class CreateOrganizationCommand {
-  readonly email: string | null
   readonly isVendor: boolean
   readonly phoneNumber: string | null
   readonly name: string
