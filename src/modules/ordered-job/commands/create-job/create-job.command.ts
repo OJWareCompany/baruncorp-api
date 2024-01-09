@@ -1,6 +1,7 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
+import { LoadCalcOriginEnum } from '../../domain/job.type'
 import { CreateOrderedTaskWhenJobIsCreatedRequestDto } from './create-job.request.dto'
 
 export class CreateJobCommand {
@@ -15,6 +16,7 @@ export class CreateJobCommand {
   readonly numberOfWetStamp: number | null
   readonly mountingType: MountingTypeEnum
   readonly isExpedited: boolean
+  readonly loadCalcOrigin: LoadCalcOriginEnum
 
   constructor(props: CreateJobCommand) {
     initialize(this, props)

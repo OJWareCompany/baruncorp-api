@@ -6,6 +6,7 @@ import { CreateJobRequestDto } from './create-job.request.dto'
 import { CreateJobCommand } from './create-job.command'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { IdResponse } from '../../../../libs/api/id.response.dto'
+import { LoadCalcOriginEnum } from '../../domain/job.type'
 
 @Controller('jobs')
 export class CreateJobHttpController {
@@ -26,6 +27,7 @@ export class CreateJobHttpController {
       numberOfWetStamp: dto.numberOfWetStamp,
       mountingType: dto.mountingType,
       isExpedited: dto.isExpedited,
+      loadCalcOrigin: dto.loadCalcOrigin || LoadCalcOriginEnum.Self,
     })
     const result = await this.commandBus.execute(command)
     return new IdResponse(result.id)

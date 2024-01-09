@@ -425,6 +425,7 @@ model OrderedJobs {
   invoiceId                                     String?           @map("invoice_id") @db.VarChar(255)
   revisionSize                                  String?           @map("revision_size") @db.VarChar(255)
   pricingType                                   String?           @map("pricing_type") @db.VarChar(255)
+  loadCalcOrigin                              String            @default("Self") @db.VarChar(255) @map("load_calc_origin")
   clientOrganizationName                        String            @map("client_organization_name") @db.VarChar(255)
   clientOrganizationId                          String            @map("client_organization_id") @db.VarChar(255)
   projectId                                     String            @map("project_id") @db.VarChar(255)

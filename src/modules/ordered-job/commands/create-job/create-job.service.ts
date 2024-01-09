@@ -40,6 +40,7 @@ export class CreateJobService implements ICommandHandler {
     // Entity에는 Record에 저장 될 모든 필드가 있어야한다.
     const job = JobEntity.create({
       propertyFullAddress: project.propertyFullAddress,
+      loadCalcOrigin: command.loadCalcOrigin,
       organizationId: project.clientOrganizationId,
       organizationName: organization.name,
       orderedServices: services.map((service) => {
