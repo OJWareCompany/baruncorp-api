@@ -8,10 +8,10 @@ import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import {
-  // JobCompleteException,
+  JobCompleteException,
   JobCompletedUpdateException,
-  // JobIsNotCompletedUpdateException,
-  // JobMissingDeliverablesEmailException,
+  JobIsNotCompletedUpdateException,
+  JobMissingDeliverablesEmailException,
   NumberOfWetStampBadRequestException,
   SystemSizeBadRequestException,
 } from './job.error'
@@ -20,7 +20,7 @@ import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
 import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
-// import { Mailer } from '../infrastructure/mailer.infrastructure'
+import { Mailer } from '../infrastructure/mailer.infrastructure'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -115,17 +115,17 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this.props.orderedServices.map((orderedService) => orderedService.billingCode)
   }
 
-  // async sendToClient(mailer: Mailer, deliverablesLink: string) {
-  //   if (this.props.jobStatus !== JobStatusEnum.Sent_To_Client && this.props.jobStatus !== JobStatusEnum.Completed) {
-  //     throw new JobIsNotCompletedUpdateException()
-  //   }
-  //   if (!this.props.deliverablesEmails.length) {
-  //     throw new JobMissingDeliverablesEmailException()
-  //   }
-  //   await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
-  //   this.props.jobStatus = JobStatusEnum.Sent_To_Client
-  //   return this
-  // }
+  async sendToClient(mailer: Mailer, deliverablesLink: string) {
+    if (this.props.jobStatus !== JobStatusEnum.Sent_To_Client && this.props.jobStatus !== JobStatusEnum.Completed) {
+      throw new JobIsNotCompletedUpdateException()
+    }
+    if (!this.props.deliverablesEmails.length) {
+      throw new JobMissingDeliverablesEmailException()
+    }
+    await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
+    this.props.jobStatus = JobStatusEnum.Sent_To_Client
+    return this
+  }
 
   updateRivisionSize() {
     const sizeForRevision = this.props.orderedServices.find(
@@ -156,7 +156,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   complete(): this {
-    // if (!this.isAllTaskCompleted()) throw new JobCompleteException()
+    if (!this.isAllTaskCompleted()) throw new JobCompleteException()
     this.props.jobStatus = JobStatusEnum.Completed
     this.addEvent(
       new JobCompletedDomainEvent({
