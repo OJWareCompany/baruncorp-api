@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { Paginated } from '../../../libs/ddd/repository.port'
 import { PrismaService } from '../../database/prisma.service'
 import { ServiceMapper } from '../service.mapper'
 import { ServiceRepositoryPort } from './service.repository.port'
 import { ServiceEntity } from '../domain/service.entity'
 import { ServiceNotFoundException, ServiceWithAssociatedTasksDeleteException } from '../domain/service.error'
+import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class ServiceRepository implements ServiceRepositoryPort {
@@ -58,7 +58,20 @@ export class ServiceRepository implements ServiceRepositoryPort {
     return entity
   }
 
-  find(): Promise<Paginated<ServiceEntity>> {
-    throw new Error('Method not implemented.')
+  async find(whereInput: Prisma.ServiceWhereInput): Promise<ServiceEntity[]> {
+    const records = await this.prismaService.service.findMany({
+      where: whereInput,
+      include: {
+        tasks: true,
+        commercialStandardPricingTiers: true,
+      },
+    })
+    return records.map((record) => {
+      return this.serviceMapper.toDomain({
+        service: record,
+        commercialStandardPricingTiers: record.commercialStandardPricingTiers,
+        tasks: record.tasks,
+      })
+    })
   }
 }
