@@ -677,7 +677,7 @@ export interface CreateJobRequestDto {
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
-  loadCalcOrigin: 'Self' | 'Client Provided'
+  loadCalcOrigin?: 'Self' | 'Client Provided'
   /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
   mailingAddressForWetStamp: AddressDto | null
@@ -838,6 +838,14 @@ export interface CreateServiceRequestDto {
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
+  /** @default null */
+  residentialNewEstimatedTaskDuration: number | null
+  /** @default null */
+  residentialRevisionEstimatedTaskDuration: number | null
+  /** @default null */
+  commercialNewEstimatedTaskDuration: number | null
+  /** @default null */
+  commercialRevisionEstimatedTaskDuration: number | null
 }
 
 export interface UpdateServiceRequestDto {
@@ -850,6 +858,14 @@ export interface UpdateServiceRequestDto {
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
+  /** @default null */
+  residentialNewEstimatedTaskDuration: number | null
+  /** @default null */
+  residentialRevisionEstimatedTaskDuration: number | null
+  /** @default null */
+  commercialNewEstimatedTaskDuration: number | null
+  /** @default null */
+  commercialRevisionEstimatedTaskDuration: number | null
 }
 
 export interface ServiceTaskResponseDto {
@@ -867,6 +883,14 @@ export interface ServiceResponseDto {
   /** @default null */
   fixedPrice: number | null
   relatedTasks: ServiceTaskResponseDto[]
+  /** @default null */
+  residentialNewEstimatedTaskDuration: number | null
+  /** @default null */
+  residentialRevisionEstimatedTaskDuration: number | null
+  /** @default null */
+  commercialNewEstimatedTaskDuration: number | null
+  /** @default null */
+  commercialRevisionEstimatedTaskDuration: number | null
 }
 
 export interface ServicePaginatedResponseDto {

@@ -43,6 +43,23 @@ export class ServiceEntity extends AggregateRoot<ServiceProps> {
     return this
   }
 
+  updateTaskDuration({
+    residentialNewEstimatedTaskDuration,
+    residentialRevisionEstimatedTaskDuration,
+    commercialNewEstimatedTaskDuration,
+    commercialRevisionEstimatedTaskDuration,
+  }: {
+    residentialNewEstimatedTaskDuration: number | null
+    residentialRevisionEstimatedTaskDuration: number | null
+    commercialNewEstimatedTaskDuration: number | null
+    commercialRevisionEstimatedTaskDuration: number | null
+  }) {
+    this.props.residentialNewEstimatedTaskDuration = residentialNewEstimatedTaskDuration
+    this.props.residentialRevisionEstimatedTaskDuration = residentialRevisionEstimatedTaskDuration
+    this.props.commercialNewEstimatedTaskDuration = commercialNewEstimatedTaskDuration
+    this.props.commercialRevisionEstimatedTaskDuration = commercialRevisionEstimatedTaskDuration
+    return this
+  }
   updatePricing(pricing: Pricing): this {
     this.props.pricing = pricing
     return this

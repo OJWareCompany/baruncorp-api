@@ -29,9 +29,14 @@ export class UpdateServiceService implements ICommandHandler {
   async execute(command: UpdateServiceCommand): Promise<void> {
     const service = await this.serviceRepo.findOne(command.serviceId)
     if (!service) throw new ServiceNotFoundException()
-
     service.updateName(command.name)
     service.updateBillingCode(command.billingCode)
+    service.updateTaskDuration({
+      residentialNewEstimatedTaskDuration: command.residentialNewEstimatedTaskDuration,
+      residentialRevisionEstimatedTaskDuration: command.residentialRevisionEstimatedTaskDuration,
+      commercialNewEstimatedTaskDuration: command.commercialNewEstimatedTaskDuration,
+      commercialRevisionEstimatedTaskDuration: command.commercialRevisionEstimatedTaskDuration,
+    })
 
     // Residential
     const residential = new ResidentialStandardPricing({
