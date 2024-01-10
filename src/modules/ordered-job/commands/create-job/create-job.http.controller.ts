@@ -28,6 +28,7 @@ export class CreateJobHttpController {
       mountingType: dto.mountingType,
       isExpedited: dto.isExpedited,
       loadCalcOrigin: dto.loadCalcOrigin || LoadCalcOriginEnum.Self,
+      dueDate: dto.dueDate || null,
     })
     const result = await this.commandBus.execute(command)
     return new IdResponse(result.id)

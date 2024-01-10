@@ -17,6 +17,7 @@ export class CreateJobCommand {
   readonly mountingType: MountingTypeEnum
   readonly isExpedited: boolean
   readonly loadCalcOrigin: LoadCalcOriginEnum
+  readonly dueDate: Date | null
 
   constructor(props: CreateJobCommand) {
     initialize(this, props)

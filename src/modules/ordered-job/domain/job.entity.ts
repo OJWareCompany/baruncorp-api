@@ -223,6 +223,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return
   }
 
+  updateDueDate(dueDate: Date) {
+    this.props.dueDate = dueDate
+    return this
+  }
+
   updateUpdatedBy(updatedBy: string) {
     this.props.updatedBy = updatedBy
     return

@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsBoolean, IsDate, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { AddressDto } from '../../dtos/address.dto'
 import { LoadCalcOriginEnum } from '../../domain/job.type'
+import { Type } from 'class-transformer'
 
 export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
@@ -16,7 +17,7 @@ export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
 }
 
 export class CreateJobRequestDto {
-  @ApiProperty({ default: 'chris@barun.com', type: String, isArray: true })
+  @ApiProperty({ default: ['chris@barun.com'], type: String, isArray: true })
   @IsArray()
   readonly deliverablesEmails: string[]
 
@@ -34,7 +35,7 @@ export class CreateJobRequestDto {
   @IsOptional()
   readonly systemSize: number | null
 
-  @ApiProperty({ default: '561f7c64-fe49-40a4-8399-d5d24725f9cd' })
+  @ApiProperty({ default: 'd6935a65-2ec5-4df0-a8b5-a4e39f124d05' })
   @IsString()
   readonly projectId: string
 
@@ -87,4 +88,10 @@ export class CreateJobRequestDto {
   @ApiProperty({ default: false })
   @IsBoolean()
   readonly isExpedited: boolean
+
+  @ApiProperty({ description: 'dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.' })
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  readonly dueDate?: Date | null
 }

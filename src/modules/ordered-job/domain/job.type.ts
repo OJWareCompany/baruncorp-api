@@ -42,6 +42,7 @@ export interface CreateJobProps {
   projectPropertyType: ProjectPropertyTypeEnum
   loadCalcOrigin: LoadCalcOriginEnum
   isExpedited: boolean
+  dueDate: Date | null
   updatedBy: string
 }
 

@@ -29,6 +29,7 @@ export class UpdateJobHttpController {
       numberOfWetStamp: dto.numberOfWetStamp,
       mountingType: dto.mountingType,
       isExpedited: dto.isExpedited,
+      dueDate: dto.dueDate || null,
     })
 
     await this.commandBus.execute(command)

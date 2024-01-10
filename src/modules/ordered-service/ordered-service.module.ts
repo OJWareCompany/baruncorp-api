@@ -118,5 +118,6 @@ const mappers: Provider[] = [
   imports: [CqrsModule, PrismaModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
+  exports: [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }, OrderedServiceMapper],
 })
 export class OrderedServiceModule {}

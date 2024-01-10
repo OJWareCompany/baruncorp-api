@@ -39,6 +39,16 @@ import { UserRepository } from '../users/database/user.repository'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { Mailer } from './infrastructure/mailer.infrastructure'
+import { SERVICE_REPOSITORY } from '../service/service.di-token'
+import { ServiceRepository } from '../service/database/service.repository'
+import { ServiceMapper } from '../service/service.mapper'
+import { PROJECT_REPOSITORY } from '../project/project.di-token'
+import { ProjectRepository } from '../project/database/project.repository'
+import { OrderedServiceRepository } from '../ordered-service/database/ordered-service.repository'
+import { ORDERED_SERVICE_REPOSITORY } from '../ordered-service/ordered-service.di-token'
+import { ProjectMapper } from '../project/project.mapper'
+import { OrderedServiceMapper } from '../ordered-service/ordered-service.mapper'
+import { TotalDurationCalculator } from './domain/domain-services/total-duration-calculator.domain-service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -80,15 +90,28 @@ const eventHandlers: Provider[] = [
 const repositories: Provider[] = [
   { provide: JOB_REPOSITORY, useClass: JobRepository },
   { provide: USER_REPOSITORY, useClass: UserRepository },
+  { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
+  { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
+  { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
+  { provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository },
 ]
 
-const mappers: Provider[] = [JobMapper, UserMapper, UserRoleMapper]
+const mappers: Provider[] = [JobMapper, UserMapper, UserRoleMapper, ServiceMapper, ProjectMapper, OrderedServiceMapper]
 
 const infrastructures: Provider[] = [Mailer]
+const domainServices: Provider[] = [TotalDurationCalculator]
 
 @Module({
   imports: [PrismaModule, CqrsModule, AuthenticationModule],
-  providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...repositories, ...mappers, ...infrastructures],
+  providers: [
+    ...commandHandlers,
+    ...queryHandlers,
+    ...eventHandlers,
+    ...repositories,
+    ...mappers,
+    ...infrastructures,
+    ...domainServices,
+  ],
   controllers: [...httpControllers],
   exports: [],
 })

@@ -31,8 +31,20 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     return new ProjectEntity({ id, props })
   }
 
+  get totalOfJobs(): number {
+    return this.props.totalOfJobs
+  }
+
+  get projectPropertyAddress(): Address {
+    return this.props.projectPropertyAddress
+  }
+
   get clientOrganizationId() {
     return this.props.clientOrganizationId
+  }
+
+  get projectPropertyType() {
+    return this.props.projectPropertyType
   }
 
   get projectPropertyOwnerName() {

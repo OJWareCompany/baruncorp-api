@@ -664,7 +664,7 @@ export interface CreateOrderedTaskWhenJobIsCreatedRequestDto {
 }
 
 export interface CreateJobRequestDto {
-  /** @default "chris@barun.com" */
+  /** @default ["chris@barun.com"] */
   deliverablesEmails: string[]
   /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   clientUserId: string
@@ -672,7 +672,7 @@ export interface CreateJobRequestDto {
   additionalInformationFromClient: string | null
   /** @default 300.1 */
   systemSize: number | null
-  /** @default "561f7c64-fe49-40a4-8399-d5d24725f9cd" */
+  /** @default "d6935a65-2ec5-4df0-a8b5-a4e39f124d05" */
   projectId: string
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
@@ -685,24 +685,36 @@ export interface CreateJobRequestDto {
   numberOfWetStamp: number | null
   /** @default false */
   isExpedited: boolean
+  /**
+   * dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.
+   * @format date-time
+   */
+  dueDate?: string | null
 }
 
 export interface UpdateJobRequestDto {
-  /** @default "chris@barun.com" */
+  /** @default ["chris@barun.com"] */
   deliverablesEmails: string[]
-  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  /** @default "96d39061-a4d7-4de9-a147-f627467e11d5" */
   clientUserId: string
   /** @default "please, check this out." */
   additionalInformationFromClient: string | null
   /** @default 300.1 */
   systemSize: number | null
+  /** @example "Ground Mount" */
+  mountingType: 'Roof Mount' | 'Ground Mount'
+  /** @default "Self" */
+  loadCalcOrigin?: 'Self' | 'Client Provided'
   mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
-  /** @default true */
+  /** @default false */
   isExpedited: boolean
-  /** @default "Roof Mount" */
-  mountingType: string
+  /**
+   * dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.
+   * @format date-time
+   */
+  dueDate: string | null
 }
 
 export interface JobPaginatedResponseFields {

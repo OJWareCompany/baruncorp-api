@@ -5,6 +5,8 @@ import { StringIsEmptyException } from '../../../libs/exceptions/exceptions'
 import { ServiceBillingCodeUpdateException, ServiceNameUpdateException } from './service.error'
 import { CreateServiceProps, ServiceProps } from './service.type'
 import { Pricing } from './value-objects/pricing.value-object'
+import { ProjectEntity } from '../../project/domain/project.entity'
+import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 export class ServiceEntity extends AggregateRoot<ServiceProps> {
   protected _id: string
@@ -60,6 +62,25 @@ export class ServiceEntity extends AggregateRoot<ServiceProps> {
     this.props.commercialRevisionEstimatedTaskDuration = commercialRevisionEstimatedTaskDuration
     return this
   }
+
+  getTaskDuration(project: ProjectEntity, isRevision: boolean) {
+    return project.projectPropertyType === ProjectPropertyTypeEnum.Residential
+      ? this.getResidentialEstimatedTaskDuration(isRevision)
+      : this.getCommercialEstimatedTaskDuration(isRevision)
+  }
+
+  private getResidentialEstimatedTaskDuration(isRevision: boolean) {
+    return isRevision
+      ? this.props.residentialRevisionEstimatedTaskDuration
+      : this.props.residentialNewEstimatedTaskDuration
+  }
+
+  private getCommercialEstimatedTaskDuration(isRevision: boolean) {
+    return isRevision
+      ? this.props.commercialRevisionEstimatedTaskDuration
+      : this.props.commercialNewEstimatedTaskDuration
+  }
+
   updatePricing(pricing: Pricing): this {
     this.props.pricing = pricing
     return this

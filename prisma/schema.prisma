@@ -440,7 +440,7 @@ model OrderedJobs {
   jobName                                       String            @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int               @map("job_request_number")
   receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
-  dateDue                                       DateTime?         @map("date_due") @db.Date
+  dueDate                                       DateTime?         @map("due_date") @db.Date
   mountingType                                  String            @map("mounting_type") @db.VarChar(255)
   projectType                                   String            @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?              @map("number_of_wet_stamp") @db.UnsignedTinyInt
