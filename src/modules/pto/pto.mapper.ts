@@ -4,6 +4,7 @@ import { PtoResponseDto } from './dtos/pto.response.dto'
 import { PtoEntity } from './domain/pto.entity'
 import { PtoModel, PtoQueryModel } from './database/pto.repository'
 import { PtoDetail } from './domain/value-objects/pto.detail.vo'
+import { PtoDetailEntity } from './domain/pto-detail.entity'
 
 @Injectable()
 export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
@@ -17,6 +18,19 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
       isPaid: props.isPaid,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
+      details: props.details.map((ptoDetail) => {
+        const ptoDetailprops = ptoDetail.getProps()
+        return {
+          id: ptoDetailprops.id,
+          ptoId: ptoDetailprops.ptoId,
+          ptoTypeId: ptoDetailprops.ptoTypeId,
+          value: ptoDetailprops.value,
+          startedAt: ptoDetailprops.startedAt,
+          endedAt: ptoDetailprops.endedAt,
+          createdAt: ptoDetailprops.createdAt,
+          updatedAt: ptoDetailprops.updatedAt,
+        }
+      }),
     }
     return record
   }
@@ -32,14 +46,22 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
         total: record.total,
         isPaid: record.isPaid,
         details: record.details.map((ptoDetail) => {
-          return new PtoDetail({
+          const ptoDetailEntity: PtoDetailEntity = new PtoDetailEntity({
             id: ptoDetail.id,
-            name: ptoDetail.ptoType.name,
-            abbreviation: ptoDetail.ptoType.abbreviation,
-            value: ptoDetail.value,
-            startedAt: ptoDetail.startedAt,
-            endedAt: ptoDetail.endedAt,
+            createdAt: ptoDetail.createdAt,
+            updatedAt: ptoDetail.updatedAt,
+            props: {
+              ptoId: ptoDetail.ptoId,
+              ptoTypeId: ptoDetail.ptoTypeId,
+              value: ptoDetail.value,
+              name: ptoDetail.ptoType.name,
+              abbreviation: ptoDetail.ptoType.abbreviation,
+              startedAt: ptoDetail.startedAt,
+              endedAt: ptoDetail.endedAt,
+            },
           })
+
+          return ptoDetailEntity
         }),
       },
     })
@@ -55,13 +77,14 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
       total: props.total,
       isPaid: props.isPaid,
       details: props.details.map((ptoDetail) => {
+        const ptoDetailprops = ptoDetail.getProps()
         return new PtoDetail({
-          id: ptoDetail.id,
-          name: ptoDetail.name,
-          abbreviation: ptoDetail.abbreviation,
-          value: ptoDetail.value,
-          startedAt: ptoDetail.startedAt,
-          endedAt: ptoDetail.endedAt,
+          id: ptoDetailprops.id,
+          name: ptoDetailprops.name ?? '',
+          abbreviation: ptoDetailprops.abbreviation ?? '',
+          value: ptoDetailprops.value,
+          startedAt: ptoDetailprops.startedAt,
+          endedAt: ptoDetailprops.endedAt,
         })
       }),
       createdAt: props.createdAt,

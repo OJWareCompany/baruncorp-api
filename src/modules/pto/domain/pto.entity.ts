@@ -4,6 +4,7 @@ import { CreatePtoProps, PtoProps } from './pto.type'
 
 export class PtoEntity extends AggregateRoot<PtoProps> {
   protected _id: string
+  details: any
 
   static create(create: CreatePtoProps) {
     const id = v4()
@@ -15,20 +16,17 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     return new PtoEntity({ id, props })
   }
 
-  get total(): number {
-    return this.props.total
+  public getUsedPtoValue(): number {
+    let totalValue = 0
+    this.props.details.forEach((detail) => {
+      totalValue += detail.getProps().value
+    })
+
+    return totalValue
   }
 
-  set total(total: number) {
-    this.props.total = total
-  }
-
-  get isPaid(): boolean {
-    return this.props.isPaid
-  }
-
-  set isPaid(isPaid: boolean) {
-    this.props.isPaid = isPaid
+  public getUsablePtoValue(): number {
+    return this.props.total - this.getUsedPtoValue()
   }
 
   public validate(): void {

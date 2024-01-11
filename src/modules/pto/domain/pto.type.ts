@@ -1,3 +1,4 @@
+import { PtoDetailEntity } from './pto-detail.entity'
 import { PtoDetail } from './value-objects/pto.detail.vo'
 
 export interface CreatePtoProps {
@@ -8,5 +9,6 @@ export interface CreatePtoProps {
 }
 
 export interface PtoProps extends CreatePtoProps {
-  details: PtoDetail[]
+  dateOfJoining?: Date
+  details: PtoDetailEntity[]
 }

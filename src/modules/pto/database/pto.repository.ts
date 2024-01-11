@@ -6,12 +6,16 @@ import { PtoEntity } from '../domain/pto.entity'
 import { PtoRepositoryPort } from './pto.repository.port'
 import { Paginated } from '@src/libs/ddd/repository.port'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
-import { UniqueConstraintException } from '../domain/pto.error'
+import { TargetUserNotFoundException, UniqueConstraintException } from '../domain/pto.error'
+import { PtoTargetUser } from '../domain/value-objects/target.user.vo'
 
-export type PtoModel = Ptos
+export type PtoModel = Ptos & {
+  details: PtoDetailModel[]
+}
+export type PtoDetailModel = PtoDetails
 export type PtoQueryModel = Ptos & {
-  // details: PtoDetails[]
-  details: (PtoDetails & { ptoType: PtoTypes })[]
+  // details: PtoDetailModel[]
+  details: (PtoDetailModel & { ptoType: PtoTypes })[]
 }
 @Injectable()
 export class PtoRepository implements PtoRepositoryPort {
@@ -64,6 +68,26 @@ export class PtoRepository implements PtoRepositoryPort {
   //   })
   // }
 
+  // Todo. 추후 User Repo에서 관리
+  async findTargetUser(userId: string): Promise<PtoTargetUser> {
+    try {
+      const record = await this.prismaService.users.findUniqueOrThrow({
+        where: { id: userId },
+      })
+
+      return new PtoTargetUser({
+        id: record.id,
+        // 우선 유저의 입사기념일이 없는 경우 createdAt을 기준으로 계산한다.
+        dateOfJoining: record.dateOfJoining ? record.dateOfJoining : record.createdAt,
+      })
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        throw new TargetUserNotFoundException()
+      }
+      throw new Error('An unexpected error occurred')
+    }
+  }
+
   async findOne(id: string): Promise<PtoEntity | null> {
     const record = await this.prismaService.ptos.findUnique({
       where: { id },
@@ -75,10 +99,29 @@ export class PtoRepository implements PtoRepositoryPort {
     // PtoDetails를 details로 매핑
     const ptoQueryModel: PtoQueryModel = {
       ...record,
-      details: record.PtoDetails,
+      details: [],
     }
 
     return this.ptoMapper.toDomain(ptoQueryModel)
+  }
+
+  async findPtoFromTenure(userId: string, startDateTenure: number, endDateTenure: number): Promise<PtoEntity[]> {
+    const records = await this.prismaService.ptos.findMany({
+      where: {
+        userId: userId,
+        OR: [{ tenure: startDateTenure }, { tenure: endDateTenure }],
+      },
+      include: this.ptoQueryIncludeInput,
+    })
+
+    return records.map((record) => {
+      const ptoQueryModel: PtoQueryModel = {
+        ...record,
+        details: record.PtoDetails,
+      }
+
+      return this.ptoMapper.toDomain(ptoQueryModel)
+    })
   }
 
   async findMany(offset: number, limit: number): Promise<PtoEntity[]> {

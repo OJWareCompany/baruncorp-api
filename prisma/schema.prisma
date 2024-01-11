@@ -998,6 +998,7 @@ model Ptos {
   user       Users    @relation(fields: [userId], references: [id])
   PtoDetails PtoDetails[]
 
+  @@unique([userId, tenure])
   @@map("ptos")
 }
 
@@ -1042,6 +1043,7 @@ model PtoDetails {
   ptoId     String   @map("pto_id")      @db.VarChar(255)
   ptoTypeId String   @map("pto_type_id") @db.VarChar(255)
   value     Float    @map("value")       @db.Float
+  days      Int      @map("number")      @db.Int
   startedAt DateTime @map("started_at")  @db.DateTime(0)
   endedAt   DateTime @map("ended_at")    @db.DateTime(0)
   createdAt DateTime @map("created_at")  @db.DateTime(0) @default(now()) 
@@ -1054,7 +1056,7 @@ model PtoDetails {
 
 model PtoTenurePolicies {
   id        String   @id                @db.VarChar(255)
-  tenure    Int      @map("tenure")     @db.TinyInt
+  tenure    Int      @map("tenure")     @db.TinyInt     @unique
   total     Float    @map("total")      @db.Float
   createdAt DateTime @map("created_at") @db.DateTime(0) @default(now()) 
   updatedAt DateTime @map("updated_at") @db.DateTime(0)

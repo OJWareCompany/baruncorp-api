@@ -49,4 +49,27 @@ export class PtoTenurePolicyRepository implements PtoTenurePolicyRepositoryPort 
   async getCount(): Promise<number> {
     return await this.prismaService.ptoTenurePolicies.count()
   }
+
+  async getMaxTotal(): Promise<number> {
+    const result = await this.prismaService.ptoTenurePolicies.aggregate({
+      _max: {
+        total: true,
+      },
+    })
+    // 만에 하나 DB에 아무런 값이 없다면 10 반환
+    return result._max.total ?? 10
+  }
+
+  async getTotalOfTenure(tenure: number): Promise<number> {
+    const result = await this.prismaService.ptoTenurePolicies.findFirst({
+      where: {
+        tenure: tenure,
+      },
+      select: {
+        total: true,
+      },
+    })
+    // 찾는 값이 없다면 기본 10으로 할당
+    return result?.total ?? 10
+  }
 }
