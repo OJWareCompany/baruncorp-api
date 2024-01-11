@@ -6,6 +6,7 @@ export interface PtoDetailProps {
   name: string
   abbreviation: string
   value: number
+  days: number
   startedAt: Date
   endedAt: Date
 }

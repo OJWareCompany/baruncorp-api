@@ -103,6 +103,7 @@ export class CreatePtoDetailService implements ICommandHandler {
       ptoId: targetPtoProps.id,
       ptoTypeId: command.ptoTypeId,
       value: command.value,
+      days: command.days,
       startedAt: command.startedAt,
       endedAt: command.endedAt,
     })

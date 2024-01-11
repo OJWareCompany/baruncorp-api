@@ -25,6 +25,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
           ptoId: ptoDetailprops.ptoId,
           ptoTypeId: ptoDetailprops.ptoTypeId,
           value: ptoDetailprops.value,
+          days: ptoDetailprops.days,
           startedAt: ptoDetailprops.startedAt,
           endedAt: ptoDetailprops.endedAt,
           createdAt: ptoDetailprops.createdAt,
@@ -54,6 +55,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
               ptoId: ptoDetail.ptoId,
               ptoTypeId: ptoDetail.ptoTypeId,
               value: ptoDetail.value,
+              days: ptoDetail.days,
               name: ptoDetail.ptoType.name,
               abbreviation: ptoDetail.ptoType.abbreviation,
               startedAt: ptoDetail.startedAt,
@@ -83,6 +85,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
           name: ptoDetailprops.name ?? '',
           abbreviation: ptoDetailprops.abbreviation ?? '',
           value: ptoDetailprops.value,
+          days: ptoDetailprops.days,
           startedAt: ptoDetailprops.startedAt,
           endedAt: ptoDetailprops.endedAt,
         })

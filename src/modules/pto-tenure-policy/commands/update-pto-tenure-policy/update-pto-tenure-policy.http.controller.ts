@@ -13,7 +13,7 @@ import {
 export class UpdatePtoTenurePolicyHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Patch(':ptoTenurePolicyId')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async patch(
     @Param() param: UpdatePtoTenurePolicyParamRequestDto,
     @Body() request: UpdatePtoTenurePolicyRequestDto,

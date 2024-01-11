@@ -8,9 +8,9 @@ export class UpdatePtoTenurePolicyParamRequestDto {
 }
 
 export class UpdatePtoTenurePolicyRequestDto {
-  @ApiProperty({ default: 12, maximum: 30, required: false })
+  @ApiProperty({ default: 12, maximum: 50, required: false })
   @IsOptional()
   @IsNumber()
-  @Max(30)
+  @Max(50)
   readonly total?: number
 }
