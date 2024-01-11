@@ -791,6 +791,70 @@ export interface SendDeliverablesRequestDto {
   deliverablesLink: string
 }
 
+export interface CreateOrderedServiceRequestDto {
+  /** @default "" */
+  serviceId: string
+  /** @default "" */
+  jobId: string
+  /** @default "" */
+  description: string | null
+}
+
+export interface UpdateOrderedServiceRequestDto {
+  /** @default "" */
+  description: string | null
+}
+
+export interface OrderedServiceAssignedTaskResponse {
+  id: string
+  taskName: string
+  status: string
+  assigneeId: string | null
+  startedAt: string | null
+  doneAt: string | null
+}
+
+export interface OrderedServiceResponseDto {
+  id: string
+  serviceId: string
+  serviceName: string
+  organizationName: string
+  jobName: string
+  price: number | null
+  priceOverride: number | null
+  jobId: string
+  /** @default "Completed" */
+  status: 'Pending' | 'Completed' | 'Canceled'
+  orderedAt: string | null
+  doneAt: string | null
+  isRevision: boolean
+  assignedTasks: OrderedServiceAssignedTaskResponse[]
+  projectPropertyType: string
+  mountingType: string
+}
+
+export interface UpdateManualPriceRequestDto {
+  /** @default "" */
+  price: number
+}
+
+export interface UpdateRevisionSizeRequestDto {
+  /** @default null */
+  sizeForRevision: 'Major' | 'Minor' | null
+}
+
+export interface OrderedServicePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: OrderedServiceResponseDto[]
+}
+
 export interface CreateJobNoteRequestDto {
   /** @default "what do you think about Jazz?" */
   content: string
@@ -915,70 +979,6 @@ export interface ServicePaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: ServiceResponseDto[]
-}
-
-export interface CreateOrderedServiceRequestDto {
-  /** @default "" */
-  serviceId: string
-  /** @default "" */
-  jobId: string
-  /** @default "" */
-  description: string | null
-}
-
-export interface UpdateOrderedServiceRequestDto {
-  /** @default "" */
-  description: string | null
-}
-
-export interface OrderedServiceAssignedTaskResponse {
-  id: string
-  taskName: string
-  status: string
-  assigneeId: string | null
-  startedAt: string | null
-  doneAt: string | null
-}
-
-export interface OrderedServiceResponseDto {
-  id: string
-  serviceId: string
-  serviceName: string
-  organizationName: string
-  jobName: string
-  price: number | null
-  priceOverride: number | null
-  jobId: string
-  /** @default "Completed" */
-  status: 'Pending' | 'Completed' | 'Canceled'
-  orderedAt: string | null
-  doneAt: string | null
-  isRevision: boolean
-  assignedTasks: OrderedServiceAssignedTaskResponse[]
-  projectPropertyType: string
-  mountingType: string
-}
-
-export interface UpdateManualPriceRequestDto {
-  /** @default "" */
-  price: number
-}
-
-export interface UpdateRevisionSizeRequestDto {
-  /** @default null */
-  sizeForRevision: 'Major' | 'Minor' | null
-}
-
-export interface OrderedServicePaginatedResponseDto {
-  /** @default 1 */
-  page: number
-  /** @default 20 */
-  pageSize: number
-  /** @example 10000 */
-  totalCount: number
-  /** @example 500 */
-  totalPage: number
-  items: OrderedServiceResponseDto[]
 }
 
 export interface CreateTaskRequestDto {
@@ -2105,21 +2105,6 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   isExpedited?: boolean | null
 }
 
-export interface FindServicePaginatedHttpControllerGetParams {
-  /**
-   * Specifies a limit of returned records
-   * @default 20
-   * @example 20
-   */
-  limit?: number
-  /**
-   * Page number
-   * @default 1
-   * @example 1
-   */
-  page?: number
-}
-
 export interface FindOrderedServicePaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
@@ -2156,6 +2141,21 @@ export interface FindOrderedServicePaginatedHttpControllerGetParams {
    * @default ""
    */
   jobName?: string | null
+}
+
+export interface FindServicePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
 }
 
 export interface FindTaskPaginatedHttpControllerGetParams {
@@ -3565,6 +3565,147 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
+  orderedServices = {
+    /**
+     * No description
+     *
+     * @name CreateOrderedServiceHttpControllerPost
+     * @request POST:/ordered-services
+     */
+    createOrderedServiceHttpControllerPost: (data: CreateOrderedServiceRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/ordered-services`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOrderedServicePaginatedHttpControllerGet
+     * @request GET:/ordered-services
+     */
+    findOrderedServicePaginatedHttpControllerGet: (
+      {
+        orderedServiceStatus,
+        projectPropertyType,
+        mountingType,
+        isRevision,
+        serviceName,
+        organizationName,
+        jobName,
+        ...query
+      }: FindOrderedServicePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<OrderedServicePaginatedResponseDto, any>({
+        path: `/ordered-services`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateOrderedServiceHttpControllerPatch
+     * @request PATCH:/ordered-services/{orderedServiceId}
+     */
+    updateOrderedServiceHttpControllerPatch: (
+      orderedServiceId: string,
+      data: UpdateOrderedServiceRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ordered-services/${orderedServiceId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOrderedServiceHttpControllerGet
+     * @request GET:/ordered-services/{orderedServiceId}
+     */
+    findOrderedServiceHttpControllerGet: (orderedServiceId: string, params: RequestParams = {}) =>
+      this.request<OrderedServiceResponseDto, any>({
+        path: `/ordered-services/${orderedServiceId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CancelOrderedServiceHttpControllerPatch
+     * @request PATCH:/ordered-services/cancel/{orderedServiceId}
+     */
+    cancelOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ordered-services/cancel/${orderedServiceId}`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ReactivateOrderedServiceHttpControllerPatch
+     * @request PATCH:/ordered-services/reactivate/{orderedServiceId}
+     */
+    reactivateOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ordered-services/reactivate/${orderedServiceId}`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateManualPriceHttpControllerPatch
+     * @request PATCH:/ordered-services/{orderedServiceId}/manual-price
+     */
+    updateManualPriceHttpControllerPatch: (
+      orderedServiceId: string,
+      data: UpdateManualPriceRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ordered-services/${orderedServiceId}/manual-price`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateRevisionSizeHttpControllerPatch
+     * @request PATCH:/ordered-services/{orderedServiceId}/revision-size
+     */
+    updateRevisionSizeHttpControllerPatch: (
+      orderedServiceId: string,
+      data: UpdateRevisionSizeRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ordered-services/${orderedServiceId}/revision-size`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
   orderedJobNotes = {
     /**
      * No description
@@ -3708,147 +3849,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/services/${serviceId}`,
         method: 'GET',
         format: 'json',
-        ...params,
-      }),
-  }
-  orderedServices = {
-    /**
-     * No description
-     *
-     * @name CreateOrderedServiceHttpControllerPost
-     * @request POST:/ordered-services
-     */
-    createOrderedServiceHttpControllerPost: (data: CreateOrderedServiceRequestDto, params: RequestParams = {}) =>
-      this.request<IdResponse, any>({
-        path: `/ordered-services`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindOrderedServicePaginatedHttpControllerGet
-     * @request GET:/ordered-services
-     */
-    findOrderedServicePaginatedHttpControllerGet: (
-      {
-        orderedServiceStatus,
-        projectPropertyType,
-        mountingType,
-        isRevision,
-        serviceName,
-        organizationName,
-        jobName,
-        ...query
-      }: FindOrderedServicePaginatedHttpControllerGetParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<OrderedServicePaginatedResponseDto, any>({
-        path: `/ordered-services`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/{orderedServiceId}
-     */
-    updateOrderedServiceHttpControllerPatch: (
-      orderedServiceId: string,
-      data: UpdateOrderedServiceRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/ordered-services/${orderedServiceId}`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindOrderedServiceHttpControllerGet
-     * @request GET:/ordered-services/{orderedServiceId}
-     */
-    findOrderedServiceHttpControllerGet: (orderedServiceId: string, params: RequestParams = {}) =>
-      this.request<OrderedServiceResponseDto, any>({
-        path: `/ordered-services/${orderedServiceId}`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name CancelOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/cancel/{orderedServiceId}
-     */
-    cancelOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/ordered-services/cancel/${orderedServiceId}`,
-        method: 'PATCH',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name ReactivateOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/reactivate/{orderedServiceId}
-     */
-    reactivateOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/ordered-services/reactivate/${orderedServiceId}`,
-        method: 'PATCH',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateManualPriceHttpControllerPatch
-     * @request PATCH:/ordered-services/{orderedServiceId}/manual-price
-     */
-    updateManualPriceHttpControllerPatch: (
-      orderedServiceId: string,
-      data: UpdateManualPriceRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/ordered-services/${orderedServiceId}/manual-price`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateRevisionSizeHttpControllerPatch
-     * @request PATCH:/ordered-services/{orderedServiceId}/revision-size
-     */
-    updateRevisionSizeHttpControllerPatch: (
-      orderedServiceId: string,
-      data: UpdateRevisionSizeRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/ordered-services/${orderedServiceId}/revision-size`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
         ...params,
       }),
   }
