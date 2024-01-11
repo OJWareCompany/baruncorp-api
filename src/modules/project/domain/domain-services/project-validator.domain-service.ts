@@ -43,14 +43,13 @@ export class ProjectValidatorDomainService {
     projectNumber: string | null,
     projectEntity?: ProjectEntity,
   ) {
-    if (projectEntity && projectEntity.projectNumber === projectNumber) return
-
     const existingProject = await this.projectRepo.findOne({
       clientOrganizationId,
-      projectNumber,
+      projectNumber: projectNumber,
+      ...(projectEntity && { NOT: { id: projectEntity.id } }), // 업데이트 상황이라면 업데이트 대상을 제외하고 조회
     })
 
-    if (projectNumber && existingProject) {
+    if (existingProject) {
       throw new ProjectNumberConflictException()
     }
   }
@@ -60,11 +59,10 @@ export class ProjectValidatorDomainService {
     fullAddress: string,
     projectEntity?: ProjectEntity,
   ) {
-    if (projectEntity && projectEntity.projectPropertyAddress.fullAddress === fullAddress) return
-
     const existingAddress = await this.projectRepo.findOne({
       clientOrganizationId,
       propertyFullAddress: fullAddress,
+      ...(projectEntity && { NOT: { id: projectEntity.id } }), // 업데이트 상황이라면 업데이트 대상을 제외하고 조회
     })
 
     if (existingAddress) {
