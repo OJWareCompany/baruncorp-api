@@ -35,7 +35,7 @@ export class CreateJobService implements ICommandHandler {
     if (!organization) throw new OrganizationNotFoundException()
     const orderer = await this.jobRepo.findUser(command.updatedByUserId)
     if (!orderer) throw new UserNotFoundException()
-    const project = await this.projectRepo.findProjectOrThrow(command.projectId)
+    const project = await this.projectRepo.findOneOrThrow({ id: command.projectId })
 
     const services = await this.serviceRepo.find({ id: { in: command.orderedTasks.map((task) => task.serviceId) } })
     const totalDurationInMinutes = await this.durationCalculator.calcTotalDuration(command.orderedTasks, project)
