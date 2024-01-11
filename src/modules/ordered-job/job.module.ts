@@ -44,11 +44,9 @@ import { ServiceRepository } from '../service/database/service.repository'
 import { ServiceMapper } from '../service/service.mapper'
 import { PROJECT_REPOSITORY } from '../project/project.di-token'
 import { ProjectRepository } from '../project/database/project.repository'
-import { OrderedServiceRepository } from '../ordered-service/database/ordered-service.repository'
-import { ORDERED_SERVICE_REPOSITORY } from '../ordered-service/ordered-service.di-token'
 import { ProjectMapper } from '../project/project.mapper'
-import { OrderedServiceMapper } from '../ordered-service/ordered-service.mapper'
 import { TotalDurationCalculator } from './domain/domain-services/total-duration-calculator.domain-service'
+import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -93,16 +91,15 @@ const repositories: Provider[] = [
   { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
   { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
   { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
-  { provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository },
 ]
 
-const mappers: Provider[] = [JobMapper, UserMapper, UserRoleMapper, ServiceMapper, ProjectMapper, OrderedServiceMapper]
+const mappers: Provider[] = [JobMapper, UserMapper, UserRoleMapper, ServiceMapper, ProjectMapper]
 
 const infrastructures: Provider[] = [Mailer]
 const domainServices: Provider[] = [TotalDurationCalculator]
 
 @Module({
-  imports: [PrismaModule, CqrsModule, AuthenticationModule],
+  imports: [PrismaModule, CqrsModule, AuthenticationModule, OrderedServiceModule],
   providers: [
     ...commandHandlers,
     ...queryHandlers,
