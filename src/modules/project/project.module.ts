@@ -32,6 +32,7 @@ import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepository } from '../organization/database/organization.repository'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { ProjectValidatorDomainService } from './domain/domain-services/project-validator.domain-service'
+import { GeographyModule } from '../geography/geography.module'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -71,7 +72,7 @@ const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMappe
 
 const domainServices: Provider[] = [ProjectValidatorDomainService]
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, GeographyModule],
   providers: [
     ...commandHandlers,
     ...eventHandlers,
