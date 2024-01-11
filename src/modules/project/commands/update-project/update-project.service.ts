@@ -1,20 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, NotFoundException } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { GeographyRepositoryPort } from '../../../geography/database/geography.repository.port'
 import { GEOGRAPHY_REPOSITORY } from '../../../geography/geography.di-token'
-import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
-import { ProjectEntity } from '../../domain/project.entity'
 import { UpdateProjectCommand } from './update-project.command'
 import { CensusResponseDto } from '../../infra/census/census.response.dto'
-import {
-  CoordinatesNotFoundException,
-  ProjectNumberConflicException,
-  ProjectPropertyAddressConflicException,
-} from '../../domain/project.error'
+import { CoordinatesNotFoundException } from '../../domain/project.error'
+import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -24,16 +19,14 @@ export class UpdateProjectService implements ICommandHandler {
     // @ts-ignore
     @Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort,
     private readonly censusSearchCoordinatesService: CensusSearchCoordinatesService,
+    private readonly projectValidatorDomainService: ProjectValidatorDomainService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
-    const project = await this.projectRepository.findProjectOrThrow(command.projectId)
+    const project = await this.projectRepository.findOneOrThrow({ id: command.projectId })
+    await this.projectValidatorDomainService.validateForUpdate(project, command)
 
-    await this.validate(project, command)
-    await this.validateProjectNumber(project, command)
-    await this.validatePropertyAddress(project, command)
-
-    if (project.getProps().projectPropertyAddress.coordinates !== command.projectPropertyAddress.coordinates) {
+    if (project.projectPropertyAddress.coordinates !== command.projectPropertyAddress.coordinates) {
       const censusResponse = await this.censusSearchCoordinatesService.search(
         command.projectPropertyAddress.coordinates,
       )
@@ -58,45 +51,6 @@ export class UpdateProjectService implements ICommandHandler {
     })
 
     await this.projectRepository.update(project)
-  }
-
-  private async validate(projectEntity: ProjectEntity, command: UpdateProjectCommand) {
-    const organization = await this.projectRepository.isExistedOrganizationById(
-      projectEntity.getProps().clientOrganizationId,
-    )
-    if (!organization) {
-      throw new OrganizationNotFoundException()
-    }
-  }
-
-  private async validateProjectNumber(projectEntity: ProjectEntity, command: UpdateProjectCommand) {
-    if (projectEntity.getProps().projectNumber === command.projectNumber) return
-
-    const isAlreadyExistedProjectNumber = command.projectNumber
-      ? await this.projectRepository.isExistedProjectByClientIdAndProjectNumber(
-          projectEntity.getProps().clientOrganizationId,
-          command.projectNumber,
-        )
-      : false
-
-    if (command.projectNumber && isAlreadyExistedProjectNumber) {
-      throw new ProjectNumberConflicException()
-    }
-  }
-
-  private async validatePropertyAddress(projectEntity: ProjectEntity, command: UpdateProjectCommand) {
-    if (projectEntity.getProps().projectPropertyAddress.fullAddress === command.projectPropertyAddress.fullAddress) {
-      return
-    }
-
-    const isAlreadyExistedPropertyAddress = await this.projectRepository.isExistedByPropertyOwnerAddress(
-      projectEntity.getProps().clientOrganizationId,
-      command.projectPropertyAddress.fullAddress,
-    )
-
-    if (isAlreadyExistedPropertyAddress) {
-      throw new ProjectPropertyAddressConflicException()
-    }
   }
 
   async generateGeographyAndAhjNotes(censusResponseDto: CensusResponseDto) {
