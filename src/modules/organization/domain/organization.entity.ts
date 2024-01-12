@@ -1,5 +1,6 @@
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { OrganizationCreatedDomainEvent } from './events/organization-created.domain-event'
 import { CreateOrganizationProps, OrganizationProps } from './organization.types'
 import { v4 } from 'uuid'
 export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
@@ -12,7 +13,14 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
       organizationType: 'client',
       isDelinquent: false,
     }
-    return new OrganizationEntity({ id, props })
+    const organization = new OrganizationEntity({ id, props })
+    organization.addEvent(
+      new OrganizationCreatedDomainEvent({
+        aggregateId: id,
+        name: organization.name,
+      }),
+    )
+    return organization
   }
 
   get name() {

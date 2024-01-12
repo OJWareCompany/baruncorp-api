@@ -440,7 +440,7 @@ model OrderedJobs {
   jobName                                       String            @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int               @map("job_request_number")
   receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
-  dueDate                                       DateTime?         @map("due_date") @db.Date
+  dueDate                                       DateTime?         @map("due_date") @db.DateTime(0)
   mountingType                                  String            @map("mounting_type") @db.VarChar(255)
   projectType                                   String            @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?              @map("number_of_wet_stamp") @db.UnsignedTinyInt
@@ -989,6 +989,37 @@ model AssigningTaskAlerts {
   isCheckedOut        Boolean  @map("is_checked_out")
 
   @@map("assigning_task_alerts")
+}
+
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model google_job_folder {
+  id                             String  @id @db.VarChar(255)
+  name                           String? @db.VarChar(255)
+  share_link                     String? @db.VarChar(255)
+  deliverables_folder_id         String? @db.VarChar(255)
+  deliverables_folder_share_link String? @db.VarChar(255)
+  job_id                         String? @db.VarChar(255)
+
+  @@index([job_id], map: "google_job_folder_FK")
+}
+
+model google_project_folder {
+  id         String  @id @db.VarChar(255)
+  name       String? @db.VarChar(255)
+  share_link String? @db.VarChar(255)
+  project_id String? @db.VarChar(255)
+
+  @@index([project_id], map: "google_project_folder_FK")
+}
+
+model google_shared_drive {
+  id                    String  @id @db.VarChar(255)
+  name                  String? @db.VarChar(255)
+  residential_folder_id String? @db.VarChar(255)
+  commercial_folder_id  String? @db.VarChar(255)
+  organization_id       String
+
+  @@index([organization_id], map: "shared_drive_FK")
 }
 
 enum InvoicesStatus {

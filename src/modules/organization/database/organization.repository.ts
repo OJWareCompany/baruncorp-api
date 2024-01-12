@@ -6,6 +6,7 @@ import { UserRoleMapper } from '../../users/user-role.mapper'
 import { OrganizationMapper } from '../organization.mapper'
 import { OrganizationEntity } from '../domain/organization.entity'
 import { OrganizationNotFoundException } from '../domain/organization.error'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 
 // Where should I put member list? Event Storming Helpful Decide
 
@@ -18,6 +19,7 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
     private readonly prismaService: PrismaService,
     private readonly userRoleMapper: UserRoleMapper,
     private readonly organizationMapper: OrganizationMapper,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
   async update(entity: OrganizationEntity): Promise<void> {
     const record = this.organizationMapper.toPersistence(entity)
@@ -44,5 +46,6 @@ export class OrganizationRepository implements OrganizationRepositoryPort {
   async insertOrganization(entity: OrganizationEntity): Promise<void> {
     const record = this.organizationMapper.toPersistence(entity)
     await this.prismaService.organizations.create({ data: record })
+    await entity.publishEventByAggregateIdAndThrowIfFailed(this.eventEmitter, entity.id)
   }
 }
