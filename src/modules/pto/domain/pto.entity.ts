@@ -64,6 +64,13 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     this.props.details?.push(detail)
   }
 
+  set total(total: number) {
+    this.props.total = total
+  }
+  // public updateTotal(total: number) {
+  //   this.props.total = total;
+  // }
+
   public validate(): void {
     return
   }

@@ -11,31 +11,16 @@ import { PtoDetailResponseDto } from './dtos/pto-detail.response.dto'
 export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
   toPersistence(entity: PtoEntity): PtoModel {
     const props = entity.getProps()
-    let record: PtoModel | null = null
-    if (props.details) {
-      record = {
-        id: props.id,
-        userId: props.userId,
-        tenure: props.tenure,
-        total: props.total,
-        isPaid: props.isPaid,
-        createdAt: props.createdAt,
-        updatedAt: props.updatedAt,
-        details: props.details.map((ptoDetail) => {
-          return this.toDetailPersistence(ptoDetail)
-        }),
-      }
-    } else {
-      record = {
-        id: props.id,
-        userId: props.userId,
-        tenure: props.tenure,
-        total: props.total,
-        isPaid: props.isPaid,
-        createdAt: props.createdAt,
-        updatedAt: props.updatedAt,
-      }
+    const record: PtoModel = {
+      id: props.id,
+      userId: props.userId,
+      tenure: props.tenure,
+      total: props.total,
+      isPaid: props.isPaid,
+      createdAt: props.createdAt,
+      updatedAt: props.updatedAt,
     }
+
     return record
   }
 

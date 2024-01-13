@@ -10,7 +10,7 @@ import { UpdatePtoRequestDto, UpdatePtoParamRequestDto } from './update-pto.requ
 export class UpdatePtoHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Patch(':ptoId')
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   async patch(@Param() param: UpdatePtoParamRequestDto, @Body() request: UpdatePtoRequestDto): Promise<void> {
     const command = new UpdatePtoCommand({
       ptoId: param.ptoId,

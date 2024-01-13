@@ -13,7 +13,8 @@ export class UpdatePtoService implements ICommandHandler {
 
     const props = entity.getProps()
 
-    if (command.total) props.total = command.total
+    // Todo. 나중에 API 분리하여 처리
+    if (command.total) entity.total = command.total
     if (command.isPaid) props.isPaid = command.isPaid
 
     await this.ptoRepository.update(entity)

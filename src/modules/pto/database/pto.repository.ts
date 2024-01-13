@@ -10,9 +10,7 @@ import { TargetUserNotFoundException, UniqueTenureException } from '../domain/pt
 import { PtoTargetUser } from '../domain/value-objects/target.user.vo'
 import { PtoDetailEntity } from '../domain/pto-detail.entity'
 
-export type PtoModel = Ptos & {
-  details?: PtoDetailModel[]
-}
+export type PtoModel = Ptos
 export type PtoQueryModel = Ptos & {
   details?: (PtoDetailModel & { ptoType: PtoTypes })[]
 }
