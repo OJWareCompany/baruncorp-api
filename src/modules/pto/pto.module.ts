@@ -3,11 +3,11 @@ import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
 import { CreatePtoHttpController } from './commands/create-pto/create-pto.http.controller'
-import { UpdatePtoHttpController } from './commands/update-pto/update-pto.http.controller'
+import { UpdatePtoTotalHttpController } from './commands/update-pto-total/update-pto-total.http.controller'
 import { FindPtoHttpController } from './queries/find-pto/find-pto.http.controller'
 import { FindPtoPaginatedHttpController } from './queries/find-pto-paginated/find-pto.paginated.http.controller'
 import { CreatePtoService } from './commands/create-pto/create-pto.service'
-import { UpdatePtoService } from './commands/update-pto/update-pto.service'
+import { UpdatePtoTotalService } from './commands/update-pto-total/update-pto-total.service'
 import { FindPtoQueryHandler } from './queries/find-pto/find-pto.query-handler'
 import { FindPtoPaginatedQueryHandler } from './queries/find-pto-paginated/find-pto.paginated.query-handler'
 import { PTO_REPOSITORY } from './pto.di-token'
@@ -18,14 +18,33 @@ import { UsersModule } from '../users/users.module'
 import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
+import { CreatePtoDetailHttpController } from './commands/create-pto-detail/create-pto-detail.http.controller'
+import { CreatePtoDetailService } from './commands/create-pto-detail/create-pto-detail.service'
+import { UpdatePtoDetailService } from './commands/update-pto-detail/update-pto-detail.service'
+import { DeletePtoDetailService } from './commands/delete-pto-detail/delete-pto-datail.service'
+import { UpdatePtoDetailHttpController } from './commands/update-pto-detail/update-pto-detail.http.controller'
+import { DeletePtoDetailHttpController } from './commands/delete-pto-detail/delete-pto-datail.http.controller'
+import { UpdatePtoPayHttpController } from './commands/update-pto-pay/update-pto-pay.http.controller'
+import { UpdatePtoPayService } from './commands/update-pto-pay/update-pto-pay.service'
 
 const httpControllers = [
   CreatePtoHttpController,
-  UpdatePtoHttpController,
+  UpdatePtoTotalHttpController,
+  UpdatePtoPayHttpController,
+  CreatePtoDetailHttpController,
+  UpdatePtoDetailHttpController,
+  DeletePtoDetailHttpController,
   FindPtoHttpController,
   FindPtoPaginatedHttpController,
 ]
-const commandHandlers: Provider[] = [CreatePtoService, UpdatePtoService]
+const commandHandlers: Provider[] = [
+  CreatePtoService,
+  UpdatePtoTotalService,
+  UpdatePtoPayService,
+  CreatePtoDetailService,
+  UpdatePtoDetailService,
+  DeletePtoDetailService,
+]
 const queryHandlers: Provider[] = [FindPtoQueryHandler, FindPtoPaginatedQueryHandler]
 const repositories: Provider[] = [
   PtoRepository,

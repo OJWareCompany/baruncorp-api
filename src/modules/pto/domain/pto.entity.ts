@@ -11,6 +11,7 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     const id = v4()
     const props: PtoProps = {
       ...create,
+      details: null,
     }
 
     return new PtoEntity({ id, props })
@@ -57,19 +58,20 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     return endedAt
   }
 
-  public addPtoDetail(detail: PtoDetailEntity) {
-    if (!this.details) {
-      this.details = []
-    }
-    this.props.details?.push(detail)
-  }
+  // public addPtoDetail(detail: PtoDetailEntity) {
+  //   if (!this.details) {
+  //     this.details = []
+  //   }
+  //   this.props.details?.push(detail)
+  // }
 
   set total(total: number) {
     this.props.total = total
   }
-  // public updateTotal(total: number) {
-  //   this.props.total = total;
-  // }
+
+  set isPaid(isPaid: boolean) {
+    this.props.isPaid = isPaid
+  }
 
   public validate(): void {
     return

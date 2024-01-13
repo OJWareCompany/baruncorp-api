@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PaidPTOException, PtoNotFoundException } from '../../domain/pto.error'
+import { PaidPTOUpdateException, PtoNotFoundException } from '../../domain/pto.error'
 import { UpdatePtoDetailCommand } from './update-pto-detail.command'
 import { PtoRepository } from '../../database/pto.repository'
 import { PtoEntity } from '../../domain/pto.entity'
@@ -11,15 +11,15 @@ export class UpdatePtoDetailService implements ICommandHandler {
   async execute(command: UpdatePtoDetailCommand): Promise<void> {
     const entity: PtoDetailEntity | null = await this.ptoRepository.findOnePtoDetail(command.ptoDetailId)
     if (!entity) throw new PtoNotFoundException()
+    console.log(entity)
+    if (entity.getProps().isPaid) throw new PaidPTOUpdateException()
 
-    if (entity.getProps().isPaid) throw new PaidPTOException()
+    if (command.startedAt) entity.startedAt = new Date(command.startedAt)
+    if (command.days) entity.days = command.days
+    if (command.ptoTypeId) entity.ptoTypeId = command.ptoTypeId
+    if (command.amountPerDay) entity.amount = command.amountPerDay
 
-    const props = entity.getProps()
-
-    if (command.startedAt) props.startedAt = command.startedAt
-    if (command.days) props.days = command.days
-    if (command.ptoTypeId) props.ptoTypeId = command.ptoTypeId
-    if (command.amount) props.amount = command.amount
+    console.log(entity.getProps().startedAt.toISOString())
 
     await this.ptoRepository.updateDetail(entity)
   }

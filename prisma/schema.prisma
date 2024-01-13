@@ -1043,7 +1043,7 @@ model PtoDetails {
   ptoId     String   @map("pto_id")      @db.VarChar(255)
   ptoTypeId String   @map("pto_type_id") @db.VarChar(255)
   amount    Float    @map("amount")      @db.Float
-  days      Int      @map("number")      @db.Int
+  days      Int      @map("days")        @db.Int
   startedAt DateTime @map("started_at")  @db.DateTime(0)
   createdAt DateTime @map("created_at")  @db.DateTime(0) @default(now()) 
   updatedAt DateTime @map("updated_at")  @db.DateTime(0)

@@ -7,7 +7,7 @@ export interface CreatePtoDetailProps {
 }
 
 export interface PtoDetailProps extends CreatePtoDetailProps {
-  isPaid?: boolean
-  name?: string
-  abbreviation?: string
+  isPaid: boolean
+  name: string
+  abbreviation: string
 }

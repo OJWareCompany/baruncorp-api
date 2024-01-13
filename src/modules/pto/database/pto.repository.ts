@@ -6,19 +6,19 @@ import { PtoEntity } from '../domain/pto.entity'
 import { PtoRepositoryPort } from './pto.repository.port'
 import { Paginated } from '@src/libs/ddd/repository.port'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
-import { TargetUserNotFoundException, UniqueTenureException } from '../domain/pto.error'
+import { DateOfJoiningNotFoundException, TargetUserNotFoundException, UniqueTenureException } from '../domain/pto.error'
 import { PtoTargetUser } from '../domain/value-objects/target.user.vo'
 import { PtoDetailEntity } from '../domain/pto-detail.entity'
 
 export type PtoModel = Ptos
 export type PtoQueryModel = Ptos & {
-  details?: (PtoDetailModel & { ptoType: PtoTypes })[]
+  details: (PtoDetailModel & { ptoType: PtoTypes })[]
 }
 
 export type PtoDetailModel = PtoDetails
 export type PtoDetailQueryModel = PtoDetails & {
-  isPaid?: boolean
-  ptoType?: PtoTypes
+  isPaid: boolean
+  ptoType: PtoTypes
 }
 
 @Injectable()
@@ -71,7 +71,9 @@ export class PtoRepository implements PtoRepositoryPort {
   }
 
   async deleteDetail(id: string): Promise<void> {
-    await this.prismaService.$executeRaw<Ptos>`DELETE FROM pto_details WHERE id = ${id}`
+    await this.prismaService.ptoDetails.delete({
+      where: { id: id },
+    })
   }
 
   async findTargetUser(userId: string): Promise<PtoTargetUser> {
@@ -80,16 +82,21 @@ export class PtoRepository implements PtoRepositoryPort {
         where: { id: userId },
       })
 
+      if (!record.dateOfJoining) {
+        throw new DateOfJoiningNotFoundException()
+      }
+
       return new PtoTargetUser({
         id: record.id,
         // 우선 유저의 입사기념일이 없는 경우 createdAt을 기준으로 계산한다.
-        dateOfJoining: record.dateOfJoining ? record.dateOfJoining : record.createdAt,
+        dateOfJoining: record.dateOfJoining,
       })
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
         throw new TargetUserNotFoundException()
+      } else {
+        throw error
       }
-      throw new Error('An unexpected error occurred')
     }
   }
 
@@ -129,7 +136,6 @@ export class PtoRepository implements PtoRepositoryPort {
     })
   }
 
-  // async findMany(offset: number, limit: number): Promise<PtoEntity[]> {
   async findMany(offset: number, limit: number): Promise<PtoEntity[]> {
     const records = await this.prismaService.ptos.findMany({
       skip: offset,

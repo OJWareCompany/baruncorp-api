@@ -1,10 +1,9 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
-export class UpdatePtoCommand {
+export class UpdatePtoPayCommand {
   readonly ptoId: string
-  readonly total?: number
-  readonly isPaid?: boolean
-  constructor(props: UpdatePtoCommand) {
+  readonly isPaid: boolean
+  constructor(props: UpdatePtoPayCommand) {
     initialize(this, props)
   }
 }

@@ -5,7 +5,7 @@ export class UpdatePtoDetailCommand {
   readonly startedAt?: Date
   readonly days?: number
   readonly ptoTypeId?: string
-  readonly amount?: number
+  readonly amountPerDay?: number
   constructor(props: UpdatePtoDetailCommand) {
     initialize(this, props)
   }

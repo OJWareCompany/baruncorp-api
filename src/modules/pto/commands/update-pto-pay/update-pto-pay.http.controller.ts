@@ -3,20 +3,17 @@ import { Body, Param, Controller, Patch, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
-import { UpdatePtoDetailCommand } from './update-pto-detail.command'
-import { UpdatePtoDetailRequestDto, UpdatePtoDetailParamRequestDto } from './update-pto-detail.request.dto'
+import { UpdatePtoPayCommand } from './update-pto-pay.command'
+import { UpdatePtoPayRequestDto, UpdatePtoPayParamRequestDto } from './update-pto-pay.request.dto'
 
 @Controller('ptos')
-export class UpdatePtoDetailHttpController {
+export class UpdatePtoPayHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Patch(':ptoDetailId/detail')
+  @Patch(':ptoId/pay')
   // @UseGuards(AuthGuard)
-  async patch(
-    @Param() param: UpdatePtoDetailParamRequestDto,
-    @Body() request: UpdatePtoDetailRequestDto,
-  ): Promise<void> {
-    const command = new UpdatePtoDetailCommand({
-      ptoDetailId: param.ptoDetailId,
+  async patch(@Param() param: UpdatePtoPayParamRequestDto, @Body() request: UpdatePtoPayRequestDto): Promise<void> {
+    const command = new UpdatePtoPayCommand({
+      ptoId: param.ptoId,
       ...request,
     })
     await this.commandBus.execute(command)

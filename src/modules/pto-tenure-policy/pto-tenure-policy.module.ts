@@ -20,5 +20,6 @@ const mappers: Provider[] = [PtoTenurePolicyMapper, UserMapper]
   imports: [CqrsModule, PrismaModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
+  exports: [PtoTenurePolicyRepository],
 })
 export class PtoTenurePolicyModule {}

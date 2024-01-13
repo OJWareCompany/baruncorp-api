@@ -41,35 +41,21 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
   }
 
   toDomain(record: PtoQueryModel): PtoEntity {
-    let entity: PtoEntity | null = null
-    if (!record.details) {
-      entity = new PtoEntity({
-        id: record.id,
-        createdAt: record.createdAt,
-        updatedAt: record.updatedAt,
-        props: {
-          userId: record.userId,
-          tenure: record.tenure,
-          total: record.total,
-          isPaid: record.isPaid,
-        },
-      })
-    } else {
-      entity = new PtoEntity({
-        id: record.id,
-        createdAt: record.createdAt,
-        updatedAt: record.updatedAt,
-        props: {
-          userId: record.userId,
-          tenure: record.tenure,
-          total: record.total,
-          isPaid: record.isPaid,
-          details: record.details.map((ptoDetail) => {
-            return this.toDetailDomain(ptoDetail)
-          }),
-        },
-      })
-    }
+    const entity: PtoEntity = new PtoEntity({
+      id: record.id,
+      createdAt: record.createdAt,
+      updatedAt: record.updatedAt,
+      props: {
+        userId: record.userId,
+        tenure: record.tenure,
+        total: record.total,
+        isPaid: record.isPaid,
+        details: null,
+        // details: record.details?.map((ptoDetail) => {
+        //   return this.toDetailDomain(ptoDetail)
+        // }),
+      },
+    })
 
     return entity
   }

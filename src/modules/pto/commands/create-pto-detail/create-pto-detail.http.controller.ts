@@ -8,7 +8,7 @@ import { UserEntity } from '../../../users/domain/user.entity'
 import { CreatePtoDetailCommand } from './create-pto-detail.command'
 import { CreatePtoDetailRequestDto } from './create-pto-detail.request.dto'
 import { ApiResponse } from '@nestjs/swagger'
-import { AnnualPtoNotExceedException, DaysRangeIssueException, PastDatePTOException } from '../../domain/pto.error'
+import { PastDatePtoException } from '../../domain/pto.error'
 
 @Controller('ptos/detail')
 export class CreatePtoDetailHttpController {
@@ -17,17 +17,14 @@ export class CreatePtoDetailHttpController {
   @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
   async post(@Body() dto: CreatePtoDetailRequestDto): Promise<IdResponse> {
-    // 연차 시작일과 종료일의 시간 범위 설정
-    dto.startedAt.setHours(0, 0, 0, 0)
-    // 과거 시간에 연차를 등록 할 시 예외처리
-    const currentDate: Date = new Date()
-    if (dto.startedAt < currentDate) throw new PastDatePTOException()
-
-    if (dto.days > 100) throw new AnnualPtoNotExceedException()
+    // Todo. amount를 ptoTypeAvalilableValues와 비교하여 예외처리
+    const startedAtDateInstance = new Date(dto.startedAt)
 
     const command = new CreatePtoDetailCommand({
       ...dto,
+      startedAt: startedAtDateInstance,
     })
+
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)
   }

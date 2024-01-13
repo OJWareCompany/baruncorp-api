@@ -18,7 +18,7 @@ export class EndedAtException extends BadRequestException {
   }
 }
 
-export class PastDatePTOException extends BadRequestException {
+export class PastDatePtoException extends BadRequestException {
   constructor() {
     super(`You cannot register annual leave for past dates.`, '20804')
   }
@@ -44,18 +44,30 @@ export class TotalValueExceedsMaxException extends BadRequestException {
 
 export class DaysRangeIssueException extends BadRequestException {
   constructor() {
-    super(`PTO cannot be issued by combining days before and after the anniversary of joining the company.`, '20808')
+    super(`Pto cannot be issued by combining days before and after the anniversary of joining the company.`, '20808')
   }
 }
 
-export class PaidPTOException extends BadRequestException {
+export class PaidPTODeleteException extends BadRequestException {
   constructor() {
-    super(`Paid PTO cannot be deleted`, '20809')
+    super(`Paid pto cannot be deleted`, '20809')
+  }
+}
+
+export class PaidPTOUpdateException extends BadRequestException {
+  constructor() {
+    super(`Paid pto cannot be updated`, '20810')
   }
 }
 
 export class UniqueTenureException extends BadRequestException {
   constructor() {
-    super(`Tenure is unique`, '20810')
+    super(`Tenure is unique`, '20811')
+  }
+}
+
+export class DateOfJoiningNotFoundException extends NotFoundException {
+  constructor() {
+    super(`Target user must have date of joining.`, '20812')
   }
 }
