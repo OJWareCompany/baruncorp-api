@@ -27,6 +27,10 @@ export class PtoDetail extends ValueObject<PtoDetailProps> {
     return this.props.amount
   }
 
+  get days(): number {
+    return this.props.days
+  }
+
   get startedAt(): Date {
     return this.props.startedAt
   }

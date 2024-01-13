@@ -50,10 +50,17 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
         tenure: record.tenure,
         total: record.total,
         isPaid: record.isPaid,
-        details: null,
-        // details: record.details?.map((ptoDetail) => {
-        //   return this.toDetailDomain(ptoDetail)
-        // }),
+        details: record.details.map((detail) => {
+          return new PtoDetail({
+            id: detail.id,
+            name: detail.ptoType.name,
+            abbreviation: detail.ptoType.abbreviation,
+            amount: detail.amount,
+            days: detail.days,
+            startedAt: detail.startedAt,
+          })
+        }),
+        dateOfJoining: null,
       },
     })
 

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Prisma, PtoAvailableValues, PtoDetails, PtoTypes, Ptos } from '@prisma/client'
+import { Prisma, PtoAvailableValues, PtoDetails, PtoTypes, Ptos, Users } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
 import { PtoMapper } from '../pto.mapper'
 import { PtoEntity } from '../domain/pto.entity'
@@ -12,7 +12,10 @@ import { PtoDetailEntity } from '../domain/pto-detail.entity'
 
 export type PtoModel = Ptos
 export type PtoQueryModel = Ptos & {
-  details: (PtoDetailModel & { ptoType: PtoTypes })[]
+  details: (PtoDetailModel & {
+    // user: Users
+    ptoType: PtoTypes
+  })[]
 }
 
 export type PtoDetailModel = PtoDetails
@@ -24,6 +27,7 @@ export type PtoDetailQueryModel = PtoDetails & {
 @Injectable()
 export class PtoRepository implements PtoRepositoryPort {
   private ptoQueryIncludeInput = {
+    // PtoDetails: true
     PtoDetails: {
       include: {
         ptoType: true,

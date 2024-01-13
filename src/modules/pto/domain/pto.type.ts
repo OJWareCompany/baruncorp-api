@@ -9,6 +9,6 @@ export interface CreatePtoProps {
 }
 
 export interface PtoProps extends CreatePtoProps {
-  dateOfJoining?: Date | null
-  details: PtoDetailEntity[] | null
+  dateOfJoining: Date | null
+  details: PtoDetail[] | null
 }

@@ -17,7 +17,6 @@ export class CreatePtoDetailHttpController {
   @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
   async post(@Body() dto: CreatePtoDetailRequestDto): Promise<IdResponse> {
-    // Todo. amount를 ptoTypeAvalilableValues와 비교하여 예외처리
     const startedAtDateInstance = new Date(dto.startedAt)
 
     const command = new CreatePtoDetailCommand({

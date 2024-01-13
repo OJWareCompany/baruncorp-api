@@ -71,3 +71,9 @@ export class DateOfJoiningNotFoundException extends NotFoundException {
     super(`Target user must have date of joining.`, '20812')
   }
 }
+
+export class OverlapsPtoException extends BadRequestException {
+  constructor() {
+    super(`Overlaps with the existing PTO dates.`, '20813')
+  }
+}
