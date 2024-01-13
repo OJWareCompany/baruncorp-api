@@ -31,7 +31,10 @@ const httpControllers = [
 ]
 const commandHandlers: Provider[] = [CreatePtoService, UpdatePtoService, DeletePtoService]
 const queryHandlers: Provider[] = [FindPtoQueryHandler, FindPtoPaginatedQueryHandler]
-const repositories: Provider[] = [PtoRepository, { provide: USER_REPOSITORY, useClass: UserRepository }]
+const repositories: Provider[] = [
+  { provide: PTO_REPOSITORY, useClass: PtoRepository },
+  { provide: USER_REPOSITORY, useClass: UserRepository },
+]
 const eventHandlers: Provider[] = []
 const mappers: Provider[] = [PtoMapper, UserMapper, UserRoleMapper]
 

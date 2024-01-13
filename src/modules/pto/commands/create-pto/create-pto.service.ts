@@ -4,15 +4,17 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { PtoEntity } from '../../domain/pto.entity'
 import { CreatePtoCommand } from './create-pto.command'
-import { PtoRepository } from '../../database/pto.repository'
+import { PtoRepositoryPort } from '../../database/pto.repository.port'
 import { UserNotFoundException } from '../../../users/user.error'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { PTO_REPOSITORY } from '../../../pto/pto.di-token'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 
 @CommandHandler(CreatePtoCommand)
 export class CreatePtoService implements ICommandHandler {
   constructor(
-    private readonly ptoRepository: PtoRepository,
+    // @ts-ignore
+    @Inject(PTO_REPOSITORY) private readonly ptoRepository: PtoRepositoryPort,
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
   ) {}
