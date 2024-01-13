@@ -45,7 +45,7 @@ const repositories: Provider[] = [
 
 const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService, UpdateOrganizationService]
 
-const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [UserMapper, UserMapper, UserRoleMapper, OrganizationMapper]
 
 @Module({
   imports: [CqrsModule],

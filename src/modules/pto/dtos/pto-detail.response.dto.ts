@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString } from 'class-validator'
+import { IsInt, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { Ptos } from '@prisma/client'
 
@@ -20,12 +20,13 @@ export class PtoDetailResponseDto {
   @ApiProperty({ default: 'V' })
   abbreviation: string
 
-  @ApiProperty({ default: 5.5 })
-  value: number
+  @ApiProperty({ default: 0.5 })
+  amount: number
 
-  @ApiProperty({ default: '2024-01-09T03:50:37.000Z' })
+  @ApiProperty({ default: '2024-01-09' })
   startedAt: Date
 
-  @ApiProperty({ default: '2024-01-09T03:50:37.000Z' })
-  endedAt: Date
+  @ApiProperty({ default: 2 })
+  @IsInt()
+  readonly days?: number
 }

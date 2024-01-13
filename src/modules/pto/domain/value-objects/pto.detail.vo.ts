@@ -5,10 +5,9 @@ export interface PtoDetailProps {
   id: string
   name: string
   abbreviation: string
-  value: number
+  amount: number
   days: number
   startedAt: Date
-  endedAt: Date
 }
 
 export class PtoDetail extends ValueObject<PtoDetailProps> {
@@ -24,16 +23,12 @@ export class PtoDetail extends ValueObject<PtoDetailProps> {
     return this.props.abbreviation
   }
 
-  get value(): number {
-    return this.props.value
+  get amount(): number {
+    return this.props.amount
   }
 
   get startedAt(): Date {
     return this.props.startedAt
-  }
-
-  get endedAt(): Date {
-    return this.props.endedAt
   }
 
   protected validate(props: PtoDetailProps): void {

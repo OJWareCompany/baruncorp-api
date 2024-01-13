@@ -25,8 +25,13 @@ export class CreatePtoDetailService implements ICommandHandler {
     const targetUser: PtoTargetUser = await this.ptoRepository.findTargetUser(command.userId)
     // 연차 시작일 시점의 근속년수
     const startDateTenure = this.calcTenure(targetUser.dateOfJoining, command.startedAt)
+
+    const endedAt: Date = new Date(command.startedAt)
+    endedAt.setDate(endedAt.getDate() + command.days)
+    endedAt.setHours(23, 59, 59, 999)
+
     // 연차 종료일 시점의 근속년수
-    const endDateTenure = this.calcTenure(targetUser.dateOfJoining, command.endedAt)
+    const endDateTenure = this.calcTenure(targetUser.dateOfJoining, endedAt)
     // 연차 시작일과 종료일에 대한 연차 시즌 정보(입사기념일 ~ 입사기념일 사이의 연차 현황)를 가져온다
     // ptos테이블에서 userId와 Tenure 쌍은 Unique하기에 targetDatePtoEntities는 0개, 1개, 2개가 생성 된다.
     // 2개(연차 시작일 ~ 종료일 사이에 입사 기념일이 겹침)의 Entity가 생성 됨
@@ -77,7 +82,7 @@ export class CreatePtoDetailService implements ICommandHandler {
       // PTO(시즌) 없다면 => PTO(시즌)생성하여 담아서 함께 추가(예외 케이스)
       const total: number = await this.ptoTenurePolicyRepository.getTotalOfTenure(tenure)
       // 허가된 연차 보유량보다 많은 경우 예외 처리
-      if (command.value > total) {
+      if (command.amount * command.days > total) {
         throw new AnnualPtoNotExceedException()
       }
       const ptoEntity: PtoEntity = PtoEntity.create({
@@ -94,7 +99,7 @@ export class CreatePtoDetailService implements ICommandHandler {
   }
 
   private addPtoDetailToTargetPto(targetPtoEntity: PtoEntity, command: CreatePtoDetailCommand) {
-    if (command.value > targetPtoEntity.getUsablePtoValue()) {
+    if (command.amount * command.days > targetPtoEntity.getUsablePtoValue()) {
       throw new AnnualPtoNotExceedException()
     }
     const targetPtoProps = targetPtoEntity.getProps()
@@ -102,13 +107,12 @@ export class CreatePtoDetailService implements ICommandHandler {
     const ptoDetailEntity = PtoDetailEntity.create({
       ptoId: targetPtoProps.id,
       ptoTypeId: command.ptoTypeId,
-      value: command.value,
+      amount: command.amount,
       days: command.days,
       startedAt: command.startedAt,
-      endedAt: command.endedAt,
     })
 
-    targetPtoProps.details.push(ptoDetailEntity)
+    targetPtoEntity.addPtoDetail(ptoDetailEntity)
 
     return ptoDetailEntity.id
   }

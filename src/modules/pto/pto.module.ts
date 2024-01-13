@@ -17,6 +17,10 @@ import { PtoRepository } from './database/pto.repository'
 import { PtoMapper } from './pto.mapper'
 import { PtoTenurePolicyRepository } from '../pto-tenure-policy/database/pto-tenure-policy.repository'
 import { PtoTenurePolicyModule } from '../pto-tenure-policy/pto-tenure-policy.module'
+import { UsersModule } from '../users/users.module'
+import { USER_REPOSITORY } from '../users/user.di-tokens'
+import { UserRepository } from '../users/database/user.repository'
+import { UserRoleMapper } from '../users/user-role.mapper'
 
 const httpControllers = [
   CreatePtoHttpController,
@@ -27,12 +31,12 @@ const httpControllers = [
 ]
 const commandHandlers: Provider[] = [CreatePtoService, UpdatePtoService, DeletePtoService]
 const queryHandlers: Provider[] = [FindPtoQueryHandler, FindPtoPaginatedQueryHandler]
-const repositories: Provider[] = [PtoRepository]
+const repositories: Provider[] = [PtoRepository, { provide: USER_REPOSITORY, useClass: UserRepository }]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [PtoMapper, UserMapper]
+const mappers: Provider[] = [PtoMapper, UserMapper, UserRoleMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule, PtoTenurePolicyModule],
+  imports: [CqrsModule, PrismaModule, PtoTenurePolicyModule, UsersModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
 })

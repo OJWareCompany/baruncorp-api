@@ -10,8 +10,8 @@ export class CreatePtoDetailRequestDto {
   readonly ptoTypeId: string
   @ApiProperty({ default: 1.5 })
   @IsNumber()
-  readonly value: number
-  @ApiProperty({ default: '2024-01-09T03:50:45.000Z' })
+  readonly amount: number
+  @ApiProperty({ default: '2024-01-09' })
   @IsDate()
   readonly startedAt: Date
   @ApiProperty({ default: 2 })

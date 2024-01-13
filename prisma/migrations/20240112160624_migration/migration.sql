@@ -1,230 +1,132 @@
-/*
-  Warnings:
+-- CreateTable
+CREATE TABLE `organization_types` (
+    `type` VARCHAR(191) NOT NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
 
-  - The primary key for the `invitation_emails` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to drop the column `code` on the `invitation_emails` table. All the data in the column will be lost.
-  - You are about to drop the column `place_ns_ansi_code` on the `places` table. All the data in the column will be lost.
-  - You are about to drop the column `department_id` on the `positions` table. All the data in the column will be lost.
-  - The primary key for the `user_role` table will be changed. If it partially fails, the table could be left without primary key constraint.
-  - You are about to drop the column `role` on the `user_role` table. All the data in the column will be lost.
-  - You are about to drop the `departments` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `position_service` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `services` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `user_electrical_licenses` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `user_service` table. If the table is not empty, all the data it contains will be lost.
-  - You are about to drop the `user_structural_licenses` table. If the table is not empty, all the data it contains will be lost.
-  - A unique constraint covering the columns `[user_id]` on the table `user_position` will be added. If there are existing duplicate values, this will fail.
-  - A unique constraint covering the columns `[user_id]` on the table `user_role` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `updated_at` to the `counties` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `county_subdivisions` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `id` to the `invitation_emails` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `invitation_emails` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `organization_types` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `address_coordinates` to the `organizations` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `full_address` to the `organizations` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `is_special_revision_pricing` to the `organizations` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `organizations` table without a default value. This is not possible if the table is not empty.
-  - Made the column `city` on table `organizations` required. This step will fail if there are existing NULL values in that column.
-  - Made the column `street1` on table `organizations` required. This step will fail if there are existing NULL values in that column.
-  - Made the column `postal_code` on table `organizations` required. This step will fail if there are existing NULL values in that column.
-  - Added the required column `updated_at` to the `passwords` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `places` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `positions` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `roles` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `states` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `position_name` to the `user_position` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `user_position` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `user_email` to the `user_position` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `user_name` to the `user_position` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `role_name` to the `user_role` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `user_role` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `full_name` to the `users` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `is_hand_raised_for_task` to the `users` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `type` to the `users` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_at` to the `users` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `updated_by` to the `users` table without a default value. This is not possible if the table is not empty.
+    PRIMARY KEY (`type`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
-*/
--- DropForeignKey
-ALTER TABLE `invitation_emails` DROP FOREIGN KEY `invitation_emails_organization_id_fkey`;
+-- CreateTable
+CREATE TABLE `organizations` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `organization_type` VARCHAR(191) NOT NULL,
+    `is_vendor` BOOLEAN NOT NULL DEFAULT false,
+    `is_delinquent` BOOLEAN NOT NULL DEFAULT false,
+    `city` VARCHAR(191) NOT NULL,
+    `country` VARCHAR(191) NULL,
+    `street1` VARCHAR(191) NOT NULL,
+    `street2` VARCHAR(191) NULL,
+    `phone_number` VARCHAR(191) NULL,
+    `postal_code` VARCHAR(191) NOT NULL,
+    `state_or_region` VARCHAR(191) NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `is_active_contractor` TINYINT NULL,
+    `is_active_work_resource` TINYINT NULL,
+    `revenue_share` TINYINT NULL,
+    `revision_revenue_share` TINYINT NULL,
+    `invoice_recipient` VARCHAR(255) NULL,
+    `invoice_recipient_email` VARCHAR(255) NULL,
+    `project_property_type_default_value` VARCHAR(255) NULL,
+    `mounting_type_default_value` VARCHAR(255) NULL,
+    `address_coordinates` VARCHAR(255) NOT NULL,
+    `full_address` VARCHAR(255) NOT NULL,
+    `is_special_revision_pricing` BOOLEAN NOT NULL,
+    `number_of_free_revision_count` TINYINT UNSIGNED NULL,
 
--- DropForeignKey
-ALTER TABLE `invitation_emails` DROP FOREIGN KEY `invitation_emails_role_fkey`;
+    UNIQUE INDEX `organizations_name_key`(`name`),
+    INDEX `organizations_organization_type_fkey`(`organization_type`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropForeignKey
-ALTER TABLE `organizations` DROP FOREIGN KEY `organizations_organization_type_fkey`;
+-- CreateTable
+CREATE TABLE `roles` (
+    `role` VARCHAR(191) NOT NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
 
--- DropForeignKey
-ALTER TABLE `passwords` DROP FOREIGN KEY `passwords_user_id_fkey`;
+    PRIMARY KEY (`role`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropForeignKey
-ALTER TABLE `position_service` DROP FOREIGN KEY `position_service_position_id_fkey`;
+-- CreateTable
+CREATE TABLE `invitation_emails` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `email` VARCHAR(191) NOT NULL,
+    `role` VARCHAR(191) NOT NULL,
+    `organization_id` VARCHAR(191) NOT NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
 
--- DropForeignKey
-ALTER TABLE `position_service` DROP FOREIGN KEY `position_service_service_id_fkey`;
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropForeignKey
-ALTER TABLE `positions` DROP FOREIGN KEY `positions_department_id_fkey`;
+-- CreateTable
+CREATE TABLE `user_role` (
+    `role_name` VARCHAR(191) NOT NULL,
+    `user_id` VARCHAR(191) NOT NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
 
--- DropForeignKey
-ALTER TABLE `user_electrical_licenses` DROP FOREIGN KEY `user_electrical_licenses_issuing_country_name_abbreviation_fkey`;
+    UNIQUE INDEX `user_id`(`user_id`),
+    INDEX `user_role_role_fkey`(`role_name`),
+    PRIMARY KEY (`user_id`, `role_name`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropForeignKey
-ALTER TABLE `user_electrical_licenses` DROP FOREIGN KEY `user_electrical_licenses_user_id_fkey`;
+-- CreateTable
+CREATE TABLE `users` (
+    `id` VARCHAR(191) NOT NULL,
+    `date_of_joining` DATETIME(0) NULL,
+    `type` VARCHAR(255) NOT NULL,
+    `deliverables_emails` TEXT NULL,
+    `email` VARCHAR(191) NOT NULL,
+    `first_name` VARCHAR(191) NOT NULL,
+    `last_name` VARCHAR(191) NOT NULL,
+    `full_name` VARCHAR(255) NOT NULL,
+    `status` VARCHAR(255) NOT NULL DEFAULT 'sign up not completed',
+    `organization_id` VARCHAR(191) NOT NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `is_hand_raised_for_task` BOOLEAN NOT NULL,
+    `address` TEXT NULL,
+    `phone_number` VARCHAR(20) NULL,
+    `is_active_work_resource` BOOLEAN NULL,
+    `is_current_user` BOOLEAN NULL,
+    `is_inactive_organization_user` BOOLEAN NULL,
+    `revenue_share` BOOLEAN NULL,
+    `revision_revenue_share` BOOLEAN NULL,
+    `updated_by` VARCHAR(255) NOT NULL,
+    `is_vendor` BOOLEAN NOT NULL DEFAULT false,
 
--- DropForeignKey
-ALTER TABLE `user_position` DROP FOREIGN KEY `user_position_position_id_fkey`;
+    UNIQUE INDEX `users_email_key`(`email`),
+    INDEX `users_organization_id_fkey`(`organization_id`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropForeignKey
-ALTER TABLE `user_position` DROP FOREIGN KEY `user_position_user_id_fkey`;
+-- CreateTable
+CREATE TABLE `passwords` (
+    `user_id` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
 
--- DropForeignKey
-ALTER TABLE `user_role` DROP FOREIGN KEY `user_role_role_fkey`;
+    UNIQUE INDEX `passwords_user_id_key`(`user_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- DropForeignKey
-ALTER TABLE `user_role` DROP FOREIGN KEY `user_role_user_id_fkey`;
+-- CreateTable
+CREATE TABLE `positions` (
+    `id` VARCHAR(191) NOT NULL,
+    `name` VARCHAR(191) NOT NULL,
+    `description` VARCHAR(191) NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `max_assigned_tasks_limit` TINYINT UNSIGNED NULL,
+    `license_type` VARCHAR(255) NULL,
 
--- DropForeignKey
-ALTER TABLE `user_service` DROP FOREIGN KEY `user_service_service_id_fkey`;
-
--- DropForeignKey
-ALTER TABLE `user_service` DROP FOREIGN KEY `user_service_user_id_fkey`;
-
--- DropForeignKey
-ALTER TABLE `user_structural_licenses` DROP FOREIGN KEY `user_structural_licenses_issuing_country_name_abbreviation_fkey`;
-
--- DropForeignKey
-ALTER TABLE `user_structural_licenses` DROP FOREIGN KEY `user_structural_licenses_user_id_fkey`;
-
--- DropForeignKey
-ALTER TABLE `users` DROP FOREIGN KEY `users_organization_id_fkey`;
-
--- AlterTable
-ALTER TABLE `counties` ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `func_stat` VARCHAR(20) NULL,
-    ADD COLUMN `lsad_code` VARCHAR(20) NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL;
-
--- AlterTable
-ALTER TABLE `county_subdivisions` ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `func_stat` VARCHAR(20) NULL,
-    ADD COLUMN `long_name` VARCHAR(200) NULL,
-    ADD COLUMN `lsad_code` VARCHAR(20) NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL;
-
--- AlterTable
-ALTER TABLE `invitation_emails` DROP PRIMARY KEY,
-    DROP COLUMN `code`,
-    ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `id` INTEGER NOT NULL AUTO_INCREMENT,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL,
-    ADD PRIMARY KEY (`id`);
-
--- AlterTable
-ALTER TABLE `organization_types` ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL;
-
--- AlterTable
-ALTER TABLE `organizations` ADD COLUMN `address_coordinates` VARCHAR(255) NOT NULL,
-    ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `full_address` VARCHAR(255) NOT NULL,
-    ADD COLUMN `invoice_recipient` VARCHAR(255) NULL,
-    ADD COLUMN `invoice_recipient_email` VARCHAR(255) NULL,
-    ADD COLUMN `is_active_contractor` TINYINT NULL,
-    ADD COLUMN `is_active_work_resource` TINYINT NULL,
-    ADD COLUMN `is_delinquent` BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN `is_special_revision_pricing` BOOLEAN NOT NULL,
-    ADD COLUMN `is_vendor` BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN `mounting_type_default_value` VARCHAR(255) NULL,
-    ADD COLUMN `number_of_free_revision_count` TINYINT UNSIGNED NULL,
-    ADD COLUMN `project_property_type_default_value` VARCHAR(255) NULL,
-    ADD COLUMN `revenue_share` TINYINT NULL,
-    ADD COLUMN `revision_revenue_share` TINYINT NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL,
-    MODIFY `city` VARCHAR(191) NOT NULL,
-    MODIFY `street1` VARCHAR(191) NOT NULL,
-    MODIFY `postal_code` VARCHAR(191) NOT NULL;
-
--- AlterTable
-ALTER TABLE `passwords` ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL;
-
--- AlterTable
-ALTER TABLE `places` DROP COLUMN `place_ns_ansi_code`,
-    ADD COLUMN `ansi_code` VARCHAR(20) NULL,
-    ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `func_stat` VARCHAR(20) NULL,
-    ADD COLUMN `place_long_name` VARCHAR(200) NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL;
-
--- AlterTable
-ALTER TABLE `positions` DROP COLUMN `department_id`,
-    ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `license_type` VARCHAR(255) NULL,
-    ADD COLUMN `max_assigned_tasks_limit` TINYINT UNSIGNED NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL,
-    MODIFY `description` VARCHAR(191) NULL;
-
--- AlterTable
-ALTER TABLE `roles` ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL;
-
--- AlterTable
-ALTER TABLE `states` ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `func_stat` VARCHAR(20) NULL,
-    ADD COLUMN `lsad_code` VARCHAR(20) NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL;
-
--- AlterTable
-ALTER TABLE `user_position` ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `position_name` VARCHAR(255) NOT NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL,
-    ADD COLUMN `user_email` VARCHAR(255) NOT NULL,
-    ADD COLUMN `user_name` VARCHAR(255) NOT NULL;
-
--- AlterTable
-ALTER TABLE `user_role` DROP PRIMARY KEY,
-    DROP COLUMN `role`,
-    ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `role_name` VARCHAR(191) NOT NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL,
-    ADD PRIMARY KEY (`user_id`, `role_name`);
-
--- AlterTable
-ALTER TABLE `users` ADD COLUMN `address` TEXT NULL,
-    ADD COLUMN `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    ADD COLUMN `deliverables_emails` TEXT NULL,
-    ADD COLUMN `full_name` VARCHAR(255) NOT NULL,
-    ADD COLUMN `is_active_work_resource` BOOLEAN NULL,
-    ADD COLUMN `is_current_user` BOOLEAN NULL,
-    ADD COLUMN `is_hand_raised_for_task` BOOLEAN NOT NULL,
-    ADD COLUMN `is_inactive_organization_user` BOOLEAN NULL,
-    ADD COLUMN `is_vendor` BOOLEAN NOT NULL DEFAULT false,
-    ADD COLUMN `phone_number` VARCHAR(20) NULL,
-    ADD COLUMN `revenue_share` BOOLEAN NULL,
-    ADD COLUMN `revision_revenue_share` BOOLEAN NULL,
-    ADD COLUMN `status` VARCHAR(255) NOT NULL DEFAULT 'sign up not completed',
-    ADD COLUMN `type` VARCHAR(255) NOT NULL,
-    ADD COLUMN `updated_at` DATETIME(0) NOT NULL,
-    ADD COLUMN `updated_by` VARCHAR(255) NOT NULL;
-
--- DropTable
-DROP TABLE `departments`;
-
--- DropTable
-DROP TABLE `position_service`;
-
--- DropTable
-DROP TABLE `services`;
-
--- DropTable
-DROP TABLE `user_electrical_licenses`;
-
--- DropTable
-DROP TABLE `user_service`;
-
--- DropTable
-DROP TABLE `user_structural_licenses`;
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `service` (
@@ -270,6 +172,91 @@ CREATE TABLE `ordered_services` (
     `job_name` VARCHAR(255) NOT NULL,
 
     PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `states` (
+    `state_name` VARCHAR(191) NOT NULL,
+    `abbreviation` VARCHAR(191) NOT NULL,
+    `geo_id` VARCHAR(20) NOT NULL,
+    `state_code` VARCHAR(20) NULL,
+    `ansi_code` VARCHAR(20) NULL,
+    `state_long_name` VARCHAR(191) NULL,
+    `lsad_code` VARCHAR(20) NULL,
+    `func_stat` VARCHAR(20) NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`state_name`, `abbreviation`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `user_position` (
+    `user_id` VARCHAR(191) NOT NULL,
+    `user_name` VARCHAR(255) NOT NULL,
+    `position_id` VARCHAR(191) NOT NULL,
+    `position_name` VARCHAR(255) NOT NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `user_email` VARCHAR(255) NOT NULL,
+
+    UNIQUE INDEX `user_id`(`user_id`),
+    INDEX `user_position_position_id_fkey`(`position_id`),
+    PRIMARY KEY (`user_id`, `position_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `county_subdivisions` (
+    `geo_id` VARCHAR(20) NOT NULL,
+    `state_code` VARCHAR(20) NULL,
+    `state_name` VARCHAR(200) NULL,
+    `county_code` VARCHAR(20) NULL,
+    `name` VARCHAR(200) NULL,
+    `ansi_code` VARCHAR(20) NULL,
+    `lsad_code` VARCHAR(20) NULL,
+    `func_stat` VARCHAR(20) NULL,
+    `long_name` VARCHAR(200) NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`geo_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `counties` (
+    `geo_id` VARCHAR(20) NOT NULL,
+    `state_code` VARCHAR(20) NULL,
+    `state_name` VARCHAR(100) NULL,
+    `county_code` VARCHAR(20) NULL,
+    `ansi_code` VARCHAR(20) NULL,
+    `county_name` VARCHAR(100) NULL,
+    `county_long_name` VARCHAR(100) NULL,
+    `lsad_code` VARCHAR(20) NULL,
+    `func_stat` VARCHAR(20) NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`geo_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `places` (
+    `geo_id` VARCHAR(20) NOT NULL,
+    `state_code` VARCHAR(20) NULL,
+    `state_name` VARCHAR(100) NULL,
+    `place_c` VARCHAR(20) NULL,
+    `ansi_code` VARCHAR(20) NULL,
+    `place_fips` VARCHAR(20) NULL,
+    `place_name` VARCHAR(100) NULL,
+    `place_type` VARCHAR(20) NULL,
+    `lsad_code` VARCHAR(20) NULL,
+    `counties` VARCHAR(100) NULL,
+    `func_stat` VARCHAR(20) NULL,
+    `place_long_name` VARCHAR(200) NULL,
+    `updated_at` DATETIME(0) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+
+    PRIMARY KEY (`geo_id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
@@ -983,18 +970,32 @@ CREATE TABLE `assigning_task_alerts` (
 -- CreateTable
 CREATE TABLE `ptos` (
     `id` VARCHAR(255) NOT NULL,
-    `name` VARCHAR(191) NOT NULL,
+    `user_id` VARCHAR(255) NOT NULL,
+    `tenure` INTEGER NOT NULL,
+    `total` FLOAT NOT NULL,
+    `is_paid` BOOLEAN NOT NULL,
     `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` DATETIME(0) NOT NULL,
 
-    UNIQUE INDEX `ptos_name_key`(`name`),
+    UNIQUE INDEX `ptos_user_id_tenure_key`(`user_id`, `tenure`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `pto_types` (
+    `id` VARCHAR(255) NOT NULL,
+    `name` VARCHAR(30) NOT NULL,
+    `abbreviation` VARCHAR(5) NOT NULL,
+    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
+    `updated_at` DATETIME(0) NOT NULL,
+
+    UNIQUE INDEX `pto_types_name_key`(`name`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
 CREATE TABLE `pto_available_values` (
     `id` VARCHAR(255) NOT NULL,
-    `pto_id` VARCHAR(255) NOT NULL,
     `value` FLOAT NOT NULL,
     `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` DATETIME(0) NOT NULL,
@@ -1003,13 +1004,23 @@ CREATE TABLE `pto_available_values` (
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `pto_records` (
+CREATE TABLE `pto_types_available_values` (
+    `pto_type_id` VARCHAR(255) NOT NULL,
+    `pto_available_value_id` VARCHAR(255) NOT NULL,
+
+    INDEX `pto_types_available_values_pto_type_id_idx`(`pto_type_id`),
+    INDEX `pto_types_available_values_pto_available_value_id_idx`(`pto_available_value_id`),
+    PRIMARY KEY (`pto_type_id`, `pto_available_value_id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `pto_details` (
     `id` VARCHAR(255) NOT NULL,
-    `user_id` VARCHAR(255) NOT NULL,
     `pto_id` VARCHAR(255) NOT NULL,
-    `value` FLOAT NOT NULL,
+    `pto_type_id` VARCHAR(255) NOT NULL,
+    `amount` FLOAT NOT NULL,
+    `number` INTEGER NOT NULL,
     `started_at` DATETIME(0) NOT NULL,
-    `ended_at` DATETIME(0) NOT NULL,
     `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` DATETIME(0) NOT NULL,
 
@@ -1020,35 +1031,19 @@ CREATE TABLE `pto_records` (
 CREATE TABLE `pto_tenure_policies` (
     `id` VARCHAR(255) NOT NULL,
     `tenure` TINYINT NOT NULL,
-    `total_pto` FLOAT NOT NULL,
-    `annual_increase` INTEGER NOT NULL,
+    `total` FLOAT NOT NULL,
     `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
     `updated_at` DATETIME(0) NOT NULL,
 
+    UNIQUE INDEX `pto_tenure_policies_tenure_key`(`tenure`),
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- CreateTable
-CREATE TABLE `pto_tenure_results` (
-    `id` VARCHAR(255) NOT NULL,
-    `user_id` VARCHAR(255) NOT NULL,
-    `pto_id` VARCHAR(255) NOT NULL,
-    `tenure` TINYINT NOT NULL,
-    `total_pto` FLOAT NOT NULL,
-    `used_pto` FLOAT NOT NULL,
-    `started_at` DATETIME(0) NOT NULL,
-    `ended_at` DATETIME(0) NOT NULL,
-    `created_at` DATETIME(0) NOT NULL DEFAULT CURRENT_TIMESTAMP(0),
-    `updated_at` DATETIME(0) NOT NULL,
+CREATE TABLE `_PtoAvailableValuesToPtoTypes` (
+    `A` VARCHAR(255) NOT NULL,
+    `B` VARCHAR(255) NOT NULL,
 
-    PRIMARY KEY (`id`)
+    UNIQUE INDEX `_PtoAvailableValuesToPtoTypes_AB_unique`(`A`, `B`),
+    INDEX `_PtoAvailableValuesToPtoTypes_B_index`(`B`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
-
--- CreateIndex
-CREATE UNIQUE INDEX `user_id` ON `user_position`(`user_id`);
-
--- CreateIndex
-CREATE UNIQUE INDEX `user_id` ON `user_role`(`user_id`);
-
--- CreateIndex
-CREATE INDEX `user_role_role_fkey` ON `user_role`(`role_name`);

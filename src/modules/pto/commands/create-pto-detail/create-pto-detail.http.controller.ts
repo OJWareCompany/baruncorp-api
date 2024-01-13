@@ -10,7 +10,7 @@ import { CreatePtoDetailRequestDto } from './create-pto-detail.request.dto'
 import { ApiResponse } from '@nestjs/swagger'
 import { AnnualPtoNotExceedException, DaysRangeIssueException, PastDatePTOException } from '../../domain/pto.error'
 
-@Controller('ptos')
+@Controller('ptos/detail')
 export class CreatePtoDetailHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('')
@@ -25,13 +25,8 @@ export class CreatePtoDetailHttpController {
 
     if (dto.days > 100) throw new AnnualPtoNotExceedException()
 
-    const endedAt: Date = new Date(dto.startedAt)
-    endedAt.setDate(endedAt.getDate() + +dto.days)
-    endedAt.setHours(23, 59, 59, 999)
-
     const command = new CreatePtoDetailCommand({
       ...dto,
-      endedAt: endedAt,
     })
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)

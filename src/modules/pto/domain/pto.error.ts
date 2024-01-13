@@ -47,3 +47,15 @@ export class DaysRangeIssueException extends BadRequestException {
     super(`PTO cannot be issued by combining days before and after the anniversary of joining the company.`, '20808')
   }
 }
+
+export class PaidPTOException extends BadRequestException {
+  constructor() {
+    super(`Paid PTO cannot be deleted`, '20809')
+  }
+}
+
+export class UniqueTenureException extends BadRequestException {
+  constructor() {
+    super(`Tenure is unique`, '20810')
+  }
+}

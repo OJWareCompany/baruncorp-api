@@ -11,7 +11,7 @@ import { IdResponse } from '../../../../libs/api/id.response.dto'
 @Controller('ptos')
 export class DeletePtoDetailHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Delete(':ptoId')
+  @Delete(':ptoDetailId/detail')
   @UseGuards(AuthGuard)
   async delete(@Param() param: DeletePtoDetailParamRequestDto) {
     const command = new DeletePtoDetailCommand({
