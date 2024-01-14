@@ -48,13 +48,13 @@ export class DaysRangeIssueException extends BadRequestException {
   }
 }
 
-export class PaidPTODeleteException extends BadRequestException {
+export class PaidPtoDeleteException extends BadRequestException {
   constructor() {
     super(`Paid pto cannot be deleted`, '20809')
   }
 }
 
-export class PaidPTOUpdateException extends BadRequestException {
+export class PaidPtoUpdateException extends BadRequestException {
   constructor() {
     super(`Paid pto cannot be updated`, '20810')
   }
@@ -75,5 +75,11 @@ export class DateOfJoiningNotFoundException extends NotFoundException {
 export class OverlapsPtoException extends BadRequestException {
   constructor() {
     super(`Overlaps with the existing PTO dates.`, '20813')
+  }
+}
+
+export class ParentPtoNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not Parent Pto found', '20814')
   }
 }

@@ -5,7 +5,6 @@ import { PtoEntity } from './domain/pto.entity'
 import { PtoDetailModel, PtoDetailQueryModel, PtoModel, PtoQueryModel } from './database/pto.repository'
 import { PtoDetail } from './domain/value-objects/pto.detail.vo'
 import { PtoDetailEntity } from './domain/pto-detail.entity'
-import { PtoDetailResponseDto } from './dtos/pto-detail.response.dto'
 
 @Injectable()
 export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
@@ -60,7 +59,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
             startedAt: detail.startedAt,
           })
         }),
-        dateOfJoining: null,
+        dateOfJoining: record.user.dateOfJoining,
       },
     })
 
@@ -77,10 +76,13 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
         ptoTypeId: record.ptoTypeId,
         amount: record.amount,
         days: record.days,
-        isPaid: record.isPaid,
-        name: record.ptoType?.name,
-        abbreviation: record.ptoType?.abbreviation,
+        ownerUserId: record.pto.user.id,
+        ownerUserDateOfJoining: record.pto.user.dateOfJoining,
+        isPaid: record.pto.isPaid,
+        name: record.ptoType.name,
+        abbreviation: record.ptoType.abbreviation,
         startedAt: record.startedAt,
+        parentPtoEntity: null,
       },
     })
     return ptoDetailEntity

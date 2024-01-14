@@ -3,10 +3,10 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreatePtoProps, PtoProps } from './pto.type'
 import { PtoDetailEntity } from './pto-detail.entity'
 import { EventEmitter2 } from '@nestjs/event-emitter'
+import { PtoDetail } from './value-objects/pto.detail.vo'
 
 export class PtoEntity extends AggregateRoot<PtoProps> {
   protected _id: string
-  details: any
 
   static create(create: CreatePtoProps) {
     const id = v4()
@@ -25,11 +25,9 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
 
   public getUsedPtoValue(): number {
     let totalValue = 0
-    console.log(`[getuserdPtoValue] this.props.details : ${this.props.details}`)
     this.props.details?.forEach((detail) => {
       totalValue += detail.amount * detail.days
     })
-    console.log(`[getuserdPtoValue] totalValue : ${totalValue}`)
     return totalValue
   }
 
@@ -95,6 +93,10 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
 
   set isPaid(isPaid: boolean) {
     this.props.isPaid = isPaid
+  }
+
+  set details(details: PtoDetail[] | null) {
+    this.props.details = details
   }
 
   public validate(): void {

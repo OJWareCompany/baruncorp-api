@@ -12,22 +12,24 @@ import { PtoDetailEntity } from '../domain/pto-detail.entity'
 
 export type PtoModel = Ptos
 export type PtoQueryModel = Ptos & {
+  user: Users
   details: (PtoDetailModel & {
-    // user: Users
     ptoType: PtoTypes
   })[]
 }
 
 export type PtoDetailModel = PtoDetails
 export type PtoDetailQueryModel = PtoDetails & {
-  isPaid: boolean
+  pto: Ptos & {
+    user: Users
+  }
   ptoType: PtoTypes
 }
 
 @Injectable()
 export class PtoRepository implements PtoRepositoryPort {
   private ptoQueryIncludeInput = {
-    // PtoDetails: true
+    user: true,
     PtoDetails: {
       include: {
         ptoType: true,
@@ -36,7 +38,11 @@ export class PtoRepository implements PtoRepositoryPort {
   }
 
   private ptoDetailQueryIncludeInput = {
-    pto: true,
+    pto: {
+      include: {
+        user: true,
+      },
+    },
     ptoType: true,
   }
 
@@ -86,13 +92,8 @@ export class PtoRepository implements PtoRepositoryPort {
         where: { id: userId },
       })
 
-      if (!record.dateOfJoining) {
-        throw new DateOfJoiningNotFoundException()
-      }
-
       return new PtoTargetUser({
         id: record.id,
-        // 우선 유저의 입사기념일이 없는 경우 createdAt을 기준으로 계산한다.
         dateOfJoining: record.dateOfJoining,
       })
     } catch (error) {
@@ -112,10 +113,10 @@ export class PtoRepository implements PtoRepositoryPort {
 
     if (!record) return null
 
-    // PtoDetails를 details로 매핑
     const ptoQueryModel: PtoQueryModel = {
       ...record,
-      details: [],
+      user: record.user,
+      details: record.PtoDetails,
     }
 
     return this.ptoMapper.toDomain(ptoQueryModel)
@@ -181,8 +182,12 @@ export class PtoRepository implements PtoRepositoryPort {
       startedAt: record.startedAt,
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
-      isPaid: record.pto.isPaid,
+      pto: record.pto,
       ptoType: record.ptoType,
+    }
+
+    if (!record.pto.user.dateOfJoining) {
+      throw new DateOfJoiningNotFoundException()
     }
 
     return this.ptoMapper.toDetailDomain(ptoDetailQueryModel)

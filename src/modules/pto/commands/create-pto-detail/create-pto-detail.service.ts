@@ -9,7 +9,12 @@ import { PtoTenurePolicyRepository } from '../../../pto-tenure-policy/database/p
 import { PtoTargetUser } from '../../domain/value-objects/target.user.vo'
 import { Prisma } from '@prisma/client'
 import { PrismaService } from '@src/modules/database/prisma.service'
-import { AnnualPtoNotExceedException, DaysRangeIssueException, OverlapsPtoException } from '../../domain/pto.error'
+import {
+  AnnualPtoNotExceedException,
+  DateOfJoiningNotFoundException,
+  DaysRangeIssueException,
+  OverlapsPtoException,
+} from '../../domain/pto.error'
 import { PtoDetail } from '../../domain/value-objects/pto.detail.vo'
 import { PtoDetailEntity } from '../../domain/pto-detail.entity'
 import { Exception } from 'handlebars'
@@ -23,7 +28,11 @@ export class CreatePtoDetailService implements ICommandHandler {
   async execute(command: CreatePtoDetailCommand): Promise<AggregateID> {
     // 유저 검색
     const targetUser: PtoTargetUser = await this.ptoRepository.findTargetUser(command.userId)
-    // 연차 시작일 시점의 근속년수
+    // 해당 유저의 입사기념일이 존재하지 않는다면 Exception
+    if (!targetUser.dateOfJoining) {
+      throw new DateOfJoiningNotFoundException()
+    }
+
     const startDateTenure = this.calcTenure(targetUser.dateOfJoining, command.startedAt)
 
     const endedAt: Date = new Date(command.startedAt)
@@ -31,7 +40,6 @@ export class CreatePtoDetailService implements ICommandHandler {
     endedAt.setTime(endedAt.getTime() - 1) // 1밀리 초 뺀다.
     // 연차 종료일 시점의 근속년수
     const endDateTenure = this.calcTenure(targetUser.dateOfJoining, endedAt)
-    console.log(`endDateTenure : ${endDateTenure}`)
     // 연차 시작일과 종료일에 대한 연차 시즌 정보(입사기념일 ~ 입사기념일 사이의 연차 현황)를 가져온다
     // ptos테이블에서 userId와 Tenure 쌍은 Unique하기에 targetDatePtoEntities는 0개, 1개, 2개가 생성 된다.
     // 2개(연차 시작일 ~ 종료일 사이에 입사 기념일이 겹침)의 Entity가 생성 됨
@@ -40,7 +48,6 @@ export class CreatePtoDetailService implements ICommandHandler {
       startDateTenure,
       endDateTenure,
     )
-
     let newPtoDetailId: string | null = null
     if (startDateTenure === endDateTenure) {
       // 이어붙인 연차가 같은 시즌일 때(연차 요청 날짜 범위 중간에 입사 기념일이 존재하지 않는 경우)

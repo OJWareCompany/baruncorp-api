@@ -3,7 +3,7 @@ import { LicenseTypeEnum } from '../../../license/dtos/license.response.dto'
 
 export interface PtoTargetUserProps {
   id: string
-  dateOfJoining: Date
+  dateOfJoining: Date | null
 }
 
 export class PtoTargetUser extends ValueObject<PtoTargetUserProps> {
@@ -11,7 +11,7 @@ export class PtoTargetUser extends ValueObject<PtoTargetUserProps> {
     return this.props.id
   }
 
-  get dateOfJoining(): Date {
+  get dateOfJoining(): Date | null {
     return this.props.dateOfJoining
   }
 

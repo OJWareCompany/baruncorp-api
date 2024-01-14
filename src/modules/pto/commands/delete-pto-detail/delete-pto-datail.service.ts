@@ -1,5 +1,5 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PaidPTODeleteException, PtoNotFoundException } from '../../domain/pto.error'
+import { PaidPtoDeleteException, PtoNotFoundException } from '../../domain/pto.error'
 import { DeletePtoDetailCommand } from './delete-pto-detail.command'
 import { PtoRepository } from '../../database/pto.repository'
 
@@ -11,7 +11,7 @@ export class DeletePtoDetailService implements ICommandHandler {
     if (!entity) throw new PtoNotFoundException()
 
     if (entity.getProps().isPaid) {
-      throw new PaidPTODeleteException()
+      throw new PaidPtoDeleteException()
     }
 
     await this.ptoRepository.deleteDetail(command.ptoDetailId)
