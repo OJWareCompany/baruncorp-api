@@ -12,11 +12,17 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     const id = v4()
     const props: PtoProps = {
       ...create,
+      startedAt: null,
+      endedAt: null,
+      targetUser: null,
       details: null,
-      dateOfJoining: null,
     }
 
-    return new PtoEntity({ id, props })
+    const entity: PtoEntity = new PtoEntity({ id, props })
+    entity.initStartedAt()
+    entity.initEndedAt()
+
+    return entity
   }
 
   public getDateOfJoining(): Date | null | undefined {
@@ -35,28 +41,26 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     return this.props.total - this.getUsedPtoValue()
   }
 
-  public getStartedAt(): Date | null {
-    if (!this.props.dateOfJoining) return null
+  private initStartedAt() {
+    if (!this.props.dateOfJoining) return
 
     const startedAt: Date = new Date(this.props.dateOfJoining)
     // tenure이 1인 경우는 startedAt이 dateOfJoining이 된다
     startedAt.setFullYear(startedAt.getFullYear() + (this.props.tenure - 1))
 
-    return startedAt
+    this.props.startedAt = startedAt
   }
 
-  public getEndedAt(): Date | null {
-    const startedAt: Date | null = this.getStartedAt()
+  private initEndedAt() {
+    if (!this.props.startedAt) return
 
-    if (!startedAt) return null
-
-    const endedAt: Date = new Date(startedAt)
+    const endedAt: Date = new Date(this.props.startedAt)
     // startedAt 으로부터 1년 후
     endedAt.setFullYear(endedAt.getFullYear() + 1)
     // 하루 뺀다
     endedAt.setDate(endedAt.getDate() - 1)
 
-    return endedAt
+    this.props.endedAt = endedAt
   }
 
   public hasPtoDetailDateInRange(startedAt: Date, days: number): boolean {

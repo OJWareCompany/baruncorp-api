@@ -6,16 +6,15 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PtoEntity } from '../../domain/pto.entity'
 import { PtoMapper } from '../../pto.mapper'
-import { PtoRepository } from '../../database/pto.repository'
+import { PtoDetailQueryModel, PtoRepository } from '../../database/pto.repository'
 import { PtoResponseDto } from '../../dtos/pto.response.dto'
-import { PrismaService } from '@src/modules/database/prisma.service'
+import { PrismaService } from '../../../database/prisma.service'
+import { PtoDetailResponseDto } from '../../dtos/pto-detail.response.dto'
 
 export class FindPtoDetailPaginatedQuery extends PaginatedQueryBase {
-  readonly userId?: string | null
-  readonly startedAt?: Date | null
-  readonly endedAt?: Date | null
-  readonly userName?: string | null
-  readonly isPaid?: boolean | null
+  readonly userId?: string
+  readonly userName?: string
+  readonly targetMonth?: Date
   constructor(props: PaginatedParams<FindPtoDetailPaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -23,27 +22,59 @@ export class FindPtoDetailPaginatedQuery extends PaginatedQueryBase {
 }
 
 @QueryHandler(FindPtoDetailPaginatedQuery)
-export class FindPtoPaginatedQueryHandler implements IQueryHandler {
+export class FindPtoDetailPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindPtoDetailPaginatedQuery) {
-    // const result: PtoEntity[] = await this.ptoRepository.findMany(query.offset, query.limit)
-    // if (!result) throw new NotFoundException()
-
-    const condition: Prisma.PtoDetailsWhereInput = {
-      ...(query.userId && { userId: query.userId }),
-      ...(query.startedAt && { startedAt: query.startedAt }),
-      ...(query.endedAt && { endedAt: query.endedAt }),
-      ...(query.userName && { userName: query.userName }),
-      ...(query.isPaid && { isPaid: query.isPaid }),
+    let condition: Prisma.PtoDetailsWhereInput = {
+      ...(query.userId && {
+        pto: {
+          userId: query.userId,
+        },
+      }),
+      ...(query.userName && {
+        pto: {
+          user: {
+            full_name: { contains: query.userName },
+          },
+        },
+      }),
     }
 
-    const records = await this.prismaService.ptoDetails.findMany({
+    if (query.targetMonth) {
+      const startDate = new Date(query.targetMonth)
+      const endDate = new Date(query.targetMonth)
+
+      endDate.setMonth(startDate.getMonth() + 1)
+      endDate.setDate(0)
+      console.log(startDate)
+      console.log(endDate)
+
+      condition = {
+        ...condition,
+        startedAt: {
+          gte: startDate,
+          lte: endDate,
+        },
+      }
+    }
+
+    const records: PtoDetailQueryModel[] = await this.prismaService.ptoDetails.findMany({
       where: condition,
-      // include: {
-      //   user: true
-      // },
-      orderBy: { startedAt: 'desc' },
+      include: {
+        //Todo. user의 필요 부분만 select
+        pto: {
+          include: {
+            user: true,
+          },
+        },
+        ptoType: true,
+      },
+      orderBy: {
+        startedAt: 'desc',
+      },
+      skip: query.offset,
+      take: query.limit,
     })
 
     const totalCount = await this.prismaService.ptoDetails.count({ where: condition })
@@ -52,7 +83,28 @@ export class FindPtoPaginatedQueryHandler implements IQueryHandler {
       page: query.page,
       pageSize: query.limit,
       totalCount: totalCount,
-      items: records,
+      items: records.map((record) => {
+        const ptoDetailDtos: PtoDetailResponseDto = {
+          id: record.id,
+          userFirstName: record.pto.user.firstName,
+          userLastName: record.pto.user.lastName,
+          startedAt: record.startedAt.toISOString().split('T')[0],
+          endedAt: this.calcEndedAt(record.startedAt, record.days).toISOString().split('T')[0],
+          days: record.days,
+          amount: record.amount * record.days,
+          ptoTypeName: record.ptoType.name,
+        }
+
+        return ptoDetailDtos
+      }),
     })
+  }
+
+  private calcEndedAt(startedAt: Date, days: number): Date {
+    const endedAt: Date = new Date(startedAt)
+    endedAt.setDate(endedAt.getDate() + days)
+    endedAt.setTime(endedAt.getTime() - 1)
+
+    return endedAt
   }
 }

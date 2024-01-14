@@ -4,11 +4,9 @@ import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
 import { CreatePtoHttpController } from './commands/create-pto/create-pto.http.controller'
 import { UpdatePtoTotalHttpController } from './commands/update-pto-total/update-pto-total.http.controller'
-import { FindPtoHttpController } from './queries/find-pto/find-pto.http.controller'
 import { FindPtoPaginatedHttpController } from './queries/find-pto-paginated/find-pto.paginated.http.controller'
 import { CreatePtoService } from './commands/create-pto/create-pto.service'
 import { UpdatePtoTotalService } from './commands/update-pto-total/update-pto-total.service'
-import { FindPtoQueryHandler } from './queries/find-pto/find-pto.query-handler'
 import { FindPtoPaginatedQueryHandler } from './queries/find-pto-paginated/find-pto.paginated.query-handler'
 import { PTO_REPOSITORY } from './pto.di-token'
 import { PtoRepository } from './database/pto.repository'
@@ -26,6 +24,8 @@ import { UpdatePtoDetailHttpController } from './commands/update-pto-detail/upda
 import { DeletePtoDetailHttpController } from './commands/delete-pto-detail/delete-pto-datail.http.controller'
 import { UpdatePtoPayHttpController } from './commands/update-pto-pay/update-pto-pay.http.controller'
 import { UpdatePtoPayService } from './commands/update-pto-pay/update-pto-pay.service'
+import { FindPtoDetailPaginatedHttpController } from './queries/find-pto-detail-paginated/find-pto-detail.paginated.http.controller'
+import { FindPtoDetailPaginatedQueryHandler } from './queries/find-pto-detail-paginated/find-pto-detail.paginated.query-handler'
 
 const httpControllers = [
   CreatePtoHttpController,
@@ -34,8 +34,8 @@ const httpControllers = [
   CreatePtoDetailHttpController,
   UpdatePtoDetailHttpController,
   DeletePtoDetailHttpController,
-  FindPtoHttpController,
   FindPtoPaginatedHttpController,
+  FindPtoDetailPaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreatePtoService,
@@ -45,7 +45,7 @@ const commandHandlers: Provider[] = [
   UpdatePtoDetailService,
   DeletePtoDetailService,
 ]
-const queryHandlers: Provider[] = [FindPtoQueryHandler, FindPtoPaginatedQueryHandler]
+const queryHandlers: Provider[] = [FindPtoPaginatedQueryHandler, FindPtoDetailPaginatedQueryHandler]
 const repositories: Provider[] = [
   PtoRepository,
   { provide: PTO_REPOSITORY, useClass: PtoRepository },

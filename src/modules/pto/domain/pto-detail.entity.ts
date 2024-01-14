@@ -76,11 +76,9 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
       throw new DaysRangeIssueException()
     }
 
-    console.log(`first : ${parentPtoProps.details?.length}`)
     this.props.parentPtoEntity.details = parentPtoProps.details!.filter((detail) => {
       return detail.id !== this.id
     })
-    console.log(`second : ${this.props.parentPtoEntity.getProps().details?.length}`)
 
     // 기존에 설정해놓은 연차 날짜 겹치면 예외 throw
     if (this.props.parentPtoEntity.hasPtoDetailDateInRange(this.props.startedAt, this.props.days)) {
@@ -97,7 +95,7 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
   private getEndedAt(): Date {
     const endedAt: Date = new Date(this.props.startedAt)
     endedAt.setDate(endedAt.getDate() + this.props.days)
-    endedAt.setTime(endedAt.getTime() - 1) // 1밀리 초 뺀다.
+    endedAt.setTime(endedAt.getTime() - 1)
 
     return endedAt
   }

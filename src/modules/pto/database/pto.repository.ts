@@ -29,6 +29,7 @@ export type PtoDetailQueryModel = PtoDetails & {
 @Injectable()
 export class PtoRepository implements PtoRepositoryPort {
   private ptoQueryIncludeInput = {
+    //Todo. user의 필요 부분만 select
     user: true,
     PtoDetails: {
       include: {
@@ -38,6 +39,7 @@ export class PtoRepository implements PtoRepositoryPort {
   }
 
   private ptoDetailQueryIncludeInput = {
+    //Todo. user의 필요 부분만 select
     pto: {
       include: {
         user: true,
@@ -95,6 +97,8 @@ export class PtoRepository implements PtoRepositoryPort {
       return new PtoTargetUser({
         id: record.id,
         dateOfJoining: record.dateOfJoining,
+        firstName: record.firstName,
+        lastName: record.lastName,
       })
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -141,14 +145,15 @@ export class PtoRepository implements PtoRepositoryPort {
     })
   }
 
-  async findMany(offset: number, limit: number): Promise<PtoEntity[]> {
+  async findMany(condition: Prisma.PtosWhereInput, offset: number, limit: number): Promise<PtoEntity[]> {
     const records = await this.prismaService.ptos.findMany({
-      skip: offset,
-      take: limit,
+      where: condition,
       include: this.ptoQueryIncludeInput,
       orderBy: {
-        tenure: 'desc',
+        startedAt: 'desc',
       },
+      skip: offset,
+      take: limit,
     })
 
     return records.map((record) => {
@@ -161,8 +166,12 @@ export class PtoRepository implements PtoRepositoryPort {
     })
   }
 
-  async getCount(): Promise<number> {
-    return await this.prismaService.ptos.count()
+  async getCount(condition: Prisma.PtosWhereInput): Promise<number> {
+    return await this.prismaService.ptos.count({ where: condition })
+  }
+
+  async getCountDetail(condition: Prisma.PtosWhereInput): Promise<number> {
+    return await this.prismaService.ptos.count({ where: condition })
   }
 
   async findOnePtoDetail(id: string): Promise<PtoDetailEntity | null> {

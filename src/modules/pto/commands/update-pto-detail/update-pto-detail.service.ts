@@ -16,7 +16,7 @@ export class UpdatePtoDetailService implements ICommandHandler {
     if (!parentPtoEntity) throw new ParentPtoNotFoundException()
 
     entity.parentPtoEntity = parentPtoEntity
-    entity.startedAt = new Date(command.startedAt)
+    entity.startedAt = command.startedAt
     entity.days = command.days
     entity.ptoTypeId = command.ptoTypeId
     entity.amount = command.amountPerDay

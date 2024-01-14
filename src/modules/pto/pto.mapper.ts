@@ -5,6 +5,7 @@ import { PtoEntity } from './domain/pto.entity'
 import { PtoDetailModel, PtoDetailQueryModel, PtoModel, PtoQueryModel } from './database/pto.repository'
 import { PtoDetail } from './domain/value-objects/pto.detail.vo'
 import { PtoDetailEntity } from './domain/pto-detail.entity'
+import { PtoTargetUser } from './domain/value-objects/target.user.vo'
 
 @Injectable()
 export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
@@ -16,6 +17,8 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
       tenure: props.tenure,
       total: props.total,
       isPaid: props.isPaid,
+      startedAt: props.startedAt!,
+      endedAt: props.endedAt!,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
     }
@@ -49,6 +52,14 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
         tenure: record.tenure,
         total: record.total,
         isPaid: record.isPaid,
+        startedAt: record.startedAt,
+        endedAt: record.endedAt,
+        targetUser: new PtoTargetUser({
+          id: record.user.id,
+          dateOfJoining: record.user.dateOfJoining,
+          firstName: record.user.firstName,
+          lastName: record.user.lastName,
+        }),
         details: record.details.map((detail) => {
           return new PtoDetail({
             id: detail.id,
@@ -59,7 +70,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
             startedAt: detail.startedAt,
           })
         }),
-        dateOfJoining: record.user.dateOfJoining,
+        dateOfJoining: record.user.dateOfJoining!,
       },
     })
 
@@ -92,8 +103,11 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
     const props = entity.getProps()
     const response = new PtoResponseDto({
       id: props.id,
-      startedAt: entity.getStartedAt(),
-      endedAt: entity.getEndedAt(),
+      userDateOfJoining: props.dateOfJoining.toISOString().split('T')[0],
+      userFirstName: props.targetUser ? props.targetUser.firstName : '',
+      userLastName: props.targetUser ? props.targetUser.lastName : '',
+      startedAt: props.startedAt ? props.startedAt.toISOString().split('T')[0] : '',
+      endedAt: props.endedAt ? props.endedAt.toISOString().split('T')[0] : '',
       tenure: props.tenure,
       total: props.total,
       availablePto: entity.getUsablePtoValue(),

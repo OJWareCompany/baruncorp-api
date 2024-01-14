@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDateString, IsInt, IsNumber, IsString, Max, Min } from 'class-validator'
+import { Type } from 'class-transformer'
+import { IsDate, IsInt, IsNumber, IsString, Max, Min } from 'class-validator'
 
 export class CreatePtoDetailRequestDto {
   @ApiProperty({ default: 'ebf47426-2f8d-4b7c-9ef1-81209db8e3ad' })
@@ -12,7 +13,8 @@ export class CreatePtoDetailRequestDto {
   @IsNumber()
   readonly amountPerDay: number
   @ApiProperty({ default: '2024-01-09' })
-  @IsDateString()
+  @IsDate()
+  @Type(() => Date)
   readonly startedAt: Date
   @ApiProperty({ default: 2 })
   @Max(180)

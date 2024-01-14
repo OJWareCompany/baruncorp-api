@@ -54,6 +54,7 @@ export class CreatePtoDetailService implements ICommandHandler {
       newPtoDetailId = await this.doProccessing(
         targetDatePtoEntities.length ? targetDatePtoEntities[0] : null,
         command,
+        targetUser.dateOfJoining,
         startDateTenure,
       )
     } else {
@@ -77,6 +78,7 @@ export class CreatePtoDetailService implements ICommandHandler {
   private async doProccessing(
     targetPtoEntity: PtoEntity | null,
     command: CreatePtoDetailCommand,
+    dateOfJoining: Date,
     tenure: number,
   ): Promise<string> {
     if (targetPtoEntity) {
@@ -90,6 +92,7 @@ export class CreatePtoDetailService implements ICommandHandler {
         tenure: tenure,
         isPaid: false,
         total: total,
+        dateOfJoining: dateOfJoining,
       })
 
       await this.ptoRepository.insert(ptoEntity)

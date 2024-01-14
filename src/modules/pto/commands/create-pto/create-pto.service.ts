@@ -8,24 +8,31 @@ import { PtoRepositoryPort } from '../../database/pto.repository.port'
 import { UserNotFoundException } from '../../../users/user.error'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { PTO_REPOSITORY } from '../../../pto/pto.di-token'
-import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { DateOfJoiningNotFoundException } from '../../domain/pto.error'
+import { PrismaService } from '../../../database/prisma.service'
+import { PtoTargetUser } from '../../domain/value-objects/target.user.vo'
 
 @CommandHandler(CreatePtoCommand)
 export class CreatePtoService implements ICommandHandler {
   constructor(
     // @ts-ignore
     @Inject(PTO_REPOSITORY) private readonly ptoRepository: PtoRepositoryPort,
-    // @ts-ignore
-    @Inject(USER_REPOSITORY) private readonly userRepository: UserRepositoryPort,
   ) {}
   async execute(command: CreatePtoCommand): Promise<AggregateID> {
+    const targetUser: PtoTargetUser = await this.ptoRepository.findTargetUser(command.userId)
+
+    if (!targetUser) {
+      throw new UserNotFoundException()
+    }
+
+    const ownerUserDateOfJoining = targetUser.dateOfJoining
+    if (!ownerUserDateOfJoining) throw new DateOfJoiningNotFoundException()
+
     const entity: PtoEntity = PtoEntity.create({
       ...command,
       isPaid: false,
+      dateOfJoining: ownerUserDateOfJoining,
     })
-
-    const user = await this.userRepository.findOneByIdOrThrow(command.userId)
-    if (!user) throw new UserNotFoundException()
 
     await this.ptoRepository.insert(entity)
     return entity.id

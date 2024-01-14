@@ -1,32 +1,24 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsInt, IsString } from 'class-validator'
+import { IsBoolean, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { Ptos } from '@prisma/client'
-
-/**
- * Remove interface after select fields
- */
 export class PtoDetailResponseDto {
   @ApiProperty({ default: 'bd2d7904-136d-4e2e-966a-679fe4f499d0' })
-  @IsString()
-  readonly id: string
-
+  id: string
   constructor(props: PtoDetailResponseDto) {
     initialize(this, props)
   }
-  @ApiProperty({ default: 'Vacation' })
-  name: string
-
-  @ApiProperty({ default: 'V' })
-  abbreviation: string
-
-  @ApiProperty({ default: 0.5 })
-  amount: number
-
+  @ApiProperty({ default: 'Deo' })
+  userFirstName: string
+  @ApiProperty({ default: 'John' })
+  userLastName: string
+  @ApiProperty({ default: '2024-01-07' })
+  startedAt: string
   @ApiProperty({ default: '2024-01-09' })
-  startedAt: Date
-
-  @ApiProperty({ default: 2 })
-  @IsInt()
-  readonly days?: number
+  endedAt: string
+  @ApiProperty({ default: 3 })
+  days: number
+  @ApiProperty({ default: 1.5 })
+  amount: number
+  @ApiProperty({ default: 'Vacation' })
+  ptoTypeName: string
 }

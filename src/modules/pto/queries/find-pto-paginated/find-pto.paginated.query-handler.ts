@@ -11,7 +11,9 @@ import { PtoResponseDto } from '../../dtos/pto.response.dto'
 import { PrismaService } from '../../../database/prisma.service'
 
 export class FindPtoPaginatedQuery extends PaginatedQueryBase {
-  readonly userId?: string | null
+  readonly userId?: string
+  readonly userName?: string
+  readonly isPaid?: boolean
   constructor(props: PaginatedParams<FindPtoPaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -20,31 +22,43 @@ export class FindPtoPaginatedQuery extends PaginatedQueryBase {
 
 @QueryHandler(FindPtoPaginatedQuery)
 export class FindPtoPaginatedQueryHandler implements IQueryHandler {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly ptoRepository: PtoRepository) {}
 
   async execute(query: FindPtoPaginatedQuery) {
-    // const result: PtoEntity[] = await this.ptoRepository.findMany(query.offset, query.limit)
-    // if (!result) throw new NotFoundException()
-
     const condition: Prisma.PtosWhereInput = {
       ...(query.userId && { userId: query.userId }),
+      ...(query.userName && {
+        user: {
+          full_name: { contains: query.userName },
+        },
+      }),
+      ...(query.isPaid !== null && query.isPaid !== undefined && { isPaid: query.isPaid }),
     }
 
-    const records = await this.prismaService.ptos.findMany({
-      where: condition,
-      // include: {
-      //   user: true
-      // },
-      orderBy: { tenure: 'desc' },
-    })
+    const entities: PtoEntity[] = await this.ptoRepository.findMany(condition, query.offset, query.limit)
 
-    const totalCount = await this.prismaService.ptos.count({ where: condition })
+    const totalCount = await this.ptoRepository.getCount(condition)
 
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
       totalCount: totalCount,
-      items: records,
+      items: entities.map((entity) => {
+        const props = entity.getProps()
+        const ptoDtos: PtoResponseDto = {
+          id: props.id,
+          userDateOfJoining: props.dateOfJoining.toISOString().split('T')[0],
+          userFirstName: props.targetUser ? props.targetUser.firstName : '',
+          userLastName: props.targetUser ? props.targetUser.lastName : '',
+          tenure: props.tenure,
+          total: props.total,
+          availablePto: entity.getUsablePtoValue(),
+          isPaid: props.isPaid,
+          startedAt: props.startedAt ? props.startedAt.toISOString().split('T')[0] : '',
+          endedAt: props.endedAt ? props.endedAt.toISOString().split('T')[0] : '',
+        }
+        return ptoDtos
+      }),
     })
   }
 }

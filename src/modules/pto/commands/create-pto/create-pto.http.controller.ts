@@ -14,7 +14,7 @@ export class CreatePtoHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('')
   @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
-  @UseGuards(AuthGuard)
+  // @UseGuards(AuthGuard)
   async post(@Body() dto: CreatePtoRequestDto): Promise<IdResponse> {
     const command = new CreatePtoCommand(dto)
     const result: AggregateID = await this.commandBus.execute(command)
