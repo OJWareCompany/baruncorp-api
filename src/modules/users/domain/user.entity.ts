@@ -13,6 +13,7 @@ import {
 import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 import { Organization } from './value-objects/organization.value-object'
 import { UserManager } from './domain-services/user-manager.domain-service'
+import { UserCreatedDomainEvent } from './events/user-created.domain-event'
 
 export class UserEntity extends AggregateRoot<UserProps> {
   protected _id: string
@@ -155,6 +156,17 @@ export class UserEntity extends AggregateRoot<UserProps> {
   updateVendor(isVendor: boolean): this {
     this.props.isVendor = this.props.organization.organizationType === 'administration' ? false : isVendor
     return this
+  }
+
+  setCreatePtoEvent(tenure: number, total: number): void {
+    this.addEvent(
+      new UserCreatedDomainEvent({
+        aggregateId: this.id,
+        userId: this.id,
+        tenure: tenure,
+        total: total,
+      }),
+    )
   }
 
   public validate(): void {

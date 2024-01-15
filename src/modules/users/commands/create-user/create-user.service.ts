@@ -10,10 +10,15 @@ import { Phone } from '../../domain/value-objects/phone-number.value-object'
 import { Organization } from '../../domain/value-objects/organization.value-object'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { UserConflictException } from '../../user.error'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 
 @CommandHandler(CreateUserCommand)
 export class CreateUserService implements ICommandHandler {
-  constructor(private readonly prismaService: PrismaService, private readonly userMapper: UserMapper) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly userMapper: UserMapper,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
 
   async execute(command: CreateUserCommand): Promise<{ id: string }> {
     const isExisted = await this.prismaService.users.findUnique({ where: { email: command.email } })
@@ -40,8 +45,16 @@ export class CreateUserService implements ICommandHandler {
       dateOfJoining: command.dateOfJoining || new Date(),
     })
 
+    // command.tenure와 command.totalPTODays는 User Entityd의요소가 아니기에
+    // Entity의 create메서드의 인자로 전달하여 Entity 내부에서 이벤트를 세팅하지 않고 외부에서 세팅함
+    if (command.dateOfJoining && command.tenure && command.totalPtoDays) {
+      user.setCreatePtoEvent(command.tenure, command.totalPtoDays)
+    }
+
     const record = this.userMapper.toPersistence(user)
     await this.prismaService.users.create({ data: { ...record } })
+    // PTO 생성 이벤트 호출
+    user.publishEvents(this.eventEmitter)
 
     // Give User Role
     const role = new UserRole({

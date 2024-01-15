@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { IsString, IsEmail, IsArray, IsOptional, IsBoolean, IsDate } from 'class-validator'
+import { IsString, IsEmail, IsArray, IsOptional, IsBoolean, IsDate, IsNumber, Max, Min, IsInt } from 'class-validator'
 
 export class CreateUserRequestDto {
   @ApiProperty({ default: '07e12e89-6077-4fd1-a029-c50060b57f43' })
@@ -32,9 +32,21 @@ export class CreateUserRequestDto {
   @IsOptional()
   readonly phoneNumber: string | null
 
-  @ApiProperty({ default: '2023-09-04T07:31:27.217Z' })
+  @ApiProperty({ default: '2023-09-04' })
   @IsDate()
   @Type(() => Date)
   @IsOptional()
   readonly dateOfJoining?: Date | null
+
+  @ApiProperty({ default: 1 })
+  @IsInt()
+  @Max(100)
+  @Min(1)
+  readonly tenure?: number
+
+  @ApiProperty({ default: 10 })
+  @IsNumber()
+  @Max(30)
+  @Min(1)
+  readonly totalPtoDays?: number
 }

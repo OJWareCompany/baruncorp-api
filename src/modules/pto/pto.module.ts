@@ -28,6 +28,7 @@ import { FindPtoDetailPaginatedHttpController } from './queries/find-pto-detail-
 import { FindPtoDetailPaginatedQueryHandler } from './queries/find-pto-detail-paginated/find-pto-detail.paginated.query-handler'
 import { FindPtoAnnualPaginatedHttpController } from './queries/find-pto-annual-paginated/find-pto-annual.paginated.http.controller'
 import { FindPtoAnnualPaginatedQueryHandler } from './queries/find-pto-annual-paginated/find-pto-annual.paginated.query-handler'
+import { CreatePtoWhenUserCreatedEventHandler } from './application/event-handlers/create-pto-when-user-created.domain-event-handler'
 
 const httpControllers = [
   CreatePtoHttpController,
@@ -58,7 +59,7 @@ const repositories: Provider[] = [
   { provide: PTO_REPOSITORY, useClass: PtoRepository },
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
-const eventHandlers: Provider[] = []
+const eventHandlers: Provider[] = [CreatePtoWhenUserCreatedEventHandler]
 const mappers: Provider[] = [PtoMapper, UserMapper, UserRoleMapper]
 
 @Module({

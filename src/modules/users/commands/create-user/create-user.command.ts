@@ -10,6 +10,8 @@ export class CreateUserCommand {
   readonly phoneNumber: string | null
   readonly updatedBy: string
   readonly dateOfJoining?: Date | null
+  readonly tenure?: number
+  readonly totalPtoDays?: number
 
   constructor(props: CreateUserCommand) {
     initialize(this, props)
