@@ -124,9 +124,21 @@ export interface CreateUserRequestDto {
   phoneNumber: string | null
   /**
    * @format date-time
-   * @default "2023-09-04T07:31:27.217Z"
+   * @default "2023-09-04"
    */
   dateOfJoining?: string | null
+  /**
+   * @min 1
+   * @max 100
+   * @default 1
+   */
+  tenure?: number
+  /**
+   * @min 1
+   * @max 30
+   * @default 10
+   */
+  totalPtoDays?: number
 }
 
 export interface IdResponse {
@@ -1792,6 +1804,224 @@ export interface AssigningTaskAlertPaginatedResponse {
   items: AssigningTaskAlertResponse[]
 }
 
+export interface CreatePtoRequestDto {
+  /** @default "ebf47426-2f8d-4b7c-9ef1-81209db8e3ad" */
+  userId: string
+  /**
+   * @min 1
+   * @max 100
+   * @default 1
+   */
+  tenure: number
+  /**
+   * @min 1
+   * @max 30
+   * @default 10
+   */
+  total: number
+}
+
+export interface UpdatePtoTotalRequestDto {
+  /**
+   * @min 1
+   * @max 30
+   * @default 12
+   */
+  total: number
+}
+
+export interface UpdatePtoPayRequestDto {
+  /** @default false */
+  isPaid: boolean
+}
+
+export interface CreatePtoDetailRequestDto {
+  /** @default "ebf47426-2f8d-4b7c-9ef1-81209db8e3ad" */
+  userId: string
+  /** @default "ebf47426-2f8d-4b7c-9ef1-81209db8e3ad" */
+  ptoTypeId: string
+  /**
+   * @min 0
+   * @max 1
+   * @default 1.5
+   */
+  amountPerDay: number
+  /**
+   * @format date-time
+   * @default "2024-01-09"
+   */
+  startedAt: string
+  /**
+   * @min 1
+   * @max 180
+   * @default 2
+   */
+  days: number
+}
+
+export interface UpdatePtoDetailRequestDto {
+  /**
+   * @format date-time
+   * @default "2024-01-09"
+   */
+  startedAt: string
+  /**
+   * @min 1
+   * @max 180
+   * @default 2
+   */
+  days: number
+  /** @default "529cec06-1fb7-4284-b56f-9f31219cd099" */
+  ptoTypeId: string
+  /**
+   * @min 0
+   * @max 1
+   * @default 1
+   */
+  amountPerDay: number
+}
+
+export interface PtoResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "Deo" */
+  userFirstName: string
+  /** @default "John" */
+  userLastName: string
+  /** @default "2024-01-01" */
+  userDateOfJoining: string
+  /** @default 3 */
+  tenure: number
+  /** @default 12 */
+  total: number
+  /** @default 5 */
+  availablePto: number
+  /** @default false */
+  isPaid: boolean
+  /** @default "2024-01-01" */
+  startedAt: string
+  /** @default "2024-12-30" */
+  endedAt: string
+}
+
+export interface PtoPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: PtoResponseDto[]
+}
+
+export interface PtoDetailResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "Deo" */
+  userFirstName: string
+  /** @default "John" */
+  userLastName: string
+  /** @default "2024-01-07" */
+  startedAt: string
+  /** @default "2024-01-09" */
+  endedAt: string
+  /** @default 3 */
+  days: number
+  /** @default 1.5 */
+  amount: number
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  ptoTypeId: string
+  /** @default "Vacation" */
+  ptoTypeName: string
+}
+
+export interface PtoDetailPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: PtoDetailResponseDto[]
+}
+
+export interface PtoTypeInfo {
+  /** @default "ad2d7904-136d-4e2e-966a-679fe4f499d2" */
+  ptoTypeId: string
+  /** @default "Vacation" */
+  ptoTypeName: string
+  /** @default 10 */
+  totalAmount: number
+}
+
+export interface PtoAnnualResponseDto {
+  /** @default "ad2d7904-136d-4e2e-966a-679fe4f499d2" */
+  userId: string
+  /** @default "Deo" */
+  userFirstName: string
+  /** @default "John" */
+  userLastName: string
+  /** @default [] */
+  ptoTypeInfos: PtoTypeInfo[]
+  /** @default 10 */
+  totalAmount: number
+}
+
+export interface PtoAnnualPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: PtoAnnualResponseDto[]
+}
+
+export interface UpdatePtoTenurePolicyRequestDto {
+  /**
+   * @max 50
+   * @default 12
+   */
+  total?: number
+}
+
+export interface PtoTenurePolicyResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "3" */
+  tenure: number
+  /** @default "12" */
+  total: number
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  createdAt: string
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  updatedAt: string
+}
+
+export interface PtoTenurePolicyPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: PtoTenurePolicyResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -2432,6 +2662,86 @@ export interface FindLicensePaginatedHttpControllerGetParams {
 }
 
 export interface FindAssigningTaskAlertPaginatedHttpControllerFindParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindPtoPaginatedHttpControllerGetParams {
+  /** @default "674e3b83-0255-46fe-bc4b-047fca3c43cf" */
+  userId?: string
+  /** @default "John Doe" */
+  userName?: string
+  /** @default false */
+  isPaid?: boolean
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindPtoDetailPaginatedHttpControllerGetParams {
+  /** @default "674e3b83-0255-46fe-bc4b-047fca3c43cf" */
+  userId?: string
+  /** @default "John Doe" */
+  userName?: string
+  /**
+   * @format date-time
+   * @default "2023-06"
+   */
+  targetMonth?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindPtoAnnualPaginatedHttpControllerGetParams {
+  /**
+   * @format date-time
+   * @default "2024"
+   */
+  targetYear: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindPtoTenurePolicyPaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -4942,6 +5252,190 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/assigning-task-alerts/${assigningTaskAlertId}/check-out`,
         method: 'PATCH',
+        ...params,
+      }),
+  }
+  ptos = {
+    /**
+     * No description
+     *
+     * @name CreatePtoHttpControllerPost
+     * @request POST:/ptos
+     */
+    createPtoHttpControllerPost: (data: CreatePtoRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/ptos`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPtoPaginatedHttpControllerGet
+     * @request GET:/ptos
+     */
+    findPtoPaginatedHttpControllerGet: (query: FindPtoPaginatedHttpControllerGetParams, params: RequestParams = {}) =>
+      this.request<PtoPaginatedResponseDto, any>({
+        path: `/ptos`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdatePtoTotalHttpControllerPatch
+     * @request PATCH:/ptos/{ptoId}/total
+     */
+    updatePtoTotalHttpControllerPatch: (ptoId: string, data: UpdatePtoTotalRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ptos/${ptoId}/total`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdatePtoPayHttpControllerPatch
+     * @request PATCH:/ptos/{ptoId}/pay
+     */
+    updatePtoPayHttpControllerPatch: (ptoId: string, data: UpdatePtoPayRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ptos/${ptoId}/pay`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CreatePtoDetailHttpControllerPost
+     * @request POST:/ptos/detail
+     */
+    createPtoDetailHttpControllerPost: (data: CreatePtoDetailRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/ptos/detail`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPtoDetailPaginatedHttpControllerGet
+     * @request GET:/ptos/detail
+     */
+    findPtoDetailPaginatedHttpControllerGet: (
+      query: FindPtoDetailPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<PtoDetailPaginatedResponseDto, any>({
+        path: `/ptos/detail`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdatePtoDetailHttpControllerPatch
+     * @request PATCH:/ptos/{ptoDetailId}/detail
+     */
+    updatePtoDetailHttpControllerPatch: (
+      ptoDetailId: string,
+      data: UpdatePtoDetailRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ptos/${ptoDetailId}/detail`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeletePtoDetailHttpControllerDelete
+     * @request DELETE:/ptos/{ptoDetailId}/detail
+     */
+    deletePtoDetailHttpControllerDelete: (ptoDetailId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ptos/${ptoDetailId}/detail`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPtoAnnualPaginatedHttpControllerGet
+     * @request GET:/ptos/annual
+     */
+    findPtoAnnualPaginatedHttpControllerGet: (
+      query: FindPtoAnnualPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<PtoAnnualPaginatedResponseDto, any>({
+        path: `/ptos/annual`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
+  ptoTenurePolicies = {
+    /**
+     * No description
+     *
+     * @name UpdatePtoTenurePolicyHttpControllerPatch
+     * @request PATCH:/pto-tenure-policies/{ptoTenurePolicyId}
+     */
+    updatePtoTenurePolicyHttpControllerPatch: (
+      ptoTenurePolicyId: string,
+      data: UpdatePtoTenurePolicyRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/pto-tenure-policies/${ptoTenurePolicyId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPtoTenurePolicyPaginatedHttpControllerGet
+     * @request GET:/pto-tenure-policies
+     */
+    findPtoTenurePolicyPaginatedHttpControllerGet: (
+      query: FindPtoTenurePolicyPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<PtoTenurePolicyPaginatedResponseDto, any>({
+        path: `/pto-tenure-policies`,
+        method: 'GET',
+        query: query,
+        format: 'json',
         ...params,
       }),
   }
