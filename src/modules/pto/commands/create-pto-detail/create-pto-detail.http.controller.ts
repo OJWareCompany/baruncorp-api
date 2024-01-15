@@ -15,7 +15,7 @@ export class CreatePtoDetailHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Post('')
   @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async post(@Body() dto: CreatePtoDetailRequestDto): Promise<IdResponse> {
     const command = new CreatePtoDetailCommand({
       ...dto,

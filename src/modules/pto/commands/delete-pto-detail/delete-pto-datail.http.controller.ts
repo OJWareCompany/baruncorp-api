@@ -12,7 +12,7 @@ import { IdResponse } from '../../../../libs/api/id.response.dto'
 export class DeletePtoDetailHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Delete(':ptoDetailId/detail')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async delete(@Param() param: DeletePtoDetailParamRequestDto) {
     const command = new DeletePtoDetailCommand({
       ptoDetailId: param.ptoDetailId,

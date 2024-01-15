@@ -10,7 +10,7 @@ import { UpdatePtoDetailRequestDto, UpdatePtoDetailParamRequestDto } from './upd
 export class UpdatePtoDetailHttpController {
   constructor(private readonly commandBus: CommandBus) {}
   @Patch(':ptoDetailId/detail')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async patch(
     @Param() param: UpdatePtoDetailParamRequestDto,
     @Body() request: UpdatePtoDetailRequestDto,
