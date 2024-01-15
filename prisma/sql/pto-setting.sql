@@ -97,6 +97,48 @@ INSERT INTO users (
   FALSE -- isVendor
 );
 
+INSERT INTO users (
+  date_of_joining, 
+  type, 
+  deliverables_emails, 
+  email, 
+  first_name, 
+  last_name, 
+  full_name, 
+  status, 
+  organization_id, 
+  is_hand_raised_for_task, 
+  address, 
+  phone_number, 
+  is_active_work_resource, 
+  is_current_user, 
+  is_inactive_organization_user, 
+  revenue_share, 
+  revision_revenue_share, 
+  updated_by, 
+  is_vendor
+) VALUES (
+  '2024-01-01', -- dateOfJoining
+  'Employee', -- type
+  NULL, -- deliverables_emails
+  'user@example.com', -- email
+  'James', -- firstName
+  'Lee', -- lastName
+  'James Lee', -- full_name
+  'active', -- status
+  (SELECT id FROM Organizations WHERE ...), -- organizationId, 조건에 맞는 조직 ID
+  FALSE, -- isHandRaisedForTask
+  '123 Example Street', -- address
+  '123-456-7890', -- phoneNumber
+  TRUE, -- isActiveWorkResource
+  FALSE, -- isCurrentUser
+  FALSE, -- isInactiveOrganizationUser
+  FALSE, -- revenueShare
+  FALSE, -- revisionRevenueShare
+  'admin', -- updatedBy
+  FALSE -- isVendor
+);
+
 
 -- PtoTypes 테이블에 데이터 추가
 INSERT INTO pto_types (id, name, abbreviation, updated_at) VALUES ('ad2d7904-136d-4e2e-966a-679fe4f499d0', 'Vacation', 'V', '2024-01-13T05:41:26.824');
@@ -123,3 +165,11 @@ INSERT INTO pto_types_available_values (pto_type_id, pto_available_value_id) VAL
 INSERT INTO pto_types_available_values (pto_type_id, pto_available_value_id) VALUES ('ad2d7904-136d-4e2e-966a-679fe4f499d4', 'ad2d7904-136d-4e2e-966a-679fe4f499d8');
 INSERT INTO pto_types_available_values (pto_type_id, pto_available_value_id) VALUES ('ad2d7904-136d-4e2e-966a-679fe4f499d5', 'ad2d7904-136d-4e2e-966a-679fe4f499d8');
 
+-- PTO
+INSERT INTO ptos (id, user_id, tenure, total, is_paid, started_at, ended_at, created_at, updated_at) 
+VALUES ('pto_1', 'user_1', 1, 100.0, true, '2023-01-01', '2023-01-10', NOW(), NOW());
+
+INSERT INTO ptos (id, user_id, tenure, total, is_paid, started_at, ended_at, created_at, updated_at) 
+VALUES ('pto_1', 'user_1', 1, 100.0, true, '2023-01-01', '2023-01-10', NOW(), NOW());
+
+-- PTO Detail

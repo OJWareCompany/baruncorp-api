@@ -11,6 +11,8 @@ export class CreatePtoDetailRequestDto {
   readonly ptoTypeId: string
   @ApiProperty({ default: 1.5 })
   @IsNumber()
+  @Max(1)
+  @Min(0)
   readonly amountPerDay: number
   @ApiProperty({ default: '2024-01-09' })
   @IsDate()

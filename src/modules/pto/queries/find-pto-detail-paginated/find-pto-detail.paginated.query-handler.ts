@@ -28,15 +28,13 @@ export class FindPtoDetailPaginatedQueryHandler implements IQueryHandler {
   async execute(query: FindPtoDetailPaginatedQuery) {
     let condition: Prisma.PtoDetailsWhereInput = {
       ...(query.userId && {
-        pto: {
-          userId: query.userId,
+        user: {
+          id: query.userId,
         },
       }),
       ...(query.userName && {
-        pto: {
-          user: {
-            full_name: { contains: query.userName },
-          },
+        user: {
+          full_name: { contains: query.userName },
         },
       }),
     }
@@ -61,11 +59,8 @@ export class FindPtoDetailPaginatedQueryHandler implements IQueryHandler {
       where: condition,
       include: {
         //Todo. user의 필요 부분만 select
-        pto: {
-          include: {
-            user: true,
-          },
-        },
+        user: true,
+        pto: true,
         ptoType: true,
       },
       orderBy: {
@@ -84,8 +79,10 @@ export class FindPtoDetailPaginatedQueryHandler implements IQueryHandler {
       items: records.map((record) => {
         const ptoDetailDtos: PtoDetailResponseDto = {
           id: record.id,
-          userFirstName: record.pto.user.firstName,
-          userLastName: record.pto.user.lastName,
+          // userFirstName: record.pto.user.firstName,
+          // userLastName: record.pto.user.lastName,
+          userFirstName: record.user.firstName,
+          userLastName: record.user.lastName,
           startedAt: record.startedAt.toISOString().split('T')[0],
           endedAt: this.calcEndedAt(record.startedAt, record.days).toISOString().split('T')[0],
           days: record.days,

@@ -20,9 +20,8 @@ export type PtoQueryModel = Ptos & {
 
 export type PtoDetailModel = PtoDetails
 export type PtoDetailQueryModel = PtoDetails & {
-  pto: Ptos & {
-    user: Users
-  }
+  user: Users
+  pto: Ptos
   ptoType: PtoTypes
 }
 
@@ -47,11 +46,8 @@ export class PtoRepository implements PtoRepositoryPort {
 
   private ptoDetailQueryIncludeInput = {
     //Todo. user의 필요 부분만 select
-    pto: {
-      include: {
-        user: true,
-      },
-    },
+    pto: true,
+    user: true,
     ptoType: true,
   }
 
@@ -201,9 +197,10 @@ export class PtoRepository implements PtoRepositoryPort {
       updatedAt: record.updatedAt,
       pto: record.pto,
       ptoType: record.ptoType,
+      user: record.user,
     }
 
-    if (!record.pto.user.dateOfJoining) {
+    if (!record.user.dateOfJoining) {
       throw new DateOfJoiningNotFoundException()
     }
 

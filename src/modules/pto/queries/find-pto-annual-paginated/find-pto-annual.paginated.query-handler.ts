@@ -80,23 +80,41 @@ export class FindPtoAnnualPaginatedQueryHandler implements IQueryHandler {
       }),
     )
 
-    console.log(JSON.stringify(finalRecords))
-
     const totalCount = await this.prismaService.users.count({ where: condition })
+
+    interface PtoTypeInfoAggregate {
+      [key: string]: {
+        ptoTypeId: string
+        ptoTypeName: string
+        totalAmount: number
+      }
+    }
 
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
       totalCount: totalCount,
       items: finalRecords.map((record) => {
-        const ptoTypeInfo = record.ptoTypes.map(
-          (ptoType) =>
-            new PtoTypeInfo({
-              ptoTypeId: ptoType.ptoTypeId,
-              ptoTypeName: ptoType.ptoTypeName,
-              totalAmount: ptoType.totalAmount,
-            }),
+        // ptoTypeId 별로 totalAmount를 합산
+        const ptoTypeInfoAggregated: PtoTypeInfoAggregate = record.ptoTypes.reduce(
+          (acc: PtoTypeInfoAggregate, ptoType) => {
+            if (!acc[ptoType.ptoTypeId]) {
+              acc[ptoType.ptoTypeId] = {
+                ptoTypeId: ptoType.ptoTypeId,
+                ptoTypeName: ptoType.ptoTypeName,
+                totalAmount: ptoType.totalAmount,
+              }
+            } else {
+              acc[ptoType.ptoTypeId].totalAmount += ptoType.totalAmount
+            }
+            return acc
+          },
+          {},
         )
+
+        // 객체를 배열로 변환하고 PtoTypeInfo 인스턴스 생성
+        const ptoTypeInfo = Object.values(ptoTypeInfoAggregated).map((info) => new PtoTypeInfo(info))
+
         const ptoAnnualDtos: PtoAnnualResponseDto = {
           userId: record.userId,
           userFirstName: record.userFirstName,
