@@ -12,6 +12,7 @@ export class UpdatePtoTotalService implements ICommandHandler {
     if (!entity) throw new PtoNotFoundException()
 
     entity.total = command.total
+    entity.checkUpdateValidate()
 
     await this.ptoRepository.update(entity)
   }

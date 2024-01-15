@@ -83,3 +83,9 @@ export class ParentPtoNotFoundException extends NotFoundException {
     super('Not Parent Pto found', '20814')
   }
 }
+
+export class LowerThanUsedPtoException extends BadRequestException {
+  constructor() {
+    super('You cannot set it lower than the number of used PTO', '20815')
+  }
+}

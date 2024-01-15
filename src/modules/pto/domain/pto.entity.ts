@@ -4,6 +4,7 @@ import { CreatePtoProps, PtoProps } from './pto.type'
 import { PtoDetailEntity } from './pto-detail.entity'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { PtoDetail } from './value-objects/pto.detail.vo'
+import { LowerThanUsedPtoException } from './pto.error'
 
 export class PtoEntity extends AggregateRoot<PtoProps> {
   protected _id: string
@@ -105,5 +106,13 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
 
   public validate(): void {
     return
+  }
+
+  public checkUpdateValidate(): void {
+    const usablePtoValue = this.getUsablePtoValue()
+    if (usablePtoValue < 0) {
+      // 사용 가능한 연차가 음수 => total 수를 사용한 연차 수보다 작게 업데이트 하려는 경우 등
+      throw new LowerThanUsedPtoException()
+    }
   }
 }
