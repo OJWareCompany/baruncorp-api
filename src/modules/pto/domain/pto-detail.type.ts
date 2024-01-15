@@ -2,6 +2,7 @@ import { Entity } from '@src/libs/ddd/entity.base'
 import { PtoEntity } from './pto.entity'
 
 export interface CreatePtoDetailProps {
+  userId: string
   ptoId: string
   ptoTypeId: string
   amount: number

@@ -26,6 +26,8 @@ import { UpdatePtoPayHttpController } from './commands/update-pto-pay/update-pto
 import { UpdatePtoPayService } from './commands/update-pto-pay/update-pto-pay.service'
 import { FindPtoDetailPaginatedHttpController } from './queries/find-pto-detail-paginated/find-pto-detail.paginated.http.controller'
 import { FindPtoDetailPaginatedQueryHandler } from './queries/find-pto-detail-paginated/find-pto-detail.paginated.query-handler'
+import { FindPtoAnnualPaginatedHttpController } from './queries/find-annual-pto-paginated/find-pto-annual.paginated.http.controller'
+import { FindPtoAnnualPaginatedQueryHandler } from './queries/find-annual-pto-paginated/find-pto-annual.paginated.query-handler'
 
 const httpControllers = [
   CreatePtoHttpController,
@@ -36,6 +38,7 @@ const httpControllers = [
   DeletePtoDetailHttpController,
   FindPtoPaginatedHttpController,
   FindPtoDetailPaginatedHttpController,
+  FindPtoAnnualPaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreatePtoService,
@@ -45,7 +48,11 @@ const commandHandlers: Provider[] = [
   UpdatePtoDetailService,
   DeletePtoDetailService,
 ]
-const queryHandlers: Provider[] = [FindPtoPaginatedQueryHandler, FindPtoDetailPaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindPtoPaginatedQueryHandler,
+  FindPtoDetailPaginatedQueryHandler,
+  FindPtoAnnualPaginatedQueryHandler,
+]
 const repositories: Provider[] = [
   PtoRepository,
   { provide: PTO_REPOSITORY, useClass: PtoRepository },

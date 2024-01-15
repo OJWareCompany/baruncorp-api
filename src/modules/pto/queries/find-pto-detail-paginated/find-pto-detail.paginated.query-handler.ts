@@ -47,8 +47,6 @@ export class FindPtoDetailPaginatedQueryHandler implements IQueryHandler {
 
       endDate.setMonth(startDate.getMonth() + 1)
       endDate.setDate(0)
-      console.log(startDate)
-      console.log(endDate)
 
       condition = {
         ...condition,
@@ -92,6 +90,7 @@ export class FindPtoDetailPaginatedQueryHandler implements IQueryHandler {
           endedAt: this.calcEndedAt(record.startedAt, record.days).toISOString().split('T')[0],
           days: record.days,
           amount: record.amount * record.days,
+          ptoTypeId: record.ptoTypeId,
           ptoTypeName: record.ptoType.name,
         }
 

@@ -115,6 +115,7 @@ export class CreatePtoDetailService implements ICommandHandler {
     const targetPtoProps = targetPtoEntity.getProps()
 
     const ptoDetailEntity = PtoDetailEntity.create({
+      userId: command.userId,
       ptoId: targetPtoProps.id,
       ptoTypeId: command.ptoTypeId,
       amount: command.amountPerDay,

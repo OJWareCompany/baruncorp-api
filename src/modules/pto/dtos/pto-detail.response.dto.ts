@@ -19,6 +19,8 @@ export class PtoDetailResponseDto {
   days: number
   @ApiProperty({ default: 1.5 })
   amount: number
+  @ApiProperty({ default: 'bd2d7904-136d-4e2e-966a-679fe4f499d0' })
+  ptoTypeId: string
   @ApiProperty({ default: 'Vacation' })
   ptoTypeName: string
 }

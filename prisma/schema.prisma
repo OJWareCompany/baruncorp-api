@@ -124,6 +124,7 @@ model Users {
   availableTasks             UserAvailableTasks[]
   licenses                   UserLicense[]
   ptos                       Ptos[]
+  ptoDetails                 PtoDetails[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -1042,6 +1043,7 @@ model PtoTypesAvailableValues {
 
 model PtoDetails {
   id        String   @id                 @db.VarChar(255)
+  userId    String   @map("user_id")     @db.VarChar(255) //집계를 돌리기 위함
   ptoId     String   @map("pto_id")      @db.VarChar(255)
   ptoTypeId String   @map("pto_type_id") @db.VarChar(255)
   amount    Float    @map("amount")      @db.Float
@@ -1049,6 +1051,7 @@ model PtoDetails {
   startedAt DateTime @map("started_at")  @db.DateTime(0)
   createdAt DateTime @map("created_at")  @db.DateTime(0) @default(now()) 
   updatedAt DateTime @map("updated_at")  @db.DateTime(0)
+  user      Users    @relation(fields: [userId], references: [id])
   pto       Ptos     @relation(fields: [ptoId], references: [id])
   ptoType   PtoTypes @relation(fields: [ptoTypeId], references: [id])
 

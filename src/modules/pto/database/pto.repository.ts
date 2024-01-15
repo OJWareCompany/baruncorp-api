@@ -26,6 +26,13 @@ export type PtoDetailQueryModel = PtoDetails & {
   ptoType: PtoTypes
 }
 
+export type PtoAnnualQueryModel = PtoDetails & {
+  pto: Ptos & {
+    user: Pick<Users, 'id' | 'firstName' | 'lastName'>
+  }
+  ptoType: PtoTypes
+}
+
 @Injectable()
 export class PtoRepository implements PtoRepositoryPort {
   private ptoQueryIncludeInput = {
@@ -184,6 +191,7 @@ export class PtoRepository implements PtoRepositoryPort {
 
     const ptoDetailQueryModel: PtoDetailQueryModel = {
       id: record.id,
+      userId: record.userId,
       ptoId: record.ptoId,
       ptoTypeId: record.ptoTypeId,
       amount: record.amount,

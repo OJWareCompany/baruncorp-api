@@ -30,6 +30,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
     const props = entity.getProps()
     const record: PtoDetailModel = {
       id: props.id,
+      userId: props.userId,
       ptoId: props.ptoId,
       ptoTypeId: props.ptoTypeId,
       amount: props.amount,
@@ -83,6 +84,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       props: {
+        userId: record.userId,
         ptoId: record.ptoId,
         ptoTypeId: record.ptoTypeId,
         amount: record.amount,
