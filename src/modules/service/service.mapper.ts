@@ -50,6 +50,18 @@ export class ServiceMapper
       commercialRevisionMinutesPerUnit: props.pricing.standard?.commercial
         ? props.pricing.standard.commercial.revision.minutesPerUnit
         : null,
+      residentialNewEstimatedTaskDuration: props.residentialNewEstimatedTaskDuration
+        ? new Prisma.Decimal(props.residentialNewEstimatedTaskDuration)
+        : null,
+      residentialRevisionEstimatedTaskDuration: props.residentialRevisionEstimatedTaskDuration
+        ? new Prisma.Decimal(props.residentialRevisionEstimatedTaskDuration)
+        : null,
+      commercialNewEstimatedTaskDuration: props.commercialNewEstimatedTaskDuration
+        ? new Prisma.Decimal(props.commercialNewEstimatedTaskDuration)
+        : null,
+      commercialRevisionEstimatedTaskDuration: props.commercialRevisionEstimatedTaskDuration
+        ? new Prisma.Decimal(props.commercialRevisionEstimatedTaskDuration)
+        : null,
     }
     const commercialStandardPricingTiersRecord: CommercialStandardPricingTiers[] = props.pricing.standard?.commercial
       ? props.pricing.standard?.commercial?.newServiceTiers.map((tier) => {
@@ -122,6 +134,18 @@ export class ServiceMapper
           fixed: fixedPrice,
         }),
         tasks: record.tasks,
+        residentialNewEstimatedTaskDuration: record.service.residentialNewEstimatedTaskDuration
+          ? Number(record.service.residentialNewEstimatedTaskDuration)
+          : null,
+        residentialRevisionEstimatedTaskDuration: record.service.residentialRevisionEstimatedTaskDuration
+          ? Number(record.service.residentialRevisionEstimatedTaskDuration)
+          : null,
+        commercialNewEstimatedTaskDuration: record.service.commercialNewEstimatedTaskDuration
+          ? Number(record.service.commercialNewEstimatedTaskDuration)
+          : null,
+        commercialRevisionEstimatedTaskDuration: record.service.commercialRevisionEstimatedTaskDuration
+          ? Number(record.service.commercialRevisionEstimatedTaskDuration)
+          : null,
       },
     })
     return entity
@@ -155,6 +179,10 @@ export class ServiceMapper
           name: task.name,
         }
       }),
+      residentialNewEstimatedTaskDuration: props.residentialNewEstimatedTaskDuration,
+      residentialRevisionEstimatedTaskDuration: props.residentialRevisionEstimatedTaskDuration,
+      commercialNewEstimatedTaskDuration: props.commercialNewEstimatedTaskDuration,
+      commercialRevisionEstimatedTaskDuration: props.commercialRevisionEstimatedTaskDuration,
     })
 
     return response

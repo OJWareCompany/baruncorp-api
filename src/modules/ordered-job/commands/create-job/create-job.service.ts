@@ -9,37 +9,41 @@ import { PrismaService } from '../../../database/prisma.service'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobEntity } from '../../domain/job.entity'
 import { CreateJobCommand } from './create-job.command'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { ServiceNotFoundException } from '../../../service/domain/service.error'
 import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
+import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
   constructor(
     // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
+    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort, // @ts-ignore
+    @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort, // @ts-ignore
+    @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort, // @ts-ignore
+    private readonly durationCalculator: TotalDurationCalculator,
     private readonly prismaService: PrismaService,
   ) {}
 
   async execute(command: CreateJobCommand): Promise<{ id: string }> {
-    // TODO Project Type 업데이트
-    // TODO Client User 여러명 설정 -> user profile에서 contact emails 필드 추가하기.
-    const clientUser = await this.jobRepository.findUser(command.clientUserId)
+    const clientUser = await this.jobRepo.findUser(command.clientUserId)
     if (!clientUser) throw new UserNotFoundException()
     const organization = await this.prismaService.organizations.findUnique({ where: { id: clientUser.organizationId } })
     if (!organization) throw new OrganizationNotFoundException()
-    const orderer = await this.jobRepository.findUser(command.updatedByUserId)
+    const orderer = await this.jobRepo.findUser(command.updatedByUserId)
     if (!orderer) throw new UserNotFoundException()
-    const project = await this.jobRepository.findProject(command.projectId)
-    if (!project) throw new ProjectNotFoundException()
+    const project = await this.projectRepo.findOneOrThrow({ id: command.projectId })
 
-    const services = await this.prismaService.service.findMany({
-      where: { id: { in: command.orderedTasks.map((task) => task.serviceId) } },
-    })
+    const services = await this.serviceRepo.find({ id: { in: command.orderedTasks.map((task) => task.serviceId) } })
+    const totalDurationInMinutes = await this.durationCalculator.calcTotalDuration(command.orderedTasks, project)
 
     // Entity에는 Record에 저장 될 모든 필드가 있어야한다.
     const job = JobEntity.create({
-      propertyFullAddress: project.propertyFullAddress,
+      propertyFullAddress: project.projectPropertyAddress.fullAddress,
+      loadCalcOrigin: command.loadCalcOrigin,
       organizationId: project.clientOrganizationId,
       organizationName: organization.name,
       orderedServices: services.map((service) => {
@@ -70,8 +74,9 @@ export class CreateJobService implements ICommandHandler {
       mountingType: command.mountingType,
       totalOfJobs: project.totalOfJobs,
       projectPropertyType: project.projectPropertyType as ProjectPropertyTypeEnum,
+      dueDate: command.dueDate ? command.dueDate : totalDurationInMinutes,
     })
-    await this.jobRepository.insert(job)
+    await this.jobRepo.insert(job)
     return {
       id: job.id,
     }

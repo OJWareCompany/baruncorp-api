@@ -47,7 +47,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
   async execute(command: CreateOrderedServiceCommand): Promise<AggregateID> {
     const service = await this.serviceRepo.findOneOrThrow(command.serviceId)
     const job = await this.jobRepo.findJobOrThrow(command.jobId)
-    const project = await this.projectRepo.findProjectOrThrow(job.projectId)
+    const project = await this.projectRepo.findOneOrThrow({ id: job.projectId })
 
     // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
     const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(

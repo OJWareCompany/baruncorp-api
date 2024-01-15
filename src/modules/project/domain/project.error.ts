@@ -6,13 +6,13 @@ export class ProjectNotFoundException extends NotFoundException {
   }
 }
 
-export class ProjectPropertyAddressConflicException extends ConflictException {
+export class ProjectPropertyAddressConflictException extends ConflictException {
   constructor() {
     super('Project Property Full Address is Already Existed.', '30002')
   }
 }
 
-export class ProjectNumberConflicException extends ConflictException {
+export class ProjectNumberConflictException extends ConflictException {
   constructor() {
     super('Project number is Already Existed.', '30003')
   }

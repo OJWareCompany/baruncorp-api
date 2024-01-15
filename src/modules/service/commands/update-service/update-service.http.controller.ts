@@ -44,6 +44,10 @@ export class UpdateServiceHttpController {
       name: request.name,
       billingCode: request.billingCode,
       type: request.pricingType,
+      residentialNewEstimatedTaskDuration: request.residentialNewEstimatedTaskDuration,
+      residentialRevisionEstimatedTaskDuration: request.residentialRevisionEstimatedTaskDuration,
+      commercialNewEstimatedTaskDuration: request.commercialNewEstimatedTaskDuration,
+      commercialRevisionEstimatedTaskDuration: request.commercialRevisionEstimatedTaskDuration,
       ...pricingType,
     })
 

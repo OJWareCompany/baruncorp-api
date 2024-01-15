@@ -154,19 +154,23 @@ model Positions {
 }
 
 model Service {
-  id                               String                           @id @default(uuid()) @db.VarChar(255)
-  name                             String                           @unique(map: "name") @db.VarChar(255)
-  billingCode                      String                           @unique(map: "billing_code") @map("billing_code") @db.VarChar(255)
-  basePrice                        Decimal?                         @map("base_price") @db.Decimal(13, 4)
-  gmPrice                          Decimal?                         @map("gm_price") @db.Decimal(13, 4)
-  revisionPrice                    Decimal?                         @map("revision_price") @db.Decimal(13, 4)
-  revisionGmPrice                  Decimal?                         @map("revision_gm_price") @db.Decimal(13, 4)
-  fixedPrice                       Decimal?                         @map("fixed_price") @db.Decimal(13, 4)
-  commercialRevisionCostPerUnit    Decimal?                         @map("commercial_revision_cost_per_unit") @db.Decimal(13, 4)
-  commercialRevisionMinutesPerUnit Int?                             @default(1) @map("commercial_revision_minutes_per_unit") @db.UnsignedInt
-  orderedServices                  OrderedServices[]
-  tasks                            Tasks[]
-  commercialStandardPricingTiers   CommercialStandardPricingTiers[]
+  id                                       String                           @id @default(uuid()) @db.VarChar(255)
+  name                                     String                           @unique(map: "name") @db.VarChar(255)
+  billingCode                              String                           @unique(map: "billing_code") @map("billing_code") @db.VarChar(255)
+  basePrice                                Decimal?                         @map("base_price") @db.Decimal(13, 4)
+  gmPrice                                  Decimal?                         @map("gm_price") @db.Decimal(13, 4)
+  revisionPrice                            Decimal?                         @map("revision_price") @db.Decimal(13, 4)
+  revisionGmPrice                          Decimal?                         @map("revision_gm_price") @db.Decimal(13, 4)
+  fixedPrice                               Decimal?                         @map("fixed_price") @db.Decimal(13, 4)
+  commercialRevisionCostPerUnit            Decimal?                         @map("commercial_revision_cost_per_unit") @db.Decimal(13, 4)
+  commercialRevisionMinutesPerUnit         Int?                             @default(1) @map("commercial_revision_minutes_per_unit") @db.UnsignedInt
+  residentialNewEstimatedTaskDuration      Decimal?                         @map("residential_new_estimated_task_duration") @db.Decimal(2, 1)
+  residentialRevisionEstimatedTaskDuration Decimal?                         @map("residential_revision_estimated_task_duration") @db.Decimal(2, 1)
+  commercialNewEstimatedTaskDuration       Decimal?                         @map("commercial_new_estimated_task_duration") @db.Decimal(2, 1)
+  commercialRevisionEstimatedTaskDuration  Decimal?                         @map("commercial_revision_estimated_task_duration") @db.Decimal(2, 1)
+  orderedServices                          OrderedServices[]
+  tasks                                    Tasks[]
+  commercialStandardPricingTiers           CommercialStandardPricingTiers[]
 
   @@map("service")
 }
@@ -427,6 +431,7 @@ model OrderedJobs {
   invoiceId                                     String?           @map("invoice_id") @db.VarChar(255)
   revisionSize                                  String?           @map("revision_size") @db.VarChar(255)
   pricingType                                   String?           @map("pricing_type") @db.VarChar(255)
+  loadCalcOrigin                                String            @default("Self") @map("load_calc_origin") @db.VarChar(255)
   clientOrganizationName                        String            @map("client_organization_name") @db.VarChar(255)
   clientOrganizationId                          String            @map("client_organization_id") @db.VarChar(255)
   projectId                                     String            @map("project_id") @db.VarChar(255)
@@ -437,7 +442,7 @@ model OrderedJobs {
   jobName                                       String            @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int               @map("job_request_number")
   receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
-  dateDue                                       DateTime?         @map("date_due") @db.Date
+  dueDate                                       DateTime?         @map("due_date") @db.Date
   mountingType                                  String            @map("mounting_type") @db.VarChar(255)
   projectType                                   String            @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?              @map("number_of_wet_stamp") @db.UnsignedTinyInt

@@ -15,6 +15,11 @@ export enum JobStatusEnum {
   Sent_To_Client = 'Sent To Client',
 }
 
+export enum LoadCalcOriginEnum {
+  Self = 'Self',
+  ClientProvided = 'Client Provided',
+}
+
 /**
  * 인자로 받지 않아도 만들수 있는 필드는 제외한다.
  * JobProps에 포함되지 않는 필드나 변형된 필드 제거할것
@@ -35,7 +40,9 @@ export interface CreateJobProps {
   additionalInformationFromClient: string | null
   clientInfo: ClientInformation
   projectPropertyType: ProjectPropertyTypeEnum
+  loadCalcOrigin: LoadCalcOriginEnum
   isExpedited: boolean
+  dueDate: Date | null
   updatedBy: string
 }
 

@@ -44,6 +44,26 @@ export class ServiceResponseDto {
   @IsObject()
   relatedTasks: ServiceTaskResponseDto[]
 
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  residentialNewEstimatedTaskDuration: number | null
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  residentialRevisionEstimatedTaskDuration: number | null
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  commercialNewEstimatedTaskDuration: number | null
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  commercialRevisionEstimatedTaskDuration: number | null
+
   constructor(props: ServiceResponseDto) {
     initialize(this, props)
   }

@@ -33,7 +33,6 @@ import { OrderedServiceRepository } from '../ordered-service/database/ordered-se
 import { EXPENSE_PRICING_REPOSITORY } from '../expense-pricing/expense-pricing.di-token'
 import { ExpensePricingRepository } from '../expense-pricing/database/expense-pricing.repository'
 import { CalculateVendorCostDomainService } from './domain/calculate-vendor-cost.domain-service'
-import { OrderedServiceMapper } from '../ordered-service/ordered-service.mapper'
 import { ExpensePricingMapper } from '../expense-pricing/expense-pricing.mapper'
 import { AssignTaskHttpController } from './commands/assign-task/assign-task.http.controller'
 import { AssignTaskService } from './commands/assign-task/assign-task.service'
@@ -52,6 +51,7 @@ import { ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler } from './appli
 import { DetermineActiveStatusDomainService } from './domain/domain-services/determine-active-status.domain-service'
 import { AssignTaskWhenTaskIsActivatedDomainEventHandler } from './application/event-handlers/assign-task-when-task-is-activated.domain-event-handler'
 import { TaskStatusChangeValidationDomainService } from './domain/domain-services/task-status-change-validation.domain-service'
+import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -97,10 +97,6 @@ const repositories: Provider[] = [
     useClass: InvoiceRepository,
   },
   {
-    provide: ORDERED_SERVICE_REPOSITORY,
-    useClass: OrderedServiceRepository,
-  },
-  {
     provide: EXPENSE_PRICING_REPOSITORY,
     useClass: ExpensePricingRepository,
   },
@@ -128,12 +124,11 @@ const mappers: Provider[] = [
   UserRoleMapper,
   JobMapper,
   InvoiceMapper,
-  OrderedServiceMapper,
   ExpensePricingMapper,
 ]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, OrderedServiceModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })

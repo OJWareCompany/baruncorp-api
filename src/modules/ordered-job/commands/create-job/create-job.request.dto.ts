@@ -1,45 +1,52 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsBoolean, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsBoolean, IsDate, IsEnum, IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { AddressDto } from '../../dtos/address.dto'
+import { LoadCalcOriginEnum } from '../../domain/job.type'
+import { Type } from 'class-transformer'
 
 export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
   @IsString()
-  serviceId: string
+  readonly serviceId: string
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  description: string | null
+  readonly description: string | null
 }
 
 export class CreateJobRequestDto {
-  @ApiProperty({ default: 'chris@barun.com', type: String, isArray: true })
+  @ApiProperty({ default: ['chris@barun.com'], type: String, isArray: true })
   @IsArray()
-  deliverablesEmails: string[]
+  readonly deliverablesEmails: string[]
 
   @ApiProperty({ default: '96d39061-a4d7-4de9-a147-f627467e11d5' })
   @IsString()
-  clientUserId: string
+  readonly clientUserId: string
 
   @ApiProperty({ default: 'please, check this out.' })
   @IsString()
   @IsOptional()
-  additionalInformationFromClient: string | null
+  readonly additionalInformationFromClient: string | null
 
   @ApiProperty({ default: 300.1 })
   @IsNumber()
   @IsOptional()
-  systemSize: number | null
+  readonly systemSize: number | null
 
-  @ApiProperty({ default: '561f7c64-fe49-40a4-8399-d5d24725f9cd' })
+  @ApiProperty({ default: 'd6935a65-2ec5-4df0-a8b5-a4e39f124d05' })
   @IsString()
-  projectId: string
+  readonly projectId: string
 
-  @ApiProperty({ enum: MountingTypeEnum, example: 'Ground Mount' })
-  @IsString()
-  mountingType: MountingTypeEnum
+  @ApiProperty({ enum: MountingTypeEnum, example: MountingTypeEnum.Ground_Mount })
+  @IsEnum(MountingTypeEnum)
+  readonly mountingType: MountingTypeEnum
+
+  @ApiProperty({ enum: LoadCalcOriginEnum, default: LoadCalcOriginEnum.Self })
+  @IsEnum(LoadCalcOriginEnum)
+  @IsOptional()
+  readonly loadCalcOrigin?: LoadCalcOriginEnum = LoadCalcOriginEnum.Self
 
   @ApiProperty({
     default: [
@@ -66,19 +73,25 @@ export class CreateJobRequestDto {
     ],
   })
   @IsArray()
-  taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
+  readonly taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
 
   @ApiProperty({ default: AddressDto })
   @IsObject()
   @IsOptional()
-  mailingAddressForWetStamp: AddressDto | null
+  readonly mailingAddressForWetStamp: AddressDto | null
 
   @ApiProperty({ default: 3 })
   @IsNumber()
   @IsOptional()
-  numberOfWetStamp: number | null
+  readonly numberOfWetStamp: number | null
 
   @ApiProperty({ default: false })
   @IsBoolean()
-  isExpedited: boolean
+  readonly isExpedited: boolean
+
+  @ApiProperty({ description: 'dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.' })
+  @IsOptional()
+  @IsDate()
+  @Type(() => Date)
+  readonly dueDate?: Date | null
 }

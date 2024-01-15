@@ -69,6 +69,7 @@ export class UpdateJobService implements ICommandHandler {
     job.updateAdditionalInformationFromClient(command.additionalInformationFromClient)
     job.updateIsExpedited(command.isExpedited)
     job.updateUpdatedBy(updatedByUserName)
+    job.updateDueDate(command.dueDate)
 
     await this.jobRepository.update(job)
   }

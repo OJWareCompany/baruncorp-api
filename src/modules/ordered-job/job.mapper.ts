@@ -25,6 +25,7 @@ import {
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
 import { JobStatusEnum } from './domain/job.type'
+import { LoadCalcOriginEnum } from './domain/job.type'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -35,6 +36,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       project_number: props.projectId,
       invoiceId: props.invoiceId,
       revisionSize: props.revisionSize,
+      loadCalcOrigin: props.loadCalcOrigin,
       propertyAddress: props.propertyFullAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
       jobStatus: props.jobStatus,
       pricingType: props.pricingType,
@@ -65,6 +67,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       isExpedited: props.isExpedited,
       clientUserId: props.clientInfo.clientUserId,
       clientUserName: props.clientInfo.clientUserName,
+      dueDate: props.dueDate,
 
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
@@ -118,7 +121,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       sixMonthsPrior: null,
       standardPricing: null,
       structuralOrElectricalPEAndWetStampSelectedGl: null,
-      dateDue: null,
       dateSentToClient: null,
     }
   }
@@ -196,6 +198,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: new Date(record.updatedAt),
       props: {
         projectId: record.projectId,
+        loadCalcOrigin: record.loadCalcOrigin as LoadCalcOriginEnum,
+        dueDate: record.dueDate,
         projectNumber: record.project_number,
         invoiceId: record.invoiceId,
         projectPropertyType: record.projectType as ProjectPropertyTypeEnum,
@@ -282,6 +286,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       propertyFullAddress: props.propertyFullAddress,
       jobRequestNumber: props.jobRequestNumber,
       jobStatus: props.jobStatus,
+      loadCalcOrigin: props.loadCalcOrigin,
       receivedAt: props.receivedAt.toISOString(),
       isExpedited: props.isExpedited,
       jobName: props.jobName,

@@ -3,11 +3,8 @@ import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
 import { JobMapper } from '../ordered-job/job.mapper'
-import { OrderedServiceRepository } from '../ordered-service/database/ordered-service.repository'
-import { ORDERED_SERVICE_REPOSITORY } from '../ordered-service/ordered-service.di-token'
 import { CUSTOM_PRICING_REPOSITORY } from '../custom-pricing/custom-pricing.di-token'
 import { CustomPricingRepository } from '../custom-pricing/database/custom-pricing.repository'
-import { OrderedServiceMapper } from '../ordered-service/ordered-service.mapper'
 import { CustomPricingMapper } from '../custom-pricing/custom-pricing.mapper'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
@@ -35,6 +32,7 @@ import { PayInvoiceWhenPaymentIsCreatedEventHandler } from './application/event-
 import { UpdatedInvoiceWhenPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-payment-is-canceled.domain-event-handler'
 import { CalculateInvoiceService } from './domain/calculate-invoice-service.domain-service'
 import { UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler } from './application/event-handlers/update-invoice-total-when-ordered-service-price-is-updated.domain-event-handler'
+import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -62,10 +60,6 @@ const repositories: Provider[] = [
     useClass: InvoiceRepository,
   },
   {
-    provide: ORDERED_SERVICE_REPOSITORY,
-    useClass: OrderedServiceRepository,
-  },
-  {
     provide: CUSTOM_PRICING_REPOSITORY,
     useClass: CustomPricingRepository,
   },
@@ -85,18 +79,11 @@ const eventHandlers: Provider[] = [
   UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler,
 ]
 
-const mappers: Provider[] = [
-  InvoiceMapper,
-  UserMapper,
-  JobMapper,
-  OrderedServiceMapper,
-  CustomPricingMapper,
-  ServiceMapper,
-]
+const mappers: Provider[] = [InvoiceMapper, UserMapper, JobMapper, CustomPricingMapper, ServiceMapper]
 
 const domainServices: Provider[] = [CalculateInvoiceService]
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, OrderedServiceModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })

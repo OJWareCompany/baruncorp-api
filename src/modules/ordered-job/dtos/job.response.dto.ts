@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { JobStatusEnum } from '../domain/job.type'
+import { JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { IsOptional } from 'class-validator'
@@ -8,7 +8,7 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from '../../ordered-service/domain/ordered-service.type'
-import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { TaskSize, TaskSizeEnum } from '../../invoice/dtos/invoice.response.dto'
 import { PrerequisiteTaskVO } from '../domain/value-objects/assigned-task.value-object'
 
@@ -161,8 +161,8 @@ export class JobResponseDto {
   @ApiProperty({ example: AddressDto })
   mailingAddressForWetStamp: AddressDto | null
 
-  @ApiProperty({ example: 'Ground Mount' })
-  mountingType: string
+  @ApiProperty({ example: MountingTypeEnum.Ground_Mount, enum: MountingTypeEnum })
+  mountingType: MountingTypeEnum
 
   @ApiProperty({ example: 3 })
   numberOfWetStamp: number | null
@@ -181,6 +181,9 @@ export class JobResponseDto {
 
   @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
   jobStatus: JobStatusEnum
+
+  @ApiProperty({ example: LoadCalcOriginEnum.Self, enum: LoadCalcOriginEnum })
+  loadCalcOrigin: LoadCalcOriginEnum
 
   @ApiProperty({ example: AssignedTaskResponseFields, type: AssignedTaskResponseFields, isArray: true })
   assignedTasks: AssignedTaskResponseFields[]

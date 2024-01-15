@@ -5,6 +5,10 @@ export interface CreateServiceProps {
   name: string
   billingCode: string
   pricing: Pricing
+  residentialNewEstimatedTaskDuration: number | null
+  residentialRevisionEstimatedTaskDuration: number | null
+  commercialNewEstimatedTaskDuration: number | null
+  commercialRevisionEstimatedTaskDuration: number | null
 }
 
 export interface ServiceProps extends CreateServiceProps {

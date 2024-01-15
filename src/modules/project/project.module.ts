@@ -31,6 +31,8 @@ import { CensusSearchCoordinatesService } from './infra/census/census.search.coo
 import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepository } from '../organization/database/organization.repository'
 import { OrganizationMapper } from '../organization/organization.mapper'
+import { ProjectValidatorDomainService } from './domain/domain-services/project-validator.domain-service'
+import { GeographyModule } from '../geography/geography.module'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -68,9 +70,18 @@ const repositories: Provider[] = [
 // 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
 const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMapper, OrganizationMapper]
 
+const domainServices: Provider[] = [ProjectValidatorDomainService]
 @Module({
-  imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...providers],
+  imports: [CqrsModule, PrismaModule, GeographyModule],
+  providers: [
+    ...commandHandlers,
+    ...eventHandlers,
+    ...queryHandlers,
+    ...repositories,
+    ...mappers,
+    ...providers,
+    ...domainServices,
+  ],
   controllers: [...httpControllers],
 })
 export class ProjectModule {}

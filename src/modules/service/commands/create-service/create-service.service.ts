@@ -63,6 +63,10 @@ export class CreateServiceService implements ICommandHandler {
         }),
         fixed: command.fixedPrice ? new FixedPrice({ value: command.fixedPrice }) : null,
       }),
+      residentialNewEstimatedTaskDuration: command.residentialNewEstimatedTaskDuration,
+      residentialRevisionEstimatedTaskDuration: command.residentialRevisionEstimatedTaskDuration,
+      commercialNewEstimatedTaskDuration: command.commercialNewEstimatedTaskDuration,
+      commercialRevisionEstimatedTaskDuration: command.commercialRevisionEstimatedTaskDuration,
     })
 
     try {

@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
-import { JobStatusEnum } from '../domain/job.type'
+import { JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
 import { OrderedServiceResponseFields, AssignedTaskResponseFields } from './job.response.dto'
-import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 export class MemberResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
@@ -30,7 +30,7 @@ export class JobPaginatedResponseFields {
   @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
   id: string
 
-  @ApiProperty({ example: 'Residential' })
+  @ApiProperty({ example: ProjectPropertyTypeEnum.Residential })
   projectPropertyType: ProjectPropertyTypeEnum
 
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
@@ -42,8 +42,11 @@ export class JobPaginatedResponseFields {
   @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
   jobStatus: JobStatusEnum
 
-  @ApiProperty({ example: 'Ground Mount' })
-  mountingType: string
+  @ApiProperty({ example: MountingTypeEnum.Ground_Mount, enum: MountingTypeEnum })
+  mountingType: MountingTypeEnum
+
+  @ApiProperty({ example: LoadCalcOriginEnum.Self, enum: LoadCalcOriginEnum })
+  loadCalcOrigin: LoadCalcOriginEnum
 
   @ApiProperty({ example: OrderedServiceResponseFields, type: OrderedServiceResponseFields, isArray: true })
   orderedServices: OrderedServiceResponseFields[]

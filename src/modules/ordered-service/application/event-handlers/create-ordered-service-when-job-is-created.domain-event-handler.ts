@@ -31,7 +31,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
     const job = await this.jobRepo.findJobOrThrow(event.aggregateId)
-    const project = await this.projectRepo.findProjectOrThrow(job.projectId)
+    const project = await this.projectRepo.findOneOrThrow({ id: job.projectId })
 
     const makeEntities = event.services.map(async (orderedService) => {
       // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음

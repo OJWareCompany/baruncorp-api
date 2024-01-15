@@ -78,7 +78,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
     }
   }
 
-  toDomain(record: OrderedProjects, ...entity: any): ProjectEntity {
+  toDomain(record: OrderedProjects): ProjectEntity {
     return new ProjectEntity({
       id: record.id,
       createdAt: new Date(record.dateCreated),

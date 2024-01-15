@@ -19,6 +19,10 @@ export class UpdateServiceCommand {
   readonly commercialRevisionCostPerUnit: number | null
   readonly commercialRevisionMinutesPerUnit: number | null
   readonly fixedPrice: number | null
+  readonly residentialNewEstimatedTaskDuration: number | null
+  readonly residentialRevisionEstimatedTaskDuration: number | null
+  readonly commercialNewEstimatedTaskDuration: number | null
+  readonly commercialRevisionEstimatedTaskDuration: number | null
   constructor(props: UpdateServiceCommand) {
     initialize(this, props)
   }

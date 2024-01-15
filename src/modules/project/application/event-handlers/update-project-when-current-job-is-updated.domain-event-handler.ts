@@ -22,7 +22,7 @@ export class UpdateProjectWhenCurrentJobIsUpdatedEventHandler {
     // const newOrderedServices = event.assignedTasks.map((tasks) => {
     //   return new NewOrderedServices({ serviceId: tasks.ser, description: tasks.ser })
     // })
-    const project = await this.projectRepository.findProjectOrThrow(event.projectId)
+    const project = await this.projectRepository.findOneOrThrow({ id: event.projectId })
     project
       .setSystemSize(event.systemSize)
       .setMailingFullAddressForWetStamp(event.mailingFullAddressForWetStamp)

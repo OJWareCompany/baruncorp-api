@@ -18,7 +18,7 @@ export class DeleteProjectService implements ICommandHandler {
     const job = await this.prismaService.orderedJobs.findFirst({ where: { projectId: command.id } })
     if (job) throw new ProjectIncludingJobDeleteException()
 
-    await this.projectRepository.findProjectOrThrow(command.id)
+    await this.projectRepository.findOneOrThrow({ id: command.id })
 
     await this.prismaService.orderedProjects.delete({ where: { id: command.id } })
   }

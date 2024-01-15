@@ -81,4 +81,24 @@ export class CreateServiceRequestDto {
   @IsNumber()
   @IsOptional()
   readonly fixedPrice: number | null
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  readonly residentialNewEstimatedTaskDuration: number | null
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  readonly residentialRevisionEstimatedTaskDuration: number | null
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  readonly commercialNewEstimatedTaskDuration: number | null
+
+  @ApiProperty({ default: null })
+  @IsNumber()
+  @IsOptional()
+  readonly commercialRevisionEstimatedTaskDuration: number | null
 }

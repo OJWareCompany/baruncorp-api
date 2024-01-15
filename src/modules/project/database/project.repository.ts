@@ -1,35 +1,34 @@
 import { EventEmitter2 } from '@nestjs/event-emitter'
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { PrismaService } from '../../database/prisma.service'
 import { ProjectEntity } from '../domain/project.entity'
 import { UserEntity } from '../../users/domain/user.entity'
-import UserMapper from '../../users/user.mapper'
 import { ProjectMapper } from '../project.mapper'
 import { ProjectNotFoundException } from '../domain/project.error'
 import { ProjectRepositoryPort } from './project.repository.port'
+import { Prisma } from '@prisma/client'
 
 @Injectable()
 export class ProjectRepository implements ProjectRepositoryPort {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly projectMapper: ProjectMapper,
-    private readonly userMapper: UserMapper, // TODO: 다른 컨텍스트간 Mapper 공유 가능?
     protected readonly eventEmitter: EventEmitter2,
   ) {}
   findClientUserById(id: string): Promise<UserEntity> {
     throw new Error('Method not implemented.')
   }
 
-  async findProject(id: string): Promise<ProjectEntity | null> {
-    const record = await this.prismaService.orderedProjects.findUnique({ where: { id } })
+  async findOne(whereInput: Prisma.OrderedProjectsWhereInput): Promise<ProjectEntity | null> {
+    const record = await this.prismaService.orderedProjects.findFirst({ where: whereInput })
     if (!record) return record
     return this.projectMapper.toDomain(record)
   }
 
-  async findProjectOrThrow(id: string): Promise<ProjectEntity> {
-    const record = await this.prismaService.orderedProjects.findUnique({ where: { id } })
+  async findOneOrThrow(whereInput: Prisma.OrderedProjectsWhereInput): Promise<ProjectEntity> {
+    const record = await this.findOne(whereInput)
     if (!record) throw new ProjectNotFoundException()
-    return this.projectMapper.toDomain(record)
+    return record
   }
 
   async update(entity: ProjectEntity): Promise<void> {
