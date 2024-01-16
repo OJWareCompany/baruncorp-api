@@ -135,7 +135,7 @@ export interface CreateUserRequestDto {
   tenure?: number
   /**
    * @min 1
-   * @max 30
+   * @max 50
    * @default 10
    */
   totalPtoDays?: number
@@ -1815,7 +1815,7 @@ export interface CreatePtoRequestDto {
   tenure: number
   /**
    * @min 1
-   * @max 30
+   * @max 50
    * @default 10
    */
   total: number
@@ -1824,7 +1824,7 @@ export interface CreatePtoRequestDto {
 export interface UpdatePtoTotalRequestDto {
   /**
    * @min 1
-   * @max 30
+   * @max 50
    * @default 12
    */
   total: number
@@ -1981,6 +1981,32 @@ export interface PtoAnnualPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: PtoAnnualResponseDto[]
+}
+
+export interface PtoTypeAvailableValue {
+  /** @default "1" */
+  value: number
+}
+
+export interface PtoTypeResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "Vacation" */
+  name: string
+  /** @default [] */
+  availableValues: PtoTypeAvailableValue[]
+}
+
+export interface PtoTypePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: PtoTypeResponseDto[]
 }
 
 export interface UpdatePtoTenurePolicyRequestDto {
@@ -2727,6 +2753,21 @@ export interface FindPtoAnnualPaginatedHttpControllerGetParams {
    * @default "2024"
    */
   targetYear: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindPtoTypePaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -5395,6 +5436,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<PtoAnnualPaginatedResponseDto, any>({
         path: `/ptos/annual`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindPtoTypePaginatedHttpControllerGet
+     * @request GET:/ptos/type
+     */
+    findPtoTypePaginatedHttpControllerGet: (
+      query: FindPtoTypePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<PtoTypePaginatedResponseDto, any>({
+        path: `/ptos/type`,
         method: 'GET',
         query: query,
         format: 'json',
