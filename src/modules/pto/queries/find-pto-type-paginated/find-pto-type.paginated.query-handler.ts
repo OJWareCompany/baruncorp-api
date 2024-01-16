@@ -54,7 +54,7 @@ export class FindPtoTypePaginatedQueryHandler implements IQueryHandler {
         const ptoTypeResponseDto: PtoTypeResponseDto = {
           id: record.id,
           name: record.name,
-          ptoTypeAvailableValues: ptoTypeAvailableValues,
+          availableValues: ptoTypeAvailableValues,
         }
         return ptoTypeResponseDto
       }),

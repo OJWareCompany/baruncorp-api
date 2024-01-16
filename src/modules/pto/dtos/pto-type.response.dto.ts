@@ -18,5 +18,5 @@ export class PtoTypeResponseDto {
   @ApiProperty({ default: 'Vacation' })
   name: string
   @ApiProperty({ default: [] })
-  ptoTypeAvailableAmount: PtoTypeAvailableValue[]
+  availableValues: PtoTypeAvailableValue[]
 }
