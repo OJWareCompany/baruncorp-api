@@ -1016,7 +1016,6 @@ model PtoTypes {
   abbreviation            String                    @map("abbreviation") @db.VarChar(5)
   createdAt               DateTime                  @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt               DateTime                  @map("updated_at") @db.DateTime(0)
-  availableValues         PtoAvailableValues[]
   ptoTypesAvailableValues PtoTypesAvailableValues[]
   ptoDetails              PtoDetails[]
 
@@ -1028,7 +1027,6 @@ model PtoAvailableValues {
   value                   Float                     @map("value") @db.Float
   createdAt               DateTime                  @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt               DateTime                  @map("updated_at") @db.DateTime(0)
-  ptoTypes                PtoTypes[]
   ptoTypesAvailableValues PtoTypesAvailableValues[]
 
   @@map("pto_available_values")

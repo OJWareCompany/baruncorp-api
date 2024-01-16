@@ -29,6 +29,8 @@ import { FindPtoDetailPaginatedQueryHandler } from './queries/find-pto-detail-pa
 import { FindPtoAnnualPaginatedHttpController } from './queries/find-pto-annual-paginated/find-pto-annual.paginated.http.controller'
 import { FindPtoAnnualPaginatedQueryHandler } from './queries/find-pto-annual-paginated/find-pto-annual.paginated.query-handler'
 import { CreatePtoWhenUserCreatedEventHandler } from './application/event-handlers/create-pto-when-user-created.domain-event-handler'
+import { FindPtoTypePaginatedHttpController } from './queries/find-pto-type-paginated/find-pto-type.paginated.http.controller'
+import { FindPtoTypePaginatedQueryHandler } from './queries/find-pto-type-paginated/find-pto-type.paginated.query-handler'
 
 const httpControllers = [
   CreatePtoHttpController,
@@ -40,6 +42,7 @@ const httpControllers = [
   FindPtoPaginatedHttpController,
   FindPtoDetailPaginatedHttpController,
   FindPtoAnnualPaginatedHttpController,
+  FindPtoTypePaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreatePtoService,
@@ -53,6 +56,7 @@ const queryHandlers: Provider[] = [
   FindPtoPaginatedQueryHandler,
   FindPtoDetailPaginatedQueryHandler,
   FindPtoAnnualPaginatedQueryHandler,
+  FindPtoTypePaginatedQueryHandler,
 ]
 const repositories: Provider[] = [
   PtoRepository,

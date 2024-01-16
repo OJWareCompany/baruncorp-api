@@ -194,19 +194,29 @@ INSERT INTO pto_types_available_values (pto_type_id, pto_available_value_id) VAL
 INSERT INTO pto_types_available_values (pto_type_id, pto_available_value_id) VALUES ('ad2d7904-136d-4e2e-966a-679fe4f499d4', 'ad2d7904-136d-4e2e-966a-679fe4f499d7');
 INSERT INTO pto_types_available_values (pto_type_id, pto_available_value_id) VALUES ('ad2d7904-136d-4e2e-966a-679fe4f499d4', 'ad2d7904-136d-4e2e-966a-679fe4f499d8');
 INSERT INTO pto_types_available_values (pto_type_id, pto_available_value_id) VALUES ('ad2d7904-136d-4e2e-966a-679fe4f499d5', 'ad2d7904-136d-4e2e-966a-679fe4f499d8');
-
 -- PTO
-INSERT INTO ptos (id, user_id, tenure, total, is_paid, created_at, updated_at, started_at, ended_at) VALUES 
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 1 , 10, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 2 , 11, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 3 , 12, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 4 , 13, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 5 , 14, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 6 , 15, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 7 , 16, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 8 , 17, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 9 , 18, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', ),
-(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 10, 19, TRUE, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '2024-01-01', '2024-12-31', );
+INSERT INTO ptos (id, user_id, tenure, total, is_paid, created_at, updated_at, started_at, ended_at) VALUES
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 1 , 10, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 2 , 11, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 3 , 12, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 4 , 13, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 5 , 14, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 6 , 15, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 7 , 16, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 8 , 17, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 9 , 18, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e2e-9562-679fe4f499d0', 10, 19, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31');
+INSERT INTO ptos (id, user_id, tenure, total, is_paid, created_at, updated_at, started_at, ended_at) VALUES
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 1,  10, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 2,  11, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 3,  12, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 4,  13, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 5,  14, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 6,  15, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 7,  16, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 8,  17, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 9,  18, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31'),
+(UUID(), '5d2d7904-136d-4e22-956a-679fe4f499d0', 10, 19, TRUE, NOW(), NOW(), '2024-01-01', '2024-12-31');
 
 -- PTO Detail
 

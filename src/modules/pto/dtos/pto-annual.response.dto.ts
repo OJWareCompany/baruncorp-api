@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 
 export class PtoTypeInfo {
