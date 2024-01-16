@@ -90,39 +90,46 @@ export class FindPtoAnnualPaginatedQueryHandler implements IQueryHandler {
       }
     }
 
+    const allPtoTypes = await this.prismaService.ptoTypes.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+    })
+
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
       totalCount: totalCount,
       items: finalRecords.map((record) => {
-        // ptoTypeId 별로 totalAmount를 합산
-        const ptoTypeInfoAggregated: PtoTypeInfoAggregate = record.ptoTypes.reduce(
-          (acc: PtoTypeInfoAggregate, ptoType) => {
-            if (!acc[ptoType.ptoTypeId]) {
-              acc[ptoType.ptoTypeId] = {
-                ptoTypeId: ptoType.ptoTypeId,
-                ptoTypeName: ptoType.ptoTypeName,
-                totalAmount: ptoType.totalAmount,
-              }
-            } else {
-              acc[ptoType.ptoTypeId].totalAmount += ptoType.totalAmount
-            }
-            return acc
-          },
-          {},
-        )
+        // 사용자별 ptoTypeInfos 초기화 (모든 ptoType에 대해 totalAmount를 0으로 설정)
+        const userPtoTypeInfo: PtoTypeInfoAggregate = allPtoTypes.reduce((acc: PtoTypeInfoAggregate, ptoType) => {
+          acc[ptoType.id] = {
+            ptoTypeId: ptoType.id,
+            ptoTypeName: ptoType.name,
+            totalAmount: 0,
+          }
+          return acc
+        }, {})
 
-        // 객체를 배열로 변환하고 PtoTypeInfo 인스턴스 생성
-        const ptoTypeInfo = Object.values(ptoTypeInfoAggregated).map((info) => new PtoTypeInfo(info))
+        // 기존 ptoTypes 데이터로 totalAmount 업데이트
+        record.ptoTypes.forEach((ptoType) => {
+          if (userPtoTypeInfo[ptoType.ptoTypeId]) {
+            userPtoTypeInfo[ptoType.ptoTypeId].totalAmount += ptoType.totalAmount
+          }
+        })
 
-        const ptoAnnualDtos: PtoAnnualResponseDto = {
+        // 객체를 배열로 변환
+        const ptoTypeInfo = Object.values(userPtoTypeInfo)
+
+        const ptoAnnualDto: PtoAnnualResponseDto = {
           userId: record.userId,
           userFirstName: record.userFirstName,
           userLastName: record.userLastName,
           totalAmount: record.userTotalAmount,
           ptoTypeInfos: ptoTypeInfo,
         }
-        return ptoAnnualDtos
+        return ptoAnnualDto
       }),
     })
   }

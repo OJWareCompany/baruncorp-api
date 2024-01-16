@@ -10,7 +10,7 @@ export class UpdatePtoTotalParamRequestDto {
 export class UpdatePtoTotalRequestDto {
   @ApiProperty({ default: 12 })
   @IsNumber()
-  @Max(30)
+  @Max(50)
   @Min(1)
   readonly total: number
 }

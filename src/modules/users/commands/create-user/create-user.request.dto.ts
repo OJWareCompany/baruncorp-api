@@ -46,7 +46,7 @@ export class CreateUserRequestDto {
 
   @ApiProperty({ default: 10 })
   @IsNumber()
-  @Max(30)
+  @Max(50)
   @Min(1)
   readonly totalPtoDays?: number
 }

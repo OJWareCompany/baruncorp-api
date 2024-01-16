@@ -12,7 +12,7 @@ export class CreatePtoRequestDto {
   readonly tenure: number
   @ApiProperty({ default: 10 })
   @IsNumber()
-  @Max(30)
+  @Max(50)
   @Min(1)
   readonly total: number
 }
