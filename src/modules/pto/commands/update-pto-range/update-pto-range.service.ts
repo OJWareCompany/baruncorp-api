@@ -27,5 +27,6 @@ export class UpdatePtoRangeService implements ICommandHandler {
     await this.ptoRepository.updateMany(entities)
 
     // Todo. 각 PTO Details들의 PTO 매핑 정보 변경(변경 사항 있다면)
+    // entities에 속한 details 검사하여 details의 startedAt에 pto의 startedAt ~ endedAt에 속한 경우 해당 pto로 이동
   }
 }
