@@ -71,6 +71,18 @@ export class PtoRepository implements PtoRepositoryPort {
     await this.prismaService.ptos.update({ where: { id: entity.id }, data: record })
   }
 
+  async updateMany(entities: PtoEntity[]): Promise<void> {
+    const updatePromises = entities.map((entity) => {
+      const record = this.ptoMapper.toPersistence(entity)
+      return this.prismaService.ptos.update({
+        where: { id: entity.id },
+        data: record,
+      })
+    })
+    // 각각 entity들의 업데이트 데이터가 다르므로 개별 업데이트
+    await Promise.all(updatePromises)
+  }
+
   async delete(id: string): Promise<void> {
     await this.prismaService.$executeRaw<Ptos>`DELETE FROM ptos WHERE id = ${id}`
   }
@@ -148,12 +160,12 @@ export class PtoRepository implements PtoRepositoryPort {
     })
   }
 
-  async findMany(condition: Prisma.PtosWhereInput, offset: number, limit: number): Promise<PtoEntity[]> {
+  async findMany(condition: Prisma.PtosWhereInput, offset = 0, limit = 50): Promise<PtoEntity[]> {
     const records = await this.prismaService.ptos.findMany({
       where: condition,
       include: this.ptoQueryIncludeInput,
       orderBy: {
-        startedAt: 'desc',
+        tenure: 'desc',
       },
       skip: offset,
       take: limit,

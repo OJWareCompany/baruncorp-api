@@ -37,13 +37,21 @@ export class UsersController {
       dto.phoneNumber,
       dto.deliverablesEmails,
       dto.isVendor,
+      dto.dateOfJoining,
     )
   }
 
   @Patch('profile')
   @UseGuards(AuthGuard)
   async patchUpdateUser(@User() { id }: { id: string }, @Body() dto: UpdateUserRequestDto): Promise<void> {
-    return await this.userService.updateProfile(id, new UserName(dto), dto.phoneNumber, dto.deliverablesEmails)
+    return await this.userService.updateProfile(
+      id,
+      new UserName(dto),
+      dto.phoneNumber,
+      dto.deliverablesEmails,
+      undefined,
+      dto.dateOfJoining,
+    )
   }
 
   @Get('roles')

@@ -5,7 +5,9 @@ import { EmailVO } from './domain/value-objects/email.vo'
 import { InvitationEmailProp } from './domain/invitationMail.types'
 import { UserRepositoryPort } from './database/user.repository.port'
 import { InvitationMailRepositoryPort } from './database/invitationMail.repository.port'
+import { PtoRepositoryPort } from '../pto/database/pto.repository.port'
 import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
+import { PTO_REPOSITORY } from '../pto/pto.di-token'
 import { OrganizationRepositoryPort } from '../organization/database/organization.repository.port'
 import { UserResponseDto } from './dtos/user.response.dto'
 import { UserEntity } from './domain/user.entity'
@@ -15,6 +17,7 @@ import { InvitationNotFoundException, OnlyMemberCanBeAdminException, UserNotFoun
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 import { PrismaService } from '../database/prisma.service'
 import { Roles } from '@prisma/client'
+import { PaidPtoUpdateException } from '../pto/domain/pto.error'
 
 @Injectable()
 export class UserService {
@@ -25,6 +28,8 @@ export class UserService {
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationMailRepository: InvitationMailRepositoryPort,
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
+    // @ts-ignore
+    @Inject(PTO_REPOSITORY) private readonly ptoRepository: PtoRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly userMapper: UserMapper,
   ) {}
@@ -58,16 +63,28 @@ export class UserService {
     phoneNumber: string | null,
     deliverablesEmails: string[],
     isVendor?: boolean,
+    dateOfJoining?: Date | null,
   ): Promise<void> {
     const user = await this.userRepository.findOneByIdOrThrow(userId)
     if (!user) throw new UserNotFoundException()
 
-    user
-      .updateName(userName) //
-      .updatePhoneNumber(phoneNumber)
-      .updateDeliverableEmails(deliverablesEmails)
+    user.updateName(userName).updatePhoneNumber(phoneNumber).updateDeliverableEmails(deliverablesEmails)
     if (isVendor !== undefined) {
       user.updateVendor(isVendor)
+    }
+    if (dateOfJoining !== undefined) {
+      // TODO: Consider an Aggregate Pattern
+      // 만약 Paid 된 Pto존재한다면 입사기념일 수정 불가능
+      const paidPtosCount: number = await this.ptoRepository.getCount({
+        userId: user.id,
+        isPaid: true,
+      })
+
+      if (paidPtosCount > 0) {
+        throw new PaidPtoUpdateException()
+      }
+
+      user.updateDateOfJoining(dateOfJoining)
     }
     await this.userRepository.update(user)
   }
