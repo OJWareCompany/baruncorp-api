@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { CustomMax } from '../../../../libs/decorators/custom/custom-max.decorator'
+import { CustomMin } from '../../../../libs/decorators/custom/custom-min.decorator'
 import { Type } from 'class-transformer'
 import { IsString, IsEmail, IsArray, IsOptional, IsBoolean, IsDate, IsNumber, Max, Min, IsInt } from 'class-validator'
+import { TenureRangeException, TotalPtoDaysRangeException } from '../../../pto/domain/pto.error'
 
 export class CreateUserRequestDto {
   @ApiProperty({ default: '07e12e89-6077-4fd1-a029-c50060b57f43' })
@@ -38,15 +41,15 @@ export class CreateUserRequestDto {
   @IsOptional()
   readonly dateOfJoining?: Date | null
 
-  @ApiProperty({ default: 1 })
+  @ApiProperty({ default: 1, minimum: 1, maximum: 100 })
   @IsInt()
-  @Max(100)
-  @Min(1)
+  @CustomMax(100, new TenureRangeException())
+  @CustomMin(1, new TenureRangeException())
   readonly tenure?: number
 
-  @ApiProperty({ default: 10 })
+  @ApiProperty({ default: 10, minimum: 1, maximum: 50 })
   @IsNumber()
-  @Max(50)
-  @Min(1)
+  @CustomMax(50, new TotalPtoDaysRangeException())
+  @CustomMin(1, new TotalPtoDaysRangeException())
   readonly totalPtoDays?: number
 }

@@ -2016,6 +2016,7 @@ export interface PtoTypePaginatedResponseDto {
 
 export interface UpdatePtoTenurePolicyRequestDto {
   /**
+   * @min 1
    * @max 50
    * @default 12
    */

@@ -89,3 +89,33 @@ export class LowerThanUsedPtoException extends BadRequestException {
     super('You cannot set it lower than the number of used PTO', '20815')
   }
 }
+
+export class TenureRangeException extends BadRequestException {
+  constructor() {
+    super('Tenure field must checked range', '20816')
+  }
+}
+
+export class TotalPtoDaysRangeException extends BadRequestException {
+  constructor() {
+    super('TotalPtoDays field must checked range', '20817')
+  }
+}
+
+export class TotalRangeException extends BadRequestException {
+  constructor() {
+    super('Total field must checked range', '20818')
+  }
+}
+
+export class DaysRangeException extends BadRequestException {
+  constructor() {
+    super('Days field must checked range', '20819')
+  }
+}
+
+export class AmountPerDayRangeException extends BadRequestException {
+  constructor() {
+    super('Amount per day field must checked range', '20820')
+  }
+}
