@@ -14,6 +14,7 @@ import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 import { Organization } from './value-objects/organization.value-object'
 import { UserManager } from './domain-services/user-manager.domain-service'
 import { UserCreatedDomainEvent } from './events/user-created.domain-event'
+import { UserUpdatedDomainEvent } from './events/user-updated.domain-event'
 
 export class UserEntity extends AggregateRoot<UserProps> {
   protected _id: string
@@ -155,6 +156,19 @@ export class UserEntity extends AggregateRoot<UserProps> {
   // update, set은 도메인 용어를 사용하지 않으므로 좋지 않은 예시 (어떤 행위를 했을때 그 안에서 아래의 업데이트가 따라와야함)
   updateVendor(isVendor: boolean): this {
     this.props.isVendor = this.props.organization.organizationType === 'administration' ? false : isVendor
+    return this
+  }
+
+  updateDateOfJoining(newDateOfJoining: Date | null): this {
+    this.props.dateOfJoining = newDateOfJoining
+
+    this.addEvent(
+      new UserUpdatedDomainEvent({
+        aggregateId: this.id,
+        dateOfJoining: this.props.dateOfJoining,
+      }),
+    )
+
     return this
   }
 

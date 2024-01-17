@@ -60,6 +60,7 @@ export class UserRepository implements UserRepositoryPort {
    */
   async update(entity: UserEntity): Promise<void> {
     const record = this.userMapper.toPersistence(entity)
+
     await this.prismaService.users.update({
       where: { id: record.id },
       data: { ...record },

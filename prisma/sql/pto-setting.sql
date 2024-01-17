@@ -221,8 +221,7 @@ INSERT INTO ptos (id, user_id, tenure, total, is_paid, created_at, updated_at, s
 -- PTO Detail
 
 
-
-
+-- 테이블 생성
 create table pto_available_values
 (
     id         varchar(255)                         not null

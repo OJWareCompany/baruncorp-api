@@ -55,6 +55,9 @@ import { JobMapper } from '../ordered-job/job.mapper'
 import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
 import { InvoiceRepository } from '../invoice/database/invoice.repository'
 import { InvoiceMapper } from '../invoice/invoice.mapper'
+import { PTO_REPOSITORY } from '../pto/pto.di-token'
+import { PtoRepository } from '../pto/database/pto.repository'
+import { PtoMapper } from '../pto/pto.mapper'
 
 const httpControllers = [
   UsersController,
@@ -101,6 +104,7 @@ const repositories: Provider[] = [
   { provide: ASSIGNED_TASK_REPOSITORY, useClass: AssignedTaskRepository },
   { provide: JOB_REPOSITORY, useClass: JobRepository },
   { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
+  { provide: PTO_REPOSITORY, useClass: PtoRepository },
 ]
 
 const mappers: Provider[] = [
@@ -111,6 +115,7 @@ const mappers: Provider[] = [
   AssignedTaskMapper,
   JobMapper,
   InvoiceMapper,
+  PtoMapper,
 ]
 
 @Module({

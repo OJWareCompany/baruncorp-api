@@ -31,6 +31,8 @@ import { FindPtoAnnualPaginatedQueryHandler } from './queries/find-pto-annual-pa
 import { CreatePtoWhenUserCreatedEventHandler } from './application/event-handlers/create-pto-when-user-created.domain-event-handler'
 import { FindPtoTypePaginatedHttpController } from './queries/find-pto-type-paginated/find-pto-type.paginated.http.controller'
 import { FindPtoTypePaginatedQueryHandler } from './queries/find-pto-type-paginated/find-pto-type.paginated.query-handler'
+import { UpdatePtoRangeWhenUserUpdatedEventHandler } from './application/event-handlers/update-pto-range-when-user-updated.domain-event-handler'
+import { UpdatePtoRangeService } from './commands/update-pto-range/update-pto-range.service'
 
 const httpControllers = [
   CreatePtoHttpController,
@@ -48,6 +50,7 @@ const commandHandlers: Provider[] = [
   CreatePtoService,
   UpdatePtoTotalService,
   UpdatePtoPayService,
+  UpdatePtoRangeService,
   CreatePtoDetailService,
   UpdatePtoDetailService,
   DeletePtoDetailService,
@@ -63,7 +66,7 @@ const repositories: Provider[] = [
   { provide: PTO_REPOSITORY, useClass: PtoRepository },
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
-const eventHandlers: Provider[] = [CreatePtoWhenUserCreatedEventHandler]
+const eventHandlers: Provider[] = [CreatePtoWhenUserCreatedEventHandler, UpdatePtoRangeWhenUserUpdatedEventHandler]
 const mappers: Provider[] = [PtoMapper, UserMapper, UserRoleMapper]
 
 @Module({
