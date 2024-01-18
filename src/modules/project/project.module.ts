@@ -32,6 +32,7 @@ import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepository } from '../organization/database/organization.repository'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { ProjectValidatorDomainService } from './domain/domain-services/project-validator.domain-service'
+import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -42,7 +43,7 @@ const httpControllers = [
   FindProjectDetailHttpController,
 ]
 
-const providers: Provider[] = [CensusSearchCoordinatesService]
+const providers: Provider[] = [CensusSearchCoordinatesService, FilesystemApiService]
 
 const commandHandlers: Provider[] = [
   CreateAhjNoteService,

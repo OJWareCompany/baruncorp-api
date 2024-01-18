@@ -47,6 +47,7 @@ import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
 import { TotalDurationCalculator } from './domain/domain-services/total-duration-calculator.domain-service'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
+import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -101,6 +102,7 @@ const domainServices: Provider[] = [TotalDurationCalculator]
 @Module({
   imports: [PrismaModule, CqrsModule, AuthenticationModule, OrderedServiceModule],
   providers: [
+    FilesystemApiService,
     ...commandHandlers,
     ...queryHandlers,
     ...eventHandlers,

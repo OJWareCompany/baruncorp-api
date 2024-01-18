@@ -52,6 +52,7 @@ model Organizations {
   invoices                        Invoices[]
   vendorInvoices                  VendorInvoices[]
   assignedTasks                   AssignedTasks[]
+  googleSharedDrive               GoogleSharedDrive[]
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
@@ -992,34 +993,38 @@ model AssigningTaskAlerts {
 }
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
-model google_job_folder {
-  id                             String  @id @db.VarChar(255)
-  name                           String? @db.VarChar(255)
-  share_link                     String? @db.VarChar(255)
-  deliverables_folder_id         String? @db.VarChar(255)
-  deliverables_folder_share_link String? @db.VarChar(255)
-  job_id                         String? @db.VarChar(255)
+model GoogleJobFolder {
+  id                          String  @map("id") @id @db.VarChar(255)
+  name                        String? @map("name") @db.VarChar(255)
+  shareLink                   String? @map("share_link") @db.VarChar(255)
+  deliverablesFolderId        String? @map("deliverables_folder_id") @db.VarChar(255)
+  deliverablesFolderShareLink String? @map("deliverables_folder_share_link") @db.VarChar(255)
+  jobId                       String? @map("job_id") @db.VarChar(255)
 
-  @@index([job_id], map: "google_job_folder_FK")
+  @@index([jobId], map: "google_job_folder_FK")
+  @@map("google_job_folder")
 }
 
-model google_project_folder {
-  id         String  @id @db.VarChar(255)
-  name       String? @db.VarChar(255)
-  share_link String? @db.VarChar(255)
-  project_id String? @db.VarChar(255)
+model GoogleProjectFolder {
+  id        String  @map("id") @id @db.VarChar(255)
+  name      String? @map("name") @db.VarChar(255)
+  shareLink String? @map("share_link") @db.VarChar(255)
+  projectId String? @map("project_id") @db.VarChar(255)
 
-  @@index([project_id], map: "google_project_folder_FK")
+  @@index([projectId], map: "google_project_folder_FK")
+  @@map("google_project_folder")
 }
 
-model google_shared_drive {
-  id                    String  @id @db.VarChar(255)
-  name                  String? @db.VarChar(255)
-  residential_folder_id String? @db.VarChar(255)
-  commercial_folder_id  String? @db.VarChar(255)
-  organization_id       String
+model GoogleSharedDrive {
+  id                  String  @map("id") @id @db.VarChar(255)
+  name                String? @map("name") @db.VarChar(255)
+  residentialFolderId String? @map("residential_folder_id") @db.VarChar(255)
+  commercialFolderId  String? @map("commercial_folder_id") @db.VarChar(255)
+  organizationId      String  @map("organization_id") @db.VarChar(255)
+  organization        Organizations?  @relation(fields: [organizationId], references: [id])
 
-  @@index([organization_id], map: "shared_drive_FK")
+  @@index([organizationId], map: "shared_drive_FK")
+  @@map("google_shared_drive")
 }
 
 enum InvoicesStatus {

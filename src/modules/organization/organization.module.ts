@@ -21,6 +21,7 @@ import { FindMyMemberPaginatedHttpController } from './queries/find-my-member-pa
 import { FindMyMemberPaginatedQueryHandler } from './queries/find-my-member-paginated/find-my-member-paginated.query-handler'
 import { UpdateOrganizationHttpController } from './commands/update-organization/update-organization.controller.http'
 import { UpdateOrganizationService } from './commands/update-organization/update-organization.service'
+import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 
 const httpControllers = [
   FindOrganizationHttpController,
@@ -43,7 +44,13 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
-const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService, UpdateOrganizationService]
+const providers: Provider[] = [
+  PrismaService,
+  OrganizationService,
+  CreateOrganizationService,
+  UpdateOrganizationService,
+  FilesystemApiService,
+]
 
 const mappers: Provider[] = [UserMapper, UserRoleMapper, OrganizationMapper]
 
