@@ -24,7 +24,7 @@ export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly calculateVendorCostDomainService: CalculateVendorCostDomainService,
-    private readonly taskStatusValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
   ) {}
   @OnEvent([AssignedTaskAssignedDomainEvent.name])
   async handle(event: AssignedTaskAssignedDomainEvent) {
@@ -39,7 +39,7 @@ export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
       this.calculateVendorCostDomainService,
       expensePricing,
       orderedService,
-      this.taskStatusValidator,
+      this.orderModificationValidator,
     )
     await this.assignedTaskRepo.update(assignedTask)
   }
