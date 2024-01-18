@@ -9,7 +9,7 @@ import { IssuedJobUpdateException } from '../job.error'
 import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
 
 @Injectable()
-export class OrderModificationValidatorDomainService {
+export class OrderModificationValidator {
   constructor(
     // @ts-ignore
     @Inject(JOB_REPOSITORY)

@@ -6,7 +6,7 @@ import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { UpdateRevisionSizeCommand as UpdateRevisionSizeCommand } from './update-revision-size.command'
 import { OrderedServiceSizeForRevisionEnum } from '../../domain/ordered-service.type'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
 import { OrderedServiceCompletionCheckDomainService } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
 
@@ -17,7 +17,7 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     @Inject(ORDERED_SERVICE_REPOSITORY)
     private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
     private readonly completionChecker: OrderedServiceCompletionCheckDomainService,
   ) {}

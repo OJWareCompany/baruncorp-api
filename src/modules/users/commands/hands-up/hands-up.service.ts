@@ -10,7 +10,7 @@ import { USER_REPOSITORY } from '../../user.di-tokens'
 import { UserRepositoryPort } from '../../database/user.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../../assigned-task/database/assigned-task.repository.port'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(HandsUpCommand)
 export class HandsUpService implements ICommandHandler {
@@ -23,7 +23,7 @@ export class HandsUpService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   async execute(command: HandsUpCommand): Promise<void> {
     const availableTasks = await this.prismaService.userAvailableTasks.findMany({ where: { userId: command.userId } })

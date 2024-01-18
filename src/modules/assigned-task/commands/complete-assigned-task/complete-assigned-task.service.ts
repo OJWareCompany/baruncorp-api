@@ -6,7 +6,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { CompleteAssignedTaskCommand } from './complete-assigned-task.command'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(CompleteAssignedTaskCommand)
 export class CompleteAssignedTaskService implements ICommandHandler {
@@ -14,7 +14,7 @@ export class CompleteAssignedTaskService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   async execute(command: CompleteAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOne(command.assignedTaskId)

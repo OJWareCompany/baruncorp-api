@@ -31,7 +31,7 @@ import { PROJECT_REPOSITORY } from '../project/project.di-token'
 import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
 import { FindVendorInvoiceLineItemHttpController } from './queries/find-vendor-invoice-line-item/find-vendor-invoice-line-item.http.controller'
-import { OrderModificationValidatorDomainService } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { JobRepository } from '../ordered-job/database/job.repository'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobMapper } from '../ordered-job/job.mapper'
@@ -94,7 +94,7 @@ const mappers: Provider[] = [
   JobMapper,
   InvoiceMapper,
 ]
-const domainServices: Provider[] = [OrderModificationValidatorDomainService]
+const domainServices: Provider[] = [OrderModificationValidator]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

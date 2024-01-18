@@ -4,7 +4,7 @@ import { UnassignAssignedTaskCommand } from './unassign-assigned-task.command'
 import { Inject } from '@nestjs/common'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(UnassignAssignedTaskCommand)
 export class UnassignAssignedTaskService implements ICommandHandler {
@@ -12,7 +12,7 @@ export class UnassignAssignedTaskService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   async execute(command: UnassignAssignedTaskCommand): Promise<void> {
     /**

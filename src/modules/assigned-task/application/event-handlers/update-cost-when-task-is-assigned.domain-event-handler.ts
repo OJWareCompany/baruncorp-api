@@ -11,7 +11,7 @@ import { ExpensePricingRepositoryPort } from '../../../expense-pricing/database/
 import { AssignedTaskAssignedDomainEvent } from '../../domain/events/assigned-task-assigned.domain-event'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
   constructor(
@@ -24,7 +24,7 @@ export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly calculateVendorCostDomainService: CalculateVendorCostDomainService,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   @OnEvent([AssignedTaskAssignedDomainEvent.name])
   async handle(event: AssignedTaskAssignedDomainEvent) {

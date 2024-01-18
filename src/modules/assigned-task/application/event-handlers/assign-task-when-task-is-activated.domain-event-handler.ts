@@ -13,7 +13,7 @@ import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
 import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { StateNotFoundException } from '../../../license/domain/license.error'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
@@ -23,7 +23,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly prismaService: PrismaService,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
   /**

@@ -9,7 +9,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { RejectAssignedTaskCommand } from './reject-assigned-task.command'
 import { AssignedTaskAlreadyCompletedException, AssigneeNotFoundException } from '../../domain/assigned-task.error'
 import { v4 } from 'uuid'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(RejectAssignedTaskCommand)
 export class RejectAssignedTaskService implements ICommandHandler {
@@ -21,7 +21,7 @@ export class RejectAssignedTaskService implements ICommandHandler {
     @Inject(USER_REPOSITORY)
     private readonly userRepo: UserRepositoryPort,
     private readonly prismaService: PrismaService,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   async execute(command: RejectAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)

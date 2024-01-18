@@ -28,7 +28,7 @@ import { UserRoleMapper } from '../users/user-role.mapper'
 import { PositionRepository } from '../position/database/position.repository'
 import { POSITION_REPOSITORY } from '../position/position.di-token'
 import { PositionMapper } from '../position/position.mapper'
-import { OrderModificationValidatorDomainService } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
 import { InvoiceRepository } from '../invoice/database/invoice.repository'
 import { InvoiceMapper } from '../invoice/invoice.mapper'
@@ -84,7 +84,7 @@ const repositories: Provider[] = [
 ]
 const eventHandlers: Provider[] = []
 const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper, PositionMapper, InvoiceMapper, JobMapper]
-const domainServices: Provider[] = [OrderModificationValidatorDomainService]
+const domainServices: Provider[] = [OrderModificationValidator]
 
 @Module({
   imports: [CqrsModule, PrismaModule],

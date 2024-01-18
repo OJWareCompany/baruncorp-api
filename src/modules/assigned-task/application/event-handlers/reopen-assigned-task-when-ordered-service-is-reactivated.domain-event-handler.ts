@@ -6,7 +6,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { OnEvent } from '@nestjs/event-emitter'
 import { AssignedTaskMapper } from '../../assigned-task.mapper'
 import { OrderedServiceReactivatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-reactivated.domain-event'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @Injectable()
 export class ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler {
@@ -15,7 +15,7 @@ export class ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler {
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly mapper: AssignedTaskMapper,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
   @OnEvent(OrderedServiceReactivatedDomainEvent.name, { async: true, promisify: true })

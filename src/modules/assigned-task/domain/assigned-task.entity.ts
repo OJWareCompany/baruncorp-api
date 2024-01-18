@@ -15,7 +15,7 @@ import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activat
 import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
 import { PrismaService } from '../../database/prisma.service'
 import { AssignedTaskAlreadyCompletedException, AssignedTaskDurationExceededException } from './assigned-task.error'
-import { OrderModificationValidatorDomainService } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -127,7 +127,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async invoice(vendorInvoiceId: string, orderModificationValidator: OrderModificationValidatorDomainService) {
+  async invoice(vendorInvoiceId: string, orderModificationValidator: OrderModificationValidator) {
     await orderModificationValidator.validate(this)
     this.props.vendorInvoiceId = vendorInvoiceId
     return this
@@ -137,14 +137,14 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     calcService: CalculateVendorCostDomainService,
     expensePricing: ExpensePricingEntity,
     orderedService: OrderedServiceEntity,
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
   ) {
     await orderModificationValidator.validate(this)
     this.props.cost = calcService.calcVendorCost(expensePricing, orderedService)
   }
 
   // residential revision은 size가 정해지지 않은 경우 complete 될 수 없음
-  async complete(orderModificationValidator: OrderModificationValidatorDomainService): Promise<this> {
+  async complete(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
     this.props.status = 'Completed'
     this.props.doneAt = new Date()
@@ -158,7 +158,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async cancel(orderModificationValidator: OrderModificationValidatorDomainService): Promise<this> {
+  async cancel(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
     if (this.props.status === 'Completed') return this
     this.props.status = 'Canceled'
@@ -167,7 +167,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async hold(orderModificationValidator: OrderModificationValidatorDomainService): Promise<this> {
+  async hold(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
     if (this.props.status === 'Completed' || this.props.status === 'Canceled') return this
     this.props.status = 'On Hold'
@@ -176,7 +176,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async reopen(orderModificationValidator: OrderModificationValidatorDomainService): Promise<this> {
+  async reopen(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
     if (this.props.status === 'Completed') return this
     this.props.status = 'Not Started'
@@ -193,7 +193,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async unassign(orderModificationValidator: OrderModificationValidatorDomainService) {
+  async unassign(orderModificationValidator: OrderModificationValidator) {
     if (this.isCompleted) throw new AssignedTaskAlreadyCompletedException()
     await orderModificationValidator.validate(this)
     this.props.assigneeId = null
@@ -212,7 +212,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async assign(user: UserEntity, orderModificationValidator: OrderModificationValidatorDomainService): Promise<this> {
+  async assign(user: UserEntity, orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
     this.props.assigneeId = user.id
     this.props.assigneeName = user.userName.fullName
@@ -242,10 +242,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async setDuration(
-    duration: number | null,
-    orderModificationValidator: OrderModificationValidatorDomainService,
-  ): Promise<this> {
+  async setDuration(duration: number | null, orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
     if (duration && duration > 127) {
       throw new AssignedTaskDurationExceededException()

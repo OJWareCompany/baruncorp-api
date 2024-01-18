@@ -47,6 +47,7 @@ import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
 import { TotalDurationCalculator } from './domain/domain-services/total-duration-calculator.domain-service'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
+import { OrderStatusChangeValidator } from './domain/domain-services/order-status-change-validator.domain-service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -96,7 +97,7 @@ const repositories: Provider[] = [
 const mappers: Provider[] = [JobMapper, UserMapper, UserRoleMapper, ServiceMapper, ProjectMapper]
 
 const infrastructures: Provider[] = [Mailer]
-const domainServices: Provider[] = [TotalDurationCalculator]
+const domainServices: Provider[] = [TotalDurationCalculator, OrderStatusChangeValidator]
 
 @Module({
   imports: [PrismaModule, CqrsModule, AuthenticationModule, OrderedServiceModule],

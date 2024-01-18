@@ -24,7 +24,7 @@ import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-
 import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
 import { OrderedServiceCompletionCheckDomainService } from './domain-services/check-all-related-tasks-completed.domain-service'
-import { OrderModificationValidatorDomainService } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain-services/revision-type-update-validation.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
@@ -33,14 +33,14 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   static async create(
     create: CreateOrderedServiceProps,
     calcService: ServiceInitialPriceManager,
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     const id = v4()
     const props: OrderedServiceProps = {
       ...create,
       priceOverride: null,
-      status: 'Pending',
+      status: OrderedServiceStatusEnum.Not_Started,
       doneAt: null,
       orderedAt: new Date(),
       isManualPrice: false,
@@ -117,7 +117,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   private async determineInitialValues(
     calcService: ServiceInitialPriceManager,
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     if (this.isRevision) {
@@ -131,7 +131,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   private async determineInitialRevisionType(
     calcService: ServiceInitialPriceManager,
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     const revisionSize = await calcService.determineInitialRevisionSize(this)
@@ -143,7 +143,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   async cleanRevisionSize(
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     await orderModificationValidator.validate(this)
@@ -161,7 +161,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   async updateRevisionSizeToMinor(
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     await orderModificationValidator.validate(this)
@@ -180,7 +180,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   // TODO: 그냥 처음부터 revision price 입력해놓고, 인보이스에서 0원으로 바꾸는게 나을지도 모르겠다.
   async updateRevisionSizeToMajor(
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
     calcService: ServiceInitialPriceManager,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ): Promise<this> {
@@ -203,7 +203,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   cancel(): this {
     if (this.props.status === 'Completed') return this
-    this.props.status = 'Canceled'
+    this.props.status = OrderedServiceStatusEnum.Canceled
     this.props.doneAt = new Date()
     this.addEvent(
       new OrderedServiceCanceledDomainEvent({
@@ -216,7 +216,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   reactivate(): this {
     if (this.props.status === 'Completed') throw new OrderedServiceAlreadyCompletedException()
-    this.props.status = 'Pending'
+    this.props.status = OrderedServiceStatusEnum.Not_Started
     this.props.doneAt = null
     this.addEvent(
       new OrderedServiceReactivatedDomainEvent({
@@ -235,7 +235,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   private complete(): this {
-    this.props.status = 'Completed'
+    this.props.status = OrderedServiceStatusEnum.Completed
     this.props.doneAt = new Date()
     this.addEvent(
       new OrderedServiceCompletedDomainEvent({
@@ -251,7 +251,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
    */
   async setManualPrice(
     serviceInitialPriceManager: ServiceInitialPriceManager,
-    orderModificationValidator: OrderModificationValidatorDomainService,
+    orderModificationValidator: OrderModificationValidator,
     price: number,
   ) {
     await orderModificationValidator.validate(this)

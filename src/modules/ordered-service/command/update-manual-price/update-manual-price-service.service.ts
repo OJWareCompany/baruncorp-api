@@ -6,7 +6,7 @@ import { OrderedServiceRepositoryPort } from '../../database/ordered-service.rep
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
-import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 /**
  * 나름 잘 리팩토링된 케이스
@@ -18,7 +18,7 @@ export class UpdateManualPriceService implements ICommandHandler {
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort, // @ts-ignore
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
-    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   async execute(command: UpdateManualPriceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
