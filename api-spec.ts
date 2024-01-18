@@ -203,6 +203,182 @@ export interface ChangeUserRoleRequestDto {
   newRole: 'Special Admin' | 'Admin' | 'Member' | 'Client Company Manager' | 'Client Company Employee' | 'Viewer'
 }
 
+export interface CreateInvoiceRequestDto {
+  /**
+   * @format date-time
+   * @default "2023-10-01T05:14:33.599Z"
+   */
+  invoiceDate: string
+  terms: 21 | 30
+  notesToClient: string | null
+  clientOrganizationId: string
+  /**
+   * @format date-time
+   * @default "2023-02"
+   */
+  serviceMonth: string
+}
+
+export interface UpdateInvoiceRequestDto {
+  /** @format date-time */
+  invoiceDate: string
+  terms: 21 | 30
+  notesToClient: string | null
+}
+
+export interface InvoiceClientOrganization {
+  id: string
+  name: string
+}
+
+export interface LineItem {
+  jobId: string
+  /** @example 5 */
+  jobRequestNumber: number
+  description: string
+  /** @format date-time */
+  dateSentToClient: string
+  mountingType: 'Roof Mount' | 'Ground Mount'
+  clientOrganization: InvoiceClientOrganization
+  isContainsRevisionTask: boolean
+  propertyType: 'Residential' | 'Commercial'
+  state: string
+  billingCodes: string[]
+  taskSizeForRevision: 'Major' | 'Minor' | null
+  pricingType: 'Standard' | 'Tiered'
+  price: number
+  taskSubtotal: number
+}
+
+export interface InvoicePayments {
+  id: string
+  paymentName: string
+  invoiceId: string
+  amount: number
+  paymentMethod: 'Credit' | 'Direct'
+  notes: string | null
+  paymentDate: string
+  canceledAt: string | null
+}
+
+export interface InvoiceResponseDto {
+  id: string
+  status: 'Unissued' | 'Issued' | 'Paid'
+  invoiceDate: string
+  terms: 21 | 30
+  dueDate: string
+  notesToClient: string | null
+  createdAt: string
+  updatedAt: string
+  servicePeriodDate: string
+  subtotal: number
+  discount: number | null
+  total: number
+  clientOrganization: InvoiceClientOrganization
+  lineItems: LineItem[]
+  payments: InvoicePayments[]
+  totalOfPayment: number
+}
+
+export interface InvoicePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: InvoiceResponseDto[]
+}
+
+export interface ClientToInvoice {
+  id: string
+  name: string
+  date: string[]
+}
+
+export interface ClientToInvoiceResponseDto {
+  clientToInvoices: ClientToInvoice[]
+}
+
+export interface Attachments {
+  filename?: string
+  content?: string
+  path?: string
+  contentType?: string
+  encoding?: string
+  raw?: string
+}
+
+export interface IssueInvoiceRequestDto {
+  attachments: Attachments[]
+}
+
+export interface CreateOrderedServiceRequestDto {
+  /** @default "" */
+  serviceId: string
+  /** @default "" */
+  jobId: string
+  /** @default "" */
+  description: string | null
+}
+
+export interface UpdateOrderedServiceRequestDto {
+  /** @default "" */
+  description: string | null
+}
+
+export interface OrderedServiceAssignedTaskResponse {
+  id: string
+  taskName: string
+  status: string
+  assigneeId: string | null
+  startedAt: string | null
+  doneAt: string | null
+}
+
+export interface OrderedServiceResponseDto {
+  id: string
+  serviceId: string
+  serviceName: string
+  organizationName: string
+  jobName: string
+  price: number | null
+  priceOverride: number | null
+  jobId: string
+  /** @default "Completed" */
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
+  orderedAt: string | null
+  doneAt: string | null
+  isRevision: boolean
+  assignedTasks: OrderedServiceAssignedTaskResponse[]
+  projectPropertyType: string
+  mountingType: string
+}
+
+export interface UpdateManualPriceRequestDto {
+  /** @default "" */
+  price: number
+}
+
+export interface UpdateRevisionSizeRequestDto {
+  /** @default null */
+  sizeForRevision: 'Major' | 'Minor' | null
+}
+
+export interface OrderedServicePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: OrderedServiceResponseDto[]
+}
+
 export interface AddressDto {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
@@ -787,30 +963,6 @@ export interface JobPaginatedResponseDto {
   items: JobPaginatedResponseFields[]
 }
 
-export interface InvoiceClientOrganization {
-  id: string
-  name: string
-}
-
-export interface LineItem {
-  jobId: string
-  /** @example 5 */
-  jobRequestNumber: number
-  description: string
-  /** @format date-time */
-  dateSentToClient: string
-  mountingType: 'Roof Mount' | 'Ground Mount'
-  clientOrganization: InvoiceClientOrganization
-  isContainsRevisionTask: boolean
-  propertyType: 'Residential' | 'Commercial'
-  state: string
-  billingCodes: string[]
-  taskSizeForRevision: 'Major' | 'Minor' | null
-  pricingType: 'Standard' | 'Tiered'
-  price: number
-  taskSubtotal: number
-}
-
 export interface JobToInvoiceResponseDto {
   items: LineItem[]
   subtotal: number
@@ -820,70 +972,6 @@ export interface JobToInvoiceResponseDto {
 
 export interface SendDeliverablesRequestDto {
   deliverablesLink: string
-}
-
-export interface CreateOrderedServiceRequestDto {
-  /** @default "" */
-  serviceId: string
-  /** @default "" */
-  jobId: string
-  /** @default "" */
-  description: string | null
-}
-
-export interface UpdateOrderedServiceRequestDto {
-  /** @default "" */
-  description: string | null
-}
-
-export interface OrderedServiceAssignedTaskResponse {
-  id: string
-  taskName: string
-  status: string
-  assigneeId: string | null
-  startedAt: string | null
-  doneAt: string | null
-}
-
-export interface OrderedServiceResponseDto {
-  id: string
-  serviceId: string
-  serviceName: string
-  organizationName: string
-  jobName: string
-  price: number | null
-  priceOverride: number | null
-  jobId: string
-  /** @default "Completed" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
-  orderedAt: string | null
-  doneAt: string | null
-  isRevision: boolean
-  assignedTasks: OrderedServiceAssignedTaskResponse[]
-  projectPropertyType: string
-  mountingType: string
-}
-
-export interface UpdateManualPriceRequestDto {
-  /** @default "" */
-  price: number
-}
-
-export interface UpdateRevisionSizeRequestDto {
-  /** @default null */
-  sizeForRevision: 'Major' | 'Minor' | null
-}
-
-export interface OrderedServicePaginatedResponseDto {
-  /** @default 1 */
-  page: number
-  /** @default 20 */
-  pageSize: number
-  /** @example 10000 */
-  totalCount: number
-  /** @example 500 */
-  totalPage: number
-  items: OrderedServiceResponseDto[]
 }
 
 export interface CreateJobNoteRequestDto {
@@ -1207,94 +1295,6 @@ export interface RejectedTaskReasonPaginatedResponseDto {
 
 export interface RejectAssignedTaskRequestDto {
   reason: string
-}
-
-export interface CreateInvoiceRequestDto {
-  /**
-   * @format date-time
-   * @default "2023-10-01T05:14:33.599Z"
-   */
-  invoiceDate: string
-  terms: 21 | 30
-  notesToClient: string | null
-  clientOrganizationId: string
-  /**
-   * @format date-time
-   * @default "2023-02"
-   */
-  serviceMonth: string
-}
-
-export interface UpdateInvoiceRequestDto {
-  /** @format date-time */
-  invoiceDate: string
-  terms: 21 | 30
-  notesToClient: string | null
-}
-
-export interface InvoicePayments {
-  id: string
-  paymentName: string
-  invoiceId: string
-  amount: number
-  paymentMethod: 'Credit' | 'Direct'
-  notes: string | null
-  paymentDate: string
-  canceledAt: string | null
-}
-
-export interface InvoiceResponseDto {
-  id: string
-  status: 'Unissued' | 'Issued' | 'Paid'
-  invoiceDate: string
-  terms: 21 | 30
-  dueDate: string
-  notesToClient: string | null
-  createdAt: string
-  updatedAt: string
-  servicePeriodDate: string
-  subtotal: number
-  discount: number | null
-  total: number
-  clientOrganization: InvoiceClientOrganization
-  lineItems: LineItem[]
-  payments: InvoicePayments[]
-  totalOfPayment: number
-}
-
-export interface InvoicePaginatedResponseDto {
-  /** @default 1 */
-  page: number
-  /** @default 20 */
-  pageSize: number
-  /** @example 10000 */
-  totalCount: number
-  /** @example 500 */
-  totalPage: number
-  items: InvoiceResponseDto[]
-}
-
-export interface ClientToInvoice {
-  id: string
-  name: string
-  date: string[]
-}
-
-export interface ClientToInvoiceResponseDto {
-  clientToInvoices: ClientToInvoice[]
-}
-
-export interface Attachments {
-  filename?: string
-  content?: string
-  path?: string
-  contentType?: string
-  encoding?: string
-  raw?: string
-}
-
-export interface IssueInvoiceRequestDto {
-  attachments: Attachments[]
 }
 
 export interface CreatePaymentRequestDto {
@@ -2122,6 +2122,66 @@ export interface RevokeUserLicenseHttpControllerPostParams {
   abbreviation: string
 }
 
+export interface FindInvoicePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindOrderedServicePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+  /** @default "Completed" */
+  orderedServiceStatus?:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Canceled (Invoice)'
+    | null
+  /** @default "Commercial" */
+  projectPropertyType?: 'Residential' | 'Commercial' | null
+  /** @default "Ground Mount" */
+  mountingType?: 'Roof Mount' | 'Ground Mount' | null
+  /** @default false */
+  isRevision?: boolean | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  serviceName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  organizationName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  jobName?: string | null
+}
+
 export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginatedParams {
   /** Using LIKE (중간 값 검색) */
   name?: string | null
@@ -2405,51 +2465,6 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   isExpedited?: boolean | null
 }
 
-export interface FindOrderedServicePaginatedHttpControllerGetParams {
-  /**
-   * Specifies a limit of returned records
-   * @default 20
-   * @example 20
-   */
-  limit?: number
-  /**
-   * Page number
-   * @default 1
-   * @example 1
-   */
-  page?: number
-  /** @default "Completed" */
-  orderedServiceStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Canceled (Invoice)'
-    | null
-  /** @default "Commercial" */
-  projectPropertyType?: 'Residential' | 'Commercial' | null
-  /** @default "Ground Mount" */
-  mountingType?: 'Roof Mount' | 'Ground Mount' | null
-  /** @default false */
-  isRevision?: boolean | null
-  /**
-   * Using LIKE (중간 값 검색)
-   * @default ""
-   */
-  serviceName?: string | null
-  /**
-   * Using LIKE (중간 값 검색)
-   * @default ""
-   */
-  organizationName?: string | null
-  /**
-   * Using LIKE (중간 값 검색)
-   * @default ""
-   */
-  jobName?: string | null
-}
-
 export interface FindServicePaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
@@ -2550,21 +2565,6 @@ export interface FindAssignedTaskPaginatedHttpControllerGetParams {
 
 export interface FindRejectedTaskReasonHttpControllerGetParams {
   userName?: string | null
-}
-
-export interface FindInvoicePaginatedHttpControllerGetParams {
-  /**
-   * Specifies a limit of returned records
-   * @default 20
-   * @example 20
-   */
-  limit?: number
-  /**
-   * Page number
-   * @default 1
-   * @example 1
-   */
-  page?: number
 }
 
 export interface FindPaymentPaginatedHttpControllerGetParams {
@@ -3470,6 +3470,254 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
+  invoices = {
+    /**
+     * No description
+     *
+     * @name CreateInvoiceHttpControllerPost
+     * @request POST:/invoices
+     */
+    createInvoiceHttpControllerPost: (data: CreateInvoiceRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/invoices`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindInvoicePaginatedHttpControllerGet
+     * @request GET:/invoices
+     */
+    findInvoicePaginatedHttpControllerGet: (
+      query: FindInvoicePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<InvoicePaginatedResponseDto, any>({
+        path: `/invoices`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateInvoiceHttpControllerPatch
+     * @request PATCH:/invoices/{invoiceId}
+     */
+    updateInvoiceHttpControllerPatch: (invoiceId: string, data: UpdateInvoiceRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invoices/${invoiceId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteInvoiceHttpControllerDelete
+     * @request DELETE:/invoices/{invoiceId}
+     */
+    deleteInvoiceHttpControllerDelete: (invoiceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invoices/${invoiceId}`,
+        method: 'DELETE',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindInvoiceHttpControllerGet
+     * @request GET:/invoices/{invoiceId}
+     */
+    findInvoiceHttpControllerGet: (invoiceId: string, params: RequestParams = {}) =>
+      this.request<InvoiceResponseDto, any>({
+        path: `/invoices/${invoiceId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name IssueInvoiceHttpControllerPatch
+     * @request PATCH:/invoices/{invoiceId}/issue
+     */
+    issueInvoiceHttpControllerPatch: (invoiceId: string, data: IssueInvoiceRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/invoices/${invoiceId}/issue`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
+  invoicesClients = {
+    /**
+     * No description
+     *
+     * @name FindClientToInvoiceHttpControllerGet
+     * @request GET:/invoices-clients
+     */
+    findClientToInvoiceHttpControllerGet: (params: RequestParams = {}) =>
+      this.request<ClientToInvoiceResponseDto, any>({
+        path: `/invoices-clients`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  orderedServices = {
+    /**
+     * No description
+     *
+     * @name CreateOrderedServiceHttpControllerPost
+     * @request POST:/ordered-services
+     */
+    createOrderedServiceHttpControllerPost: (data: CreateOrderedServiceRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/ordered-services`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOrderedServicePaginatedHttpControllerGet
+     * @request GET:/ordered-services
+     */
+    findOrderedServicePaginatedHttpControllerGet: (
+      {
+        orderedServiceStatus,
+        projectPropertyType,
+        mountingType,
+        isRevision,
+        serviceName,
+        organizationName,
+        jobName,
+        ...query
+      }: FindOrderedServicePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<OrderedServicePaginatedResponseDto, any>({
+        path: `/ordered-services`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateOrderedServiceHttpControllerPatch
+     * @request PATCH:/ordered-services/{orderedServiceId}
+     */
+    updateOrderedServiceHttpControllerPatch: (
+      orderedServiceId: string,
+      data: UpdateOrderedServiceRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ordered-services/${orderedServiceId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOrderedServiceHttpControllerGet
+     * @request GET:/ordered-services/{orderedServiceId}
+     */
+    findOrderedServiceHttpControllerGet: (orderedServiceId: string, params: RequestParams = {}) =>
+      this.request<OrderedServiceResponseDto, any>({
+        path: `/ordered-services/${orderedServiceId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CancelOrderedServiceHttpControllerPatch
+     * @request PATCH:/ordered-services/cancel/{orderedServiceId}
+     */
+    cancelOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ordered-services/cancel/${orderedServiceId}`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name ReactivateOrderedServiceHttpControllerPatch
+     * @request PATCH:/ordered-services/reactivate/{orderedServiceId}
+     */
+    reactivateOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/ordered-services/reactivate/${orderedServiceId}`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateManualPriceHttpControllerPatch
+     * @request PATCH:/ordered-services/{orderedServiceId}/manual-price
+     */
+    updateManualPriceHttpControllerPatch: (
+      orderedServiceId: string,
+      data: UpdateManualPriceRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ordered-services/${orderedServiceId}/manual-price`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateRevisionSizeHttpControllerPatch
+     * @request PATCH:/ordered-services/{orderedServiceId}/revision-size
+     */
+    updateRevisionSizeHttpControllerPatch: (
+      orderedServiceId: string,
+      data: UpdateRevisionSizeRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/ordered-services/${orderedServiceId}/revision-size`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
   organizations = {
     /**
      * No description
@@ -3967,147 +4215,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
-  orderedServices = {
-    /**
-     * No description
-     *
-     * @name CreateOrderedServiceHttpControllerPost
-     * @request POST:/ordered-services
-     */
-    createOrderedServiceHttpControllerPost: (data: CreateOrderedServiceRequestDto, params: RequestParams = {}) =>
-      this.request<IdResponse, any>({
-        path: `/ordered-services`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindOrderedServicePaginatedHttpControllerGet
-     * @request GET:/ordered-services
-     */
-    findOrderedServicePaginatedHttpControllerGet: (
-      {
-        orderedServiceStatus,
-        projectPropertyType,
-        mountingType,
-        isRevision,
-        serviceName,
-        organizationName,
-        jobName,
-        ...query
-      }: FindOrderedServicePaginatedHttpControllerGetParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<OrderedServicePaginatedResponseDto, any>({
-        path: `/ordered-services`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/{orderedServiceId}
-     */
-    updateOrderedServiceHttpControllerPatch: (
-      orderedServiceId: string,
-      data: UpdateOrderedServiceRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/ordered-services/${orderedServiceId}`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindOrderedServiceHttpControllerGet
-     * @request GET:/ordered-services/{orderedServiceId}
-     */
-    findOrderedServiceHttpControllerGet: (orderedServiceId: string, params: RequestParams = {}) =>
-      this.request<OrderedServiceResponseDto, any>({
-        path: `/ordered-services/${orderedServiceId}`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name CancelOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/cancel/{orderedServiceId}
-     */
-    cancelOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/ordered-services/cancel/${orderedServiceId}`,
-        method: 'PATCH',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name ReactivateOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/reactivate/{orderedServiceId}
-     */
-    reactivateOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/ordered-services/reactivate/${orderedServiceId}`,
-        method: 'PATCH',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateManualPriceHttpControllerPatch
-     * @request PATCH:/ordered-services/{orderedServiceId}/manual-price
-     */
-    updateManualPriceHttpControllerPatch: (
-      orderedServiceId: string,
-      data: UpdateManualPriceRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/ordered-services/${orderedServiceId}/manual-price`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateRevisionSizeHttpControllerPatch
-     * @request PATCH:/ordered-services/{orderedServiceId}/revision-size
-     */
-    updateRevisionSizeHttpControllerPatch: (
-      orderedServiceId: string,
-      data: UpdateRevisionSizeRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/ordered-services/${orderedServiceId}/revision-size`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-  }
   orderedJobNotes = {
     /**
      * No description
@@ -4548,113 +4655,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/rejected-task-reasons`,
         method: 'GET',
         query: query,
-        format: 'json',
-        ...params,
-      }),
-  }
-  invoices = {
-    /**
-     * No description
-     *
-     * @name CreateInvoiceHttpControllerPost
-     * @request POST:/invoices
-     */
-    createInvoiceHttpControllerPost: (data: CreateInvoiceRequestDto, params: RequestParams = {}) =>
-      this.request<IdResponse, any>({
-        path: `/invoices`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindInvoicePaginatedHttpControllerGet
-     * @request GET:/invoices
-     */
-    findInvoicePaginatedHttpControllerGet: (
-      query: FindInvoicePaginatedHttpControllerGetParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<InvoicePaginatedResponseDto, any>({
-        path: `/invoices`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateInvoiceHttpControllerPatch
-     * @request PATCH:/invoices/{invoiceId}
-     */
-    updateInvoiceHttpControllerPatch: (invoiceId: string, data: UpdateInvoiceRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/invoices/${invoiceId}`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name DeleteInvoiceHttpControllerDelete
-     * @request DELETE:/invoices/{invoiceId}
-     */
-    deleteInvoiceHttpControllerDelete: (invoiceId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/invoices/${invoiceId}`,
-        method: 'DELETE',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindInvoiceHttpControllerGet
-     * @request GET:/invoices/{invoiceId}
-     */
-    findInvoiceHttpControllerGet: (invoiceId: string, params: RequestParams = {}) =>
-      this.request<InvoiceResponseDto, any>({
-        path: `/invoices/${invoiceId}`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name IssueInvoiceHttpControllerPatch
-     * @request PATCH:/invoices/{invoiceId}/issue
-     */
-    issueInvoiceHttpControllerPatch: (invoiceId: string, data: IssueInvoiceRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/invoices/${invoiceId}/issue`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-  }
-  invoicesClients = {
-    /**
-     * No description
-     *
-     * @name FindClientToInvoiceHttpControllerGet
-     * @request GET:/invoices-clients
-     */
-    findClientToInvoiceHttpControllerGet: (params: RequestParams = {}) =>
-      this.request<ClientToInvoiceResponseDto, any>({
-        path: `/invoices-clients`,
-        method: 'GET',
         format: 'json',
         ...params,
       }),

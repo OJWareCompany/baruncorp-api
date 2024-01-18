@@ -52,3 +52,21 @@ export class JobCompleteException extends UnprocessableEntityException {
     super('If there are unfinished services, the job cannot be completed.', '40010')
   }
 }
+
+export class JobNotStartableException extends UnprocessableEntityException {
+  constructor() {
+    super(`Cannot change job status to 'Not Started'.`, '40011')
+  }
+}
+
+export class JobSendableToClientPriceNotSetException extends UnprocessableEntityException {
+  constructor() {
+    super(`Job cannot be sent to client as the price is not set.`, '40012')
+  }
+}
+
+export class JobSendableToClientScopesInCompletedException extends UnprocessableEntityException {
+  constructor() {
+    super(`Job cannot be sent to client as there are incomplete scopes.`, '40013')
+  }
+}

@@ -21,6 +21,11 @@ import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
 import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 import { Mailer } from '../infrastructure/mailer.infrastructure'
+import { JobNotStartedDomainEvent } from './events/job-not-started.domain-event'
+import { OrderStatusChangeValidator } from './domain-services/order-status-change-validator.domain-service'
+import { OrderModificationValidator } from './domain-services/order-modification-validator.domain-service'
+import { JobStartedDomainEvent } from './events/job-started.domain-event'
+import { JobCanceledAndKeptInvoiceDomainEvent } from './events/job-canceled-and-kept-invoice.domain-event'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -55,6 +60,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
       }),
     )
     return job
+  }
+
+  get jobStatus() {
+    return this.props.jobStatus
+  }
+
+  get deliverablesEmails() {
+    return this.props.deliverablesEmails
   }
 
   get jobName() {
@@ -115,13 +128,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this.props.orderedServices.map((orderedService) => orderedService.billingCode)
   }
 
-  async sendToClient(mailer: Mailer, deliverablesLink: string) {
-    if (this.props.jobStatus !== JobStatusEnum.Sent_To_Client && this.props.jobStatus !== JobStatusEnum.Completed) {
-      throw new JobIsNotCompletedUpdateException()
-    }
+  isSendableOrThrow() {
     if (!this.props.deliverablesEmails.length) {
       throw new JobMissingDeliverablesEmailException()
     }
+  }
+
+  async sendToClient(mailer: Mailer, deliverablesLink: string, orderStatusChangeValidator: OrderStatusChangeValidator) {
+    await orderStatusChangeValidator.checkJobSendableToClient(this)
     await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
     this.props.jobStatus = JobStatusEnum.Sent_To_Client
     return this
@@ -143,20 +157,24 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  notStart(): this {
-    if (this.isCompleted()) throw new JobCompletedUpdateException()
+  async backToNotStart(
+    orderStatusChangeValidator: OrderStatusChangeValidator,
+    orderModificationValidator: OrderModificationValidator,
+  ): Promise<this> {
+    await orderModificationValidator.validateJob(this)
+    await orderStatusChangeValidator.validateJob(this, JobStatusEnum.Not_Started)
     this.props.jobStatus = JobStatusEnum.Not_Started
+    this.addEvent(new JobNotStartedDomainEvent({ aggregateId: this.id }))
     return this
   }
 
   start(): this {
-    if (this.isCompleted()) throw new JobCompletedUpdateException()
     this.props.jobStatus = JobStatusEnum.In_Progress
+    this.addEvent(new JobStartedDomainEvent({ aggregateId: this.id }))
     return this
   }
 
   complete(): this {
-    if (!this.isAllTaskCompleted()) throw new JobCompleteException()
     this.props.jobStatus = JobStatusEnum.Completed
     this.addEvent(
       new JobCompletedDomainEvent({
@@ -166,29 +184,21 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  private isAllTaskCompleted(): boolean {
-    return this.props.orderedServices.some((service) => {
-      return service.status === 'Completed' || service.status === 'Canceled'
-    })
-  }
-
   cancel(): this {
     this.props.jobStatus = JobStatusEnum.Canceled
-    this.addEvent(
-      new JobCanceledDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
+    this.addEvent(new JobCanceledDomainEvent({ aggregateId: this.id }))
+    return this
+  }
+
+  cancelAndKeepInvoice(): this {
+    this.props.jobStatus = JobStatusEnum.Canceled_Invoice
+    this.addEvent(new JobCanceledAndKeptInvoiceDomainEvent({ aggregateId: this.id }))
     return this
   }
 
   hold(): this {
     this.props.jobStatus = JobStatusEnum.On_Hold
-    this.addEvent(
-      new JobHeldDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
+    this.addEvent(new JobHeldDomainEvent({ aggregateId: this.id }))
     return this
   }
 

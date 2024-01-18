@@ -26,6 +26,10 @@ import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-
 import { OrderedServiceCompletionCheckDomainService } from './domain-services/check-all-related-tasks-completed.domain-service'
 import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain-services/revision-type-update-validation.domain-service'
+import {
+  JobSendableToClientPriceNotSetException,
+  JobSendableToClientScopesInCompletedException,
+} from '../../ordered-job/domain/job.error'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -61,6 +65,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     )
 
     return entity
+  }
+
+  get status() {
+    return this.props.status
   }
 
   get sizeForRevision() {
@@ -113,6 +121,18 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   get projectPropertyType() {
     return this.props.projectPropertyType
+  }
+
+  isSendableOrThrow() {
+    const constraints = [
+      OrderedServiceStatusEnum.On_Hold,
+      OrderedServiceStatusEnum.Not_Started,
+      OrderedServiceStatusEnum.In_Progress,
+    ]
+    const isSendable = constraints.includes(this.props.status)
+    if (!isSendable) throw new JobSendableToClientScopesInCompletedException()
+
+    if (this.props.price === null) throw new JobSendableToClientPriceNotSetException()
   }
 
   private async determineInitialValues(
