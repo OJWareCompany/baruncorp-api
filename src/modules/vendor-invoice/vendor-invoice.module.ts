@@ -35,9 +35,7 @@ import { OrderModificationValidator } from '../ordered-job/domain/domain-service
 import { JobRepository } from '../ordered-job/database/job.repository'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobMapper } from '../ordered-job/job.mapper'
-import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
-import { InvoiceRepository } from '../invoice/database/invoice.repository'
-import { InvoiceMapper } from '../invoice/invoice.mapper'
+import { InvoiceModule } from '../invoice/invoice.module'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -78,10 +76,6 @@ const repositories: Provider[] = [
     provide: JOB_REPOSITORY,
     useClass: JobRepository,
   },
-  {
-    provide: INVOICE_REPOSITORY,
-    useClass: InvoiceRepository,
-  },
 ]
 const eventHandlers: Provider[] = []
 const mappers: Provider[] = [
@@ -92,12 +86,11 @@ const mappers: Provider[] = [
   AssignedTaskMapper,
   ProjectMapper,
   JobMapper,
-  InvoiceMapper,
 ]
 const domainServices: Provider[] = [OrderModificationValidator]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, InvoiceModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })

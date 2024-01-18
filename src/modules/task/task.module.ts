@@ -29,12 +29,10 @@ import { PositionRepository } from '../position/database/position.repository'
 import { POSITION_REPOSITORY } from '../position/position.di-token'
 import { PositionMapper } from '../position/position.mapper'
 import { OrderModificationValidator } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
-import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
-import { InvoiceRepository } from '../invoice/database/invoice.repository'
-import { InvoiceMapper } from '../invoice/invoice.mapper'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
 import { JobMapper } from '../ordered-job/job.mapper'
+import { InvoiceModule } from '../invoice/invoice.module'
 
 const httpControllers = [
   CreateTaskHttpController,
@@ -74,20 +72,16 @@ const repositories: Provider[] = [
     useClass: PositionRepository,
   },
   {
-    provide: INVOICE_REPOSITORY,
-    useClass: InvoiceRepository,
-  },
-  {
     provide: JOB_REPOSITORY,
     useClass: JobRepository,
   },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper, PositionMapper, InvoiceMapper, JobMapper]
+const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper, PositionMapper, JobMapper]
 const domainServices: Provider[] = [OrderModificationValidator]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, InvoiceModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
   exports: [],

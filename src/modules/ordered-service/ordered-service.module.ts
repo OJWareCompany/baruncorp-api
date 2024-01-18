@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
@@ -33,13 +33,10 @@ import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
 import { OrganizationRepository } from '../organization/database/organization.repository'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
-import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
-import { InvoiceRepository } from '../invoice/database/invoice.repository'
 import { ServiceInitialPriceManager } from './domain/ordered-service-manager.domain-service'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { JobMapper } from '../ordered-job/job.mapper'
-import { InvoiceMapper } from '../invoice/invoice.mapper'
 import { PROJECT_REPOSITORY } from '../project/project.di-token'
 import { ProjectRepository } from '../project/database/project.repository'
 import { ProjectMapper } from '../project/project.mapper'
@@ -51,6 +48,7 @@ import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.
 import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
 import { OrderModificationValidator } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain/domain-services/revision-type-update-validation.domain-service'
+import { InvoiceModule } from '../invoice/invoice.module'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -89,7 +87,6 @@ const repositories: Provider[] = [
   { provide: CUSTOM_PRICING_REPOSITORY, useClass: CustomPricingRepository },
   { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
   { provide: JOB_REPOSITORY, useClass: JobRepository },
-  { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
   { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
   { provide: ASSIGNED_TASK_REPOSITORY, useClass: AssignedTaskRepository },
 ]
@@ -109,13 +106,12 @@ const mappers: Provider[] = [
   ServiceMapper,
   JobMapper,
   OrderedServiceMapper,
-  InvoiceMapper,
   ProjectMapper,
   AssignedTaskMapper,
 ]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, forwardRef(() => InvoiceModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
   exports: [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }, OrderedServiceMapper],

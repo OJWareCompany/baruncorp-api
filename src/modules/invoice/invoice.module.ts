@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import UserMapper from '../users/user.mapper'
@@ -83,8 +83,14 @@ const mappers: Provider[] = [InvoiceMapper, UserMapper, JobMapper, CustomPricing
 
 const domainServices: Provider[] = [CalculateInvoiceService]
 @Module({
-  imports: [CqrsModule, PrismaModule, OrderedServiceModule],
+  imports: [CqrsModule, PrismaModule, forwardRef(() => OrderedServiceModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
+  exports: [
+    {
+      provide: INVOICE_REPOSITORY,
+      useClass: InvoiceRepository,
+    },
+  ],
 })
 export class InvoiceModule {}

@@ -52,12 +52,10 @@ import { OrderModificationValidator } from '../ordered-job/domain/domain-service
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
 import { JobMapper } from '../ordered-job/job.mapper'
-import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
-import { InvoiceRepository } from '../invoice/database/invoice.repository'
-import { InvoiceMapper } from '../invoice/invoice.mapper'
 import { PTO_REPOSITORY } from '../pto/pto.di-token'
 import { PtoRepository } from '../pto/database/pto.repository'
 import { PtoMapper } from '../pto/pto.mapper'
+import { InvoiceModule } from '../invoice/invoice.module'
 
 const httpControllers = [
   UsersController,
@@ -103,7 +101,6 @@ const repositories: Provider[] = [
   { provide: POSITION_REPOSITORY, useClass: PositionRepository },
   { provide: ASSIGNED_TASK_REPOSITORY, useClass: AssignedTaskRepository },
   { provide: JOB_REPOSITORY, useClass: JobRepository },
-  { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
   { provide: PTO_REPOSITORY, useClass: PtoRepository },
 ]
 
@@ -114,12 +111,11 @@ const mappers: Provider[] = [
   PositionMapper,
   AssignedTaskMapper,
   JobMapper,
-  InvoiceMapper,
   PtoMapper,
 ]
 
 @Module({
-  imports: [PrismaModule, CqrsModule],
+  imports: [PrismaModule, CqrsModule, InvoiceModule],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
   exports: [UserService],

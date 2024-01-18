@@ -21,15 +21,10 @@ import { USER_REPOSITORY } from '../users/user.di-tokens'
 import { UserRepository } from '../users/database/user.repository'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
-import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
-import { InvoiceRepository } from '../invoice/database/invoice.repository'
 import { UserRoleMapper } from '../users/user-role.mapper'
 import { JobMapper } from '../ordered-job/job.mapper'
-import { InvoiceMapper } from '../invoice/invoice.mapper'
 import { UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler } from './application/event-handlers/update-cost-when-ordered-service-price-is-updated.domain-event-handler'
 import { UpdateCostWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/update-cost-when-task-is-assigned.domain-event-handler'
-import { ORDERED_SERVICE_REPOSITORY } from '../ordered-service/ordered-service.di-token'
-import { OrderedServiceRepository } from '../ordered-service/database/ordered-service.repository'
 import { EXPENSE_PRICING_REPOSITORY } from '../expense-pricing/expense-pricing.di-token'
 import { ExpensePricingRepository } from '../expense-pricing/database/expense-pricing.repository'
 import { CalculateVendorCostDomainService } from './domain/calculate-vendor-cost.domain-service'
@@ -52,6 +47,7 @@ import { DetermineActiveStatusDomainService } from './domain/domain-services/det
 import { AssignTaskWhenTaskIsActivatedDomainEventHandler } from './application/event-handlers/assign-task-when-task-is-activated.domain-event-handler'
 import { OrderModificationValidator } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
+import { InvoiceModule } from '../invoice/invoice.module'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -93,10 +89,6 @@ const repositories: Provider[] = [
     useClass: JobRepository,
   },
   {
-    provide: INVOICE_REPOSITORY,
-    useClass: InvoiceRepository,
-  },
-  {
     provide: EXPENSE_PRICING_REPOSITORY,
     useClass: ExpensePricingRepository,
   },
@@ -118,17 +110,10 @@ const domainServices: Provider[] = [
   DetermineActiveStatusDomainService,
   OrderModificationValidator,
 ]
-const mappers: Provider[] = [
-  AssignedTaskMapper,
-  UserMapper,
-  UserRoleMapper,
-  JobMapper,
-  InvoiceMapper,
-  ExpensePricingMapper,
-]
+const mappers: Provider[] = [AssignedTaskMapper, UserMapper, UserRoleMapper, JobMapper, ExpensePricingMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule, OrderedServiceModule],
+  imports: [CqrsModule, PrismaModule, OrderedServiceModule, InvoiceModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })
