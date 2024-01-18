@@ -5,11 +5,7 @@ import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/
 import { JobEntity } from '../job.entity'
 import { JobStatusEnum } from '../job.type'
 import { OrderedServiceStatusEnum } from '../../../ordered-service/domain/ordered-service.type'
-import {
-  JobNotStartableException,
-  JobSendableToClientPriceNotSetException,
-  JobSendableToClientScopesInCompletedException,
-} from '../job.error'
+import { JobNotStartableException } from '../job.error'
 
 export class OrderStatusChangeValidator {
   constructor(
@@ -22,7 +18,7 @@ export class OrderStatusChangeValidator {
         await this.checkJobNotStartable(job)
         break
       case JobStatusEnum.Sent_To_Client:
-        await this.checkJobNotStartable(job)
+        await this.checkJobSendableToClient(job)
         break
 
       default:
@@ -49,7 +45,7 @@ export class OrderStatusChangeValidator {
    * 4. 모든 Scope는 가격이 입력되어 있어야 한다. (0원은 가능)
    * 5. Scope (추가 / 제거 / 상태 수정)이 불가능하다.
    */
-  async checkJobSendableToClient(job: JobEntity) {
+  private async checkJobSendableToClient(job: JobEntity) {
     job.isSendableOrThrow()
     const orderedScopes = await this.orderedServiceRepository.findBy('jobId', [job.id])
     orderedScopes.map((scope) => scope.isSendableOrThrow())

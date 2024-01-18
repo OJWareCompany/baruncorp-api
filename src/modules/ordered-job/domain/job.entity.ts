@@ -8,9 +8,6 @@ import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import {
-  JobCompleteException,
-  JobCompletedUpdateException,
-  JobIsNotCompletedUpdateException,
   JobMissingDeliverablesEmailException,
   NumberOfWetStampBadRequestException,
   SystemSizeBadRequestException,
@@ -135,7 +132,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
   }
 
   async sendToClient(mailer: Mailer, deliverablesLink: string, orderStatusChangeValidator: OrderStatusChangeValidator) {
-    await orderStatusChangeValidator.checkJobSendableToClient(this)
+    await orderStatusChangeValidator.validateJob(this, JobStatusEnum.Sent_To_Client)
     await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
     this.props.jobStatus = JobStatusEnum.Sent_To_Client
     return this
