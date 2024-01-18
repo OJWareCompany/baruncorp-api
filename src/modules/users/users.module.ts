@@ -48,7 +48,7 @@ import { DeactivateUserService } from './commands/deactivate-user/deactivate-use
 import { UserManager } from './domain/domain-services/user-manager.domain-service'
 import { ChangeUserRoleService } from './commands/change-user-role/change-user-role.service'
 import { ChangeUserRoleHttpController } from './commands/change-user-role/change-user-role.http.controller'
-import { TaskStatusChangeValidationDomainService } from '../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
 import { JobRepository } from '../ordered-job/database/job.repository'
 import { JobMapper } from '../ordered-job/job.mapper'
@@ -94,7 +94,7 @@ const commandHandlers: Provider[] = [
   ChangeUserRoleService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
-const domainServices: Provider[] = [UserManager, TaskStatusChangeValidationDomainService]
+const domainServices: Provider[] = [UserManager, OrderModificationValidatorDomainService]
 
 const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },

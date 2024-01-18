@@ -3,14 +3,8 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { UnassignAssignedTaskCommand } from './unassign-assigned-task.command'
 import { Inject } from '@nestjs/common'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
-import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
-import { AssignedTaskAlreadyCompletedException } from '../../domain/assigned-task.error'
-import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(UnassignAssignedTaskCommand)
 export class UnassignAssignedTaskService implements ICommandHandler {
@@ -18,13 +12,7 @@ export class UnassignAssignedTaskService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY)
-    private readonly jobRepo: JobRepositoryPort,
-    // @ts-ignore
-    @Inject(INVOICE_REPOSITORY)
-    private readonly invoiceRepo: InvoiceRepositoryPort,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
   ) {}
   async execute(command: UnassignAssignedTaskCommand): Promise<void> {
     /**
@@ -43,7 +31,7 @@ export class UnassignAssignedTaskService implements ICommandHandler {
      */
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
 
-    await assignedTask.unassign(this.taskStatusValidator)
+    await assignedTask.unassign(this.orderModificationValidator)
     await this.assignedTaskRepo.update(assignedTask)
   }
 }

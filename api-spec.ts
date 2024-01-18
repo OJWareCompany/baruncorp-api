@@ -575,8 +575,8 @@ export interface OrderedServiceResponseFields {
   description: string | null
   price: number | null
   priceOverride: number | null
-  /** @example "Pending" */
-  status: 'Pending' | 'Completed' | 'Canceled'
+  /** @example "Not Started" */
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
   orderedAt: string
   doneAt: string | null
 }
@@ -621,7 +621,14 @@ export interface JobResponseDto {
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client'
+  jobStatus:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Sent To Client'
+    | 'Canceled (Invoice)'
   /** @example "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
   assignedTasks: AssignedTaskResponseFields[]
@@ -744,7 +751,14 @@ export interface JobPaginatedResponseFields {
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
-  jobStatus: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client'
+  jobStatus:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Sent To Client'
+    | 'Canceled (Invoice)'
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @example "Self" */
@@ -841,7 +855,7 @@ export interface OrderedServiceResponseDto {
   priceOverride: number | null
   jobId: string
   /** @default "Completed" */
-  status: 'Pending' | 'Completed' | 'Canceled'
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
   orderedAt: string | null
   doneAt: string | null
   isRevision: boolean
@@ -2262,7 +2276,15 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
+  jobStatus?:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Sent To Client'
+    | 'Canceled (Invoice)'
+    | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -2300,7 +2322,15 @@ export interface FindMyJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "In Progress" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
+  jobStatus?:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Sent To Client'
+    | 'Canceled (Invoice)'
+    | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -2360,7 +2390,15 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | null
+  jobStatus?:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Sent To Client'
+    | 'Canceled (Invoice)'
+    | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -2381,7 +2419,14 @@ export interface FindOrderedServicePaginatedHttpControllerGetParams {
    */
   page?: number
   /** @default "Completed" */
-  orderedServiceStatus?: 'Pending' | 'Completed' | 'Canceled' | null
+  orderedServiceStatus?:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Canceled (Invoice)'
+    | null
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Ground Mount" */

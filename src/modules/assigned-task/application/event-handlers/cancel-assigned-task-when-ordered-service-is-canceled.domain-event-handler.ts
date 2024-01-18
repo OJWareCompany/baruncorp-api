@@ -6,7 +6,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { OnEvent } from '@nestjs/event-emitter'
 import { OrderedServiceCanceledDomainEvent } from '../../../ordered-service/domain/events/ordered-service-canceled.domain-event'
 import { AssignedTaskMapper } from '../../assigned-task.mapper'
-import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @Injectable()
 export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
@@ -15,7 +15,7 @@ export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly mapper: AssignedTaskMapper,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
   ) {}
 
   @OnEvent(OrderedServiceCanceledDomainEvent.name, { async: true, promisify: true })
@@ -25,7 +25,7 @@ export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
     })
 
     const assignedTaskEntities = assignedTasks.map(this.mapper.toDomain)
-    assignedTaskEntities.map(async (assignedTask) => await assignedTask.cancel(this.taskStatusValidator))
+    assignedTaskEntities.map(async (assignedTask) => await assignedTask.cancel(this.orderModificationValidator))
     await Promise.all(assignedTaskEntities)
     await this.assignedTaskRepo.update(assignedTaskEntities)
   }

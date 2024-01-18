@@ -10,7 +10,7 @@ import { USER_REPOSITORY } from '../../user.di-tokens'
 import { UserRepositoryPort } from '../../database/user.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../../assigned-task/database/assigned-task.repository.port'
-import { TaskStatusChangeValidationDomainService } from '../../../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(HandsUpCommand)
 export class HandsUpService implements ICommandHandler {
@@ -23,7 +23,7 @@ export class HandsUpService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
   ) {}
   async execute(command: HandsUpCommand): Promise<void> {
     const availableTasks = await this.prismaService.userAvailableTasks.findMany({ where: { userId: command.userId } })
@@ -63,7 +63,7 @@ export class HandsUpService implements ICommandHandler {
 
       // 할당한다.
       const assignedTaskEntity = this.assignedTaskMapper.toDomain(pendingTask)
-      await assignedTaskEntity.assign(user, this.taskStatusValidator) // OK?
+      await assignedTaskEntity.assign(user, this.orderModificationValidator) // OK?
       await this.assignedTaskRepo.update(assignedTaskEntity)
       return
     }

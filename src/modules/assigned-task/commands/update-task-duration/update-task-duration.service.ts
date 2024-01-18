@@ -5,7 +5,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { UpdateTaskDurationCommand } from './update-task-duration.command'
-import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(UpdateTaskDurationCommand)
 export class UpdateTaskDurationService implements ICommandHandler {
@@ -13,12 +13,12 @@ export class UpdateTaskDurationService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
   ) {}
   async execute(command: UpdateTaskDurationCommand): Promise<void> {
     const entity = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!entity) throw new AssignedTaskNotFoundException()
-    await entity.setDuration(command.duration, this.taskStatusValidator)
+    await entity.setDuration(command.duration, this.orderModificationValidator)
 
     await this.assignedTaskRepo.update(entity)
   }

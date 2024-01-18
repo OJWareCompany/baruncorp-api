@@ -24,7 +24,7 @@ import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-
 import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
 import { OrderedServiceCompletionCheckDomainService } from './domain-services/check-all-related-tasks-completed.domain-service'
-import { TaskStatusChangeValidationDomainService } from '../../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain-services/revision-type-update-validation.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
@@ -33,7 +33,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   static async create(
     create: CreateOrderedServiceProps,
     calcService: ServiceInitialPriceManager,
-    taskStatusValidator: TaskStatusChangeValidationDomainService,
+    orderModificationValidator: OrderModificationValidatorDomainService,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     const id = v4()
@@ -51,7 +51,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
     const entity = new OrderedServiceEntity({ id, props })
 
-    await entity.determineInitialValues(calcService, taskStatusValidator, revisionTypeUpdateValidator)
+    await entity.determineInitialValues(calcService, orderModificationValidator, revisionTypeUpdateValidator)
 
     entity.addEvent(
       new OrderedServiceCreatedDomainEvent({
@@ -117,13 +117,13 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   private async determineInitialValues(
     calcService: ServiceInitialPriceManager,
-    taskStatusValidator: TaskStatusChangeValidationDomainService,
+    orderModificationValidator: OrderModificationValidatorDomainService,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     if (this.isRevision) {
-      await this.determineInitialRevisionType(calcService, taskStatusValidator, revisionTypeUpdateValidator)
+      await this.determineInitialRevisionType(calcService, orderModificationValidator, revisionTypeUpdateValidator)
     } else {
-      await taskStatusValidator.validate(this)
+      await orderModificationValidator.validate(this)
       const initialPrice = await calcService.determinePrice(this, this.sizeForRevision)
       this.setPrice(initialPrice)
     }
@@ -131,22 +131,22 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   private async determineInitialRevisionType(
     calcService: ServiceInitialPriceManager,
-    taskStatusValidator: TaskStatusChangeValidationDomainService,
+    orderModificationValidator: OrderModificationValidatorDomainService,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
     const revisionSize = await calcService.determineInitialRevisionSize(this)
     if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
-      await this.updateRevisionSizeToMajor(taskStatusValidator, calcService, revisionTypeUpdateValidator)
+      await this.updateRevisionSizeToMajor(orderModificationValidator, calcService, revisionTypeUpdateValidator)
     } else if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
-      await this.updateRevisionSizeToMinor(taskStatusValidator, revisionTypeUpdateValidator)
+      await this.updateRevisionSizeToMinor(orderModificationValidator, revisionTypeUpdateValidator)
     }
   }
 
   async cleanRevisionSize(
-    taskStatusValidator: TaskStatusChangeValidationDomainService,
+    orderModificationValidator: OrderModificationValidatorDomainService,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
-    await taskStatusValidator.validate(this)
+    await orderModificationValidator.validate(this)
     await revisionTypeUpdateValidator.validate(this)
 
     this.props.sizeForRevision = null
@@ -161,10 +161,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   async updateRevisionSizeToMinor(
-    taskStatusValidator: TaskStatusChangeValidationDomainService,
+    orderModificationValidator: OrderModificationValidatorDomainService,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {
-    await taskStatusValidator.validate(this)
+    await orderModificationValidator.validate(this)
     await revisionTypeUpdateValidator.validate(this)
 
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Minor
@@ -180,11 +180,11 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   // TODO: 그냥 처음부터 revision price 입력해놓고, 인보이스에서 0원으로 바꾸는게 나을지도 모르겠다.
   async updateRevisionSizeToMajor(
-    taskStatusValidator: TaskStatusChangeValidationDomainService,
+    orderModificationValidator: OrderModificationValidatorDomainService,
     calcService: ServiceInitialPriceManager,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ): Promise<this> {
-    await taskStatusValidator.validate(this)
+    await orderModificationValidator.validate(this)
     await revisionTypeUpdateValidator.validate(this)
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Major
 
@@ -251,10 +251,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
    */
   async setManualPrice(
     serviceInitialPriceManager: ServiceInitialPriceManager,
-    taskStatusValidator: TaskStatusChangeValidationDomainService,
+    orderModificationValidator: OrderModificationValidatorDomainService,
     price: number,
   ) {
-    await taskStatusValidator.validate(this)
+    await orderModificationValidator.validate(this)
 
     if (this.isResidentialRevision && this.sizeForRevision !== 'Major') {
       throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()

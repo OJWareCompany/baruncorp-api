@@ -2,14 +2,14 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
 import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { AssignedTaskEntity } from '../assigned-task.entity'
-import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
+import { JOB_REPOSITORY } from '../../job.di-token'
+import { JobRepositoryPort } from '../../database/job.repository.port'
+import { AssignedTaskEntity } from '../../../assigned-task/domain/assigned-task.entity'
+import { IssuedJobUpdateException } from '../job.error'
 import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
 
 @Injectable()
-export class TaskStatusChangeValidationDomainService {
+export class OrderModificationValidatorDomainService {
   constructor(
     // @ts-ignore
     @Inject(JOB_REPOSITORY)

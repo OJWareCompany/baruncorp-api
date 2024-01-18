@@ -49,7 +49,7 @@ import { OrderedServiceCompletionCheckDomainService } from './domain/domain-serv
 import { ASSIGNED_TASK_REPOSITORY } from '../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.repository'
 import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
-import { TaskStatusChangeValidationDomainService } from '../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain/domain-services/revision-type-update-validation.domain-service'
 
 const httpControllers = [
@@ -97,7 +97,7 @@ const repositories: Provider[] = [
 const domainServices: Provider[] = [
   ServiceInitialPriceManager,
   OrderedServiceCompletionCheckDomainService,
-  TaskStatusChangeValidationDomainService,
+  OrderModificationValidatorDomainService,
   RevisionTypeUpdateValidationDomainService,
 ]
 

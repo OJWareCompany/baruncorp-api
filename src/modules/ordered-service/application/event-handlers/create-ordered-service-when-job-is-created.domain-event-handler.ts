@@ -11,7 +11,7 @@ import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
-import { TaskStatusChangeValidationDomainService } from '../../../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidatorDomainService } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
 
 @Injectable()
@@ -24,7 +24,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidatorDomainService,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {}
 
@@ -58,7 +58,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
           isExpedited: job.getProps().isExpedited,
         },
         this.serviceInitialPriceManager,
-        this.taskStatusValidator,
+        this.orderModificationValidator,
         this.revisionTypeUpdateValidator,
       )
 
