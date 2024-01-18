@@ -206,6 +206,9 @@ export class JobResponseDto {
   @ApiProperty()
   isCurrentJob?: boolean
 
+  @ApiProperty({ example: 'GnpyEmUZfZ1k7e6Jsvy_fcG8r-PWCQswP' })
+  jobFolderId: string | null
+
   constructor(props: JobResponseDto) {
     initialize(this, props)
   }

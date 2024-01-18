@@ -317,6 +317,99 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         contactEmail: props.clientInfo.clientContactEmail,
         deliverablesEmails: props.clientInfo.deliverablesEmail,
       },
+
+      /**
+       * @TODO @SANGWON
+       * jobMapper.toResponse 참조하는 곳들 jobFolderId 어떤식으로 처리할지 생각하기
+       * <jobMapper.toResponse를 사용하는 곳들>
+       *   - find-job.paginated.http.controller
+       *   - find-my-job.paginated.http.controller
+       *   - find-my-ordered-jobs.paginated.http.controller
+       *   - find-project-detail.http.controller
+       */
+      jobFolderId: null,
+    })
+
+    props.orderedServices.map((service) => {
+      return {
+        ...service.unpack(),
+        sizeForRevision: service.sizeForRevision,
+        price: service.price === null ? null : Number(service.price),
+        priceOverride: service.priceOverride === null ? null : Number(service.priceOverride),
+        orderedAt: service.orderedAt.toISOString(),
+        doneAt: service.doneAt?.toISOString() || null,
+      }
+    })
+
+    return response
+  }
+
+  toResponseWithJobFolderId(entity: JobEntity, jobFolderId: string): JobResponseDto {
+    const props = entity.getProps()
+
+    const sizeForRevision = props.orderedServices.find(
+      (orderedService) =>
+        orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
+    )
+      ? TaskSizeEnum.Major
+      : props.orderedServices.find(
+          (orderedService) =>
+            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
+        )
+      ? TaskSizeEnum.Minor
+      : null
+
+    const isContainsRevisionTask = props.orderedServices.find((orderedService) => orderedService.isRevision)
+
+    const response = new JobResponseDto({
+      id: props.id,
+      isContainsRevisionTask: !!isContainsRevisionTask,
+      billingCodes: props.orderedServices.map((orderedService) => orderedService.billingCode),
+      projectPropertyType: props.projectPropertyType as ProjectPropertyTypeEnum,
+      taskSizeForRevision: sizeForRevision,
+      projectId: props.projectId,
+      systemSize: props.systemSize,
+      mailingAddressForWetStamp: props.mailingAddressForWetStamp,
+      mountingType: props.mountingType,
+      numberOfWetStamp: props.numberOfWetStamp,
+      additionalInformationFromClient: props.additionalInformationFromClient,
+      updatedBy: props.updatedBy,
+      propertyFullAddress: props.propertyFullAddress,
+      jobRequestNumber: props.jobRequestNumber,
+      jobStatus: props.jobStatus,
+      loadCalcOrigin: props.loadCalcOrigin,
+      receivedAt: props.receivedAt.toISOString(),
+      isExpedited: props.isExpedited,
+      jobName: props.jobName,
+      isCurrentJob: props.isCurrentJob,
+      assignedTasks: props.assignedTasks.map((assignedTask) => ({
+        ...assignedTask.unpack(),
+        duration: assignedTask.duration,
+        startedAt: assignedTask.startedAt?.toISOString() || null,
+        doneAt: assignedTask.doneAt?.toISOString() || null,
+        isActive: assignedTask.isActive,
+        prerequisiteTasks: assignedTask.prerequisiteTasks,
+      })),
+
+      orderedServices: props.orderedServices.map((service) => ({
+        ...service.unpack(),
+        sizeForRevision: service.sizeForRevision,
+        price: service.price === null ? null : Number(service.price),
+        priceOverride: service.priceOverride === null ? null : Number(service.priceOverride),
+        orderedAt: service.orderedAt.toISOString(),
+        doneAt: service.doneAt?.toISOString() || null,
+      })),
+
+      clientInfo: {
+        clientOrganizationId: props.clientInfo.clientOrganizationId,
+        clientOrganizationName: props.clientInfo.clientOrganizationName,
+        clientUserName: props.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
+        clientUserId: props.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
+        contactEmail: props.clientInfo.clientContactEmail,
+        deliverablesEmails: props.clientInfo.deliverablesEmail,
+      },
+
+      jobFolderId,
     })
 
     props.orderedServices.map((service) => {

@@ -5,6 +5,8 @@ import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JobMapper } from '../../job.mapper'
 import { JobResponseDto } from '../../dtos/job.response.dto'
+import { PrismaService } from '../../../database/prisma.service'
+import { GoogleDriveJobFolderNotFoundException } from '../../../filesystem/domain/filesystem.error'
 
 export class FindJobQuery {
   readonly jobId: string
@@ -19,10 +21,15 @@ export class FindJobQueryHandler implements IQueryHandler {
     // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly jobMapper: JobMapper,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async execute(query: FindJobQuery): Promise<JobResponseDto> {
     const job = await this.jobRepository.findJobOrThrow(query.jobId)
-    return this.jobMapper.toResponse(job)
+    const jobFolder = await this.prismaService.googleJobFolder.findFirst({
+      where: { jobId: job.id },
+    })
+    if (!jobFolder) throw new GoogleDriveJobFolderNotFoundException()
+    return this.jobMapper.toResponseWithJobFolderId(job, jobFolder.id)
   }
 }
