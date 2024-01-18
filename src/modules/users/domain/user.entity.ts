@@ -40,6 +40,15 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return new UserEntity({ id, props })
   }
 
+  get canEditOrderPostInvoice() {
+    const grantedPermissions = [
+      UserRoleNameEnum.client_company_manager,
+      UserRoleNameEnum.special_admin,
+      UserRoleNameEnum.admin,
+    ]
+    return grantedPermissions.includes(this.role)
+  }
+
   get userName(): UserName {
     return this.props.userName
   }
