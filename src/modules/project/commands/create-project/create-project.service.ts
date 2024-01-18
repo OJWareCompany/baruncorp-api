@@ -15,6 +15,11 @@ import { CreateProjectCommand } from './create-project.command'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
+import { PrismaService } from './../../../database/prisma.service'
+import { GoogleDriveSharedDriveNotFoundException } from '../../../filesystem/domain/filesystem.error'
+import { FilesystemApiService } from '../../../filesystem/infra/filesystem.api.service'
+import { ProjectMapper } from '../../project.mapper'
+import { CommonInternalServerException, DataIntegrityException } from '../../../../app.error'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
@@ -30,6 +35,9 @@ export class CreateProjectService implements ICommandHandler {
     @Inject(GEOGRAPHY_REPOSITORY) private readonly geographyRepository: GeographyRepositoryPort,
     private readonly censusSearchCoordinatesService: CensusSearchCoordinatesService,
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
+    private readonly projectMapper: ProjectMapper,
+    private readonly prismaService: PrismaService,
+    private readonly filesystemApiService: FilesystemApiService,
   ) {}
 
   async execute(command: CreateProjectCommand): Promise<{ id: string }> {
@@ -41,8 +49,41 @@ export class CreateProjectService implements ICommandHandler {
     await this.generateGeographyAndAhjNotes(censusResponse)
 
     const organization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
+    const sharedDrive = await this.prismaService.googleSharedDrive.findFirst({
+      where: { organizationId: command.clientOrganizationId },
+    })
+    if (!sharedDrive) throw new GoogleDriveSharedDriveNotFoundException()
 
-    const entity = ProjectEntity.create({
+    /**
+     * @TODO 전체 검색: typeFolderId-refactor
+     */
+    let typeFolderId = null
+    let field = null
+    switch (command.projectPropertyType) {
+      case 'Residential':
+        typeFolderId = sharedDrive.residentialFolderId
+        field = 'residentialFolderId'
+        break
+      case 'Commercial':
+        typeFolderId = sharedDrive.commercialFolderId
+        field = 'commercialFolderId'
+        break
+      default:
+        throw new CommonInternalServerException(
+          'A value must have been selected in the switch case statement, but not selected',
+        )
+    }
+    if (!typeFolderId) {
+      throw new DataIntegrityException(`google_shared_drive table must have ${field} information, but it doesn't exist`)
+    }
+
+    const createProjectFolderResponseData = await this.filesystemApiService.requestToCreateProjectFolder({
+      sharedDriveId: sharedDrive.id,
+      residentailOrCommercialFolderId: typeFolderId,
+      projectName: command.projectPropertyAddress.fullAddress,
+    })
+
+    const projectEntity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
       projectNumber: command.projectNumber,
@@ -60,9 +101,36 @@ export class CreateProjectService implements ICommandHandler {
       }),
     })
 
-    await this.projectRepository.createProject(entity)
+    const projectRecord = this.projectMapper.toPersistence(projectEntity)
+    const projectFolder = createProjectFolderResponseData.projectFolder
+
+    try {
+      await this.prismaService.$transaction([
+        this.prismaService.orderedProjects.create({ data: { ...projectRecord } }),
+        this.prismaService.googleProjectFolder.create({
+          data: {
+            id: projectFolder.id,
+            name: projectFolder.name,
+            shareLink: projectFolder.shareLink,
+            projectId: projectEntity.id,
+          },
+        }),
+      ])
+    } catch (error) {
+      if (!projectFolder.matchedExistingData) {
+        await this.filesystemApiService.requestToDeleteItemsInSharedDrive({
+          sharedDrive: {
+            id: sharedDrive.id,
+            delete: false,
+          },
+          itemIds: [projectFolder.id],
+        })
+      }
+      throw error
+    }
+
     return {
-      id: entity.id,
+      id: projectEntity.id,
     }
   }
 
