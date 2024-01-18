@@ -20,7 +20,7 @@ export class SendDeliverablesHttpController {
     const command = new SendDeliverablesCommand({
       updatedByUserId: user.id,
       jobId: param.jobId,
-      deliverablesLink: request.deliverablesLink,
+      // deliverablesLink: request.deliverablesLink,
     })
 
     await this.commandBus.execute(command)

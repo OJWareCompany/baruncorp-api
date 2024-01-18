@@ -8,7 +8,5 @@ export class SendDeliverablesParamRequestDto {
 }
 
 export class SendDeliverablesRequestDto {
-  @ApiProperty()
-  @IsString()
-  readonly deliverablesLink: string
+  // readonly deliverablesLink: string
 }
