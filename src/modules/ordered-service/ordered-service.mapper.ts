@@ -6,7 +6,7 @@ import { OrderedServiceResponseDto } from './dtos/ordered-service.response.dto'
 import {
   OrderedServiceSizeForRevision,
   OrderedServiceSizeForRevisionEnum,
-  OrderedServiceStatus,
+  OrderedServiceStatusEnum,
 } from './domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 
@@ -56,7 +56,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
         priceOverride: record.priceOverride === null ? null : Number(record.priceOverride),
         orderedAt: record.orderedAt,
         doneAt: record.doneAt,
-        status: record.status as OrderedServiceStatus,
+        status: record.status as OrderedServiceStatusEnum,
         isManualPrice: record.isManualPrice, //record.isManualPrice,
         assignedTasks: record.assignedTasks,
         projectPropertyType: record.projectPropertyType as ProjectPropertyTypeEnum,

@@ -20,7 +20,7 @@ import { OrderedService } from './domain/value-objects/ordered-service.value-obj
 import {
   OrderedServiceSizeForRevision,
   OrderedServiceSizeForRevisionEnum,
-  OrderedServiceStatus,
+  OrderedServiceStatusEnum,
 } from '../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
@@ -186,7 +186,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
           price: orderedService.price === null ? null : Number(orderedService.price),
           priceOverride: orderedService.priceOverride === null ? null : Number(orderedService.priceOverride),
           orderedAt: orderedService.orderedAt,
-          status: orderedService.status as OrderedServiceStatus,
+          status: orderedService.status as OrderedServiceStatusEnum,
           doneAt: orderedService.doneAt,
         }),
       )
