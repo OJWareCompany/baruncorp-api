@@ -13,6 +13,7 @@ export enum JobStatusEnum {
   Canceled = 'Canceled',
   Completed = 'Completed',
   Sent_To_Client = 'Sent To Client',
+  Canceled_Invoice = 'Canceled (Invoice)',
 }
 
 export enum LoadCalcOriginEnum {
@@ -27,35 +28,51 @@ export enum LoadCalcOriginEnum {
 export interface CreateJobProps {
   organizationId: string
   organizationName: string
+
   projectId: string
   projectNumber: string | null
-  mountingType: MountingTypeEnum
   propertyFullAddress: string
-  totalOfJobs: number
-  deliverablesEmails: string[]
-  orderedServices: NewOrderedServices[]
-  systemSize: number | null
-  mailingAddressForWetStamp: Address | null
-  numberOfWetStamp: number | null
-  additionalInformationFromClient: string | null
-  clientInfo: ClientInformation
   projectPropertyType: ProjectPropertyTypeEnum
-  loadCalcOrigin: LoadCalcOriginEnum
-  isExpedited: boolean
-  dueDate: Date | null
+  totalOfJobs: number
+
+  deliverablesEmails: string[]
+  mailingAddressForWetStamp: Address | null
   updatedBy: string
+  clientInfo: ClientInformation
+  additionalInformationFromClient: string | null
+
+  /**
+   * 주문 수정, 주문 수정 이력 생성
+   * 서비스 가격 수정됨 -> 서비스 수정 이력 생성
+   *
+   */
+  // 수정하게 되면 주문 품목, 태스크의 상태까지 변경될 수 있는 필드들
+  mountingType: MountingTypeEnum // 가격이 수정됨
+  systemSize: number | null // 가격이 수정됨
+  isExpedited: boolean
+  loadCalcOrigin: LoadCalcOriginEnum
+
+  // 서비스나 태스크의 추가/수정에 영향받는 필드들
+  dueDate: Date | null
+
+  numberOfWetStamp: number | null
+  orderedServices: NewOrderedServices[]
 }
 
 export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
-  invoiceId: string | null
   jobName: string
-  jobStatus: JobStatusEnum // 인자로 받지 않고 내부에서 값을 생성하는 필드
   jobRequestNumber: number
-  assignedTasks: AssignedTask[]
-  orderedServices: OrderedService[]
   receivedAt: Date
   isCurrentJob?: boolean
-  revisionSize: OrderedServiceSizeForRevisionEnum | null
+
+  // 인보이스에 영향받는 필드들
+  invoiceId: string | null
+
+  // 서비스나 태스크의 추가/수정에 영향받는 필드들
+  jobStatus: JobStatusEnum // 인자로 받지 않고 내부에서 값을 생성하는 필드
   pricingType: PricingTypeEnum | null
-  // project?: OrderedProjects | null
+  revisionSize: OrderedServiceSizeForRevisionEnum | null
+
+  orderedServices: OrderedService[]
+  assignedTasks: AssignedTask[]
 }

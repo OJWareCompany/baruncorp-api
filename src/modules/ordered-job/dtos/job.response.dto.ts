@@ -53,7 +53,7 @@ export class OrderedServiceResponseFields {
   @IsOptional()
   priceOverride: number | null
 
-  @ApiProperty({ example: OrderedServiceStatusEnum.Pending, enum: OrderedServiceStatusEnum })
+  @ApiProperty({ example: OrderedServiceStatusEnum.Not_Started, enum: OrderedServiceStatusEnum })
   status: string
 
   @ApiProperty()
