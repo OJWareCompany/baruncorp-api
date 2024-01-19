@@ -1,7 +1,6 @@
 import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
-import UserMapper from '../users/user.mapper'
 import { CreateTaskHttpController } from './commands/create-task/create-task.http.controller'
 import { UpdateTaskHttpController } from './commands/update-task/update-task.http.controller'
 import { FindTaskHttpController } from './queries/find-task/find-task.http.controller'
@@ -22,22 +21,14 @@ import { UpdatePositionOrderHttpController } from './commands/update-position-or
 import { UpdatePositionOrderService } from './commands/update-position-order/update-position-order.service'
 import { FindUnregisteredUsersForTaskHttpController } from './queries/find-unregistered-users-for-task/find-unregistered-users-for-task.http.controller'
 import { FindUnregisteredUsersForTaskPaginatedQueryHandler } from './queries/find-unregistered-users-for-task/find-unregistered-users-for-task.query-handler'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRepository } from '../users/database/user.repository'
-import { UserRoleMapper } from '../users/user-role.mapper'
-import { PositionRepository } from '../position/database/position.repository'
-import { POSITION_REPOSITORY } from '../position/position.di-token'
-import { PositionMapper } from '../position/position.mapper'
-import { OrderModificationValidator } from '../ordered-job/domain/domain-services/order-modification-validator.domain-service'
-import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
-import { JobRepository } from '../ordered-job/database/job.repository'
-import { JobMapper } from '../ordered-job/job.mapper'
 import { InvoiceModule } from '../invoice/invoice.module'
+import { JobModule } from '../ordered-job/job.module'
+import { UsersModule } from '../users/users.module'
+import { PositionModule } from '../position/position.module'
 
 const httpControllers = [
   CreateTaskHttpController,
   UpdateTaskHttpController,
-  // DeleteTaskHttpController,
   FindTaskHttpController,
   FindTaskPaginatedHttpController,
   AddPrerequisiteTaskHttpController,
@@ -63,27 +54,15 @@ const repositories: Provider[] = [
     provide: TASK_REPOSITORY,
     useClass: TaskRepository,
   },
-  {
-    provide: USER_REPOSITORY,
-    useClass: UserRepository,
-  },
-  {
-    provide: POSITION_REPOSITORY,
-    useClass: PositionRepository,
-  },
-  {
-    provide: JOB_REPOSITORY,
-    useClass: JobRepository,
-  },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [TaskMapper, UserMapper, UserRoleMapper, PositionMapper, JobMapper]
-const domainServices: Provider[] = [OrderModificationValidator]
+const mappers: Provider[] = [TaskMapper]
+const domainServices: Provider[] = []
 
 @Module({
-  imports: [CqrsModule, PrismaModule, InvoiceModule],
+  imports: [CqrsModule, PrismaModule, InvoiceModule, JobModule, UsersModule, PositionModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
-  exports: [],
+  exports: [...repositories, ...mappers],
 })
 export class TaskModule {}

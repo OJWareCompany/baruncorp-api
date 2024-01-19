@@ -1,7 +1,6 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
-import UserMapper from '../users/user.mapper'
 import { CreateCustomPricingHttpController } from './commands/create-custom-pricing/create-custom-pricing.http.controller'
 import { UpdateCustomPricingHttpController } from './commands/update-custom-pricing/update-custom-pricing.http.controller'
 import { DeleteCustomPricingHttpController } from './commands/delete-custom-pricing/delete-custom-pricing.http.controller'
@@ -15,6 +14,7 @@ import { CUSTOM_PRICING_REPOSITORY } from './custom-pricing.di-token'
 import { CustomPricingRepository } from './database/custom-pricing.repository'
 import { CustomPricingMapper } from './custom-pricing.mapper'
 import { FindCreatableCustomPricingHttpController } from './queries/find-creatable-custom-pricing/find-creatable-custom-pricing.http.controller'
+import { UsersModule } from '../users/users.module'
 
 const httpControllers = [
   CreateCustomPricingHttpController,
@@ -33,11 +33,12 @@ const repositories: Provider[] = [
   },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [CustomPricingMapper, UserMapper]
+const mappers: Provider[] = [CustomPricingMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, forwardRef(() => UsersModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
+  exports: [...repositories, ...mappers],
 })
 export class CustomPricingModule {}

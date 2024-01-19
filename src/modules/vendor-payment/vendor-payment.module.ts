@@ -1,7 +1,6 @@
 import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
-import UserMapper from '../users/user.mapper'
 import { CreateVendorPaymentHttpController } from './commands/create-vendor-payment/create-vendor-payment.http.controller'
 import { CancelVendorPaymentHttpController } from './commands/cancel-vendor-payment/cancel-vendor-payment.http.controller'
 import { FindVendorPaymentHttpController } from './queries/find-vendor-payment/find-vendor-payment.http.controller'
@@ -13,6 +12,7 @@ import { FindPaymentPaginatedQueryHandler } from './queries/find-vendor-payment-
 import { VENDOR_PAYMENT_REPOSITORY } from './vendor-payment.di-token'
 import { VendorPaymentRepository } from './database/vendor-payment.repository'
 import { VendorPaymentMapper } from './vendor-payment.mapper'
+import { UsersModule } from '../users/users.module'
 
 const httpControllers = [
   CreateVendorPaymentHttpController,
@@ -29,10 +29,10 @@ const repositories: Provider[] = [
   },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [VendorPaymentMapper, UserMapper]
+const mappers: Provider[] = [VendorPaymentMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, UsersModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
 })

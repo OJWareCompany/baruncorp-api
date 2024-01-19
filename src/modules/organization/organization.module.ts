@@ -1,10 +1,6 @@
 import { CqrsModule } from '@nestjs/cqrs'
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { PrismaService } from '../database/prisma.service'
-import UserMapper from '../users/user.mapper'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRepository } from '../users/database/user.repository'
-import { UserRoleMapper } from '../users/user-role.mapper'
 import { OrganizationService } from './organization.service'
 import { ORGANIZATION_REPOSITORY } from './organization.di-token'
 import { OrganizationRepository } from './database/organization.repository'
@@ -21,6 +17,7 @@ import { FindMyMemberPaginatedHttpController } from './queries/find-my-member-pa
 import { FindMyMemberPaginatedQueryHandler } from './queries/find-my-member-paginated/find-my-member-paginated.query-handler'
 import { UpdateOrganizationHttpController } from './commands/update-organization/update-organization.controller.http'
 import { UpdateOrganizationService } from './commands/update-organization/update-organization.service'
+import { UsersModule } from '../users/users.module'
 
 const httpControllers = [
   FindOrganizationHttpController,
@@ -38,19 +35,16 @@ const queryHandlers: Provider[] = [
   FindMyMemberPaginatedQueryHandler,
 ]
 
-const repositories: Provider[] = [
-  { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
-  { provide: USER_REPOSITORY, useClass: UserRepository },
-]
+const repositories: Provider[] = [{ provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository }]
 
 const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService, UpdateOrganizationService]
 
-const mappers: Provider[] = [UserMapper, UserMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [OrganizationMapper]
 
 @Module({
-  imports: [CqrsModule],
+  imports: [CqrsModule, forwardRef(() => UsersModule)],
   providers: [...providers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
-  exports: [OrganizationService],
+  exports: [OrganizationService, ...mappers, ...repositories],
 })
 export class OrganizationModule {}

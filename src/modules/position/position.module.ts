@@ -1,7 +1,6 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
-import UserMapper from '../users/user.mapper'
 import { CreatePositionHttpController } from './commands/create-position/create-position.http.controller'
 import { UpdatePositionHttpController } from './commands/update-position/update-position.http.controller'
 import { DeletePositionHttpController } from './commands/delete-position/delete-position.http.controller'
@@ -27,9 +26,7 @@ import { FindPositionUnRegisteredUsersHttpController } from './queries/find-posi
 import { FindPositionUnRegisteredUsersQueryHandler } from './queries/find-position-unregistered-users/find-position-unregistered-users.query-handler'
 import { AddPositionWorkerService } from './commands/add-worker/add-position-worker.service'
 import { DeletePositionWorkerService } from './commands/delete-position-worker/delete-position-worker.service'
-import { UserRepository } from '../users/database/user.repository'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRoleMapper } from '../users/user-role.mapper'
+import { UsersModule } from '../users/users.module'
 
 const httpControllers = [
   CreatePositionHttpController,
@@ -64,17 +61,14 @@ const repositories: Provider[] = [
     provide: POSITION_REPOSITORY,
     useClass: PositionRepository,
   },
-  {
-    provide: USER_REPOSITORY,
-    useClass: UserRepository,
-  },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [PositionMapper, UserMapper, UserRoleMapper]
+const mappers: Provider[] = [PositionMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, forwardRef(() => UsersModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
+  exports: [...repositories, ...mappers],
 })
 export class PositionModule {}

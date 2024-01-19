@@ -1,15 +1,9 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { SearchCensusHttpController } from './commands/create-ahj-note/create-ahj-note.http.controller'
 import { PrismaModule } from '../database/prisma.module'
-import { GEOGRAPHY_REPOSITORY } from '../geography/geography.di-token'
-import { GeographyRepository } from '../geography/database/geography.repository'
 import { CreateProjectHttpController } from './commands/create-project/create-project.http.controller'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRepository } from '../users/database/user.repository'
-import UserMapper from '../users/user.mapper'
 import { ProjectMapper } from './project.mapper'
-import { UserRoleMapper } from '../users/user-role.mapper'
 import { CreateProjectService } from './commands/create-project/create-project.service'
 import { PROJECT_REPOSITORY } from './project.di-token'
 import { ProjectRepository } from './database/project.repository'
@@ -24,15 +18,12 @@ import { DeleteProjectService } from './commands/delete-project/delete-project.s
 import { DeleteProjectHttpController } from './commands/delete-project/delete-project.http.controller'
 import { UpdateProjectHttpController } from './commands/update-project/update-project.http.controller'
 import { UpdateProjectService } from './commands/update-project/update-project.service'
-import { JobMapper } from '../ordered-job/job.mapper'
-import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
-import { JobRepository } from '../ordered-job/database/job.repository'
 import { CensusSearchCoordinatesService } from './infra/census/census.search.coordinates.request.dto'
-import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
-import { OrganizationRepository } from '../organization/database/organization.repository'
-import { OrganizationMapper } from '../organization/organization.mapper'
 import { ProjectValidatorDomainService } from './domain/domain-services/project-validator.domain-service'
 import { GeographyModule } from '../geography/geography.module'
+import { JobModule } from '../ordered-job/job.module'
+import { UsersModule } from '../users/users.module'
+import { OrganizationModule } from '../organization/organization.module'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -59,20 +50,21 @@ const eventHandlers: Provider[] = [
 
 const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
 
-const repositories: Provider[] = [
-  { provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository },
-  { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
-  { provide: JOB_REPOSITORY, useClass: JobRepository },
-  { provide: USER_REPOSITORY, useClass: UserRepository },
-  { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
-]
+const repositories: Provider[] = [{ provide: PROJECT_REPOSITORY, useClass: ProjectRepository }]
 
-// 얘네는 왜 세트인가? UserMapper, UserRoleMapper, LicenseMapper
-const mappers: Provider[] = [ProjectMapper, JobMapper, UserMapper, UserRoleMapper, OrganizationMapper]
+const mappers: Provider[] = [ProjectMapper]
 
 const domainServices: Provider[] = [ProjectValidatorDomainService]
+
 @Module({
-  imports: [CqrsModule, PrismaModule, GeographyModule],
+  imports: [
+    CqrsModule,
+    PrismaModule,
+    GeographyModule,
+    OrganizationModule,
+    forwardRef(() => JobModule),
+    forwardRef(() => UsersModule),
+  ],
   providers: [
     ...commandHandlers,
     ...eventHandlers,
@@ -83,5 +75,6 @@ const domainServices: Provider[] = [ProjectValidatorDomainService]
     ...domainServices,
   ],
   controllers: [...httpControllers],
+  exports: [...repositories, ...mappers],
 })
 export class ProjectModule {}
