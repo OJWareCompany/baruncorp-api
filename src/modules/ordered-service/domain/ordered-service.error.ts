@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { BadRequestException, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 
 export class OrderedServiceNotFoundException extends NotFoundException {
   constructor() {
@@ -52,5 +52,11 @@ export class NewServiceRevisionUpdateException extends BadRequestException {
 export class SpecialRevisionPricingRevisionTypeUpdateException extends BadRequestException {
   constructor() {
     super(`Revision type update is not allowed for Special Revision Pricing.`, '40308')
+  }
+}
+
+export class OrderedServiceCompletableException extends UnprocessableEntityException {
+  constructor() {
+    super(`Cannot complete the scope as all tasks are not yet finished.`, '400309')
   }
 }

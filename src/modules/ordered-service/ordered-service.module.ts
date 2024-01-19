@@ -25,7 +25,7 @@ import { UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler } fr
 import { ServiceInitialPriceManager } from './domain/ordered-service-manager.domain-service'
 import { FindOrderedServicePaginatedHttpController } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.http.controller'
 import { FindOrderedServicePaginatedQueryHandler } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.query-handler'
-import { OrderedServiceCompletionCheckDomainService } from './domain/domain-services/check-all-related-tasks-completed.domain-service'
+import { OrderedScopeStatusChangeValidator } from './domain/domain-services/check-all-related-tasks-completed.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain/domain-services/revision-type-update-validation.domain-service'
 import { InvoiceModule } from '../invoice/invoice.module'
 import { JobModule } from '../ordered-job/job.module'
@@ -71,7 +71,7 @@ const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClas
 
 const domainServices: Provider[] = [
   ServiceInitialPriceManager,
-  OrderedServiceCompletionCheckDomainService,
+  OrderedScopeStatusChangeValidator,
   RevisionTypeUpdateValidationDomainService,
 ]
 

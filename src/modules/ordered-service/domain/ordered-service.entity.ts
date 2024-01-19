@@ -8,12 +8,10 @@ import {
 } from './ordered-service.type'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import {
-  OrderedServiceAlreadyCompletedException,
   OrderedServiceFreeRevisionManualPriceUpdateException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
 } from './ordered-service.error'
 import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
-import { OrderedServiceReactivatedDomainEvent } from './events/ordered-service-reactivated.domain-event'
 import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
 import { Service } from '@prisma/client'
 import { OrderedServiceUpdatedRevisionSizeDomainEvent } from './events/ordered-service-updated-revision-size.domain-event'
@@ -23,13 +21,18 @@ import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custo
 import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-service-invoiced.domain-event'
 import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
-import { OrderedServiceCompletionCheckDomainService } from './domain-services/check-all-related-tasks-completed.domain-service'
+import { OrderedScopeStatusChangeValidator } from './domain-services/check-all-related-tasks-completed.domain-service'
 import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from './domain-services/revision-type-update-validation.domain-service'
 import {
   JobSendableToClientPriceNotSetException,
   JobSendableToClientScopesInCompletedException,
 } from '../../ordered-job/domain/job.error'
+import { OrderedServiceBackToNotStartedDomainEvent } from './events/ordered-service-back-to-not-started.domain-event'
+import { OrderedServiceCanceledAndKeptInvoiceDomainEvent } from './events/ordered-service-canceled-and-ketp-invoice.domain-event'
+import { OrderedServiceHeldDomainEvent } from './events/ordered-service-held.domain-event'
+import { OrderedServiceStartedDomainEvent } from './events/ordered-service-started.domain-event'
+import { OrderedServiceResetDomainEvent } from './events/ordered-service-reset.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -221,8 +224,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
+  // Canceled 조건없이 가능한가? 완료상태에서 취소 가능?
   cancel(): this {
-    if (this.props.status === 'Completed') return this
     this.props.status = OrderedServiceStatusEnum.Canceled
     this.props.doneAt = new Date()
     this.addEvent(
@@ -234,27 +237,69 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  reactivate(): this {
-    if (this.props.status === 'Completed') throw new OrderedServiceAlreadyCompletedException()
-    this.props.status = OrderedServiceStatusEnum.Not_Started
+  cancelAndKeepInvoice() {
+    this.props.status = OrderedServiceStatusEnum.Canceled_Invoice
     this.props.doneAt = null
     this.addEvent(
-      new OrderedServiceReactivatedDomainEvent({
+      new OrderedServiceCanceledAndKeptInvoiceDomainEvent({
         aggregateId: this.id,
       }),
     )
     return this
   }
 
-  async validateAndComplete(completionChecker: OrderedServiceCompletionCheckDomainService) {
+  backToNotStarted() {
+    this.props.status = OrderedServiceStatusEnum.Not_Started
+    this.props.doneAt = null
+    this.addEvent(
+      new OrderedServiceBackToNotStartedDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  hold() {
+    this.props.status = OrderedServiceStatusEnum.On_Hold
+    this.addEvent(
+      new OrderedServiceHeldDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  start() {
+    this.props.status = OrderedServiceStatusEnum.In_Progress
+    this.addEvent(
+      new OrderedServiceStartedDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return this
+  }
+
+  reset() {
+    this.props.status = OrderedServiceStatusEnum.Not_Started
+    this.props.sizeForRevision = null
+    // this.props.price = null
+
+    this.addEvent(
+      new OrderedServiceResetDomainEvent({
+        aggregateId: this.id,
+      }),
+    )
+    return 1
+  }
+
+  async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator) {
     if (this.isRevision && !this.isRevisionTypeEntered) return
-    const isAllCompleted = await completionChecker.isAllRelatedTasksCompleted(this)
-    if (!isAllCompleted) return
+    await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
     this.complete()
     return this
   }
 
-  private complete(): this {
+  private async complete(): Promise<this> {
     this.props.status = OrderedServiceStatusEnum.Completed
     this.props.doneAt = new Date()
     this.addEvent(

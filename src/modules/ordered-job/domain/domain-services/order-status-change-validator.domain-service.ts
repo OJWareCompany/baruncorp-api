@@ -10,7 +10,7 @@ import { JobNotStartableException } from '../job.error'
 export class OrderStatusChangeValidator {
   constructor(
     // @ts-ignore
-    @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepository: OrderedServiceRepositoryPort,
+    @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepository: OrderedServiceRepositoryPort, // @ts-ignore
   ) {}
   async validateJob(job: JobEntity, jobStatusEnum: JobStatusEnum) {
     switch (jobStatusEnum) {
