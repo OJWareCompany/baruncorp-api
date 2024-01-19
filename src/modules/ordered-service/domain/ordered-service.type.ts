@@ -1,11 +1,13 @@
 import { AssignedTasks } from '@prisma/client'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
-export type OrderedServiceStatus = 'Pending' | 'Completed' | 'Canceled'
 export enum OrderedServiceStatusEnum {
-  Pending = 'Pending',
-  Completed = 'Completed',
+  Not_Started = 'Not Started',
+  In_Progress = 'In Progress',
+  On_Hold = 'On Hold',
   Canceled = 'Canceled',
+  Completed = 'Completed',
+  Canceled_Invoice = 'Canceled (Invoice)',
 }
 
 export type OrderedServiceSizeForRevision = 'Major' | 'Minor'
@@ -37,7 +39,7 @@ export interface OrderedServiceProps extends CreateOrderedServiceProps {
   priceOverride: number | null
   sizeForRevision: OrderedServiceSizeForRevisionEnum | null
   orderedAt: Date
-  status: OrderedServiceStatus
+  status: OrderedServiceStatusEnum
   doneAt: Date | null
   assignedTasks: AssignedTasks[]
   isManualPrice: boolean

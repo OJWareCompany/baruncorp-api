@@ -1,7 +1,6 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
-import UserMapper from '../users/user.mapper'
 import { CreateExpensePricingHttpController } from './commands/create-expense-pricing/create-expense-pricing.http.controller'
 import { UpdateExpensePricingHttpController } from './commands/update-expense-pricing/update-expense-pricing.http.controller'
 import { DeleteExpensePricingHttpController } from './commands/delete-expense-pricing/delete-expense-pricing.http.controller'
@@ -15,6 +14,7 @@ import { EXPENSE_PRICING_REPOSITORY } from './expense-pricing.di-token'
 import { ExpensePricingRepository } from './database/expense-pricing.repository'
 import { ExpensePricingMapper } from './expense-pricing.mapper'
 import { FindCreatableExpensePricingHttpController } from './queries/find-creatable-expense-pricing/find-creatable-expense-pricing.http.controller'
+import { UsersModule } from '../users/users.module'
 
 const httpControllers = [
   CreateExpensePricingHttpController,
@@ -37,11 +37,12 @@ const repositories: Provider[] = [
   },
 ]
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [ExpensePricingMapper, UserMapper]
+const mappers: Provider[] = [ExpensePricingMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
+  imports: [CqrsModule, PrismaModule, forwardRef(() => UsersModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
+  exports: [...repositories, ...mappers],
 })
 export class ExpensePricingModule {}

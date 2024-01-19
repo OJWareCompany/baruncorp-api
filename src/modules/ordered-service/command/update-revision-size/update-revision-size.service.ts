@@ -6,9 +6,9 @@ import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { UpdateRevisionSizeCommand as UpdateRevisionSizeCommand } from './update-revision-size.command'
 import { OrderedServiceSizeForRevisionEnum } from '../../domain/ordered-service.type'
-import { TaskStatusChangeValidationDomainService } from '../../../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
-import { OrderedServiceCompletionCheckDomainService } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
+import { OrderedScopeStatusChangeValidator } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
 
 @CommandHandler(UpdateRevisionSizeCommand)
 export class UpdateRevisionSizeService implements ICommandHandler {
@@ -17,26 +17,25 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     @Inject(ORDERED_SERVICE_REPOSITORY)
     private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
-    private readonly completionChecker: OrderedServiceCompletionCheckDomainService,
+    private readonly completionChecker: OrderedScopeStatusChangeValidator,
   ) {}
   async execute(command: UpdateRevisionSizeCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(command.orderedServiceId)
 
     if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
       await orderedService.updateRevisionSizeToMajor(
-        this.taskStatusValidator,
+        this.orderModificationValidator,
         this.serviceInitialPriceManager,
         this.revisionTypeUpdateValidator,
       )
     } else if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
-      await orderedService.updateRevisionSizeToMinor(this.taskStatusValidator, this.revisionTypeUpdateValidator)
+      await orderedService.updateRevisionSizeToMinor(this.orderModificationValidator, this.revisionTypeUpdateValidator)
     } else {
-      await orderedService.cleanRevisionSize(this.taskStatusValidator, this.revisionTypeUpdateValidator)
+      await orderedService.cleanRevisionSize(this.orderModificationValidator, this.revisionTypeUpdateValidator)
     }
     // TODO: update revision type 메서드에 validateAndComplete 메서드 넣기
-    await orderedService.validateAndComplete(this.completionChecker)
     await this.orderedServiceRepo.update(orderedService)
   }
 }

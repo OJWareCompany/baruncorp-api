@@ -6,7 +6,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { OnEvent } from '@nestjs/event-emitter'
 import { AssignedTaskMapper } from '../../assigned-task.mapper'
 import { JobHeldDomainEvent } from '../../../ordered-job/domain/events/job-held.domain-event'
-import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @Injectable()
 export class HoldAssignedTaskWhenJobIsHeldDomainEventHandler {
@@ -15,7 +15,7 @@ export class HoldAssignedTaskWhenJobIsHeldDomainEventHandler {
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly mapper: AssignedTaskMapper,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
   @OnEvent(JobHeldDomainEvent.name, { async: true, promisify: true })
@@ -25,7 +25,9 @@ export class HoldAssignedTaskWhenJobIsHeldDomainEventHandler {
     })
 
     const assignedTaskEntities = assignedTasks.map(this.mapper.toDomain)
-    const loop = assignedTaskEntities.map(async (assignedTask) => await assignedTask.hold(this.taskStatusValidator))
+    const loop = assignedTaskEntities.map(
+      async (assignedTask) => await assignedTask.hold(this.orderModificationValidator),
+    )
     await Promise.all(loop)
     await this.assignedTaskRepo.update(assignedTaskEntities)
   }

@@ -8,15 +8,16 @@ import { SendDeliverablesCommand } from './send-deliverables.command'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { Mailer } from '../../infrastructure/mailer.infrastructure'
+import { OrderStatusChangeValidator } from '../../domain/domain-services/order-status-change-validator.domain-service'
 
 @CommandHandler(SendDeliverablesCommand)
 export class SendDeliverablesService implements ICommandHandler {
   constructor(
     // @ts-ignore
-    @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
-    // @ts-ignore
+    @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly mailer: Mailer,
+    private readonly orderStatusChangeValidator: OrderStatusChangeValidator,
   ) {}
 
   async execute(command: SendDeliverablesCommand): Promise<void> {
@@ -27,7 +28,7 @@ export class SendDeliverablesService implements ICommandHandler {
     if (!editor) throw new UserNotFoundException()
     job.updateUpdatedBy(editor.userName.fullName)
 
-    await job.sendToClient(this.mailer, command.deliverablesLink)
+    await job.sendToClient(this.mailer, command.deliverablesLink, this.orderStatusChangeValidator)
     await this.jobRepository.update(job)
   }
 }

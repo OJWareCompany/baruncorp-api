@@ -1,13 +1,20 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ParentPtoNotFoundException, PtoNotFoundException } from '../../domain/pto.error'
 import { UpdatePtoDetailCommand } from './update-pto-detail.command'
-import { PtoRepository } from '../../database/pto.repository'
 import { PtoEntity } from '../../domain/pto.entity'
 import { PtoDetailEntity } from '../../domain/pto-detail.entity'
+import { PtoRepositoryPort } from '../../database/pto.repository.port'
+import { Inject } from '@nestjs/common'
+import { PTO_REPOSITORY } from '../../pto.di-token'
 
 @CommandHandler(UpdatePtoDetailCommand)
 export class UpdatePtoDetailService implements ICommandHandler {
-  constructor(private readonly ptoRepository: PtoRepository) {}
+  constructor(
+    // @ts-ignore
+    @Inject(PTO_REPOSITORY)
+    private readonly ptoRepository: PtoRepositoryPort,
+  ) {}
   async execute(command: UpdatePtoDetailCommand): Promise<void> {
     const entity: PtoDetailEntity | null = await this.ptoRepository.findOnePtoDetail(command.ptoDetailId)
     if (!entity) throw new PtoNotFoundException()

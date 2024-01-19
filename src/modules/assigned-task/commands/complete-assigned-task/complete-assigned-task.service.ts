@@ -6,7 +6,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { CompleteAssignedTaskCommand } from './complete-assigned-task.command'
-import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(CompleteAssignedTaskCommand)
 export class CompleteAssignedTaskService implements ICommandHandler {
@@ -14,14 +14,13 @@ export class CompleteAssignedTaskService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    private readonly prismaService: PrismaService,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   async execute(command: CompleteAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!assignedTask) throw new AssignedTaskNotFoundException()
 
-    await assignedTask.complete(this.taskStatusValidator)
+    await assignedTask.complete(this.orderModificationValidator)
     await this.assignedTaskRepo.update(assignedTask)
   }
 }

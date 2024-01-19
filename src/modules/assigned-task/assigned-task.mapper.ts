@@ -3,9 +3,9 @@ import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { AssignedTaskResponseDto } from './dtos/assigned-task.response.dto'
 import { AssignedTaskEntity } from './domain/assigned-task.entity'
-import { AssignedTaskStatus } from './domain/assigned-task.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { VendorInvoiceLineItemResponse } from '../vendor-invoice/dtos/vendor-invoice-line-item.response.dto'
+import { AssignedTaskStatusEnum } from './domain/assigned-task.type'
 
 @Injectable()
 export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTasks, AssignedTaskResponseDto> {
@@ -55,7 +55,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         taskId: record.taskId,
         orderedServiceId: record.orderedServiceId,
         jobId: record.jobId,
-        status: record.status as AssignedTaskStatus,
+        status: record.status as AssignedTaskStatusEnum,
         assigneeId: record.assigneeId,
         assigneeName: record.assigneeName,
         assigneeOrganizationId: record.assigneeOrganizationId,

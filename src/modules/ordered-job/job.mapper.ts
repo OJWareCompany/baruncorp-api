@@ -15,17 +15,17 @@ import { Mapper } from '../../libs/ddd/mapper.interface'
 import { ClientInformation } from './domain/value-objects/client-information.value-object'
 import { AssignedTask } from './domain/value-objects/assigned-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
-import { AssignedTaskStatus } from '../assigned-task/domain/assigned-task.type'
 import { OrderedService } from './domain/value-objects/ordered-service.value-object'
 import {
   OrderedServiceSizeForRevision,
   OrderedServiceSizeForRevisionEnum,
-  OrderedServiceStatus,
+  OrderedServiceStatusEnum,
 } from '../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
 import { JobStatusEnum } from './domain/job.type'
 import { LoadCalcOriginEnum } from './domain/job.type'
+import { AssignedTaskStatusEnum } from '../assigned-task/domain/assigned-task.type'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -141,7 +141,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         assignedTasks.push(
           new AssignedTask({
             assignTaskId: assignedTask.id,
-            status: assignedTask.status as AssignedTaskStatus,
+            status: assignedTask.status as AssignedTaskStatusEnum,
             taskName: assignedTask.task.name,
             taskId: assignedTask.taskId,
             orderedServiceId: assignedTask.orderedServiceId,
@@ -186,7 +186,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
           price: orderedService.price === null ? null : Number(orderedService.price),
           priceOverride: orderedService.priceOverride === null ? null : Number(orderedService.priceOverride),
           orderedAt: orderedService.orderedAt,
-          status: orderedService.status as OrderedServiceStatus,
+          status: orderedService.status as OrderedServiceStatusEnum,
           doneAt: orderedService.doneAt,
         }),
       )

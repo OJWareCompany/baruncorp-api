@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { CreateJobHttpController } from './commands/create-job/create-job.http.controller'
 import { JOB_REPOSITORY } from './job.di-token'
@@ -15,7 +15,6 @@ import { FindJobPaginatedHttpController } from './queries/find-job-paginated/fin
 import { FindJobPaginatedQueryHandler } from './queries/find-job-paginated/find-job.paginated.query-handler'
 import { DeleteJobHttpController } from './commands/delete-job/delete-job.http.controller'
 import { DeleteJobService } from './commands/delete-job/delete-job.service'
-import UserMapper from '../users/user.mapper'
 import { FindMyJobPaginatedHttpController } from './queries/find-my-jobs/find-my-job.paginated.http.controller'
 import { FindMyJobPaginatedQueryHandler } from './queries/find-my-jobs/find-my-job.paginated.query-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
@@ -35,18 +34,16 @@ import { SendDeliverablesHttpController } from './commands/send-deliverables/sen
 import { SendDeliverablesService } from './commands/send-deliverables/send-deliverables.service'
 import { FindMyOrderedJobPaginatedHttpController } from './queries/find-my-ordered-jobs/find-my-ordered-jobs.paginated.http.controller'
 import { FindMyOrderedJobPaginatedQueryHandler } from './queries/find-my-ordered-jobs/find-my-ordered-jobs.paginated.query-handler'
-import { UserRepository } from '../users/database/user.repository'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRoleMapper } from '../users/user-role.mapper'
 import { Mailer } from './infrastructure/mailer.infrastructure'
-import { SERVICE_REPOSITORY } from '../service/service.di-token'
-import { ServiceRepository } from '../service/database/service.repository'
-import { ServiceMapper } from '../service/service.mapper'
-import { PROJECT_REPOSITORY } from '../project/project.di-token'
-import { ProjectRepository } from '../project/database/project.repository'
-import { ProjectMapper } from '../project/project.mapper'
 import { TotalDurationCalculator } from './domain/domain-services/total-duration-calculator.domain-service'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
+import { OrderStatusChangeValidator } from './domain/domain-services/order-status-change-validator.domain-service'
+import { OrderModificationValidator } from './domain/domain-services/order-modification-validator.domain-service'
+import { InvoiceModule } from '../invoice/invoice.module'
+import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
+import { ProjectModule } from '../project/project.module'
+import { UsersModule } from '../users/users.module'
+import { ServiceModule } from '../service/service.module'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -85,21 +82,23 @@ const eventHandlers: Provider[] = [
   UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler,
   UpdateJobWhenTaskIsUnassignedDomainEventHandler,
 ]
-const repositories: Provider[] = [
-  { provide: JOB_REPOSITORY, useClass: JobRepository },
-  { provide: USER_REPOSITORY, useClass: UserRepository },
-  { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
-  { provide: PROJECT_REPOSITORY, useClass: ProjectRepository },
-  { provide: SERVICE_REPOSITORY, useClass: ServiceRepository },
-]
-
-const mappers: Provider[] = [JobMapper, UserMapper, UserRoleMapper, ServiceMapper, ProjectMapper]
-
+const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
+const mappers: Provider[] = [JobMapper]
 const infrastructures: Provider[] = [Mailer]
-const domainServices: Provider[] = [TotalDurationCalculator]
+const domainServices: Provider[] = [TotalDurationCalculator, OrderStatusChangeValidator, OrderModificationValidator]
 
 @Module({
-  imports: [PrismaModule, CqrsModule, AuthenticationModule, OrderedServiceModule],
+  imports: [
+    PrismaModule,
+    CqrsModule,
+    ServiceModule,
+    forwardRef(() => AuthenticationModule),
+    forwardRef(() => ProjectModule),
+    forwardRef(() => OrderedServiceModule),
+    forwardRef(() => AssignedTaskModule),
+    forwardRef(() => InvoiceModule),
+    forwardRef(() => UsersModule),
+  ],
   providers: [
     ...commandHandlers,
     ...queryHandlers,
@@ -110,6 +109,6 @@ const domainServices: Provider[] = [TotalDurationCalculator]
     ...domainServices,
   ],
   controllers: [...httpControllers],
-  exports: [],
+  exports: [...repositories, ...mappers, ...domainServices],
 })
 export class JobModule {}

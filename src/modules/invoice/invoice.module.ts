@@ -1,16 +1,6 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
-import UserMapper from '../users/user.mapper'
-import { JobMapper } from '../ordered-job/job.mapper'
-import { CUSTOM_PRICING_REPOSITORY } from '../custom-pricing/custom-pricing.di-token'
-import { CustomPricingRepository } from '../custom-pricing/database/custom-pricing.repository'
-import { CustomPricingMapper } from '../custom-pricing/custom-pricing.mapper'
-import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
-import { JobRepository } from '../ordered-job/database/job.repository'
-import { SERVICE_REPOSITORY } from '../service/service.di-token'
-import { ServiceRepository } from '../service/database/service.repository'
-import { ServiceMapper } from '../service/service.mapper'
 import { CreateInvoiceHttpController } from './commands/create-invoice/create-invoice.http.controller'
 import { UpdateInvoiceHttpController } from './commands/update-invoice/update-invoice.http.controller'
 import { DeleteInvoiceHttpController } from './commands/delete-invoice/delete-invoice.http.controller'
@@ -33,6 +23,10 @@ import { UpdatedInvoiceWhenPaymentIsCanceledEventHandler } from './application/e
 import { CalculateInvoiceService } from './domain/calculate-invoice-service.domain-service'
 import { UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler } from './application/event-handlers/update-invoice-total-when-ordered-service-price-is-updated.domain-event-handler'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
+import { JobModule } from '../ordered-job/job.module'
+import { UsersModule } from '../users/users.module'
+import { ServiceModule } from '../service/service.module'
+import { CustomPricingModule } from '../custom-pricing/custom-pricing.module'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -59,18 +53,6 @@ const repositories: Provider[] = [
     provide: INVOICE_REPOSITORY,
     useClass: InvoiceRepository,
   },
-  {
-    provide: CUSTOM_PRICING_REPOSITORY,
-    useClass: CustomPricingRepository,
-  },
-  {
-    provide: JOB_REPOSITORY,
-    useClass: JobRepository,
-  },
-  {
-    provide: SERVICE_REPOSITORY,
-    useClass: ServiceRepository,
-  },
 ]
 
 const eventHandlers: Provider[] = [
@@ -79,12 +61,26 @@ const eventHandlers: Provider[] = [
   UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler,
 ]
 
-const mappers: Provider[] = [InvoiceMapper, UserMapper, JobMapper, CustomPricingMapper, ServiceMapper]
+const mappers: Provider[] = [InvoiceMapper]
 
 const domainServices: Provider[] = [CalculateInvoiceService]
 @Module({
-  imports: [CqrsModule, PrismaModule, OrderedServiceModule],
+  imports: [
+    CqrsModule,
+    PrismaModule,
+    ServiceModule,
+    CustomPricingModule,
+    forwardRef(() => UsersModule),
+    forwardRef(() => OrderedServiceModule),
+    forwardRef(() => JobModule),
+  ],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
+  exports: [
+    {
+      provide: INVOICE_REPOSITORY,
+      useClass: InvoiceRepository,
+    },
+  ],
 })
 export class InvoiceModule {}

@@ -1,12 +1,14 @@
-import { NotFoundException } from '@nestjs/common'
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { Inject, NotFoundException } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { PtoTenurePolicies, Ptos } from '@prisma/client'
+import { PtoTenurePolicies } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
-import { PtoTenurePolicyRepository } from '../../database/pto-tenure-policy.repository'
 import { PtoTenurePolicyMapper } from '../../pto-tenure-policy.mapper'
 import { PtoTenurePolicyEntity } from '../../domain/pto-tenure-policy.entity'
+import { PtoTenurePolicyRepositoryPort } from '../../database/pto-tenure-policy.repository.port'
+import { PTO_TENURE_REPOSITORY } from '../../pto-tenure-policy.di-token'
 
 export class FindPtoTenurePolicyPaginatedQuery extends PaginatedQueryBase {
   constructor(props: PaginatedParams<FindPtoTenurePolicyPaginatedQuery>) {
@@ -18,7 +20,8 @@ export class FindPtoTenurePolicyPaginatedQuery extends PaginatedQueryBase {
 @QueryHandler(FindPtoTenurePolicyPaginatedQuery)
 export class FindPtoTenurePolicyPaginatedQueryHandler implements IQueryHandler {
   constructor(
-    private readonly ptoTenurePolicyRepository: PtoTenurePolicyRepository,
+    // @ts-ignore
+    @Inject(PTO_TENURE_REPOSITORY) private readonly ptoTenurePolicyRepository: PtoTenurePolicyRepositoryPort,
     private readonly mapper: PtoTenurePolicyMapper,
   ) {}
 

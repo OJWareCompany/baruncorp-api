@@ -1,7 +1,6 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
-import UserMapper from '../users/user.mapper'
 import { CreatePtoHttpController } from './commands/create-pto/create-pto.http.controller'
 import { UpdatePtoTotalHttpController } from './commands/update-pto-total/update-pto-total.http.controller'
 import { FindPtoPaginatedHttpController } from './queries/find-pto-paginated/find-pto.paginated.http.controller'
@@ -13,9 +12,6 @@ import { PtoRepository } from './database/pto.repository'
 import { PtoMapper } from './pto.mapper'
 import { PtoTenurePolicyModule } from '../pto-tenure-policy/pto-tenure-policy.module'
 import { UsersModule } from '../users/users.module'
-import { USER_REPOSITORY } from '../users/user.di-tokens'
-import { UserRepository } from '../users/database/user.repository'
-import { UserRoleMapper } from '../users/user-role.mapper'
 import { CreatePtoDetailHttpController } from './commands/create-pto-detail/create-pto-detail.http.controller'
 import { CreatePtoDetailService } from './commands/create-pto-detail/create-pto-detail.service'
 import { UpdatePtoDetailService } from './commands/update-pto-detail/update-pto-detail.service'
@@ -61,17 +57,14 @@ const queryHandlers: Provider[] = [
   FindPtoAnnualPaginatedQueryHandler,
   FindPtoTypePaginatedQueryHandler,
 ]
-const repositories: Provider[] = [
-  PtoRepository,
-  { provide: PTO_REPOSITORY, useClass: PtoRepository },
-  { provide: USER_REPOSITORY, useClass: UserRepository },
-]
 const eventHandlers: Provider[] = [CreatePtoWhenUserCreatedEventHandler, UpdatePtoRangeWhenUserUpdatedEventHandler]
-const mappers: Provider[] = [PtoMapper, UserMapper, UserRoleMapper]
+const repositories: Provider[] = [{ provide: PTO_REPOSITORY, useClass: PtoRepository }]
+const mappers: Provider[] = [PtoMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule, PtoTenurePolicyModule, UsersModule],
+  imports: [CqrsModule, PrismaModule, PtoTenurePolicyModule, forwardRef(() => UsersModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
+  exports: [...repositories, ...mappers],
 })
 export class PtoModule {}

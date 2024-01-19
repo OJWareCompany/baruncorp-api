@@ -8,4 +8,6 @@ export interface PtoTenurePolicyRepositoryPort {
   findOne(id: string): Promise<PtoTenurePolicyEntity | null>
   findMany(offset: number, limit: number): Promise<PtoTenurePolicyEntity[]>
   getCount(): Promise<number>
+
+  getTotalOfTenure(tenure: number): Promise<number>
 }

@@ -1,13 +1,11 @@
 import { CqrsModule } from '@nestjs/cqrs'
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from './user.di-tokens'
 import { UsersController } from './users.controller'
 import { UserService } from './users.service'
 import { PrismaModule } from '../database/prisma.module'
 import { UserRepository } from './database/user.repository'
 import { InvitationMailRepository } from './database/invitationMail.repository'
-import { ORGANIZATION_REPOSITORY } from '../organization/organization.di-token'
-import { OrganizationRepository } from '../organization/database/organization.repository'
 import UserMapper from './user.mapper'
 import { UserRoleMapper } from './user-role.mapper'
 import { OrganizationMapper } from '../organization/organization.mapper'
@@ -34,12 +32,6 @@ import { InviteHttpController } from './commands/invite/invite.http.controller'
 import { InviteService } from './commands/invite/invite.service'
 import { ResetDefaultTasksHttpController } from './commands/reset-default-tasks/reset-default-tasks.http.controller'
 import { ResetDefaultTasksService } from './commands/reset-default-tasks/reset-default-tasks.service'
-import { PositionRepository } from '../position/database/position.repository'
-import { PositionMapper } from '../position/position.mapper'
-import { POSITION_REPOSITORY } from '../position/position.di-token'
-import { ASSIGNED_TASK_REPOSITORY } from '../assigned-task/assigned-task.di-token'
-import { AssignedTaskRepository } from '../assigned-task/database/assigned-task.repository'
-import { AssignedTaskMapper } from '../assigned-task/assigned-task.mapper'
 import { CheckInvitedUserHttpController } from './queries/check-invited-user/check-invited-user.http.controller'
 import { ReactivateUserHttpController } from './commands/reactivate-user/reactivate-user.http.controller'
 import { DeactivateUserHttpController } from './commands/deactivate-user/deactivate-user.http.controller'
@@ -48,16 +40,12 @@ import { DeactivateUserService } from './commands/deactivate-user/deactivate-use
 import { UserManager } from './domain/domain-services/user-manager.domain-service'
 import { ChangeUserRoleService } from './commands/change-user-role/change-user-role.service'
 import { ChangeUserRoleHttpController } from './commands/change-user-role/change-user-role.http.controller'
-import { TaskStatusChangeValidationDomainService } from '../assigned-task/domain/domain-services/task-status-change-validation.domain-service'
-import { JOB_REPOSITORY } from '../ordered-job/job.di-token'
-import { JobRepository } from '../ordered-job/database/job.repository'
-import { JobMapper } from '../ordered-job/job.mapper'
-import { INVOICE_REPOSITORY } from '../invoice/invoice.di-token'
-import { InvoiceRepository } from '../invoice/database/invoice.repository'
-import { InvoiceMapper } from '../invoice/invoice.mapper'
-import { PTO_REPOSITORY } from '../pto/pto.di-token'
-import { PtoRepository } from '../pto/database/pto.repository'
-import { PtoMapper } from '../pto/pto.mapper'
+import { InvoiceModule } from '../invoice/invoice.module'
+import { JobModule } from '../ordered-job/job.module'
+import { OrganizationModule } from '../organization/organization.module'
+import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
+import { PositionModule } from '../position/position.module'
+import { PtoModule } from '../pto/pto.module'
 
 const httpControllers = [
   UsersController,
@@ -94,35 +82,29 @@ const commandHandlers: Provider[] = [
   ChangeUserRoleService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
-const domainServices: Provider[] = [UserManager, TaskStatusChangeValidationDomainService]
+const domainServices: Provider[] = [UserManager]
 
 const repositories: Provider[] = [
-  { provide: USER_REPOSITORY, useClass: UserRepository },
   { provide: INVITATION_MAIL_REPOSITORY, useClass: InvitationMailRepository },
-  { provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository },
-  { provide: POSITION_REPOSITORY, useClass: PositionRepository },
-  { provide: ASSIGNED_TASK_REPOSITORY, useClass: AssignedTaskRepository },
-  { provide: JOB_REPOSITORY, useClass: JobRepository },
-  { provide: INVOICE_REPOSITORY, useClass: InvoiceRepository },
-  { provide: PTO_REPOSITORY, useClass: PtoRepository },
+  { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 
-const mappers: Provider[] = [
-  UserMapper,
-  UserRoleMapper,
-  OrganizationMapper,
-  PositionMapper,
-  AssignedTaskMapper,
-  JobMapper,
-  InvoiceMapper,
-  PtoMapper,
-]
+const mappers: Provider[] = [UserMapper, UserRoleMapper]
 
 @Module({
-  imports: [PrismaModule, CqrsModule],
+  imports: [
+    PrismaModule,
+    CqrsModule,
+    forwardRef(() => OrganizationModule),
+    forwardRef(() => JobModule),
+    forwardRef(() => AssignedTaskModule),
+    forwardRef(() => InvoiceModule),
+    forwardRef(() => PositionModule),
+    forwardRef(() => PtoModule),
+  ],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
-  exports: [UserService],
+  exports: [UserService, ...repositories, ...mappers],
 })
 export class UsersModule {}
 

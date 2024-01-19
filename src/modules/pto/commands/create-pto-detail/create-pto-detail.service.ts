@@ -1,30 +1,31 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { BadRequestException, Inject } from '@nestjs/common'
+import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { PtoEntity } from '../../domain/pto.entity'
 import { CreatePtoDetailCommand } from './create-pto-detail.command'
-import { PtoRepository } from '../../database/pto.repository'
 import { PtoTenurePolicyRepository } from '../../../pto-tenure-policy/database/pto-tenure-policy.repository'
 import { PtoTargetUser } from '../../domain/value-objects/target.user.vo'
-import { Prisma } from '@prisma/client'
-import { PrismaService } from '@src/modules/database/prisma.service'
 import {
   AnnualPtoNotExceedException,
   DateOfJoiningNotFoundException,
   DaysRangeIssueException,
   OverlapsPtoException,
 } from '../../domain/pto.error'
-import { PtoDetail } from '../../domain/value-objects/pto.detail.vo'
 import { PtoDetailEntity } from '../../domain/pto-detail.entity'
 import { Exception } from 'handlebars'
 import { addYears, subDays } from 'date-fns'
+import { PtoRepositoryPort } from '../../database/pto.repository.port'
+import { PTO_REPOSITORY } from '../../pto.di-token'
+import { PtoTenurePolicyRepositoryPort } from '../../../pto-tenure-policy/database/pto-tenure-policy.repository.port'
+import { PTO_TENURE_REPOSITORY } from '../../../pto-tenure-policy/pto-tenure-policy.di-token'
 
 @CommandHandler(CreatePtoDetailCommand)
 export class CreatePtoDetailService implements ICommandHandler {
   constructor(
-    private readonly ptoRepository: PtoRepository,
-    private readonly ptoTenurePolicyRepository: PtoTenurePolicyRepository,
+    // @ts-ignore
+    @Inject(PTO_REPOSITORY) private readonly ptoRepository: PtoRepositoryPort, // @ts-ignore
+    @Inject(PTO_TENURE_REPOSITORY) private readonly ptoTenurePolicyRepository: PtoTenurePolicyRepositoryPort,
   ) {}
   async execute(command: CreatePtoDetailCommand): Promise<AggregateID> {
     // 유저 검색
@@ -128,7 +129,6 @@ export class CreatePtoDetailService implements ICommandHandler {
     })
 
     await this.ptoRepository.insertDetail(ptoDetailEntity)
-
     return ptoDetailEntity.id
   }
 }

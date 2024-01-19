@@ -9,7 +9,7 @@ import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-ser
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { EXPENSE_PRICING_REPOSITORY } from '../../../expense-pricing/expense-pricing.di-token'
 import { ExpensePricingRepositoryPort } from '../../../expense-pricing/database/expense-pricing.repository.port'
-import { TaskStatusChangeValidationDomainService } from '../../domain/domain-services/task-status-change-validation.domain-service'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
   constructor(
@@ -20,7 +20,7 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
     // @ts-ignore
     @Inject(EXPENSE_PRICING_REPOSITORY) private readonly expensePricingRepo: ExpensePricingRepositoryPort,
     private readonly calculateVendorCostDomainService: CalculateVendorCostDomainService,
-    private readonly taskStatusValidator: TaskStatusChangeValidationDomainService,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   @OnEvent([OrderedServicePriceUpdatedDomainEvent.name])
   async handle(event: OrderedServicePriceUpdatedDomainEvent) {
@@ -33,7 +33,7 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
           this.calculateVendorCostDomainService,
           expensePricing,
           orderedService,
-          this.taskStatusValidator,
+          this.orderModificationValidator,
         )
         await this.assignedTaskRepo.update(assignedTask)
       }),

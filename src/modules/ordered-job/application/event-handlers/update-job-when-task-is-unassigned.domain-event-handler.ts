@@ -4,6 +4,8 @@ import { OnEvent } from '@nestjs/event-emitter'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { AssignedTaskUnassignedDomainEvent } from '../../../assigned-task/domain/events/assigned-task-unassigned.domain-event'
+import { OrderStatusChangeValidator } from '../../domain/domain-services/order-status-change-validator.domain-service'
+import { OrderModificationValidator } from '../../domain/domain-services/order-modification-validator.domain-service'
 
 /**
  * TODO: 이벤트 다 손봐야할듯.. 주문상태 업데이트 정책대로 재검토, 재구현, 그리고 Aggregate로 관리하는 것 고려
@@ -13,6 +15,8 @@ export class UpdateJobWhenTaskIsUnassignedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
+    private readonly orderStatusChangeValidator: OrderStatusChangeValidator,
+    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   @OnEvent(AssignedTaskUnassignedDomainEvent.name, { async: true, promisify: true })
   async handle(event: AssignedTaskUnassignedDomainEvent) {
@@ -24,7 +28,7 @@ export class UpdateJobWhenTaskIsUnassignedDomainEventHandler {
     if (isInprogress) {
       job.start()
     } else {
-      job.notStart()
+      await job.backToNotStart(this.orderStatusChangeValidator, this.orderModificationValidator)
     }
     await this.jobRepository.update(job)
   }
