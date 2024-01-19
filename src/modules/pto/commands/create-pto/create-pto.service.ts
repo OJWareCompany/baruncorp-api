@@ -6,10 +6,8 @@ import { PtoEntity } from '../../domain/pto.entity'
 import { CreatePtoCommand } from './create-pto.command'
 import { PtoRepositoryPort } from '../../database/pto.repository.port'
 import { UserNotFoundException } from '../../../users/user.error'
-import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { PTO_REPOSITORY } from '../../../pto/pto.di-token'
 import { DateOfJoiningNotFoundException } from '../../domain/pto.error'
-import { PrismaService } from '../../../database/prisma.service'
 import { PtoTargetUser } from '../../domain/value-objects/target.user.vo'
 
 @CommandHandler(CreatePtoCommand)

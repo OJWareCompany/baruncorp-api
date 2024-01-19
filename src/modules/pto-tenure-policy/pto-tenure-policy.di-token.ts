@@ -1,1 +1,1 @@
-export const PTO_REPOSITORY = Symbol('PTO_REPOSITORY')
+export const PTO_TENURE_REPOSITORY = Symbol('PTO_TENURE_REPOSITORY')

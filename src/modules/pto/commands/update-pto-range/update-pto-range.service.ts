@@ -1,13 +1,19 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PaidPtoUpdateException, PtoNotFoundException } from '../../domain/pto.error'
 import { UpdatePtoRangeCommand } from './update-pto-range.command'
-import { PtoRepository } from '../../database/pto.repository'
 import { PtoEntity } from '../../domain/pto.entity'
 import { Prisma } from '@prisma/client'
+import { Inject } from '@nestjs/common'
+import { PTO_REPOSITORY } from '../../pto.di-token'
+import { PtoRepositoryPort } from '../../database/pto.repository.port'
 
 @CommandHandler(UpdatePtoRangeCommand)
 export class UpdatePtoRangeService implements ICommandHandler {
-  constructor(private readonly ptoRepository: PtoRepository) {}
+  constructor(
+    // @ts-ignore
+    @Inject(PTO_REPOSITORY)
+    private readonly ptoRepository: PtoRepositoryPort,
+  ) {}
   async execute(command: UpdatePtoRangeCommand): Promise<void> {
     // Todo. 추후 dateOfJoinning이 null로 수정 되는 경우 기존 PTO 데이터 리셋해야하는지 확인 필요
     if (command.dateOfJoining === null) {

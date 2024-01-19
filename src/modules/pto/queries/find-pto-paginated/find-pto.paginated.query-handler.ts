@@ -1,14 +1,14 @@
-import { NotFoundException } from '@nestjs/common'
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { Prisma, Ptos, Users } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PtoEntity } from '../../domain/pto.entity'
-import { PtoMapper } from '../../pto.mapper'
-import { PtoRepository } from '../../database/pto.repository'
 import { PtoResponseDto } from '../../dtos/pto.response.dto'
-import { PrismaService } from '../../../database/prisma.service'
+import { PTO_REPOSITORY } from '../../pto.di-token'
+import { PtoRepositoryPort } from '../../database/pto.repository.port'
+import { Inject } from '@nestjs/common'
 
 export class FindPtoPaginatedQuery extends PaginatedQueryBase {
   readonly userId?: string
@@ -22,7 +22,11 @@ export class FindPtoPaginatedQuery extends PaginatedQueryBase {
 
 @QueryHandler(FindPtoPaginatedQuery)
 export class FindPtoPaginatedQueryHandler implements IQueryHandler {
-  constructor(private readonly ptoRepository: PtoRepository) {}
+  constructor(
+    // @ts-ignore
+    @Inject(PTO_REPOSITORY)
+    private readonly ptoRepository: PtoRepositoryPort,
+  ) {}
 
   async execute(query: FindPtoPaginatedQuery) {
     const condition: Prisma.PtosWhereInput = {
