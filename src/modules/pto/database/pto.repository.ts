@@ -79,7 +79,7 @@ export class PtoRepository implements PtoRepositoryPort {
         data: record,
       })
     })
-    // 각각 entity들의 업데이트 데이터가 다르므로 개별 업데이트
+
     await Promise.all(updatePromises)
   }
 

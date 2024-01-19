@@ -17,7 +17,9 @@ import { InvitationNotFoundException, OnlyMemberCanBeAdminException, UserNotFoun
 import { OrganizationNotFoundException } from '../organization/domain/organization.error'
 import { PrismaService } from '../database/prisma.service'
 import { Roles } from '@prisma/client'
-import { PaidPtoUpdateException } from '../pto/domain/pto.error'
+import { OldPtoDetailException, PaidPtoUpdateException } from '../pto/domain/pto.error'
+import { Pto } from './domain/value-objects/pto.vo'
+import { PtoDetail } from './domain/value-objects/pto-detail.vo'
 
 @Injectable()
 export class UserService {
@@ -65,7 +67,7 @@ export class UserService {
     isVendor?: boolean,
     dateOfJoining?: Date | null,
   ): Promise<void> {
-    const user = await this.userRepository.findOneByIdOrThrow(userId)
+    const user = await this.userRepository.findOneByIdIncludePtos(userId)
     if (!user) throw new UserNotFoundException()
 
     user.updateName(userName).updatePhoneNumber(phoneNumber).updateDeliverableEmails(deliverablesEmails)
@@ -73,15 +75,19 @@ export class UserService {
       user.updateVendor(isVendor)
     }
     if (dateOfJoining !== undefined) {
-      // TODO: Consider an Aggregate Pattern
       // 만약 Paid 된 Pto존재한다면 입사기념일 수정 불가능
-      const paidPtosCount: number = await this.ptoRepository.getCount({
-        userId: user.id,
-        isPaid: true,
-      })
-
-      if (paidPtosCount > 0) {
+      const paidPtos: Pto[] = user.ptos.filter((pto) => pto.isPaid)
+      if (paidPtos.length > 0) {
         throw new PaidPtoUpdateException()
+      }
+
+      if (dateOfJoining !== null) {
+        // 만약 변경하려는 입사기념일 이전에 연차 기록이 존재한다면 입사기념일 수정 불가능
+        const oldPtoDetails: PtoDetail[] = user.ptoDetails.filter((detail) => detail.startedAt < dateOfJoining)
+        console.log(JSON.stringify(oldPtoDetails))
+        if (oldPtoDetails.length > 0) {
+          throw new OldPtoDetailException()
+        }
       }
 
       user.updateDateOfJoining(dateOfJoining)

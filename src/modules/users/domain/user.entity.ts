@@ -15,6 +15,8 @@ import { Organization } from './value-objects/organization.value-object'
 import { UserManager } from './domain-services/user-manager.domain-service'
 import { UserCreatedDomainEvent } from './events/user-created.domain-event'
 import { UserUpdatedDomainEvent } from './events/user-updated.domain-event'
+import { Pto } from './value-objects/pto.vo'
+import { PtoDetail } from './value-objects/pto-detail.vo'
 
 export class UserEntity extends AggregateRoot<UserProps> {
   protected _id: string
@@ -33,6 +35,8 @@ export class UserEntity extends AggregateRoot<UserProps> {
       position: null,
       licenses: [],
       availableTasks: [],
+      ptos: [],
+      ptoDetails: [],
       isHandRaisedForTask: false,
       status: UserStatusEnum.INVITATION_NOT_SENT,
       isVendor: create.organization.organizationType === 'administration' ? false : create.isVendor,
@@ -58,6 +62,18 @@ export class UserEntity extends AggregateRoot<UserProps> {
 
   get isAdministrationMember() {
     return this.props.organization.organizationType === 'administration'
+  }
+
+  get dateOfJoining(): Date | null {
+    return this.props.dateOfJoining
+  }
+
+  get ptos(): Pto[] {
+    return this.props.ptos
+  }
+
+  get ptoDetails(): PtoDetail[] {
+    return this.props.ptoDetails
   }
 
   changeRole(newRole: UserRoleNameEnum): UserEntity {

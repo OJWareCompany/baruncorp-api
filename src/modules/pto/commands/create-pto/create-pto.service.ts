@@ -11,6 +11,7 @@ import { PTO_REPOSITORY } from '../../../pto/pto.di-token'
 import { DateOfJoiningNotFoundException } from '../../domain/pto.error'
 import { PrismaService } from '../../../database/prisma.service'
 import { PtoTargetUser } from '../../domain/value-objects/target.user.vo'
+import { addYears, subDays } from 'date-fns'
 
 @CommandHandler(CreatePtoCommand)
 export class CreatePtoService implements ICommandHandler {
@@ -28,9 +29,15 @@ export class CreatePtoService implements ICommandHandler {
     const ownerUserDateOfJoining = targetUser.dateOfJoining
     if (!ownerUserDateOfJoining) throw new DateOfJoiningNotFoundException()
 
+    const startedAt = addYears(ownerUserDateOfJoining, command.tenure - 1)
+    const endedAt = subDays(addYears(startedAt, 1), 1)
     const entity: PtoEntity = PtoEntity.create({
-      ...command,
+      userId: command.userId,
+      tenure: command.tenure,
       isPaid: false,
+      total: command.total,
+      startedAt: startedAt,
+      endedAt: endedAt,
       dateOfJoining: ownerUserDateOfJoining,
     })
 

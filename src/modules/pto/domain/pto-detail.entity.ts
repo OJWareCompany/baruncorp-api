@@ -10,6 +10,7 @@ import {
   ParentPtoNotFoundException,
 } from './pto.error'
 import { PtoEntity } from './pto.entity'
+import { addDays, subMilliseconds } from 'date-fns'
 
 export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
   protected _id: string
@@ -29,8 +30,16 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
     return new PtoDetailEntity({ id, props })
   }
 
+  get startedAt() {
+    return this.props.startedAt
+  }
+
   set startedAt(startedAt: Date) {
     this.props.startedAt = startedAt
+  }
+
+  get endedAt() {
+    return subMilliseconds(addDays(this.startedAt, this.days), 1)
   }
 
   set days(days: number) {
@@ -47,6 +56,14 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
 
   set parentPtoEntity(parent: PtoEntity) {
     this.props.parentPtoEntity = parent
+  }
+
+  get id(): string {
+    return this._id
+  }
+
+  set id(id: string) {
+    this._id = id
   }
 
   public validate(): void {
@@ -71,7 +88,7 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
     }
     // pto 요청한 날짜 중간에 입사기념일 걸쳤는지 체크
     const startDateTenure = this.calcTenure(parentPtoProps.dateOfJoining, this.props.startedAt)
-    const endDateTenure = this.calcTenure(parentPtoProps.dateOfJoining, this.getEndedAt())
+    const endDateTenure = this.calcTenure(parentPtoProps.dateOfJoining, this.endedAt)
     if (startDateTenure !== endDateTenure) {
       throw new DaysRangeIssueException()
     }
@@ -90,14 +107,6 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
     if (requestedTotalAmount > usablePtoValue) {
       throw new AnnualPtoNotExceedException()
     }
-  }
-
-  private getEndedAt(): Date {
-    const endedAt: Date = new Date(this.props.startedAt)
-    endedAt.setDate(endedAt.getDate() + this.props.days)
-    endedAt.setTime(endedAt.getTime() - 1)
-
-    return endedAt
   }
 
   private calcTenure(dateOfJoining: Date, targetDate: Date): number {

@@ -119,3 +119,9 @@ export class AmountPerDayRangeException extends BadRequestException {
     super('Amount per day field must checked range', '20820')
   }
 }
+
+export class OldPtoDetailException extends BadRequestException {
+  constructor() {
+    super('There is a history of PTO before the new joining of date', '20821')
+  }
+}

@@ -10,6 +10,8 @@ import {
   UserLicense,
   UserAvailableTasks,
   Tasks,
+  Ptos,
+  PtoDetails,
 } from '@prisma/client'
 import { UserRepositoryPort } from './user.repository.port'
 import { PrismaService } from '../../database/prisma.service'
@@ -28,6 +30,8 @@ export type UserQueryModel = Users & {
   userPosition: (UserPosition & { position: Positions }) | null
   licenses: UserLicense[]
   availableTasks: (UserAvailableTasks & { task: Tasks | null })[]
+  ptos?: Ptos[]
+  ptoDetails?: PtoDetails[]
 }
 
 @Injectable()
@@ -40,6 +44,16 @@ export class UserRepository implements UserRepositoryPort {
     availableTasks: { include: { task: true } },
   }
 
+  static userQueryIncludePtoInput = {
+    organization: true,
+    userRole: { include: { role: true } },
+    userPosition: { include: { position: true } },
+    licenses: true,
+    availableTasks: { include: { task: true } },
+    ptos: true,
+    ptoDetails: true,
+  }
+
   constructor(
     private readonly prismaService: PrismaService,
     private readonly userMapper: UserMapper,
@@ -50,6 +64,15 @@ export class UserRepository implements UserRepositoryPort {
     const user: UserQueryModel | null = await this.prismaService.users.findUnique({
       where: { id },
       include: UserRepository.userQueryIncludeInput,
+    })
+    if (!user) throw new UserNotFoundException()
+    return this.userMapper.toDomain(user)
+  }
+
+  async findOneByIdIncludePtos(id: string): Promise<UserEntity> {
+    const user: UserQueryModel | null = await this.prismaService.users.findUnique({
+      where: { id },
+      include: UserRepository.userQueryIncludePtoInput,
     })
     if (!user) throw new UserNotFoundException()
     return this.userMapper.toDomain(user)

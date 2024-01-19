@@ -5,6 +5,7 @@ import { PtoDetailEntity } from './pto-detail.entity'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { PtoDetail } from './value-objects/pto.detail.vo'
 import { LowerThanUsedPtoException, PaidPtoUpdateException } from './pto.error'
+import { addDays, addYears, subDays, subMilliseconds } from 'date-fns'
 
 export class PtoEntity extends AggregateRoot<PtoProps> {
   protected _id: string
@@ -13,16 +14,11 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     const id = v4()
     const props: PtoProps = {
       ...create,
-      startedAt: null,
-      endedAt: null,
       targetUser: null,
-      details: null,
+      details: [],
     }
 
-    const entity: PtoEntity = new PtoEntity({ id, props })
-    entity.renewDateRange()
-
-    return entity
+    return new PtoEntity({ id, props })
   }
 
   public getDateOfJoining(): Date | null | undefined {
@@ -42,30 +38,9 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
   }
 
   public renewDateRange() {
-    this.initStartedAt()
-    this.initEndedAt()
-  }
-
-  private initStartedAt() {
-    if (!this.props.dateOfJoining) return
-
     const startedAt: Date = new Date(this.props.dateOfJoining)
-    // tenure이 1인 경우는 startedAt이 dateOfJoining이 된다
-    startedAt.setFullYear(startedAt.getFullYear() + (this.props.tenure - 1))
-
-    this.props.startedAt = startedAt
-  }
-
-  private initEndedAt() {
-    if (!this.props.startedAt) return
-
-    const endedAt: Date = new Date(this.props.startedAt)
-    // startedAt 으로부터 1년 후
-    endedAt.setFullYear(endedAt.getFullYear() + 1)
-    // 하루 뺀다
-    endedAt.setDate(endedAt.getDate() - 1)
-
-    this.props.endedAt = endedAt
+    this.props.startedAt = addYears(startedAt, this.tenure - 1)
+    this.props.endedAt = subDays(addYears(this.props.startedAt, 1), 1)
   }
 
   public hasPtoDetailDateInRange(startedAt: Date, days: number): boolean {
@@ -74,10 +49,11 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     let result = false
 
     const targetStartedAt = startedAt
-    const targetEndedAt = this.makeEndedAt(startedAt, days)
+    const targetEndedAt = subMilliseconds(addDays(startedAt, days), 1)
     for (const detail of this.props.details) {
       const detailsStartedAt = detail.startedAt
-      const detailsEndedAt: Date = this.makeEndedAt(detail.startedAt, detail.days)
+      // 하루 더하고 1 밀리 세컨드(ms) 뺀다
+      const detailsEndedAt: Date = subMilliseconds(addDays(detail.startedAt, detail.days), 1)
       // 기존의 ptoDetails 영역(detailsStartedAt ~ detailsEndedAt)을 침범한다면 true 반환
       if (!(targetEndedAt < detailsStartedAt || detailsEndedAt < targetStartedAt)) {
         result = true
@@ -88,23 +64,43 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     return result
   }
 
-  private makeEndedAt(startedAt: Date, days: number): Date {
-    const endedAt = new Date(startedAt)
-    endedAt.setDate(endedAt.getDate() + days)
-    endedAt.setTime(endedAt.getTime() - 1) // 1ms 뺀다
+  get userId() {
+    return this.props.userId
+  }
 
-    return endedAt
+  get startedAt() {
+    return this.props.startedAt
+  }
+
+  get endedAt() {
+    return this.props.endedAt
+  }
+
+  get total() {
+    return this.props.total
   }
 
   set total(total: number) {
     this.props.total = total
   }
 
+  get tenure() {
+    return this.props.tenure
+  }
+
+  set tenure(tenure: number) {
+    this.props.tenure = tenure
+  }
+
   set isPaid(isPaid: boolean) {
     this.props.isPaid = isPaid
   }
 
-  set details(details: PtoDetail[] | null) {
+  get details(): PtoDetail[] {
+    return this.props.details
+  }
+
+  set details(details: PtoDetail[]) {
     this.props.details = details
   }
 

@@ -12,6 +12,8 @@ import { AutoAssignmentTypeEnum } from '../position/domain/position.type'
 import { UserStatusEnum } from './domain/user.types'
 import { License } from './domain/value-objects/license.value-object'
 import { LicenseTypeEnum } from '../license/dtos/license.response.dto'
+import { Pto } from './domain/value-objects/pto.vo'
+import { PtoDetail } from './domain/value-objects/pto-detail.vo'
 
 @Injectable()
 export default class UserMapper implements Mapper<UserEntity, UserModel, UserResponseDto> {
@@ -83,6 +85,23 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
             licenseType: (task.task?.license_type as LicenseTypeEnum) || null,
           }
         }),
+        ptos: record.ptos
+          ? record.ptos.map((pto) => {
+              return new Pto({
+                isPaid: pto.isPaid,
+              })
+            })
+          : [],
+        ptoDetails: record.ptoDetails
+          ? record.ptoDetails.map((ptoDetail) => {
+              return new PtoDetail({
+                typeId: ptoDetail.ptoTypeId,
+                amount: ptoDetail.amount,
+                startedAt: ptoDetail.startedAt,
+                days: ptoDetail.days,
+              })
+            })
+          : [],
         role: record.userRole?.roleName as UserRoleNameEnum,
         isVendor: record.isVendor,
         isHandRaisedForTask: record.isHandRaisedForTask,

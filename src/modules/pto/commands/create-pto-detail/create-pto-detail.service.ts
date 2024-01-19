@@ -18,6 +18,7 @@ import {
 import { PtoDetail } from '../../domain/value-objects/pto.detail.vo'
 import { PtoDetailEntity } from '../../domain/pto-detail.entity'
 import { Exception } from 'handlebars'
+import { addYears, subDays } from 'date-fns'
 
 @CommandHandler(CreatePtoDetailCommand)
 export class CreatePtoDetailService implements ICommandHandler {
@@ -87,11 +88,14 @@ export class CreatePtoDetailService implements ICommandHandler {
     } else {
       // PTO(시즌)을 찾지 못함 => PTO(시즌)생성하여 담아서 함께 추가(예외 케이스)
       const total: number = await this.ptoTenurePolicyRepository.getTotalOfTenure(tenure)
+
       const ptoEntity: PtoEntity = PtoEntity.create({
         userId: command.userId,
         tenure: tenure,
         isPaid: false,
         total: total,
+        startedAt: command.startedAt,
+        endedAt: subDays(addYears(command.startedAt, 1), 1),
         dateOfJoining: dateOfJoining,
       })
 

@@ -64,6 +64,7 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
         details: record.details.map((detail) => {
           return new PtoDetail({
             id: detail.id,
+            typeId: detail.ptoTypeId,
             name: detail.ptoType.name,
             abbreviation: detail.ptoType.abbreviation,
             amount: detail.amount,

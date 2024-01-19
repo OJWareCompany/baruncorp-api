@@ -7,12 +7,12 @@ export interface CreatePtoProps {
   tenure: number
   total: number
   isPaid: boolean
+  startedAt: Date
+  endedAt: Date
   dateOfJoining: Date
 }
 
 export interface PtoProps extends CreatePtoProps {
-  startedAt: Date | null
-  endedAt: Date | null
   targetUser: PtoTargetUser | null
-  details: PtoDetail[] | null
+  details: PtoDetail[]
 }
