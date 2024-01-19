@@ -15,7 +15,6 @@ import { CancelOrderedServiceHttpController } from './command/cancel-ordered-ser
 import { CancelOrderedServiceService } from './command/cancel-ordered-service/cancel-ordered-service.service'
 import { ReactivateOrderedServiceHttpController } from './command/reactivate-ordered-service/reactivate-ordered-service.http.controller'
 import { ReactivateOrderedServiceService } from './command/reactivate-ordered-service/reactivate-ordered-service.service'
-import { CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/complete-ordered-service-when-task-is-completed.domain-event-handler'
 import { CancelOrderedServiceWhenJobIsCanceledDomainEventHandler } from './application/event-handlers/cancel-ordered-service-when-job-is-canceled.domain-event-handler'
 import { UpdateManualPriceHttpController } from './command/update-manual-price/update-manual-price.http.controller'
 import { UpdateRevisionSizeHttpController } from './command/update-revision-size/update-revision-size.http.controller'
@@ -35,11 +34,13 @@ import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
 import { ServiceModule } from '../service/service.module'
 import { UsersModule } from '../users/users.module'
 import { CustomPricingModule } from '../custom-pricing/custom-pricing.module'
+import { StartOrderedServiceWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-ordered-service-when-task-is-assigned.domain-event-handler'
+import { HoldOrderedServiceWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-ordered-service-when-job-is-held.domain-event-handler'
+import { UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEventHandler } from './application/event-handlers/update-ordered-service-to-not-started-when-job-is-updated-to-not-started.domain-event-handler'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
   UpdateOrderedServiceHttpController,
-  // DeleteOrderedServiceHttpController,
   FindOrderedServiceHttpController,
   CancelOrderedServiceHttpController,
   ReactivateOrderedServiceHttpController,
@@ -50,7 +51,6 @@ const httpControllers = [
 const commandHandlers: Provider[] = [
   CreateOrderedServiceService,
   UpdateOrderedServiceService,
-  // DeleteOrderedServiceService,
   CancelOrderedServiceService,
   ReactivateOrderedServiceService,
   UpdateManualPriceService,
@@ -63,9 +63,11 @@ const queryHandlers: Provider[] = [
 ]
 const eventHandlers: Provider[] = [
   CreateOrderedServiceWhenJobIsCreatedEventHandler,
-  CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler,
   CancelOrderedServiceWhenJobIsCanceledDomainEventHandler,
   UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler,
+  StartOrderedServiceWhenTaskIsAssignedDomainEventHandler,
+  HoldOrderedServiceWhenJobIsHeldDomainEventHandler,
+  UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]
 

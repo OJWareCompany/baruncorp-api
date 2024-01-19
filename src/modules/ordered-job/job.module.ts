@@ -18,18 +18,15 @@ import { DeleteJobService } from './commands/delete-job/delete-job.service'
 import { FindMyJobPaginatedHttpController } from './queries/find-my-jobs/find-my-job.paginated.http.controller'
 import { FindMyJobPaginatedQueryHandler } from './queries/find-my-jobs/find-my-job.paginated.query-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
-import { StartJobWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-job-when-task-is-assigned.domain-event-handler'
-import { CompleteJobWhenServiceIsCompletedDomainEventHandler } from './application/event-handlers/complete-job-when-service-is-completed.domain-event-handler'
+import { StartJobWhenOrderedServiceIsStartedDomainEventHandler } from './application/event-handlers/start-job-when-ordered-service-is-started.domain-event-handler'
 import { CancelJobHttpController } from './commands/cancel-job/cancel-job.http.controller'
 import { CancelJobService } from './commands/cancel-job/cancel-job.service'
 import { HoldJobHttpController } from './commands/hold-job/hold-job.http.controller'
 import { HoldJobService } from './commands/hold-job/hold-job.service'
 import { FindJobToInvoiceHttpController } from './queries/find-job-to-invoice/find-job-to-invoice.http.controller'
 import { FindJobToInvoiceQueryHandler } from './queries/find-job-to-invoice/find-job-to-invoice.query-handler'
-import { UpdateJobWhenTaskIsReopenedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-reopended.domain-event-handler'
 import { UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler } from './application/event-handlers/update-job-revision-size-when-ordered-service-revision-size-updated.domain-event-handler'
 import { UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler } from './application/event-handlers/update-pricing-type-when-ordered-service-applied.domain-event-handler'
-import { UpdateJobWhenTaskIsUnassignedDomainEventHandler } from './application/event-handlers/update-job-when-task-is-unassigned.domain-event-handler'
 import { SendDeliverablesHttpController } from './commands/send-deliverables/send-deliverables.http.controller'
 import { SendDeliverablesService } from './commands/send-deliverables/send-deliverables.service'
 import { FindMyOrderedJobPaginatedHttpController } from './queries/find-my-ordered-jobs/find-my-ordered-jobs.paginated.http.controller'
@@ -75,12 +72,9 @@ const queryHandlers: Provider[] = [
 ]
 const eventHandlers: Provider[] = [
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
-  StartJobWhenTaskIsAssignedDomainEventHandler,
-  CompleteJobWhenServiceIsCompletedDomainEventHandler,
-  UpdateJobWhenTaskIsReopenedDomainEventHandler,
+  StartJobWhenOrderedServiceIsStartedDomainEventHandler,
   UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler,
   UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler,
-  UpdateJobWhenTaskIsUnassignedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 const mappers: Provider[] = [JobMapper]

@@ -31,7 +31,7 @@ export class CancelOrderedServiceService implements ICommandHandler {
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
-    orderedService.cancel()
+    orderedService.cancel('manually')
     await this.orderedServiceRepo.update(orderedService)
   }
 }

@@ -32,7 +32,7 @@ export class ReactivateOrderedServiceService implements ICommandHandler {
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
-    orderedService.backToNotStarted()
+    orderedService.backToNotStarted('manually')
     await this.orderedServiceRepo.update(orderedService)
   }
 }

@@ -8,8 +8,11 @@ import {
 } from './ordered-service.type'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import {
+  OrderedServiceAutoCancelableException,
   OrderedServiceFreeRevisionManualPriceUpdateException,
+  OrderedServiceHoldableException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
+  OrderedServiceAutoStartableException,
 } from './ordered-service.error'
 import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
 import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
@@ -33,6 +36,10 @@ import { OrderedServiceCanceledAndKeptInvoiceDomainEvent } from './events/ordere
 import { OrderedServiceHeldDomainEvent } from './events/ordered-service-held.domain-event'
 import { OrderedServiceStartedDomainEvent } from './events/ordered-service-started.domain-event'
 import { OrderedServiceResetDomainEvent } from './events/ordered-service-reset.domain-event'
+import { JobCanceledDomainEvent } from '../../ordered-job/domain/events/job-canceled.domain-event'
+import { JobCanceledAndKeptInvoiceDomainEvent } from '../../ordered-job/domain/events/job-canceled-and-kept-invoice.domain-event'
+import { JobNotStartedDomainEvent } from '../../ordered-job/domain/events/job-not-started.domain-event'
+import { JobStartedDomainEvent } from '../../ordered-job/domain/events/job-started.domain-event'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -224,8 +231,13 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  // Canceled 조건없이 가능한가? 완료상태에서 취소 가능?
-  cancel(): this {
+  cancel(option: JobCanceledDomainEvent | JobCanceledAndKeptInvoiceDomainEvent | 'manually'): this {
+    const excludesFromAutoUpdate = [OrderedServiceStatusEnum.Completed, OrderedServiceStatusEnum.Canceled_Invoice]
+    const isExcludedFromAutoUpdate = excludesFromAutoUpdate.includes(this.props.status)
+    if (option !== 'manually' && isExcludedFromAutoUpdate) {
+      throw new OrderedServiceAutoCancelableException()
+    }
+
     this.props.status = OrderedServiceStatusEnum.Canceled
     this.props.doneAt = new Date()
     this.addEvent(
@@ -248,7 +260,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  backToNotStarted() {
+  backToNotStarted(option: JobNotStartedDomainEvent | JobStartedDomainEvent | 'manually') {
+    const targetStatusForAutoUpdate = [OrderedServiceStatusEnum.Canceled, OrderedServiceStatusEnum.On_Hold]
+    const isIncludedFromAutoUpdate = targetStatusForAutoUpdate.includes(this.props.status)
+    if (option !== 'manually' && !isIncludedFromAutoUpdate) {
+      throw new OrderedServiceAutoStartableException()
+    }
     this.props.status = OrderedServiceStatusEnum.Not_Started
     this.props.doneAt = null
     this.addEvent(
@@ -260,6 +277,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   hold() {
+    const targetStatus = [OrderedServiceStatusEnum.Not_Started, OrderedServiceStatusEnum.In_Progress]
+    if (!targetStatus.includes(this.props.status)) {
+      throw new OrderedServiceHoldableException()
+    }
     this.props.status = OrderedServiceStatusEnum.On_Hold
     this.addEvent(
       new OrderedServiceHeldDomainEvent({
@@ -274,6 +295,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     this.addEvent(
       new OrderedServiceStartedDomainEvent({
         aggregateId: this.id,
+        jobId: this.jobId,
       }),
     )
     return this

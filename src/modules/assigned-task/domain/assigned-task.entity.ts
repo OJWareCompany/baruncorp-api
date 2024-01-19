@@ -1,21 +1,19 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateAssignedTaskProps, AssignedTaskProps, AssignedTaskStatusEnum } from './assigned-task.type'
-import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned.domain-event'
-import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
-import { AssignedTaskReopenedDomainEvent } from './events/assigned-task-reopened.domain-event'
-import { AssignedTaskDurationUpdatedDomainEvent } from './events/assigned-task-duration-updated.domain-event'
 import { UserEntity } from '../../users/domain/user.entity'
-import { CalculateVendorCostDomainService } from './calculate-vendor-cost.domain-service'
 import { ExpensePricingEntity } from '../../expense-pricing/domain/expense-pricing.entity'
 import { OrderedServiceEntity } from '../../ordered-service/domain/ordered-service.entity'
-import { AssignedTaskUnassignedDomainEvent } from './events/assigned-task-unassigned.domain-event'
+import { PrismaService } from '../../database/prisma.service'
+import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { CreateAssignedTaskProps, AssignedTaskProps, AssignedTaskStatusEnum } from './assigned-task.type'
+import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned.domain-event'
+import { AssignedTaskDurationUpdatedDomainEvent } from './events/assigned-task-duration-updated.domain-event'
+import { CalculateVendorCostDomainService } from './calculate-vendor-cost.domain-service'
 import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.domain-event'
 import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activated.domain-event'
 import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
-import { PrismaService } from '../../database/prisma.service'
 import { AssignedTaskAlreadyCompletedException, AssignedTaskDurationExceededException } from './assigned-task.error'
-import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -186,12 +184,6 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     this.props.assigneeId = null
     this.props.assigneeName = null
     this.props.startedAt = null
-    this.addEvent(
-      new AssignedTaskReopenedDomainEvent({
-        aggregateId: this.id,
-        jobId: this.props.jobId,
-      }),
-    )
     return this
   }
 
@@ -205,12 +197,6 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     this.props.status = AssignedTaskStatusEnum.Not_Started
     this.props.startedAt = null
     this.props.doneAt = null
-    this.addEvent(
-      new AssignedTaskUnassignedDomainEvent({
-        aggregateId: this.id,
-        jobId: this.props.jobId,
-      }),
-    )
     return this
   }
 
@@ -239,6 +225,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
         note: this.props.description,
         assigneeUserId: this.props.assigneeId,
         assigneeName: this.props.assigneeName,
+        orderedServiceId: this.props.orderedServiceId,
       }),
     )
     return this

@@ -60,3 +60,21 @@ export class OrderedServiceCompletableException extends UnprocessableEntityExcep
     super(`Cannot complete the scope as all tasks are not yet finished.`, '400309')
   }
 }
+
+export class OrderedServiceHoldableException extends UnprocessableEntityException {
+  constructor() {
+    super(`Cannot update to 'On Hold' status: Invalid current status.`, '400310')
+  }
+}
+
+export class OrderedServiceAutoStartableException extends UnprocessableEntityException {
+  constructor() {
+    super(`Cannot update to 'Not Started' status: Invalid current status.`, '400311')
+  }
+}
+
+export class OrderedServiceAutoCancelableException extends UnprocessableEntityException {
+  constructor() {
+    super(`Cannot update to 'Canceled' status: Invalid current status.`, '400312')
+  }
+}
