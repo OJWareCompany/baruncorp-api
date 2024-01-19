@@ -1,7 +1,5 @@
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
-export type AssignedTaskStatus = 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
-
 export enum AssignedTaskStatusEnum {
   Not_Started = 'Not Started',
   In_Progress = 'In Progress',
@@ -31,7 +29,7 @@ export interface CreateAssignedTaskProps {
 }
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {
-  status: AssignedTaskStatus
+  status: AssignedTaskStatusEnum
   cost: number | null
   isVendor: boolean
   assigneeId: string | null

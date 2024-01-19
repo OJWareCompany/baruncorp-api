@@ -26,7 +26,7 @@ export class ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler {
 
     const assignedTaskEntities = assignedTasks.map(this.mapper.toDomain)
     const loop = assignedTaskEntities.map(
-      async (assignedTask) => await assignedTask.reopen(this.orderModificationValidator),
+      async (assignedTask) => await assignedTask.reset(this.orderModificationValidator),
     )
     await Promise.all(loop)
     await this.assignedTaskRepo.update(assignedTaskEntities)

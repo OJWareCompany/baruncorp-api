@@ -24,7 +24,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     const id = v4()
     const props: AssignedTaskProps = {
       ...create,
-      status: 'Not Started',
+      status: AssignedTaskStatusEnum.Not_Started,
       assigneeId: null,
       assigneeName: null,
       assigneeOrganizationId: null,
@@ -73,6 +73,10 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   get isCompleted() {
     return this.props.status === AssignedTaskStatusEnum.Completed
+  }
+
+  get isCanceled() {
+    return this.props.status === AssignedTaskStatusEnum.Canceled
   }
 
   get isRevision() {
@@ -146,7 +150,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   // residential revision은 size가 정해지지 않은 경우 complete 될 수 없음
   async complete(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
-    this.props.status = 'Completed'
+    this.props.status = AssignedTaskStatusEnum.Completed
     this.props.doneAt = new Date()
     this.addEvent(
       new AssignedTaskCompletedDomainEvent({
@@ -160,8 +164,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   async cancel(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
-    if (this.props.status === 'Completed') return this
-    this.props.status = 'Canceled'
+    this.props.status = AssignedTaskStatusEnum.Canceled
     this.props.doneAt = new Date()
     // this.deActive()
     return this
@@ -169,17 +172,16 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   async hold(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
-    if (this.props.status === 'Completed' || this.props.status === 'Canceled') return this
-    this.props.status = 'On Hold'
-    this.props.doneAt = new Date()
-    // this.deActive()
+    if (this.isCompleted || this.isCanceled) {
+      return this
+    }
+    this.props.status = AssignedTaskStatusEnum.On_Hold
     return this
   }
 
-  async reopen(orderModificationValidator: OrderModificationValidator): Promise<this> {
+  async reset(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
-    if (this.props.status === 'Completed') return this
-    this.props.status = 'Not Started'
+    this.props.status = AssignedTaskStatusEnum.Not_Started
     this.props.doneAt = null
     this.props.assigneeId = null
     this.props.assigneeName = null
@@ -200,7 +202,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     this.props.assigneeName = null
     this.props.assigneeOrganizationId = null
     this.props.assigneeOrganizationName = null
-    this.props.status = 'Not Started'
+    this.props.status = AssignedTaskStatusEnum.Not_Started
     this.props.startedAt = null
     this.props.doneAt = null
     this.addEvent(
@@ -218,7 +220,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     this.props.assigneeName = user.userName.fullName
     this.props.assigneeOrganizationId = user.organization.id
     this.props.assigneeOrganizationName = user.organization.name
-    this.props.status = 'In Progress'
+    this.props.status = AssignedTaskStatusEnum.In_Progress
     this.props.startedAt = new Date()
     if (user.isVendor) {
       this.props.isVendor = true

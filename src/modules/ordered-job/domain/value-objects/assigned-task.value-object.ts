@@ -1,7 +1,6 @@
-import { AssignedTaskStatus } from '../../../assigned-task/domain/assigned-task.type'
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
-import { prerequisiteTasks } from '@prisma/client'
 import { ApiProperty } from '@nestjs/swagger'
+import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
 
 export class NewOrderedServices {
   serviceId: string
@@ -22,7 +21,7 @@ export class PrerequisiteTaskVO {
 
 interface AssignedTaskProps {
   assignTaskId: string
-  status: AssignedTaskStatus
+  status: AssignedTaskStatusEnum
   taskName: string
   taskId: string
   orderedServiceId: string
@@ -48,7 +47,7 @@ export class AssignedTask extends ValueObject<AssignedTaskProps> {
     return this.props.assignTaskId
   }
 
-  get status(): AssignedTaskStatus {
+  get status(): AssignedTaskStatusEnum {
     return this.props.status
   }
 
