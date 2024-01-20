@@ -11,10 +11,6 @@ import { UpdateOrderedServiceService } from './command/update-ordered-service/up
 import { FindOrderedServiceHttpController } from './queries/find-ordered-service/find-ordered-service.http.controller'
 import { FindOrderedServiceQueryHandler } from './queries/find-ordered-service/find-ordered-service.query-handler'
 import { CreateOrderedServiceWhenJobIsCreatedEventHandler } from './application/event-handlers/create-ordered-service-when-job-is-created.domain-event-handler'
-import { CancelOrderedServiceHttpController } from './command/cancel-ordered-service/cancel-ordered-service.http.controller'
-import { CancelOrderedServiceService } from './command/cancel-ordered-service/cancel-ordered-service.service'
-import { ReactivateOrderedServiceHttpController } from './command/reactivate-ordered-service/reactivate-ordered-service.http.controller'
-import { ReactivateOrderedServiceService } from './command/reactivate-ordered-service/reactivate-ordered-service.service'
 import { CancelOrderedServiceWhenJobIsCanceledDomainEventHandler } from './application/event-handlers/cancel-ordered-service-when-job-is-canceled.domain-event-handler'
 import { UpdateManualPriceHttpController } from './command/update-manual-price/update-manual-price.http.controller'
 import { UpdateRevisionSizeHttpController } from './command/update-revision-size/update-revision-size.http.controller'
@@ -38,13 +34,14 @@ import { StartOrderedServiceWhenTaskIsAssignedDomainEventHandler } from './appli
 import { HoldOrderedServiceWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-ordered-service-when-job-is-held.domain-event-handler'
 import { UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEventHandler } from './application/event-handlers/update-ordered-service-to-not-started-when-job-is-updated-to-not-started.domain-event-handler'
 import { CancelOrderedServiceWhenJobIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-ordered-service-when-job-is-canceled-and-kept-invoice.domain-event-handler'
+import { UpdateOrderedScopeStatusHttpController } from './command/update-ordered-scope-status/update-ordered-scope-status.http.controller'
+import { UpdateOrderedScopeStatusService } from './command/update-ordered-scope-status/update-ordered-scope-status.service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
   UpdateOrderedServiceHttpController,
   FindOrderedServiceHttpController,
-  CancelOrderedServiceHttpController,
-  ReactivateOrderedServiceHttpController,
+  UpdateOrderedScopeStatusHttpController,
   UpdateManualPriceHttpController,
   UpdateRevisionSizeHttpController,
   FindOrderedServicePaginatedHttpController,
@@ -52,8 +49,7 @@ const httpControllers = [
 const commandHandlers: Provider[] = [
   CreateOrderedServiceService,
   UpdateOrderedServiceService,
-  CancelOrderedServiceService,
-  ReactivateOrderedServiceService,
+  UpdateOrderedScopeStatusService,
   UpdateManualPriceService,
   UpdateRevisionSizeService,
 ]
