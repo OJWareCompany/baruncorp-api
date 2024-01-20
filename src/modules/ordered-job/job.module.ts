@@ -19,10 +19,6 @@ import { FindMyJobPaginatedHttpController } from './queries/find-my-jobs/find-my
 import { FindMyJobPaginatedQueryHandler } from './queries/find-my-jobs/find-my-job.paginated.query-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
 import { StartJobWhenOrderedServiceIsStartedDomainEventHandler } from './application/event-handlers/start-job-when-ordered-service-is-started.domain-event-handler'
-import { CancelJobHttpController } from './commands/cancel-job/cancel-job.http.controller'
-import { CancelJobService } from './commands/cancel-job/cancel-job.service'
-import { HoldJobHttpController } from './commands/hold-job/hold-job.http.controller'
-import { HoldJobService } from './commands/hold-job/hold-job.service'
 import { FindJobToInvoiceHttpController } from './queries/find-job-to-invoice/find-job-to-invoice.http.controller'
 import { FindJobToInvoiceQueryHandler } from './queries/find-job-to-invoice/find-job-to-invoice.query-handler'
 import { UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler } from './application/event-handlers/update-job-revision-size-when-ordered-service-revision-size-updated.domain-event-handler'
@@ -41,6 +37,7 @@ import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
 import { ProjectModule } from '../project/project.module'
 import { UsersModule } from '../users/users.module'
 import { ServiceModule } from '../service/service.module'
+import { OrganizationModule } from '../organization/organization.module'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -49,20 +46,11 @@ const httpControllers = [
   FindJobHttpController,
   FindJobPaginatedHttpController,
   FindMyJobPaginatedHttpController,
-  CancelJobHttpController,
-  HoldJobHttpController,
   FindJobToInvoiceHttpController,
   SendDeliverablesHttpController,
   FindMyOrderedJobPaginatedHttpController,
 ]
-const commandHandlers: Provider[] = [
-  CreateJobService,
-  UpdateJobService,
-  DeleteJobService,
-  CancelJobService,
-  HoldJobService,
-  SendDeliverablesService,
-]
+const commandHandlers: Provider[] = [CreateJobService, UpdateJobService, DeleteJobService, SendDeliverablesService]
 const queryHandlers: Provider[] = [
   FindJobQueryHandler,
   FindJobPaginatedQueryHandler,
@@ -86,6 +74,7 @@ const domainServices: Provider[] = [TotalDurationCalculator, OrderStatusChangeVa
     PrismaModule,
     CqrsModule,
     ServiceModule,
+    OrganizationModule,
     forwardRef(() => AuthenticationModule),
     forwardRef(() => ProjectModule),
     forwardRef(() => OrderedServiceModule),
