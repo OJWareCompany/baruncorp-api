@@ -23,6 +23,7 @@ import { OrderStatusChangeValidator } from './domain-services/order-status-chang
 import { OrderModificationValidator } from './domain-services/order-modification-validator.domain-service'
 import { JobStartedDomainEvent } from './events/job-started.domain-event'
 import { JobCanceledAndKeptInvoiceDomainEvent } from './events/job-canceled-and-kept-invoice.domain-event'
+import { UserEntity } from '../../users/domain/user.entity'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -131,10 +132,16 @@ export class JobEntity extends AggregateRoot<JobProps> {
     }
   }
 
-  async sendToClient(mailer: Mailer, deliverablesLink: string, orderStatusChangeValidator: OrderStatusChangeValidator) {
+  async sendToClient(
+    editor: UserEntity,
+    mailer: Mailer,
+    deliverablesLink: string,
+    orderStatusChangeValidator: OrderStatusChangeValidator,
+  ) {
     await orderStatusChangeValidator.validateJob(this, JobStatusEnum.Sent_To_Client)
     await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
     this.props.jobStatus = JobStatusEnum.Sent_To_Client
+    this.props.updatedBy = editor.userName.fullName
     return this
   }
 
@@ -193,7 +200,8 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  hold(): this {
+  hold(user: UserEntity): this {
+    this.props.updatedBy = user.userName.fullName
     this.props.jobStatus = JobStatusEnum.On_Hold
     this.addEvent(new JobHeldDomainEvent({ aggregateId: this.id }))
     return this
@@ -235,9 +243,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  updateUpdatedBy(updatedBy: string) {
-    this.props.updatedBy = updatedBy
-    return
+  updateUpdatedBy(editor: UserEntity) {
+    this.props.updatedBy = editor.userName.fullName
+    return this
   }
 
   updateSystemSize(systemSize: number | null): JobEntity {
