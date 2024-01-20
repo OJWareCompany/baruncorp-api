@@ -12,8 +12,15 @@ import { CalculateVendorCostDomainService } from './calculate-vendor-cost.domain
 import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.domain-event'
 import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activated.domain-event'
 import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
-import { AssignedTaskAlreadyCompletedException, AssignedTaskDurationExceededException } from './assigned-task.error'
+import {
+  AssignedTaskAlreadyCompletedException,
+  AssignedTaskDurationExceededException,
+  CompletedTaskChangeStatusException,
+  InprogressTaskAutoChangeStatusException,
+} from './assigned-task.error'
 import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
+import { OrderedServiceBackToNotStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-back-to-not-started.domain-event'
+import { OrderedServiceStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-started.domain-event'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -75,6 +82,10 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   get isCanceled() {
     return this.props.status === AssignedTaskStatusEnum.Canceled
+  }
+
+  get isInProgress() {
+    return this.props.status === AssignedTaskStatusEnum.In_Progress
   }
 
   get isRevision() {
@@ -160,8 +171,21 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
+  async backToNotStarted(
+    option: OrderedServiceBackToNotStartedDomainEvent | OrderedServiceStartedDomainEvent,
+    orderModificationValidator: OrderModificationValidator,
+  ) {
+    if (!option) return
+    await orderModificationValidator.validate(this)
+    if (this.isCompleted) throw new CompletedTaskChangeStatusException()
+    if (this.isInProgress) throw new InprogressTaskAutoChangeStatusException()
+    this.props.status = AssignedTaskStatusEnum.Not_Started
+    return this
+  }
+
   async cancel(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
+    if (this.isCompleted) throw new CompletedTaskChangeStatusException()
     this.props.status = AssignedTaskStatusEnum.Canceled
     this.props.doneAt = new Date()
     // this.deActive()

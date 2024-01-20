@@ -10,10 +10,9 @@ import { AssignedTaskRepository } from './database/assigned-task.repository'
 import { AssignedTaskMapper } from './assigned-task.mapper'
 import { CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler } from './application/event-handlers/create-assigned-task-when-ordered-service-is-created.domain-event-handler'
 import { CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled.domain-event-handler'
-import { ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler } from './application/event-handlers/reopen-assigned-task-when-ordered-service-is-reactivated.domain-event-handler'
 import { CompleteAssignedTaskHttpController } from './commands/complete-assigned-task/complete-assigned-task.http.controller'
 import { CompleteAssignedTaskService } from './commands/complete-assigned-task/complete-assigned-task.service'
-import { HoldAssignedTaskWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-assigned-task-when-job-is-held.domain-event-handler'
+import { HoldAssignedTaskWhenOrderedScopeIsHeldDomainEventHandler } from './application/event-handlers/hold-assigned-task-when-ordered-scope-is-held.domain-event-handler'
 import { UpdateTaskDurationHttpController } from './commands/update-task-duration/update-task-duration.http.controller'
 import { UpdateTaskDurationService } from './commands/update-task-duration/update-task-duration.service'
 import { UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler } from './application/event-handlers/update-cost-when-ordered-service-price-is-updated.domain-event-handler'
@@ -70,8 +69,7 @@ const queryHandlers: Provider[] = [
 const eventHandlers: Provider[] = [
   CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler,
   CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler,
-  ReopenAssignedTaskWhenOrderedServiceIsReactivedDomainEventHandler,
-  HoldAssignedTaskWhenJobIsHeldDomainEventHandler,
+  HoldAssignedTaskWhenOrderedScopeIsHeldDomainEventHandler,
   UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler,
   UpdateCostWhenTaskIsAssignedDomainEventHandler,
   ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler,

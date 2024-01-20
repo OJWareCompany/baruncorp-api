@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException } from '@nestjs/common'
+import { BadRequestException, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 
 export class AssignedTaskNotFoundException extends NotFoundException {
   constructor() {
@@ -21,5 +21,16 @@ export class AssigneeNotFoundException extends NotFoundException {
 export class AssignedTaskDurationExceededException extends BadRequestException {
   constructor() {
     super('The duration of the task is too long. Please enter a value less than or equal to 127.', '30203')
+  }
+}
+
+export class CompletedTaskChangeStatusException extends UnprocessableEntityException {
+  constructor() {
+    super(`Completed Task Can not be changed Status.`, '30204')
+  }
+}
+export class InprogressTaskAutoChangeStatusException extends UnprocessableEntityException {
+  constructor() {
+    super(`In Progress Task Can not be Not Started automatically.`, '30205')
   }
 }

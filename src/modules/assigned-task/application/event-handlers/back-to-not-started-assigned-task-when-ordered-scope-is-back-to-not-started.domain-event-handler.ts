@@ -3,30 +3,30 @@ import { Inject, Injectable } from '@nestjs/common'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { OnEvent } from '@nestjs/event-emitter'
-import { OrderedServiceCanceledDomainEvent } from '../../../ordered-service/domain/events/ordered-service-canceled.domain-event'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
-import { OrderedServiceCanceledAndKeptInvoiceDomainEvent } from '../../../ordered-service/domain/events/ordered-service-canceled-and-ketp-invoice.domain-event'
+import { OrderedServiceBackToNotStartedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-back-to-not-started.domain-event'
+import { OrderedServiceStartedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-started.domain-event'
 
 @Injectable()
-export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
+export class BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @OnEvent([OrderedServiceCanceledDomainEvent.name, OrderedServiceCanceledAndKeptInvoiceDomainEvent.name], {
+  @OnEvent([OrderedServiceBackToNotStartedDomainEvent.name, OrderedServiceStartedDomainEvent.name], {
     async: true,
     promisify: true,
   })
-  async handle(event: OrderedServiceCanceledDomainEvent) {
+  async handle(event: OrderedServiceBackToNotStartedDomainEvent | OrderedServiceStartedDomainEvent) {
     const assignedTasks = await this.assignedTaskRepo.find({
       orderedServiceId: event.aggregateId,
     })
 
     await Promise.all(
       assignedTasks.map(async (assignedTask) => {
-        await assignedTask.cancel(this.orderModificationValidator)
+        await assignedTask.backToNotStarted(event, this.orderModificationValidator)
       }),
     )
 
