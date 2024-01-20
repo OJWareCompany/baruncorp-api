@@ -2068,6 +2068,47 @@ export interface AssigningTaskAlertPaginatedResponse {
   items: AssigningTaskAlertResponse[]
 }
 
+export interface CreateInformationRequestDto {
+  /** @default [{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:newjobs@baruncorp.com","target":"_blank","children":[{"text":"newjobs@baruncorp.com"}]},{"text":" if you need to:"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Add additional services to an active service order"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Send us updated information for an active service order or for a service order that is on hold"}],"listStart":2},{"type":"p","listStyleType":"disc","indent":1,"listStart":3,"children":[{"text":"Any other questions or issues concerning service orders"}]},{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:chrisk@baruncorp.com","target":"_blank","children":[{"text":"chrisk@baruncorp.com"}]},{"text":" for any matter relating to the portal."}]}] */
+  contents: object[]
+}
+
+export interface UpdateInformationRequestDto {
+  /** @default [{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:newjobs@baruncorp.com","target":"_blank","children":[{"text":"newjobs@baruncorp.com"}]},{"text":" if you need to:"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Add additional services to an active service order"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Send us updated information for an active service order or for a service order that is on hold"}],"listStart":2},{"type":"p","listStyleType":"disc","indent":1,"listStart":3,"children":[{"text":"Any other questions or issues concerning service orders"}]},{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:chrisk@baruncorp.com","target":"_blank","children":[{"text":"chrisk@baruncorp.com"}]},{"text":" for any matter relating to the portal."}]}] */
+  contents: object[]
+}
+
+export interface InformationResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default [{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:newjobs@baruncorp.com","target":"_blank","children":[{"text":"newjobs@baruncorp.com"}]},{"text":" if you need to:"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Add additional services to an active service order"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Send us updated information for an active service order or for a service order that is on hold"}],"listStart":2},{"type":"p","listStyleType":"disc","indent":1,"listStart":3,"children":[{"text":"Any other questions or issues concerning service orders"}]},{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:chrisk@baruncorp.com","target":"_blank","children":[{"text":"chrisk@baruncorp.com"}]},{"text":" for any matter relating to the portal."}]}] */
+  contents: object[]
+  /** @default true */
+  isActive: boolean
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  createdAt: string
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  updatedAt: string
+}
+
+export interface InformationPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: InformationResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -2834,6 +2875,21 @@ export interface FindLicensePaginatedHttpControllerGetParams {
 }
 
 export interface FindAssigningTaskAlertPaginatedHttpControllerFindParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindInformationPaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -5546,6 +5602,60 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/assigning-task-alerts/${assigningTaskAlertId}/check-out`,
         method: 'PATCH',
+        ...params,
+      }),
+  }
+  informations = {
+    /**
+     * No description
+     *
+     * @name CreateInformationHttpControllerPatch
+     * @request POST:/informations
+     */
+    createInformationHttpControllerPatch: (data: CreateInformationRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/informations`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindInformationPaginatedHttpControllerGet
+     * @request GET:/informations
+     */
+    findInformationPaginatedHttpControllerGet: (
+      query: FindInformationPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<InformationPaginatedResponseDto, any>({
+        path: `/informations`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateInformationHttpControllerPatch
+     * @request PATCH:/informations/{informationId}
+     */
+    updateInformationHttpControllerPatch: (
+      informationId: string,
+      data: UpdateInformationRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/informations/${informationId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }

@@ -24,6 +24,7 @@ import { LicenseModule } from './modules/license/license.module'
 import { AssigningTaskAlertModule } from './modules/assigning-task-alert/assigning-task-alert.module'
 import { PtoModule } from './modules/pto/pto.module'
 import { PtoTenurePolicyModule } from './modules/pto-tenure-policy/pto-tenure-policy.module'
+import { InformationModule } from './modules/information/information.module'
 
 @Module({
   imports: [
@@ -50,6 +51,7 @@ import { PtoTenurePolicyModule } from './modules/pto-tenure-policy/pto-tenure-po
     AssigningTaskAlertModule,
     PtoModule,
     PtoTenurePolicyModule,
+    InformationModule,
   ],
   controllers: [],
   providers: [
