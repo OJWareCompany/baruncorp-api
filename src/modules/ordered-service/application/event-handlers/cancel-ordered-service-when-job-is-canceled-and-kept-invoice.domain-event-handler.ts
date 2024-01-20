@@ -3,10 +3,10 @@ import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
-import { JobCanceledDomainEvent } from '../../../ordered-job/domain/events/job-canceled.domain-event'
+import { JobCanceledAndKeptInvoiceDomainEvent } from '../../../ordered-job/domain/events/job-canceled-and-kept-invoice.domain-event'
 
 @Injectable()
-export class CancelOrderedServiceWhenJobIsCanceledDomainEventHandler {
+export class CancelOrderedServiceWhenJobIsCanceledAndKeptInvoiceDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
@@ -15,8 +15,8 @@ export class CancelOrderedServiceWhenJobIsCanceledDomainEventHandler {
   /**
    * 주문 품목을 저장한다.
    */
-  @OnEvent(JobCanceledDomainEvent.name, { async: true, promisify: true })
-  async handle(event: JobCanceledDomainEvent) {
+  @OnEvent(JobCanceledAndKeptInvoiceDomainEvent.name, { async: true, promisify: true })
+  async handle(event: JobCanceledAndKeptInvoiceDomainEvent) {
     const orderedServiceEntities = await this.orderedServiceRepo.findBy('jobId', [event.aggregateId])
     orderedServiceEntities.map((service) => service.cancel(event))
 

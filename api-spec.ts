@@ -364,6 +364,11 @@ export interface UpdateJobRequestDto {
   dueDate: string | null
 }
 
+export interface UpdateJobStatusRequestDto {
+  /** @default "Completed" */
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | 'Canceled (Invoice)'
+}
+
 export interface PrerequisiteTaskVO {
   prerequisiteTaskId: string
   prerequisiteTaskName: string
@@ -3663,26 +3668,19 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name CancelJobHttpControllerUpdateJob
-     * @request PATCH:/jobs/cancel/{jobId}
+     * @name UpdateJobStatusHttpControllerUpdateJob
+     * @request PATCH:/jobs/{jobId}/status
      */
-    cancelJobHttpControllerUpdateJob: (jobId: string, params: RequestParams = {}) =>
+    updateJobStatusHttpControllerUpdateJob: (
+      jobId: string,
+      data: UpdateJobStatusRequestDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
-        path: `/jobs/cancel/${jobId}`,
+        path: `/jobs/${jobId}/status`,
         method: 'PATCH',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name HoldJobHttpControllerUpdateJob
-     * @request PATCH:/jobs/hold/{jobId}
-     */
-    holdJobHttpControllerUpdateJob: (jobId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/jobs/hold/${jobId}`,
-        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

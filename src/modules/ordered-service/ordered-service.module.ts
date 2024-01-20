@@ -37,6 +37,7 @@ import { CustomPricingModule } from '../custom-pricing/custom-pricing.module'
 import { StartOrderedServiceWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-ordered-service-when-task-is-assigned.domain-event-handler'
 import { HoldOrderedServiceWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-ordered-service-when-job-is-held.domain-event-handler'
 import { UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEventHandler } from './application/event-handlers/update-ordered-service-to-not-started-when-job-is-updated-to-not-started.domain-event-handler'
+import { CancelOrderedServiceWhenJobIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-ordered-service-when-job-is-canceled-and-kept-invoice.domain-event-handler'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -62,11 +63,12 @@ const queryHandlers: Provider[] = [
   FindOrderedServicePaginatedQueryHandler,
 ]
 const eventHandlers: Provider[] = [
+  StartOrderedServiceWhenTaskIsAssignedDomainEventHandler,
   CreateOrderedServiceWhenJobIsCreatedEventHandler,
   CancelOrderedServiceWhenJobIsCanceledDomainEventHandler,
-  UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler,
-  StartOrderedServiceWhenTaskIsAssignedDomainEventHandler,
+  CancelOrderedServiceWhenJobIsCanceledAndKeptInvoiceDomainEventHandler,
   HoldOrderedServiceWhenJobIsHeldDomainEventHandler,
+  UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler,
   UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]
