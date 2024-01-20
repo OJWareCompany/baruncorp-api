@@ -3,7 +3,7 @@ import { Inject } from '@nestjs/common'
 import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { JobEntity } from '../job.entity'
-import { JobStatusEnum } from '../job.type'
+import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum } from '../job.type'
 import { OrderedServiceStatusEnum } from '../../../ordered-service/domain/ordered-service.type'
 import { JobNotStartableException } from '../job.error'
 
@@ -12,12 +12,12 @@ export class OrderStatusChangeValidator {
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepository: OrderedServiceRepositoryPort, // @ts-ignore
   ) {}
-  async validateJob(job: JobEntity, jobStatusEnum: JobStatusEnum) {
+  async validateJob(job: JobEntity, jobStatusEnum: JobStatus) {
     switch (jobStatusEnum) {
       case JobStatusEnum.Not_Started:
         await this.checkJobNotStartable(job)
         break
-      case JobStatusEnum.Sent_To_Client:
+      case AutoOnlyJobStatusEnum.Sent_To_Client:
         await this.checkJobSendableToClient(job)
         break
 

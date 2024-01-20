@@ -366,7 +366,7 @@ export interface UpdateJobRequestDto {
 
 export interface UpdateJobStatusRequestDto {
   /** @default "Completed" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Sent To Client' | 'Canceled (Invoice)'
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
 }
 
 export interface PrerequisiteTaskVO {
@@ -451,8 +451,8 @@ export interface JobResponseDto {
     | 'On Hold'
     | 'Canceled'
     | 'Completed'
-    | 'Sent To Client'
     | 'Canceled (Invoice)'
+    | 'Sent To Client'
   /** @example "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
   assignedTasks: AssignedTaskResponseFields[]
@@ -482,8 +482,8 @@ export interface JobPaginatedResponseFields {
     | 'On Hold'
     | 'Canceled'
     | 'Completed'
-    | 'Sent To Client'
     | 'Canceled (Invoice)'
+    | 'Sent To Client'
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @example "Self" */
@@ -1681,6 +1681,11 @@ export interface OrderedServiceResponseDto {
   mountingType: string
 }
 
+export interface UpdateOrderedScopeStatusRequestDto {
+  /** @default "In Progress" */
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
+}
+
 export interface UpdateManualPriceRequestDto {
   /** @default "" */
   price: number
@@ -2245,15 +2250,7 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Sent To Client'
-    | 'Canceled (Invoice)'
-    | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -2291,15 +2288,7 @@ export interface FindMyJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "In Progress" */
-  jobStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Sent To Client'
-    | 'Canceled (Invoice)'
-    | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -2359,15 +2348,7 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Sent To Client'
-    | 'Canceled (Invoice)'
-    | null
+  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -5088,26 +5069,19 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name CancelOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/cancel/{orderedServiceId}
+     * @name UpdateOrderedScopeStatusHttpControllerPatch
+     * @request PATCH:/ordered-services/{orderedScopeId}/status
      */
-    cancelOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
+    updateOrderedScopeStatusHttpControllerPatch: (
+      orderedScopeId: string,
+      data: UpdateOrderedScopeStatusRequestDto,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
-        path: `/ordered-services/cancel/${orderedServiceId}`,
+        path: `/ordered-services/${orderedScopeId}/status`,
         method: 'PATCH',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name ReactivateOrderedServiceHttpControllerPatch
-     * @request PATCH:/ordered-services/reactivate/{orderedServiceId}
-     */
-    reactivateOrderedServiceHttpControllerPatch: (orderedServiceId: string, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/ordered-services/reactivate/${orderedServiceId}`,
-        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

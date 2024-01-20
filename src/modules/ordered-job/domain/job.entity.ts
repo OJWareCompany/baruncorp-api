@@ -3,7 +3,7 @@ import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingType, MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { Address } from '../../organization/domain/value-objects/address.vo'
-import { CreateJobProps, JobProps, JobStatusEnum } from './job.type'
+import { AutoOnlyJobStatusEnum, CreateJobProps, JobProps, JobStatusEnum } from './job.type'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
@@ -138,9 +138,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
     deliverablesLink: string,
     orderStatusChangeValidator: OrderStatusChangeValidator,
   ) {
-    await orderStatusChangeValidator.validateJob(this, JobStatusEnum.Sent_To_Client)
+    await orderStatusChangeValidator.validateJob(this, AutoOnlyJobStatusEnum.Sent_To_Client)
     await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
-    this.props.jobStatus = JobStatusEnum.Sent_To_Client
+    this.props.jobStatus = AutoOnlyJobStatusEnum.Sent_To_Client
     this.props.updatedBy = editor.userName.fullName
     return this
   }

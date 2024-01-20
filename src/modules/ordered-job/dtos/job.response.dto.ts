@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { IsOptional } from 'class-validator'
@@ -179,8 +179,11 @@ export class JobResponseDto {
   @ApiProperty({ example: 5 })
   jobRequestNumber: number
 
-  @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
-  jobStatus: JobStatusEnum
+  @ApiProperty({
+    example: JobStatusEnum.In_Progress,
+    enum: [...Object.values(JobStatusEnum), ...Object.values(AutoOnlyJobStatusEnum)],
+  })
+  jobStatus: JobStatus
 
   @ApiProperty({ example: LoadCalcOriginEnum.Self, enum: LoadCalcOriginEnum })
   loadCalcOrigin: LoadCalcOriginEnum

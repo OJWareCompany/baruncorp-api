@@ -12,9 +12,14 @@ export enum JobStatusEnum {
   On_Hold = 'On Hold',
   Canceled = 'Canceled',
   Completed = 'Completed',
-  Sent_To_Client = 'Sent To Client',
   Canceled_Invoice = 'Canceled (Invoice)',
 }
+
+export enum AutoOnlyJobStatusEnum {
+  Sent_To_Client = 'Sent To Client',
+}
+
+export type JobStatus = JobStatusEnum | AutoOnlyJobStatusEnum
 
 export enum LoadCalcOriginEnum {
   Self = 'Self',
@@ -69,7 +74,7 @@ export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
   invoiceId: string | null
 
   // 서비스나 태스크의 추가/수정에 영향받는 필드들
-  jobStatus: JobStatusEnum // 인자로 받지 않고 내부에서 값을 생성하는 필드
+  jobStatus: JobStatus // 인자로 받지 않고 내부에서 값을 생성하는 필드
   pricingType: PricingTypeEnum | null
   revisionSize: OrderedServiceSizeForRevisionEnum | null
 

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
-import { JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
 import { OrderedServiceResponseFields, AssignedTaskResponseFields } from './job.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
@@ -39,8 +39,11 @@ export class JobPaginatedResponseFields {
   @ApiProperty({ example: 5 })
   jobRequestNumber: number
 
-  @ApiProperty({ example: JobStatusEnum.In_Progress, enum: JobStatusEnum })
-  jobStatus: JobStatusEnum
+  @ApiProperty({
+    example: JobStatusEnum.In_Progress,
+    enum: [...Object.values(JobStatusEnum), ...Object.values(AutoOnlyJobStatusEnum)],
+  })
+  jobStatus: JobStatus
 
   @ApiProperty({ example: MountingTypeEnum.Ground_Mount, enum: MountingTypeEnum })
   mountingType: MountingTypeEnum

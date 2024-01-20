@@ -23,7 +23,7 @@ import {
 } from '../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
-import { JobStatusEnum } from './domain/job.type'
+import { JobStatus, JobStatusEnum } from './domain/job.type'
 import { LoadCalcOriginEnum } from './domain/job.type'
 import { AssignedTaskStatusEnum } from '../assigned-task/domain/assigned-task.type'
 
@@ -285,7 +285,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedBy: props.updatedBy,
       propertyFullAddress: props.propertyFullAddress,
       jobRequestNumber: props.jobRequestNumber,
-      jobStatus: props.jobStatus,
+      jobStatus: props.jobStatus as JobStatus,
       loadCalcOrigin: props.loadCalcOrigin,
       receivedAt: props.receivedAt.toISOString(),
       isExpedited: props.isExpedited,
