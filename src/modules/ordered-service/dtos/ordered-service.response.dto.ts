@@ -1,6 +1,10 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { OrderedServiceStatusEnum } from '../domain/ordered-service.type'
+import {
+  AutoOnlyOrderedServiceStatusEnum,
+  OrderedScopeStatus,
+  OrderedServiceStatusEnum,
+} from '../domain/ordered-service.type'
 
 export class OrderedServiceAssignedTaskResponse {
   @ApiProperty()
@@ -42,8 +46,11 @@ export class OrderedServiceResponseDto {
   @ApiProperty()
   jobId: string
 
-  @ApiProperty({ default: OrderedServiceStatusEnum.Completed, enum: OrderedServiceStatusEnum })
-  status: OrderedServiceStatusEnum
+  @ApiProperty({
+    default: OrderedServiceStatusEnum.Completed,
+    enum: [...Object.values(OrderedServiceStatusEnum), ...Object.values(AutoOnlyOrderedServiceStatusEnum)],
+  })
+  status: OrderedScopeStatus
 
   @ApiProperty({ nullable: true })
   orderedAt: string | null

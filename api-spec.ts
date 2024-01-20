@@ -400,7 +400,7 @@ export interface OrderedServiceResponseFields {
   price: number | null
   priceOverride: number | null
   /** @example "Not Started" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
+  status: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
   orderedAt: string
   doneAt: string | null
 }
@@ -1672,7 +1672,7 @@ export interface OrderedServiceResponseDto {
   priceOverride: number | null
   jobId: string
   /** @default "Completed" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
+  status: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | 'On Hold'
   orderedAt: string | null
   doneAt: string | null
   isRevision: boolean
@@ -1683,7 +1683,7 @@ export interface OrderedServiceResponseDto {
 
 export interface UpdateOrderedScopeStatusRequestDto {
   /** @default "In Progress" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
+  status: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
 }
 
 export interface UpdateManualPriceRequestDto {
@@ -2692,14 +2692,7 @@ export interface FindOrderedServicePaginatedHttpControllerGetParams {
    */
   page?: number
   /** @default "Completed" */
-  orderedServiceStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Canceled (Invoice)'
-    | null
+  orderedServiceStatus?: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | null
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Ground Mount" */

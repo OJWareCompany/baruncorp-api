@@ -4,11 +4,16 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/
 export enum OrderedServiceStatusEnum {
   Not_Started = 'Not Started',
   In_Progress = 'In Progress',
-  On_Hold = 'On Hold',
   Canceled = 'Canceled',
   Completed = 'Completed',
   Canceled_Invoice = 'Canceled (Invoice)',
 }
+
+export enum AutoOnlyOrderedServiceStatusEnum {
+  On_Hold = 'On Hold',
+}
+
+export type OrderedScopeStatus = OrderedServiceStatusEnum | AutoOnlyOrderedServiceStatusEnum
 
 export type OrderedServiceSizeForRevision = 'Major' | 'Minor'
 
@@ -39,7 +44,7 @@ export interface OrderedServiceProps extends CreateOrderedServiceProps {
   priceOverride: number | null
   sizeForRevision: OrderedServiceSizeForRevisionEnum | null
   orderedAt: Date
-  status: OrderedServiceStatusEnum
+  status: OrderedScopeStatus
   doneAt: Date | null
   assignedTasks: AssignedTasks[]
   isManualPrice: boolean

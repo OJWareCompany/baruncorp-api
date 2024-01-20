@@ -4,7 +4,10 @@ import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-ser
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { JobEntity } from '../job.entity'
 import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum } from '../job.type'
-import { OrderedServiceStatusEnum } from '../../../ordered-service/domain/ordered-service.type'
+import {
+  AutoOnlyOrderedServiceStatusEnum,
+  OrderedServiceStatusEnum,
+} from '../../../ordered-service/domain/ordered-service.type'
 import { JobNotStartableException } from '../job.error'
 
 export class OrderStatusChangeValidator {
@@ -32,9 +35,14 @@ export class OrderStatusChangeValidator {
    * 2. 설정시 (Canceled, On Hold) Scope는 Not Started 상태로 수정된다.
    */
   private async checkJobNotStartable(job: JobEntity) {
-    const constraints = [OrderedServiceStatusEnum.In_Progress, OrderedServiceStatusEnum.Completed]
+    const permittedStatus = [
+      OrderedServiceStatusEnum.Canceled,
+      OrderedServiceStatusEnum.Canceled_Invoice,
+      OrderedServiceStatusEnum.Not_Started,
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
+    ]
     const orderedScopes = await this.orderedServiceRepository.findBy('jobId', [job.id])
-    const isViolated = orderedScopes.some((scope) => constraints.includes(scope.status))
+    const isViolated = orderedScopes.some((scope) => !permittedStatus.includes(scope.status))
     if (isViolated) throw new JobNotStartableException()
   }
 

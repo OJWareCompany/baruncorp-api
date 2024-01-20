@@ -1,6 +1,7 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import {
+  AutoOnlyOrderedServiceStatusEnum,
   CreateOrderedServiceProps,
   OrderedServiceProps,
   OrderedServiceSizeForRevisionEnum,
@@ -134,13 +135,13 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   isSendableOrThrow() {
-    const constraints = [
-      OrderedServiceStatusEnum.On_Hold,
+    const invalidStatus = [
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
       OrderedServiceStatusEnum.Not_Started,
       OrderedServiceStatusEnum.In_Progress,
     ]
-    const isSendable = constraints.includes(this.props.status)
-    if (!isSendable) throw new JobSendableToClientScopesInCompletedException()
+    const isInvalid = invalidStatus.includes(this.props.status)
+    if (isInvalid) throw new JobSendableToClientScopesInCompletedException()
 
     if (this.props.price === null) throw new JobSendableToClientPriceNotSetException()
   }
@@ -232,9 +233,13 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   cancel(option: JobCanceledDomainEvent | JobCanceledAndKeptInvoiceDomainEvent | 'manually'): this {
-    const excludesFromAutoUpdate = [OrderedServiceStatusEnum.Completed, OrderedServiceStatusEnum.Canceled_Invoice]
-    const isExcludedFromAutoUpdate = excludesFromAutoUpdate.includes(this.props.status)
-    if (option !== 'manually' && isExcludedFromAutoUpdate) {
+    const permittedAutoUpdateStatus = [
+      OrderedServiceStatusEnum.In_Progress,
+      OrderedServiceStatusEnum.Not_Started,
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
+    ]
+    const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
+    if (option !== 'manually' && !isIncludedFromAutoUpdate) {
       throw new OrderedServiceAutoCancelableException()
     }
 
@@ -261,8 +266,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   backToNotStarted(option: JobNotStartedDomainEvent | JobStartedDomainEvent | 'manually') {
-    const targetStatusForAutoUpdate = [OrderedServiceStatusEnum.Canceled, OrderedServiceStatusEnum.On_Hold]
-    const isIncludedFromAutoUpdate = targetStatusForAutoUpdate.includes(this.props.status)
+    const permittedAutoUpdateStatus = [OrderedServiceStatusEnum.Canceled, AutoOnlyOrderedServiceStatusEnum.On_Hold]
+    const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
     if (option !== 'manually' && !isIncludedFromAutoUpdate) {
       throw new OrderedServiceAutoStartableException()
     }
@@ -277,11 +282,18 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   hold() {
-    const targetStatus = [OrderedServiceStatusEnum.Not_Started, OrderedServiceStatusEnum.In_Progress]
-    if (!targetStatus.includes(this.props.status)) {
+    const invalidStatus = [
+      OrderedServiceStatusEnum.Canceled,
+      OrderedServiceStatusEnum.Canceled_Invoice,
+      OrderedServiceStatusEnum.Completed,
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
+    ]
+
+    if (invalidStatus.includes(this.props.status)) {
       throw new OrderedServiceHoldableException()
     }
-    this.props.status = OrderedServiceStatusEnum.On_Hold
+
+    this.props.status = AutoOnlyOrderedServiceStatusEnum.On_Hold
     this.addEvent(
       new OrderedServiceHeldDomainEvent({
         aggregateId: this.id,
