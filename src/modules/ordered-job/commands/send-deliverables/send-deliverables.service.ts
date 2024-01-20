@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { UserNotFoundException } from '../../../users/user.error'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { SendDeliverablesCommand } from './send-deliverables.command'
@@ -22,13 +21,8 @@ export class SendDeliverablesService implements ICommandHandler {
 
   async execute(command: SendDeliverablesCommand): Promise<void> {
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
-
-    // TODO: updated by 로직 모듈화하기
     const editor = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)
-    if (!editor) throw new UserNotFoundException()
-    job.updateUpdatedBy(editor.userName.fullName)
-
-    await job.sendToClient(this.mailer, command.deliverablesLink, this.orderStatusChangeValidator)
+    await job.sendToClient(editor, this.mailer, command.deliverablesLink, this.orderStatusChangeValidator)
     await this.jobRepository.update(job)
   }
 }

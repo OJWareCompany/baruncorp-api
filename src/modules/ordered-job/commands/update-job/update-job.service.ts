@@ -1,24 +1,32 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { OrganizationNotFoundException, WrongClientException } from '../../../organization/domain/organization.error'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
+import { WrongClientException } from '../../../organization/domain/organization.error'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
-import { PrismaService } from '../../../database/prisma.service'
-import { UserNotFoundException } from '../../../users/user.error'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { UpdateJobCommand } from './update-job.command'
 import { IssuedJobUpdateException, JobCompletedUpdateException } from '../../domain/job.error'
 import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
+import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
+import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 
 @CommandHandler(UpdateJobCommand)
 export class UpdateJobService implements ICommandHandler {
   constructor(
     // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
-    private readonly prismaService: PrismaService,
+    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort, // @ts-ignore
+    @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort, // @ts-ignore
+    @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
+    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort, // @ts-ignore
+    @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
   ) {}
 
   async execute(command: UpdateJobCommand): Promise<void> {
@@ -29,28 +37,17 @@ export class UpdateJobService implements ICommandHandler {
 
     // TODO: REFACTOR
     if (invoiceId !== null) {
-      const invoice = await this.prismaService.invoices.findUnique({ where: { id: invoiceId } })
+      const invoice = await this.invoiceRepo.findOneOrThrow(invoiceId)
       if (!invoice) throw new InvoiceNotFoundException()
       if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
     }
 
-    const editor = await this.prismaService.users.findUnique({ where: { id: command.updatedByUserId } })
-    if (!editor) throw new UserNotFoundException()
+    const editor = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)
+    const clientUserRecord = await this.userRepo.findOneByIdOrThrow(command.clientUserId)
+    const organization = await this.organizationRepo.findOneOrThrow(clientUserRecord.organization.id)
+    const project = await this.projectRepo.findOneOrThrow({ id: job.projectId })
 
-    const clientUserRecord = await this.prismaService.users.findUnique({ where: { id: command.clientUserId } })
-    if (!clientUserRecord) throw new UserNotFoundException()
-
-    const organization = await this.prismaService.organizations.findUnique({
-      where: { id: clientUserRecord.organizationId },
-    })
-    if (!organization) throw new OrganizationNotFoundException()
-
-    const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.getProps().projectId } })
-    if (!project) throw new ProjectNotFoundException()
-
-    if (clientUserRecord.organizationId !== project.clientOrganizationId) throw new WrongClientException()
-
-    const updatedByUserName = editor.firstName + ' ' + editor.lastName
+    if (clientUserRecord.organization.id !== project.clientOrganizationId) throw new WrongClientException()
 
     job.updateMountingType(command.mountingType as MountingTypeEnum)
     job.updateClientInfo(
@@ -58,8 +55,8 @@ export class UpdateJobService implements ICommandHandler {
         clientOrganizationId: organization.id,
         clientOrganizationName: organization.name,
         clientUserId: clientUserRecord.id,
-        clientUserName: clientUserRecord.firstName + ' ' + clientUserRecord.lastName,
-        clientContactEmail: clientUserRecord.email,
+        clientUserName: clientUserRecord.userName.fullName,
+        clientContactEmail: clientUserRecord.getProps().email,
         deliverablesEmail: command.deliverablesEmails,
       }),
     )
@@ -68,7 +65,7 @@ export class UpdateJobService implements ICommandHandler {
     job.updateNumberOfWetStamp(command.numberOfWetStamp)
     job.updateAdditionalInformationFromClient(command.additionalInformationFromClient)
     job.updateIsExpedited(command.isExpedited)
-    job.updateUpdatedBy(updatedByUserName)
+    job.updateUpdatedBy(editor)
     job.updateDueDate(command.dueDate)
 
     await this.jobRepository.update(job)

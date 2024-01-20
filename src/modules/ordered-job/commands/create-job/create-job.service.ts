@@ -1,11 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { Inject } from '@nestjs/common'
-import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
-import { UserNotFoundException } from '../../../users/user.error'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobRepositoryPort } from '../../database/job.repository.port'
-import { PrismaService } from '../../../database/prisma.service'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobEntity } from '../../domain/job.entity'
 import { CreateJobCommand } from './create-job.command'
@@ -16,6 +13,10 @@ import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
 import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -24,17 +25,15 @@ export class CreateJobService implements ICommandHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort, // @ts-ignore
     @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort, // @ts-ignore
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort, // @ts-ignore
+    @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
+    @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
     private readonly durationCalculator: TotalDurationCalculator,
-    private readonly prismaService: PrismaService,
   ) {}
 
   async execute(command: CreateJobCommand): Promise<{ id: string }> {
-    const clientUser = await this.jobRepo.findUser(command.clientUserId)
-    if (!clientUser) throw new UserNotFoundException()
-    const organization = await this.prismaService.organizations.findUnique({ where: { id: clientUser.organizationId } })
-    if (!organization) throw new OrganizationNotFoundException()
-    const orderer = await this.jobRepo.findUser(command.updatedByUserId)
-    if (!orderer) throw new UserNotFoundException()
+    const clientUser = await this.userRepo.findOneByIdOrThrow(command.clientUserId)
+    const organization = await this.organizationRepo.findOneOrThrow(clientUser.organization.id)
+    const orderer = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)
     const project = await this.projectRepo.findOneOrThrow({ id: command.projectId })
 
     const services = await this.serviceRepo.find({ id: { in: command.orderedTasks.map((task) => task.serviceId) } })
@@ -60,14 +59,14 @@ export class CreateJobService implements ICommandHandler {
       numberOfWetStamp: command.numberOfWetStamp,
       deliverablesEmails: command.deliverablesEmails,
       clientInfo: new ClientInformation({
-        clientOrganizationId: clientUser.organizationId,
+        clientOrganizationId: clientUser.organization.id,
         clientOrganizationName: organization.name,
         clientUserId: command.clientUserId,
-        clientUserName: clientUser.full_name,
-        clientContactEmail: clientUser.email,
+        clientUserName: clientUser.userName.fullName,
+        clientContactEmail: clientUser.getProps().email,
         deliverablesEmail: command.deliverablesEmails,
       }),
-      updatedBy: orderer.firstName + ' ' + orderer.lastName,
+      updatedBy: orderer.userName.fullName,
       projectId: command.projectId,
       projectNumber: project.projectNumber,
       isExpedited: command.isExpedited,

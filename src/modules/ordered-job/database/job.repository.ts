@@ -1,4 +1,4 @@
-import { AssignedTasks, OrderedJobs, OrderedProjects, OrderedServices, Service, Tasks, Users } from '@prisma/client'
+import { AssignedTasks, OrderedJobs, OrderedServices, Service, Tasks, Users } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { JobRepositoryPort } from './job.repository.port'
@@ -50,14 +50,6 @@ export class JobRepository implements JobRepositoryPort {
       entity.addUpdateEvent()
       await entity.publishEvents(this.eventEmitter)
     }
-  }
-
-  async findUser(id: string): Promise<Users | null> {
-    return await this.prismaService.users.findUnique({ where: { id } })
-  }
-
-  async findProject(id: string): Promise<OrderedProjects | null> {
-    return await this.prismaService.orderedProjects.findUnique({ where: { id } })
   }
 
   async findJobOrThrow(id: string): Promise<JobEntity> {
