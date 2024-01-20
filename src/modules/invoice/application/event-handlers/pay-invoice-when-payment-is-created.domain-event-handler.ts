@@ -8,7 +8,7 @@ import { InvoiceNotFoundException } from '../../domain/invoice.error'
 @Injectable()
 export class PayInvoiceWhenPaymentIsCreatedEventHandler {
   constructor(private readonly prismaService: PrismaService) {} // @ts-ignore
-  @OnEvent([PaymentCreatedDomainEvent.name], { async: true, promisify: true })
+  @OnEvent(PaymentCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: PaymentCreatedDomainEvent) {
     const invoice = await this.prismaService.invoices.findUnique({ where: { id: event.invoiceId } })
     if (!invoice) throw new InvoiceNotFoundException()

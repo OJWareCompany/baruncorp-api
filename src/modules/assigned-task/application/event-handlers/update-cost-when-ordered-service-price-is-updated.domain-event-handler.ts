@@ -22,7 +22,7 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
     private readonly calculateVendorCostDomainService: CalculateVendorCostDomainService,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
-  @OnEvent([OrderedServicePriceUpdatedDomainEvent.name])
+  @OnEvent(OrderedServicePriceUpdatedDomainEvent.name)
   async handle(event: OrderedServicePriceUpdatedDomainEvent) {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.aggregateId)
     await Promise.all(

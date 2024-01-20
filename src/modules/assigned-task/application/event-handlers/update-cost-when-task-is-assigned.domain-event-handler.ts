@@ -26,7 +26,7 @@ export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
     private readonly calculateVendorCostDomainService: CalculateVendorCostDomainService,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
-  @OnEvent([AssignedTaskAssignedDomainEvent.name])
+  @OnEvent(AssignedTaskAssignedDomainEvent.name, { async: true, promisify: true })
   async handle(event: AssignedTaskAssignedDomainEvent) {
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(event.aggregateId)
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(assignedTask.orderedServiceId)

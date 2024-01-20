@@ -5,7 +5,6 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { OnEvent } from '@nestjs/event-emitter'
 import { OrderedServiceCanceledDomainEvent } from '../../../ordered-service/domain/events/ordered-service-canceled.domain-event'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
-import { OrderedServiceCanceledAndKeptInvoiceDomainEvent } from '../../../ordered-service/domain/events/ordered-service-canceled-and-ketp-invoice.domain-event'
 
 @Injectable()
 export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
@@ -15,21 +14,16 @@ export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @OnEvent([OrderedServiceCanceledDomainEvent.name, OrderedServiceCanceledAndKeptInvoiceDomainEvent.name], {
-    async: true,
-    promisify: true,
-  })
+  @OnEvent(OrderedServiceCanceledDomainEvent.name, { async: true, promisify: true })
   async handle(event: OrderedServiceCanceledDomainEvent) {
     const assignedTasks = await this.assignedTaskRepo.find({
       orderedServiceId: event.aggregateId,
     })
-
     await Promise.all(
       assignedTasks.map(async (assignedTask) => {
         await assignedTask.cancel(this.orderModificationValidator)
       }),
     )
-
     await this.assignedTaskRepo.update(assignedTasks)
   }
 }

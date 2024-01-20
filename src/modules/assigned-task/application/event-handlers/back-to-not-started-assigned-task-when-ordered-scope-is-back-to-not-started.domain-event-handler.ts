@@ -15,10 +15,7 @@ export class BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHand
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @OnEvent([OrderedServiceBackToNotStartedDomainEvent.name, OrderedServiceStartedDomainEvent.name], {
-    async: true,
-    promisify: true,
-  })
+  @OnEvent(OrderedServiceBackToNotStartedDomainEvent.name, { async: true, promisify: true })
   async handle(event: OrderedServiceBackToNotStartedDomainEvent | OrderedServiceStartedDomainEvent) {
     const assignedTasks = await this.assignedTaskRepo.find({
       orderedServiceId: event.aggregateId,

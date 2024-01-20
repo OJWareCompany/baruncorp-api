@@ -1,6 +1,5 @@
 import { Prisma } from '@prisma/client'
 import { PaginatedQueryBase } from '../../../libs/ddd/query.base'
-import { Paginated } from '../../../libs/ddd/repository.port'
 import { AssignedTaskEntity } from '../domain/assigned-task.entity'
 
 export interface AssignedTaskRepositoryPort {

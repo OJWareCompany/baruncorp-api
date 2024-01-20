@@ -11,7 +11,7 @@ export class UpdateProjectWhenJobIsCreatedEventHandler {
     // @ts-ignore
     @Inject(PROJECT_REPOSITORY) private readonly projectRepository: ProjectRepositoryPort,
   ) {}
-  @OnEvent([JobCreatedDomainEvent.name], { async: true, promisify: true })
+  @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobCreatedDomainEvent) {
     const project = await this.projectRepository.findOneOrThrow({ id: event.projectId })
     const totalOfJobs = await this.projectRepository.countTotalOfJobs(event.projectId)

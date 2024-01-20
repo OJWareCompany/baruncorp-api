@@ -39,6 +39,9 @@ import { InvoiceModule } from '../invoice/invoice.module'
 import { JobModule } from '../ordered-job/job.module'
 import { UsersModule } from '../users/users.module'
 import { ExpensePricingModule } from '../expense-pricing/expense-pricing.module'
+import { BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-started.domain-event-handler'
+import { BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-back-to-not-started.domain-event-handler'
+import { CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -75,6 +78,9 @@ const eventHandlers: Provider[] = [
   ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler,
   ActivateTaskWhenTaskIsCreatedDomainEventHandler,
   AssignTaskWhenTaskIsActivatedDomainEventHandler,
+  BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler,
+  BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler,
+  CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler,
 ]
 const domainServices: Provider[] = [
   CalculateVendorCostDomainService,

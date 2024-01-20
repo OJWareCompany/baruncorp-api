@@ -9,12 +9,13 @@ import { UpdatePtoRangeCommand } from '../../commands/update-pto-range/update-pt
 @Injectable()
 export class UpdatePtoRangeWhenUserUpdatedEventHandler {
   constructor(private readonly commandBus: CommandBus) {} // @ts-ignore
-  @OnEvent([UserUpdatedDomainEvent.name], { async: true, promisify: true })
+  @OnEvent(UserUpdatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: UserUpdatedDomainEvent) {
     const command = new UpdatePtoRangeCommand({
       userId: event.aggregateId,
       dateOfJoining: event.dateOfJoining,
     })
     const result: AggregateID = await this.commandBus.execute(command)
+    return result
   }
 }

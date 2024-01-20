@@ -8,7 +8,7 @@ import { PaymentCanceledDomainEvent } from '../../../payment/domain/events/payme
 @Injectable()
 export class UpdatedInvoiceWhenPaymentIsCanceledEventHandler {
   constructor(private readonly prismaService: PrismaService) {} // @ts-ignore
-  @OnEvent([PaymentCanceledDomainEvent.name], { async: true, promisify: true })
+  @OnEvent(PaymentCanceledDomainEvent.name, { async: true, promisify: true })
   async handle(event: PaymentCanceledDomainEvent) {
     const invoice = await this.prismaService.invoices.findUnique({ where: { id: event.invoiceId } })
     if (!invoice) throw new InvoiceNotFoundException()

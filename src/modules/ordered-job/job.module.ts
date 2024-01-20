@@ -38,10 +38,13 @@ import { ProjectModule } from '../project/project.module'
 import { UsersModule } from '../users/users.module'
 import { ServiceModule } from '../service/service.module'
 import { OrganizationModule } from '../organization/organization.module'
+import { UpdateJobStatusHttpController } from './commands/update-job-status/update-job-status.http.controller'
+import { UpdateJobStatusService } from './commands/update-job-status/update-job-status.service'
 
 const httpControllers = [
   CreateJobHttpController,
   UpdateJobHttpController,
+  UpdateJobStatusHttpController,
   DeleteJobHttpController,
   FindJobHttpController,
   FindJobPaginatedHttpController,
@@ -50,7 +53,13 @@ const httpControllers = [
   SendDeliverablesHttpController,
   FindMyOrderedJobPaginatedHttpController,
 ]
-const commandHandlers: Provider[] = [CreateJobService, UpdateJobService, DeleteJobService, SendDeliverablesService]
+const commandHandlers: Provider[] = [
+  CreateJobService,
+  UpdateJobService,
+  UpdateJobStatusService,
+  DeleteJobService,
+  SendDeliverablesService,
+]
 const queryHandlers: Provider[] = [
   FindJobQueryHandler,
   FindJobPaginatedQueryHandler,
