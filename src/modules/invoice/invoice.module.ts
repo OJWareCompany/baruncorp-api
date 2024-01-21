@@ -28,6 +28,8 @@ import { UsersModule } from '../users/users.module'
 import { ServiceModule } from '../service/service.module'
 import { CustomPricingModule } from '../custom-pricing/custom-pricing.module'
 import { FindClientWithOutstandingBalancesHttpController } from './queries/find-client-with-outstanding-balances/find-client-with-outstanding-balances.http.controller'
+import { FindOverdueInvoicePaginatedHttpController } from './queries/find-overdue-invoices-paginated/find-overdue-invoices.paginated.http.controller'
+import { FindOverdueInvoicePaginatedQueryHandler } from './queries/find-overdue-invoices-paginated/find-overdue-invoices.paginated.query-handler'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -38,6 +40,7 @@ const httpControllers = [
   FindClientToInvoiceHttpController,
   IssueInvoiceHttpController,
   FindClientWithOutstandingBalancesHttpController,
+  FindOverdueInvoicePaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateInvoiceService,
@@ -49,6 +52,7 @@ const queryHandlers: Provider[] = [
   FindInvoiceQueryHandler,
   FindInvoicePaginatedQueryHandler,
   FindClientToInvoiceQueryHandler,
+  FindOverdueInvoicePaginatedQueryHandler,
 ]
 const repositories: Provider[] = [
   {

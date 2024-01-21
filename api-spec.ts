@@ -2573,6 +2573,21 @@ export interface FindClientWithOutstandingBalancesHttpControllerGetParams {
   page?: number
 }
 
+export interface FindOverdueInvoicePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
 export interface FindCustomPricingPaginatedHttpControllerGetParams {
   /** @default "asda" */
   organizationId?: string | null
@@ -4528,6 +4543,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<ClientWithOutstandingBalancesPaginatedResponseDto, any>({
         path: `/client-with-outstanding-balances`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
+  overdueInvoices = {
+    /**
+     * No description
+     *
+     * @name FindOverdueInvoicePaginatedHttpControllerGet
+     * @request GET:/overdue-invoices
+     */
+    findOverdueInvoicePaginatedHttpControllerGet: (
+      query: FindOverdueInvoicePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<InvoicePaginatedResponseDto, any>({
+        path: `/overdue-invoices`,
         method: 'GET',
         query: query,
         format: 'json',
