@@ -8,7 +8,7 @@ import { PrismaService } from '../../../modules/database/prisma.service'
 import { JobNotFoundException } from '../domain/job.error'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import { endOfMonth, startOfMonth } from 'date-fns'
-import { JobStatusEnum } from '../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../domain/job.type'
 import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
 type JobModel =
   | OrderedJobs & {
@@ -115,8 +115,24 @@ export class JobRepository implements JobRepositoryPort {
           gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
           lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
         },
-        jobStatus: { in: [JobStatusEnum.Completed, JobStatusEnum.Canceled] },
-        orderedServices: { some: { status: OrderedServiceStatusEnum.Completed } },
+        jobStatus: {
+          in: [
+            AutoOnlyJobStatusEnum.Sent_To_Client,
+            JobStatusEnum.Completed,
+            JobStatusEnum.Canceled,
+            JobStatusEnum.Canceled_Invoice,
+          ],
+        },
+        orderedServices: {
+          some: {
+            status: {
+              in: [
+                OrderedServiceStatusEnum.Completed,
+                OrderedServiceStatusEnum.Canceled_Invoice, //
+              ],
+            },
+          },
+        },
         invoice: null,
       },
       include: {
