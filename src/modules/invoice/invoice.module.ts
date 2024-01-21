@@ -27,6 +27,7 @@ import { JobModule } from '../ordered-job/job.module'
 import { UsersModule } from '../users/users.module'
 import { ServiceModule } from '../service/service.module'
 import { CustomPricingModule } from '../custom-pricing/custom-pricing.module'
+import { FindClientWithOutstandingBalancesHttpController } from './queries/find-client-with-outstanding-balances/find-client-with-outstanding-balances.http.controller'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -36,6 +37,7 @@ const httpControllers = [
   FindInvoicePaginatedHttpController,
   FindClientToInvoiceHttpController,
   IssueInvoiceHttpController,
+  FindClientWithOutstandingBalancesHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateInvoiceService,

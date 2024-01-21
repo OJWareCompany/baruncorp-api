@@ -1184,6 +1184,24 @@ export interface IssueInvoiceRequestDto {
   attachments: Attachments[]
 }
 
+export interface ClientWithOutstandingBalancesResponseDto {
+  organizationId: string
+  organizationName: string
+  totalBalanceDue: number
+}
+
+export interface ClientWithOutstandingBalancesPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: ClientWithOutstandingBalancesResponseDto[]
+}
+
 export interface Tier {
   /** @default 0.01 */
   startingPoint: number
@@ -2526,6 +2544,21 @@ export interface FindCreatableExpensePricingHttpControllerGetParams {
 }
 
 export interface FindInvoicePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindClientWithOutstandingBalancesHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -4478,6 +4511,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<ClientToInvoiceResponseDto, any>({
         path: `/invoices-clients`,
         method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  clientWithOutstandingBalances = {
+    /**
+     * No description
+     *
+     * @name FindClientWithOutstandingBalancesHttpControllerGet
+     * @request GET:/client-with-outstanding-balances
+     */
+    findClientWithOutstandingBalancesHttpControllerGet: (
+      query: FindClientWithOutstandingBalancesHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<ClientWithOutstandingBalancesPaginatedResponseDto, any>({
+        path: `/client-with-outstanding-balances`,
+        method: 'GET',
+        query: query,
         format: 'json',
         ...params,
       }),
