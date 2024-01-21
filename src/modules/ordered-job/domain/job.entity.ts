@@ -214,6 +214,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   invoice(invoiceId: string) {
     this.props.invoiceId = invoiceId
+    if (this.props.jobStatus === JobStatusEnum.Canceled) {
+      this.props.jobStatus = JobStatusEnum.Canceled_Invoice
+    }
     return this
   }
 
