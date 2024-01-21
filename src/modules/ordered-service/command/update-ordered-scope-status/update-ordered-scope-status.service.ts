@@ -38,7 +38,7 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
         orderedScope.start()
         break
       case OrderedServiceStatusEnum.Completed:
-        orderedScope.validateAndComplete(this.orderedScopeStatusChangeValidator)
+        await orderedScope.validateAndComplete(this.orderedScopeStatusChangeValidator)
         break
       case OrderedServiceStatusEnum.Canceled:
         orderedScope.cancel('manually')
