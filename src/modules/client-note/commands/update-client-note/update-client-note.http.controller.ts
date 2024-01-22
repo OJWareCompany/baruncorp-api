@@ -3,21 +3,21 @@ import { Body, Param, Controller, Patch, UseGuards } from '@nestjs/common'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
-import { UpdateInformationCommand } from './update-information.command'
-import { UpdateInformationParamRequestDto, UpdateInformationRequestDto } from './update-information.request.dto'
+import { UpdateClientNoteCommand } from './update-client-note.command'
+import { UpdateClientNoteParamRequestDto, UpdateClientNoteRequestDto } from './update-client-note.request.dto'
 
-@Controller('informations')
-export class UpdateInformationHttpController {
+@Controller('client-note')
+export class UpdateClientNoteHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Patch(':informationId')
+  @Patch(':clientNoteId')
   @UseGuards(AuthGuard)
   async patch(
-    @Param() param: UpdateInformationParamRequestDto,
-    @Body() request: UpdateInformationRequestDto,
+    @Param() param: UpdateClientNoteParamRequestDto,
+    @Body() request: UpdateClientNoteRequestDto,
     @User() user: UserEntity,
   ): Promise<void> {
-    const command = new UpdateInformationCommand({
-      informationId: param.informationId,
+    const command = new UpdateClientNoteCommand({
+      clientNoteId: param.clientNoteId,
       updatedBy: user.id,
       ...request,
     })

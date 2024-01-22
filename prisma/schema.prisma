@@ -52,6 +52,7 @@ model Organizations {
   invoices                        Invoices[]
   vendorInvoices                  VendorInvoices[]
   assignedTasks                   AssignedTasks[]
+  clientNotes                     ClientNotes?
 
   @@index([organizationType], map: "organizations_organization_type_fkey")
   @@map("organizations")
@@ -126,6 +127,7 @@ model Users {
   ptos                       Ptos[]
   ptoDetails                 PtoDetails[]
   informationHistories       InformationHistories[]
+  client_note_snapshot       ClientNoteSnapshots[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
   @@map("users")
@@ -1077,24 +1079,59 @@ model PtoTenurePolicies {
 
 model Informations {
   id        String   @id @db.VarChar(255)
-  contents  String   @map("contents")   @db.VarChar(3000)
+  contents  String   @map("contents")   @db.Text
   isActive  Boolean  @map("is_active")  @default(true)
   createdAt DateTime @map("created_at") @db.DateTime(0) @default(now())
   updatedAt DateTime @map("updated_at") @db.DateTime(0)
+
+  informationHistories InformationHistories[]
 
   @@map("informations")
 }
 
 model InformationHistories {
-  id        String    @id @db.VarChar(255)
-  contents  String    @map("content") @db.VarChar(3000)
-  updatedBy String    @map("updated_by") @db.VarChar(255)
-  createdAt DateTime  @map("created_at") @db.DateTime(0) @default(now())
-  updatedAt DateTime  @map("updated_at") @db.DateTime(0)
+  id        String     @id @db.VarChar(255)
+  informationId String @map("information_id") @db.VarChar(255)
+  contents  String     @map("content")    @db.Text
+  updatedBy String     @map("updated_by") @db.VarChar(255)
+  createdAt DateTime   @map("created_at") @db.DateTime(0) @default(now())
+  updatedAt DateTime   @map("updated_at") @db.DateTime(0)
 
-  user      Users    @relation(fields: [updatedBy], references: [id])
+  user        Users        @relation(fields: [updatedBy],     references: [id])
+  information Informations @relation(fields: [informationId], references: [id])
+
   @@map("information_histories")
   @@index([updatedBy])
+  @@index([informationId])
+}
+
+model ClientNotes {
+  id              String    @id @db.VarChar(255)
+  organizationId  String    @map("organization_id") @db.VarChar(255) @unique
+  createdAt       DateTime  @map("created_at") @db.DateTime(0) @default(now())
+
+  snapshots       ClientNoteSnapshots[]
+  organization    Organizations  @relation(fields: [organizationId], references: [id])
+  @@map("client_notes")
+  @@index([organizationId])
+}
+
+model ClientNoteSnapshots {
+  id                         String         @id                                  @db.VarChar(255)
+  clientNoteId               String         @map("client_note_id")               @db.VarChar(255)
+  updatedBy                  String         @map("updated_by")                   @db.VarChar(255)
+  designNotes                String         @map("design_notes")                 @db.Text
+  electricalEngineeringNotes String         @map("electrical_engineering_notes") @db.Text
+  structuralEngineeringNotes String         @map("structural_engineering_notes") @db.Text
+  type                       ClientNoteType @map("type")
+  createdAt                  DateTime       @map("created_at")                   @db.DateTime(0)   @default(now())
+  updatedAt                  DateTime       @map("updated_at")                   @db.DateTime(0)
+
+  clientNote                 ClientNotes @relation(fields: [clientNoteId], references: [id])
+  user                       Users       @relation(fields: [updatedBy], references: [id])
+  @@map("client_note_snapshots")
+  @@index([updatedBy])
+  @@index([clientNoteId])
 }
 
 enum InvoicesStatus {
@@ -1111,4 +1148,9 @@ enum PaymentsPaymentMethod {
 enum CreditTransactionsTransactionType {
   Reload
   Deduction
+}
+
+enum ClientNoteType {
+  Create
+  Modify
 }

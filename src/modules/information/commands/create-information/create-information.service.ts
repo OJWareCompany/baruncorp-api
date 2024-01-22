@@ -7,6 +7,7 @@ import { INFORMATION_REPOSITORY } from '../../information.di-token'
 import { InformationRepositoryPort } from '../../database/information.repository.port'
 import { InformationEntity } from '../../domain/information.entity'
 import { AggregateID } from '@src/libs/ddd/entity.base'
+import { InformationHistoryEntity } from '../../domain/information-history.entity'
 
 @CommandHandler(CreateInformationCommand)
 export class CreateInformationService implements ICommandHandler {
@@ -21,6 +22,14 @@ export class CreateInformationService implements ICommandHandler {
     })
 
     await this.informationRepository.insert(entity)
+
+    const historyEntitiy: InformationHistoryEntity = InformationHistoryEntity.create({
+      informationId: entity.id,
+      contents: command.contents,
+      updatedBy: command.updatedBy,
+    })
+    await this.informationRepository.insertHistory(historyEntitiy)
+
     return entity.id
   }
 }

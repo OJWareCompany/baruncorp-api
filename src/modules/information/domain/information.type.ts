@@ -1,12 +1,13 @@
 export interface CreateInformationProps {
-  contents: JSON[]
+  contents: string
   isActive: boolean
 }
 
 export type InformationProps = CreateInformationProps
 
 export interface CreateInformationHistoryProps {
-  contents: JSON[]
+  informationId: string
+  contents: string
   updatedBy: string
 }
 

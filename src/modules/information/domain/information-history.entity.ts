@@ -19,11 +19,11 @@ export class InformationHistoryEntity extends AggregateRoot<InformationHistoryPr
     return new InformationHistoryEntity({ id, props })
   }
 
-  get contents(): JSON[] {
+  get contents(): string {
     return this.props.contents
   }
 
-  set contents(contents: JSON[]) {
+  set contents(contents: string) {
     this.props.contents = contents
   }
 

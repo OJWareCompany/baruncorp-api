@@ -2097,20 +2097,20 @@ export interface AssigningTaskAlertPaginatedResponse {
 }
 
 export interface CreateInformationRequestDto {
-  /** @default [{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:newjobs@baruncorp.com","target":"_blank","children":[{"text":"newjobs@baruncorp.com"}]},{"text":" if you need to:"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Add additional services to an active service order"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Send us updated information for an active service order or for a service order that is on hold"}],"listStart":2},{"type":"p","listStyleType":"disc","indent":1,"listStart":3,"children":[{"text":"Any other questions or issues concerning service orders"}]},{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:chrisk@baruncorp.com","target":"_blank","children":[{"text":"chrisk@baruncorp.com"}]},{"text":" for any matter relating to the portal."}]}] */
-  contents: object[]
+  /** @default "string contents..." */
+  contents: string
 }
 
 export interface UpdateInformationRequestDto {
-  /** @default [{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:newjobs@baruncorp.com","target":"_blank","children":[{"text":"newjobs@baruncorp.com"}]},{"text":" if you need to:"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Add additional services to an active service order"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Send us updated information for an active service order or for a service order that is on hold"}],"listStart":2},{"type":"p","listStyleType":"disc","indent":1,"listStart":3,"children":[{"text":"Any other questions or issues concerning service orders"}]},{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:chrisk@baruncorp.com","target":"_blank","children":[{"text":"chrisk@baruncorp.com"}]},{"text":" for any matter relating to the portal."}]}] */
-  contents: object[]
+  /** @default "string contents..." */
+  contents: string
 }
 
 export interface InformationResponseDto {
   /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
   id: string
-  /** @default [{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:newjobs@baruncorp.com","target":"_blank","children":[{"text":"newjobs@baruncorp.com"}]},{"text":" if you need to:"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Add additional services to an active service order"}]},{"type":"p","listStyleType":"disc","indent":1,"children":[{"text":"Send us updated information for an active service order or for a service order that is on hold"}],"listStart":2},{"type":"p","listStyleType":"disc","indent":1,"listStart":3,"children":[{"text":"Any other questions or issues concerning service orders"}]},{"type":"p","children":[{"text":"Please send an email to "},{"type":"a","url":"mailto:chrisk@baruncorp.com","target":"_blank","children":[{"text":"chrisk@baruncorp.com"}]},{"text":" for any matter relating to the portal."}]}] */
-  contents: object[]
+  /** @default "string contents..." */
+  contents: string
   /** @default true */
   isActive: boolean
   /**
@@ -2135,6 +2135,52 @@ export interface InformationPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: InformationResponseDto[]
+}
+
+export interface CreateClientNoteRequestDto {
+  /** @default "ebf47426-2f8d-4b7c-9ef1-81209db8e3ad" */
+  organizationId: string
+  /** @default "Blah - Blah" */
+  designNotes: string
+  /** @default "Blah - Blah" */
+  electricalEngineeringNotes: string
+  /** @default "Blah - Blah" */
+  structuralEngineeringNotes: string
+}
+
+export interface UpdateClientNoteRequestDto {
+  /** @default "Blah - Blah" */
+  designNotes: string
+  /** @default "Blah - Blah" */
+  electricalEngineeringNotes: string
+  /** @default "Blah - Blah" */
+  structuralEngineeringNotes: string
+}
+
+export interface ClientNoteResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "dglee" */
+  userName: string
+  /** @default "Create" */
+  type: string
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  updatedAt: string
+}
+
+export interface ClientNotePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: ClientNoteResponseDto[]
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -2933,6 +2979,23 @@ export interface FindAssigningTaskAlertPaginatedHttpControllerFindParams {
 }
 
 export interface FindInformationPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindClientNotePaginatedHttpControllerGetParams {
+  /** @default "674e3b83-0255-46fe-bc4b-047fca3c43cf" */
+  organizationId?: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -5723,6 +5786,74 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+  }
+  clientNote = {
+    /**
+     * No description
+     *
+     * @name CreateClientNoteHttpControllerPatch
+     * @request POST:/client-note
+     */
+    createClientNoteHttpControllerPatch: (data: CreateClientNoteRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/client-note`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindClientNotePaginatedHttpControllerGet
+     * @request GET:/client-note
+     */
+    findClientNotePaginatedHttpControllerGet: (
+      query: FindClientNotePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<ClientNotePaginatedResponseDto, any>({
+        path: `/client-note`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateClientNoteHttpControllerPatch
+     * @request PATCH:/client-note/{clientNoteId}
+     */
+    updateClientNoteHttpControllerPatch: (
+      clientNoteId: string,
+      data: UpdateClientNoteRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/client-note/${clientNoteId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindClientNoteHttpControllerGet
+     * @request GET:/client-note/{clientNoteSnapshotId}
+     */
+    findClientNoteHttpControllerGet: (clientNoteSnapshotId: string, params: RequestParams = {}) =>
+      this.request<ClientNoteResponseDto, any>({
+        path: `/client-note/${clientNoteSnapshotId}`,
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   }
