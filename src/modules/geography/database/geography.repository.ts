@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { GeographyRepositoryPort } from './geography.repository.port'
 import { AHJNoteHistory, AHJNotes, Prisma } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
@@ -9,9 +9,7 @@ import {
   CensusPlace,
 } from '../../project/infra/census/census.type.dto'
 import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
-import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
-import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
-import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
+import { UpdateAhjNoteCommand } from '../commands/update-ahj-note/update-ahj-note.command'
 import { AHJType } from '../dto/ahj-note.response.dto'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import {
@@ -50,7 +48,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
         data: { ...create.getNoteInputData() },
         where: { geoId: create.geoId },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...existedStateNote } })
+      await this.prismaService.aHJNoteHistory.create({ data: { ...existedStateNote, history_type: 'Modified' } })
     }
 
     if (!existedStateNote) {
@@ -65,11 +63,14 @@ export class GeographyRepository implements GeographyRepositoryPort {
         data: { ...create.getNoteInputData(state) },
         where: { geoId: create.geoId },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...existedCountyNote } })
+      await this.prismaService.aHJNoteHistory.create({ data: { ...existedCountyNote, history_type: 'Modified' } })
     }
 
     if (!existedCountyNote) {
-      await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state) } })
+      const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state) } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: { ...newNote, history_type: 'Modified' },
+      })
     }
   }
 
@@ -87,11 +88,16 @@ export class GeographyRepository implements GeographyRepositoryPort {
         data: { ...create.getNoteInputData(state, county) },
         where: { geoId: create.geoId },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...existedCountySubdivisionsNotes } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: { ...existedCountySubdivisionsNotes, history_type: 'Modified' },
+      })
     }
 
     if (!existedCountySubdivisionsNotes) {
-      await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state, county) } })
+      const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state, county) } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: { ...newNote, history_type: 'Created' },
+      })
     }
   }
 
@@ -107,13 +113,14 @@ export class GeographyRepository implements GeographyRepositoryPort {
         data: { ...create.getNoteInputData(state, county, subdivision) },
         where: { geoId: create.geoId },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...placeNotes } })
+      await this.prismaService.aHJNoteHistory.create({ data: { ...placeNotes, history_type: 'Modified' } })
     }
 
     if (!placeNotes) {
-      await this.prismaService.aHJNotes.create({
+      const newNotes = await this.prismaService.aHJNotes.create({
         data: { ...create.getNoteInputData(state, county, subdivision) },
       })
+      await this.prismaService.aHJNoteHistory.create({ data: { ...newNotes, history_type: 'Created' } })
     }
   }
 
@@ -148,8 +155,15 @@ export class GeographyRepository implements GeographyRepositoryPort {
     }
   }
 
-  async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistory> {
-    const result = await this.prismaService.aHJNoteHistory.findUnique({ where: { id: historyId } })
+  async findAhjNoteHistoryDetail(geoId: string, updatedAt: Date): Promise<AHJNoteHistory> {
+    const result = await this.prismaService.aHJNoteHistory.findUnique({
+      where: {
+        geoId_updatedAt: {
+          geoId: geoId,
+          updatedAt: updatedAt,
+        },
+      },
+    })
     if (!result) throw new AhjNoteHistoryNotFoundException()
     return result
   }
@@ -158,7 +172,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     pageNo: number,
     pageSize: number,
     geoId: string | null,
-  ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>> {
+  ): Promise<Paginated<AHJNoteHistoryModel>> {
     const offset = (pageNo - 1) * pageSize ?? 0
     const where = geoId ? { geoId: geoId } : undefined
 
@@ -166,14 +180,6 @@ export class GeographyRepository implements GeographyRepositoryPort {
     const totalCount = count.geoId
 
     const result = await this.prismaService.aHJNoteHistory.findMany({
-      select: {
-        id: true,
-        geoId: true,
-        name: true,
-        fullAhjName: true,
-        updatedBy: true,
-        updatedAt: true,
-      },
       where: { ...where },
       orderBy: {
         createdAt: 'desc',
@@ -189,7 +195,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     searchQuery: FindAhjNotesSearchQueryRequestDto,
     pageNo: number,
     pageSize: number,
-  ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>> {
+  ): Promise<Paginated<AHJNotesModel>> {
     const offset = (pageNo - 1) * pageSize ?? 0
 
     const whereInput: Prisma.AHJNotesWhereInput = {
@@ -198,15 +204,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
       ...(searchQuery.name && { name: { contains: searchQuery.name } }),
     }
 
-    const result: Pick<AHJNotesModel, keyof AhjNoteListResponseDto>[] = await this.prismaService.aHJNotes.findMany({
-      select: {
-        geoId: true,
-        name: true,
-        fullAhjName: true,
-        updatedBy: true,
-        updatedAt: true,
-        type: true,
-      },
+    const result = await this.prismaService.aHJNotes.findMany({
       where: whereInput,
       orderBy: {
         updatedAt: 'desc', // 수정/생성 날짜 데이터가 없음
@@ -221,23 +219,98 @@ export class GeographyRepository implements GeographyRepositoryPort {
     return new Paginated({ page: pageNo, totalCount, pageSize, items: result })
   }
 
-  async findNoteByGeoId(geoId: string): Promise<AHJNotesModel> {
-    const result = await this.prismaService.aHJNotes.findUnique({
-      where: {
-        geoId,
-      },
-    })
-
+  async findNoteByGeoIdOrThrow(geoId: string): Promise<AHJNotesModel> {
+    const result = await this.prismaService.aHJNotes.findUnique({ where: { geoId } })
     if (!result) throw new AhjJobNoteNotFoundException()
     return result
   }
 
-  // TOFIX
-  async updateNote(username: string, geoId: string, update: UpdateAhjNoteDto): Promise<void> {
+  // TO FIX
+  async updateNoteAndCreateHistory(username: string, geoId: string, update: UpdateAhjNoteCommand): Promise<void> {
     const model = await this.prismaService.aHJNotes.findFirst({ where: { geoId } })
     if (!model) throw new AhjNoteNotFoundException()
-
-    await this.prismaService.aHJNotes.update({ data: { ...update, updatedBy: username }, where: { geoId } })
-    await this.prismaService.aHJNoteHistory.create({ data: { ...model, updatedBy: username } })
+    const updated = await this.prismaService.aHJNotes.update({
+      data: {
+        website: update.website,
+        specificFormRequired: update.specificFormRequired,
+        generalNotes: update.generalNotes,
+        buildingCodes: update.buildingCodes,
+        fireSetBack: update.fireSetBack,
+        utilityNotes: update.utilityNotes,
+        designNotes: update.designNotes,
+        pvMeterRequired: update.pvMeterRequired,
+        acDisconnectRequired: update.acDisconnectRequired,
+        centerFed120Percent: update.centerFed120Percent,
+        deratedAmpacity: update.deratedAmpacity,
+        engineeringNotes: update.engineeringNotes,
+        iebcAccepted: update.iebcAccepted,
+        structuralObservationRequired: update.structuralObservationRequired,
+        windUpliftCalculationRequired: update.windUpliftCalculationRequired,
+        wetStampsRequired: update.wetStampsRequired,
+        digitalSignatureType: update.digitalSignatureType,
+        windExposure: update.windExposure,
+        wetStampSize: update.wetStampSize,
+        windSpeed: update.windSpeed,
+        snowLoadGround: update.snowLoadGround,
+        snowLoadFlatRoof: update.snowLoadFlatRoof,
+        snowLoadSlopedRoof: update.snowLoadSlopedRoof,
+        ofWetStamps: update.ofWetStamps,
+        electricalNotes: update.electricalNotes,
+        geoId: update.geoId,
+        updatedBy: username,
+      },
+      where: { geoId },
+    })
+    await this.prismaService.aHJNoteHistory.create({
+      data: {
+        history_type: 'Modified',
+        geoIdState: updated.geoIdState,
+        geoIdCounty: updated.geoIdCounty,
+        geoIdCountySubdivision: updated.geoIdCountySubdivision,
+        geoIdPlace: updated.geoIdPlace,
+        name: updated.name,
+        fullAhjName: updated.fullAhjName,
+        queryState: updated.queryState,
+        queryCounty: updated.queryCounty,
+        website: updated.website,
+        specificFormRequired: updated.specificFormRequired,
+        buildingCodes: updated.buildingCodes,
+        generalNotes: updated.generalNotes,
+        pvMeterRequired: updated.pvMeterRequired,
+        acDisconnectRequired: updated.acDisconnectRequired,
+        centerFed120Percent: updated.centerFed120Percent,
+        deratedAmpacity: updated.deratedAmpacity,
+        fireSetBack: updated.fireSetBack,
+        utilityNotes: updated.utilityNotes,
+        designNotes: updated.designNotes,
+        iebcAccepted: updated.iebcAccepted,
+        structuralObservationRequired: updated.structuralObservationRequired,
+        digitalSignatureType: updated.digitalSignatureType,
+        windUpliftCalculationRequired: updated.windUpliftCalculationRequired,
+        windSpeed: updated.windSpeed,
+        windExposure: updated.windExposure,
+        snowLoadGround: updated.snowLoadGround,
+        snowLoadFlatRoof: updated.snowLoadFlatRoof,
+        snowLoadSlopedRoof: updated.snowLoadSlopedRoof,
+        wetStampsRequired: updated.wetStampsRequired,
+        ofWetStamps: updated.ofWetStamps,
+        wetStampSize: updated.wetStampSize,
+        engineeringNotes: updated.engineeringNotes,
+        electricalNotes: updated.electricalNotes,
+        stateCode: updated.stateCode,
+        funcStat: updated.funcStat,
+        address: updated.address,
+        lsadCode: updated.lsadCode,
+        usps: updated.usps,
+        ansiCode: updated.ansiCode,
+        type: updated.type,
+        longName: updated.longName,
+        countyCode: updated.countyCode,
+        createdAt: updated.updatedAt,
+        geoId: updated.geoId,
+        updatedAt: updated.updatedAt,
+        updatedBy: updated.updatedBy,
+      },
+    })
   }
 }

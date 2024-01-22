@@ -1,4 +1,4 @@
-import { AHJNoteHistoryModel, AHJNotesModel } from './geography.repository'
+import { AHJNoteHistory } from '@prisma/client'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import {
   CensusCounties,
@@ -7,30 +7,21 @@ import {
   CensusState,
 } from '../../project/infra/census/census.type.dto'
 import { FindAhjNotesSearchQueryRequestDto } from '../queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
-import { AhjNoteListResponseDto } from '../dto/ahj-note.paginated.response.dto'
-import { AhjNoteHistoryListResponseDto } from '../dto/ahj-note-history.paginated.response.dto'
-import { UpdateAhjNoteDto } from '../commands/update-ahj-note/update-ahj-note.dto'
+import { UpdateAhjNoteCommand } from '../commands/update-ahj-note/update-ahj-note.command'
+import { AHJNoteHistoryModel, AHJNotesModel } from './geography.repository'
 
 export interface GeographyRepositoryPort {
   findNotes(
     searchQuery: FindAhjNotesSearchQueryRequestDto,
     pageNo: number,
     pageSize: number,
-  ): Promise<Paginated<Pick<AHJNotesModel, keyof AhjNoteListResponseDto>>>
-  findNoteByGeoId(geoId: string): Promise<AHJNotesModel>
+  ): Promise<Paginated<AHJNotesModel>>
+  findNoteByGeoIdOrThrow(geoId: string): Promise<AHJNotesModel>
   deleteNoteByGeoId(geoId: string): Promise<void>
-  updateNote(username: string, geoId: string, update: UpdateAhjNoteDto): Promise<void>
-  findNoteHistory(
-    pageNo: number,
-    pageSize: number,
-    geoId: string | null,
-  ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>>
+  updateNoteAndCreateHistory(username: string, geoId: string, update: UpdateAhjNoteCommand): Promise<void>
+  findNoteHistory(pageNo: number, pageSize: number, geoId: string | null): Promise<Paginated<AHJNoteHistoryModel>>
 
-  findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel>
-  // findStateByGeoId(geoId: string): Promise<States>
-  // findCountiesByGeoId(geoId: string): Promise<Counties>
-  // findCountySubdivisionByGeoId(geoId: string): Promise<CountySubdivisions>
-  // findPlaceByGeoId(geoId: string): Promise<Places>
+  findAhjNoteHistoryDetail(geoId: string, updatedAt: Date): Promise<AHJNoteHistory>
 
   createState(create: CensusState): Promise<void>
   createCounty(create: CensusCounties): Promise<void>

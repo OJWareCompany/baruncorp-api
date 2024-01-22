@@ -1,14 +1,13 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { GeographyRepositoryPort } from './database/geography.repository.port'
 import { AHJNoteHistoryModel, AHJNotesModel } from './database/geography.repository'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
 import { Paginated } from '../../libs/ddd/repository.port'
 import { FindAhjNotesSearchQueryRequestDto } from './queries/find-ahj-notes/find-ahj-notes-search-query.request.dto'
 import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
-import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { UserEntity } from '../users/domain/user.entity'
-import { UpdateAhjNoteDto } from './commands/update-ahj-note/update-ahj-note.dto'
+import { UpdateAhjNoteCommand } from './commands/update-ahj-note/update-ahj-note.command'
 import { AhjNoteHistoryNotFoundException, AhjNoteNotFoundException } from './domain/ahj-job-note.error'
 
 @Injectable()
@@ -30,31 +29,31 @@ export class GeographyService {
     pageNo: number,
     pageSize: number,
     geoId: string | null,
-  ): Promise<Paginated<Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>>> {
+  ): Promise<Paginated<AHJNoteHistoryModel>> {
     return await this.geographyRepository.findNoteHistory(pageNo, pageSize, geoId)
   }
 
   async findNoteByGeoId(geoId: string): Promise<AHJNotesModel> {
-    const note = await this.geographyRepository.findNoteByGeoId(geoId)
+    const note = await this.geographyRepository.findNoteByGeoIdOrThrow(geoId)
     if (!note) throw new AhjNoteNotFoundException()
     return note
   }
 
   async deleteNoteByGeoId(geoId: string): Promise<void> {
-    const note = await this.geographyRepository.findNoteByGeoId(geoId)
+    const note = await this.geographyRepository.findNoteByGeoIdOrThrow(geoId)
     if (!note) throw new AhjNoteNotFoundException()
     return await this.geographyRepository.deleteNoteByGeoId(geoId)
   }
 
-  async findNoteUpdateHistoryDetail(historyId: number): Promise<AHJNoteHistoryModel> {
-    const note = await this.geographyRepository.findNoteUpdateHistoryDetail(historyId)
+  async findNoteUpdateHistoryDetail(geoId: string, updatedAt: Date): Promise<AHJNoteHistoryModel> {
+    const note = await this.geographyRepository.findAhjNoteHistoryDetail(geoId, updatedAt)
     if (!note) throw new AhjNoteHistoryNotFoundException()
     return note
   }
 
-  async updateNote(user: UserEntity, geoId: string, dto: UpdateAhjNoteDto): Promise<void> {
-    const note = await this.geographyRepository.findNoteByGeoId(geoId)
+  async updateNote(user: UserEntity, geoId: string, dto: UpdateAhjNoteCommand): Promise<void> {
+    const note = await this.geographyRepository.findNoteByGeoIdOrThrow(geoId)
     if (!note) throw new AhjNoteNotFoundException()
-    await this.geographyRepository.updateNote(user.userName.fullName, geoId, dto)
+    await this.geographyRepository.updateNoteAndCreateHistory(user.userName.fullName, geoId, dto)
   }
 }

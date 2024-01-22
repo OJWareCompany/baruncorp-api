@@ -1,12 +1,13 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { PaginatedResponseDto } from '../../../libs/api/page.response.dto'
+import { AhjNoteHistoryTypeEnum } from '../domain/ahj-job-note.type'
 
 export class AhjNoteHistoryListResponseDto {
   @ApiProperty()
-  id: number
+  geoId: string
 
   @ApiProperty()
-  geoId: string
+  historyType: AhjNoteHistoryTypeEnum
 
   @ApiProperty()
   name: string

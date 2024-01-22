@@ -2,31 +2,38 @@ import { Controller, Get, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { InvoicePaginatedResponseDto } from '../../dtos/invoice.paginated.response.dto'
-import { FindInvoicePaginatedQuery, FindInvoidPaginatedReturnType } from './find-invoice.paginated.query-handler'
+import { FindInvoicePaginatedQuery, FindInvoicePaginatedReturnType } from './find-invoice.paginated.query-handler'
 import {
   MountingType,
   MountingTypeEnum,
   ProjectPropertyType,
   ProjectPropertyTypeEnum,
 } from '../../../project/domain/project.type'
+import { FindInvoicePaginatedRequestDto } from './find-invoice.paginated.request.dto'
 
 @Controller('invoices')
 export class FindInvoicePaginatedHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('')
-  async get(@Query() queryParams: PaginatedQueryRequestDto): Promise<InvoicePaginatedResponseDto> {
+  async get(
+    @Query() queryParams: PaginatedQueryRequestDto,
+    @Query() request: FindInvoicePaginatedRequestDto,
+  ): Promise<InvoicePaginatedResponseDto> {
     const command = new FindInvoicePaginatedQuery({
       ...queryParams,
+      status: request.status,
+      organizationName: request.organizationName,
+      invoiceDate: request.invoiceDate,
     })
-    const result: FindInvoidPaginatedReturnType = await this.queryBus.execute(command)
+    const result: FindInvoicePaginatedReturnType = await this.queryBus.execute(command)
 
     return new InvoicePaginatedResponseDto({
       ...queryParams,
       ...result,
       items: result.items.map((invoice) => ({
         id: invoice.id,
-        // invoiceName: invoice.invoiceDate.toISOString(),
+        invoiceName: invoice.invoiceDate.toISOString(),
         status: invoice.status,
         invoiceDate: invoice.invoiceDate.toISOString(),
         terms: invoice.terms,

@@ -4,6 +4,8 @@ import { AHJType } from './dto/ahj-note.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
 import { Injectable } from '@nestjs/common'
+import { AHJNoteHistory } from '@prisma/client'
+import { AhjNoteHistoryTypeEnum } from './domain/ahj-job-note.type'
 
 @Injectable()
 export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, AhjNoteHistoryResponseDto> {
@@ -26,7 +28,8 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
     if (model.geoIdPlace) type = AHJType.PLACE
 
     const response = new AhjNoteHistoryResponseDto()
-    response.id = model.id
+
+    response.historyType = model.history_type as AhjNoteHistoryTypeEnum
 
     response.general = {
       website: model.website,
@@ -72,17 +75,15 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
     }
 
     // for history id
-    const id = model['id'] ? { id: model['id'] } : undefined
     return {
-      ...id,
       ...response,
     }
   }
 
-  toListResponse(model: Pick<AHJNoteHistoryModel, keyof AhjNoteHistoryListResponseDto>): AhjNoteHistoryListResponseDto {
+  toListResponse(model: AHJNoteHistory): AhjNoteHistoryListResponseDto {
     const response = new AhjNoteHistoryListResponseDto()
-    response.id = model.id
     response.geoId = model.geoId
+    response.historyType = model.history_type as AhjNoteHistoryTypeEnum
     response.name = model.name
     response.fullAhjName = model.fullAhjName
     response.updatedBy = model.updatedBy

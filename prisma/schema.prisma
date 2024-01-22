@@ -95,32 +95,32 @@ model UserRole {
 }
 
 model Users {
-  id                         String               @id @default(uuid())
-  dateOfJoining              DateTime?            @map("date_of_joining") @db.DateTime(0)
-  type                       String               @db.VarChar(255)
-  deliverables_emails        String?              @db.Text
-  email                      String               @unique
-  firstName                  String               @map("first_name")
-  lastName                   String               @map("last_name")
-  full_name                  String               @db.VarChar(255)
-  status                     String               @default("sign up not completed") @db.VarChar(255)
-  organizationId             String               @map("organization_id")
-  updatedAt                  DateTime             @updatedAt @map("updated_at") @db.DateTime(0)
-  createdAt                  DateTime             @default(now()) @map("created_at") @db.DateTime(0)
-  isHandRaisedForTask        Boolean              @map("is_hand_raised_for_task")
-  address                    String?              @db.Text
-  phoneNumber                String?              @map("phone_number") @db.VarChar(20)
-  isActiveWorkResource       Boolean?             @map("is_active_work_resource")
-  isCurrentUser              Boolean?             @map("is_current_user")
-  isInactiveOrganizationUser Boolean?             @map("is_inactive_organization_user")
-  revenueShare               Boolean?             @map("revenue_share")
-  revisionRevenueShare       Boolean?             @map("revision_revenue_share")
-  updatedBy                  String               @map("updated_by") @db.VarChar(255)
-  isVendor                   Boolean              @default(false) @map("is_vendor")
+  id                         String                 @id @default(uuid())
+  dateOfJoining              DateTime?              @map("date_of_joining") @db.DateTime(0)
+  type                       String                 @db.VarChar(255)
+  deliverables_emails        String?                @db.Text
+  email                      String                 @unique
+  firstName                  String                 @map("first_name")
+  lastName                   String                 @map("last_name")
+  full_name                  String                 @db.VarChar(255)
+  status                     String                 @default("sign up not completed") @db.VarChar(255)
+  organizationId             String                 @map("organization_id")
+  updatedAt                  DateTime               @updatedAt @map("updated_at") @db.DateTime(0)
+  createdAt                  DateTime               @default(now()) @map("created_at") @db.DateTime(0)
+  isHandRaisedForTask        Boolean                @map("is_hand_raised_for_task")
+  address                    String?                @db.Text
+  phoneNumber                String?                @map("phone_number") @db.VarChar(20)
+  isActiveWorkResource       Boolean?               @map("is_active_work_resource")
+  isCurrentUser              Boolean?               @map("is_current_user")
+  isInactiveOrganizationUser Boolean?               @map("is_inactive_organization_user")
+  revenueShare               Boolean?               @map("revenue_share")
+  revisionRevenueShare       Boolean?               @map("revision_revenue_share")
+  updatedBy                  String                 @map("updated_by") @db.VarChar(255)
+  isVendor                   Boolean                @default(false) @map("is_vendor")
   passwordEntity             Passwords?
   userRole                   UserRole?
   userPosition               UserPosition?
-  organization               Organizations        @relation(fields: [organizationId], references: [id])
+  organization               Organizations          @relation(fields: [organizationId], references: [id])
   assignedTasks              AssignedTasks[]
   availableTasks             UserAvailableTasks[]
   licenses                   UserLicense[]
@@ -167,10 +167,10 @@ model Service {
   fixedPrice                               Decimal?                         @map("fixed_price") @db.Decimal(13, 4)
   commercialRevisionCostPerUnit            Decimal?                         @map("commercial_revision_cost_per_unit") @db.Decimal(13, 4)
   commercialRevisionMinutesPerUnit         Int?                             @default(1) @map("commercial_revision_minutes_per_unit") @db.UnsignedInt
-  commercialNewEstimatedTaskDuration       Decimal?                         @map("commercial_new_estimated_task_duration") @db.Decimal(2, 1)
-  commercialRevisionEstimatedTaskDuration  Decimal?                         @map("commercial_revision_estimated_task_duration") @db.Decimal(2, 1)
   residentialNewEstimatedTaskDuration      Decimal?                         @map("residential_new_estimated_task_duration") @db.Decimal(2, 1)
   residentialRevisionEstimatedTaskDuration Decimal?                         @map("residential_revision_estimated_task_duration") @db.Decimal(2, 1)
+  commercialNewEstimatedTaskDuration       Decimal?                         @map("commercial_new_estimated_task_duration") @db.Decimal(2, 1)
+  commercialRevisionEstimatedTaskDuration  Decimal?                         @map("commercial_revision_estimated_task_duration") @db.Decimal(2, 1)
   orderedServices                          OrderedServices[]
   tasks                                    Tasks[]
   commercialStandardPricingTiers           CommercialStandardPricingTiers[]
@@ -293,8 +293,6 @@ model Places {
 
 model AHJNotes {
   geoId                         String   @id @map("geo_id") @db.VarChar(20)
-  createdAt                     DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt                     DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
   type                          String?  @db.VarChar(20)
   geoIdState                    String   @map("geo_id_state") @db.VarChar(20)
   geoIdCounty                   String?  @map("geo_id_county") @db.VarChar(20)
@@ -337,15 +335,15 @@ model AHJNotes {
   ansiCode                      String?  @map("ansi_code") @db.VarChar(20)
   longName                      String?  @map("long_name") @db.VarChar(300)
   countyCode                    String?  @map("county_code") @db.VarChar(20)
-  modifiedAt                    DateTime @default(now()) @map("modified_at") @db.DateTime(0)
+  createdAt                     DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt                     DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
   updatedBy                     String   @default("system") @map("updated_by") @db.VarChar(300)
 
   @@map("ahj_notes")
 }
 
 model AHJNoteHistory {
-  id                            Int      @id @default(autoincrement()) @db.UnsignedInt
-  geoId                         String   @map("geo_id") @db.VarChar(20)
+  history_type                  String   @db.VarChar(20)
   geoIdState                    String   @map("geo_id_state") @db.VarChar(20)
   geoIdCounty                   String?  @map("geo_id_county") @db.VarChar(20)
   geoIdCountySubdivision        String?  @map("geo_id_county_subdivision") @db.VarChar(20)
@@ -389,10 +387,11 @@ model AHJNoteHistory {
   longName                      String?  @map("long_name") @db.VarChar(300)
   countyCode                    String?  @map("county_code") @db.VarChar(20)
   createdAt                     DateTime @default(now()) @map("created_at") @db.DateTime(0)
-  updatedAt                     DateTime @updatedAt @map("updated_at") @db.DateTime(0)
-  modifiedAt                    DateTime @map("modified_at") @db.DateTime(0)
-  updatedBy                     String   @map("updated_by") @db.VarChar(300)
+  geoId                         String   @map("geo_id") @db.VarChar(20)
+  updatedAt                     DateTime @default(now()) @updatedAt @map("updated_at") @db.DateTime(0)
+  updatedBy                     String   @default("system") @map("updated_by") @db.VarChar(255)
 
+  @@id([geoId, updatedAt])
   @@map("ahj_note_history")
 }
 
@@ -434,6 +433,7 @@ model OrderedJobs {
   invoiceId                                     String?           @map("invoice_id") @db.VarChar(255)
   revisionSize                                  String?           @map("revision_size") @db.VarChar(255)
   pricingType                                   String?           @map("pricing_type") @db.VarChar(255)
+  loadCalcOrigin                                String            @default("Self") @map("load_calc_origin") @db.VarChar(255)
   clientOrganizationName                        String            @map("client_organization_name") @db.VarChar(255)
   clientOrganizationId                          String            @map("client_organization_id") @db.VarChar(255)
   projectId                                     String            @map("project_id") @db.VarChar(255)
@@ -444,6 +444,7 @@ model OrderedJobs {
   jobName                                       String            @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int               @map("job_request_number")
   receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
+  dueDate                                       DateTime?         @map("due_date") @db.DateTime(0)
   mountingType                                  String            @map("mounting_type") @db.VarChar(255)
   projectType                                   String            @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?              @map("number_of_wet_stamp") @db.UnsignedTinyInt
@@ -513,8 +514,6 @@ model OrderedJobs {
   mailingAdderssStreet2                         String?           @map("mailing_adderss_street2") @db.VarChar(255)
   mailingAdderssPostalCode                      String?           @map("mailing_adderss_postal_code") @db.VarChar(255)
   mailingAdderssPostalCountry                   String?           @map("mailing_adderss_country") @db.VarChar(255)
-  dueDate                                       DateTime?         @map("due_date") @db.DateTime(0)
-  loadCalcOrigin                                String            @default("Self") @map("load_calc_origin") @db.VarChar(255)
   project                                       OrderedProjects?  @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
@@ -1061,9 +1060,6 @@ model PtoDetails {
   pto       Ptos     @relation(fields: [ptoId], references: [id])
   ptoType   PtoTypes @relation(fields: [ptoTypeId], references: [id])
 
-  @@index([userId])
-  @@index([ptoId])
-  @@index([ptoTypeId])
   @@map("pto_details")
 }
 
@@ -1079,10 +1075,16 @@ model PtoTenurePolicies {
 
 model Informations {
   id        String   @id @db.VarChar(255)
+<<<<<<< Updated upstream
   contents  String   @map("contents")   @db.Text
   isActive  Boolean  @map("is_active")  @default(true)
   createdAt DateTime @map("created_at") @db.DateTime(0) @default(now())
+=======
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
+>>>>>>> Stashed changes
   updatedAt DateTime @map("updated_at") @db.DateTime(0)
+  isActive  Boolean  @default(true) @map("is_active")
+  contents  String   @map("contents") @db.VarChar(3000)
 
   informationHistories InformationHistories[]
 
@@ -1090,6 +1092,7 @@ model Informations {
 }
 
 model InformationHistories {
+<<<<<<< Updated upstream
   id        String     @id @db.VarChar(255)
   informationId String @map("information_id") @db.VarChar(255)
   contents  String     @map("content")    @db.Text
@@ -1132,6 +1135,17 @@ model ClientNoteSnapshots {
   @@map("client_note_snapshots")
   @@index([updatedBy])
   @@index([clientNoteId])
+=======
+  id        String   @id @db.VarChar(255)
+  contents  String   @map("content") @db.VarChar(3000)
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime @map("updated_at") @db.DateTime(0)
+  updatedBy String   @map("updated_by") @db.VarChar(255)
+  user      Users    @relation(fields: [updatedBy], references: [id])
+
+  @@index([updatedBy])
+  @@map("information_histories")
+>>>>>>> Stashed changes
 }
 
 enum InvoicesStatus {
