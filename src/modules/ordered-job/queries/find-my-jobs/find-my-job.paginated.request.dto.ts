@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsOptional, IsEnum, IsBoolean, IsString } from 'class-validator'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
-import { JobStatusEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { DESCRIPTION } from '../find-job-paginated/find-job.paginated.request.dto'
 
 export class FindMyJobPaginatedRequestDto {
@@ -26,10 +26,14 @@ export class FindMyJobPaginatedRequestDto {
   @IsOptional()
   readonly projectPropertyType?: ProjectPropertyTypeEnum | null
 
-  @ApiProperty({ default: JobStatusEnum.In_Progress, enum: JobStatusEnum })
-  @IsEnum(JobStatusEnum)
+  @ApiProperty({
+    default: JobStatusEnum.Completed,
+    enum: [...Object.values(JobStatusEnum), ...Object.values(AutoOnlyJobStatusEnum)],
+    nullable: true,
+  })
+  @IsEnum([...Object.values(JobStatusEnum), ...Object.values(AutoOnlyJobStatusEnum)])
   @IsOptional()
-  readonly jobStatus?: JobStatusEnum | null
+  readonly jobStatus?: JobStatusEnum | AutoOnlyJobStatusEnum | null
 
   @ApiProperty({ default: MountingTypeEnum.Ground_Mount, enum: MountingTypeEnum })
   @IsEnum(MountingTypeEnum)

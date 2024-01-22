@@ -5,7 +5,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users, Prisma } from '@prisma/client'
-import { JobStatusEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 export class FindJobPaginatedQuery extends PaginatedQueryBase {
@@ -13,7 +13,7 @@ export class FindJobPaginatedQuery extends PaginatedQueryBase {
   readonly jobName?: string | null
   readonly propertyFullAddress?: string | null
   readonly projectPropertyType?: ProjectPropertyTypeEnum | null
-  readonly jobStatus?: JobStatusEnum | null
+  readonly jobStatus?: JobStatusEnum | AutoOnlyJobStatusEnum | null
   readonly mountingType?: MountingTypeEnum | null
   readonly isExpedited?: boolean | null
 

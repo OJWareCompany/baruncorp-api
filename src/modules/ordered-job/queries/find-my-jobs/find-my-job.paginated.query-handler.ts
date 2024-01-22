@@ -1,20 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
-import { JOB_REPOSITORY } from '../../job.di-token'
-import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JobMapper } from '../../job.mapper'
 import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users } from '@prisma/client'
-import { JobStatusEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 export class FindMyJobPaginatedQuery extends PaginatedQueryBase {
   readonly userId: string
-  readonly jobStatus?: JobStatusEnum | null
+  readonly jobStatus?: JobStatusEnum | AutoOnlyJobStatusEnum | null
   readonly projectNumber?: string | null
   readonly jobName?: string | null
   readonly propertyFullAddress?: string | null

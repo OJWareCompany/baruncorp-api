@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsBooleanString, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { JobStatusEnum } from '../../domain/job.type'
-import { Transform, Type } from 'class-transformer'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
+import { Transform } from 'class-transformer'
 
 export enum DESCRIPTION {
   using_like = 'Using LIKE (중간 값 검색)',
@@ -29,10 +29,14 @@ export class FindJobPaginatedRequestDto {
   @IsOptional()
   readonly projectPropertyType?: ProjectPropertyTypeEnum | null
 
-  @ApiProperty({ default: JobStatusEnum.Completed, enum: JobStatusEnum })
-  @IsEnum(JobStatusEnum)
+  @ApiProperty({
+    default: JobStatusEnum.Completed,
+    enum: [...Object.values(JobStatusEnum), ...Object.values(AutoOnlyJobStatusEnum)],
+    nullable: true,
+  })
+  @IsEnum([...Object.values(JobStatusEnum), ...Object.values(AutoOnlyJobStatusEnum)])
   @IsOptional()
-  readonly jobStatus?: JobStatusEnum | null
+  readonly jobStatus?: JobStatusEnum | AutoOnlyJobStatusEnum | null
 
   @ApiProperty({ default: MountingTypeEnum.Ground_Mount, enum: MountingTypeEnum })
   @IsEnum(MountingTypeEnum)
