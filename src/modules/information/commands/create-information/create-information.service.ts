@@ -24,6 +24,7 @@ export class CreateInformationService implements ICommandHandler {
     await this.informationRepository.insert(entity)
 
     const historyEntitiy: InformationHistoryEntity = InformationHistoryEntity.create({
+      informationId: entity.id,
       contents: command.contents,
       updatedBy: command.updatedBy,
     })

@@ -14,11 +14,11 @@ export class InformationEntity extends AggregateRoot<InformationProps> {
     return new InformationEntity({ id, props })
   }
 
-  get contents(): JSON[] {
+  get contents(): string {
     return this.props.contents
   }
 
-  set contents(contents: JSON[]) {
+  set contents(contents: string) {
     this.props.contents = contents
   }
 

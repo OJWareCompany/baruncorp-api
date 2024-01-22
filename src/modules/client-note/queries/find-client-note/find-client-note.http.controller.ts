@@ -4,7 +4,7 @@ import { Payments } from '@prisma/client'
 import { FindClientNoteRequestDto } from './find-client-note.request.dto'
 import { FindClientNoteQuery } from './find-client-note.query-handler'
 import { ClientNoteResponseDto } from '../../dtos/client-note.response.dto'
-import { AuthGuard } from '@src/modules/auth/guards/authentication.guard'
+import { AuthGuard } from '../../../../modules/auth/guards/authentication.guard'
 
 @Controller('client-note')
 export class FindClientNoteHttpController {

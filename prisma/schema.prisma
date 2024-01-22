@@ -1079,24 +1079,30 @@ model PtoTenurePolicies {
 
 model Informations {
   id        String   @id @db.VarChar(255)
-  contents  String   @map("contents")   @db.VarChar(3000)
+  contents  String   @map("contents")   @db.Text
   isActive  Boolean  @map("is_active")  @default(true)
   createdAt DateTime @map("created_at") @db.DateTime(0) @default(now())
   updatedAt DateTime @map("updated_at") @db.DateTime(0)
+
+  informationHistories InformationHistories[]
 
   @@map("informations")
 }
 
 model InformationHistories {
-  id        String    @id @db.VarChar(255)
-  contents  String    @map("content") @db.VarChar(3000)
-  updatedBy String    @map("updated_by") @db.VarChar(255)
-  createdAt DateTime  @map("created_at") @db.DateTime(0) @default(now())
-  updatedAt DateTime  @map("updated_at") @db.DateTime(0)
+  id        String     @id @db.VarChar(255)
+  informationId String @map("information_id") @db.VarChar(255)
+  contents  String     @map("content")    @db.Text
+  updatedBy String     @map("updated_by") @db.VarChar(255)
+  createdAt DateTime   @map("created_at") @db.DateTime(0) @default(now())
+  updatedAt DateTime   @map("updated_at") @db.DateTime(0)
 
-  user      Users    @relation(fields: [updatedBy], references: [id])
+  user        Users        @relation(fields: [updatedBy],     references: [id])
+  information Informations @relation(fields: [informationId], references: [id])
+
   @@map("information_histories")
   @@index([updatedBy])
+  @@index([informationId])
 }
 
 model ClientNotes {
@@ -1114,9 +1120,9 @@ model ClientNoteSnapshots {
   id                         String         @id                                  @db.VarChar(255)
   clientNoteId               String         @map("client_note_id")               @db.VarChar(255)
   updatedBy                  String         @map("updated_by")                   @db.VarChar(255)
-  designNotes                String         @map("design_notes")                 @db.VarChar(1000)
-  electricalEngineeringNotes String         @map("electrical_engineering_notes") @db.VarChar(1000)
-  structuralEngineeringNotes String         @map("structural_engineering_notes") @db.VarChar(1000)
+  designNotes                String         @map("design_notes")                 @db.Text
+  electricalEngineeringNotes String         @map("electrical_engineering_notes") @db.Text
+  structuralEngineeringNotes String         @map("structural_engineering_notes") @db.Text
   type                       ClientNoteType @map("type")
   createdAt                  DateTime       @map("created_at")                   @db.DateTime(0)   @default(now())
   updatedAt                  DateTime       @map("updated_at")                   @db.DateTime(0)

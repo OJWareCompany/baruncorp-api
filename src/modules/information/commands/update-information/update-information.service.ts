@@ -22,6 +22,7 @@ export class UpdateInformationService implements ICommandHandler {
     await this.informationRepository.update(entity)
 
     const historyEntitiy: InformationHistoryEntity = InformationHistoryEntity.create({
+      informationId: entity.id,
       contents: command.contents,
       updatedBy: command.updatedBy,
     })

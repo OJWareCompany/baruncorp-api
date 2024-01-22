@@ -26,6 +26,7 @@ export class InformationMapper implements Mapper<InformationEntity, InformationM
 
     const record: InformationHistoryModel = {
       id: props.id,
+      informationId: props.informationId,
       contents: JSON.stringify(props.contents),
       updatedBy: props.updatedBy,
       createdAt: props.createdAt,

@@ -21,7 +21,7 @@ export class UpdateInformationHttpController {
       updatedBy: user.id,
       ...request,
     })
-    console.log(JSON.stringify(command))
+
     await this.commandBus.execute(command)
   }
 }
