@@ -25,6 +25,7 @@ import { AssigningTaskAlertModule } from './modules/assigning-task-alert/assigni
 import { PtoModule } from './modules/pto/pto.module'
 import { PtoTenurePolicyModule } from './modules/pto-tenure-policy/pto-tenure-policy.module'
 import { InformationModule } from './modules/information/information.module'
+import { ClientNoteModule } from './modules/client-note/client-note.module'
 
 @Module({
   imports: [
@@ -52,6 +53,7 @@ import { InformationModule } from './modules/information/information.module'
     PtoModule,
     PtoTenurePolicyModule,
     InformationModule,
+    ClientNoteModule,
   ],
   controllers: [],
   providers: [
