@@ -125,3 +125,9 @@ export class OldPtoDetailException extends BadRequestException {
     super('There is a history of PTO before the new joining of date', '20821')
   }
 }
+
+export class CanNotBeTakenPTOInOldDateException extends BadRequestException {
+  constructor() {
+    super('Can not be taken before the date of joinning ', '20822')
+  }
+}

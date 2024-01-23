@@ -8,6 +8,7 @@ import { PtoTenurePolicyRepository } from '../../../pto-tenure-policy/database/p
 import { PtoTargetUser } from '../../domain/value-objects/target.user.vo'
 import {
   AnnualPtoNotExceedException,
+  CanNotBeTakenPTOInOldDateException,
   DateOfJoiningNotFoundException,
   DaysRangeIssueException,
   OverlapsPtoException,
@@ -33,6 +34,10 @@ export class CreatePtoDetailService implements ICommandHandler {
     // 해당 유저의 입사기념일이 존재하지 않는다면 Exception
     if (!targetUser.dateOfJoining) {
       throw new DateOfJoiningNotFoundException()
+    }
+    // 현재 입사기념일보다 과거 시점에 연차를 추가하려면 예외
+    if (command.startedAt < targetUser.dateOfJoining) {
+      throw new CanNotBeTakenPTOInOldDateException()
     }
 
     const startDateTenure = this.calcTenure(targetUser.dateOfJoining, command.startedAt)
@@ -90,13 +95,15 @@ export class CreatePtoDetailService implements ICommandHandler {
       // PTO(시즌)을 찾지 못함 => PTO(시즌)생성하여 담아서 함께 추가(예외 케이스)
       const total: number = await this.ptoTenurePolicyRepository.getTotalOfTenure(tenure)
 
+      const startedAt = addYears(dateOfJoining, tenure - 1)
+      const endedAt = subDays(addYears(startedAt, 1), 1)
       const ptoEntity: PtoEntity = PtoEntity.create({
         userId: command.userId,
         tenure: tenure,
         isPaid: false,
         total: total,
-        startedAt: command.startedAt,
-        endedAt: subDays(addYears(command.startedAt, 1), 1),
+        startedAt: startedAt,
+        endedAt: endedAt,
         dateOfJoining: dateOfJoining,
       })
 
@@ -110,7 +117,7 @@ export class CreatePtoDetailService implements ICommandHandler {
     if (targetPtoEntity.hasPtoDetailDateInRange(command.startedAt, command.days)) {
       throw new OverlapsPtoException()
     }
-    // Todo. 현재보다 1년 이상 멀면 예외
+
     // 이번 시즌에 사용 가능한 연차 수를 초과하면 예외 처리
     const requestedTotalAmount = command.amountPerDay * command.days
     const usablePtoValue = targetPtoEntity.getUsablePtoValue()
