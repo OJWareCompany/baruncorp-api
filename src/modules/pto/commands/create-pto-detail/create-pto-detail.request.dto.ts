@@ -12,7 +12,7 @@ export class CreatePtoDetailRequestDto {
   @ApiProperty({ default: 'ebf47426-2f8d-4b7c-9ef1-81209db8e3ad' })
   @IsString()
   readonly ptoTypeId: string
-  @ApiProperty({ default: 1.5, minimum: 0, maximum: 1 })
+  @ApiProperty({ default: 1, minimum: 0, maximum: 1 })
   @IsNumber()
   @CustomMax(1, new AmountPerDayRangeException())
   @CustomMin(0, new AmountPerDayRangeException())

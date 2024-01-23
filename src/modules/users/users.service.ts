@@ -84,7 +84,6 @@ export class UserService {
       if (dateOfJoining !== null) {
         // 만약 변경하려는 입사기념일 이전에 연차 기록이 존재한다면 입사기념일 수정 불가능
         const oldPtoDetails: PtoDetail[] = user.ptoDetails.filter((detail) => detail.startedAt < dateOfJoining)
-        console.log(JSON.stringify(oldPtoDetails))
         if (oldPtoDetails.length > 0) {
           throw new OldPtoDetailException()
         }

@@ -72,8 +72,16 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     return this.props.startedAt
   }
 
+  set startedAt(startedAt: Date) {
+    this.props.startedAt = startedAt
+  }
+
   get endedAt() {
     return this.props.endedAt
+  }
+
+  set endedAt(endedAt: Date) {
+    this.props.endedAt = endedAt
   }
 
   get total() {
