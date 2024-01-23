@@ -1,5 +1,6 @@
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { OrganizationCreatedDomainEvent } from './events/organization-created.domain-event'
 import { CreateOrganizationProps, OrganizationProps } from './organization.types'
 import { v4 } from 'uuid'
 export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
@@ -12,6 +13,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
       organizationType: 'client',
       isDelinquent: false,
     }
+
     return new OrganizationEntity({ id, props })
   }
 
@@ -56,6 +58,15 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     this.props.mountingTypeDefaultValue = data.mountingTypeDefaultValue
     this.props.isSpecialRevisionPricing = data.isSpecialRevisionPricing
     this.props.numberOfFreeRevisionCount = data.numberOfFreeRevisionCount
+  }
+
+  public setCreateClientNoteEvent(userId: string) {
+    this.addEvent(
+      new OrganizationCreatedDomainEvent({
+        aggregateId: this.id,
+        userId: userId,
+      }),
+    )
   }
 
   public validate(): void {

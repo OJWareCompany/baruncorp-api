@@ -4,7 +4,7 @@ import { IsArray, IsBoolean, IsJSON, IsNumber, IsObject, IsOptional, IsString, M
 export class UpdateClientNoteParamRequestDto {
   @ApiProperty({ default: '529cec06-1fb7-4284-b56f-9f31219cd099' })
   @IsString()
-  readonly clientNoteId: string
+  readonly organizationId: string
 }
 
 export class UpdateClientNoteRequestDto {

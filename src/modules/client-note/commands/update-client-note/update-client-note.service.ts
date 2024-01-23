@@ -15,11 +15,11 @@ export class UpdateClientNoteService implements ICommandHandler {
     @Inject(CLIENT_NOTE_REPOSITORY) private readonly clientNoteRepository: ClientNoteRepositoryPort,
   ) {}
   async execute(command: UpdateClientNoteCommand): Promise<void> {
-    const entity = await this.clientNoteRepository.findOne(command.clientNoteId)
+    const entity = await this.clientNoteRepository.findOne(command.organizationId)
     if (!entity) throw new ClientNoteNotFoundException()
 
     const historyEntitiy: ClientNoteSnapshotEntity = ClientNoteSnapshotEntity.create({
-      clientNoteId: command.clientNoteId,
+      clientNoteId: entity.id,
       designNotes: command.designNotes,
       electricalEngineeringNotes: command.electricalEngineeringNotes,
       structuralEngineeringNotes: command.structuralEngineeringNotes,

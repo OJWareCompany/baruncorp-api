@@ -61,9 +61,9 @@ export class ClientNoteRepository implements ClientNoteRepositoryPort {
     await this.prismaService.clientNotes.update({ where: { id: entity.id }, data: record })
   }
 
-  async findOne(id: string): Promise<ClientNoteEntity | null> {
+  async findOne(organizationId: string): Promise<ClientNoteEntity | null> {
     const record = await this.prismaService.clientNotes.findUnique({
-      where: { id },
+      where: { organizationId: organizationId },
       include: this.clientNoteQueryIncludeInput,
     })
 

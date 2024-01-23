@@ -5,6 +5,8 @@ import { CreateOrganizationRequestDto } from './create-organization.request.dto'
 import { CreateOrganizationCommand } from './create-organization.command'
 import { IdResponse } from '../../../../libs/api/id.response.dto'
 import { ApiResponse } from '@nestjs/swagger'
+import { UserEntity } from '../../../users/domain/user.entity'
+import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 
 @Controller('organizations')
 export class CreateOrganizationHttpController {
@@ -13,8 +15,14 @@ export class CreateOrganizationHttpController {
   @Post('')
   @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
-  async postCreateOrganization(@Body() dto: CreateOrganizationRequestDto): Promise<IdResponse> {
-    const command = new CreateOrganizationCommand(dto)
+  async postCreateOrganization(
+    @Body() dto: CreateOrganizationRequestDto,
+    @User() user: UserEntity,
+  ): Promise<IdResponse> {
+    const command = new CreateOrganizationCommand({
+      ...dto,
+      createUserId: user.id,
+    })
     const result = await this.commandBus.execute(command)
     return new IdResponse(result.id)
   }

@@ -13,6 +13,7 @@ import { Prisma } from '@prisma/client'
 import { PrismaService } from '../../../database/prisma.service'
 import { ClientNoteNotFoundException } from '../../domain/client-note.error'
 import { ClientNoteQueryModel } from '../../database/client-note.repository'
+import { ClientNoteTypeEnum } from '../../domain/client-note-snapshot.type'
 
 export class FindClientNotePaginatedQuery extends PaginatedQueryBase {
   readonly organizationId?: string
@@ -72,7 +73,7 @@ export class FindClientNotePaginatedQueryHandler implements IQueryHandler {
       items: result.snapshots.map((record) => {
         const dto: ClientNoteResponseDto = {
           id: record.id,
-          userName: record.user.full_name,
+          userName: record.type === ClientNoteTypeEnum.Create ? 'System' : record.user.full_name,
           type: record.type,
           updatedAt: record.updatedAt,
         }

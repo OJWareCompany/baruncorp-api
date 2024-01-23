@@ -1,7 +1,7 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export class UpdateClientNoteCommand {
-  readonly clientNoteId: string
+  readonly organizationId: string
   readonly designNotes: string
   readonly electricalEngineeringNotes: string
   readonly structuralEngineeringNotes: string

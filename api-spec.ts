@@ -2138,17 +2138,6 @@ export interface InformationPaginatedResponseDto {
   items: InformationResponseDto[]
 }
 
-export interface CreateClientNoteRequestDto {
-  /** @default "ebf47426-2f8d-4b7c-9ef1-81209db8e3ad" */
-  organizationId: string
-  /** @default "Blah - Blah" */
-  designNotes: string
-  /** @default "Blah - Blah" */
-  electricalEngineeringNotes: string
-  /** @default "Blah - Blah" */
-  structuralEngineeringNotes: string
-}
-
 export interface UpdateClientNoteRequestDto {
   /** @default "Blah - Blah" */
   designNotes: string
@@ -5849,15 +5838,32 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name CreateClientNoteHttpControllerPatch
-     * @request POST:/client-note
+     * @name UpdateClientNoteHttpControllerPatch
+     * @request PATCH:/client-note/{organizationId}
      */
-    createClientNoteHttpControllerPatch: (data: CreateClientNoteRequestDto, params: RequestParams = {}) =>
-      this.request<IdResponse, any>({
-        path: `/client-note`,
-        method: 'POST',
+    updateClientNoteHttpControllerPatch: (
+      organizationId: string,
+      data: UpdateClientNoteRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/client-note/${organizationId}`,
+        method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindClientNoteHttpControllerGet
+     * @request GET:/client-note/{clientNoteId}
+     */
+    findClientNoteHttpControllerGet: (clientNoteId: string, params: RequestParams = {}) =>
+      this.request<ClientNoteDetailResponseDto, any>({
+        path: `/client-note/${clientNoteId}`,
+        method: 'GET',
         format: 'json',
         ...params,
       }),
@@ -5876,39 +5882,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/client-note`,
         method: 'GET',
         query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateClientNoteHttpControllerPatch
-     * @request PATCH:/client-note/{clientNoteId}
-     */
-    updateClientNoteHttpControllerPatch: (
-      clientNoteId: string,
-      data: UpdateClientNoteRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/client-note/${clientNoteId}`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindClientNoteHttpControllerGet
-     * @request GET:/client-note/{clientNoteSnapshotId}
-     */
-    findClientNoteHttpControllerGet: (clientNoteSnapshotId: string, params: RequestParams = {}) =>
-      this.request<ClientNoteDetailResponseDto, any>({
-        path: `/client-note/${clientNoteSnapshotId}`,
-        method: 'GET',
         format: 'json',
         ...params,
       }),

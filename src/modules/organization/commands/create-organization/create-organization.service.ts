@@ -37,6 +37,8 @@ export class CreateOrganizationService implements ICommandHandler {
       isVendor: command.isVendor,
     })
 
+    entity.setCreateClientNoteEvent(command.createUserId)
+
     await this.organizationRepository.insertOrganization(entity)
 
     return {

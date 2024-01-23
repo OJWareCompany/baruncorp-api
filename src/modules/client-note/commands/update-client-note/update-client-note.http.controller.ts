@@ -9,7 +9,7 @@ import { UpdateClientNoteParamRequestDto, UpdateClientNoteRequestDto } from './u
 @Controller('client-note')
 export class UpdateClientNoteHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Patch(':clientNoteId')
+  @Patch(':organizationId')
   @UseGuards(AuthGuard)
   async patch(
     @Param() param: UpdateClientNoteParamRequestDto,
@@ -17,7 +17,7 @@ export class UpdateClientNoteHttpController {
     @User() user: UserEntity,
   ): Promise<void> {
     const command = new UpdateClientNoteCommand({
-      clientNoteId: param.clientNoteId,
+      organizationId: param.organizationId,
       updatedBy: user.id,
       ...request,
     })

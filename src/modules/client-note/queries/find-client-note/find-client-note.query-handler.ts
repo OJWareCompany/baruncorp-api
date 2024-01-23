@@ -4,9 +4,10 @@ import { PrismaService } from '../../../database/prisma.service'
 import { ClientNoteNotFoundException } from '../../domain/client-note.error'
 import { ClientNoteDetail, ClientNoteDetailResponseDto } from '../../dtos/client-note-detail.response.dto'
 import { ClientNoteType } from '@prisma/client'
+import { ClientNoteTypeEnum } from '../../domain/client-note-snapshot.type'
 
 export class FindClientNoteQuery {
-  readonly clientNoteSnapshotId: string
+  readonly clientNoteId: string
   constructor(props: FindClientNoteQuery) {
     initialize(this, props)
   }
@@ -17,9 +18,8 @@ export class FindClientNoteQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindClientNoteQuery): Promise<ClientNoteDetailResponseDto> {
-    console.log(JSON.stringify(query))
     const targetRecord = await this.prismaService.clientNoteSnapshots.findUnique({
-      where: { id: query.clientNoteSnapshotId },
+      where: { id: query.clientNoteId },
       include: {
         clientNote: {
           include: {
@@ -72,7 +72,7 @@ export class FindClientNoteQueryHandler implements IQueryHandler {
     const dto: ClientNoteDetailResponseDto = {
       id: targetRecord.id,
       organizationName: targetRecord.clientNote.organization.name,
-      userName: targetRecord.user.full_name,
+      userName: targetRecord.type === ClientNoteTypeEnum.Create ? 'System' : targetRecord.user.full_name,
       type: targetRecord.type,
       updatedAt: targetRecord.updatedAt,
       beforeModificationDetail: beforeModificationDetail,

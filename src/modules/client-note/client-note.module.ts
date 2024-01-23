@@ -9,13 +9,12 @@ import { CLIENT_NOTE_REPOSITORY } from './client-note.di-token'
 import { UsersModule } from '../users/users.module'
 import { FindClientNotePaginatedQueryHandler } from './queries/find-client-note-paginated/client-note.paginated.query-handler'
 import { FindClientNotePaginatedHttpController } from './queries/find-client-note-paginated/client-note.paginated.http.controller'
-import { CreateClientNoteHttpController } from './commands/create-client-note/create-client-note.http.controller'
 import { CreateClientNoteService } from './commands/create-client-note/create-client-note.service'
 import { FindClientNoteHttpController } from './queries/find-client-note/find-client-note.http.controller'
 import { FindClientNoteQueryHandler } from './queries/find-client-note/find-client-note.query-handler'
+import { CreateClientNoteWhenOrganizationCreatedEventHandler } from './application/event-handlers/create-client-note-when-organization-created.domain-event-handler'
 
 const httpControllers = [
-  CreateClientNoteHttpController,
   UpdateClientNoteHttpController,
   FindClientNoteHttpController,
   FindClientNotePaginatedHttpController,
@@ -28,7 +27,7 @@ const repositories: Provider[] = [
     useClass: ClientNoteRepository,
   },
 ]
-const eventHandlers: Provider[] = []
+const eventHandlers: Provider[] = [CreateClientNoteWhenOrganizationCreatedEventHandler]
 const mappers: Provider[] = [ClientNoteMapper]
 
 @Module({

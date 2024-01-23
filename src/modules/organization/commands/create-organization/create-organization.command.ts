@@ -27,6 +27,7 @@ export class CreateOrganizationCommand {
   readonly mountingTypeDefaultValue: MountingTypeEnum | null
   readonly isSpecialRevisionPricing: boolean
   readonly numberOfFreeRevisionCount: number | null
+  readonly createUserId: string
 
   constructor(props: CreateOrganizationCommand) {
     initialize(this, props)
