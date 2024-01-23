@@ -10,7 +10,7 @@ import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JobMapper } from '../../job.mapper'
 import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users, Prisma } from '@prisma/client'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
-import { JobStatusEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 
 export class FindMyOrderedJobPaginatedQuery extends PaginatedQueryBase {
   readonly userId: string
@@ -18,7 +18,7 @@ export class FindMyOrderedJobPaginatedQuery extends PaginatedQueryBase {
   readonly jobName?: string | null
   readonly propertyFullAddress?: string | null
   readonly projectPropertyType?: ProjectPropertyTypeEnum | null
-  readonly jobStatus?: JobStatusEnum | null
+  readonly jobStatus?: JobStatusEnum | AutoOnlyJobStatusEnum | null
   readonly mountingType?: MountingTypeEnum | null
   readonly isExpedited?: boolean | null
 

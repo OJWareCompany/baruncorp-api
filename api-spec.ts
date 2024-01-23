@@ -2429,7 +2429,15 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   /** @default "Commercial" */
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
-  jobStatus?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | null
+  jobStatus?:
+    | 'Not Started'
+    | 'In Progress'
+    | 'On Hold'
+    | 'Canceled'
+    | 'Completed'
+    | 'Canceled (Invoice)'
+    | 'Sent To Client'
+    | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
