@@ -905,6 +905,7 @@ export interface UpdateAhjNoteRequestDto {
 
 export interface AhjNoteHistoryResponseDto {
   id: number
+  historyType: 'Created' | 'Modified'
   general: General
   design: Design
   engineering: Engineering
@@ -912,8 +913,8 @@ export interface AhjNoteHistoryResponseDto {
 }
 
 export interface AhjNoteHistoryListResponseDto {
-  id: number
   geoId: string
+  historyType: 'Created' | 'Modified'
   name: string
   fullAhjName: string
   updatedBy: string
@@ -2510,6 +2511,13 @@ export interface GeographyControllerGetFindNotesParams {
   name?: string | null
 }
 
+export interface GeographyControllerGetFinNoteUpdateHistoryDetailParams {
+  /** @format date-time */
+  updatedAt: string
+  /** @default "1239525" */
+  geoId: string
+}
+
 export interface GeographyControllerGetFindNoteUpdateHistoryParams {
   /**
    * Specifies a limit of returned records
@@ -2618,6 +2626,15 @@ export interface FindInvoicePaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  organizationName?: string | null
+  /** @default "Issued" */
+  status?: 'Unissued' | 'Issued' | 'Paid' | null
+  /** @format date-time */
+  invoiceDate?: string | null
 }
 
 export interface FindClientWithOutstandingBalancesHttpControllerGetParams {
@@ -4204,13 +4221,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      *
      * @tags geography
      * @name GeographyControllerGetFinNoteUpdateHistoryDetail
-     * @request GET:/geography/notes/history/{historyId}
+     * @request GET:/geography/{geoId}/notes/history
      * @secure
      */
-    geographyControllerGetFinNoteUpdateHistoryDetail: (historyId: number, params: RequestParams = {}) =>
+    geographyControllerGetFinNoteUpdateHistoryDetail: (
+      { geoId, ...query }: GeographyControllerGetFinNoteUpdateHistoryDetailParams,
+      params: RequestParams = {},
+    ) =>
       this.request<AhjNoteHistoryResponseDto, any>({
-        path: `/geography/notes/history/${historyId}`,
+        path: `/geography/${geoId}/notes/history`,
         method: 'GET',
+        query: query,
         secure: true,
         format: 'json',
         ...params,
