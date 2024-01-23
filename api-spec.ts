@@ -1452,7 +1452,7 @@ export interface CreatePtoDetailRequestDto {
   /**
    * @min 0
    * @max 1
-   * @default 1.5
+   * @default 1
    */
   amountPerDay: number
   /**
