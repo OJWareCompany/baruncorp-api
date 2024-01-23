@@ -3,6 +3,7 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreatePtoDetailProps, PtoDetailProps } from './pto-detail.type'
 import {
   AnnualPtoNotExceedException,
+  CanNotBeTakenPTOInOldDateException,
   DateOfJoiningNotFoundException,
   DaysRangeIssueException,
   OverlapsPtoException,
@@ -40,6 +41,10 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
 
   get endedAt() {
     return subMilliseconds(addDays(this.startedAt, this.days), 1)
+  }
+
+  get days() {
+    return this.props.days
   }
 
   set days(days: number) {
@@ -86,6 +91,11 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
     if (parentPtoProps.isPaid) {
       throw new PaidPtoUpdateException()
     }
+    // 현재 입사기념일보다 과거 시점에 연차를 추가하려면 예외
+    if (this.props.startedAt < parentPtoProps.dateOfJoining) {
+      throw new CanNotBeTakenPTOInOldDateException()
+    }
+
     // pto 요청한 날짜 중간에 입사기념일 걸쳤는지 체크
     const startDateTenure = this.calcTenure(parentPtoProps.dateOfJoining, this.props.startedAt)
     const endDateTenure = this.calcTenure(parentPtoProps.dateOfJoining, this.endedAt)
