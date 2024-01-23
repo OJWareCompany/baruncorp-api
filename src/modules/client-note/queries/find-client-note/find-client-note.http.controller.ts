@@ -5,6 +5,7 @@ import { FindClientNoteRequestDto } from './find-client-note.request.dto'
 import { FindClientNoteQuery } from './find-client-note.query-handler'
 import { ClientNoteResponseDto } from '../../dtos/client-note.response.dto'
 import { AuthGuard } from '../../../../modules/auth/guards/authentication.guard'
+import { ClientNoteDetailResponseDto } from '../../dtos/client-note-detail.response.dto'
 
 @Controller('client-note')
 export class FindClientNoteHttpController {
@@ -12,9 +13,9 @@ export class FindClientNoteHttpController {
 
   @Get(':clientNoteSnapshotId')
   @UseGuards(AuthGuard)
-  async get(@Param() param: FindClientNoteRequestDto): Promise<ClientNoteResponseDto> {
+  async get(@Param() param: FindClientNoteRequestDto): Promise<ClientNoteDetailResponseDto> {
     const command = new FindClientNoteQuery(param)
-    const result: ClientNoteResponseDto = await this.queryBus.execute(command)
+    const result: ClientNoteDetailResponseDto = await this.queryBus.execute(command)
 
     return result
   }

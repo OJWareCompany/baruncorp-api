@@ -2158,6 +2158,33 @@ export interface UpdateClientNoteRequestDto {
   structuralEngineeringNotes: string
 }
 
+export interface ClientNoteDetail {
+  /** @default "Blah - Blah" */
+  designNotes: string
+  /** @default "Blah - Blah" */
+  electricalEngineeringNotes: string
+  /** @default "Blah - Blah" */
+  structuralEngineeringNotes: string
+}
+
+export interface ClientNoteDetailResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "BarunCorp" */
+  organizationName: string
+  /** @default "dglee" */
+  userName: string
+  /** @default "Create" */
+  type: string
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  updatedAt: string
+  beforeModificationDetail: ClientNoteDetail | null
+  afterModificationDetail: ClientNoteDetail
+}
+
 export interface ClientNoteResponseDto {
   /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
   id: string
@@ -5879,7 +5906,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/client-note/{clientNoteSnapshotId}
      */
     findClientNoteHttpControllerGet: (clientNoteSnapshotId: string, params: RequestParams = {}) =>
-      this.request<ClientNoteResponseDto, any>({
+      this.request<ClientNoteDetailResponseDto, any>({
         path: `/client-note/${clientNoteSnapshotId}`,
         method: 'GET',
         format: 'json',
