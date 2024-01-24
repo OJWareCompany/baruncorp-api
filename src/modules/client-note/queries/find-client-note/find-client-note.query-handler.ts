@@ -49,6 +49,7 @@ export class FindClientNoteQueryHandler implements IQueryHandler {
     if (targetRecord.type === ClientNoteType.Modify) {
       const previousRecord = await this.prismaService.clientNoteSnapshots.findFirst({
         where: {
+          clientNoteId: targetRecord.clientNoteId,
           createdAt: {
             lt: targetRecord.createdAt,
           },
