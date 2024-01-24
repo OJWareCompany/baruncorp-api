@@ -5,10 +5,7 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
-import { JOB_REPOSITORY } from '../../job.di-token'
-import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JobMapper } from '../../job.mapper'
-import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users, Prisma } from '@prisma/client'
+import { OrderedJobs, Prisma } from '@prisma/client'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 
@@ -29,23 +26,9 @@ export class FindMyOrderedJobPaginatedQuery extends PaginatedQueryBase {
 }
 @QueryHandler(FindMyOrderedJobPaginatedQuery)
 export class FindMyOrderedJobPaginatedQueryHandler implements IQueryHandler {
-  constructor(
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
-    private readonly prismaService: PrismaService,
-    private readonly jobMapper: JobMapper,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindMyOrderedJobPaginatedQuery): Promise<
-    Paginated<
-      OrderedJobs & {
-        orderedServices: (OrderedServices & {
-          service: Service
-          assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
-        })[]
-      }
-    >
-  > {
+  async execute(query: FindMyOrderedJobPaginatedQuery): Promise<Paginated<OrderedJobs>> {
     const condition: Prisma.OrderedJobsWhereInput = {
       clientUserId: query.userId,
       ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
@@ -58,19 +41,6 @@ export class FindMyOrderedJobPaginatedQueryHandler implements IQueryHandler {
     }
     const myOrderedJobs = await this.prismaService.orderedJobs.findMany({
       where: condition,
-      include: {
-        orderedServices: {
-          include: {
-            service: true,
-            assignedTasks: {
-              include: {
-                task: true,
-                user: true,
-              },
-            },
-          },
-        },
-      },
       orderBy: { createdAt: 'desc' },
       take: query.limit,
       skip: query.offset,

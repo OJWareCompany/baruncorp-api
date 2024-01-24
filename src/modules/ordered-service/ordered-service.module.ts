@@ -92,6 +92,6 @@ const mappers: Provider[] = [OrderedServiceMapper]
   ],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
-  exports: [...repositories, ...mappers],
+  exports: [...repositories, ...mappers, ServiceInitialPriceManager],
 })
 export class OrderedServiceModule {}

@@ -6,17 +6,12 @@ import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.r
 import { JobPaginatedResponseDto } from '../../dtos/job.paginated.response.dto'
 import { FindJobPaginatedQuery } from './find-job.paginated.query-handler'
 import { FindJobPaginatedRequestDto } from './find-job.paginated.request.dto'
-import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users } from '@prisma/client'
-import { JobMapper } from '../../job.mapper'
-import { PrismaService } from '../../../database/prisma.service'
+import { OrderedJobs } from '@prisma/client'
+import { JobResponseMapper } from '../../job.response.mapper'
 
 @Controller('jobs')
 export class FindJobPaginatedHttpController {
-  constructor(
-    private readonly queryBus: QueryBus,
-    private readonly prismaService: PrismaService,
-    private readonly mapper: JobMapper,
-  ) {}
+  constructor(private readonly queryBus: QueryBus, private readonly jobResponseMapper: JobResponseMapper) {}
 
   @Get()
   @ApiOperation({ summary: 'Find job' })
@@ -34,23 +29,15 @@ export class FindJobPaginatedHttpController {
       limit: queryParams.limit,
     })
 
-    const result: Paginated<
-      OrderedJobs & {
-        orderedServices: (OrderedServices & {
-          service: Service
-          assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
-        })[]
-      }
-    > = await this.queryBus.execute(query)
-
-    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
+    const result: Paginated<OrderedJobs> = await this.queryBus.execute(query)
 
     return new JobPaginatedResponseDto({
       ...result,
-      items: result.items.map((job) => {
-        const entity = this.mapper.toDomain({ ...job, prerequisiteTasks })
-        return this.mapper.toResponse(entity)
-      }),
+      items: await Promise.all(
+        result.items.map(async (job) => {
+          return await this.jobResponseMapper.toResponse(job)
+        }),
+      ),
     })
   }
 }

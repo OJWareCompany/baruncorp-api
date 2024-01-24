@@ -4,7 +4,7 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
-import { OrderedJobs, OrderedServices, Service, AssignedTasks, Tasks, Users } from '@prisma/client'
+import { OrderedJobs } from '@prisma/client'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
@@ -28,16 +28,7 @@ export class FindMyJobPaginatedQuery extends PaginatedQueryBase {
 export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindMyJobPaginatedQuery): Promise<
-    Paginated<
-      OrderedJobs & {
-        orderedServices: (OrderedServices & {
-          service: Service
-          assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
-        })[]
-      }
-    >
-  > {
+  async execute(query: FindMyJobPaginatedQuery): Promise<Paginated<OrderedJobs>> {
     // TODO: totalCount때문에 풀스캔하게됨
     const condition = {
       ...(query.jobStatus && { jobStatus: query.jobStatus }),
@@ -56,19 +47,6 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
 
     const myJobs = await this.prismaService.orderedJobs.findMany({
       where: condition,
-      include: {
-        orderedServices: {
-          include: {
-            service: true,
-            assignedTasks: {
-              include: {
-                task: true,
-                user: true,
-              },
-            },
-          },
-        },
-      },
       orderBy: { createdAt: 'desc' },
       take: query.limit,
       skip: query.offset,

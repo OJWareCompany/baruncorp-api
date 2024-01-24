@@ -40,6 +40,7 @@ import { ServiceModule } from '../service/service.module'
 import { OrganizationModule } from '../organization/organization.module'
 import { UpdateJobStatusHttpController } from './commands/update-job-status/update-job-status.http.controller'
 import { UpdateJobStatusService } from './commands/update-job-status/update-job-status.service'
+import { JobResponseMapper } from './job.response.mapper'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -74,7 +75,7 @@ const eventHandlers: Provider[] = [
   UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
-const mappers: Provider[] = [JobMapper]
+const mappers: Provider[] = [JobMapper, JobResponseMapper]
 const infrastructures: Provider[] = [Mailer]
 const domainServices: Provider[] = [TotalDurationCalculator, OrderStatusChangeValidator, OrderModificationValidator]
 

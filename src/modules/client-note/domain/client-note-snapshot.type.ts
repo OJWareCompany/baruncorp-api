@@ -1,5 +1,3 @@
-import { ClientNoteSnapshot } from './value-objects/client-not-snapshot.vo'
-
 export interface CreateClientNoteSnapshotProps {
   clientNoteId: string
   updatedBy: string

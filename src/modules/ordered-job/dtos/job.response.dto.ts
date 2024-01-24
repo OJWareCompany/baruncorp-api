@@ -5,25 +5,12 @@ import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { IsOptional } from 'class-validator'
 import {
+  OrderedServicePricingTypeEnum,
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from '../../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
-import { TaskSize, TaskSizeEnum } from '../../invoice/dtos/invoice.response.dto'
 import { PrerequisiteTaskVO } from '../domain/value-objects/assigned-task.value-object'
-
-export class MemberResponseFields {
-  @ApiProperty({ example: '5c29f1ae-d50b-4400-a6fb-b1a2c87126e9' })
-  userId: string | null
-
-  @ApiProperty({ example: 'Chris Kim' })
-  name: string | null
-
-  constructor(props: MemberResponseFields) {
-    this.userId = props.userId
-    this.name = props.name
-  }
-}
 
 export class OrderedServiceResponseFields {
   @ApiProperty()
@@ -37,6 +24,9 @@ export class OrderedServiceResponseFields {
 
   @ApiProperty()
   serviceName: string
+
+  @ApiProperty()
+  pricingType: OrderedServicePricingTypeEnum
 
   @ApiProperty()
   isRevision: boolean
@@ -151,9 +141,9 @@ export class JobResponseDto {
   @ApiProperty()
   billingCodes: string[]
 
-  @ApiProperty({ enum: TaskSizeEnum, nullable: true })
+  @ApiProperty({ enum: OrderedServiceSizeForRevisionEnum, nullable: true })
   @IsOptional()
-  taskSizeForRevision: TaskSize | null
+  revisionSize: OrderedServiceSizeForRevisionEnum | null
 
   @ApiProperty({ example: 300.1 })
   systemSize: number | null

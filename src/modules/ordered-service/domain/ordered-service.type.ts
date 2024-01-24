@@ -22,6 +22,33 @@ export enum OrderedServiceSizeForRevisionEnum {
   Minor = 'Minor',
 }
 
+export enum OrderedServicePricingTypeEnum {
+  BASE_RESIDENTIAL_NEW_PRICE = 'Base Residential New Price',
+  BASE_RESIDENTIAL_GM_PRICE = 'Base Residential GM Price',
+  BASE_RESIDENTIAL_REVISION_PRICE = 'Base Residential Revision Price',
+  BASE_RESIDENTIAL_REVISION_GM_PRICE = 'Base Residential Revision GM Price',
+  BASE_COMMERCIAL_NEW_PRICE = 'Base Commercial New Price',
+  BASE_COMMERCIAL_GM_PRICE = 'Base Commercial GM Price',
+  BASE_COMMERCIAL_REVISION_PRICE = 'Base Commercial Revision Price',
+  BASE_COMMERCIAL_REVISION_GM_PRICE = 'Base Commercial Revision GM Price',
+  BASE_FIXED_PRICE = 'Base Fixed Price',
+
+  CUSTOM_RESIDENTIAL_NEW_PRICE = 'Custom Residential New Price',
+  CUSTOM_RESIDENTIAL_GM_PRICE = 'Custom Residential GM Price',
+  CUSTOM_RESIDENTIAL_NEW_FLAT_PRICE = 'Custom Residential New Flat Price',
+  CUSTOM_RESIDENTIAL_GM_FLAT_PRICE = 'Custom Residential GM Flat Price',
+  CUSTOM_RESIDENTIAL_REVISION_PRICE = 'Custom Residential Revision Price',
+  CUSTOM_RESIDENTIAL_REVISION_GM_PRICE = 'Custom Residential Revision GM Price',
+  CUSTOM_COMMERCIAL_NEW_PRICE = 'Custom Commercial New Price',
+  CUSTOM_COMMERCIAL_GM_PRICE = 'Custom Commercial GM Price',
+  CUSTOM_FIXED_PRICE = 'Custom Fixed Price',
+
+  CUSTOM_SPECIAL_REVISION_PRICE = 'Custom Special Revision Price',
+  CUSTOM_SPECIAL_REVISION_FREE = 'Custom Special Revision Fee',
+
+  NO_PRICING_TYPE = 'No Pricing Type',
+}
+
 export interface CreateOrderedServiceProps {
   serviceId: string
   serviceName: string

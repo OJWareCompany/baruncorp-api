@@ -17,6 +17,7 @@ import { AssignedTask } from './domain/value-objects/assigned-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { OrderedService } from './domain/value-objects/ordered-service.value-object'
 import {
+  OrderedServicePricingTypeEnum,
   OrderedServiceSizeForRevision,
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
@@ -260,12 +261,12 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       (orderedService) =>
         orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
     )
-      ? TaskSizeEnum.Major
+      ? OrderedServiceSizeForRevisionEnum.Major
       : props.orderedServices.find(
           (orderedService) =>
             orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
         )
-      ? TaskSizeEnum.Minor
+      ? OrderedServiceSizeForRevisionEnum.Minor
       : null
 
     const isContainsRevisionTask = props.orderedServices.find((orderedService) => orderedService.isRevision)
@@ -275,7 +276,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       isContainsRevisionTask: !!isContainsRevisionTask,
       billingCodes: props.orderedServices.map((orderedService) => orderedService.billingCode),
       projectPropertyType: props.projectPropertyType as ProjectPropertyTypeEnum,
-      taskSizeForRevision: sizeForRevision,
+      revisionSize: sizeForRevision as OrderedServiceSizeForRevisionEnum,
       projectId: props.projectId,
       systemSize: props.systemSize,
       mailingAddressForWetStamp: props.mailingAddressForWetStamp,
@@ -307,6 +308,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         priceOverride: service.priceOverride === null ? null : Number(service.priceOverride),
         orderedAt: service.orderedAt.toISOString(),
         doneAt: service.doneAt?.toISOString() || null,
+        pricingType: OrderedServicePricingTypeEnum.BASE_COMMERCIAL_GM_PRICE,
       })),
 
       clientInfo: {

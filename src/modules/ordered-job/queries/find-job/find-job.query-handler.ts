@@ -1,10 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { JOB_REPOSITORY } from '../../job.di-token'
-import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JobMapper } from '../../job.mapper'
 import { JobResponseDto } from '../../dtos/job.response.dto'
+import { PrismaService } from '../../../database/prisma.service'
+import { JobNotFoundException } from '../../domain/job.error'
+import { JobResponseMapper } from '../../job.response.mapper'
 
 export class FindJobQuery {
   readonly jobId: string
@@ -15,14 +14,12 @@ export class FindJobQuery {
 
 @QueryHandler(FindJobQuery)
 export class FindJobQueryHandler implements IQueryHandler {
-  constructor(
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
-    private readonly jobMapper: JobMapper,
-  ) {}
+  constructor(private readonly prismaService: PrismaService, private readonly jobResponseMapper: JobResponseMapper) {}
 
   async execute(query: FindJobQuery): Promise<JobResponseDto> {
-    const job = await this.jobRepository.findJobOrThrow(query.jobId)
-    return this.jobMapper.toResponse(job)
+    const job = await this.prismaService.orderedJobs.findFirst({ where: { id: query.jobId } })
+    if (!job) throw new JobNotFoundException()
+    const result = await this.jobResponseMapper.toResponse(job)
+    return result
   }
 }

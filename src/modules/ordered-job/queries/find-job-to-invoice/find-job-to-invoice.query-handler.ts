@@ -1,13 +1,9 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JobStatusEnum } from '../../domain/job.type'
-import { JOB_REPOSITORY } from '../../job.di-token'
-import { JobMapper } from '../../job.mapper'
 import { PrismaService } from '../../../database/prisma.service'
 import { TaskSizeEnum } from '../../../invoice/dtos/invoice.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
@@ -24,12 +20,7 @@ export class FindJobToInvoiceQuery {
 
 @QueryHandler(FindJobToInvoiceQuery)
 export class FindJobToInvoiceQueryHandler implements IQueryHandler {
-  constructor(
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
-    private readonly prismaService: PrismaService,
-    private readonly jobMapper: JobMapper,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindJobToInvoiceQuery): Promise<JobToInvoiceResponseDto> {
     // // 입력받은 값을 UTC로 변환한다, Postman에서 한국 시간을 보내고(헤더에 명시), TimezoneOffset을 사용하여 UTC로 변환.

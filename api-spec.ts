@@ -395,6 +395,28 @@ export interface OrderedServiceResponseFields {
   serviceId: string
   sizeForRevision: 'Major' | 'Minor' | null
   serviceName: string
+  pricingType:
+    | 'Base Residential New Price'
+    | 'Base Residential GM Price'
+    | 'Base Residential Revision Price'
+    | 'Base Residential Revision GM Price'
+    | 'Base Commercial New Price'
+    | 'Base Commercial GM Price'
+    | 'Base Commercial Revision Price'
+    | 'Base Commercial Revision GM Price'
+    | 'Base Fixed Price'
+    | 'Custom Residential New Price'
+    | 'Custom Residential GM Price'
+    | 'Custom Residential New Flat Price'
+    | 'Custom Residential GM Flat Price'
+    | 'Custom Residential Revision Price'
+    | 'Custom Residential Revision GM Price'
+    | 'Custom Commercial New Price'
+    | 'Custom Commercial GM Price'
+    | 'Custom Fixed Price'
+    | 'Custom Special Revision Price'
+    | 'Custom Special Revision Fee'
+    | 'No Pricing Type'
   isRevision: boolean
   description: string | null
   price: number | null
@@ -428,7 +450,7 @@ export interface JobResponseDto {
   isContainsRevisionTask: boolean
   projectPropertyType: 'Residential' | 'Commercial'
   billingCodes: string[]
-  taskSizeForRevision: 'Major' | 'Minor' | null
+  revisionSize: 'Major' | 'Minor' | null
   /** @example 300.1 */
   systemSize: number | null
   mailingAddressForWetStamp: AddressDto | null
@@ -466,40 +488,6 @@ export interface JobResponseDto {
   isCurrentJob?: boolean
 }
 
-export interface JobPaginatedResponseFields {
-  /** @example "5c29f1ae-d50b-4400-a6fb-b1a2c87126e9" */
-  id: string
-  /** @example "Residential" */
-  projectPropertyType: 'Residential' | 'Commercial'
-  /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
-  propertyFullAddress: string
-  /** @example 5 */
-  jobRequestNumber: number
-  /** @example "In Progress" */
-  jobStatus:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Canceled (Invoice)'
-    | 'Sent To Client'
-  /** @example "Ground Mount" */
-  mountingType: 'Roof Mount' | 'Ground Mount'
-  /** @example "Self" */
-  loadCalcOrigin: 'Self' | 'Client Provided'
-  orderedServices: OrderedServiceResponseFields[]
-  assignedTasks: AssignedTaskResponseFields[]
-  clientInfo: ClientInformationFields
-  /** @example "2023-08-11 09:10:31" */
-  receivedAt: string
-  /** @example true */
-  isExpedited: boolean
-  /** @example "Please check this out." */
-  additionalInformationFromClient: string | null
-  jobName: string
-}
-
 export interface JobPaginatedResponseDto {
   /** @default 1 */
   page: number
@@ -509,7 +497,7 @@ export interface JobPaginatedResponseDto {
   totalCount: number
   /** @example 500 */
   totalPage: number
-  items: JobPaginatedResponseFields[]
+  items: JobResponseDto[]
 }
 
 export interface InvoiceClientOrganization {
