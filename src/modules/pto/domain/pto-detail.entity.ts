@@ -71,6 +71,26 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
     this._id = id
   }
 
+  get userId(): string {
+    return this.props.userId
+  }
+
+  set userId(userId: string) {
+    this.props.userId = userId
+  }
+
+  get ptoId(): string {
+    return this.props.ptoId
+  }
+
+  set ptoId(ptoId: string) {
+    this.props.ptoId = ptoId
+  }
+
+  get currentTenure() {
+    return this.calcTenure(this.props.ownerUserDateOfJoining!, this.props.startedAt)
+  }
+
   public validate(): void {
     return
   }

@@ -9,7 +9,6 @@ import { addYears, subDays } from 'date-fns'
 import { Inject } from '@nestjs/common'
 import { PTO_REPOSITORY } from '../../pto.di-token'
 import { PtoRepositoryPort } from '../../database/pto.repository.port'
-import { el } from 'date-fns/locale'
 
 @CommandHandler(UpdatePtoRangeCommand)
 export class UpdatePtoRangeService implements ICommandHandler {

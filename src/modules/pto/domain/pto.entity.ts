@@ -21,10 +21,6 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
     return new PtoEntity({ id, props })
   }
 
-  public getDateOfJoining(): Date | null | undefined {
-    return this.props.dateOfJoining
-  }
-
   public getUsedPtoValue(): number {
     let totalValue = 0
     this.props.details?.forEach((detail) => {
@@ -110,6 +106,10 @@ export class PtoEntity extends AggregateRoot<PtoProps> {
 
   set details(details: PtoDetail[]) {
     this.props.details = details
+  }
+
+  get dateOfJoining(): Date {
+    return this.props.dateOfJoining
   }
 
   public validate(): void {
