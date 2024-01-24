@@ -892,12 +892,12 @@ export interface UpdateAhjNoteRequestDto {
 }
 
 export interface AhjNoteHistoryResponseDto {
+  id: number
   historyType: 'Created' | 'Modified'
   general: General
   design: Design
   engineering: Engineering
   electricalEngineering: ElectricalEngineering
-  beforeModification?: AhjNoteHistoryResponseDto
 }
 
 export interface AhjNoteHistoryListResponseDto {
