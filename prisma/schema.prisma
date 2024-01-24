@@ -1128,6 +1128,22 @@ model ClientNoteSnapshots {
   @@map("client_note_snapshots")
 }
 
+model IntegratedOrderModificationHistory {
+  jobId           String   @map("job_id") @db.VarChar(255)
+  modifiedAt      DateTime @default(now()) @map("modified_at") @db.DateTime(0)
+  modifiedBy      String   @default("System") @map("modified_by") @db.VarChar(255)
+  entity          String   @map("entity") @db.VarChar(255)
+  entityId        String   @map("entity_id") @db.VarChar(255)
+  scopeOrTaskName String?  @map("scope_or_task_name") @db.VarChar(255)
+  attribute       String?  @map("attribute") @db.VarChar(255)
+  operation       String   @default("Create") @map("operation") @db.VarChar(22)
+  afterValue      String?  @map("after_value") @db.Text
+  beforeValue     String?  @map("before_value") @db.Text
+
+  @@id([jobId, modifiedAt])
+  @@map("integrated_order_modification_history")
+}
+
 enum InvoicesStatus {
   Unissued
   Issued
