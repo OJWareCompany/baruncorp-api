@@ -145,6 +145,18 @@ export class JobResponseDto {
   @IsOptional()
   revisionSize: OrderedServiceSizeForRevisionEnum | null
 
+  @ApiProperty({ enum: OrderedServiceSizeForRevisionEnum, nullable: true })
+  @IsOptional()
+  eeChangeScope: OrderedServiceSizeForRevisionEnum | null
+
+  @ApiProperty({ enum: OrderedServiceSizeForRevisionEnum, nullable: true })
+  @IsOptional()
+  structuralRevisionScope: OrderedServiceSizeForRevisionEnum | null
+
+  @ApiProperty({ enum: OrderedServiceSizeForRevisionEnum, nullable: true })
+  @IsOptional()
+  designRevisionScope: OrderedServiceSizeForRevisionEnum | null
+
   @ApiProperty({ example: 300.1 })
   systemSize: number | null
 

@@ -14,7 +14,7 @@ export class JobResponseMapper {
     private readonly prismaService: PrismaService,
     private readonly serviceManager: ServiceInitialPriceManager,
   ) {}
-  async toResponse(job: OrderedJobs) {
+  async toResponse(job: OrderedJobs): Promise<JobResponseDto> {
     const currentJobId = await this.prismaService.orderedJobs.findFirst({
       select: { id: true },
       where: { projectId: job.projectId },
@@ -25,6 +25,19 @@ export class JobResponseMapper {
       where: { jobId: job.id },
       include: { service: true },
     })
+
+    const eeChangeScope = orderedScopes.find((scope) => {
+      return scope.service.billingCode === 'E3' && scope.isRevision
+    })
+
+    const structuralRevisionScope = orderedScopes.find((scope) => {
+      return scope.service.billingCode === 'S4' && scope.isRevision
+    })
+
+    const designRevisionScope = orderedScopes.find((scope) => {
+      return scope.service.billingCode === 'PV' && scope.isRevision
+    })
+
     const orderedScopesResponse = await Promise.all(
       orderedScopes.map(async (scope) => {
         return {
@@ -90,7 +103,6 @@ export class JobResponseMapper {
         contactEmail: job.clientContactEmail,
         deliverablesEmails: job.deliverablesEmail?.split(',') || [],
       },
-
       isContainsRevisionTask: !!orderedScopes.find((scope) => scope.isRevision),
       billingCodes: orderedScopes.map((scope) => scope.service.billingCode),
       revisionSize: job.revisionSize as OrderedServiceSizeForRevisionEnum,
@@ -110,6 +122,13 @@ export class JobResponseMapper {
       assignedTasks: assignedTasksResponse,
       orderedServices: orderedScopesResponse,
       isCurrentJob: job.id === currentJobId?.id,
+      eeChangeScope: eeChangeScope ? (eeChangeScope.sizeForRevision as OrderedServiceSizeForRevisionEnum) : null,
+      structuralRevisionScope: structuralRevisionScope
+        ? (structuralRevisionScope.sizeForRevision as OrderedServiceSizeForRevisionEnum)
+        : null,
+      designRevisionScope: designRevisionScope
+        ? (designRevisionScope.sizeForRevision as OrderedServiceSizeForRevisionEnum)
+        : null,
     })
   }
 

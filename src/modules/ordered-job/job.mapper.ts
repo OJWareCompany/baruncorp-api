@@ -17,14 +17,13 @@ import { AssignedTask } from './domain/value-objects/assigned-task.value-object'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { OrderedService } from './domain/value-objects/ordered-service.value-object'
 import {
-  OrderedServicePricingTypeEnum,
   OrderedServiceSizeForRevision,
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from '../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
-import { PricingTypeEnum, TaskSizeEnum } from '../invoice/dtos/invoice.response.dto'
-import { JobStatus, JobStatusEnum } from './domain/job.type'
+import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
+import { JobStatusEnum } from './domain/job.type'
 import { LoadCalcOriginEnum } from './domain/job.type'
 import { AssignedTaskStatusEnum } from '../assigned-task/domain/assigned-task.type'
 
@@ -255,83 +254,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
   }
 
   toResponse(entity: JobEntity): JobResponseDto {
-    const props = entity.getProps()
-
-    const sizeForRevision = props.orderedServices.find(
-      (orderedService) =>
-        orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
-    )
-      ? OrderedServiceSizeForRevisionEnum.Major
-      : props.orderedServices.find(
-          (orderedService) =>
-            orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Minor,
-        )
-      ? OrderedServiceSizeForRevisionEnum.Minor
-      : null
-
-    const isContainsRevisionTask = props.orderedServices.find((orderedService) => orderedService.isRevision)
-
-    const response = new JobResponseDto({
-      id: props.id,
-      isContainsRevisionTask: !!isContainsRevisionTask,
-      billingCodes: props.orderedServices.map((orderedService) => orderedService.billingCode),
-      projectPropertyType: props.projectPropertyType as ProjectPropertyTypeEnum,
-      revisionSize: sizeForRevision as OrderedServiceSizeForRevisionEnum,
-      projectId: props.projectId,
-      systemSize: props.systemSize,
-      mailingAddressForWetStamp: props.mailingAddressForWetStamp,
-      mountingType: props.mountingType,
-      numberOfWetStamp: props.numberOfWetStamp,
-      additionalInformationFromClient: props.additionalInformationFromClient,
-      updatedBy: props.updatedBy,
-      propertyFullAddress: props.propertyFullAddress,
-      jobRequestNumber: props.jobRequestNumber,
-      jobStatus: props.jobStatus as JobStatus,
-      loadCalcOrigin: props.loadCalcOrigin,
-      receivedAt: props.receivedAt.toISOString(),
-      isExpedited: props.isExpedited,
-      jobName: props.jobName,
-      isCurrentJob: props.isCurrentJob,
-      assignedTasks: props.assignedTasks.map((assignedTask) => ({
-        ...assignedTask.unpack(),
-        duration: assignedTask.duration,
-        startedAt: assignedTask.startedAt?.toISOString() || null,
-        doneAt: assignedTask.doneAt?.toISOString() || null,
-        isActive: assignedTask.isActive,
-        prerequisiteTasks: assignedTask.prerequisiteTasks,
-      })),
-
-      orderedServices: props.orderedServices.map((service) => ({
-        ...service.unpack(),
-        sizeForRevision: service.sizeForRevision,
-        price: service.price === null ? null : Number(service.price),
-        priceOverride: service.priceOverride === null ? null : Number(service.priceOverride),
-        orderedAt: service.orderedAt.toISOString(),
-        doneAt: service.doneAt?.toISOString() || null,
-        pricingType: OrderedServicePricingTypeEnum.BASE_COMMERCIAL_GM_PRICE,
-      })),
-
-      clientInfo: {
-        clientOrganizationId: props.clientInfo.clientOrganizationId,
-        clientOrganizationName: props.clientInfo.clientOrganizationName,
-        clientUserName: props.clientInfo.clientUserName, // TODO: project나 조직도 join 해야하나
-        clientUserId: props.clientInfo.clientUserId, // TODO: project나 조직도 join 해야하나
-        contactEmail: props.clientInfo.clientContactEmail,
-        deliverablesEmails: props.clientInfo.deliverablesEmail,
-      },
-    })
-
-    props.orderedServices.map((service) => {
-      return {
-        ...service.unpack(),
-        sizeForRevision: service.sizeForRevision,
-        price: service.price === null ? null : Number(service.price),
-        priceOverride: service.priceOverride === null ? null : Number(service.priceOverride),
-        orderedAt: service.orderedAt.toISOString(),
-        doneAt: service.doneAt?.toISOString() || null,
-      }
-    })
-
-    return response
+    return {} as JobResponseDto
   }
 }

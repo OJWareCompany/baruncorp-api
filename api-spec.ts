@@ -451,6 +451,9 @@ export interface JobResponseDto {
   projectPropertyType: 'Residential' | 'Commercial'
   billingCodes: string[]
   revisionSize: 'Major' | 'Minor' | null
+  eeChangeScope: 'Major' | 'Minor' | null
+  structuralRevisionScope: 'Major' | 'Minor' | null
+  designRevisionScope: 'Major' | 'Minor' | null
   /** @example 300.1 */
   systemSize: number | null
   mailingAddressForWetStamp: AddressDto | null
@@ -892,12 +895,12 @@ export interface UpdateAhjNoteRequestDto {
 }
 
 export interface AhjNoteHistoryResponseDto {
-  id: number
   historyType: 'Created' | 'Modified'
   general: General
   design: Design
   engineering: Engineering
   electricalEngineering: ElectricalEngineering
+  beforeModification?: AhjNoteHistoryResponseDto
 }
 
 export interface AhjNoteHistoryListResponseDto {
