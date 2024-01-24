@@ -73,9 +73,9 @@ export class UpdatePtoRangeService implements ICommandHandler {
         // 해당 tenure에 대한 PTO 존재
         if (latestPtoDetail) {
           // 등록된 연차 정보가 존재함
-          if (latestPtoDetail.startedAt < targetPtoStartedAt) {
-            // 필요없는 미래 구간의 PTO
-            // PTO 제거
+          if (currentDate < targetPtoStartedAt && latestPtoDetail.startedAt < targetPtoStartedAt) {
+            //현재 기준 시즌까지라면 남긴다
+            // 미래 구간의 PTO 이면서 연차가 등록되어 있지 않음 => 제거
             // console.log(`[doOrderingPto] delete pto`)
             ptoEntities = ptoEntities.filter((entities) => entities.id !== targetEntity.id)
             promises.push(this.ptoRepository.delete(targetEntity.id))
@@ -100,8 +100,8 @@ export class UpdatePtoRangeService implements ICommandHandler {
         // 해당 tenure에 대한 PTO 없음
         if (latestPtoDetail) {
           // 등록된 연차 정보가 존재함
-          if (latestPtoDetail.startedAt < targetPtoStartedAt) {
-            // 필요없는 미래 구간의 PTO => PTO 추가 하지 않고 continue
+          if (currentDate < targetPtoStartedAt && latestPtoDetail.startedAt < targetPtoStartedAt) {
+            // 미래 구간의 PTO이면서 연차가 등록되어 있지 않음 => PTO 추가 하지 않고 continue
             continue
           } else {
             // 보유 해야 할 PTO 구간 => PTO 추가
