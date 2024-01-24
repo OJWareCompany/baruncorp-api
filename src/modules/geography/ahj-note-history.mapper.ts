@@ -6,6 +6,7 @@ import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
 import { Injectable } from '@nestjs/common'
 import { AHJNoteHistory } from '@prisma/client'
 import { AhjNoteHistoryTypeEnum } from './domain/ahj-job-note.type'
+import { before } from 'node:test'
 
 @Injectable()
 export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, AhjNoteHistoryResponseDto> {
@@ -21,7 +22,7 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
     throw new Error('Method not implemented.')
   }
 
-  toResponse(model: AHJNoteHistoryModel): AhjNoteHistoryResponseDto {
+  toResponse(model: AHJNoteHistoryModel, beforeHistory?: AHJNoteHistoryModel | null): AhjNoteHistoryResponseDto {
     let type: AHJType = AHJType.STATE
     if (model.geoIdCounty) type = AHJType.COUNTY
     if (model.geoIdCountySubdivision) type = AHJType.COUNTY_SUBDIVISIONS
@@ -74,7 +75,9 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
       electricalNotes: model.electricalNotes,
     }
 
-    // for history id
+    if (beforeHistory) {
+      response.beforeModification = this.toResponse(beforeHistory)
+    }
     return {
       ...response,
     }

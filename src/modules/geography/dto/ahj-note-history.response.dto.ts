@@ -4,9 +4,6 @@ import { AhjNoteHistoryTypeEnum } from '../domain/ahj-job-note.type'
 
 export class AhjNoteHistoryResponseDto {
   @ApiProperty()
-  id: number
-
-  @ApiProperty()
   historyType: AhjNoteHistoryTypeEnum
 
   @ApiProperty({ type: General })
@@ -20,4 +17,7 @@ export class AhjNoteHistoryResponseDto {
 
   @ApiProperty({ type: ElectricalEngineering })
   electricalEngineering: ElectricalEngineering
+
+  @ApiProperty({ example: AhjNoteHistoryResponseDto, type: AhjNoteHistoryResponseDto })
+  beforeModification?: AhjNoteHistoryResponseDto
 }

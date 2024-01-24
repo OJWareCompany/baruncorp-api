@@ -168,6 +168,18 @@ export class GeographyRepository implements GeographyRepositoryPort {
     return result
   }
 
+  async findAhjNoteBeforeHistoryDetail(model: AHJNoteHistory): Promise<AHJNoteHistory | null> {
+    const result = await this.prismaService.aHJNoteHistory.findFirst({
+      where: {
+        geoId: model.geoId,
+        updatedAt: {
+          lt: model.updatedAt,
+        },
+      },
+    })
+    return result
+  }
+
   async findNoteHistory(
     pageNo: number,
     pageSize: number,

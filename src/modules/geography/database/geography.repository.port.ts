@@ -22,6 +22,7 @@ export interface GeographyRepositoryPort {
   findNoteHistory(pageNo: number, pageSize: number, geoId: string | null): Promise<Paginated<AHJNoteHistoryModel>>
 
   findAhjNoteHistoryDetail(geoId: string, updatedAt: Date): Promise<AHJNoteHistory>
+  findAhjNoteBeforeHistoryDetail(model: AHJNoteHistory): Promise<AHJNoteHistory | null>
 
   createState(create: CensusState): Promise<void>
   createCounty(create: CensusCounties): Promise<void>

@@ -51,6 +51,11 @@ export class GeographyService {
     return note
   }
 
+  async findNoteBeforeHistoryDetail(model: AHJNoteHistoryModel): Promise<AHJNoteHistoryModel | null> {
+    const note = await this.geographyRepository.findAhjNoteBeforeHistoryDetail(model)
+    return note
+  }
+
   async updateNote(user: UserEntity, geoId: string, dto: UpdateAhjNoteCommand): Promise<void> {
     const note = await this.geographyRepository.findNoteByGeoIdOrThrow(geoId)
     if (!note) throw new AhjNoteNotFoundException()

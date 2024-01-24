@@ -64,7 +64,6 @@ export class GeographyController {
       editorUserId: user.id,
       geoId: param.geoId,
     })
-    console.log(2222)
     await this.geographyService.updateNote(user, param.geoId, update)
   }
 
@@ -78,9 +77,10 @@ export class GeographyController {
     @Param() param: GeoGraphyParamRequestDto,
     @Query() query: FindAhjNoteHistoryDetailRequestDto,
   ): Promise<AhjNoteHistoryResponseDto> {
-    return this.ahjNoteHistoryMapper.toResponse(
-      await this.geographyService.findNoteUpdateHistoryDetail(param.geoId, query.updatedAt),
-    )
+    const history = await this.geographyService.findNoteUpdateHistoryDetail(param.geoId, query.updatedAt)
+    const beforeHistory = await this.geographyService.findNoteBeforeHistoryDetail(history)
+
+    return this.ahjNoteHistoryMapper.toResponse(history, beforeHistory)
   }
 
   @Get('notes/history')
