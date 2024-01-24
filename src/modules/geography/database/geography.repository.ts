@@ -176,6 +176,9 @@ export class GeographyRepository implements GeographyRepositoryPort {
           lt: model.updatedAt,
         },
       },
+      orderBy: {
+        updatedAt: 'desc',
+      },
     })
     return result
   }
