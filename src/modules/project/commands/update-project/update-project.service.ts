@@ -70,7 +70,7 @@ export class UpdateProjectService implements ICommandHandler {
     const fromProjectFolderName = project.projectPropertyAddress.fullAddress
     const fromProjectPropertyType = project.projectPropertyType
 
-    if (project.projectPropertyAddress.coordinates !== command.projectPropertyAddress.coordinates) {
+    if (!project.deepEqualsPropertyAddressCoordinates(command.projectPropertyAddress.coordinates)) {
       const censusResponse = await this.censusSearchCoordinatesService.search(
         command.projectPropertyAddress.coordinates,
       )
