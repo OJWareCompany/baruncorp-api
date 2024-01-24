@@ -96,6 +96,71 @@ export type UpdateGoogleProjectFolderResponseData = {
 }
 
 /**
+ * AhjNote
+ */
+export type CreateAhjNoteFolderData = {
+  operation: 'create-ahj'
+  data: {
+    createName: string
+    geoId: string
+  }
+}
+export type UpdateAhjNoteFolderData = {
+  operation: 'update-ahj'
+  data: {
+    folderId: string | null
+    updateName: string
+    geoId: string
+  }
+}
+export type AhjNoteFolderData = CreateAhjNoteFolderData | UpdateAhjNoteFolderData
+
+/**
+ * AhjNoteFolderOperationResult
+ */
+export type CreateAhjNoteFolderOperationResult = {
+  operation: 'create-ahj'
+  id: string
+  name: string
+  matchedExistingData: boolean
+  geoId: string
+}
+export type UpdateAhjNoteFolderOperationResult = {
+  operation: 'update-ahj'
+  id: string
+  name: string
+  nameBeforeUpdate: string | null
+  matchedExistingData: boolean
+  geoId: string
+}
+export type AhjNoteFolderOperationResult = CreateAhjNoteFolderOperationResult | UpdateAhjNoteFolderOperationResult
+
+/**
+ * CreateOrUpdateAhjNoteFolders
+ */
+export type CreateOrUpdateAhjNoteFoldersRequestPayload = {
+  ahjNoteFolderDatas: AhjNoteFolderData[]
+}
+export type CreateOrUpdateAhjNoteFoldersResponse = {
+  message: string
+  data: CreateOrUpdateAhjNoteFoldersResponseData
+}
+export type CreateOrUpdateAhjNoteFoldersResponseData = {
+  ahjNoteFolderOperationResults: AhjNoteFolderOperationResult[]
+}
+
+/**
+ * RollbackCreateOrUpdateAhjNoteFolders
+ */
+export type RollbackCreateOrUpdateAhjNoteFoldersRequestPayload = {
+  ahjNoteFolderOperationResults: AhjNoteFolderOperationResult[]
+}
+export type RollbackCreateOrUpdateAhjNoteFoldersResponse = {
+  message: string
+  data: null
+}
+
+/**
  * DeleteItemsInSharedDrive
  */
 export type DeleteItemsInSharedDriveRequestPayload = {

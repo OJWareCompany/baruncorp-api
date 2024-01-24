@@ -58,7 +58,6 @@ export class CreateOrganizationService implements ICommandHandler {
         this.prismaService.googleSharedDrive.create({
           data: {
             id: sharedDrive.id,
-            name: sharedDrive.name,
             residentialFolderId: residentialFolder.id,
             commercialFolderId: commercialFolder.id,
             organizationId,

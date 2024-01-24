@@ -115,7 +115,6 @@ export class CreateJobService implements ICommandHandler {
         this.prismaService.googleJobFolder.create({
           data: {
             id: jobFolder.id,
-            name: jobFolder.name,
             shareLink: jobFolder.shareLink,
             deliverablesFolderId: deliverablesFolder.id,
             deliverablesFolderShareLink: deliverablesFolder.shareLink,

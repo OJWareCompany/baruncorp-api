@@ -18,7 +18,12 @@ import {
   CreateGoogleProjectFolderResponseData,
   CreateGoogleSharedDriveResponse,
   CreateGoogleSharedDriveResponseData,
+  CreateOrUpdateAhjNoteFoldersRequestPayload,
+  CreateOrUpdateAhjNoteFoldersResponse,
+  CreateOrUpdateAhjNoteFoldersResponseData,
   DeleteItemsInSharedDriveRequestPayload,
+  RollbackCreateOrUpdateAhjNoteFoldersRequestPayload,
+  RollbackCreateOrUpdateAhjNoteFoldersResponse,
   UpdateGoogleProjectFolderRequestPayload,
   UpdateGoogleProjectFolderResponse,
   UpdateGoogleProjectFolderResponseData,
@@ -74,7 +79,7 @@ export class FilesystemApiService {
     } catch (error: any) {
       if (error.code) handleRequestError(error.code)
 
-      const errorCode = error.response.body.errorCode
+      const { errorCode } = JSON.parse(error.response.body)
       if (errorCode === 'PARENT_FOLDER_NOT_FOUND_ERROR') {
         throw new GoogleDriveParentFolderNotFoundException()
       }
@@ -103,7 +108,7 @@ export class FilesystemApiService {
     } catch (error: any) {
       if (error.code) handleRequestError(error.code)
 
-      const errorCode = error.response.body.errorCode
+      const { errorCode } = JSON.parse(error.response.body)
       if (errorCode === 'PARENT_FOLDER_NOT_FOUND_ERROR') {
         throw new GoogleDriveParentFolderNotFoundException()
       }
@@ -132,8 +137,7 @@ export class FilesystemApiService {
     } catch (error: any) {
       if (error.code) handleRequestError(error.code)
 
-      const errorCode = error.response.body.errorCode
-      const message = error.response.body.message
+      const { errorCode, message } = JSON.parse(error.response.body)
       if (errorCode === 'BAD_REQUEST_ERROR') {
         throw new GoogleDriveBadRequestException(message)
       } else if (errorCode === 'FAILED_UPDATE_ERROR') {
@@ -142,6 +146,40 @@ export class FilesystemApiService {
         throw new GoogleDriveConflictException(message)
       }
 
+      throw new FileServerInternalErrorException()
+    }
+  }
+
+  async requestToCreateOrUpdateAhjNoteFolders({
+    ahjNoteFolderDatas,
+  }: CreateOrUpdateAhjNoteFoldersRequestPayload): Promise<CreateOrUpdateAhjNoteFoldersResponseData> {
+    try {
+      const url = `${this.baseUrl}/ahjNoteFolders`
+      const response: CreateOrUpdateAhjNoteFoldersResponse = await got
+        .post(url, {
+          json: { ahjNoteFolderDatas },
+        })
+        .json()
+      return response.data
+    } catch (error: any) {
+      if (error.code) handleRequestError(error.code)
+      throw new FileServerInternalErrorException()
+    }
+  }
+
+  async requestToRollbackCreateOrUpdateAhjNoteFolders({
+    ahjNoteFolderOperationResults,
+  }: RollbackCreateOrUpdateAhjNoteFoldersRequestPayload): Promise<null> {
+    try {
+      const url = `${this.baseUrl}/ahjNoteFolders/rollback`
+      const response: RollbackCreateOrUpdateAhjNoteFoldersResponse = await got
+        .post(url, {
+          json: { ahjNoteFolderOperationResults },
+        })
+        .json()
+      return response.data
+    } catch (error: any) {
+      if (error.code) handleRequestError(error.code)
       throw new FileServerInternalErrorException()
     }
   }

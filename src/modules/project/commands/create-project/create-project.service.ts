@@ -8,7 +8,6 @@ import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/proj
 import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
 import { CoordinatesNotFoundException } from '../../domain/project.error'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
-import { CensusResponseDto } from '../../infra/census/census.response.dto'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectEntity } from '../../domain/project.entity'
 import { CreateProjectCommand } from './create-project.command'
@@ -20,6 +19,7 @@ import { GoogleDriveSharedDriveNotFoundException } from '../../../filesystem/dom
 import { FilesystemApiService } from '../../../filesystem/infra/filesystem.api.service'
 import { ProjectMapper } from '../../project.mapper'
 import { CommonInternalServerException, DataIntegrityException } from '../../../../app.error'
+import { GenerateCensusResourceDomainService } from '../../../geography/domain/domain-services/generate-census-resource.domain-service'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
@@ -38,6 +38,7 @@ export class CreateProjectService implements ICommandHandler {
     private readonly projectMapper: ProjectMapper,
     private readonly prismaService: PrismaService,
     private readonly filesystemApiService: FilesystemApiService,
+    private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
   async execute(command: CreateProjectCommand): Promise<{ id: string }> {
@@ -46,7 +47,7 @@ export class CreateProjectService implements ICommandHandler {
     // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
     if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-    await this.generateGeographyAndAhjNotes(censusResponse)
+    await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
 
     const organization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
     const sharedDrive = await this.prismaService.googleSharedDrive.findFirst({
@@ -110,7 +111,6 @@ export class CreateProjectService implements ICommandHandler {
         this.prismaService.googleProjectFolder.create({
           data: {
             id: projectFolder.id,
-            name: projectFolder.name,
             shareLink: projectFolder.shareLink,
             projectId: projectEntity.id,
           },
@@ -132,33 +132,5 @@ export class CreateProjectService implements ICommandHandler {
     return {
       id: projectEntity.id,
     }
-  }
-
-  async generateGeographyAndAhjNotes(censusResponseDto: CensusResponseDto) {
-    const { state, county, countySubdivisions, place } = censusResponseDto
-    /**
-     * State & Notes
-     */
-    state && (await this.geographyRepository.createState(state))
-    state && (await this.geographyRepository.updateStateNote(state))
-
-    /**
-     * County & Notes
-     */
-    county && (await this.geographyRepository.createCounty(county))
-    county && (await this.geographyRepository.updateCountyNote(county, state))
-
-    /**
-     * County Subdivisions & Note
-     */
-    countySubdivisions && (await this.geographyRepository.createCountySubdivisions(countySubdivisions))
-    countySubdivisions &&
-      (await this.geographyRepository.updateCountySubdivisionsNote(countySubdivisions, state, county))
-
-    /**
-     * Place & Note
-     */
-    place && (await this.geographyRepository.createPlace(place))
-    place && (await this.geographyRepository.updatePlaceNote(place, state, county, countySubdivisions))
   }
 }

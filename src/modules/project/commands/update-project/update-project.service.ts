@@ -7,7 +7,6 @@ import { CensusSearchCoordinatesService } from '../../infra/census/census.search
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { UpdateProjectCommand } from './update-project.command'
-import { CensusResponseDto } from '../../infra/census/census.response.dto'
 import { CoordinatesNotFoundException } from '../../domain/project.error'
 import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
 import { FilesystemApiService } from '../../../filesystem/infra/filesystem.api.service'
@@ -18,6 +17,7 @@ import {
 } from '../../../filesystem/domain/filesystem.error'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
 import { CommonInternalServerException, DataIntegrityException } from '../../../../app.error'
+import { GenerateCensusResourceDomainService } from '../../../geography/domain/domain-services/generate-census-resource.domain-service'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -30,40 +30,10 @@ export class UpdateProjectService implements ICommandHandler {
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
     private readonly filesystemApiService: FilesystemApiService,
     private readonly prismaService: PrismaService,
+    private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
-    // 기존 코드 ==================================================================================
-    // const project = await this.projectRepository.findOneOrThrow({ id: command.projectId })
-    // await this.projectValidatorDomainService.validateForUpdate(project, command)
-
-    // if (project.projectPropertyAddress.coordinates !== command.projectPropertyAddress.coordinates) {
-    //   const censusResponse = await this.censusSearchCoordinatesService.search(
-    //     command.projectPropertyAddress.coordinates,
-    //   )
-    //   if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-    //   this.generateGeographyAndAhjNotes(censusResponse)
-    //   project.updatePropertyAddress({
-    //     projectPropertyAddress: command.projectPropertyAddress,
-    //     projectAssociatedRegulatory: {
-    //       stateId: censusResponse.state.geoId, // 무조건 결과값 받아온다고 가정
-    //       countyId: censusResponse?.county?.geoId || null,
-    //       countySubdivisionsId: censusResponse?.countySubdivisions?.geoId || null,
-    //       placeId: censusResponse?.place?.geoId || null,
-    //     },
-    //   })
-    // }
-
-    // project.update({
-    //   projectPropertyType: command.projectPropertyType,
-    //   projectPropertyOwner: command.projectPropertyOwner,
-    //   projectNumber: command.projectNumber,
-    //   updatedBy: command.updatedByUserId,
-    // })
-
-    // await this.projectRepository.update(project)
-
-    // 새로운 코드 ==================================================================================
     const project = await this.projectRepository.findOneOrThrow({ id: command.projectId })
     await this.projectValidatorDomainService.validateForUpdate(project, command)
 
@@ -75,7 +45,7 @@ export class UpdateProjectService implements ICommandHandler {
         command.projectPropertyAddress.coordinates,
       )
       if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-      this.generateGeographyAndAhjNotes(censusResponse)
+      await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
       project.updatePropertyAddress({
         projectPropertyAddress: command.projectPropertyAddress,
         projectAssociatedRegulatory: {
@@ -116,7 +86,7 @@ export class UpdateProjectService implements ICommandHandler {
         throw new GoogleDriveSharedDriveNotFoundException()
 
       /**
-       * @TODO
+       * @TODO 전체 검색
        * 지금은 가장 늦게 생성된 공유 드라이브(EX. sharedDrive 003)를 'sharedDrives[length - 1]'를 통해 판별하는 것 으로 코드를 작성했다
        * 그러나 추후 공유 드라이브 테이블에 컬럼을 하나 더 추가해서, 더 정확하게 구분할 수 있도록 코드 재구현 필요
        */
@@ -171,33 +141,5 @@ export class UpdateProjectService implements ICommandHandler {
       }
       throw error
     }
-  }
-
-  async generateGeographyAndAhjNotes(censusResponseDto: CensusResponseDto) {
-    const { state, county, countySubdivisions, place } = censusResponseDto
-    /**
-     * State & Notes
-     */
-    state && (await this.geographyRepository.createState(state))
-    state && (await this.geographyRepository.updateStateNote(state))
-
-    /**
-     * County & Notes
-     */
-    county && (await this.geographyRepository.createCounty(county))
-    county && (await this.geographyRepository.updateCountyNote(county, state))
-
-    /**
-     * County Subdivisions & Note
-     */
-    countySubdivisions && (await this.geographyRepository.createCountySubdivisions(countySubdivisions))
-    countySubdivisions &&
-      (await this.geographyRepository.updateCountySubdivisionsNote(countySubdivisions, state, county))
-
-    /**
-     * Place & Note
-     */
-    place && (await this.geographyRepository.createPlace(place))
-    place && (await this.geographyRepository.updatePlaceNote(place, state, county, countySubdivisions))
   }
 }

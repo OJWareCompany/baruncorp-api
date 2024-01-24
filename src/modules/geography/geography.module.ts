@@ -12,6 +12,8 @@ import { AhjNoteMapper } from './ahj-note.mapper'
 import { GEOGRAPHY_REPOSITORY } from './geography.di-token'
 import { GeographyController } from './geography.controller'
 import { GeographyService } from './geography.service'
+import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
+import { GenerateCensusResourceDomainService } from './domain/domain-services/generate-census-resource.domain-service'
 
 const repositories: Provider[] = [
   { provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository },
@@ -19,11 +21,13 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 const mappers: Provider[] = [AhjNoteMapper, AhjNoteHistoryMapper, UserMapper, UserRoleMapper]
-const services: Provider[] = [GeographyService]
+const services: Provider[] = [GeographyService, FilesystemApiService]
+const domainServices: Provider[] = [GenerateCensusResourceDomainService]
 
 @Module({
   imports: [PrismaModule, UsersModule],
-  providers: [...services, ...repositories, ...mappers],
+  providers: [...services, ...repositories, ...mappers, ...domainServices],
   controllers: [GeographyController],
+  exports: [GenerateCensusResourceDomainService],
 })
 export class GeographyModule {}

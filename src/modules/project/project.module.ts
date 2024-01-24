@@ -33,6 +33,7 @@ import { OrganizationRepository } from '../organization/database/organization.re
 import { OrganizationMapper } from '../organization/organization.mapper'
 import { ProjectValidatorDomainService } from './domain/domain-services/project-validator.domain-service'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
+import { GenerateCensusResourceDomainService } from '../geography/domain/domain-services/generate-census-resource.domain-service'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -43,7 +44,11 @@ const httpControllers = [
   FindProjectDetailHttpController,
 ]
 
-const providers: Provider[] = [CensusSearchCoordinatesService, FilesystemApiService]
+const providers: Provider[] = [
+  CensusSearchCoordinatesService,
+  FilesystemApiService,
+  GenerateCensusResourceDomainService,
+]
 
 const commandHandlers: Provider[] = [
   CreateAhjNoteService,
