@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { LineItem } from '../../invoice/dtos/invoice.response.dto'
+import { JobResponseDto } from './job.response.dto'
 
 export class JobToInvoiceResponseDto {
-  @ApiProperty({ type: LineItem, isArray: true })
-  readonly items: LineItem[]
+  @ApiProperty({ type: JobResponseDto, isArray: true })
+  readonly items: JobResponseDto[]
 
   @ApiProperty()
   subtotal: number

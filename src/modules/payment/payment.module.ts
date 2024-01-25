@@ -13,6 +13,7 @@ import { PAYMENT_REPOSITORY } from './payment.di-token'
 import { PaymentRepository } from './database/payment.repository'
 import { PaymentMapper } from './payment.mapper'
 import { UsersModule } from '../users/users.module'
+import { JobModule } from '../ordered-job/job.module'
 
 const httpControllers = [
   CreatePaymentHttpController,
@@ -32,7 +33,7 @@ const eventHandlers: Provider[] = []
 const mappers: Provider[] = [PaymentMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule, UsersModule],
+  imports: [CqrsModule, PrismaModule, UsersModule, JobModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
 })

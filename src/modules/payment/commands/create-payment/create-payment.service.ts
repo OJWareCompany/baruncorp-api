@@ -9,13 +9,15 @@ import { PaymentEntity } from '../../domain/payment.entity'
 import { CreatePaymentCommand } from './create-payment.command'
 import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
 import { PaymentOverException, UnissuedInvoicePayException, ZeroPaymentException } from '../../domain/payment.error'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 
 @CommandHandler(CreatePaymentCommand)
 export class CreatePaymentService implements ICommandHandler {
   constructor(
     // @ts-ignore
-    @Inject(PAYMENT_REPOSITORY)
-    private readonly paymentRepo: PaymentRepositoryPort,
+    @Inject(PAYMENT_REPOSITORY) private readonly paymentRepo: PaymentRepositoryPort, // @ts-ignore
+    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: CreatePaymentCommand): Promise<AggregateID> {
@@ -33,24 +35,22 @@ export class CreatePaymentService implements ICommandHandler {
 
     const jobs = await this.prismaService.orderedJobs.findMany({
       where: { invoiceId: invoice.id },
-      include: {
-        orderedServices: {
-          include: {
-            service: true,
-          },
-        },
-      },
     })
 
     const payments = await this.prismaService.payments.findMany({ where: { invoiceId: invoice.id, canceledAt: null } })
     const totalOfPayment = payments.reduce((pre, cur) => pre + Number(cur.amount), 0)
 
+    let subtotal = 0
     let total = 0
-    jobs.map((job) => {
-      job.orderedServices.map(
-        (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),
-      )
-    })
+
+    await Promise.all(
+      jobs.map(async (job) => {
+        const eachSubtotal = await this.jobRepo.getSubtotalInvoiceAmount(job.id)
+        const eachTotal = await this.jobRepo.getTotalInvoiceAmount(job.id)
+        subtotal += eachSubtotal
+        total += eachTotal
+      }),
+    )
 
     if (total <= totalOfPayment || total < command.amount + totalOfPayment) {
       throw new PaymentOverException()

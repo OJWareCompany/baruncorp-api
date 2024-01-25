@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { OrderedJobs } from '@prisma/client'
 import { PrismaService } from '../database/prisma.service'
 import { ServiceInitialPriceManager } from '../ordered-service/domain/ordered-service-manager.domain-service'
@@ -7,10 +7,16 @@ import { JobResponseDto } from './dtos/job.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { JobStatusEnum, LoadCalcOriginEnum } from './domain/job.type'
 import { Address } from '../organization/domain/value-objects/address.vo'
+import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
+import { JobRepositoryPort } from './database/job.repository.port'
+import { JOB_REPOSITORY } from './job.di-token'
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 
 @Injectable()
 export class JobResponseMapper {
   constructor(
+    // @ts-ignore
+    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     private readonly prismaService: PrismaService,
     private readonly serviceManager: ServiceInitialPriceManager,
   ) {}
@@ -25,6 +31,15 @@ export class JobResponseMapper {
       where: { jobId: job.id },
       include: { service: true },
     })
+
+    const project = await this.prismaService.orderedProjects.findFirst({
+      where: { id: job.projectId },
+    })
+    let stateName = 'unknown'
+    if (project?.stateId) {
+      const ahjnote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: project.stateId } })
+      stateName = ahjnote?.name || 'unknown'
+    }
 
     const eeChangeScope = orderedScopes.find((scope) => {
       return scope.service.billingCode === 'E3' && scope.isRevision
@@ -80,6 +95,9 @@ export class JobResponseMapper {
       }),
     )
 
+    const subtotal = await this.jobRepo.getSubtotalInvoiceAmount(job.id)
+    const total = await this.jobRepo.getTotalInvoiceAmount(job.id)
+
     return new JobResponseDto({
       id: job.id,
       projectId: job.projectId,
@@ -129,6 +147,11 @@ export class JobResponseMapper {
       designRevisionScope: designRevisionScope
         ? (designRevisionScope.sizeForRevision as OrderedServiceSizeForRevisionEnum)
         : null,
+      pricingType: job.pricingType as PricingTypeEnum,
+      price: total,
+      taskSubtotal: subtotal,
+      state: stateName,
+      dateSentToClient: job.dateSentToClient,
     })
   }
 

@@ -7,4 +7,6 @@ export interface JobRepositoryPort {
   findJobOrThrow(id: string): Promise<JobEntity>
   findManyBy(property: keyof OrderedJobs, value: OrderedJobs[typeof property]): Promise<JobEntity[]>
   findJobsToInvoice(clientOrganizationId: string, serviceMonth: Date): Promise<JobEntity[]>
+  getTotalInvoiceAmount(jobId: string): Promise<number>
+  getSubtotalInvoiceAmount(jobId: string): Promise<number>
 }

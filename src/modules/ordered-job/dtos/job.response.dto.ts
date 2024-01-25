@@ -3,7 +3,7 @@ import { initialize } from '../../../libs/utils/constructor-initializer'
 import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
-import { IsOptional } from 'class-validator'
+import { IsDate, IsEnum, IsNumber, IsOptional, IsString, isNumber } from 'class-validator'
 import {
   OrderedServicePricingTypeEnum,
   OrderedServiceSizeForRevisionEnum,
@@ -11,6 +11,7 @@ import {
 } from '../../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { PrerequisiteTaskVO } from '../domain/value-objects/assigned-task.value-object'
+import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 
 export class OrderedServiceResponseFields {
   @ApiProperty()
@@ -211,7 +212,31 @@ export class JobResponseDto {
   @ApiProperty()
   isCurrentJob?: boolean
 
+  @ApiProperty()
+  @IsDate()
+  @IsOptional()
+  dateSentToClient: Date | null
+
+  @ApiProperty()
+  @IsNumber()
+  price: number
+
+  @ApiProperty()
+  @IsNumber()
+  taskSubtotal: number
+
+  @ApiProperty()
+  @IsEnum(PricingTypeEnum)
+  pricingType: PricingTypeEnum
+
+  @ApiProperty()
+  @IsString()
+  state: string
+
   constructor(props: JobResponseDto) {
     initialize(this, props)
   }
 }
+// pricingType
+// state
+// taskSubtotal

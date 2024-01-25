@@ -489,6 +489,12 @@ export interface JobResponseDto {
   isExpedited: boolean
   jobName: string
   isCurrentJob?: boolean
+  /** @format date-time */
+  dateSentToClient: string
+  price: number
+  taskSubtotal: number
+  pricingType: 'Standard' | 'Tiered'
+  state: string
 }
 
 export interface JobPaginatedResponseDto {
@@ -503,32 +509,8 @@ export interface JobPaginatedResponseDto {
   items: JobResponseDto[]
 }
 
-export interface InvoiceClientOrganization {
-  id: string
-  name: string
-}
-
-export interface LineItem {
-  jobId: string
-  /** @example 5 */
-  jobRequestNumber: number
-  description: string
-  /** @format date-time */
-  dateSentToClient: string
-  mountingType: 'Roof Mount' | 'Ground Mount'
-  clientOrganization: InvoiceClientOrganization
-  isContainsRevisionTask: boolean
-  propertyType: 'Residential' | 'Commercial'
-  state: string
-  billingCodes: string[]
-  taskSizeForRevision: 'Major' | 'Minor' | null
-  pricingType: 'Standard' | 'Tiered'
-  price: number
-  taskSubtotal: number
-}
-
 export interface JobToInvoiceResponseDto {
-  items: LineItem[]
+  items: JobResponseDto[]
   subtotal: number
   discount: number
   total: number
@@ -1116,6 +1098,11 @@ export interface UpdateInvoiceRequestDto {
   notesToClient: string | null
 }
 
+export interface InvoiceClientOrganization {
+  id: string
+  name: string
+}
+
 export interface InvoicePayments {
   id: string
   paymentName: string
@@ -1141,7 +1128,7 @@ export interface InvoiceResponseDto {
   discount: number | null
   total: number
   clientOrganization: InvoiceClientOrganization
-  lineItems: LineItem[]
+  lineItems: JobResponseDto[][]
   payments: InvoicePayments[]
   totalOfPayment: number
 }

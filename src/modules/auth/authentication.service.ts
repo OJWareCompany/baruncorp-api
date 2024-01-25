@@ -95,7 +95,7 @@ export class AuthenticationService {
     const options: CookieOptions = {
       maxAge: 24 * 60 * 60 * 1000, //1 day
       httpOnly: true,
-      secure: true,
+      secure: false,
       // sameSite: 'none',
     }
     res.cookie(name, token, options)

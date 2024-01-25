@@ -84,7 +84,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       createdAt: new Date(record.dateCreated),
       updatedAt: new Date(record.updatedAt),
       props: {
-        projectPropertyType: record.projectPropertyType as ProjectPropertyType, // TODO: status any
+        projectPropertyType: record.projectPropertyType as ProjectPropertyType,
         projectPropertyOwner: record.propertyOwnerName,
         projectNumber: record.projectNumber,
         systemSize: record.systemSize === null ? null : Number(record.systemSize),
@@ -113,7 +113,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         // clientUserId: record.clientUserId,
         // clientUserName: record.clientUserName,
         numberOfWetStamp: null,
-        mountingType: record.mountingType as MountingType, // TODO: status any
+        mountingType: record.mountingType as MountingType,
         hasHistoryElectricalPEStamp: !!record.hasHistoryElectricalPEStamp,
         hasHistoryStructuralPEStamp: !!record.hasHistoryStructuralPEStamp,
       },

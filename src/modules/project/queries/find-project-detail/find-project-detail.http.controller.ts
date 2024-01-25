@@ -64,7 +64,7 @@ export class FindProjectDetailHttpController {
     response.projectFolderLink = result.projectFolder || null
 
     response.numberOfWetStamp = result.numberOfWetStamps
-    response.propertyType = result.projectPropertyType as ProjectPropertyType // TODO: type
+    response.propertyType = result.projectPropertyType as ProjectPropertyType
     response.projectNumber = result.projectNumber || null
     response.createdAt = result.dateCreated.toISOString()
     response.totalOfJobs = result.totalOfJobs

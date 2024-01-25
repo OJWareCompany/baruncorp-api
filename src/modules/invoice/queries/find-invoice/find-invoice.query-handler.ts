@@ -3,11 +3,12 @@ import { Invoices, Organizations } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobEntity } from '../../../ordered-job/domain/job.entity'
-import { InvoiceResponseDto, LineItem, PricingType, TaskSizeEnum } from '../../dtos/invoice.response.dto'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { InvoiceResponseDto } from '../../dtos/invoice.response.dto'
 import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
 import { formatDateWithTime } from '../../../../libs/utils/formatDate'
+import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
+import { JobResponseDto } from '../../../ordered-job/dtos/job.response.dto'
 
 export class FindInvoiceQuery {
   readonly invoiceId: string
@@ -19,7 +20,7 @@ export class FindInvoiceQuery {
 export type FindInvoidReturnType = Invoices & { organization: Organizations; jobs: JobEntity[] }
 @QueryHandler(FindInvoiceQuery)
 export class FindInvoiceQueryHandler implements IQueryHandler {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(private readonly prismaService: PrismaService, private readonly jobResponseMapper: JobResponseMapper) {}
 
   async execute(query: FindInvoiceQuery): Promise<InvoiceResponseDto> {
     const invoice = await this.prismaService.invoices.findUnique({
@@ -56,47 +57,9 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
     })
 
     // TODO: 조회에서 단순 조회가 아닌 계산 로직이 생긴다. 이게 맞나
-    const lineItems: LineItem[] = await Promise.all(
+    const lineItems: JobResponseDto[] = await Promise.all(
       jobs.map(async (job) => {
-        // 이거 뭐냐.
-        let subtotal = 0
-        job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.service.basePrice ?? 0)))
-        let total = 0
-        job.orderedServices.map(
-          (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),
-        )
-
-        const isContainsRevisionTask = job.orderedServices.find((orderedService) => orderedService.isRevision)
-
-        const project = await this.prismaService.orderedProjects.findUnique({ where: { id: job.projectId } })
-
-        let stateName = 'unknown'
-        if (project?.stateId) {
-          const ahjnote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: project.stateId } })
-          stateName = ahjnote?.name || 'unknown'
-        }
-
-        return {
-          jobId: job.id,
-          jobRequestNumber: job.jobRequestNumber,
-          description: job.jobName,
-          dateSentToClient: job.updatedAt,
-          mountingType: job.mountingType as MountingTypeEnum,
-          clientOrganization: {
-            id: job.clientOrganizationId,
-            name: job.clientOrganizationName,
-          },
-          propertyType: job.projectType as ProjectPropertyTypeEnum,
-          billingCodes: job.orderedServices.map((orderedService) => orderedService.service.billingCode),
-          price: total,
-          taskSubtotal: subtotal,
-
-          // totalJobPriceOverride: null, // TODO: job필드 추가? -> X Job의 Service 가격을 수정하는 방식으로.
-          state: stateName,
-          isContainsRevisionTask: !!isContainsRevisionTask,
-          taskSizeForRevision: job.revisionSize as TaskSizeEnum | null, // 컬럼 추가, 프로젝트 Aggregate를 만든다고 될 일이 아님
-          pricingType: job.pricingType as PricingType, // TODO: 조직별 할인 작업 들어가야 할 수 있음
-        }
+        return await this.jobResponseMapper.toResponse(job)
       }),
     )
 

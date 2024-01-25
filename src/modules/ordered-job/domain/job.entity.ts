@@ -42,6 +42,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       assignedTasks: [],
       orderedServices: [],
       pricingType: null,
+      dateSentToClient: null,
     }
     const job = new JobEntity({ id, props })
     job.addEvent(
@@ -53,7 +54,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         services: create.orderedServices,
         systemSize: create.systemSize,
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
-        mountingType: create.mountingType as MountingTypeEnum, // TODO: status any
+        mountingType: create.mountingType as MountingTypeEnum,
         projectType: create.projectPropertyType as ProjectPropertyTypeEnum,
       }),
     )
@@ -142,6 +143,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
     this.props.jobStatus = AutoOnlyJobStatusEnum.Sent_To_Client
     this.props.updatedBy = editor.userName.fullName
+    this.props.dateSentToClient = new Date()
     return this
   }
 
@@ -309,7 +311,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         systemSize: this.props.systemSize,
         mailingFullAddressForWetStamp: this.props.mailingAddressForWetStamp?.fullAddress || null,
         jobStatus: this.props.jobStatus,
-        mountingType: this.props.mountingType as MountingType, // TODO: status any
+        mountingType: this.props.mountingType as MountingType,
         // assignedTasks: this.props.assignedTasks.map(task => {
         //   return new NewOrderedServices({
         //     serviceId: task.

@@ -10,6 +10,8 @@ import { ConfigModule } from '@nestjs/config'
 import nodemailer from 'nodemailer'
 import { formatDate } from '../../../../libs/utils/formatDate'
 import { OrganizationNotFoundException } from '../../../organization/domain/organization.error'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 
 ConfigModule.forRoot()
 
@@ -19,8 +21,8 @@ const { EMAIL_USER, EMAIL_PASS } = process.env
 export class IssueInvoiceService implements ICommandHandler {
   constructor(
     // @ts-ignore
-    @Inject(INVOICE_REPOSITORY)
-    private readonly invoiceRepo: InvoiceRepositoryPort,
+    @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort, // @ts-ignore
+    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
   async execute(command: IssueInvoiceCommand): Promise<void> {
@@ -51,18 +53,17 @@ export class IssueInvoiceService implements ICommandHandler {
     })
 
     if (!organization) throw new OrganizationNotFoundException()
-
     let subtotal = 0
-    jobs.map((job) => {
-      job.orderedServices.map((orderedService) => (subtotal += Number(orderedService.service.basePrice ?? 0)))
-    })
-
     let total = 0
-    jobs.map((job) => {
-      job.orderedServices.map(
-        (orderedService) => (total += Number((orderedService.priceOverride || orderedService.price) ?? 0)),
-      )
-    })
+
+    await Promise.all(
+      jobs.map(async (job) => {
+        const eachSubtotal = await this.jobRepo.getSubtotalInvoiceAmount(job.id)
+        const eachTotal = await this.jobRepo.getTotalInvoiceAmount(job.id)
+        subtotal += eachSubtotal
+        total += eachTotal
+      }),
+    )
 
     const transporter = nodemailer.createTransport({
       // host: 'smtp.gmail.com',

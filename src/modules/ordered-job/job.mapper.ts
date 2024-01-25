@@ -68,6 +68,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       clientUserId: props.clientInfo.clientUserId,
       clientUserName: props.clientInfo.clientUserName,
       dueDate: props.dueDate,
+      dateSentToClient: props.dateSentToClient,
 
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
@@ -121,7 +122,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       sixMonthsPrior: null,
       standardPricing: null,
       structuralOrElectricalPEAndWetStampSelectedGl: null,
-      dateSentToClient: null,
     }
   }
 
@@ -206,7 +206,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         pricingType: record.pricingType as PricingTypeEnum | null,
         mountingType: record.mountingType as MountingTypeEnum,
         revisionSize: record.revisionSize as OrderedServiceSizeForRevisionEnum | null,
-        jobStatus: record.jobStatus as JobStatusEnum, // TODO: status any
+        jobStatus: record.jobStatus as JobStatusEnum,
         jobRequestNumber: record.jobRequestNumber,
         propertyFullAddress: record.propertyAddress,
         deliverablesEmails: record.deliverablesEmail?.split(',') || [],
@@ -249,6 +249,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         isCurrentJob: record.isCurrentJob,
         organizationId: record.clientOrganizationId,
         organizationName: record.clientOrganizationName,
+        dateSentToClient: record.dateSentToClient,
       },
     })
   }
