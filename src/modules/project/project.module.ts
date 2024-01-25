@@ -24,6 +24,7 @@ import { GeographyModule } from '../geography/geography.module'
 import { JobModule } from '../ordered-job/job.module'
 import { UsersModule } from '../users/users.module'
 import { OrganizationModule } from '../organization/organization.module'
+import { FindProjectsCountHttpController } from './queries/find-projects-count/find-projects-count.http.controller'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -32,6 +33,7 @@ const httpControllers = [
   DeleteProjectHttpController,
   FindProjectsHttpController,
   FindProjectDetailHttpController,
+  FindProjectsCountHttpController,
 ]
 
 const providers: Provider[] = [CensusSearchCoordinatesService]

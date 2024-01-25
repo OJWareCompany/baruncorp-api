@@ -770,6 +770,11 @@ export interface ProjectResponseDto {
   jobs: JobResponseDto[]
 }
 
+export interface ProjectsCountResponseDto {
+  projectsCount: number
+  jobsCount: number
+}
+
 export interface AhjNoteListResponseDto {
   geoId: string
   name: string
@@ -4156,6 +4161,22 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     findProjectDetailHttpControllerFindProjectDetail: (projectId: string, params: RequestParams = {}) =>
       this.request<ProjectResponseDto, any>({
         path: `/projects/${projectId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  projectsCount = {
+    /**
+     * No description
+     *
+     * @name FindProjectsCountHttpControllerFindUsers
+     * @summary Find projects count
+     * @request GET:/projects-count
+     */
+    findProjectsCountHttpControllerFindUsers: (params: RequestParams = {}) =>
+      this.request<ProjectsCountResponseDto, any>({
+        path: `/projects-count`,
         method: 'GET',
         format: 'json',
         ...params,
