@@ -215,13 +215,13 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         orderedServices: orderedServices,
         systemSize: record.systemSize === null ? null : Number(record.systemSize),
         mailingAddressForWetStamp:
-          record.mailingAdderssCity !== null &&
-          record.mailingAdderssPostalCountry !== null &&
-          record.mailingAdderssPostalCode !== null &&
-          record.mailingAdderssState !== null &&
-          record.mailingAdderssStreet1 !== null &&
-          record.mailingFullAddressForWetStamp !== null &&
-          record.mailingAdderssCoordinates !== null
+          !!record.mailingAdderssCity &&
+          !!record.mailingAdderssPostalCountry &&
+          !!record.mailingAdderssPostalCode &&
+          !!record.mailingAdderssState &&
+          !!record.mailingAdderssStreet1 &&
+          !!record.mailingFullAddressForWetStamp &&
+          !!record.mailingAdderssCoordinates
             ? new Address({
                 city: record.mailingAdderssCity,
                 country: record.mailingAdderssPostalCountry,

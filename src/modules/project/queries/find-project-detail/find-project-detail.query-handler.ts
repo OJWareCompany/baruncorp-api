@@ -26,12 +26,7 @@ export class FindProjectDetailQuery {
 }
 
 export type FindProjectDetailReturnType = OrderedProjects & { organization: Organizations | null } & {
-  jobs: (OrderedJobs & {
-    orderedServices: (OrderedServices & {
-      service: Service
-      assignedTasks: (AssignedTasks & { task: Tasks; user: Users | null })[]
-    })[]
-  })[]
+  jobs: OrderedJobs[]
 }
 @QueryHandler(FindProjectDetailQuery)
 export class FindProjectDetailQueryHandler implements IQueryHandler {
@@ -55,19 +50,6 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
       include: {
         organization: true,
         jobs: {
-          include: {
-            orderedServices: {
-              include: {
-                service: true,
-                assignedTasks: {
-                  include: {
-                    task: true,
-                    user: true,
-                  },
-                },
-              },
-            },
-          },
           orderBy: {
             createdAt: 'desc',
           },

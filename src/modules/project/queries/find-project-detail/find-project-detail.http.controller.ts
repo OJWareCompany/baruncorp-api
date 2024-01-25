@@ -2,21 +2,17 @@ import { Controller, Get, HttpStatus, Param } from '@nestjs/common'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { QueryBus } from '@nestjs/cqrs'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
-import { JobMapper } from '../../../ordered-job/job.mapper'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
 import { ProjectResponseDto } from '../../dtos/project.response.dto'
 import { ProjectPropertyType } from '../../domain/project.type'
 import { FindProjectDetailQuery, FindProjectDetailReturnType } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
 import { PrismaService } from '../../../database/prisma.service'
+import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
 
 @Controller('projects')
 export class FindProjectDetailHttpController {
-  constructor(
-    private readonly queryBus: QueryBus,
-    private readonly prismaService: PrismaService,
-    private readonly jobMapper: JobMapper,
-  ) {}
+  constructor(private readonly queryBus: QueryBus, private readonly jobResponseMapper: JobResponseMapper) {}
 
   @Get(':projectId')
   @ApiOperation({ summary: 'Find projects' })
@@ -30,27 +26,33 @@ export class FindProjectDetailHttpController {
     })
 
     const result: FindProjectDetailReturnType = await this.queryBus.execute(query)
-    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
 
-    const jobEntities = result.jobs.map((job) => this.jobMapper.toDomain({ ...job, prerequisiteTasks }))
-    const jobHasCurrentMailingAddress = jobEntities.find((entity) => entity.hasCurrentMailingAddress())
-    const mailingAddressForWetStamp = jobHasCurrentMailingAddress?.getProps().mailingAddressForWetStamp || null
-    const currentMailingAddress: Address | null = mailingAddressForWetStamp
-      ? new Address({
-          city: mailingAddressForWetStamp.city,
-          country: mailingAddressForWetStamp.country,
-          postalCode: mailingAddressForWetStamp.postalCode,
-          state: mailingAddressForWetStamp.state,
-          street1: mailingAddressForWetStamp.street1,
-          street2: mailingAddressForWetStamp.street2,
-          fullAddress: mailingAddressForWetStamp.fullAddress,
-          coordinates: mailingAddressForWetStamp.coordinates,
-        })
-      : null
+    // const jobEntities = result.jobs.map((job) => this.jobMapper.toDomain({ ...job, prerequisiteTasks }))
+    const jobHasCurrentMailingAddress = result.jobs.find((job) => job.mailingAdderssCoordinates)
+    const mailingAddressForWetStamp = jobHasCurrentMailingAddress || null
+    const currentMailingAddress: Address | null =
+      !!mailingAddressForWetStamp &&
+      !!mailingAddressForWetStamp.mailingAdderssCity &&
+      !!mailingAddressForWetStamp.mailingAdderssPostalCountry &&
+      !!mailingAddressForWetStamp.mailingAdderssPostalCode &&
+      !!mailingAddressForWetStamp.mailingAdderssState &&
+      !!mailingAddressForWetStamp.mailingAdderssStreet1 &&
+      !!mailingAddressForWetStamp.mailingAdderssStreet2 &&
+      !!mailingAddressForWetStamp.mailingFullAddressForWetStamp &&
+      !!mailingAddressForWetStamp.mailingAdderssCoordinates
+        ? new Address({
+            city: mailingAddressForWetStamp.mailingAdderssCity,
+            country: mailingAddressForWetStamp.mailingAdderssPostalCountry,
+            postalCode: mailingAddressForWetStamp.mailingAdderssPostalCode,
+            state: mailingAddressForWetStamp.mailingAdderssState,
+            street1: mailingAddressForWetStamp.mailingAdderssStreet1,
+            street2: mailingAddressForWetStamp.mailingAdderssStreet2,
+            fullAddress: mailingAddressForWetStamp.mailingFullAddressForWetStamp,
+            coordinates: mailingAddressForWetStamp.mailingAdderssCoordinates.split(',').map((n) => Number(n)),
+          })
+        : null
 
-    const jobsResponse = result.jobs
-      .map((job) => this.jobMapper.toDomain({ ...job, prerequisiteTasks }))
-      .map(this.jobMapper.toResponse)
+    const jobsResponse = await Promise.all(result.jobs.map(this.jobResponseMapper.toResponse))
 
     const response = new ProjectResponseDto()
     response.projectId = result.id
