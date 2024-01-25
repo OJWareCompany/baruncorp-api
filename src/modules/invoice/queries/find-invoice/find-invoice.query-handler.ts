@@ -2,14 +2,12 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { Invoices, Organizations } from '@prisma/client'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
-import { JobMapper } from '../../../ordered-job/job.mapper'
 import { JobEntity } from '../../../ordered-job/domain/job.entity'
 import { InvoiceResponseDto, LineItem, PricingType, TaskSizeEnum } from '../../dtos/invoice.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
-import { OrderedServiceSizeForRevisionEnum } from '../../../ordered-service/domain/ordered-service.type'
-import { formatDate, formatDateWithTime } from '../../../../libs/utils/formatDate'
+import { formatDateWithTime } from '../../../../libs/utils/formatDate'
 
 export class FindInvoiceQuery {
   readonly invoiceId: string
@@ -21,7 +19,7 @@ export class FindInvoiceQuery {
 export type FindInvoidReturnType = Invoices & { organization: Organizations; jobs: JobEntity[] }
 @QueryHandler(FindInvoiceQuery)
 export class FindInvoiceQueryHandler implements IQueryHandler {
-  constructor(private readonly prismaService: PrismaService, private readonly jobMapper: JobMapper) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindInvoiceQuery): Promise<InvoiceResponseDto> {
     const invoice = await this.prismaService.invoices.findUnique({

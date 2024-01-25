@@ -7,7 +7,6 @@ import { ProjectResponseDto } from '../../dtos/project.response.dto'
 import { ProjectPropertyType } from '../../domain/project.type'
 import { FindProjectDetailQuery, FindProjectDetailReturnType } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
-import { PrismaService } from '../../../database/prisma.service'
 import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
 
 @Controller('projects')
@@ -27,7 +26,6 @@ export class FindProjectDetailHttpController {
 
     const result: FindProjectDetailReturnType = await this.queryBus.execute(query)
 
-    // const jobEntities = result.jobs.map((job) => this.jobMapper.toDomain({ ...job, prerequisiteTasks }))
     const jobHasCurrentMailingAddress = result.jobs.find((job) => job.mailingAdderssCoordinates)
     const mailingAddressForWetStamp = jobHasCurrentMailingAddress || null
     const currentMailingAddress: Address | null =
@@ -52,7 +50,7 @@ export class FindProjectDetailHttpController {
           })
         : null
 
-    const jobsResponse = await Promise.all(result.jobs.map(this.jobResponseMapper.toResponse))
+    const jobsResponse = await Promise.all(result.jobs.map((job) => this.jobResponseMapper.toResponse(job))) // job을 생략하면 undefined 됨
 
     const response = new ProjectResponseDto()
     response.projectId = result.id

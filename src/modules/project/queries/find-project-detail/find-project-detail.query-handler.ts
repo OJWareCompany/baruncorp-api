@@ -1,21 +1,8 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { PrismaService } from '../../../database/prisma.service'
-import { JobMapper } from '../../../ordered-job/job.mapper'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { ProjectNotFoundException } from '../../domain/project.error'
-import {
-  AssignedTasks,
-  OrderedJobs,
-  OrderedProjects,
-  OrderedServices,
-  Organizations,
-  Service,
-  Tasks,
-  Users,
-} from '@prisma/client'
+import { OrderedJobs, OrderedProjects, Organizations } from '@prisma/client'
 
 export class FindProjectDetailQuery {
   readonly id: string
@@ -30,12 +17,7 @@ export type FindProjectDetailReturnType = OrderedProjects & { organization: Orga
 }
 @QueryHandler(FindProjectDetailQuery)
 export class FindProjectDetailQueryHandler implements IQueryHandler {
-  constructor(
-    private readonly prismaService: PrismaService,
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
-    private readonly jobMapper: JobMapper,
-  ) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   /**
    * In read model we don't need to execute

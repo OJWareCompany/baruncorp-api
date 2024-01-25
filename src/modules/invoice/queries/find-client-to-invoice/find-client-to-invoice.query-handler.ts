@@ -1,7 +1,6 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
-import { JobMapper } from '../../../ordered-job/job.mapper'
 import { ClientToInvoiceResponseDto } from '../../dtos/client-to-invoice.response.dto'
 
 export class FindClientToInvoiceQuery {
@@ -12,7 +11,7 @@ export class FindClientToInvoiceQuery {
 
 @QueryHandler(FindClientToInvoiceQuery)
 export class FindClientToInvoiceQueryHandler implements IQueryHandler {
-  constructor(private readonly prismaService: PrismaService, private readonly jobMapper: JobMapper) {}
+  constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindClientToInvoiceQuery): Promise<any> {
     // AND created_at < DATE_FORMAT(CURDATE(), '%Y-%m-01')

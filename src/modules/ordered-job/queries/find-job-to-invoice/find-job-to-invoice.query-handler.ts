@@ -71,8 +71,6 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
       )
     })
 
-    // const jobs = records.map(this.jobMapper.toDomain)
-
     return {
       items: await Promise.all(
         jobs.map(async (job) => {
