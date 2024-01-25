@@ -44,32 +44,45 @@ export class GeographyRepository implements GeographyRepositoryPort {
     const existedStateNote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: create.geoId } })
 
     if (existedStateNote && existedStateNote?.type !== AHJType.STATE) {
-      await this.prismaService.aHJNotes.update({
+      const updated = await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData() },
         where: { geoId: create.geoId },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...existedStateNote, history_type: 'Modified' } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: { ...updated, createdAt: new Date(), history_type: 'Modify' },
+      })
     }
 
     if (!existedStateNote) {
-      await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData() } })
+      const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData() } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: { ...newNote, createdAt: new Date(), history_type: 'Create' },
+      })
     }
   }
 
   async updateCountyNote(create: CensusCounties, state: CensusState): Promise<void> {
     const existedCountyNote = await this.prismaService.aHJNotes.findFirst({ where: { geoId: create.geoId } })
     if (existedCountyNote && existedCountyNote?.type !== AHJType.COUNTY) {
-      await this.prismaService.aHJNotes.update({
+      const updated = await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData(state) },
         where: { geoId: create.geoId },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...existedCountyNote, history_type: 'Modified' } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: {
+          ...updated,
+          history_type: 'Create',
+          createdAt: new Date(),
+          // updatedAt: new Date(), // 도대체 이게 왜 에러를 발생시키는거지?
+          // updatedAt: '2024-01-25T09:20:11.000Z', // 이렇게 해야만 한다. createdAt이랑 무슨 차이지? pk인것? 아니 그러면 업데이트할때 이력 생성하는 코드에서는 상관없었는데 왜..
+        },
+      })
     }
 
     if (!existedCountyNote) {
       const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state) } })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...newNote, history_type: 'Modified' },
+        data: { ...newNote, createdAt: new Date(), history_type: 'Create' },
       })
     }
   }
@@ -84,19 +97,19 @@ export class GeographyRepository implements GeographyRepositoryPort {
     })
 
     if (existedCountySubdivisionsNotes && existedCountySubdivisionsNotes?.type !== AHJType.COUNTY_SUBDIVISIONS) {
-      await this.prismaService.aHJNotes.update({
+      const updated = await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData(state, county) },
         where: { geoId: create.geoId },
       })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...existedCountySubdivisionsNotes, history_type: 'Modified' },
+        data: { ...updated, createdAt: new Date(), history_type: 'Modify' },
       })
     }
 
     if (!existedCountySubdivisionsNotes) {
       const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state, county) } })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...newNote, history_type: 'Created' },
+        data: { ...newNote, createdAt: new Date(), history_type: 'Create' },
       })
     }
   }
@@ -109,18 +122,22 @@ export class GeographyRepository implements GeographyRepositoryPort {
   ): Promise<void> {
     const placeNotes = await this.prismaService.aHJNotes.findFirst({ where: { geoId: create.geoId } })
     if (placeNotes && placeNotes?.type !== AHJType.PLACE) {
-      await this.prismaService.aHJNotes.update({
+      const updated = await this.prismaService.aHJNotes.update({
         data: { ...create.getNoteInputData(state, county, subdivision) },
         where: { geoId: create.geoId },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...placeNotes, history_type: 'Modified' } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: { ...updated, createdAt: new Date(), history_type: 'Modify' },
+      })
     }
 
     if (!placeNotes) {
       const newNotes = await this.prismaService.aHJNotes.create({
         data: { ...create.getNoteInputData(state, county, subdivision) },
       })
-      await this.prismaService.aHJNoteHistory.create({ data: { ...newNotes, history_type: 'Created' } })
+      await this.prismaService.aHJNoteHistory.create({
+        data: { ...newNotes, createdAt: new Date(), history_type: 'Create' },
+      })
     }
   }
 
@@ -278,54 +295,61 @@ export class GeographyRepository implements GeographyRepositoryPort {
     })
     await this.prismaService.aHJNoteHistory.create({
       data: {
-        history_type: 'Modified',
-        geoIdState: updated.geoIdState,
-        geoIdCounty: updated.geoIdCounty,
-        geoIdCountySubdivision: updated.geoIdCountySubdivision,
-        geoIdPlace: updated.geoIdPlace,
-        name: updated.name,
-        fullAhjName: updated.fullAhjName,
-        queryState: updated.queryState,
-        queryCounty: updated.queryCounty,
-        website: updated.website,
-        specificFormRequired: updated.specificFormRequired,
-        buildingCodes: updated.buildingCodes,
-        generalNotes: updated.generalNotes,
-        pvMeterRequired: updated.pvMeterRequired,
-        acDisconnectRequired: updated.acDisconnectRequired,
-        centerFed120Percent: updated.centerFed120Percent,
-        deratedAmpacity: updated.deratedAmpacity,
-        fireSetBack: updated.fireSetBack,
-        utilityNotes: updated.utilityNotes,
-        designNotes: updated.designNotes,
-        iebcAccepted: updated.iebcAccepted,
-        structuralObservationRequired: updated.structuralObservationRequired,
-        digitalSignatureType: updated.digitalSignatureType,
-        windUpliftCalculationRequired: updated.windUpliftCalculationRequired,
-        windSpeed: updated.windSpeed,
-        windExposure: updated.windExposure,
-        snowLoadGround: updated.snowLoadGround,
-        snowLoadFlatRoof: updated.snowLoadFlatRoof,
-        snowLoadSlopedRoof: updated.snowLoadSlopedRoof,
-        wetStampsRequired: updated.wetStampsRequired,
-        ofWetStamps: updated.ofWetStamps,
-        wetStampSize: updated.wetStampSize,
-        engineeringNotes: updated.engineeringNotes,
-        electricalNotes: updated.electricalNotes,
-        stateCode: updated.stateCode,
-        funcStat: updated.funcStat,
-        address: updated.address,
-        lsadCode: updated.lsadCode,
-        usps: updated.usps,
-        ansiCode: updated.ansiCode,
-        type: updated.type,
-        longName: updated.longName,
-        countyCode: updated.countyCode,
-        createdAt: updated.updatedAt,
-        geoId: updated.geoId,
-        updatedAt: updated.updatedAt,
-        updatedBy: updated.updatedBy,
+        ...updated,
+        history_type: 'Modify',
       },
     })
+  }
+
+  uncover(updated: AHJNotes) {
+    return {
+      history_type: 'Modify',
+      geoIdState: updated.geoIdState,
+      geoIdCounty: updated.geoIdCounty,
+      geoIdCountySubdivision: updated.geoIdCountySubdivision,
+      geoIdPlace: updated.geoIdPlace,
+      name: updated.name,
+      fullAhjName: updated.fullAhjName,
+      queryState: updated.queryState,
+      queryCounty: updated.queryCounty,
+      website: updated.website,
+      specificFormRequired: updated.specificFormRequired,
+      buildingCodes: updated.buildingCodes,
+      generalNotes: updated.generalNotes,
+      pvMeterRequired: updated.pvMeterRequired,
+      acDisconnectRequired: updated.acDisconnectRequired,
+      centerFed120Percent: updated.centerFed120Percent,
+      deratedAmpacity: updated.deratedAmpacity,
+      fireSetBack: updated.fireSetBack,
+      utilityNotes: updated.utilityNotes,
+      designNotes: updated.designNotes,
+      iebcAccepted: updated.iebcAccepted,
+      structuralObservationRequired: updated.structuralObservationRequired,
+      digitalSignatureType: updated.digitalSignatureType,
+      windUpliftCalculationRequired: updated.windUpliftCalculationRequired,
+      windSpeed: updated.windSpeed,
+      windExposure: updated.windExposure,
+      snowLoadGround: updated.snowLoadGround,
+      snowLoadFlatRoof: updated.snowLoadFlatRoof,
+      snowLoadSlopedRoof: updated.snowLoadSlopedRoof,
+      wetStampsRequired: updated.wetStampsRequired,
+      ofWetStamps: updated.ofWetStamps,
+      wetStampSize: updated.wetStampSize,
+      engineeringNotes: updated.engineeringNotes,
+      electricalNotes: updated.electricalNotes,
+      stateCode: updated.stateCode,
+      funcStat: updated.funcStat,
+      address: updated.address,
+      lsadCode: updated.lsadCode,
+      usps: updated.usps,
+      ansiCode: updated.ansiCode,
+      type: updated.type,
+      longName: updated.longName,
+      countyCode: updated.countyCode,
+      createdAt: new Date(),
+      geoId: updated.geoId,
+      updatedAt: new Date(),
+      updatedBy: updated.updatedBy,
+    }
   }
 }
