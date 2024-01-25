@@ -134,6 +134,8 @@ export class CreatePtoDetailService implements ICommandHandler {
       days: command.days,
       startedAt: command.startedAt,
     })
+    ptoDetailEntity.parentPtoEntity = targetPtoEntity
+    ptoDetailEntity.checkUpdateValidate()
 
     await this.ptoRepository.insertDetail(ptoDetailEntity)
     return ptoDetailEntity.id
