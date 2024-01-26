@@ -8,6 +8,7 @@ import { ProjectPropertyType } from '../../domain/project.type'
 import { FindProjectDetailQuery, FindProjectDetailReturnType } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
 import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
+import { OrderedJobs } from '@prisma/client'
 
 @Controller('projects')
 export class FindProjectDetailHttpController {
@@ -29,24 +30,16 @@ export class FindProjectDetailHttpController {
     const jobHasCurrentMailingAddress = result.jobs.find((job) => job.mailingAdderssCoordinates)
     const mailingAddressForWetStamp = jobHasCurrentMailingAddress || null
     const currentMailingAddress: Address | null =
-      !!mailingAddressForWetStamp &&
-      !!mailingAddressForWetStamp.mailingAdderssCity &&
-      !!mailingAddressForWetStamp.mailingAdderssPostalCountry &&
-      !!mailingAddressForWetStamp.mailingAdderssPostalCode &&
-      !!mailingAddressForWetStamp.mailingAdderssState &&
-      !!mailingAddressForWetStamp.mailingAdderssStreet1 &&
-      !!mailingAddressForWetStamp.mailingAdderssStreet2 &&
-      !!mailingAddressForWetStamp.mailingFullAddressForWetStamp &&
-      !!mailingAddressForWetStamp.mailingAdderssCoordinates
+      !!mailingAddressForWetStamp && this.isAddressValid(mailingAddressForWetStamp)
         ? new Address({
-            city: mailingAddressForWetStamp.mailingAdderssCity,
+            city: mailingAddressForWetStamp.mailingAdderssCity!,
             country: mailingAddressForWetStamp.mailingAdderssPostalCountry,
-            postalCode: mailingAddressForWetStamp.mailingAdderssPostalCode,
+            postalCode: mailingAddressForWetStamp.mailingAdderssPostalCode!,
             state: mailingAddressForWetStamp.mailingAdderssState,
-            street1: mailingAddressForWetStamp.mailingAdderssStreet1,
+            street1: mailingAddressForWetStamp.mailingAdderssStreet1!,
             street2: mailingAddressForWetStamp.mailingAdderssStreet2,
-            fullAddress: mailingAddressForWetStamp.mailingFullAddressForWetStamp,
-            coordinates: mailingAddressForWetStamp.mailingAdderssCoordinates.split(',').map((n) => Number(n)),
+            fullAddress: mailingAddressForWetStamp.mailingFullAddressForWetStamp!,
+            coordinates: mailingAddressForWetStamp.mailingAdderssCoordinates!.split(',').map((n) => Number(n)),
           })
         : null
 
@@ -92,5 +85,17 @@ export class FindProjectDetailHttpController {
     })
 
     return response
+  }
+
+  private isAddressValid(job: OrderedJobs) {
+    return (
+      !!job.mailingAdderssCity &&
+      !!job.mailingAdderssPostalCountry &&
+      !!job.mailingAdderssPostalCode &&
+      !!job.mailingAdderssState &&
+      !!job.mailingAdderssStreet1 &&
+      !!job.mailingFullAddressForWetStamp &&
+      !!job.mailingAdderssCoordinates
+    )
   }
 }

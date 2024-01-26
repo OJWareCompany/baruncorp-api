@@ -214,25 +214,18 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         assignedTasks: assignedTasks || [],
         orderedServices: orderedServices,
         systemSize: record.systemSize === null ? null : Number(record.systemSize),
-        mailingAddressForWetStamp:
-          !!record.mailingAdderssCity &&
-          !!record.mailingAdderssPostalCountry &&
-          !!record.mailingAdderssPostalCode &&
-          !!record.mailingAdderssState &&
-          !!record.mailingAdderssStreet1 &&
-          !!record.mailingFullAddressForWetStamp &&
-          !!record.mailingAdderssCoordinates
-            ? new Address({
-                city: record.mailingAdderssCity,
-                country: record.mailingAdderssPostalCountry,
-                postalCode: record.mailingAdderssPostalCode,
-                state: record.mailingAdderssState,
-                street1: record.mailingAdderssStreet1,
-                street2: record.mailingAdderssStreet2,
-                fullAddress: record.mailingFullAddressForWetStamp,
-                coordinates: record.mailingAdderssCoordinates.split(',').map((n) => Number(n)),
-              })
-            : null,
+        mailingAddressForWetStamp: this.isAddressValid(record)
+          ? new Address({
+              city: record.mailingAdderssCity!,
+              country: record.mailingAdderssPostalCountry,
+              postalCode: record.mailingAdderssPostalCode!,
+              state: record.mailingAdderssState,
+              street1: record.mailingAdderssStreet1!,
+              street2: record.mailingAdderssStreet2,
+              fullAddress: record.mailingFullAddressForWetStamp!,
+              coordinates: record.mailingAdderssCoordinates!.split(',').map((n) => Number(n)),
+            })
+          : null,
         numberOfWetStamp: record.numberOfWetStamp,
         additionalInformationFromClient: record.additionalInformationFromClient,
         clientInfo: new ClientInformation({
@@ -256,5 +249,17 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
 
   toResponse(entity: JobEntity): JobResponseDto {
     return {} as JobResponseDto
+  }
+
+  private isAddressValid(job: OrderedJobs) {
+    return (
+      !!job.mailingAdderssCity &&
+      !!job.mailingAdderssPostalCountry &&
+      !!job.mailingAdderssPostalCode &&
+      !!job.mailingAdderssState &&
+      !!job.mailingAdderssStreet1 &&
+      !!job.mailingFullAddressForWetStamp &&
+      !!job.mailingAdderssCoordinates
+    )
   }
 }
