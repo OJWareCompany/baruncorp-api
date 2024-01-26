@@ -33,8 +33,8 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       mailingAddressForWetStamps: props.mailingFullAddressForWetStamp,
       projectPropertyType: props.projectPropertyType,
       systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
-      updatedAt: new Date(),
-      dateCreated: new Date(),
+      updatedAt: props.updatedAt,
+      dateCreated: props.createdAt,
       hasHistoryElectricalPEStamp: entity.getProps().hasHistoryElectricalPEStamp,
       hasHistoryStructuralPEStamp: entity.getProps().hasHistoryStructuralPEStamp,
 
