@@ -1135,12 +1135,12 @@ model IntegratedOrderModificationHistory {
   entity          String   @map("entity") @db.VarChar(255)
   entityId        String   @map("entity_id") @db.VarChar(255)
   scopeOrTaskName String?  @map("scope_or_task_name") @db.VarChar(255)
-  attribute       String?  @map("attribute") @db.VarChar(255)
+  attribute       String   @default("None") @map("attribute") @db.VarChar(255)
   operation       String   @default("Create") @map("operation") @db.VarChar(22)
   afterValue      String?  @map("after_value") @db.Text
   beforeValue     String?  @map("before_value") @db.Text
 
-  @@id([jobId, modifiedAt])
+  @@id([jobId, modifiedAt, entityId, attribute])
   @@map("integrated_order_modification_history")
 }
 
