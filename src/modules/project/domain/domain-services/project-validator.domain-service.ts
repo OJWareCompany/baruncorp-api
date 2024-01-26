@@ -43,6 +43,7 @@ export class ProjectValidatorDomainService {
     projectNumber: string | null,
     projectEntity?: ProjectEntity,
   ) {
+    if (projectNumber === null) return
     const existingProject = await this.projectRepo.findOne({
       clientOrganizationId,
       projectNumber: projectNumber,
