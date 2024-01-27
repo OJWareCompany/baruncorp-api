@@ -9,7 +9,7 @@ export class UpdateJobCommand {
   readonly clientUserId: string
   readonly additionalInformationFromClient: string | null
   readonly numberOfWetStamp: number | null
-  readonly updatedByUserId: string
+  readonly editorUserId: string
   readonly mountingType: string
   readonly isExpedited: boolean
   readonly dueDate: Date

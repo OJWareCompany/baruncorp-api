@@ -20,7 +20,7 @@ export class UpdateJobHttpController {
   ): Promise<void> {
     const command = new UpdateJobCommand({
       deliverablesEmails: dto.deliverablesEmails,
-      updatedByUserId: user.id,
+      editorUserId: user.id,
       clientUserId: dto.clientUserId,
       additionalInformationFromClient: dto.additionalInformationFromClient,
       systemSize: dto.systemSize,

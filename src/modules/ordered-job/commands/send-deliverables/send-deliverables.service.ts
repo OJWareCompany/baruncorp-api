@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import _ from 'lodash'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { SendDeliverablesCommand } from './send-deliverables.command'
@@ -8,6 +9,9 @@ import { UserRepositoryPort } from '../../../users/database/user.repository.port
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { Mailer } from '../../infrastructure/mailer.infrastructure'
 import { OrderStatusChangeValidator } from '../../domain/domain-services/order-status-change-validator.domain-service'
+import { OrderModificationHistoryGenerator } from '../../../integrated-order-modification-history/domain/domain-services/order-modification-history-generator.domain-service'
+import { deepCopy } from '../../../../libs/utils/deep-copy.util'
+import { JobMapper } from '../../job.mapper'
 
 @CommandHandler(SendDeliverablesCommand)
 export class SendDeliverablesService implements ICommandHandler {
@@ -17,12 +21,18 @@ export class SendDeliverablesService implements ICommandHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
     private readonly mailer: Mailer,
     private readonly orderStatusChangeValidator: OrderStatusChangeValidator,
+    private readonly jobMapper: JobMapper,
+    private readonly orderModificationHistoryGenerator: OrderModificationHistoryGenerator,
   ) {}
 
   async execute(command: SendDeliverablesCommand): Promise<void> {
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
     const editor = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)
+    const copyBefore = deepCopy(this.jobMapper.toPersistence(job))
     await job.sendToClient(editor, this.mailer, command.deliverablesLink, this.orderStatusChangeValidator)
+    const copyAfter = deepCopy(this.jobMapper.toPersistence(job))
+    if (_.isEqual(copyBefore, copyAfter)) return
     await this.jobRepository.update(job)
+    await this.orderModificationHistoryGenerator.generate(job, copyBefore, copyAfter, editor)
   }
 }

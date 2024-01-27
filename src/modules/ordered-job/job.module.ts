@@ -41,6 +41,7 @@ import { OrganizationModule } from '../organization/organization.module'
 import { UpdateJobStatusHttpController } from './commands/update-job-status/update-job-status.http.controller'
 import { UpdateJobStatusService } from './commands/update-job-status/update-job-status.service'
 import { JobResponseMapper } from './job.response.mapper'
+import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -85,6 +86,7 @@ const domainServices: Provider[] = [TotalDurationCalculator, OrderStatusChangeVa
     CqrsModule,
     ServiceModule,
     OrganizationModule,
+    IntegratedOrderModificationHistoryModule,
     forwardRef(() => AuthenticationModule),
     forwardRef(() => ProjectModule),
     forwardRef(() => OrderedServiceModule),

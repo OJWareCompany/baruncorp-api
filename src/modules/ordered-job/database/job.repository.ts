@@ -73,7 +73,7 @@ export class JobRepository implements JobRepositoryPort {
       records.map(async (record) => {
         await this.prismaService.orderedJobs.update({
           where: { id: record.id },
-          data: record,
+          data: { ...record, updatedAt: new Date() }, // 매개변수의 entity의 updatedAt은 수정되지 않는다. update후에 이 entity를 반환해야하나.
         })
       }),
     )
