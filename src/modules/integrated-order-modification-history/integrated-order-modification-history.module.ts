@@ -6,9 +6,7 @@ import { FindIntegratedOrderModificationHistoryHttpController } from './queries/
 import { FindIntegratedOrderModificationHistoryPaginatedHttpController } from './queries/find-integrated-order-modification-history-paginated/find-integrated-order-modification-history.paginated.http.controller'
 import { FindIntegratedOrderModificationHistoryQueryHandler } from './queries/find-integrated-order-modification-history/find-integrated-order-modification-history.query-handler'
 import { FindIntegratedOrderModificationHistoryPaginatedQueryHandler } from './queries/find-integrated-order-modification-history-paginated/find-integrated-order-modification-history.paginated.query-handler'
-import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from './integrated-order-modification-history.di-token'
-import { IntegratedOrderModificationHistoryRepository } from './database/integrated-order-modification-history.repository'
-import { IntegratedOrderModificationHistoryMapper } from './integrated-order-modification-history.mapper'
+import { OrderModificationHistoryGenerator } from './domain/domain-services/order-modification-history-generator.domain-service'
 
 const httpControllers = [
   FindIntegratedOrderModificationHistoryHttpController,
@@ -19,18 +17,14 @@ const queryHandlers: Provider[] = [
   FindIntegratedOrderModificationHistoryQueryHandler,
   FindIntegratedOrderModificationHistoryPaginatedQueryHandler,
 ]
-const repositories: Provider[] = [
-  {
-    provide: INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY,
-    useClass: IntegratedOrderModificationHistoryRepository,
-  },
-]
+const repositories: Provider[] = []
 const eventHandlers: Provider[] = []
-const mappers: Provider[] = [IntegratedOrderModificationHistoryMapper, UserMapper]
-
+const mappers: Provider[] = [UserMapper]
+const domainServices: Provider[] = [OrderModificationHistoryGenerator]
 @Module({
   imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
+  exports: [...domainServices],
 })
 export class IntegratedOrderModificationHistoryModule {}
