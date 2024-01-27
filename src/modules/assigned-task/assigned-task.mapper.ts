@@ -43,6 +43,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       is_expedited: props.isExpedited,
       is_active: props.isActive,
       created_at: props.createdAt,
+      updated_at: props.updatedAt,
     }
     return record
   }
@@ -51,6 +52,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
     const entity = new AssignedTaskEntity({
       id: record.id,
       createdAt: record.created_at,
+      updatedAt: record.updated_at,
       props: {
         taskId: record.taskId,
         orderedServiceId: record.orderedServiceId,

@@ -37,12 +37,14 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       projectPropertyOwnerName: props.projectPropertyOwnerName,
       jobName: props.jobName,
       is_expedited: props.isExpedited,
+      updated_at: props.updatedAt,
     }
   }
 
   toDomain(record: OrderedServices & { assignedTasks: AssignedTasks[] }): OrderedServiceEntity {
     const entity = new OrderedServiceEntity({
       id: record.id,
+      updatedAt: record.updated_at,
       props: {
         serviceId: record.serviceId,
         projectId: record.projectId,

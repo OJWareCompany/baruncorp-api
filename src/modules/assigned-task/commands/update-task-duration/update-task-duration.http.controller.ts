@@ -19,6 +19,7 @@ export class UpdateTaskDurationHttpController {
     const command = new UpdateTaskDurationCommand({
       assignedTaskId: param.assignedTaskId,
       ...request,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

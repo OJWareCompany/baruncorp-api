@@ -36,6 +36,7 @@ import { UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEvent
 import { CancelOrderedServiceWhenJobIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-ordered-service-when-job-is-canceled-and-kept-invoice.domain-event-handler'
 import { UpdateOrderedScopeStatusHttpController } from './command/update-ordered-scope-status/update-ordered-scope-status.http.controller'
 import { UpdateOrderedScopeStatusService } from './command/update-ordered-scope-status/update-ordered-scope-status.service'
+import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -83,6 +84,7 @@ const mappers: Provider[] = [OrderedServiceMapper]
     PrismaModule,
     ServiceModule,
     CustomPricingModule,
+    IntegratedOrderModificationHistoryModule,
     forwardRef(() => OrganizationModule),
     forwardRef(() => UsersModule),
     forwardRef(() => ProjectModule),

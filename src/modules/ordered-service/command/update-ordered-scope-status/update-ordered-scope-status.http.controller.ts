@@ -22,6 +22,7 @@ export class UpdateOrderedScopeStatusHttpController {
     const command = new UpdateOrderedScopeStatusCommand({
       orderedScopeId: param.orderedScopeId,
       status: request.status,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

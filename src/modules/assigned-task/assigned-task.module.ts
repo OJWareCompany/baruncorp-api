@@ -42,6 +42,7 @@ import { ExpensePricingModule } from '../expense-pricing/expense-pricing.module'
 import { BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-started.domain-event-handler'
 import { BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-back-to-not-started.domain-event-handler'
 import { CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
+import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -100,6 +101,7 @@ const mappers: Provider[] = [AssignedTaskMapper]
     CqrsModule,
     PrismaModule,
     ExpensePricingModule,
+    IntegratedOrderModificationHistoryModule,
     forwardRef(() => UsersModule),
     forwardRef(() => JobModule),
     forwardRef(() => OrderedServiceModule),

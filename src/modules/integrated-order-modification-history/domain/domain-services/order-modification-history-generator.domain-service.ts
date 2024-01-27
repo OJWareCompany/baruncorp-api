@@ -6,7 +6,7 @@ import { JobEntity } from '../../../ordered-job/domain/job.entity'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
 import { AssignedTaskEntity } from '../../../assigned-task/domain/assigned-task.entity'
-import { OrderedJobs } from '@prisma/client'
+import { AssignedTasks, OrderedJobs, OrderedServices } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
 
 type modificationFields = {
@@ -24,8 +24,8 @@ export class OrderModificationHistoryGenerator {
 
   async generate<T>(
     entity: JobEntity | OrderedServiceEntity | AssignedTaskEntity,
-    copyBeforeObj: OrderedJobs,
-    copyAfterObj: OrderedJobs,
+    copyBeforeObj: OrderedJobs | OrderedServices | AssignedTasks,
+    copyAfterObj: OrderedJobs | OrderedServices | AssignedTasks,
     editor?: UserEntity,
   ) {
     const entityName = this.getEntityName(entity)
@@ -46,14 +46,14 @@ export class OrderModificationHistoryGenerator {
     prismaService: PrismaService,
     original: T,
     modified: T,
-    modificationFields: modificationFields,
+    modifiedObj: modificationFields,
   ) {
     const modifiedFields = getModifiedFields(original, modified)
     await Promise.all(
       _.map(modifiedFields, async ({ propertyTitle, before, after }, key) => {
         await prismaService.integratedOrderModificationHistory.create({
           data: {
-            ...modificationFields,
+            ...modifiedObj,
             attribute: propertyTitle,
             operation: OrderModificationHistoryOperationEnum.Update,
             beforeValue: before,
