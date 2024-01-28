@@ -202,6 +202,7 @@ model OrderedServices {
   projectPropertyOwnerName String?         @map("project_property_owner_name") @db.VarChar(255)
   jobName                  String          @map("job_name") @db.VarChar(255)
   updated_at               DateTime        @default(now()) @db.DateTime(0)
+  updated_by               String?         @db.VarChar(255)
   job                      OrderedJobs     @relation(fields: [jobId], references: [id])
   service                  Service         @relation(fields: [serviceId], references: [id])
   assignedTasks            AssignedTasks[]
@@ -717,6 +718,7 @@ model AssignedTasks {
   organizationName         String          @map("organization_name") @db.VarChar(255)
   created_at               DateTime        @db.DateTime(0)
   updated_at               DateTime        @default(now()) @db.DateTime(0)
+  updated_by               String?         @db.VarChar(255)
   task                     Tasks           @relation(fields: [taskId], references: [id])
   orderedService           OrderedServices @relation(fields: [orderedServiceId], references: [id])
   job                      OrderedJobs     @relation(fields: [jobId], references: [id])
