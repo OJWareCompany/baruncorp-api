@@ -24,6 +24,7 @@ export function getModifiedFields<T>(
         if (_.isObject(value) && _.isObject(_.get(originalObj, key))) {
           findChanges(_.get(originalObj, key), value, newPath)
         } else if (!_.isEqual(_.get(originalObj, key), value)) {
+          if (_.includes(['updated_at', 'updatedAt'], key)) return
           _.set(changes, newPath, {
             propertyTitle: _.startCase(key),
             before: String(_.get(originalObj, key)),
