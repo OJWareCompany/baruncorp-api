@@ -7,6 +7,7 @@ import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
 
 /**
  * 나름 잘 리팩토링된 케이스
@@ -20,6 +21,8 @@ export class UpdateManualPriceService implements ICommandHandler {
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
+
+  @GenerateOrderedScopeModificationHistory
   async execute(command: UpdateManualPriceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()

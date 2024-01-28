@@ -7,6 +7,7 @@ import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { CompleteAssignedTaskCommand } from './complete-assigned-task.command'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 @CommandHandler(CompleteAssignedTaskCommand)
 export class CompleteAssignedTaskService implements ICommandHandler {
@@ -16,6 +17,8 @@ export class CompleteAssignedTaskService implements ICommandHandler {
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
+
+  @GenerateAssignedTaskModificationHistory
   async execute(command: CompleteAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!assignedTask) throw new AssignedTaskNotFoundException()

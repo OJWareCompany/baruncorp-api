@@ -1,14 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
+import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
+import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
+import { ProjectNotFoundException } from '../../../project/domain/project.error'
 import { PrismaService } from '../../../database/prisma.service'
-import { UpdateOrderedServiceCommand } from './update-ordered-service.command'
+import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
-import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
-import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
-import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
+import { UpdateOrderedServiceCommand } from './update-ordered-service.command'
 
 @CommandHandler(UpdateOrderedServiceCommand)
 export class UpdateOrderedServiceService implements ICommandHandler {
@@ -18,6 +19,8 @@ export class UpdateOrderedServiceService implements ICommandHandler {
     private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     private readonly prismaService: PrismaService,
   ) {}
+
+  @GenerateOrderedScopeModificationHistory
   async execute(command: UpdateOrderedServiceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()

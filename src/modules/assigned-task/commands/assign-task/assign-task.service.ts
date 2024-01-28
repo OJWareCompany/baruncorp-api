@@ -7,6 +7,7 @@ import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { AssignTaskCommand } from './assign-task.command'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 @CommandHandler(AssignTaskCommand)
 export class AssignTaskService implements ICommandHandler {
@@ -19,6 +20,8 @@ export class AssignTaskService implements ICommandHandler {
     private readonly userRepo: UserRepositoryPort,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
+
+  @GenerateAssignedTaskModificationHistory
   async execute(command: AssignTaskCommand): Promise<void> {
     const userEntity = await this.userRepo.findOneByIdOrThrow(command.assigneeId)
     const assignedTaskEntity = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)

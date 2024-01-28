@@ -10,6 +10,7 @@ import { RejectAssignedTaskCommand } from './reject-assigned-task.command'
 import { AssignedTaskAlreadyCompletedException, AssigneeNotFoundException } from '../../domain/assigned-task.error'
 import { v4 } from 'uuid'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 @CommandHandler(RejectAssignedTaskCommand)
 export class RejectAssignedTaskService implements ICommandHandler {
@@ -23,6 +24,8 @@ export class RejectAssignedTaskService implements ICommandHandler {
     private readonly prismaService: PrismaService,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
+
+  @GenerateAssignedTaskModificationHistory
   async execute(command: RejectAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
     if (assignedTask.isCompleted) throw new AssignedTaskAlreadyCompletedException()

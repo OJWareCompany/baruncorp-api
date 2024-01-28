@@ -5,6 +5,7 @@ import { Inject } from '@nestjs/common'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 @CommandHandler(UnassignAssignedTaskCommand)
 export class UnassignAssignedTaskService implements ICommandHandler {
@@ -14,6 +15,8 @@ export class UnassignAssignedTaskService implements ICommandHandler {
     private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
+
+  @GenerateAssignedTaskModificationHistory
   async execute(command: UnassignAssignedTaskCommand): Promise<void> {
     /**
      * unassign 불가 조건
