@@ -13,7 +13,7 @@ export class UnassignAssignedTaskHttpController {
   @Patch(':assignedTaskId/unassign')
   @UseGuards(AuthGuard)
   async patch(@User() user: UserEntity, @Param() param: UnassignTaskParamRequestDto): Promise<void> {
-    const command = new UnassignAssignedTaskCommand({ assignedTaskId: param.assignedTaskId })
+    const command = new UnassignAssignedTaskCommand({ assignedTaskId: param.assignedTaskId, editorUserId: user.id })
     await this.commandBus.execute(command)
   }
 }

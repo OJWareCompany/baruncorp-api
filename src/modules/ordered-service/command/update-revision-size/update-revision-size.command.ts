@@ -4,6 +4,7 @@ import { OrderedServiceSizeForRevisionEnum } from '../../domain/ordered-service.
 export class UpdateRevisionSizeCommand {
   readonly orderedServiceId: string
   readonly revisionSize: OrderedServiceSizeForRevisionEnum | null
+  readonly editorUserId: string
   constructor(props: UpdateRevisionSizeCommand) {
     initialize(this, props)
   }

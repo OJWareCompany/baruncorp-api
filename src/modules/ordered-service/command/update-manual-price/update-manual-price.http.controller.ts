@@ -19,6 +19,7 @@ export class UpdateManualPriceHttpController {
     const command = new UpdateManualPriceCommand({
       orderedServiceId: param.orderedServiceId,
       price: request.price,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

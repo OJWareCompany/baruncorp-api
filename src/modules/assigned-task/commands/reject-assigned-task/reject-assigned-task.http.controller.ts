@@ -21,6 +21,7 @@ export class RejectAssignedTaskHttpController {
       assignedTaskId: param.assignedTaskId,
       reason: request.reason,
       userId: user.id,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

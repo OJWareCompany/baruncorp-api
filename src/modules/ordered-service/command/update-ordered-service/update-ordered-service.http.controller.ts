@@ -22,6 +22,7 @@ export class UpdateOrderedServiceHttpController {
     const command = new UpdateOrderedServiceCommand({
       orderedServiceId: param.orderedServiceId,
       description: request.description,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

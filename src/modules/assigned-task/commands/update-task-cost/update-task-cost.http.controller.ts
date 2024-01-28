@@ -17,8 +17,9 @@ export class UpdateTaskCostHttpController {
     @Body() request: UpdateTaskCostRequestDto,
   ): Promise<void> {
     const command = new UpdateTaskCostCommand({
-      assignedTaskId: param.assignedTaskId,
       ...request,
+      assignedTaskId: param.assignedTaskId,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

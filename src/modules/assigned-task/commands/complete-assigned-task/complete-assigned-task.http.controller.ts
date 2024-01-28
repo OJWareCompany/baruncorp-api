@@ -12,7 +12,7 @@ export class CompleteAssignedTaskHttpController {
   @Patch(':assignedTaskId')
   @UseGuards(AuthGuard)
   async patch(@User() user: UserEntity, @Param() param: CompleteAssignedTaskParamRequestDto): Promise<void> {
-    const command = new CompleteAssignedTaskCommand(param)
+    const command = new CompleteAssignedTaskCommand({ ...param, editorUserId: user.id })
     await this.commandBus.execute(command)
   }
 }

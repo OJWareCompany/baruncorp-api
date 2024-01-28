@@ -19,6 +19,7 @@ export class AssignTaskHttpController {
     const command = new AssignTaskCommand({
       assignedTaskId: param.assignedTaskId,
       ...request,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

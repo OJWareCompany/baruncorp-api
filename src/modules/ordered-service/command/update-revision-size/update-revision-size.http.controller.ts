@@ -19,6 +19,7 @@ export class UpdateRevisionSizeHttpController {
     const command = new UpdateRevisionSizeCommand({
       orderedServiceId: param.orderedServiceId,
       revisionSize: request.sizeForRevision,
+      editorUserId: user.id,
     })
     await this.commandBus.execute(command)
   }

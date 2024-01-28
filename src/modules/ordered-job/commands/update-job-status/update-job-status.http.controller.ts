@@ -18,7 +18,7 @@ export class UpdateJobStatusHttpController {
     @Body() request: UpdateJobStatusRequestDto,
   ): Promise<void> {
     const command = new UpdateJobStatusCommand({
-      updatedByUserId: user.id,
+      editorUserId: user.id,
       status: request.status,
       jobId: param.jobId,
     })
