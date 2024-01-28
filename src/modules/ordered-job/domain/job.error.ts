@@ -70,3 +70,9 @@ export class JobSendableToClientScopesInCompletedException extends Unprocessable
     super(`Job cannot be sent to client as there are incomplete scopes.`, '40013')
   }
 }
+
+export class NoUpdateException extends BadRequestException {
+  constructor() {
+    super('To update, different data from the existing ones must be entered', '40014')
+  }
+}

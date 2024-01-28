@@ -26,6 +26,7 @@ export interface CreateAssignedTaskProps {
   projectPropertyOwnerName: string | null
   jobName: string
   isExpedited: boolean
+  updatedBy: string | null
 }
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {

@@ -38,6 +38,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       jobName: props.jobName,
       is_expedited: props.isExpedited,
       updated_at: props.updatedAt,
+      updated_by: props.updatedBy,
     }
   }
 
@@ -70,6 +71,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
         projectPropertyOwnerName: record.projectPropertyOwnerName,
         jobName: record.jobName,
         isExpedited: record.is_expedited,
+        updatedBy: record.updated_by,
       },
     })
     return entity

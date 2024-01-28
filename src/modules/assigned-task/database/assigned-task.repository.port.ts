@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { PaginatedQueryBase } from '../../../libs/ddd/query.base'
 import { AssignedTaskEntity } from '../domain/assigned-task.entity'
+import { UserEntity } from '../../users/domain/user.entity'
 
 export interface AssignedTaskRepositoryPort {
   insert(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void>
@@ -14,4 +15,6 @@ export interface AssignedTaskRepositoryPort {
     serviceMonth: Date,
     query?: PaginatedQueryBase,
   ): Promise<AssignedTaskEntity[]>
+  rollbackUpdatedAtAndEditor(entity: AssignedTaskEntity): Promise<void>
+  updateOnlyEditorInfo(entity: AssignedTaskEntity, editor: UserEntity): Promise<void>
 }

@@ -1,5 +1,6 @@
 import { OrderedServices } from '@prisma/client'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
+import { UserEntity } from '../../users/domain/user.entity'
 
 /**
  * 원칙상 Repository Port(인터페이스)는 Domain 모듈의 파일이다.
@@ -22,4 +23,6 @@ export interface OrderedServiceRepositoryPort {
   update(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void>
   delete(id: string): Promise<void>
   getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]>
+  rollbackUpdatedAtAndEditor(orderedScope: OrderedServiceEntity): Promise<void>
+  updateOnlyEditorInfo(entity: OrderedServiceEntity, editor: UserEntity): Promise<void>
 }

@@ -7,6 +7,7 @@ import { OrderedServiceNotFoundException } from '../domain/ordered-service.error
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { OrderedServices } from '@prisma/client'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
+import { UserEntity } from '../../users/domain/user.entity'
 
 @Injectable()
 export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
@@ -15,6 +16,38 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     private readonly orderedServiceMapper: OrderedServiceMapper,
     protected readonly eventEmitter: EventEmitter2,
   ) {}
+
+  async updateOnlyEditorInfo(entity: OrderedServiceEntity, editor: UserEntity): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.orderedServiceMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.orderedServices.update({
+          where: { id: record.id },
+          data: { updated_by: editor.userName.fullName },
+        })
+      }),
+    )
+  }
+
+  /**
+   * order modification history 생성하는 서비스에서, 실질적으로 변경된 데이터가 없을시 updated At을 롤백한다.
+   */
+  async rollbackUpdatedAtAndEditor(entity: OrderedServiceEntity): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.orderedServiceMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.orderedServices.update({
+          where: { id: record.id },
+          data: {
+            updated_at: record.updated_at,
+            updated_by: entity.getProps().updatedBy,
+          },
+        })
+      }),
+    )
+  }
 
   async insert(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
@@ -63,7 +96,10 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     const records = entities.map(this.orderedServiceMapper.toPersistence)
     await Promise.all(
       records.map(async (record) => {
-        await this.prismaService.orderedServices.update({ where: { id: record.id }, data: record })
+        await this.prismaService.orderedServices.update({
+          where: { id: record.id },
+          data: { ...record, updated_at: new Date() },
+        })
       }),
     )
 

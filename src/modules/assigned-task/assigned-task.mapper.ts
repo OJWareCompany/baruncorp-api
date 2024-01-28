@@ -44,6 +44,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       is_active: props.isActive,
       created_at: props.createdAt,
       updated_at: props.updatedAt,
+      updated_by: props.updatedBy,
     }
     return record
   }
@@ -83,6 +84,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         jobName: record.jobName,
         isExpedited: record.is_expedited,
         isActive: record.is_active,
+        updatedBy: record.updated_by,
       },
     })
     return entity

@@ -1,5 +1,8 @@
 import _ from 'lodash'
 
+/**
+ * updated at, updated by 이외의 수정된 필드를 검색합니다.
+ */
 export function getModifiedFields<T>(
   original: T,
   modified: T,
@@ -24,7 +27,7 @@ export function getModifiedFields<T>(
         if (_.isObject(value) && _.isObject(_.get(originalObj, key))) {
           findChanges(_.get(originalObj, key), value, newPath)
         } else if (!_.isEqual(_.get(originalObj, key), value)) {
-          if (_.includes(['updated_at', 'updatedAt'], key)) return
+          if (_.includes(['updated_at', 'updatedAt', 'modified_by', 'updated_by'], key)) return null
           _.set(changes, newPath, {
             propertyTitle: _.startCase(key),
             before: String(_.get(originalObj, key)),

@@ -11,6 +11,7 @@ import { zonedTimeToUtc } from 'date-fns-tz'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
 import { PaginatedQueryBase } from '../../../libs/ddd/query.base'
+import { UserEntity } from '../../users/domain/user.entity'
 
 @Injectable()
 export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
@@ -20,6 +21,38 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
+  async updateOnlyEditorInfo(entity: AssignedTaskEntity, editor: UserEntity): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.assignedTaskMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.assignedTasks.update({
+          where: { id: record.id },
+          data: { updated_by: editor.userName.fullName },
+        })
+      }),
+    )
+  }
+
+  /**
+   * order modification history 생성하는 서비스에서, 실질적으로 변경된 데이터가 없을시 updated At을 롤백한다.
+   */
+  async rollbackUpdatedAtAndEditor(entity: AssignedTaskEntity): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.assignedTaskMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.assignedTasks.update({
+          where: { id: record.id },
+          data: {
+            updated_at: record.updated_at,
+            updated_by: entity.getProps().updatedBy,
+          },
+        })
+      }),
+    )
+  }
+
   async find(whereInput: Prisma.AssignedTasksWhereInput): Promise<AssignedTaskEntity[]> {
     const records = await this.prismaService.assignedTasks.findMany({ where: whereInput })
     return records.map(this.assignedTaskMapper.toDomain)
@@ -28,7 +61,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
   async insert(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.assignedTaskMapper.toPersistence)
-    await this.prismaService.assignedTasks.createMany({ data: records })
+    await this.prismaService.assignedTasks.createMany({ data: { ...records, updated_at: new Date() } })
     for (const entity of entities) {
       await entity.publishEvents(this.eventEmitter)
     }
@@ -39,7 +72,10 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     const records = entities.map(this.assignedTaskMapper.toPersistence)
     await Promise.all(
       records.map(async (record) => {
-        await this.prismaService.assignedTasks.update({ where: { id: record.id }, data: record })
+        await this.prismaService.assignedTasks.update({
+          where: { id: record.id },
+          data: { ...record, updated_at: new Date() },
+        })
       }),
     )
 

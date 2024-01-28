@@ -71,6 +71,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
         projectPropertyOwnerName: project.projectPropertyOwnerName,
         jobName: job.jobName,
         isExpedited: job.getProps().isExpedited,
+        updatedBy: null,
       },
       this.serviceInitialPriceManager,
       this.orderModificationValidator,

@@ -40,6 +40,7 @@ export class CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler {
         projectPropertyOwnerName: event.projectPropertyOwnerName,
         jobName: event.jobName,
         isExpedited: event.isExpedited,
+        updatedBy: null,
       })
       return entity
     })

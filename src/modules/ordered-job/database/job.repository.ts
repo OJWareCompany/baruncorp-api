@@ -10,6 +10,7 @@ import { zonedTimeToUtc } from 'date-fns-tz'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../domain/job.type'
 import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
+import { UserEntity } from '../../users/domain/user.entity'
 type JobModel =
   | OrderedJobs & {
       orderedServices: (OrderedServices & {
@@ -24,6 +25,40 @@ export class JobRepository implements JobRepositoryPort {
     private readonly jobMapper: JobMapper,
     protected readonly eventEmitter: EventEmitter2,
   ) {}
+
+  async updateOnlyEditorInfo(entity: JobEntity, editor: UserEntity): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.jobMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.orderedJobs.update({
+          where: { id: record.id },
+          data: {
+            updatedBy: editor.userName.fullName,
+          },
+        })
+      }),
+    )
+  }
+
+  /**
+   * order modification history 생성하는 서비스에서, 실질적으로 변경된 데이터가 없을시 updated At을 롤백한다.
+   */
+  async rollbackUpdatedAtAndEditor(entity: JobEntity): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.jobMapper.toPersistence)
+    await Promise.all(
+      records.map(async (record) => {
+        await this.prismaService.orderedJobs.update({
+          where: { id: record.id },
+          data: {
+            updatedAt: record.updatedAt,
+            updatedBy: entity.getProps().updatedBy,
+          },
+        })
+      }),
+    )
+  }
 
   async getTotalInvoiceAmount(jobId: string): Promise<number> {
     const total = await this.prismaService.orderedServices.aggregate({

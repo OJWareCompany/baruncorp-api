@@ -18,10 +18,22 @@ type modificationFields = {
   scopeOrTaskName: string | null
 }
 
+/**
+ * 데이터가 변경된 필드를 검색하고 이력 생성에 필요한 데이터를
+ * 주문에 관련된 각 엔티티의 방식으로 추출하여
+ * 주문 수정 통합 이력을 생성하는 도메인 서비스입니다.
+ */
 @Injectable()
 export class OrderModificationHistoryGenerator {
   constructor(private readonly prismaService: PrismaService) {}
 
+  /**
+   *
+   * @param entity 수정된 이후의 엔티티를 조회하여 입력해야합니다.
+   * @param copyBeforeObj
+   * @param copyAfterObj
+   * @param editor
+   */
   async generate<T>(
     entity: JobEntity | OrderedServiceEntity | AssignedTaskEntity,
     copyBeforeObj: OrderedJobs | OrderedServices | AssignedTasks,
@@ -31,7 +43,6 @@ export class OrderModificationHistoryGenerator {
     const entityName = this.getEntityName(entity)
     const jobId = this.getJobId(entity)
     const scopeOrTaskName = this.getScopeOrTaskName(entity)
-
     await this.generateOrderModificationHistory(this.prismaService, copyBeforeObj, copyAfterObj, {
       entity: entityName,
       jobId: jobId,
