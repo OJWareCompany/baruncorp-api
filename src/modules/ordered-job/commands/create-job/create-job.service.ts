@@ -108,6 +108,7 @@ export class CreateJobService implements ICommandHandler {
     const jobRecord = this.jobMapper.toPersistence(jobEntity)
     const jobFolder = createJobFolderResponseData.jobFolder
     const deliverablesFolder = createJobFolderResponseData.deliverablesFolder
+    const jobNotesFolder = createJobFolderResponseData.jobNotesFolder
 
     try {
       await this.prismaService.$transaction([
@@ -118,6 +119,8 @@ export class CreateJobService implements ICommandHandler {
             shareLink: jobFolder.shareLink,
             deliverablesFolderId: deliverablesFolder.id,
             deliverablesFolderShareLink: deliverablesFolder.shareLink,
+            jobNotesFolderId: jobNotesFolder.id,
+            jobNotesFolderShareLink: jobNotesFolder.shareLink,
             jobId: jobEntity.id,
           },
         }),

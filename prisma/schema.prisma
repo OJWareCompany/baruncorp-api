@@ -999,6 +999,8 @@ model GoogleJobFolder {
   deliverablesFolderId        String? @map("deliverables_folder_id") @db.VarChar(255)
   deliverablesFolderShareLink String? @map("deliverables_folder_share_link") @db.VarChar(255)
   jobId                       String? @map("job_id") @db.VarChar(255)
+  jobNotesFolderId            String? @unique(map: "google_job_folder_UN") @map("job_notes_folder_id") @db.VarChar(255)
+  jobNotesFolderShareLink     String? @map("job_notes_folder_share_link") @db.VarChar(255)
 
   @@index([jobId], map: "google_job_folder_FK")
   @@map("google_job_folder")
@@ -1030,6 +1032,16 @@ model GoogleAhjNotesFolder {
 
   @@index([geoId], map: "google_ahj_notes_folder_FK")
   @@map("google_ahj_notes_folder")
+}
+
+model GoogleJobNoteFolder {
+  id               String  @id @map("id") @db.VarChar(255)
+  shareLink        String? @map("share_link") @db.VarChar(255)
+  jobNotesFolderId String? @map("job_notes_folder_id") @db.VarChar(255)
+  jobNoteId        String? @map("job_note_id") @db.VarChar(255)
+
+  @@index([jobNotesFolderId], map: "google_job_note_folder_FK")
+  @@map("google_job_note_folder")
 }
 
 enum InvoicesStatus {

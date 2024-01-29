@@ -44,6 +44,12 @@ export type CreateGoogleJobFolderResponseData = {
     shareLink: string
     matchedExistingData: boolean
   }
+  jobNotesFolder: {
+    id: string
+    name: string
+    shareLink: string
+    matchedExistingData: boolean
+  }
 }
 
 /**
