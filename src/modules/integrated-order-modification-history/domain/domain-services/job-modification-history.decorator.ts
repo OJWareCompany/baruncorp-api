@@ -1,4 +1,5 @@
 import { Inject } from '@nestjs/common'
+import { OrderedJobs } from '@prisma/client'
 import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs-aop'
 import _ from 'lodash'
 import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
@@ -39,7 +40,7 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
       const filterValue = this.getFilterValue(options, ...args)
 
       const jobs = await this.jobRepository.findManyBy(filterField, filterValue)
-      const copiesBefore = new Map(jobs.map((job) => [job.id, deepCopy(this.jobMapper.toPersistence(job))]))
+      const copiesBefore = this.createCopies(jobs)
 
       const result = await method(...args)
 
@@ -60,7 +61,11 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
     return options?.byProject ? projectId : jobId
   }
 
-  private async generateHistory(job: JobEntity, copiesBefore: any, editor?: UserEntity | null) {
+  private createCopies(jobs: JobEntity[]): Map<string, OrderedJobs> {
+    return new Map(jobs.map((job) => [job.id, deepCopy(this.jobMapper.toPersistence(job))]))
+  }
+
+  private async generateHistory(job: JobEntity, copiesBefore: Map<string, OrderedJobs>, editor?: UserEntity | null) {
     const copyBefore = copiesBefore.get(job.id)
     if (!copyBefore) return
 
