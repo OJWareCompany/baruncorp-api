@@ -28,10 +28,14 @@ export function getModifiedFields<T>(
           findChanges(_.get(originalObj, key), value, newPath)
         } else if (!_.isEqual(_.get(originalObj, key), value)) {
           if (_.includes(['updated_at', 'updatedAt', 'modified_by', 'updated_by'], key)) return null
+
+          const beforeValue = transformValue(_.get(originalObj, key))
+          const afterValue = transformValue(value)
+
           _.set(changes, newPath, {
             propertyTitle: _.startCase(key),
-            before: String(_.get(originalObj, key)),
-            after: String(value),
+            before: beforeValue,
+            after: afterValue,
           })
         }
       })
@@ -40,4 +44,16 @@ export function getModifiedFields<T>(
 
   findChanges(original, modified)
   return changes
+}
+
+function transformValue(value: any) {
+  if (_.isNil(value)) {
+    return null
+  }
+
+  if (_.isNumber(value)) {
+    return String(value)
+  }
+
+  return String(value)
 }
