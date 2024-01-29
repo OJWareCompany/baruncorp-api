@@ -16,5 +16,5 @@ export interface AssignedTaskRepositoryPort {
     query?: PaginatedQueryBase,
   ): Promise<AssignedTaskEntity[]>
   rollbackUpdatedAtAndEditor(entity: AssignedTaskEntity): Promise<void>
-  updateOnlyEditorInfo(entity: AssignedTaskEntity, editor: UserEntity): Promise<void>
+  updateOnlyEditorInfo(entity: AssignedTaskEntity, editor?: UserEntity): Promise<void>
 }

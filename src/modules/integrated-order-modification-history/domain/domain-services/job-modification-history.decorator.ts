@@ -27,7 +27,7 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
 
   wrap({ method, metadata: options }: WrapParams<any, any>) {
     return async (...args: any) => {
-      const editor = await this.userRepo.findOneByIdOrThrow(args[0].editorUserId)
+      const editor = await this.userRepo.findOneById(args[0].editorUserId)
 
       const job = await this.jobRepository.findJobOrThrow(args[0].jobId)
       const copyBefore = deepCopy(this.jobMapper.toPersistence(job))
@@ -43,8 +43,13 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
         throw new NoUpdateException()
       }
 
-      await this.orderModificationHistoryGenerator.generate(jobAfterModification, copyBefore, copyAfter, editor)
-      await this.jobRepository.updateOnlyEditorInfo(jobAfterModification, editor)
+      await this.orderModificationHistoryGenerator.generate(
+        jobAfterModification,
+        copyBefore,
+        copyAfter,
+        editor || undefined,
+      )
+      await this.jobRepository.updateOnlyEditorInfo(jobAfterModification, editor || undefined)
       return result
     }
   }

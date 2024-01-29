@@ -17,14 +17,14 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     protected readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async updateOnlyEditorInfo(entity: OrderedServiceEntity, editor: UserEntity): Promise<void> {
+  async updateOnlyEditorInfo(entity: OrderedServiceEntity, editor?: UserEntity): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.orderedServiceMapper.toPersistence)
     await Promise.all(
       records.map(async (record) => {
         await this.prismaService.orderedServices.update({
           where: { id: record.id },
-          data: { updated_by: editor.userName.fullName },
+          data: { updated_by: editor?.userName.fullName || 'System' },
         })
       }),
     )

@@ -60,13 +60,23 @@ export class UserRepository implements UserRepositoryPort {
     private readonly userRoleMapper: UserRoleMapper,
     protected readonly eventEmitter: EventEmitter2,
   ) {}
+
+  async findOneById(id: string): Promise<UserEntity | null> {
+    try {
+      const user: UserQueryModel | null = await this.prismaService.users.findUnique({
+        where: { id },
+        include: UserRepository.userQueryIncludeInput,
+      })
+      return user ? this.userMapper.toDomain(user) : null
+    } catch (error) {
+      return null
+    }
+  }
+
   async findOneByIdOrThrow(id: string): Promise<UserEntity> {
-    const user: UserQueryModel | null = await this.prismaService.users.findUnique({
-      where: { id },
-      include: UserRepository.userQueryIncludeInput,
-    })
+    const user = await this.findOneById(id)
     if (!user) throw new UserNotFoundException()
-    return this.userMapper.toDomain(user)
+    return user
   }
 
   async findOneByIdIncludePtos(id: string): Promise<UserEntity> {

@@ -24,5 +24,5 @@ export interface OrderedServiceRepositoryPort {
   delete(id: string): Promise<void>
   getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]>
   rollbackUpdatedAtAndEditor(orderedScope: OrderedServiceEntity): Promise<void>
-  updateOnlyEditorInfo(entity: OrderedServiceEntity, editor: UserEntity): Promise<void>
+  updateOnlyEditorInfo(entity: OrderedServiceEntity, editor?: UserEntity): Promise<void>
 }

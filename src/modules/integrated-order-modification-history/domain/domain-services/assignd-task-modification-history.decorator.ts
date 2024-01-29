@@ -27,7 +27,7 @@ export class AssignedTaskModificationHistoryDecorator implements LazyDecorator {
 
   wrap({ method, metadata: options }: WrapParams<any, any>) {
     return async (...args: any) => {
-      const editor = await this.userRepo.findOneByIdOrThrow(args[0].editorUserId)
+      const editor = await this.userRepo.findOneById(args[0].editorUserId)
 
       const assignedTask = await this.assignedTaskRepo.findOneOrThrow(args[0].assignedTaskId)
       const copyBefore = deepCopy(this.assignedTaskMapper.toPersistence(assignedTask))
@@ -47,9 +47,9 @@ export class AssignedTaskModificationHistoryDecorator implements LazyDecorator {
         assignedTaskAfterModification,
         copyBefore,
         copyAfter,
-        editor,
+        editor || undefined,
       )
-      await this.assignedTaskRepo.updateOnlyEditorInfo(assignedTaskAfterModification, editor)
+      await this.assignedTaskRepo.updateOnlyEditorInfo(assignedTaskAfterModification, editor || undefined)
       return result
     }
   }

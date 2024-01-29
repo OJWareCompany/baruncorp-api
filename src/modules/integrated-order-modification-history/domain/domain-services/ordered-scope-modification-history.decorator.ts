@@ -27,7 +27,7 @@ export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
 
   wrap({ method, metadata: options }: WrapParams<any, any>) {
     return async (...args: any) => {
-      const editor = await this.userRepo.findOneByIdOrThrow(args[0].editorUserId)
+      const editor = await this.userRepo.findOneById(args[0].editorUserId)
 
       const orderedScope = await this.orderedScopeRepo.findOneOrThrow(
         args[0].orderedServiceId || args[0].orderedScopeId,
@@ -51,9 +51,9 @@ export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
         orderedScopeAfterModification,
         copyBefore,
         copyAfter,
-        editor,
+        editor || undefined,
       )
-      await this.orderedScopeRepo.updateOnlyEditorInfo(orderedScopeAfterModification, editor)
+      await this.orderedScopeRepo.updateOnlyEditorInfo(orderedScopeAfterModification, editor || undefined)
       return result
     }
   }

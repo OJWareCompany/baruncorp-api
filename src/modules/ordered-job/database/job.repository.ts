@@ -26,7 +26,7 @@ export class JobRepository implements JobRepositoryPort {
     protected readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async updateOnlyEditorInfo(entity: JobEntity, editor: UserEntity): Promise<void> {
+  async updateOnlyEditorInfo(entity: JobEntity, editor?: UserEntity): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.jobMapper.toPersistence)
     await Promise.all(
@@ -34,7 +34,7 @@ export class JobRepository implements JobRepositoryPort {
         await this.prismaService.orderedJobs.update({
           where: { id: record.id },
           data: {
-            updatedBy: editor.userName.fullName,
+            updatedBy: editor?.userName.fullName || 'System',
           },
         })
       }),
