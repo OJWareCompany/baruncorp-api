@@ -1128,7 +1128,7 @@ export interface InvoiceResponseDto {
   discount: number | null
   total: number
   clientOrganization: InvoiceClientOrganization
-  lineItems: JobResponseDto[][]
+  lineItems: JobResponseDto[]
   payments: InvoicePayments[]
   totalOfPayment: number
 }

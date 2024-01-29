@@ -96,7 +96,7 @@ export class InvoiceResponseDto {
   @ApiProperty({ type: InvoiceClientOrganization })
   readonly clientOrganization: InvoiceClientOrganization
 
-  @ApiProperty({ type: JobResponseDto, isArray: true })
+  @ApiProperty({ type: JobResponseDto })
   readonly lineItems: JobResponseDto[]
 
   @ApiProperty({ type: InvoicePayments, isArray: true })
