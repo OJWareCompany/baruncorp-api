@@ -6,12 +6,11 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { PrismaService } from '../../../database/prisma.service'
 import { VendorInvoiceResponseDto } from '../../dtos/vendor-invoice.response.dto'
 import { VendorInvoiceMapper } from '../../vendor-invoice.mapper'
-import { InvoiceStatusEnum } from '../../../invoice/domain/invoice.type'
 import { Prisma } from '@prisma/client'
 
 export class FindVendorInvoicePaginatedQuery extends PaginatedQueryBase {
   readonly organizationName?: string | null
-  // readonly status?: InvoiceStatusEnum | null
+  readonly organizationId?: string | null
   constructor(props: PaginatedParams<FindVendorInvoicePaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -25,6 +24,7 @@ export class FindVendorInvoicePaginatedQueryHandler implements IQueryHandler {
   async execute(query: FindVendorInvoicePaginatedQuery): Promise<Paginated<VendorInvoiceResponseDto>> {
     const condition: Prisma.VendorInvoicesWhereInput = {
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
+      ...(query.organizationId && { organizationId: query.organizationId }),
       // ...(query.status && { status: query.status }),
     }
 

@@ -10,6 +10,11 @@ export class FindInvoicePaginatedRequestDto {
   @IsOptional()
   readonly organizationName?: string | null
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly clientOrganizationId?: string | null
+
   @ApiProperty({ default: InvoiceStatusEnum.Issued, enum: InvoiceStatusEnum })
   @IsEnum(InvoiceStatusEnum)
   @IsOptional()

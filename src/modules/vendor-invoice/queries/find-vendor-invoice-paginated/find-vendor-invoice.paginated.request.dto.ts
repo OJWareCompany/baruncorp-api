@@ -1,6 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsEnum, IsOptional, IsString } from 'class-validator'
-import { InvoiceStatusEnum } from '../../../invoice/domain/invoice.type'
+import { IsOptional, IsString } from 'class-validator'
 import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 
 export class FindVendorInvoicePaginatedRequestDto {
@@ -8,6 +7,11 @@ export class FindVendorInvoicePaginatedRequestDto {
   @IsString()
   @IsOptional()
   readonly organizationName?: string | null
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly organizationId?: string | null
 
   // @ApiProperty({ default: InvoiceStatusEnum.Issued, enum: InvoiceStatusEnum })
   // @IsEnum(InvoiceStatusEnum)

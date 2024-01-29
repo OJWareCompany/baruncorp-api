@@ -2668,6 +2668,7 @@ export interface FindInvoicePaginatedHttpControllerGetParams {
   status?: 'Unissued' | 'Issued' | 'Paid' | null
   /** @format date-time */
   invoiceDate?: string | null
+  clientOrganizationId?: string | null
 }
 
 export interface FindClientWithOutstandingBalancesHttpControllerGetParams {
@@ -2945,6 +2946,7 @@ export interface FindVendorInvoicePaginatedHttpControllerGetParams {
    * @default ""
    */
   organizationName?: string | null
+  organizationId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20

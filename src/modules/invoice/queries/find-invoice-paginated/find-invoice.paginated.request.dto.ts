@@ -21,6 +21,11 @@ export class FindInvoicePaginatedRequestDto {
   @IsOptional()
   readonly invoiceDate?: Date | null
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly clientOrganizationId?: string | null
+
   // @ApiProperty()
   // @IsDate()
   // @Type(() => Date)

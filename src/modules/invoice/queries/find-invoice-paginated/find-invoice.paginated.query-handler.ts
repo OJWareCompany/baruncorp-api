@@ -12,6 +12,7 @@ export class FindInvoicePaginatedQuery extends PaginatedQueryBase {
   readonly organizationName?: string | null
   readonly status?: InvoiceStatusEnum | null
   readonly invoiceDate?: Date | null
+  readonly clientOrganizationId?: string | null
   constructor(props: PaginatedParams<FindInvoicePaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -28,8 +29,9 @@ export class FindInvoicePaginatedQueryHandler implements IQueryHandler {
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
       ...(query.status && { status: query.status }),
       ...(query.invoiceDate && { invoiceDate: query.invoiceDate }),
+      ...(query.clientOrganizationId && { clientOrganizationId: query.clientOrganizationId }),
     }
-    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
+    // const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const invoices = await this.prismaService.invoices.findMany({
       where: condition,
       include: {
