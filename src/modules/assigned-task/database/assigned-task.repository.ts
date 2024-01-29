@@ -4,7 +4,6 @@ import { EventEmitter2 } from '@nestjs/event-emitter'
 import { PrismaService } from '../../database/prisma.service'
 import { AssignedTaskMapper } from '../assigned-task.mapper'
 import { AssignedTaskRepositoryPort } from './assigned-task.repository.port'
-import { Paginated } from '../../../libs/ddd/repository.port'
 import { AssignedTaskEntity } from '../domain/assigned-task.entity'
 import { AssignedTaskNotFoundException } from '../domain/assigned-task.error'
 import { zonedTimeToUtc } from 'date-fns-tz'
@@ -21,14 +20,14 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     private readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async updateOnlyEditorInfo(entity: AssignedTaskEntity, editor: UserEntity): Promise<void> {
+  async updateOnlyEditorInfo(entity: AssignedTaskEntity, editor?: UserEntity): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.assignedTaskMapper.toPersistence)
     await Promise.all(
       records.map(async (record) => {
         await this.prismaService.assignedTasks.update({
           where: { id: record.id },
-          data: { updated_by: editor.userName.fullName },
+          data: { updated_by: editor?.userName.fullName || 'System' },
         })
       }),
     )
@@ -61,7 +60,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
   async insert(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.assignedTaskMapper.toPersistence)
-    await this.prismaService.assignedTasks.createMany({ data: { ...records, updated_at: new Date() } })
+    await this.prismaService.assignedTasks.createMany({ data: records })
     for (const entity of entities) {
       await entity.publishEvents(this.eventEmitter)
     }
