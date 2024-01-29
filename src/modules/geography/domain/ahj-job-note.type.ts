@@ -1,4 +1,4 @@
 export enum AhjNoteHistoryTypeEnum {
-  Created = 'Created',
-  Modified = 'Modified',
+  Create = 'Create',
+  Modify = 'Modify',
 }

@@ -490,7 +490,7 @@ export interface JobResponseDto {
   jobName: string
   isCurrentJob?: boolean
   /** @format date-time */
-  dateSentToClient: string
+  dateSentToClient: string | null
   price: number
   taskSubtotal: number
   pricingType: 'Standard' | 'Tiered'
@@ -882,7 +882,7 @@ export interface UpdateAhjNoteRequestDto {
 }
 
 export interface AhjNoteHistoryResponseDto {
-  historyType: 'Created' | 'Modified'
+  historyType: 'Create' | 'Modify'
   general: General
   design: Design
   engineering: Engineering
@@ -892,7 +892,7 @@ export interface AhjNoteHistoryResponseDto {
 
 export interface AhjNoteHistoryListResponseDto {
   geoId: string
-  historyType: 'Created' | 'Modified'
+  historyType: 'Create' | 'Modify'
   name: string
   fullAhjName: string
   updatedBy: string
@@ -1708,6 +1708,32 @@ export interface OrderedServicePaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: OrderedServiceResponseDto[]
+}
+
+export interface IntegratedOrderModificationHistoryResponseDto {
+  jobId: string
+  /** @format date-time */
+  modifiedAt: string
+  modifiedBy: string
+  entity: string
+  entityId: string
+  scopeOrTaskName: string | null
+  attribute: string | null
+  operation: 'Create' | 'Update' | 'Delete'
+  afterValue: string | null
+  beforeValue: string | null
+}
+
+export interface IntegratedOrderModificationHistoryPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: IntegratedOrderModificationHistoryResponseDto[]
 }
 
 export interface CreateJobNoteRequestDto {
@@ -2848,6 +2874,23 @@ export interface FindOrderedServicePaginatedHttpControllerGetParams {
    * @default ""
    */
   jobName?: string | null
+}
+
+export interface FindIntegratedOrderModificationHistoryPaginatedHttpControllerGetParams {
+  /** @default "" */
+  integratedOrderModificationHistoryId: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
 }
 
 export interface FindTaskPaginatedHttpControllerGetParams {
@@ -5322,6 +5365,42 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+  }
+  integratedOrderModificationHistory = {
+    /**
+     * No description
+     *
+     * @name FindIntegratedOrderModificationHistoryHttpControllerGet
+     * @request GET:/integrated-order-modification-history/{integratedOrderModificationHistoryId}
+     */
+    findIntegratedOrderModificationHistoryHttpControllerGet: (
+      integratedOrderModificationHistoryId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<IntegratedOrderModificationHistoryResponseDto, any>({
+        path: `/integrated-order-modification-history/${integratedOrderModificationHistoryId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindIntegratedOrderModificationHistoryPaginatedHttpControllerGet
+     * @request GET:/integrated-order-modification-history
+     */
+    findIntegratedOrderModificationHistoryPaginatedHttpControllerGet: (
+      query: FindIntegratedOrderModificationHistoryPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<IntegratedOrderModificationHistoryPaginatedResponseDto, any>({
+        path: `/integrated-order-modification-history`,
+        method: 'GET',
+        query: query,
+        format: 'json',
         ...params,
       }),
   }

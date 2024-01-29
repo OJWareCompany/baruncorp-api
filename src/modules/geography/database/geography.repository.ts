@@ -17,6 +17,7 @@ import {
   AhjNoteHistoryNotFoundException,
   AhjNoteNotFoundException,
 } from '../domain/ahj-job-note.error'
+import { AhjNoteHistoryTypeEnum } from '../domain/ahj-job-note.type'
 
 export type AHJNotesModel = AHJNotes
 export type AHJNoteHistoryModel = AHJNoteHistory
@@ -56,7 +57,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     if (!existedStateNote) {
       const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData() } })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...newNote, createdAt: new Date(), history_type: 'Create' },
+        data: { ...newNote, createdAt: new Date(), history_type: AhjNoteHistoryTypeEnum.Create },
       })
     }
   }
@@ -71,7 +72,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
       await this.prismaService.aHJNoteHistory.create({
         data: {
           ...updated,
-          history_type: 'Create',
+          history_type: AhjNoteHistoryTypeEnum.Create,
           createdAt: new Date(),
           // updatedAt: new Date(), // 도대체 이게 왜 에러를 발생시키는거지?
           // updatedAt: '2024-01-25T09:20:11.000Z', // 이렇게 해야만 한다. createdAt이랑 무슨 차이지? pk인것? 아니 그러면 업데이트할때 이력 생성하는 코드에서는 상관없었는데 왜..
@@ -82,7 +83,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     if (!existedCountyNote) {
       const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state) } })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...newNote, createdAt: new Date(), history_type: 'Create' },
+        data: { ...newNote, createdAt: new Date(), history_type: AhjNoteHistoryTypeEnum.Create },
       })
     }
   }
@@ -109,7 +110,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     if (!existedCountySubdivisionsNotes) {
       const newNote = await this.prismaService.aHJNotes.create({ data: { ...create.getNoteInputData(state, county) } })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...newNote, createdAt: new Date(), history_type: 'Create' },
+        data: { ...newNote, createdAt: new Date(), history_type: AhjNoteHistoryTypeEnum.Create },
       })
     }
   }
@@ -127,7 +128,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
         where: { geoId: create.geoId },
       })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...updated, createdAt: new Date(), history_type: 'Modify' },
+        data: { ...updated, createdAt: new Date(), history_type: AhjNoteHistoryTypeEnum.Modify },
       })
     }
 
@@ -136,7 +137,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
         data: { ...create.getNoteInputData(state, county, subdivision) },
       })
       await this.prismaService.aHJNoteHistory.create({
-        data: { ...newNotes, createdAt: new Date(), history_type: 'Create' },
+        data: { ...newNotes, createdAt: new Date(), history_type: AhjNoteHistoryTypeEnum.Create },
       })
     }
   }
@@ -214,7 +215,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
     const result = await this.prismaService.aHJNoteHistory.findMany({
       where: { ...where },
       orderBy: {
-        createdAt: 'desc',
+        updatedAt: 'desc',
       },
       skip: offset,
       take: pageSize,
