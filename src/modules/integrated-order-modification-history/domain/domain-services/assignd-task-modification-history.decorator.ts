@@ -39,7 +39,9 @@ export class AssignedTaskModificationHistoryDecorator implements LazyDecorator {
 
       const modified = getModifiedFields(copyBefore, copyAfter)
       if (_.isEmpty(modified)) {
-        await this.assignedTaskRepo.rollbackUpdatedAtAndEditor(assignedTask)
+        if (copyAfter.updated_at !== copyBefore.updated_at) {
+          await this.assignedTaskRepo.rollbackUpdatedAtAndEditor(assignedTask)
+        }
         throw new NoUpdateException()
       }
 

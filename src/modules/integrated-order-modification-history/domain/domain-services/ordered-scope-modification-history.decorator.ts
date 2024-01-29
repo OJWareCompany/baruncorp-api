@@ -43,7 +43,9 @@ export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
 
       const modified = getModifiedFields(copyBefore, copyAfter)
       if (_.isEmpty(modified)) {
-        await this.orderedScopeRepo.rollbackUpdatedAtAndEditor(orderedScope)
+        if (copyAfter.updated_at !== copyBefore.updated_at) {
+          await this.orderedScopeRepo.rollbackUpdatedAtAndEditor(orderedScope)
+        }
         throw new NoUpdateException()
       }
 

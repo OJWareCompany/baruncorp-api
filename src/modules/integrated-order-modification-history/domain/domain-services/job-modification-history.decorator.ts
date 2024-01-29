@@ -39,7 +39,9 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
 
       const modified = getModifiedFields(copyBefore, copyAfter)
       if (_.isEmpty(modified)) {
-        await this.jobRepository.rollbackUpdatedAtAndEditor(job)
+        if (copyAfter.updatedAt !== copyBefore.updatedAt) {
+          await this.jobRepository.rollbackUpdatedAtAndEditor(job)
+        }
         throw new NoUpdateException()
       }
 
