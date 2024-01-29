@@ -8,6 +8,7 @@ export function getModifiedFields<T>(
   modified: T,
 ): Record<string, { propertyTitle: string; before: any; after: any }> {
   const changes: Record<string, { propertyTitle: string; before: any; after: any }> = {}
+  const excludingFields = ['updated_at', 'updatedAt', 'modified_by', 'modifiedBy', 'updated_by', 'updatedBy']
 
   function findChanges(originalObj: any, modifiedObj: any, path = ''): void {
     if (_.isNil(originalObj) || _.isNil(modifiedObj)) {
@@ -27,7 +28,7 @@ export function getModifiedFields<T>(
         if (_.isObject(value) && _.isObject(_.get(originalObj, key))) {
           findChanges(_.get(originalObj, key), value, newPath)
         } else if (!_.isEqual(_.get(originalObj, key), value)) {
-          if (_.includes(['updated_at', 'updatedAt', 'modified_by', 'updated_by'], key)) return null
+          if (_.includes(excludingFields, key)) return null
 
           const beforeValue = transformValue(_.get(originalObj, key))
           const afterValue = transformValue(value)

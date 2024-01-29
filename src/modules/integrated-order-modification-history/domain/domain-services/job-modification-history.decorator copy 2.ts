@@ -9,6 +9,8 @@ import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { OrderModificationHistoryGenerator } from './order-modification-history-generator.domain-service'
+import { UserEntity } from '../../../users/domain/user.entity'
+import { JobEntity } from '../../../ordered-job/domain/job.entity'
 
 type JobHistoryOption = {
   byProject?: boolean
@@ -33,37 +35,47 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
     return async (...args: any) => {
       const editor = await this.userRepo.findOneById(args[0].editorUserId)
 
-      const projectId = args[0].projectId || args[0].aggregateId
-      const jobId = args[0].jobId
+      const filterField = this.getFilterField(options)
+      const filterValue = this.getFilterValue(options, ...args)
 
-      const filterField = options?.byProject ? 'projectId' : 'id'
-      const filterValue = options?.byProject ? projectId : jobId
       const jobs = await this.jobRepository.findManyBy(filterField, filterValue)
       const copiesBefore = new Map(jobs.map((job) => [job.id, deepCopy(this.jobMapper.toPersistence(job))]))
 
       const result = await method(...args)
 
       const jobsAfterModification = await this.jobRepository.findManyBy(filterField, filterValue)
-      await Promise.all(
-        jobsAfterModification.map(async (job) => {
-          const copyBefore = copiesBefore.get(job.id)
-          if (!copyBefore) return
-
-          const copyAfter = deepCopy(this.jobMapper.toPersistence(job))
-
-          const modified = getModifiedFields(copyBefore, copyAfter)
-          if (_.isEmpty(modified)) {
-            if (copyAfter.updatedAt !== copyBefore.updatedAt) {
-              await this.jobRepository.rollbackUpdatedAtAndEditor(job)
-            }
-            return
-          }
-          await this.orderModificationHistoryGenerator.generate(job, copyBefore, copyAfter, editor || undefined)
-          await this.jobRepository.updateOnlyEditorInfo(job, editor || undefined)
-        }),
-      )
+      await Promise.all(jobsAfterModification.map(async (job) => await this.generateHistory(job, copiesBefore, editor)))
 
       return result
     }
+  }
+
+  private getFilterField(options: JobHistoryOption) {
+    return options?.byProject ? 'projectId' : 'id'
+  }
+
+  private getFilterValue(options: JobHistoryOption, ...args: any) {
+    const projectId = args[0].projectId || args[0].aggregateId
+    const jobId = args[0].jobId
+    return options?.byProject ? projectId : jobId
+  }
+
+  private async generateHistory(job: JobEntity, copiesBefore: any, editor?: UserEntity | null) {
+    const copyBefore = copiesBefore.get(job.id)
+    if (!copyBefore) return
+
+    const copyAfter = deepCopy(this.jobMapper.toPersistence(job))
+
+    const modified = getModifiedFields(copyBefore, copyAfter)
+
+    if (_.isEmpty(modified)) {
+      if (copyAfter.updatedAt !== copyBefore.updatedAt) {
+        await this.jobRepository.rollbackUpdatedAtAndEditor(job)
+      }
+      return
+    }
+
+    await this.orderModificationHistoryGenerator.generate(job, copyBefore, copyAfter, editor || undefined)
+    await this.jobRepository.updateOnlyEditorInfo(job, editor || undefined)
   }
 }
