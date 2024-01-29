@@ -21,7 +21,7 @@ export class SendDeliverablesService implements ICommandHandler {
     private readonly orderStatusChangeValidator: OrderStatusChangeValidator,
   ) {}
 
-  @GenerateJobModificationHistory
+  @GenerateJobModificationHistory()
   async execute(command: SendDeliverablesCommand): Promise<void> {
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
     const editor = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)

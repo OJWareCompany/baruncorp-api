@@ -3,6 +3,8 @@ import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs
 import _ from 'lodash'
 import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
 import { deepCopy } from '../../../../libs/utils/deep-copy.util'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
@@ -11,12 +13,10 @@ import { JobMapper } from '../../../ordered-job/job.mapper'
 import { OrderModificationHistoryGenerator } from './order-modification-history-generator.domain-service'
 
 type JobHistoryOption = {
-  byProject?: boolean
+  byProject: boolean
 }
-
 export const JOB_MODIFICATION_HISTORY_DECORATOR = Symbol('JOB_MODIFICATION_HISTORY_DECORATOR')
-export const GenerateJobModificationHistory = (option?: JobHistoryOption) =>
-  createDecorator(JOB_MODIFICATION_HISTORY_DECORATOR, option)
+export const GenerateJobModificationHistory = createDecorator(JOB_MODIFICATION_HISTORY_DECORATOR)
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 @Aspect(JOB_MODIFICATION_HISTORY_DECORATOR)
@@ -24,21 +24,22 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
   constructor(
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
+    @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort, // @ts-ignore
+    @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
     private readonly jobMapper: JobMapper,
     private readonly orderModificationHistoryGenerator: OrderModificationHistoryGenerator,
   ) {}
 
-  wrap({ method, metadata: options }: WrapParams<any, JobHistoryOption>) {
+  wrap({ method, metadata: options }: WrapParams<any, any>) {
     return async (...args: any) => {
       const editor = await this.userRepo.findOneById(args[0].editorUserId)
 
       const projectId = args[0].projectId || args[0].aggregateId
       const jobId = args[0].jobId
 
-      const filterField = options?.byProject ? 'projectId' : 'id'
-      const filterValue = options?.byProject ? projectId : jobId
-      console.log(filterField, filterValue)
+      const filterField = options.byProject ? 'projectId' : 'id'
+      const filterValue = options.byProject ? projectId : jobId
+
       const jobs = await this.jobRepository.findManyBy(filterField, filterValue)
       const copiesBefore = new Map(jobs.map((job) => [job.id, deepCopy(this.jobMapper.toPersistence(job))]))
 

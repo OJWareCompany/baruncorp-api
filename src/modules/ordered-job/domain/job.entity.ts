@@ -147,7 +147,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  updateRivisionSize() {
+  updateRevisionSize() {
     const sizeForRevision = this.props.orderedServices.find(
       (orderedService) =>
         orderedService.isRevision && orderedService.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major,
@@ -222,7 +222,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  updatePropetyAddress(propertyFullAddress: string) {
+  updatePropertyAddress(propertyFullAddress: string) {
     this.props.propertyFullAddress = propertyFullAddress
     this.props.jobName = `Job #${this.props.jobRequestNumber} ${propertyFullAddress}`
   }

@@ -22,7 +22,7 @@ export class UpdateJobStatusService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @GenerateJobModificationHistory
+  @GenerateJobModificationHistory()
   async execute(command: UpdateJobStatusCommand): Promise<void> {
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
     const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)

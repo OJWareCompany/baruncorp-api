@@ -13,7 +13,7 @@ export class StartJobWhenOrderedServiceIsStartedDomainEventHandler {
   ) {}
 
   @OnEvent(OrderedServiceStartedDomainEvent.name, { async: true, promisify: true })
-  @GenerateJobModificationHistory
+  @GenerateJobModificationHistory()
   async handle(event: OrderedServiceStartedDomainEvent) {
     const job = await this.jobRepository.findJobOrThrow(event.jobId)
     job.start()
