@@ -2699,6 +2699,12 @@ export interface FindOverdueInvoicePaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  organizationName?: string | null
+  clientOrganizationId?: string | null
 }
 
 export interface FindCustomPricingPaginatedHttpControllerGetParams {

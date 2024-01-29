@@ -10,6 +10,7 @@ import { InvoiceStatusEnum } from '../../domain/invoice.type'
 
 export class FindOverdueInvoicePaginatedQuery extends PaginatedQueryBase {
   readonly clientOrganizationId?: string | null
+  readonly organizationName?: string | null
   constructor(props: PaginatedParams<FindOverdueInvoicePaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -28,8 +29,9 @@ export class FindOverdueInvoicePaginatedQueryHandler implements IQueryHandler {
       dueDate: { lt: new Date() },
       status: InvoiceStatusEnum.Issued,
       ...(query.clientOrganizationId && { clientOrganizationId: query.clientOrganizationId }),
+      ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
     }
-    const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
+    // const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const invoices = await this.prismaService.invoices.findMany({
       where: condition,
       include: {

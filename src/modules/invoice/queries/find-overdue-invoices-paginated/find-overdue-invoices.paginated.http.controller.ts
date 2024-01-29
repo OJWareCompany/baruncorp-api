@@ -10,6 +10,7 @@ import {
 import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
+import { FindInvoiceOverduePaginatedRequestDto } from './find-overdue-invoices.paginated.request.dto'
 
 @Controller('overdue-invoices')
 export class FindOverdueInvoicePaginatedHttpController {
@@ -21,9 +22,14 @@ export class FindOverdueInvoicePaginatedHttpController {
   ) {}
 
   @Get('')
-  async get(@Query() queryParams: PaginatedQueryRequestDto): Promise<InvoicePaginatedResponseDto> {
+  async get(
+    @Query() queryParams: PaginatedQueryRequestDto,
+    @Query() request: FindInvoiceOverduePaginatedRequestDto,
+  ): Promise<InvoicePaginatedResponseDto> {
     const command = new FindOverdueInvoicePaginatedQuery({
       ...queryParams,
+      organizationName: request.organizationName,
+      clientOrganizationId: request.clientOrganizationId,
     })
     const result: FindOverdueInvoicePaginatedReturnType = await this.queryBus.execute(command)
 
