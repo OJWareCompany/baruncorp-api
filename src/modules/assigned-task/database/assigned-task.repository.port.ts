@@ -15,6 +15,7 @@ export interface AssignedTaskRepositoryPort {
     serviceMonth: Date,
     query?: PaginatedQueryBase,
   ): Promise<AssignedTaskEntity[]>
+  countTasksToVendorInvoice(organizationId: string, serviceMonth: Date): Promise<number>
   rollbackUpdatedAtAndEditor(entity: AssignedTaskEntity): Promise<void>
   updateOnlyEditorInfo(entity: AssignedTaskEntity, editor?: UserEntity): Promise<void>
 }

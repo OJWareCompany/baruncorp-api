@@ -108,7 +108,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
       ...(query && { skip: query.offset }),
       ...(query && { take: query.limit }),
       where: {
-        organizationId: organizationId,
+        assigneeOrganizationId: organizationId,
         status: AssignedTaskStatusEnum.Completed,
         isVendor: true,
         NOT: { cost: null },
@@ -120,5 +120,23 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
       },
     })
     return records.map(this.assignedTaskMapper.toDomain)
+  }
+
+  async countTasksToVendorInvoice(organizationId: string, serviceMonth: Date): Promise<number> {
+    const result = await this.prismaService.assignedTasks.count({
+      where: {
+        assigneeOrganizationId: organizationId,
+        status: AssignedTaskStatusEnum.Completed,
+        isVendor: true,
+        NOT: { cost: null },
+        // TODO: 검토필요, createdAt으로 교체?
+        startedAt: {
+          gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
+          lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+        },
+      },
+    })
+
+    return result
   }
 }

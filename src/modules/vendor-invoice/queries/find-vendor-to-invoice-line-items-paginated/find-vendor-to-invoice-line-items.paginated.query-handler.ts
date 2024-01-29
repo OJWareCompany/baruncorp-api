@@ -37,20 +37,10 @@ export class FindVendorToInvoiceLineItemsQueryHandler implements IQueryHandler {
       query.serviceMonth,
       query,
     )
-    const totalCount = await this.prismaService.assignedTasks.count({
-      where: {
-        organizationId: query.clientOrganizationId,
-        status: AssignedTaskStatusEnum.Completed,
-        isVendor: true,
-        NOT: { cost: null },
-        // TODO: 검토필요, createdAt으로 교체?
-        startedAt: {
-          gte: zonedTimeToUtc(startOfMonth(query.serviceMonth), 'Etc/UTC'),
-          lte: zonedTimeToUtc(endOfMonth(query.serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
-        },
-      },
-    })
-
+    const totalCount = await this.assignedTaskRepo.countTasksToVendorInvoice(
+      query.clientOrganizationId,
+      query.serviceMonth,
+    )
     return new Paginated<VendorInvoiceLineItemResponse>({
       items: result.map(this.assignedTaskMapper.toResponseForVendorLineItem),
       page: query.page,
