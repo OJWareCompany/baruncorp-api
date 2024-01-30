@@ -152,6 +152,7 @@ export class JobResponseMapper {
       taskSubtotal: subtotal,
       state: stateName,
       dateSentToClient: job.dateSentToClient,
+      dueDate: job.dueDate ? job.dueDate : null,
     })
   }
 

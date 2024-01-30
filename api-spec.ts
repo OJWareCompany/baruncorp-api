@@ -495,6 +495,8 @@ export interface JobResponseDto {
   taskSubtotal: number
   pricingType: 'Standard' | 'Tiered'
   state: string
+  /** @format date-time */
+  dueDate: string | null
 }
 
 export interface JobPaginatedResponseDto {

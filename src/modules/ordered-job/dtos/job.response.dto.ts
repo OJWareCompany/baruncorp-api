@@ -233,6 +233,11 @@ export class JobResponseDto {
   @IsString()
   state: string
 
+  @ApiProperty()
+  @IsDate()
+  @IsOptional()
+  dueDate: Date | null
+
   constructor(props: JobResponseDto) {
     initialize(this, props)
   }
