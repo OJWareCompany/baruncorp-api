@@ -1,6 +1,6 @@
-import { Inject } from '@nestjs/common'
-import { OrderedJobs } from '@prisma/client'
 import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs-aop'
+import { BadRequestException, Inject } from '@nestjs/common'
+import { OrderedJobs } from '@prisma/client'
 import _ from 'lodash'
 import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
 import { deepCopy } from '../../../../libs/utils/deep-copy.util'
@@ -14,8 +14,22 @@ import { JobMapper } from '../../../ordered-job/job.mapper'
 import { OrderModificationHistoryGenerator } from './order-modification-history-generator.domain-service'
 
 type JobHistoryOption = {
-  byProject?: boolean
+  invokedFrom?: 'project' | 'invoice'
 }
+
+type InvokedFromProjectArg = {
+  projectId: string | null
+}
+
+type InvokedFromInvoiceArg = {
+  clientOrganizationId: string | null
+  serviceMonth: Date | null
+}
+
+type JobHistoryArguments = {
+  jobId: string | null
+} & InvokedFromProjectArg &
+  InvokedFromInvoiceArg
 
 export const JOB_MODIFICATION_HISTORY_DECORATOR = Symbol('JOB_MODIFICATION_HISTORY_DECORATOR')
 export const GenerateJobModificationHistory = (option?: JobHistoryOption) =>
@@ -36,29 +50,45 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
     return async (...args: any) => {
       const editor = await this.userRepo.findOneById(args[0].editorUserId)
 
-      const filterField = this.getFilterField(options)
-      const filterValue = this.getFilterValue(options, ...args)
-
-      const jobs = await this.jobRepository.findManyBy(filterField, filterValue)
+      const jobs = await this.findBeforeJobs(options, ...args)
       const copiesBefore = this.createCopies(jobs)
 
       const result = await method(...args)
 
-      const jobsAfterModification = await this.jobRepository.findManyBy(filterField, filterValue)
+      const jobsAfterModification = await this.findAfterJobs(jobs)
       await Promise.all(jobsAfterModification.map(async (job) => await this.generateHistory(job, copiesBefore, editor)))
 
       return result
     }
   }
 
-  private getFilterField(options: JobHistoryOption) {
-    return options?.byProject ? 'projectId' : 'id'
+  private async findBeforeJobs(options: JobHistoryOption, ...args: any): Promise<JobEntity[]> {
+    const { projectId, jobId, clientOrganizationId, serviceMonth } = this.extractArguments(...args)
+
+    switch (options?.invokedFrom) {
+      case 'invoice':
+        if (_.isNil(clientOrganizationId) || _.isNil(serviceMonth)) throw new BadRequestException()
+        return await this.jobRepository.findJobsToInvoice(clientOrganizationId, serviceMonth)
+      case 'project':
+        if (_.isNil(projectId)) throw new BadRequestException()
+        return await this.jobRepository.findManyBy({ projectId: projectId })
+      default:
+        if (_.isNil(jobId)) throw new BadRequestException()
+        return await this.jobRepository.findManyBy({ id: jobId })
+    }
   }
 
-  private getFilterValue(options: JobHistoryOption, ...args: any) {
-    const projectId = args[0].projectId || args[0].aggregateId
-    const jobId = args[0].jobId
-    return options?.byProject ? projectId : jobId
+  private async findAfterJobs(jobs: JobEntity[]) {
+    return await this.jobRepository.findManyBy({ id: { in: jobs.map((job) => job.id) } })
+  }
+
+  private extractArguments(...args: any): JobHistoryArguments {
+    return {
+      projectId: args[0].projectId || args[0].aggregateId || null,
+      jobId: args[0].jobId || null,
+      clientOrganizationId: args[0].clientOrganizationId || null,
+      serviceMonth: args[0].serviceMonth || null,
+    }
   }
 
   private createCopies(jobs: JobEntity[]): Map<string, OrderedJobs> {

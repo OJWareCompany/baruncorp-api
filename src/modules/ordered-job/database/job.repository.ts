@@ -1,4 +1,4 @@
-import { AssignedTasks, OrderedJobs, OrderedServices, Service, Tasks, Users } from '@prisma/client'
+import { AssignedTasks, OrderedJobs, OrderedServices, Prisma, Service, Tasks, Users } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { JobRepositoryPort } from './job.repository.port'
@@ -151,10 +151,10 @@ export class JobRepository implements JobRepositoryPort {
     })
   }
 
-  async findManyBy(property: keyof OrderedJobs, value: OrderedJobs[typeof property]): Promise<JobEntity[]> {
+  async findManyBy(whereInput: Prisma.OrderedJobsWhereInput): Promise<JobEntity[]> {
     const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const records: JobModel[] = await this.prismaService.orderedJobs.findMany({
-      where: { [property]: value },
+      where: whereInput,
       include: {
         orderedServices: {
           include: {

@@ -13,9 +13,9 @@ export class UpdateJobNameWhenProjectIsUpdatedDomainEventHandler {
   ) {}
 
   @OnEvent(ProjectPropertyAddressUpdatedDomainEvent.name, { async: true, promisify: true })
-  @GenerateJobModificationHistory({ byProject: true })
+  @GenerateJobModificationHistory({ invokedFrom: 'project' })
   async handle(event: ProjectPropertyAddressUpdatedDomainEvent) {
-    const jobs = await this.jobRepository.findManyBy('projectId', event.aggregateId)
+    const jobs = await this.jobRepository.findManyBy({ projectId: event.aggregateId })
     jobs.map((job) => job.updatePropertyAddress(event.projectPropertyAddress.fullAddress))
     await this.jobRepository.update(jobs)
   }

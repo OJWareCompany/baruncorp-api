@@ -1,15 +1,20 @@
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable } from '@nestjs/common'
 import { Invoices } from '@prisma/client'
+import { Paginated } from '../../../libs/ddd/repository.port'
 import { PrismaService } from '../../database/prisma.service'
+import { InvoiceNotFoundException } from '../domain/invoice.error'
+import { InvoiceEntity } from '../domain/invoice.entity'
 import { InvoiceMapper } from '../invoice.mapper'
 import { InvoiceRepositoryPort } from './invoice.repository.port'
-import { Paginated } from '../../../libs/ddd/repository.port'
-import { InvoiceEntity } from '../domain/invoice.entity'
-import { InvoiceNotFoundException } from '../domain/invoice.error'
 
 @Injectable()
 export class InvoiceRepository implements InvoiceRepositoryPort {
-  constructor(private readonly prismaService: PrismaService, private readonly invoiceMapper: InvoiceMapper) {}
+  constructor(
+    private readonly prismaService: PrismaService,
+    private readonly invoiceMapper: InvoiceMapper,
+    private readonly eventEmitter: EventEmitter2,
+  ) {}
   find(): Promise<Paginated<InvoiceEntity>> {
     throw new Error('Method not implemented.')
   }
@@ -22,6 +27,8 @@ export class InvoiceRepository implements InvoiceRepositoryPort {
         dueDate: null,
       },
     })
+
+    await entity.publishEvents(this.eventEmitter)
   }
 
   async update(entity: InvoiceEntity): Promise<void> {

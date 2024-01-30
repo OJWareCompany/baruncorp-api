@@ -38,7 +38,7 @@ export class UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandl
     const job = await this.jobRepo.findJobOrThrow(event.jobId)
     if (!job.invoiceId) return
 
-    const jobs = await this.jobRepo.findManyBy('invoiceId', job.invoiceId)
+    const jobs = await this.jobRepo.findManyBy({ invoiceId: job.invoiceId })
     const orderedServices = await this.orderedServiceRepo.findBy(
       'jobId',
       jobs.map((job) => job.id),

@@ -2,6 +2,7 @@ import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateInvoiceProps, InvoiceProps, InvoiceStatusEnum, InvoiceTermsEnum } from './invoice.type'
 import addDays from 'date-fns/addDays'
+import { InvoiceCreatedDomainEvent } from './domain-events/invoice-created.domain-event'
 
 export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   protected _id: string
@@ -14,7 +15,18 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
       status: InvoiceStatusEnum.Unissued,
       payments: [],
     }
-    return new InvoiceEntity({ id, props })
+
+    const entity = new InvoiceEntity({ id, props })
+
+    entity.addEvent(
+      new InvoiceCreatedDomainEvent({
+        aggregateId: entity.id,
+        clientOrganizationId: entity.props.clientOrganizationId,
+        serviceMonth: entity.props.serviceMonth,
+      }),
+    )
+
+    return entity
   }
 
   get isIssuedOrPaid() {
