@@ -33,7 +33,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
     const props = entity.getProps()
     return {
       id: props.id,
-      project_number: props.projectId,
+      project_number: props.projectNumber,
       invoiceId: props.invoiceId,
       revisionSize: props.revisionSize,
       loadCalcOrigin: props.loadCalcOrigin,
