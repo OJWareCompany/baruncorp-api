@@ -17,7 +17,7 @@ export class FindInvoiceQuery {
   }
 }
 
-export type FindInvoidReturnType = Invoices & { organization: Organizations; jobs: JobEntity[] }
+export type FindInvoiceReturnType = Invoices & { organization: Organizations; jobs: JobEntity[] }
 @QueryHandler(FindInvoiceQuery)
 export class FindInvoiceQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService, private readonly jobResponseMapper: JobResponseMapper) {}
