@@ -28,7 +28,9 @@ export class FindIntegratedOrderModificationHistoryPaginatedQueryHandler impleme
       orderBy: { modifiedAt: 'desc' },
     })
     if (!result) throw new IntegratedOrderModificationHistoryNotFoundException()
-    const totalCount = await this.prismaService.integratedOrderModificationHistory.count()
+    const totalCount = await this.prismaService.integratedOrderModificationHistory.count({
+      where: { jobId: query.jobId },
+    })
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
