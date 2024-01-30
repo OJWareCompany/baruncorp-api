@@ -2,6 +2,6 @@ import { NotFoundException } from '@nestjs/common'
 
 export class IntegratedOrderModificationHistoryNotFoundException extends NotFoundException {
   constructor() {
-    super('Not IntegratedOrderModificationHistory found', '')
+    super('Not IntegratedOrderModificationHistory found', '50101')
   }
 }

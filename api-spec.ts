@@ -2884,8 +2884,7 @@ export interface FindOrderedServicePaginatedHttpControllerGetParams {
 }
 
 export interface FindIntegratedOrderModificationHistoryPaginatedHttpControllerGetParams {
-  /** @default "" */
-  integratedOrderModificationHistoryId: string
+  jobId: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -5381,14 +5380,17 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindIntegratedOrderModificationHistoryHttpControllerGet
-     * @request GET:/integrated-order-modification-history/{integratedOrderModificationHistoryId}
+     * @request GET:/integrated-order-modification-history/{jobId}/{entityId}/{attribute}/{modifiedAt}
      */
     findIntegratedOrderModificationHistoryHttpControllerGet: (
-      integratedOrderModificationHistoryId: string,
+      entityId: string,
+      jobId: string,
+      attribute: string,
+      modifiedAt: string,
       params: RequestParams = {},
     ) =>
       this.request<IntegratedOrderModificationHistoryResponseDto, any>({
-        path: `/integrated-order-modification-history/${integratedOrderModificationHistoryId}`,
+        path: `/integrated-order-modification-history/${jobId}/${entityId}/${attribute}/${modifiedAt}`,
         method: 'GET',
         format: 'json',
         ...params,
