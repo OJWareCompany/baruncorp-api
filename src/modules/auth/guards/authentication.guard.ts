@@ -5,7 +5,7 @@ import { Request } from 'express'
 import { PrismaService } from '../../database/prisma.service'
 import UserMapper from '../../users/user.mapper'
 import { UserNotFoundException } from '../../users/user.error'
-import { TokenExpiredException, TokenNotFoundException } from '../auth.error'
+import { LoginException, TokenExpiredException, TokenNotFoundException } from '../auth.error'
 
 @Injectable()
 export class AuthGuard implements CanActivate {
@@ -41,7 +41,9 @@ export class AuthGuard implements CanActivate {
       if (!user) throw new UserNotFoundException()
       request['user'] = this.userMapper.toDomain(user)
     } catch (error) {
-      console.log(error)
+      if (error instanceof UserNotFoundException) {
+        throw new LoginException()
+      }
       throw new TokenExpiredException()
     }
     return true
