@@ -19,6 +19,8 @@ export class FindVendorToInvoiceLineItemsPaginatedHttpController {
   ): Promise<VendorInvoiceLineItemPaginatedResponseDto> {
     const query = new FindVendorToInvoiceLineItemsQuery({
       ...request,
+      clientOrganizationId: request.clientOrganizationId,
+      serviceMonth: request.serviceMonth,
       page: queryParams.page,
       limit: queryParams.limit,
     })

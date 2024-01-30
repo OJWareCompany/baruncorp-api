@@ -1,8 +1,8 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { Invoices, OrderedJobs, Organizations, Prisma } from '@prisma/client'
+import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
-import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobMapper } from '../../../ordered-job/job.mapper'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
@@ -31,7 +31,7 @@ export class FindInvoicePaginatedQueryHandler implements IQueryHandler {
       ...(query.invoiceDate && { invoiceDate: query.invoiceDate }),
       ...(query.clientOrganizationId && { clientOrganizationId: query.clientOrganizationId }),
     }
-    // const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
+
     const invoices = await this.prismaService.invoices.findMany({
       where: condition,
       include: {

@@ -28,6 +28,7 @@ export class FindInvoicePaginatedHttpController {
       status: request.status,
       organizationName: request.organizationName,
       invoiceDate: request.invoiceDate,
+      clientOrganizationId: request.clientOrganizationId,
     })
     const result: FindInvoicePaginatedReturnType = await this.queryBus.execute(command)
 
