@@ -14,6 +14,10 @@ import { OrderModificationHistoryGenerator } from './order-modification-history-
 export const ASSIGNED_TASK_MODIFICATION_HISTORY_DECORATOR = Symbol('ORDER_MODIFICATION_HISTORY_DECORATOR')
 export const GenerateAssignedTaskModificationHistory = createDecorator(ASSIGNED_TASK_MODIFICATION_HISTORY_DECORATOR)
 
+/**
+ * https://toss.tech/article/nestjs-custom-decorator
+ */
+
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 @Aspect(ASSIGNED_TASK_MODIFICATION_HISTORY_DECORATOR)
 export class AssignedTaskModificationHistoryDecorator implements LazyDecorator {

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs-aop'
 import { BadRequestException, Inject } from '@nestjs/common'
 import { OrderedJobs } from '@prisma/client'
@@ -35,7 +36,9 @@ export const JOB_MODIFICATION_HISTORY_DECORATOR = Symbol('JOB_MODIFICATION_HISTO
 export const GenerateJobModificationHistory = (option?: JobHistoryOption) =>
   createDecorator(JOB_MODIFICATION_HISTORY_DECORATOR, option)
 
-/* eslint-disable @typescript-eslint/ban-ts-comment */
+/**
+ * https://toss.tech/article/nestjs-custom-decorator
+ */
 @Aspect(JOB_MODIFICATION_HISTORY_DECORATOR)
 export class JobModificationHistoryDecorator implements LazyDecorator {
   constructor(

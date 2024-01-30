@@ -14,6 +14,9 @@ import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
 export const ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR = Symbol('ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR')
 export const GenerateOrderedScopeModificationHistory = createDecorator(ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR)
 
+/**
+ * https://toss.tech/article/nestjs-custom-decorator
+ */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 @Aspect(ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR)
 export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
