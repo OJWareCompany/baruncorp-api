@@ -1,8 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from '../../../integrated-order-modification-history/integrated-order-modification-history.di-token'
-import { IntegratedOrderModificationHistoryRepositoryPort } from '../../../integrated-order-modification-history/database/integrated-order-modification-history.repository.port'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-created.domain-event'
@@ -29,9 +27,6 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
-    // @ts-ignore
-    @Inject(INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY)
-    private readonly orderHistoryRepo: IntegratedOrderModificationHistoryRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
@@ -80,16 +75,6 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     const orderedServiceEntities = await Promise.all(makeEntities)
 
     await this.orderedServiceRepo.insert(orderedServiceEntities)
-
-    // GENERATE HISTORY
-    const createdOrderedServices = await this.orderedServiceRepo.find(
-      orderedServiceEntities.map((service) => service.id),
-    )
-    await Promise.all(
-      createdOrderedServices.map(async (orderedService) => {
-        await this.orderHistoryRepo.generateCreationHistory(orderedService, editor)
-      }),
-    )
   }
 }
 

@@ -17,6 +17,9 @@ import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
 import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
 import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from './integrated-order-modification-history.di-token'
 import { IntegratedOrderModificationHistoryRepository } from './database/integrated-order-modification-history.repository'
+import { GenerateCreationHistoryWhenOrderIsCreatedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-order-is-created.domain-event-handler'
+import { GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-task-is-ordered.domain-event-handler'
+import { GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-scope-is-ordered.domain-event-handler'
 
 const httpControllers = [
   FindIntegratedOrderModificationHistoryHttpController,
@@ -33,7 +36,11 @@ const repositories: Provider[] = [
     useClass: IntegratedOrderModificationHistoryRepository,
   },
 ]
-const eventHandlers: Provider[] = []
+const eventHandlers: Provider[] = [
+  GenerateCreationHistoryWhenOrderIsCreatedDomainEventHandler,
+  GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler,
+  GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler,
+]
 const mappers: Provider[] = [UserMapper]
 const domainServices: Provider[] = [OrderModificationHistoryGenerator]
 const decorators: Provider[] = [

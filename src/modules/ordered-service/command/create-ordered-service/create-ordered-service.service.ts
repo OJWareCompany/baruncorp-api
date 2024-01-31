@@ -2,8 +2,6 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
-import { IntegratedOrderModificationHistoryRepositoryPort } from '../../../integrated-order-modification-history/database/integrated-order-modification-history.repository.port'
-import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from '../../../integrated-order-modification-history/integrated-order-modification-history.di-token'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
@@ -34,9 +32,6 @@ export class CreateOrderedServiceService implements ICommandHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
-    // @ts-ignore
-    @Inject(INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY)
-    private readonly orderHistoryRepo: IntegratedOrderModificationHistoryRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
@@ -87,11 +82,6 @@ export class CreateOrderedServiceService implements ICommandHandler {
     )
 
     await this.orderedServiceRepo.insert(orderedServiceEntity)
-
-    // GENERATE ORDER HISTORY
-    const createdOrderedService = await this.orderedServiceRepo.findOneOrThrow(orderedServiceEntity.id)
-    await this.orderHistoryRepo.generateCreationHistory(createdOrderedService, editor)
-
     return orderedServiceEntity.id
   }
 }

@@ -47,6 +47,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
       new AssignedTaskCreatedDomainEvent({
         aggregateId: entity.id,
         jobId: entity.getProps().jobId,
+        editorUserId: entity.getProps().editorUserId,
       }),
     )
     return entity
