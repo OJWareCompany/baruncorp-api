@@ -1137,7 +1137,7 @@ model ClientNoteSnapshots {
 
 model IntegratedOrderModificationHistory {
   jobId           String   @map("job_id") @db.VarChar(255)
-  modifiedAt      DateTime @default(now()) @map("modified_at") @db.DateTime(0)
+  modifiedAt      DateTime @map("modified_at")
   modifiedBy      String   @default("System") @map("modified_by") @db.VarChar(255)
   entity          String   @map("entity") @db.VarChar(255)
   entityId        String   @map("entity_id") @db.VarChar(255)
