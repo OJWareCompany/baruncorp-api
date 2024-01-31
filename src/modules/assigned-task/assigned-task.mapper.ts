@@ -45,6 +45,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       created_at: props.createdAt,
       updated_at: props.updatedAt,
       updated_by: props.updatedBy,
+      editor_user_id: props.editorUserId,
     }
     return record
   }
@@ -85,6 +86,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         isExpedited: record.is_expedited,
         isActive: record.is_active,
         updatedBy: record.updated_by,
+        editorUserId: record.editor_user_id,
       },
     })
     return entity

@@ -203,6 +203,7 @@ model OrderedServices {
   jobName                  String          @map("job_name") @db.VarChar(255)
   updated_at               DateTime        @default(now()) @db.DateTime(0)
   updated_by               String?         @db.VarChar(255)
+  editor_user_id           String?         @db.VarChar(255)
   job                      OrderedJobs     @relation(fields: [jobId], references: [id])
   service                  Service         @relation(fields: [serviceId], references: [id])
   assignedTasks            AssignedTasks[]
@@ -516,6 +517,7 @@ model OrderedJobs {
   mailingAdderssStreet2                         String?           @map("mailing_adderss_street2") @db.VarChar(255)
   mailingAdderssPostalCode                      String?           @map("mailing_adderss_postal_code") @db.VarChar(255)
   mailingAdderssPostalCountry                   String?           @map("mailing_adderss_country") @db.VarChar(255)
+  editor_user_id                                String?           @db.VarChar(255)
   project                                       OrderedProjects?  @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
@@ -719,6 +721,7 @@ model AssignedTasks {
   created_at               DateTime        @db.DateTime(0)
   updated_at               DateTime        @default(now()) @db.DateTime(0)
   updated_by               String?         @db.VarChar(255)
+  editor_user_id           String?         @db.VarChar(255)
   task                     Tasks           @relation(fields: [taskId], references: [id])
   orderedService           OrderedServices @relation(fields: [orderedServiceId], references: [id])
   job                      OrderedJobs     @relation(fields: [jobId], references: [id])

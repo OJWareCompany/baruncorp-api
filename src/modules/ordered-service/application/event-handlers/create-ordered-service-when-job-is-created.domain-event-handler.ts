@@ -1,18 +1,22 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-created.domain-event'
-import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
-import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
-import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from '../../../integrated-order-modification-history/integrated-order-modification-history.di-token'
+import { IntegratedOrderModificationHistoryRepositoryPort } from '../../../integrated-order-modification-history/database/integrated-order-modification-history.repository.port'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
-import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { JobCreatedDomainEvent } from '../../../ordered-job/domain/events/job-created.domain-event'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
+import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
+import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
+import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -23,6 +27,11 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
+    // @ts-ignore
+    @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
+    // @ts-ignore
+    @Inject(INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY)
+    private readonly orderHistoryRepo: IntegratedOrderModificationHistoryRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
@@ -32,6 +41,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   async handle(event: JobCreatedDomainEvent) {
     const job = await this.jobRepo.findJobOrThrow(event.aggregateId)
     const project = await this.projectRepo.findOneOrThrow({ id: job.projectId })
+    const editor = event.editorUserId ? await this.userRepo.findOneById(event.editorUserId) : null
 
     const makeEntities = event.services.map(async (orderedService) => {
       // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
@@ -56,7 +66,8 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
           projectPropertyOwnerName: project.projectPropertyOwnerName,
           jobName: job.jobName,
           isExpedited: job.getProps().isExpedited,
-          updatedBy: null,
+          updatedBy: editor ? editor.userName.fullName : null,
+          editorUserId: editor ? editor.id : null,
         },
         this.serviceInitialPriceManager,
         this.orderModificationValidator,
@@ -69,6 +80,16 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     const orderedServiceEntities = await Promise.all(makeEntities)
 
     await this.orderedServiceRepo.insert(orderedServiceEntities)
+
+    // GENERATE HISTORY
+    const createdOrderedServices = await this.orderedServiceRepo.find(
+      orderedServiceEntities.map((service) => service.id),
+    )
+    await Promise.all(
+      createdOrderedServices.map(async (orderedService) => {
+        await this.orderHistoryRepo.generateCreationHistory(orderedService, editor)
+      }),
+    )
   }
 }
 

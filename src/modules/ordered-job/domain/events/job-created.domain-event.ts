@@ -18,6 +18,7 @@ export class JobCreatedDomainEvent extends DomainEvent {
   readonly organizationName: string
   readonly mountingType: MountingTypeEnum
   readonly projectType: ProjectPropertyTypeEnum
+  readonly editorUserId: string | null
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {
     super(props)

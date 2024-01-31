@@ -18,6 +18,7 @@ export class CreateJobCommand {
   readonly isExpedited: boolean
   readonly loadCalcOrigin: LoadCalcOriginEnum
   readonly dueDate: Date | null
+  readonly editorUserId: string
 
   constructor(props: CreateJobCommand) {
     initialize(this, props)

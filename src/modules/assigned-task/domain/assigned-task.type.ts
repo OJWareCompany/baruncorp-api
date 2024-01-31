@@ -27,6 +27,7 @@ export interface CreateAssignedTaskProps {
   jobName: string
   isExpedited: boolean
   updatedBy: string | null
+  editorUserId: string | null
 }
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {

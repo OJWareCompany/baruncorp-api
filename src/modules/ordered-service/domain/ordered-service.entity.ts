@@ -72,6 +72,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       new OrderedServiceCreatedDomainEvent({
         aggregateId: entity.id,
         ...props,
+        editorUserId: entity.getProps().editorUserId,
       }),
     )
 

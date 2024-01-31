@@ -69,6 +69,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       clientUserName: props.clientInfo.clientUserName,
       dueDate: props.dueDate,
       dateSentToClient: props.dateSentToClient,
+      editor_user_id: props.editorUserId,
 
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
@@ -243,6 +244,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         organizationId: record.clientOrganizationId,
         organizationName: record.clientOrganizationName,
         dateSentToClient: record.dateSentToClient,
+        editorUserId: record.editor_user_id,
       },
     })
   }

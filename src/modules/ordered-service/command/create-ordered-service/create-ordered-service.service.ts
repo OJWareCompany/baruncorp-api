@@ -2,20 +2,24 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
-import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
-import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
-import { CreateOrderedServiceCommand } from './create-ordered-service.command'
-import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
-import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
-import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
-import { MountingTypeEnum } from '../../../project/domain/project.type'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
-import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { IntegratedOrderModificationHistoryRepositoryPort } from '../../../integrated-order-modification-history/database/integrated-order-modification-history.repository.port'
+import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from '../../../integrated-order-modification-history/integrated-order-modification-history.di-token'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { MountingTypeEnum } from '../../../project/domain/project.type'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
+import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
+import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
+import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
+import { CreateOrderedServiceCommand } from './create-ordered-service.command'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -23,14 +27,16 @@ export class CreateOrderedServiceService implements ICommandHandler {
     // @ts-ignore
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
     // @ts-ignore
-    @Inject(ORDERED_SERVICE_REPOSITORY)
-    private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
+    @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     // @ts-ignore
-    @Inject(PROJECT_REPOSITORY)
-    private readonly projectRepo: ProjectRepositoryPort,
+    @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
     // @ts-ignore
-    @Inject(JOB_REPOSITORY)
-    private readonly jobRepo: JobRepositoryPort,
+    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
+    // @ts-ignore
+    @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
+    // @ts-ignore
+    @Inject(INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY)
+    private readonly orderHistoryRepo: IntegratedOrderModificationHistoryRepositoryPort,
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
@@ -48,6 +54,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
     const service = await this.serviceRepo.findOneOrThrow(command.serviceId)
     const job = await this.jobRepo.findJobOrThrow(command.jobId)
     const project = await this.projectRepo.findOneOrThrow({ id: job.projectId })
+    const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)
 
     // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
     const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
@@ -71,7 +78,8 @@ export class CreateOrderedServiceService implements ICommandHandler {
         projectPropertyOwnerName: project.projectPropertyOwnerName,
         jobName: job.jobName,
         isExpedited: job.getProps().isExpedited,
-        updatedBy: null,
+        updatedBy: editor.userName.fullName,
+        editorUserId: editor.id,
       },
       this.serviceInitialPriceManager,
       this.orderModificationValidator,
@@ -79,6 +87,11 @@ export class CreateOrderedServiceService implements ICommandHandler {
     )
 
     await this.orderedServiceRepo.insert(orderedServiceEntity)
+
+    // GENERATE ORDER HISTORY
+    const createdOrderedService = await this.orderedServiceRepo.findOneOrThrow(orderedServiceEntity.id)
+    await this.orderHistoryRepo.generateCreationHistory(createdOrderedService, editor)
+
     return orderedServiceEntity.id
   }
 }

@@ -15,7 +15,7 @@ export interface OrderedServiceRepositoryPort {
   insert(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void>
   findOne(id: string): Promise<OrderedServiceEntity | null>
   findOneOrThrow(id: string): Promise<OrderedServiceEntity>
-  find(ids: string[]): Promise<OrderedServiceEntity[] | null>
+  find(ids: string[]): Promise<OrderedServiceEntity[]>
   findBy(
     propertyName: keyof OrderedServices,
     values: OrderedServices[typeof propertyName][],

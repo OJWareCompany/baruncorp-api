@@ -18,6 +18,8 @@ export class OrderedServiceCreatedDomainEvent extends DomainEvent {
   readonly projectPropertyOwnerName: string | null
   readonly jobName: string
   readonly isExpedited: boolean
+  readonly editorUserId: string | null
+
   constructor(props: DomainEventProps<OrderedServiceCreatedDomainEvent>) {
     super(props)
     initialize(this, props)

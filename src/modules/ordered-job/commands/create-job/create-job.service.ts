@@ -1,22 +1,24 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { Inject } from '@nestjs/common'
+import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from '../../../integrated-order-modification-history/integrated-order-modification-history.di-token'
+import { IntegratedOrderModificationHistoryRepositoryPort } from '../../../integrated-order-modification-history/database/integrated-order-modification-history.repository.port'
+import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { ServiceNotFoundException } from '../../../service/domain/service.error'
+import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
+import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
+import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
+import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobEntity } from '../../domain/job.entity'
 import { CreateJobCommand } from './create-job.command'
-import { ServiceNotFoundException } from '../../../service/domain/service.error'
-import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
-import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
-import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
-import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
-import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
-import { USER_REPOSITORY } from '../../../users/user.di-tokens'
-import { UserRepositoryPort } from '../../../users/database/user.repository.port'
-import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
-import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -27,6 +29,9 @@ export class CreateJobService implements ICommandHandler {
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort, // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
+    // @ts-ignore
+    @Inject(INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY)
+    private readonly orderHistoryRepo: IntegratedOrderModificationHistoryRepositoryPort,
     private readonly durationCalculator: TotalDurationCalculator,
   ) {}
 
@@ -35,6 +40,7 @@ export class CreateJobService implements ICommandHandler {
     const organization = await this.organizationRepo.findOneOrThrow(clientUser.organization.id)
     const orderer = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)
     const project = await this.projectRepo.findOneOrThrow({ id: command.projectId })
+    const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)
 
     const services = await this.serviceRepo.find({ id: { in: command.orderedTasks.map((task) => task.serviceId) } })
     const totalDurationInMinutes = await this.durationCalculator.calcTotalDuration(command.orderedTasks, project)
@@ -66,7 +72,7 @@ export class CreateJobService implements ICommandHandler {
         clientContactEmail: clientUser.getProps().email,
         deliverablesEmail: command.deliverablesEmails,
       }),
-      updatedBy: orderer.userName.fullName,
+      updatedBy: editor.userName.fullName,
       projectId: command.projectId,
       projectNumber: project.projectNumber,
       isExpedited: command.isExpedited,
@@ -74,8 +80,14 @@ export class CreateJobService implements ICommandHandler {
       totalOfJobs: project.totalOfJobs,
       projectPropertyType: project.projectPropertyType as ProjectPropertyTypeEnum,
       dueDate: command.dueDate ? command.dueDate : totalDurationInMinutes,
+      editorUserId: command.editorUserId,
     })
     await this.jobRepo.insert(job)
+
+    // GENERATE HISTORY
+    const createdJob = await this.jobRepo.findJobOrThrow(job.id)
+    await this.orderHistoryRepo.generateCreationHistory(createdJob, editor)
+
     return {
       id: job.id,
     }

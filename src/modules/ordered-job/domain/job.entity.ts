@@ -56,6 +56,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
         mountingType: create.mountingType as MountingTypeEnum,
         projectType: create.projectPropertyType as ProjectPropertyTypeEnum,
+        editorUserId: create.editorUserId,
       }),
     )
     return job
