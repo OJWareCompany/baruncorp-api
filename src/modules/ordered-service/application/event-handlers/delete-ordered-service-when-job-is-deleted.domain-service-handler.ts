@@ -6,7 +6,6 @@ import { OrderDeletionValidator } from '../../../ordered-job/domain/domain-servi
 import { JobDeletedDomainEvent } from '../../../ordered-job/domain/events/job-deleted.domain-event'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
-import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
 
 export class DeleteOrderedServiceWhenJobIsDeletedDomainServiceHandler {
   constructor(
@@ -18,7 +17,7 @@ export class DeleteOrderedServiceWhenJobIsDeletedDomainServiceHandler {
   ) {}
   @OnEvent(JobDeletedDomainEvent.name, { async: true, promisify: true })
   async handle(event: JobDeletedDomainEvent) {
-    const orderedServices = await this.orderedServiceRepo.findBy('jobId', [event.aggregateId])
+    const orderedServices = await this.orderedServiceRepo.findBy({ jobId: event.aggregateId })
 
     await Promise.all(
       orderedServices.map(async (orderedService) => {

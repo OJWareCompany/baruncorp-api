@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
-import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
-import { JobEntity } from '../job.entity'
-import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum } from '../job.type'
+import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
 import {
   AutoOnlyOrderedServiceStatusEnum,
   OrderedServiceStatusEnum,
 } from '../../../ordered-service/domain/ordered-service.type'
+import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum } from '../job.type'
 import { JobNotStartableException } from '../job.error'
+import { JobEntity } from '../job.entity'
 
 @Injectable()
 export class OrderStatusChangeValidator {
   constructor(
     // @ts-ignore
-    @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepository: OrderedServiceRepositoryPort, // @ts-ignore
+    @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort, // @ts-ignore
   ) {}
   async validateJob(job: JobEntity, jobStatusEnum: JobStatus) {
     switch (jobStatusEnum) {
@@ -42,7 +42,7 @@ export class OrderStatusChangeValidator {
       OrderedServiceStatusEnum.Not_Started,
       AutoOnlyOrderedServiceStatusEnum.On_Hold,
     ]
-    const orderedScopes = await this.orderedServiceRepository.findBy('jobId', [job.id])
+    const orderedScopes = await this.orderedServiceRepo.findBy({ jobId: job.id })
     const isViolated = orderedScopes.some((scope) => !permittedStatus.includes(scope.status))
     if (isViolated) throw new JobNotStartableException()
   }
@@ -56,7 +56,7 @@ export class OrderStatusChangeValidator {
    */
   private async checkJobSendableToClient(job: JobEntity) {
     job.isSendableOrThrow()
-    const orderedScopes = await this.orderedServiceRepository.findBy('jobId', [job.id])
+    const orderedScopes = await this.orderedServiceRepo.findBy({ jobId: job.id })
     orderedScopes.map((scope) => scope.isSendableOrThrow())
   }
 }

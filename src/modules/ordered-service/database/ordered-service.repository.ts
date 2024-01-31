@@ -1,6 +1,6 @@
-import { OrderedServices } from '@prisma/client'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
 import _ from 'lodash'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { PrismaService } from '../../database/prisma.service'
@@ -81,12 +81,9 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     return entity
   }
 
-  async findBy(
-    propertyName: keyof OrderedServices,
-    values: OrderedServices[typeof propertyName][],
-  ): Promise<OrderedServiceEntity[]> {
+  async findBy(whereInput: Prisma.OrderedServicesWhereInput): Promise<OrderedServiceEntity[]> {
     const records = await this.prismaService.orderedServices.findMany({
-      where: { [propertyName]: { in: values } },
+      where: whereInput,
       include: { assignedTasks: true },
     })
     return records.map(this.orderedServiceMapper.toDomain)

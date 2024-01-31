@@ -1,6 +1,6 @@
-import { OrderedServices } from '@prisma/client'
-import { OrderedServiceEntity } from '../domain/ordered-service.entity'
+import { Prisma } from '@prisma/client'
 import { UserEntity } from '../../users/domain/user.entity'
+import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 
 /**
  * 원칙상 Repository Port(인터페이스)는 Domain 모듈의 파일이다.
@@ -16,10 +16,7 @@ export interface OrderedServiceRepositoryPort {
   findOne(id: string): Promise<OrderedServiceEntity | null>
   findOneOrThrow(id: string): Promise<OrderedServiceEntity>
   find(ids: string[]): Promise<OrderedServiceEntity[]>
-  findBy(
-    propertyName: keyof OrderedServices,
-    values: OrderedServices[typeof propertyName][],
-  ): Promise<OrderedServiceEntity[]>
+  findBy(whereInput: Prisma.OrderedServicesWhereInput): Promise<OrderedServiceEntity[]>
   update(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void>
   delete(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void>
   getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]>
