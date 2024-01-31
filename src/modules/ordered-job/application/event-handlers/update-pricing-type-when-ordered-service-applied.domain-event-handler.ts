@@ -14,7 +14,7 @@ export class UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
   ) {}
   @OnEvent(OrderedServiceAppliedTieredPricingDomainEvent.name, { async: true, promisify: true })
-  @GenerateJobModificationHistory()
+  @GenerateJobModificationHistory({ invokedFrom: 'scope' })
   async handle(event: OrderedServiceAppliedTieredPricingDomainEvent) {
     const job = await this.jobRepo.findJobOrThrow(event.jobId)
     if (job.pricingType === PricingTypeEnum.Tiered) throw new NoUpdateException()

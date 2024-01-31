@@ -32,7 +32,7 @@ export class UpdateJobService implements ICommandHandler {
     @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
   ) {}
 
-  @GenerateJobModificationHistory()
+  @GenerateJobModificationHistory({ invokedFrom: 'self' })
   async execute(command: UpdateJobCommand): Promise<void> {
     const job = await this.jobRepository.findJobOrThrow(command.jobId)
     if (job.isCompleted()) throw new JobCompletedUpdateException()

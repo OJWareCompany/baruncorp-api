@@ -12,7 +12,7 @@ export class UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEve
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
   ) {}
   @OnEvent(OrderedServiceUpdatedRevisionSizeDomainEvent.name, { async: true, promisify: true })
-  @GenerateJobModificationHistory()
+  @GenerateJobModificationHistory({ invokedFrom: 'scope' })
   async handle(event: OrderedServiceUpdatedRevisionSizeDomainEvent) {
     const job = await this.jobRepository.findJobOrThrow(event.jobId)
     job.updateRevisionSize()

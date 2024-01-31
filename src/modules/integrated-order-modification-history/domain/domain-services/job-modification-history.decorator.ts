@@ -15,11 +15,15 @@ import { JobMapper } from '../../../ordered-job/job.mapper'
 import { OrderModificationHistoryGenerator } from './order-modification-history-generator.domain-service'
 
 type JobHistoryOption = {
-  invokedFrom?: 'project' | 'invoice'
+  invokedFrom: 'project' | 'scope' | 'invoice' | 'self'
 }
 
 type InvokedFromProjectArg = {
   projectId: string | null
+}
+
+type InvokedFromScopeArg = {
+  scopeId: string | null
 }
 
 type InvokedFromInvoiceArg = {
@@ -30,10 +34,11 @@ type InvokedFromInvoiceArg = {
 type JobHistoryArguments = {
   jobId: string | null
 } & InvokedFromProjectArg &
+  InvokedFromScopeArg &
   InvokedFromInvoiceArg
 
 export const JOB_MODIFICATION_HISTORY_DECORATOR = Symbol('JOB_MODIFICATION_HISTORY_DECORATOR')
-export const GenerateJobModificationHistory = (option?: JobHistoryOption) =>
+export const GenerateJobModificationHistory = (option: JobHistoryOption) =>
   createDecorator(JOB_MODIFICATION_HISTORY_DECORATOR, option)
 
 /**
@@ -72,7 +77,7 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
   }
 
   private async findBeforeJobs(options: JobHistoryOption, ...args: any): Promise<JobEntity[]> {
-    const { projectId, jobId, clientOrganizationId, serviceMonth } = this.extractArguments(...args)
+    const { projectId, jobId, scopeId, clientOrganizationId, serviceMonth } = this.extractArguments(...args)
 
     switch (options?.invokedFrom) {
       case 'invoice':
@@ -81,7 +86,10 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
       case 'project':
         if (_.isNil(projectId)) throw new BadRequestException()
         return await this.jobRepository.findManyBy({ projectId: projectId })
-      default:
+      case 'scope':
+        if (_.isNil(scopeId)) throw new BadRequestException()
+        return await this.jobRepository.findManyBy({ orderedServices: { some: { id: scopeId } } })
+      case 'self':
         if (_.isNil(jobId)) throw new BadRequestException()
         return await this.jobRepository.findManyBy({ id: jobId })
     }
@@ -94,7 +102,8 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
   private extractArguments(...args: any): JobHistoryArguments {
     return {
       projectId: args[0].projectId || args[0].aggregateId || null,
-      jobId: args[0].jobId || null,
+      jobId: args[0].jobId || args[0].aggregateId || null,
+      scopeId: args[0].orderedScopeId || args[0].orderedServiceId || args[0].aggregateId || null,
       clientOrganizationId: args[0].clientOrganizationId || null,
       serviceMonth: args[0].serviceMonth || null,
     }
