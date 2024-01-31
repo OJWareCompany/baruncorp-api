@@ -1,11 +1,11 @@
 import { v4 } from 'uuid'
+import _ from 'lodash'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { OrderedServiceBackToNotStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-back-to-not-started.domain-event'
 import { OrderedServiceStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-started.domain-event'
 import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { ExpensePricingEntity } from '../../expense-pricing/domain/expense-pricing.entity'
 import { OrderedServiceEntity } from '../../ordered-service/domain/ordered-service.entity'
-import { PrismaService } from '../../database/prisma.service'
 import { UserEntity } from '../../users/domain/user.entity'
 import { CreateAssignedTaskProps, AssignedTaskProps, AssignedTaskStatusEnum } from './assigned-task.type'
 import { AssignedTaskDurationUpdatedDomainEvent } from './events/assigned-task-duration-updated.domain-event'
@@ -21,7 +21,6 @@ import {
   AssignedTaskDurationExceededException,
   CompletedTaskChangeStatusException,
   CompletedTaskDeletionException,
-  InprogressTaskAutoChangeStatusException,
 } from './assigned-task.error'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
@@ -177,11 +176,13 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   async backToNotStarted(
     option: OrderedServiceBackToNotStartedDomainEvent | OrderedServiceStartedDomainEvent,
     orderModificationValidator: OrderModificationValidator,
-  ) {
-    if (!option) return
+  ): Promise<this> {
+    const permittedAutoUpdateStatus = [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold]
+    if (!option) return this
+    if (!_.includes(permittedAutoUpdateStatus, this.status)) return this
     await orderModificationValidator.validate(this)
-    if (this.isCompleted) throw new CompletedTaskChangeStatusException()
-    if (this.isInProgress) throw new InprogressTaskAutoChangeStatusException()
+    // if (this.isCompleted) throw new CompletedTaskChangeStatusException()
+    // if (this.isInProgress) throw new InprogressTaskAutoChangeStatusException()
     this.props.status = AssignedTaskStatusEnum.Not_Started
     return this
   }

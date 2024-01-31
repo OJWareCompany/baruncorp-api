@@ -257,7 +257,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     ]
     const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
     if (option !== 'manually' && !isIncludedFromAutoUpdate) {
-      throw new OrderedServiceAutoCancelableException()
+      // throw new OrderedServiceAutoCancelableException()
+      return this
     }
 
     this.props.status = OrderedServiceStatusEnum.Canceled
@@ -282,11 +283,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  backToNotStarted(option: JobNotStartedDomainEvent | JobStartedDomainEvent | 'manually') {
+  backToNotStarted(option: JobNotStartedDomainEvent | JobStartedDomainEvent | 'manually'): this {
     const permittedAutoUpdateStatus = [OrderedServiceStatusEnum.Canceled, AutoOnlyOrderedServiceStatusEnum.On_Hold]
     const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
     if (option !== 'manually' && !isIncludedFromAutoUpdate) {
-      throw new OrderedServiceAutoStartableException()
+      // throw new OrderedServiceAutoStartableException()
+      return this
     }
     this.props.status = OrderedServiceStatusEnum.Not_Started
     this.props.doneAt = null

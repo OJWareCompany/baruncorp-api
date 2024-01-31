@@ -33,7 +33,6 @@ export class CreateJobService implements ICommandHandler {
   async execute(command: CreateJobCommand): Promise<{ id: string }> {
     const clientUser = await this.userRepo.findOneByIdOrThrow(command.clientUserId)
     const organization = await this.organizationRepo.findOneOrThrow(clientUser.organization.id)
-    const orderer = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)
     const project = await this.projectRepo.findOneOrThrow({ id: command.projectId })
     const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)
 
