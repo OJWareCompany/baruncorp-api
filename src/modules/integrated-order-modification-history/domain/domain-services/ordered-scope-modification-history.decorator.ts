@@ -14,19 +14,24 @@ import { UserEntity } from '../../../users/domain/user.entity'
 import { OrderModificationHistoryGenerator } from './order-modification-history-generator.domain-service'
 
 type OrderedScopeHistoryOption = {
-  invokedFrom?: 'job'
+  invokedFrom: 'job' | 'task' | 'self'
 }
 
 type InvokedFromJobArg = {
   jobId: string | null
 }
 
+type InvokedFromTaskArg = {
+  assignedTaskId: string | null
+}
+
 type OrderedScopeHistoryArguments = {
   orderedScopeId: string | null
-} & InvokedFromJobArg
+} & InvokedFromJobArg &
+  InvokedFromTaskArg
 
 export const ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR = Symbol('ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR')
-export const GenerateOrderedScopeModificationHistory = (options?: OrderedScopeHistoryOption) =>
+export const GenerateOrderedScopeModificationHistory = (options: OrderedScopeHistoryOption) =>
   createDecorator(ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR, options)
 
 /**
@@ -68,16 +73,19 @@ export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
     options: OrderedScopeHistoryOption,
     ...args: any
   ): Promise<OrderedServiceEntity[]> {
-    const { orderedScopeId, jobId } = this.extractArguments(...args)
+    const { orderedScopeId, jobId, assignedTaskId } = this.extractArguments(...args)
 
     // TODO: to ADD invoked task, invoked self
-    switch (options?.invokedFrom) {
+    switch (options.invokedFrom) {
       case 'job':
         if (_.isNil(jobId)) throw new BadRequestException()
-        return await this.orderedScopeRepo.findBy('jobId', [jobId])
-      default:
+        return await this.orderedScopeRepo.findBy({ jobId: jobId })
+      case 'task':
+        if (_.isNil(assignedTaskId)) throw new BadRequestException()
+        return await this.orderedScopeRepo.findBy({ assignedTasks: { some: { id: assignedTaskId } } })
+      case 'self':
         if (_.isNil(orderedScopeId)) throw new BadRequestException()
-        return await this.orderedScopeRepo.findBy('id', [orderedScopeId])
+        return await this.orderedScopeRepo.findBy({ id: orderedScopeId })
     }
   }
 
@@ -88,7 +96,8 @@ export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
   private extractArguments(...args: any): OrderedScopeHistoryArguments {
     return {
       jobId: args[0].jobId || args[0].aggregateId || null,
-      orderedScopeId: args[0].orderedScopeId || args[0].orderedServiceId,
+      orderedScopeId: args[0].orderedScopeId || args[0].orderedServiceId || args[0].aggregateId,
+      assignedTaskId: args[0].assignedTaskId || args[0].aggregateId || null,
     }
   }
 

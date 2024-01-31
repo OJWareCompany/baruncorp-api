@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { PrismaService } from '../../../database/prisma.service'
 import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
 import { AssignedTaskDurationUpdatedDomainEvent } from '../../../assigned-task/domain/events/assigned-task-duration-updated.domain-event'
 import { ServiceNotFoundException } from '../../../service/domain/service.error'
+import { PrismaService } from '../../../database/prisma.service'
 import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
@@ -23,7 +23,7 @@ export class UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler 
    * 주문 품목을 저장한다.
    */
   @OnEvent(AssignedTaskDurationUpdatedDomainEvent.name, { async: true, promisify: true })
-  @GenerateOrderedScopeModificationHistory()
+  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'task' })
   async handle(event: AssignedTaskDurationUpdatedDomainEvent) {
     const record = await this.prismaService.orderedServices.findUnique({
       where: { id: event.orderedServiceId },

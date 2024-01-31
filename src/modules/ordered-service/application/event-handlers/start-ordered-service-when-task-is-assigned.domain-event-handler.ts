@@ -12,9 +12,8 @@ export class StartOrderedServiceWhenTaskIsAssignedDomainEventHandler {
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
   ) {}
   @OnEvent(AssignedTaskAssignedDomainEvent.name, { async: true, promisify: true })
-  @GenerateOrderedScopeModificationHistory()
+  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'task' })
   async handle(event: AssignedTaskAssignedDomainEvent) {
-    console.log('뭐지?')
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.orderedServiceId)
     orderedService.start()
     await this.orderedServiceRepo.update(orderedService)

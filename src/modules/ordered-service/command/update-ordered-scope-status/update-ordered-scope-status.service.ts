@@ -23,7 +23,7 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
     private readonly orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator,
   ) {}
 
-  @GenerateOrderedScopeModificationHistory()
+  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'self' })
   async execute(command: UpdateOrderedScopeStatusCommand): Promise<void> {
     const orderedScope = await this.orderedScopeRepo.findOneOrThrow(command.orderedScopeId)
 

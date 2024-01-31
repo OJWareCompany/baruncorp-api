@@ -15,7 +15,6 @@ import { OrderedServiceRepositoryPort } from '../../database/ordered-service.rep
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -34,7 +33,6 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
   ) {}
 
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
-  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'job' })
   async handle(event: JobCreatedDomainEvent) {
     const job = await this.jobRepo.findJobOrThrow(event.aggregateId)
     const project = await this.projectRepo.findOneOrThrow({ id: job.projectId })
