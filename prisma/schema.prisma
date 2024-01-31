@@ -100,7 +100,7 @@ model Users {
   type                       String                 @db.VarChar(255)
   deliverables_emails        String?                @db.Text
   email                      String                 @unique
-  firstName                  String                 @map("first_name")
+  firstName                   String                 @map("first_name")
   lastName                   String                 @map("last_name")
   full_name                  String                 @db.VarChar(255)
   status                     String                 @default("sign up not completed") @db.VarChar(255)
@@ -418,15 +418,19 @@ model employees {
 }
 
 model OrderedJobNotes {
-  id              String   @id @map("id") @db.VarChar(255)
-  content         String   @db.Text
-  commenterName   String   @map("commneter_name") @db.VarChar(255)
-  commenterUserId String   @map("commenter_user_id") @db.VarChar(255)
-  jobId           String   @map("job_id") @db.VarChar(255)
-  createdAt       DateTime @map("created_at") @db.DateTime(0)
+  id                String      @id @map("id")             @db.VarChar(255)
+  jobId             String      @map("job_id")             @db.VarChar(255)
+  createdBy         String?     @map("created_by")         @db.VarChar(255)
+  content           String      @map("content")            @db.Text
+  jobNoteNumber     Int         @map("job_note_number")    @db.Int
+  senderEmail       String?     @map("sender_email")
+  receiverEmails    String?     @map("receiver_emails")    @db.Text
+  type              JobNoteType @map("type")
+  createdAt         DateTime    @map("created_at")         @db.DateTime(0)
 
   @@map("ordered_job_notes")
 }
+
 
 model OrderedJobs {
   id                                            String            @id @map("id") @db.VarChar(255)
@@ -1167,4 +1171,9 @@ enum CreditTransactionsTransactionType {
 enum ClientNoteType {
   Create
   Modify
+}
+
+enum JobNoteType {
+  JobNote
+  RFI
 }

@@ -1,9 +1,13 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
+import { JobNoteTypeEnum } from '../../domain/job-note.type'
 
 export class CreateJobNoteCommand {
-  readonly content: string
   readonly jobId: string
-  readonly commenterUserId: string
+  readonly creatorUserId: string
+  readonly content: string
+  readonly type: JobNoteTypeEnum
+  readonly receiverEmails: string[] | null
+
   constructor(props: CreateJobNoteCommand) {
     initialize(this, props)
   }
