@@ -17,14 +17,13 @@ export class CreateJobNoteHttpController {
   @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
   async create(@User() user: UserEntity, @Body() request: CreateJobNoteRequestDto): Promise<CreateJobNoteResponseDto> {
-    const command = new CreateJobNoteCommand({
+    const command: CreateJobNoteCommand = new CreateJobNoteCommand({
       jobId: request.jobId,
       creatorUserId: user.id,
       content: request.content,
       type: request.type,
       receiverEmails: request.receiverEmails,
     })
-    const result: CreateJobNoteResponseDto = await this.commandBus.execute(command)
-    return result
+    return await this.commandBus.execute(command)
   }
 }
