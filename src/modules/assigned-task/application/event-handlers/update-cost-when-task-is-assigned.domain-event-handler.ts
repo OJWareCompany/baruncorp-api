@@ -29,7 +29,7 @@ export class UpdateCostWhenTaskIsAssignedDomainEventHandler {
   ) {}
 
   @OnEvent(AssignedTaskAssignedDomainEvent.name, { async: true, promisify: true })
-  @GenerateAssignedTaskModificationHistory()
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'self', queryScope: null })
   async handle(event: AssignedTaskAssignedDomainEvent) {
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(event.aggregateId)
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(assignedTask.orderedServiceId)

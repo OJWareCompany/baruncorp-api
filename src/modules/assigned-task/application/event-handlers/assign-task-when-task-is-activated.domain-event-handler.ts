@@ -1,18 +1,19 @@
-import { Inject } from '@nestjs/common'
-import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
-import { PrismaService } from '../../../database/prisma.service'
 import { OnEvent } from '@nestjs/event-emitter'
-import { AssignedTaskActivatedDomainEvent } from '../../domain/events/assigned-task-activated.domain-event'
-import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
-import { TaskNotFoundException } from '../../../task/domain/task.error'
-import { USER_REPOSITORY } from '../../../users/user.di-tokens'
-import { UserRepositoryPort } from '../../../users/database/user.repository.port'
-import { ProjectNotFoundException } from '../../../project/domain/project.error'
-import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
-import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { StateNotFoundException } from '../../../license/domain/license.error'
+import { Inject } from '@nestjs/common'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { ProjectNotFoundException } from '../../../project/domain/project.error'
+import { ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { AutoAssignmentTypeEnum } from '../../../position/domain/position.type'
+import { StateNotFoundException } from '../../../license/domain/license.error'
+import { TaskNotFoundException } from '../../../task/domain/task.error'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { PrismaService } from '../../../database/prisma.service'
+import { AssignedTaskActivatedDomainEvent } from '../../domain/events/assigned-task-activated.domain-event'
+import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
+import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
+import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
@@ -33,6 +34,7 @@ export class AssignTaskWhenTaskIsActivatedDomainEventHandler {
    * 손을 든 작업자에게 할당되는 케이스는 대부분 새로운 프로젝트의 Job일것이라 생각됩니다.
    */
   @OnEvent(AssignedTaskActivatedDomainEvent.name, { async: true, promisify: true })
+  @GenerateAssignedTaskModificationHistory({ queryScope: 'self', invokedFrom: 'self' })
   async handle(event: AssignedTaskActivatedDomainEvent) {
     /**
      * 할당되면 안되는 태스크

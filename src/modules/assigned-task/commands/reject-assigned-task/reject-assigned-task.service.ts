@@ -25,7 +25,7 @@ export class RejectAssignedTaskService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @GenerateAssignedTaskModificationHistory()
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: null, queryScope: 'self' })
   async execute(command: RejectAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
     if (assignedTask.isCompleted) throw new AssignedTaskAlreadyCompletedException()

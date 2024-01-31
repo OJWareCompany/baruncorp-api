@@ -24,7 +24,7 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   @OnEvent(OrderedServicePriceUpdatedDomainEvent.name)
-  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope' })
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope', queryScope: null })
   async handle(event: OrderedServicePriceUpdatedDomainEvent) {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.aggregateId)
     await Promise.all(

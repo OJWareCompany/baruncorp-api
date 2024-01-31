@@ -17,7 +17,7 @@ export class UpdateTaskDurationService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @GenerateAssignedTaskModificationHistory()
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: null, queryScope: 'self' })
   async execute(command: UpdateTaskDurationCommand): Promise<void> {
     const entity = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!entity) throw new AssignedTaskNotFoundException()

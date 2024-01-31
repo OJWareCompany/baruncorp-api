@@ -16,7 +16,7 @@ export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
   ) {}
 
   @OnEvent(OrderedServiceCanceledDomainEvent.name, { async: true, promisify: true })
-  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope' })
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope', queryScope: null })
   async handle(event: OrderedServiceCanceledDomainEvent) {
     const assignedTasks = await this.assignedTaskRepo.find({
       orderedServiceId: event.aggregateId,

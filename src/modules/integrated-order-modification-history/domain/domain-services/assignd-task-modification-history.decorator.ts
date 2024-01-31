@@ -14,19 +14,25 @@ import { UserEntity } from '../../../users/domain/user.entity'
 import { OrderModificationHistoryGenerator } from './order-modification-history-generator.domain-service'
 
 type AssignedTaskHistoryOption = {
-  invokedFrom?: 'scope'
+  queryScope: 'job' | 'self' | null
+  invokedFrom: 'scope' | 'self' | null
 }
 
 type InvokedFromScopeArg = {
   scopeId: string | null
 }
 
+type queryJobScopeArg = {
+  jobId: string | null
+}
+
 type AssignedTaskHistoryArguments = {
   assignedTaskId: string | null
-} & InvokedFromScopeArg
+} & InvokedFromScopeArg &
+  queryJobScopeArg
 
 export const ASSIGNED_TASK_MODIFICATION_HISTORY_DECORATOR = Symbol('ORDER_MODIFICATION_HISTORY_DECORATOR')
-export const GenerateAssignedTaskModificationHistory = (options?: AssignedTaskHistoryOption) =>
+export const GenerateAssignedTaskModificationHistory = (options: AssignedTaskHistoryOption) =>
   createDecorator(ASSIGNED_TASK_MODIFICATION_HISTORY_DECORATOR, options)
 
 /**
@@ -69,13 +75,20 @@ export class AssignedTaskModificationHistoryDecorator implements LazyDecorator {
     options: AssignedTaskHistoryOption,
     ...args: any
   ): Promise<AssignedTaskEntity[]> {
-    const { assignedTaskId, scopeId } = this.extractArguments(...args)
+    const { jobId, scopeId, assignedTaskId } = this.extractArguments(...args)
 
-    // TODO: to ADD invoked task, invoked self
-    switch (options?.invokedFrom) {
+    if (options.queryScope === 'job') {
+      if (_.isNil(jobId)) throw new BadRequestException()
+      return await this.assignedTaskRepo.find({ jobId: jobId })
+    }
+
+    switch (options.invokedFrom) {
       case 'scope':
         if (_.isNil(scopeId)) throw new BadRequestException()
         return await this.assignedTaskRepo.find({ orderedServiceId: scopeId })
+      case 'self':
+        if (_.isNil(assignedTaskId)) throw new BadRequestException()
+        return await this.assignedTaskRepo.find({ id: assignedTaskId })
       default:
         if (_.isNil(assignedTaskId)) throw new BadRequestException()
         return await this.assignedTaskRepo.find({ id: assignedTaskId })
@@ -88,6 +101,7 @@ export class AssignedTaskModificationHistoryDecorator implements LazyDecorator {
 
   private extractArguments(...args: any): AssignedTaskHistoryArguments {
     return {
+      jobId: args[0].jobId || args[0].aggregateId || null,
       scopeId: args[0].orderedServiceId || args[0].orderedScopeId || args[0].aggregateId || null,
       assignedTaskId: args[0].assignedTaskId || args[0].aggregateId,
     }

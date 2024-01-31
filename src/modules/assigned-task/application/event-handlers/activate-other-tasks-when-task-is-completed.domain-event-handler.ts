@@ -6,6 +6,7 @@ import { AssignedTaskCompletedDomainEvent } from '../../domain/events/assigned-t
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { AssignedTaskMapper } from '../../assigned-task.mapper'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 export class ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler {
@@ -18,6 +19,7 @@ export class ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler {
   ) {}
 
   @OnEvent(AssignedTaskCompletedDomainEvent.name, { async: true, promisify: true })
+  @GenerateAssignedTaskModificationHistory({ queryScope: 'job', invokedFrom: null })
   async handle(event: AssignedTaskCompletedDomainEvent) {
     const assignedTasks = await this.prismaService.assignedTasks.findMany({ where: { jobId: event.jobId } })
     const assignedTaskEntities = assignedTasks.map(this.mapper.toDomain)

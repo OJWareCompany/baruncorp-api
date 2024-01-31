@@ -21,7 +21,7 @@ export class AssignTaskService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @GenerateAssignedTaskModificationHistory()
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: null, queryScope: null })
   async execute(command: AssignTaskCommand): Promise<void> {
     const userEntity = await this.userRepo.findOneByIdOrThrow(command.assigneeId)
     const assignedTaskEntity = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
