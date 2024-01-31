@@ -134,8 +134,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async determineActiveStatus(activeStatusService: DetermineActiveStatusDomainService, prismaService: PrismaService) {
-    const isActive = await activeStatusService.isActive(this, prismaService)
+  async determineActiveStatus(activeStatusService: DetermineActiveStatusDomainService) {
+    const isActive = await activeStatusService.isActive(this)
 
     // active 메서드를 사용하기 위해서는 위의 isActive 로직이 필수임
     if (isActive) this.active()
