@@ -7,6 +7,7 @@ import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { CreateJobNoteCommand } from './create-job-note.command'
 import { CreateJobNoteRequestDto } from './create-job-note.request.dto'
+import { CreateJobNoteResponseDto } from '../../dtos/create-job-note.response.dto'
 
 @Controller('ordered-job-notes')
 export class CreateJobNoteHttpController {
@@ -15,13 +16,15 @@ export class CreateJobNoteHttpController {
   @Post()
   @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
   @UseGuards(AuthGuard)
-  async create(@User() user: UserEntity, @Body() request: CreateJobNoteRequestDto): Promise<IdResponse> {
+  async create(@User() user: UserEntity, @Body() request: CreateJobNoteRequestDto): Promise<CreateJobNoteResponseDto> {
     const command = new CreateJobNoteCommand({
-      content: request.content,
       jobId: request.jobId,
-      commenterUserId: user.id,
+      creatorUserId: user.id,
+      content: request.content,
+      type: request.type,
+      receiverEmails: request.receiverEmails,
     })
-    const result = await this.commandBus.execute(command)
-    return new IdResponse(result.id)
+    const result: CreateJobNoteResponseDto = await this.commandBus.execute(command)
+    return result
   }
 }

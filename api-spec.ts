@@ -1719,24 +1719,28 @@ export interface OrderedServicePaginatedResponseDto {
 }
 
 export interface CreateJobNoteRequestDto {
-  /** @default "what do you think about Jazz?" */
-  content: string
   /** @default "hs8da-cdef-gh22321ask-xzcm12e3" */
   jobId: string
-}
-
-export interface JobNoteResponseDto {
-  jobNoteId: string
-  /** @example "what do you think about Jazz?" */
+  /** @default "This is Job Note Content" */
   content: string
-  jobId: string
-  commenterName: string
-  commenterUserId: string
-  createdAt: string
+  /** @default "JobNote" */
+  type: 'JobNote' | 'RFI'
+  /** @default ["yunwoo@oj.vision"] */
+  receiverEmails: string[] | null
 }
 
-export interface JobNoteListResponseDto {
-  notes: JobNoteResponseDto[]
+export type Paginated = object
+
+export interface JobNotePagenatedResponseDto {
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  clientOrganizationName: string
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  projectType: string
+  /** @example "Chris Kim" */
+  propertyAddress: string
+  /** @example 1 */
+  jobRequestNumber: number
+  pagenated: Paginated
 }
 
 export interface CreateTaskRequestDto {
@@ -5341,7 +5345,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/ordered-job-notes/{jobId}
      */
     findJobNotesHttpControllerFind: (jobId: string, params: RequestParams = {}) =>
-      this.request<JobNoteListResponseDto, any>({
+      this.request<JobNotePagenatedResponseDto, any>({
         path: `/ordered-job-notes/${jobId}`,
         method: 'GET',
         format: 'json',
