@@ -6,7 +6,7 @@ import { JobStartedDomainEvent } from '../../../ordered-job/domain/events/job-st
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 
-export class UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEventHandler {
+export class UpdateOrderedServiceToNotStartedWhenJobIsStartedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,

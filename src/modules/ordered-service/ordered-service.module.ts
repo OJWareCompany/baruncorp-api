@@ -38,6 +38,7 @@ import { UpdateOrderedScopeStatusHttpController } from './command/update-ordered
 import { UpdateOrderedScopeStatusService } from './command/update-ordered-scope-status/update-ordered-scope-status.service'
 import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
 import { DeleteOrderedServiceWhenJobIsDeletedDomainServiceHandler } from './application/event-handlers/delete-ordered-service-when-job-is-deleted.domain-service-handler'
+import { UpdateOrderedServiceToNotStartedWhenJobIsStartedDomainEventHandler } from './application/event-handlers/update-ordered-service-to-not-started-when-job-is-started.domain-event-handler'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -67,6 +68,7 @@ const eventHandlers: Provider[] = [
   CancelOrderedServiceWhenJobIsCanceledAndKeptInvoiceDomainEventHandler,
   HoldOrderedServiceWhenJobIsHeldDomainEventHandler,
   UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler,
+  UpdateOrderedServiceToNotStartedWhenJobIsStartedDomainEventHandler,
   UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainEventHandler,
   DeleteOrderedServiceWhenJobIsDeletedDomainServiceHandler,
 ]
