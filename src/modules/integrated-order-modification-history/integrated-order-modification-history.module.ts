@@ -20,6 +20,8 @@ import { IntegratedOrderModificationHistoryRepository } from './database/integra
 import { GenerateCreationHistoryWhenOrderIsCreatedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-order-is-created.domain-event-handler'
 import { GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-task-is-ordered.domain-event-handler'
 import { GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-scope-is-ordered.domain-event-handler'
+import { GenerateDeletionHistoryWhenTaskIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-task-is-deleted.domain-event-handler'
+import { GenerateDeletionHistoryWhenOrderIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-order-is-deleted.domain-event-handler'
 
 const httpControllers = [
   FindIntegratedOrderModificationHistoryHttpController,
@@ -40,6 +42,9 @@ const eventHandlers: Provider[] = [
   GenerateCreationHistoryWhenOrderIsCreatedDomainEventHandler,
   GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler,
   GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler,
+  GenerateDeletionHistoryWhenOrderIsDeletedDomainEventHandler,
+  GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler,
+  GenerateDeletionHistoryWhenTaskIsDeletedDomainEventHandler,
 ]
 const mappers: Provider[] = [UserMapper]
 const domainServices: Provider[] = [OrderModificationHistoryGenerator]

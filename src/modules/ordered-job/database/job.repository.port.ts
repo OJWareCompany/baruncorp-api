@@ -5,6 +5,7 @@ import { UserEntity } from '../../users/domain/user.entity'
 export interface JobRepositoryPort {
   insert(entity: JobEntity | JobEntity[]): Promise<void>
   update(entity: JobEntity | JobEntity[]): Promise<void>
+  delete(entity: JobEntity | JobEntity[]): Promise<void>
   findJobOrThrow(id: string): Promise<JobEntity>
   findManyBy(whereInput: Prisma.OrderedJobsWhereInput): Promise<JobEntity[]>
   findJobsToInvoice(clientOrganizationId: string, serviceMonth: Date): Promise<JobEntity[]>

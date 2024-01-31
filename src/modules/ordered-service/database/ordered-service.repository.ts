@@ -109,8 +109,13 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     }
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prismaService.orderedServices.delete({ where: { id } })
+  async delete(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.orderedServiceMapper.toPersistence)
+    await this.prismaService.orderedServices.deleteMany({ where: { id: { in: records.map((record) => record.id) } } })
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]> {

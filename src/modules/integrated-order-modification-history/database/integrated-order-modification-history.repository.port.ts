@@ -9,7 +9,10 @@ export interface IntegratedOrderModificationHistoryRepositoryPort {
     editor?: UserEntity | null,
   ): Promise<void>
   generateDeletionHistory(
-    entity: JobEntity | OrderedServiceEntity | AssignedTaskEntity,
+    jobId: string,
+    aggregateId: string,
+    entityName: 'Job' | 'Scope' | 'Task',
+    deletedAt: Date,
     editor?: UserEntity | null,
   ): Promise<void>
 }

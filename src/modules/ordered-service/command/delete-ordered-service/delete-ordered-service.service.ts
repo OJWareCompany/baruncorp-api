@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
-import { PrismaService } from '../../../database/prisma.service'
-import { DeleteOrderedServiceCommand } from './delete-ordered-service.command'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
-import { OrderedServiceNotFoundException } from '../../domain/ordered-service.error'
-import { IssuedJobUpdateException, JobNotFoundException } from '../../../ordered-job/domain/job.error'
-import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
+import { DeleteOrderedServiceCommand } from './delete-ordered-service.command'
+import { OrderDeletionValidator } from '../../../ordered-job/domain/domain-services/order-deletion-validator.domain-service'
 
 @CommandHandler(DeleteOrderedServiceCommand)
 export class DeleteOrderedServiceService implements ICommandHandler {
@@ -15,25 +14,16 @@ export class DeleteOrderedServiceService implements ICommandHandler {
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY)
     private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
-    private readonly prismaService: PrismaService,
+    private readonly modificationValidator: OrderModificationValidator,
+    private readonly deletionValidator: OrderDeletionValidator,
   ) {}
 
   async execute(command: DeleteOrderedServiceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()
 
-    // TODO: REFACTOR
-    const job = await this.prismaService.orderedJobs.findUnique({ where: { id: orderedService.getProps().jobId } })
-    if (!job) throw new JobNotFoundException()
-    const invoiceId = job.invoiceId
+    await orderedService.delete(this.modificationValidator, this.deletionValidator)
 
-    if (invoiceId !== null) {
-      const invoice = await this.prismaService.invoices.findUnique({ where: { id: invoiceId } })
-      if (!invoice) throw new InvoiceNotFoundException()
-      if (invoice.status !== 'Unissued') throw new IssuedJobUpdateException()
-    }
-
-    await this.orderedServiceRepo.delete(orderedService.id)
-    // TODO: History
+    await this.orderedServiceRepo.delete(orderedService)
   }
 }

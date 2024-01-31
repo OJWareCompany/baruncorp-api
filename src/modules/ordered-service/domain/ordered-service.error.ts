@@ -57,24 +57,30 @@ export class SpecialRevisionPricingRevisionTypeUpdateException extends BadReques
 
 export class OrderedServiceCompletableException extends UnprocessableEntityException {
   constructor() {
-    super(`Cannot complete the scope as all tasks are not yet finished.`, '400309')
+    super(`Cannot complete the scope as all tasks are not yet finished.`, '40309')
   }
 }
 
 export class OrderedServiceHoldableException extends UnprocessableEntityException {
   constructor() {
-    super(`Cannot update to 'On Hold' status: Invalid current status.`, '400310')
+    super(`Cannot update to 'On Hold' status: Invalid current status.`, '40310')
   }
 }
 
 export class OrderedServiceAutoStartableException extends UnprocessableEntityException {
   constructor() {
-    super(`Cannot update to 'Not Started' status: Invalid current status.`, '400311')
+    super(`Cannot update to 'Not Started' status: Invalid current status.`, '40311')
   }
 }
 
 export class OrderedServiceAutoCancelableException extends UnprocessableEntityException {
   constructor() {
-    super(`Cannot update to 'Canceled' status: Invalid current status.`, '400312')
+    super(`Cannot update to 'Canceled' status: Invalid current status.`, '40312')
+  }
+}
+
+export class OrderedScopeIncludingCompletedTaskDeleteException extends UnprocessableEntityException {
+  constructor() {
+    super('Ordered Scope including completed task can`t be deleted.', '40313')
   }
 }

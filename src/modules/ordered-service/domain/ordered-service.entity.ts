@@ -41,6 +41,8 @@ import { JobCanceledDomainEvent } from '../../ordered-job/domain/events/job-canc
 import { JobCanceledAndKeptInvoiceDomainEvent } from '../../ordered-job/domain/events/job-canceled-and-kept-invoice.domain-event'
 import { JobNotStartedDomainEvent } from '../../ordered-job/domain/events/job-not-started.domain-event'
 import { JobStartedDomainEvent } from '../../ordered-job/domain/events/job-started.domain-event'
+import { OrderedServiceDeletedDomainEvent } from './events/ordered-service-deleted.domain-event'
+import { OrderDeletionValidator } from '../../ordered-job/domain/domain-services/order-deletion-validator.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -133,6 +135,20 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   get projectPropertyType() {
     return this.props.projectPropertyType
+  }
+
+  async delete(modificationValidator: OrderModificationValidator, deletionValidator: OrderDeletionValidator) {
+    await deletionValidator.validate(this)
+    await modificationValidator.validate(this)
+    this.addEvent(
+      new OrderedServiceDeletedDomainEvent({
+        aggregateId: this.id,
+        jobId: this.jobId,
+        editorUserId: this.props.editorUserId,
+        deletedAt: new Date(),
+      }),
+    )
+    return this
   }
 
   isSendableOrThrow() {

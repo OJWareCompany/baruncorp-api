@@ -32,17 +32,21 @@ export class IntegratedOrderModificationHistoryRepository implements IntegratedO
   }
 
   async generateDeletionHistory(
-    entity: JobEntity | OrderedServiceEntity | AssignedTaskEntity,
+    // entity: JobEntity | OrderedServiceEntity | AssignedTaskEntity,
+    jobId: string,
+    aggregateId: string,
+    entityName: 'Job' | 'Scope' | 'Task',
+    deletedAt: Date,
     editor?: UserEntity | null,
   ) {
     await this.prisma.integratedOrderModificationHistory.create({
       data: {
-        entity: this.getEntityName(entity),
-        jobId: this.getJobId(entity),
-        entityId: entity.id,
-        modifiedAt: entity.updatedAt, // 받아와야함
+        entity: entityName,
+        jobId: jobId,
+        entityId: aggregateId,
+        modifiedAt: deletedAt, // 받아와야함
         modifiedBy: editor ? editor.userName.fullName : 'System',
-        scopeOrTaskName: this.getScopeOrTaskName(entity),
+        scopeOrTaskName: null,
         attribute: 'Entity',
         operation: OrderModificationHistoryOperationEnum.Delete,
         beforeValue: null,

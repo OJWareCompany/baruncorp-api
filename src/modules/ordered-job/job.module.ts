@@ -43,6 +43,7 @@ import { JobRepository } from './database/job.repository'
 import { JobMapper } from './job.mapper'
 import { Mailer } from './infrastructure/mailer.infrastructure'
 import { UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler } from './application/event-handlers/update-invoice-id-when-invoice-is-created.domain-event-handler'
+import { OrderDeletionValidator } from './domain/domain-services/order-deletion-validator.domain-service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -80,7 +81,12 @@ const eventHandlers: Provider[] = [
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 const mappers: Provider[] = [JobMapper, JobResponseMapper]
 const infrastructures: Provider[] = [Mailer]
-const domainServices: Provider[] = [TotalDurationCalculator, OrderStatusChangeValidator, OrderModificationValidator]
+const domainServices: Provider[] = [
+  TotalDurationCalculator,
+  OrderStatusChangeValidator,
+  OrderModificationValidator,
+  OrderDeletionValidator,
+]
 
 @Module({
   imports: [

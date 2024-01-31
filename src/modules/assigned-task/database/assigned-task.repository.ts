@@ -83,8 +83,13 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     }
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prismaService.$executeRaw<AssignedTasks>`DELETE FROM assigned_task WHERE id = ${id}`
+  async delete(entity: AssignedTaskEntity | AssignedTaskEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    const records = entities.map(this.assignedTaskMapper.toPersistence)
+    await this.prismaService.assignedTasks.deleteMany({ where: { id: { in: records.map((record) => record.id) } } })
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
   }
 
   async findOne(id: string): Promise<AssignedTaskEntity | null> {

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { JobEntity } from '../job.entity'
@@ -10,6 +10,7 @@ import {
 } from '../../../ordered-service/domain/ordered-service.type'
 import { JobNotStartableException } from '../job.error'
 
+@Injectable()
 export class OrderStatusChangeValidator {
   constructor(
     // @ts-ignore
