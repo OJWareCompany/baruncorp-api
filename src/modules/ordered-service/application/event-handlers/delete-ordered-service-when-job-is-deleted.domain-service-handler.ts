@@ -17,7 +17,6 @@ export class DeleteOrderedServiceWhenJobIsDeletedDomainServiceHandler {
     private readonly deletionValidator: OrderDeletionValidator,
   ) {}
   @OnEvent(JobDeletedDomainEvent.name, { async: true, promisify: true })
-  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'job' })
   async handle(event: JobDeletedDomainEvent) {
     const orderedServices = await this.orderedServiceRepo.findBy('jobId', [event.aggregateId])
 

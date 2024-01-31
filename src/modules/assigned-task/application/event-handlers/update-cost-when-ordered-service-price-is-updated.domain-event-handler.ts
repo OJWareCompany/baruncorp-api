@@ -1,15 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { OnEvent } from '@nestjs/event-emitter'
-import { OrderedServicePriceUpdatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-price-updated.domain-event'
-import { CalculateVendorCostDomainService } from '../../domain/calculate-vendor-cost.domain-service'
 import { Inject } from '@nestjs/common'
-import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
-import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
+import { OrderedServicePriceUpdatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-price-updated.domain-event'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
-import { EXPENSE_PRICING_REPOSITORY } from '../../../expense-pricing/expense-pricing.di-token'
 import { ExpensePricingRepositoryPort } from '../../../expense-pricing/database/expense-pricing.repository.port'
+import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
+import { EXPENSE_PRICING_REPOSITORY } from '../../../expense-pricing/expense-pricing.di-token'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { CalculateVendorCostDomainService } from '../../domain/calculate-vendor-cost.domain-service'
+import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
+import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 
 export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
   constructor(
@@ -23,6 +24,7 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   @OnEvent(OrderedServicePriceUpdatedDomainEvent.name)
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope' })
   async handle(event: OrderedServicePriceUpdatedDomainEvent) {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.aggregateId)
     await Promise.all(

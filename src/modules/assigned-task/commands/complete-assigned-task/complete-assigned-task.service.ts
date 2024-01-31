@@ -18,7 +18,7 @@ export class CompleteAssignedTaskService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @GenerateAssignedTaskModificationHistory
+  @GenerateAssignedTaskModificationHistory()
   async execute(command: CompleteAssignedTaskCommand): Promise<void> {
     const assignedTask = await this.assignedTaskRepo.findOne(command.assignedTaskId)
     if (!assignedTask) throw new AssignedTaskNotFoundException()

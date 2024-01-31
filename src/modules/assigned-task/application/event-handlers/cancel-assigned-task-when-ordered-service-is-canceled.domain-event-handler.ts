@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
-import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { OnEvent } from '@nestjs/event-emitter'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 import { OrderedServiceCanceledDomainEvent } from '../../../ordered-service/domain/events/ordered-service-canceled.domain-event'
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
+import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 
 @Injectable()
 export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
@@ -15,6 +16,7 @@ export class CancelAssignedTaskWhenOrderedServiceIsCanceledDomainEventHandler {
   ) {}
 
   @OnEvent(OrderedServiceCanceledDomainEvent.name, { async: true, promisify: true })
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope' })
   async handle(event: OrderedServiceCanceledDomainEvent) {
     const assignedTasks = await this.assignedTaskRepo.find({
       orderedServiceId: event.aggregateId,
