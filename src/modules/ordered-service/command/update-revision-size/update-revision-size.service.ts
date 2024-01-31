@@ -21,7 +21,7 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
   ) {}
 
-  @GenerateOrderedScopeModificationHistory
+  @GenerateOrderedScopeModificationHistory()
   async execute(command: UpdateRevisionSizeCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(command.orderedServiceId)
 
