@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { OrderedJobs } from '@prisma/client'
 import { PrismaService } from '../database/prisma.service'
 import { ServiceInitialPriceManager } from '../ordered-service/domain/ordered-service-manager.domain-service'
-import { OrderedServiceSizeForRevisionEnum } from '../ordered-service/domain/ordered-service.type'
+import { OrderedScopeStatus, OrderedServiceSizeForRevisionEnum } from '../ordered-service/domain/ordered-service.type'
 import { JobResponseDto } from './dtos/job.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { JobStatusEnum, LoadCalcOriginEnum } from './domain/job.type'
@@ -65,7 +65,7 @@ export class JobResponseMapper {
           description: scope.description,
           price: scope.price ? Number(scope.price) : null,
           priceOverride: scope.priceOverride ? Number(scope.priceOverride) : null,
-          status: scope.status!,
+          status: scope.status! as OrderedScopeStatus,
           orderedAt: scope.orderedAt.toISOString(),
           doneAt: scope.doneAt ? scope.doneAt.toISOString() : null,
         }

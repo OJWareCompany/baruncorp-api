@@ -325,7 +325,7 @@ export interface CreateJobRequestDto {
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
   loadCalcOrigin?: 'Self' | 'Client Provided'
-  /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
+  /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
   mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
@@ -335,6 +335,7 @@ export interface CreateJobRequestDto {
   /**
    * dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.
    * @format date-time
+   * @default null
    */
   dueDate?: string | null
 }
@@ -360,6 +361,7 @@ export interface UpdateJobRequestDto {
   /**
    * dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.
    * @format date-time
+   * @default null
    */
   dueDate: string | null
 }
@@ -421,8 +423,8 @@ export interface OrderedServiceResponseFields {
   description: string | null
   price: number | null
   priceOverride: number | null
-  /** @example "Not Started" */
-  status: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
+  /** @default "Completed" */
+  status: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | 'On Hold'
   orderedAt: string
   doneAt: string | null
 }

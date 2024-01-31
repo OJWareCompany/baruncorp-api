@@ -5,6 +5,8 @@ import { AddressDto } from './address.dto'
 import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { IsDate, IsEnum, IsNumber, IsOptional, IsString, isNumber } from 'class-validator'
 import {
+  AutoOnlyOrderedServiceStatusEnum,
+  OrderedScopeStatus,
   OrderedServicePricingTypeEnum,
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
@@ -44,8 +46,11 @@ export class OrderedServiceResponseFields {
   @IsOptional()
   priceOverride: number | null
 
-  @ApiProperty({ example: OrderedServiceStatusEnum.Not_Started, enum: OrderedServiceStatusEnum })
-  status: string
+  @ApiProperty({
+    default: OrderedServiceStatusEnum.Completed,
+    enum: [...Object.values(OrderedServiceStatusEnum), ...Object.values(AutoOnlyOrderedServiceStatusEnum)],
+  })
+  status: OrderedScopeStatus
 
   @ApiProperty()
   orderedAt: string
