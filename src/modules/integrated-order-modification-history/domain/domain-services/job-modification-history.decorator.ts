@@ -59,7 +59,13 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
       const result = await method(...args)
 
       const jobsAfterModification = await this.findAfterJobs(jobs)
-      await Promise.all(jobsAfterModification.map(async (job) => await this.generateHistory(job, copiesBefore, editor)))
+      const copiesAfter = this.createCopies(jobsAfterModification)
+
+      await Promise.all(
+        jobsAfterModification.map(async (job) => {
+          await this.generateHistory(job, copiesBefore, copiesAfter, editor)
+        }),
+      )
 
       return result
     }
@@ -98,11 +104,15 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
     return new Map(jobs.map((job) => [job.id, deepCopy(this.jobMapper.toPersistence(job))]))
   }
 
-  private async generateHistory(job: JobEntity, copiesBefore: Map<string, OrderedJobs>, editor?: UserEntity | null) {
+  private async generateHistory(
+    job: JobEntity,
+    copiesBefore: Map<string, OrderedJobs>,
+    copiesAfter: Map<string, OrderedJobs>,
+    editor?: UserEntity | null,
+  ) {
     const copyBefore = copiesBefore.get(job.id)
-    if (!copyBefore) return
-
-    const copyAfter = deepCopy(this.jobMapper.toPersistence(job))
+    const copyAfter = copiesAfter.get(job.id)
+    if (!copyBefore || !copyAfter) return
 
     const modified = getModifiedFields(copyBefore, copyAfter)
 
