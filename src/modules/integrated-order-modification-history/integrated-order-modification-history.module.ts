@@ -22,6 +22,7 @@ import { GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler } from './ap
 import { GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-scope-is-ordered.domain-event-handler'
 import { GenerateDeletionHistoryWhenTaskIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-task-is-deleted.domain-event-handler'
 import { GenerateDeletionHistoryWhenOrderIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-order-is-deleted.domain-event-handler'
+import { GenerateDeletionHistoryWhenScopeIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-scope-is-deleted.domain-event-handler'
 
 const httpControllers = [
   FindIntegratedOrderModificationHistoryHttpController,
@@ -43,7 +44,7 @@ const eventHandlers: Provider[] = [
   GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler,
   GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler,
   GenerateDeletionHistoryWhenOrderIsDeletedDomainEventHandler,
-  GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler,
+  GenerateDeletionHistoryWhenScopeIsDeletedDomainEventHandler,
   GenerateDeletionHistoryWhenTaskIsDeletedDomainEventHandler,
 ]
 const mappers: Provider[] = [UserMapper]

@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { AssignedTasks, Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { PrismaService } from '../../database/prisma.service'
 import { AssignedTaskMapper } from '../assigned-task.mapper'
