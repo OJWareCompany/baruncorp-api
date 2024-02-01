@@ -417,7 +417,8 @@ export interface OrderedServiceResponseFields {
     | 'Custom Commercial GM Price'
     | 'Custom Fixed Price'
     | 'Custom Special Revision Price'
-    | 'Custom Special Revision Fee'
+    | 'Custom Special Revision Free'
+    | 'Base Minor Revision Free'
     | 'No Pricing Type'
   isRevision: boolean
   description: string | null
