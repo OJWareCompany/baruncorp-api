@@ -1,9 +1,9 @@
+import { IsDate, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
-import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
-import { AddressDto } from './address.dto'
-import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString, isNumber } from 'class-validator'
+import { AssignedTaskResponseDto } from '../../assigned-task/dtos/assigned-task.response.dto'
+import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import {
   AutoOnlyOrderedServiceStatusEnum,
   OrderedScopeStatus,
@@ -11,9 +11,8 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from '../../ordered-service/domain/ordered-service.type'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
-import { PrerequisiteTaskVO } from '../domain/value-objects/assigned-task.value-object'
-import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
+import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
+import { AddressDto } from './address.dto'
 
 export class OrderedServiceResponseFields {
   @ApiProperty()
@@ -60,53 +59,6 @@ export class OrderedServiceResponseFields {
   doneAt: string | null
 
   constructor(props: OrderedServiceResponseFields) {
-    initialize(this, props)
-  }
-}
-
-export class AssignedTaskResponseFields {
-  @ApiProperty()
-  assignTaskId: string
-
-  @ApiProperty({ example: AssignedTaskStatusEnum.Not_Started, enum: AssignedTaskStatusEnum })
-  status: string
-
-  @ApiProperty()
-  taskName: string
-
-  @ApiProperty()
-  taskId: string
-
-  @ApiProperty()
-  orderedServiceId: string
-
-  @ApiProperty()
-  @IsOptional()
-  startedAt: string | null
-
-  @ApiProperty()
-  assigneeName: string | null
-
-  @ApiProperty()
-  @IsOptional()
-  assigneeId: string | null
-
-  @ApiProperty()
-  @IsOptional()
-  doneAt: string | null
-
-  @ApiProperty()
-  @IsOptional()
-  description: string | null
-
-  @ApiProperty()
-  @IsOptional()
-  duration: number | null
-
-  @ApiProperty()
-  prerequisiteTasks: PrerequisiteTaskVO[]
-
-  constructor(props: AssignedTaskResponseFields) {
     initialize(this, props)
   }
 }
@@ -196,8 +148,8 @@ export class JobResponseDto {
   @ApiProperty({ example: LoadCalcOriginEnum.Self, enum: LoadCalcOriginEnum })
   loadCalcOrigin: LoadCalcOriginEnum
 
-  @ApiProperty({ example: AssignedTaskResponseFields, type: AssignedTaskResponseFields, isArray: true })
-  assignedTasks: AssignedTaskResponseFields[]
+  @ApiProperty({ example: AssignedTaskResponseDto, type: AssignedTaskResponseDto, isArray: true })
+  assignedTasks: AssignedTaskResponseDto[]
 
   @ApiProperty({ example: OrderedServiceResponseFields, type: OrderedServiceResponseFields, isArray: true })
   orderedServices: OrderedServiceResponseFields[]

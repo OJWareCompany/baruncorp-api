@@ -2,6 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
+import { PrerequisiteTaskVO } from '../../ordered-job/domain/value-objects/assigned-task.value-object'
 
 export class AssignedTaskResponseDto {
   @ApiProperty()
@@ -118,6 +119,9 @@ export class AssignedTaskResponseDto {
   @IsNumber()
   @IsOptional()
   readonly cost: number | null
+
+  @ApiProperty()
+  readonly prerequisiteTasks: PrerequisiteTaskVO[]
 
   constructor(props: AssignedTaskResponseDto) {
     initialize(this, props)

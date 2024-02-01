@@ -7,6 +7,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
 import { MountingType, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
+import { PrerequisiteTaskVO } from '../../../ordered-job/domain/value-objects/assigned-task.value-object'
 
 export class FindAssignedTaskPaginatedQuery extends PaginatedQueryBase {
   readonly projectNumber?: string | null
@@ -32,7 +33,7 @@ export class FindAssignedTaskPaginatedQueryHandler implements IQueryHandler {
 
   async execute(
     query: FindAssignedTaskPaginatedQuery,
-  ): Promise<Paginated<AssignedTasks & { user: Users | null; orderedService: OrderedServices }>> {
+  ): Promise<Paginated<AssignedTasks & { prerequisiteTasks: PrerequisiteTaskVO[] }>> {
     const condition: Prisma.AssignedTasksWhereInput = {
       ...(query.projectNumber && { projectNumber: query.projectNumber }),
       ...(query.jobName && { jobName: query.jobName }),
@@ -52,13 +53,19 @@ export class FindAssignedTaskPaginatedQueryHandler implements IQueryHandler {
       skip: query.offset,
       take: query.limit,
     })
+    const preTasks = await this.prismaService.prerequisiteTasks.findMany()
     if (!result) throw new AssignedTaskNotFoundException()
     const totalCount = await this.prismaService.assignedTasks.count({ where: condition })
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
       totalCount: totalCount,
-      items: result,
+      items: result.map((item) => {
+        return {
+          ...item,
+          prerequisiteTasks: preTasks.filter((pre) => (pre.taskId = item.taskId)),
+        }
+      }),
     })
   }
 }

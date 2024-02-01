@@ -14,6 +14,7 @@ import { Address } from '../organization/domain/value-objects/address.vo'
 import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
 import { JobRepositoryPort } from './database/job.repository.port'
 import { JOB_REPOSITORY } from './job.di-token'
+import { AssignedTaskResponseDto } from '../assigned-task/dtos/assigned-task.response.dto'
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 @Injectable()
@@ -76,26 +77,39 @@ export class JobResponseMapper {
       }),
     )
     const assignedTasks = await this.prismaService.assignedTasks.findMany({ where: { jobId: job.id } })
-    const assignedTasksResponse = await Promise.all(
+    const assignedTasksResponse: AssignedTaskResponseDto[] = await Promise.all(
       assignedTasks.map(async (assignedTask) => {
         const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany({
           where: { taskId: assignedTask.taskId },
         })
-        return {
-          assignTaskId: assignedTask.id,
-          status: assignedTask.status,
-          taskName: assignedTask.taskName,
-          duration: assignedTask.duration,
-          startedAt: assignedTask.startedAt ? assignedTask.startedAt.toISOString() : null,
-          doneAt: assignedTask.doneAt ? assignedTask.doneAt.toISOString() : null,
-          isActive: assignedTask.is_active,
-          prerequisiteTasks: prerequisiteTasks,
+        return new AssignedTaskResponseDto({
+          id: assignedTask.id,
           taskId: assignedTask.taskId,
           orderedServiceId: assignedTask.orderedServiceId,
-          assigneeName: assignedTask.assigneeName,
-          assigneeId: assignedTask.assigneeId,
+          jobId: assignedTask.jobId,
+          status: assignedTask.status,
           description: assignedTask.description,
-        }
+          assigneeId: assignedTask.assigneeId,
+          assigneeName: assignedTask.assigneeName,
+          assigneeOrganizationId: assignedTask.assigneeOrganizationId,
+          assigneeOrganizationName: assignedTask.assigneeOrganizationName,
+          duration: assignedTask.duration,
+          startedAt: assignedTask.startedAt,
+          doneAt: assignedTask.doneAt,
+          taskName: assignedTask.taskName,
+          serviceName: assignedTask.serviceName,
+          projectId: assignedTask.projectId,
+          organizationId: assignedTask.organizationId,
+          organizationName: assignedTask.organizationName,
+          projectPropertyType: assignedTask.projectPropertyType as ProjectPropertyTypeEnum,
+          mountingType: assignedTask.mountingType as MountingTypeEnum,
+          cost: assignedTask.cost ? Number(assignedTask.cost) : null,
+          isVendor: assignedTask.isVendor,
+          vendorInvoiceId: assignedTask.vendorInvoiceId,
+          serviceId: assignedTask.serviceId,
+          createdAt: assignedTask.created_at,
+          prerequisiteTasks: prerequisiteTasks,
+        })
       }),
     )
 

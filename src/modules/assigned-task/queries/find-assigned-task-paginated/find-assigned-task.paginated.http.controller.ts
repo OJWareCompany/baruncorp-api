@@ -1,13 +1,14 @@
 import { Controller, Get, Query } from '@nestjs/common'
+import { AssignedTasks } from '@prisma/client'
+import { ApiOperation } from '@nestjs/swagger'
 import { QueryBus } from '@nestjs/cqrs'
-import { AssignedTasks, OrderedServices, Users } from '@prisma/client'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { AssignedTaskPaginatedResponseDto } from '../../dtos/assigned-task.paginated.response.dto'
 import { FindAssignedTaskPaginatedRequestDto } from './find-assigned-task.paginated.request.dto'
 import { FindAssignedTaskPaginatedQuery } from './find-assigned-task.paginated.query-handler'
-import { AssignedTaskPaginatedResponseDto } from '../../dtos/assigned-task.paginated.response.dto'
-import { ApiOperation } from '@nestjs/swagger'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
+import { PrerequisiteTaskVO } from '../../../ordered-job/domain/value-objects/assigned-task.value-object'
 
 @Controller('assigned-tasks')
 export class FindAssignedTaskPaginatedHttpController {
@@ -24,7 +25,9 @@ export class FindAssignedTaskPaginatedHttpController {
       ...queryParams,
     })
 
-    const result: Paginated<AssignedTasks & { orderedService: OrderedServices }> = await this.queryBus.execute(command)
+    const result: Paginated<AssignedTasks & { prerequisiteTasks: PrerequisiteTaskVO[] }> = await this.queryBus.execute(
+      command,
+    )
 
     return new AssignedTaskPaginatedResponseDto({
       ...queryParams,
@@ -35,7 +38,7 @@ export class FindAssignedTaskPaginatedHttpController {
         orderedServiceId: item.orderedServiceId,
         jobId: item.jobId,
         status: item.status,
-        description: item.orderedService.description,
+        description: item.description,
         assigneeId: item.assigneeId,
         assigneeName: item.assigneeName,
         assigneeOrganizationId: item.assigneeOrganizationId,
@@ -50,11 +53,12 @@ export class FindAssignedTaskPaginatedHttpController {
         organizationName: item.organizationName,
         projectPropertyType: item.projectPropertyType as ProjectPropertyTypeEnum,
         mountingType: item.mountingType as MountingTypeEnum,
-        cost: Number(item.cost),
+        cost: item.cost ? Number(item.cost) : null,
         isVendor: item.isVendor,
         vendorInvoiceId: item.vendorInvoiceId,
         serviceId: item.serviceId,
         createdAt: item.created_at,
+        prerequisiteTasks: item.prerequisiteTasks,
       })),
     })
   }

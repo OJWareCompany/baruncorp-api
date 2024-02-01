@@ -1,9 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { AssignedTasks, OrderedServices, Users } from '@prisma/client'
+import { AssignedTasks } from '@prisma/client'
 import { AssignedTaskResponseDto } from '../../dtos/assigned-task.response.dto'
 import { FindAssignedTaskRequestDto } from './find-assigned-task.request.dto'
 import { FindAssignedTaskQuery } from './find-assigned-task.query-handler'
+import { PrerequisiteTaskVO } from '../../../ordered-job/domain/value-objects/assigned-task.value-object'
 
 @Controller('assigned-tasks')
 export class FindAssignedTaskHttpController {
@@ -13,9 +14,7 @@ export class FindAssignedTaskHttpController {
   async get(@Param() request: FindAssignedTaskRequestDto): Promise<AssignedTaskResponseDto> {
     const command = new FindAssignedTaskQuery(request)
 
-    const result: AssignedTasks & { user: Users | null; orderedService: OrderedServices } = await this.queryBus.execute(
-      command,
-    )
+    const result: AssignedTasks & { prerequisiteTasks: PrerequisiteTaskVO[] } = await this.queryBus.execute(command)
 
     return new AssignedTaskResponseDto({
       id: result.id,
@@ -23,7 +22,7 @@ export class FindAssignedTaskHttpController {
       orderedServiceId: result.orderedServiceId,
       jobId: result.jobId,
       status: result.status,
-      description: result.orderedService.description,
+      description: result.description,
       assigneeId: result.assigneeId,
       assigneeName: result.assigneeName,
       assigneeOrganizationId: result.assigneeOrganizationId,
@@ -43,6 +42,7 @@ export class FindAssignedTaskHttpController {
       vendorInvoiceId: result.vendorInvoiceId,
       serviceId: result.serviceId,
       createdAt: result.created_at,
+      prerequisiteTasks: result.prerequisiteTasks,
     })
   }
 }
