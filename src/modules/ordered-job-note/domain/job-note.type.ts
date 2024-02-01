@@ -8,6 +8,7 @@ export interface CreateJobNoteProps {
   jobNoteNumber: number
   senderEmail: string | null
   receiverEmails: string[] | null
+  emailThreadId: string | null
 }
 
 export interface JobNoteProps extends CreateJobNoteProps {

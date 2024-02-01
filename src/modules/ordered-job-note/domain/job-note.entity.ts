@@ -53,6 +53,14 @@ export class JobNoteEntity extends AggregateRoot<JobNoteProps> {
     this.props.jobNoteNumber = jobNoteNumber
   }
 
+  get emailThreadId(): string | null {
+    return this.props.emailThreadId
+  }
+
+  set emailThreadId(emailThreadId: string | null) {
+    this.props.emailThreadId = emailThreadId
+  }
+
   public validate(): void {
     return
   }

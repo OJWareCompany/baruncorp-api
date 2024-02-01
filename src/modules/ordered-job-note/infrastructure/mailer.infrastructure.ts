@@ -14,7 +14,6 @@ export interface IRFIMail {
 export class RFIMailer {
   async sendRFI(input: IRFIMail) {
     const gmail = await this.getGmailClient(input.from)
-    console.log(`[sendRFI] gmail.users.messages : ${JSON.stringify(gmail.users.messages)}`)
 
     const emailLines = []
     emailLines.push(`To: ${input.to}`)
@@ -30,13 +29,19 @@ export class RFIMailer {
     let base64EncodedEmail = Buffer.from(email).toString('base64')
     base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
+    const requestBody = input.threadId
+      ? {
+          raw: base64EncodedEmail,
+          threadId: input.threadId,
+        }
+      : {
+          raw: base64EncodedEmail,
+        }
+    console.log(`[sendRFI] requestBody : ${JSON.stringify(requestBody)}`)
     const res = await gmail.users.messages
       .send({
         userId: 'me',
-        requestBody: {
-          raw: base64EncodedEmail,
-          // threadId,
-        },
+        requestBody: requestBody,
       })
       .catch((error) => {
         if (error.status === 404) {
@@ -44,24 +49,24 @@ export class RFIMailer {
         }
       })
 
-    console.log('🚀 ~ file: send.mjs:49 ~ sendEmail ~ res:', res)
-
-    // return res.data;
+    console.log(`[sendRFI] threadId : ${res?.data.threadId}`)
+    return res?.data.threadId ?? null
   }
 
   async getGmailClient(sender: string) {
-    console.log(`[getGmailClient] sender: ${sender}`)
+    const authClient: OAuth2Client = await this.getGoogleAuthClient(sender)
+    return google.gmail({ version: 'v1', auth: authClient })
+  }
+
+  async getGoogleAuthClient(sender: string): Promise<OAuth2Client> {
     const auth = new google.auth.GoogleAuth({
       scopes: ['https://mail.google.com'],
       keyFile: './baruncorp-file-service-1b5ac540d6f3.json',
       clientOptions: {
-        subject: sender, //"automation@baruncorp.com",
+        subject: sender,
       },
     })
 
-    const authClient: OAuth2Client = (await auth.getClient()) as OAuth2Client
-    // const tokenInfo = await authClient.getAccessToken()
-    // console.log(`[getGmailClient] tokenInfo : ${tokenInfo}`);
-    return google.gmail({ version: 'v1', auth: authClient })
+    return (await auth.getClient()) as OAuth2Client
   }
 }

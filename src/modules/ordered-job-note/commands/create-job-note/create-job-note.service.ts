@@ -30,35 +30,42 @@ export class CreateJobNoteService implements ICommandHandler {
     const senderEmail: string = creatorUser.isVendor ? 'newjobs@baruncorp.com' : creatorUser.email
     // 메시지 넘버 확인
     const maxJobNoteNumber: number | null = await this.jobNoteRepository.getMaxJobNoteNumber(command.jobId)
-    // Entity 생성
-    const entity: JobNoteEntity = JobNoteEntity.create({
-      jobId: command.jobId,
-      creatorUserId: command.creatorUserId,
-      type: command.type,
-      content: command.content,
-      jobNoteNumber: maxJobNoteNumber ? maxJobNoteNumber + 1 : 1,
-      senderEmail: senderEmail,
-      receiverEmails: command.type === JobNoteTypeEnum.RFI ? command.receiverEmails : null,
-    })
+
+    let content: string = command.content
+    let emailThreadId: string | null = null
 
     if (command.type === JobNoteTypeEnum.RFI) {
       if (!command.receiverEmails || command.receiverEmails.length === 0) {
         throw new ReceiverEmailsFoundException()
       }
-      entity.content += command.content + `\n\n${creatorUser.full_name}` + RFISignature
       const subject = `[BARUN CORP] Job #${targetJob.jobRequestNumber} ${targetJob.propertyAddress}`
 
+      content += content + `\n\n${creatorUser.full_name}` + RFISignature
+      // From의 email에 대한 threadId가 있는지 확인
+      emailThreadId = await this.jobNoteRepository.findSendersThreadId(command.jobId, senderEmail)
+      console.log(`[execute] finded emailThreadId : ${emailThreadId}`)
       // 메일 전송 요청
       const input: IRFIMail = {
-        from: entity.senderEmail!,
-        to: entity.receiverEmails!,
-        text: entity.content,
+        from: senderEmail,
+        to: command.receiverEmails,
+        text: content,
         subject: subject,
-        threadId: null,
+        threadId: emailThreadId,
       }
 
-      await this.mailer.sendRFI(input)
+      emailThreadId = await this.mailer.sendRFI(input)
     }
+
+    const entity: JobNoteEntity = JobNoteEntity.create({
+      jobId: command.jobId,
+      creatorUserId: command.creatorUserId,
+      type: command.type,
+      content: content,
+      jobNoteNumber: maxJobNoteNumber ? maxJobNoteNumber + 1 : 1,
+      senderEmail: senderEmail,
+      receiverEmails: command.type === JobNoteTypeEnum.RFI ? command.receiverEmails : null,
+      emailThreadId: emailThreadId,
+    })
 
     await this.jobNoteRepository.insert(entity)
 

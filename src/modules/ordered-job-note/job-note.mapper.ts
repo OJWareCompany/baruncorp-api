@@ -20,6 +20,7 @@ export class JobNoteMapper implements Mapper<JobNoteEntity, JobNoteModel, JobNot
       receiverEmails: props.receiverEmails ? props.receiverEmails.toString() : null,
       createdAt: props.createdAt,
       senderEmail: props.senderEmail,
+      emailThreadId: props.emailThreadId,
     }
     return record
   }
@@ -36,6 +37,7 @@ export class JobNoteMapper implements Mapper<JobNoteEntity, JobNoteModel, JobNot
         type: record.type === JobNoteType.JobNote ? JobNoteTypeEnum.JobNote : JobNoteTypeEnum.RFI,
         jobNoteNumber: record.jobNoteNumber,
         senderEmail: record.senderEmail,
+        emailThreadId: record.emailThreadId,
       },
     })
   }

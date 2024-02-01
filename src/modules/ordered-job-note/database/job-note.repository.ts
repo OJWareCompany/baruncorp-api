@@ -57,11 +57,31 @@ export class JobNoteRepository implements JobNoteRepositoryPort {
 
   async getMaxJobNoteNumber(jobId: string): Promise<number | null> {
     const maxJobNoteNumber = await this.prismaService.orderedJobNotes.aggregate({
+      where: {
+        jobId: jobId,
+      },
       _max: {
         jobNoteNumber: true,
       },
     })
 
     return maxJobNoteNumber._max.jobNoteNumber
+  }
+
+  async findSendersThreadId(jobId: string, senderEmail: string): Promise<string | null> {
+    const record = await this.prismaService.orderedJobNotes.findFirst({
+      where: {
+        jobId: jobId,
+        senderEmail: senderEmail,
+      },
+      select: {
+        emailThreadId: true,
+      },
+    })
+    // Todo. Thread 관리 디테일하게 어떻게 할 지 생각 해 봐야 함.
+    console.log(`[findSendersThreadId] jobId : ${jobId}, senderEmail : ${senderEmail}`)
+    console.log(`[findSendersThreadId] record : ${JSON.stringify(record)}`)
+
+    return record?.emailThreadId ?? null
   }
 }

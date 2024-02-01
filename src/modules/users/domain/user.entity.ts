@@ -14,9 +14,10 @@ import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 import { Organization } from './value-objects/organization.value-object'
 import { UserManager } from './domain-services/user-manager.domain-service'
 import { UserCreatedDomainEvent } from './events/user-created.domain-event'
-import { UserUpdatedDomainEvent } from './events/user-updated.domain-event'
+import { UserDateOfJoiningUpdatedDomainEvent } from './events/user-date-of-joining-updated.domain-event'
 import { Pto } from './value-objects/pto.vo'
 import { PtoDetail } from './value-objects/pto-detail.vo'
+import { UserStatusUpdatedDomainEvent } from '@modules/users/domain/events/user-status-updated.domain-event'
 
 export class UserEntity extends AggregateRoot<UserProps> {
   protected _id: string
@@ -105,11 +106,13 @@ export class UserEntity extends AggregateRoot<UserProps> {
 
   async reactivate(userManager: UserManager) {
     this.props.status = await userManager.determineUserStatus(this)
+    this.setUserStatusChangedEvent()
     return this
   }
 
   deactivate() {
     this.props.status = UserStatusEnum.INACTIVE
+    this.setUserStatusChangedEvent()
     return this
   }
 
@@ -151,6 +154,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
 
   invite() {
     this.props.status = UserStatusEnum.INVITATION_SENT
+    this.setUserStatusChangedEvent()
     return this
   }
 
@@ -159,6 +163,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
     this.props.phone = phone
     this.props.deliverablesEmails = deliverablesEmails
     this.props.status = UserStatusEnum.ACTIVE
+    this.setUserStatusChangedEvent()
     return this
   }
 
@@ -188,7 +193,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
     this.props.dateOfJoining = newDateOfJoining
 
     this.addEvent(
-      new UserUpdatedDomainEvent({
+      new UserDateOfJoiningUpdatedDomainEvent({
         aggregateId: this.id,
         dateOfJoining: this.props.dateOfJoining,
       }),
@@ -204,6 +209,16 @@ export class UserEntity extends AggregateRoot<UserProps> {
         userId: this.id,
         tenure: tenure,
         total: total,
+      }),
+    )
+  }
+
+  setUserStatusChangedEvent() {
+    this.addEvent(
+      new UserStatusUpdatedDomainEvent({
+        aggregateId: this.id,
+        status: this.props.status,
+        email: this.props.email,
       }),
     )
   }
