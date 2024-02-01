@@ -1,14 +1,15 @@
-import { Injectable } from '@nestjs/common'
 import { AssignedTasks, OrderedServices, Prisma } from '@prisma/client'
+import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
-import { OrderedServiceEntity } from './domain/ordered-service.entity'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { OrderedServiceResponseDto } from './dtos/ordered-service.response.dto'
+import { OrderedServiceEntity } from './domain/ordered-service.entity'
 import {
+  OrderedServicePricingTypeEnum,
   OrderedServiceSizeForRevision,
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from './domain/ordered-service.type'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 
 @Injectable()
 export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, OrderedServices, OrderedServiceResponseDto> {
@@ -22,6 +23,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       projectId: props.projectId,
       jobId: props.jobId,
       description: props.description,
+      pricing_type: props.pricingType,
       price: props.price === null ? null : new Prisma.Decimal(props.price),
       priceOverride: props.priceOverride === null ? null : new Prisma.Decimal(props.priceOverride),
       status: props.status,
@@ -56,6 +58,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
           ? OrderedServiceSizeForRevisionEnum[record.sizeForRevision as OrderedServiceSizeForRevision]
           : null,
         description: record.description,
+        pricingType: record.pricing_type as OrderedServicePricingTypeEnum,
         price: record.price === null ? null : Number(record.price),
         priceOverride: record.priceOverride === null ? null : Number(record.priceOverride),
         orderedAt: record.orderedAt,

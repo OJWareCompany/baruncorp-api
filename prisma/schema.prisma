@@ -186,8 +186,8 @@ model OrderedServices {
   serviceId                String          @map("service_id") @db.VarChar(255)
   jobId                    String          @map("job_id") @db.VarChar(255)
   serviceName              String          @map("service_name") @db.VarChar(255)
+  pricing_type             String?         @db.VarChar(255)
   price                    Decimal?        @db.Decimal(13, 4)
-  priceOverride            Decimal?        @map("price_override") @db.Decimal(13, 4)
   status                   String?         @db.VarChar(255)
   doneAt                   DateTime?       @map("done_at") @db.DateTime(0)
   orderedAt                DateTime        @map("ordered_at")
@@ -202,6 +202,7 @@ model OrderedServices {
   projectPropertyOwnerName String?         @map("project_property_owner_name") @db.VarChar(255)
   jobName                  String          @map("job_name") @db.VarChar(255)
   updated_at               DateTime
+  priceOverride            Decimal?        @map("price_override") @db.Decimal(13, 4)
   updated_by               String?         @db.VarChar(255)
   editor_user_id           String?         @db.VarChar(255)
   job                      OrderedJobs     @relation(fields: [jobId], references: [id])

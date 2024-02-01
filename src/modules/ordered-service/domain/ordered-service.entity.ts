@@ -3,6 +3,7 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import {
   AutoOnlyOrderedServiceStatusEnum,
   CreateOrderedServiceProps,
+  OrderedServicePricingTypeEnum,
   OrderedServiceProps,
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
@@ -64,6 +65,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       assignedTasks: [],
       price: null,
       sizeForRevision: null,
+      pricingType: null,
     }
 
     const entity = new OrderedServiceEntity({ id, props })
@@ -172,8 +174,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       await this.determineInitialRevisionType(calcService, orderModificationValidator, revisionTypeUpdateValidator)
     } else {
       await orderModificationValidator.validate(this)
-      const initialPrice = await calcService.determinePrice(this, this.sizeForRevision)
-      this.setPrice(initialPrice)
+      const initialValue = await calcService.determinePriceAndPricingType(this, this.sizeForRevision)
+      this.setPrice(initialValue?.price || null)
+      this.setPricingType(initialValue?.pricingType || null)
     }
   }
 
@@ -187,6 +190,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       await this.updateRevisionSizeToMajor(orderModificationValidator, calcService, revisionTypeUpdateValidator)
     } else if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
       await this.updateRevisionSizeToMinor(orderModificationValidator, revisionTypeUpdateValidator)
+    } else {
+      const initialValue = await calcService.determinePriceAndPricingType(this, this.sizeForRevision)
+      this.setPrice(initialValue?.price || null)
+      this.setPricingType(initialValue?.pricingType || null)
     }
   }
 
@@ -199,6 +206,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
     this.props.sizeForRevision = null
     this.props.price = null
+    this.props.pricingType = null
     this.addEvent(
       new OrderedServiceUpdatedRevisionSizeDomainEvent({
         aggregateId: this.id,
@@ -217,6 +225,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Minor
     this.freeCost()
+    this.setPricingType(OrderedServicePricingTypeEnum.BASE_MINOR_REVISION_FREE)
     this.addEvent(
       new OrderedServiceUpdatedRevisionSizeDomainEvent({
         aggregateId: this.id,
@@ -236,9 +245,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     await revisionTypeUpdateValidator.validate(this)
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Major
 
-    const initialPrice = await calcService.determinePrice(this, this.sizeForRevision)
-
-    this.setPrice(initialPrice)
+    const initialValue = await calcService.determinePriceAndPricingType(this, this.sizeForRevision)
+    this.setPrice(initialValue?.price || null)
+    this.setPricingType(initialValue?.pricingType || null)
 
     this.addEvent(
       new OrderedServiceUpdatedRevisionSizeDomainEvent({
@@ -397,6 +406,11 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     // 왜 Minor Completed로 했었을까? 도메인 정보를 문서화 할 필요가 있다.
     // if (this.isCanceledOrMinorCompleted) this.setPrice(NO_COST)
     if (this.props.sizeForRevision !== OrderedServiceSizeForRevisionEnum.Major) this.setPrice(NO_COST)
+  }
+
+  private setPricingType(pricingType: OrderedServicePricingTypeEnum | null): this {
+    this.props.pricingType = pricingType
+    return this
   }
 
   private setPrice(price: number | null): void {
