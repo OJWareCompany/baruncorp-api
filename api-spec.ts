@@ -376,19 +376,36 @@ export interface PrerequisiteTaskVO {
   prerequisiteTaskName: string
 }
 
-export interface AssignedTaskResponseFields {
-  assignTaskId: string
-  /** @example "Not Started" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
-  taskName: string
+export interface AssignedTaskResponseDto {
+  id: string
   taskId: string
+  taskName: string
   orderedServiceId: string
-  startedAt: string | null
-  assigneeName: string | null
-  assigneeId: string | null
-  doneAt: string | null
+  serviceName: string
+  jobId: string
+  /** @default "Not Started" */
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
   description: string | null
+  assigneeId: string | null
+  assigneeName: string | null
+  assigneeOrganizationId: string | null
+  assigneeOrganizationName: string | null
+  projectId: string
+  organizationId: string
+  organizationName: string
+  projectPropertyType: string
+  mountingType: string
+  serviceId: string
+  vendorInvoiceId: string | null
+  isVendor: boolean
+  /** @format date-time */
+  startedAt: string | null
+  /** @format date-time */
+  doneAt: string | null
+  /** @format date-time */
+  createdAt: string | null
   duration: number | null
+  cost: number | null
   prerequisiteTasks: PrerequisiteTaskVO[]
 }
 
@@ -483,7 +500,7 @@ export interface JobResponseDto {
     | 'Sent To Client'
   /** @example "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
-  assignedTasks: AssignedTaskResponseFields[]
+  assignedTasks: AssignedTaskResponseDto[]
   orderedServices: OrderedServiceResponseFields[]
   clientInfo: ClientInformationFields
   /** @example "2023-08-11 09:10:31" */
@@ -919,38 +936,6 @@ export interface AhjNoteHistoryPaginatedResponseDto {
 export interface AssignTaskRequestDto {
   /** @default "295fff4a-b13f-4c42-ba30-c0f39536ee6e" */
   assigneeId: string
-}
-
-export interface AssignedTaskResponseDto {
-  id: string
-  taskId: string
-  taskName: string
-  orderedServiceId: string
-  serviceName: string
-  jobId: string
-  /** @default "Not Started" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
-  description: string | null
-  assigneeId: string | null
-  assigneeName: string | null
-  assigneeOrganizationId: string | null
-  assigneeOrganizationName: string | null
-  projectId: string
-  organizationId: string
-  organizationName: string
-  projectPropertyType: string
-  mountingType: string
-  serviceId: string
-  vendorInvoiceId: string | null
-  isVendor: boolean
-  /** @format date-time */
-  startedAt: string | null
-  /** @format date-time */
-  doneAt: string | null
-  /** @format date-time */
-  createdAt: string | null
-  duration: number | null
-  cost: number | null
 }
 
 export interface AssignedTaskPaginatedResponseDto {
