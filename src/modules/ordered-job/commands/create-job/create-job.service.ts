@@ -17,6 +17,10 @@ import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobEntity } from '../../domain/job.entity'
 import { CreateJobCommand } from './create-job.command'
+import { JobMapper } from '../../job.mapper'
+import { EventEmitter2 } from '@nestjs/event-emitter'
+import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
+import { PrismaService } from '../../../database/prisma.service'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -28,6 +32,10 @@ export class CreateJobService implements ICommandHandler {
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
     private readonly durationCalculator: TotalDurationCalculator,
+    private readonly prismaService: PrismaService,
+    private readonly filesystemDomainService: FilesystemDomainService,
+    private readonly jobMapper: JobMapper,
+    protected readonly eventEmitter: EventEmitter2,
   ) {}
 
   async execute(command: CreateJobCommand): Promise<{ id: string }> {
@@ -40,7 +48,7 @@ export class CreateJobService implements ICommandHandler {
     const totalDurationInMinutes = await this.durationCalculator.calcTotalDuration(command.orderedTasks, project)
 
     // Entity에는 Record에 저장 될 모든 필드가 있어야한다.
-    const job = JobEntity.create({
+    const jobEntity = JobEntity.create({
       propertyFullAddress: project.projectPropertyAddress.fullAddress,
       loadCalcOrigin: command.loadCalcOrigin,
       organizationId: project.clientOrganizationId,
@@ -76,10 +84,37 @@ export class CreateJobService implements ICommandHandler {
       dueDate: command.dueDate ? command.dueDate : totalDurationInMinutes,
       editorUserId: command.editorUserId,
     })
-    await this.jobRepo.insert(job)
+    const jobRecord = this.jobMapper.toPersistence(jobEntity)
+
+    /**
+     * @FilesystemLogic
+     */
+    const { googleJobFolderData, rollback } = await this.filesystemDomainService.createGoogleJobFolder(
+      command.projectId,
+      project.projectPropertyType,
+      project.projectPropertyAddress.fullAddress,
+      jobEntity.id,
+      project.totalOfJobs,
+    )
+
+    try {
+      await this.prismaService.$transaction([
+        this.prismaService.orderedJobs.create({ data: jobRecord }),
+        this.prismaService.googleJobFolder.create({ data: googleJobFolderData }),
+      ])
+
+      jobEntity.publishEvents(this.eventEmitter)
+    } catch (error) {
+      jobEntity.clearEvents()
+      /**
+       * @FilesystemLogic
+       */
+      await rollback()
+      throw error
+    }
 
     return {
-      id: job.id,
+      id: jobEntity.id,
     }
   }
 }

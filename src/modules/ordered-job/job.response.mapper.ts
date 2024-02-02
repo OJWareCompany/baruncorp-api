@@ -15,6 +15,7 @@ import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
 import { JobRepositoryPort } from './database/job.repository.port'
 import { JOB_REPOSITORY } from './job.di-token'
 import { AssignedTaskResponseDto } from '../assigned-task/dtos/assigned-task.response.dto'
+import { GoogleDriveJobFolderNotFoundException } from '../filesystem/domain/filesystem.error'
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 @Injectable()
@@ -26,6 +27,9 @@ export class JobResponseMapper {
     private readonly serviceManager: ServiceInitialPriceManager,
   ) {}
   async toResponse(job: OrderedJobs): Promise<JobResponseDto> {
+    const jobFolder = await this.prismaService.googleJobFolder.findFirst({ where: { jobId: job.id } })
+    if (!jobFolder) throw new GoogleDriveJobFolderNotFoundException()
+
     const currentJobId = await this.prismaService.orderedJobs.findFirst({
       select: { id: true },
       where: { projectId: job.projectId },
@@ -171,6 +175,7 @@ export class JobResponseMapper {
       state: stateName,
       dateSentToClient: job.dateSentToClient,
       dueDate: job.dueDate ? job.dueDate : null,
+      jobFolderId: jobFolder.id,
     })
   }
 

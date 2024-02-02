@@ -1107,6 +1107,67 @@ model InformationHistories {
   @@map("information_histories")
 }
 
+/// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
+model GoogleJobFolder {
+  id                          String  @id @map("id") @db.VarChar(255)
+  shareLink                   String? @map("share_link") @db.VarChar(255)
+  deliverablesFolderId        String? @map("deliverables_folder_id") @db.VarChar(255)
+  deliverablesFolderShareLink String? @map("deliverables_folder_share_link") @db.VarChar(255)
+  jobId                       String? @map("job_id") @db.VarChar(255)
+  jobNotesFolderId            String? @unique(map: "google_job_folder_UN") @map("job_notes_folder_id") @db.VarChar(255)
+  jobNotesFolderShareLink     String? @map("job_notes_folder_share_link") @db.VarChar(255)
+  sharedDriveId               String? @map("shared_drive_id") @db.VarChar(255)
+  count                       Int?    @map("count") @db.UnsignedSmallInt
+
+  @@index([sharedDriveId], map: "google_job_folder_google_shared_drive_fkey")
+  @@index([jobId], map: "google_job_folder_FK")
+  @@map("google_job_folder")
+}
+
+model GoogleProjectFolder {
+  id            String  @id @map("id") @db.VarChar(255)
+  shareLink     String? @map("share_link") @db.VarChar(255)
+  projectId     String? @map("project_id") @db.VarChar(255)
+  sharedDriveId String? @map("shared_drive_id") @db.VarChar(255)
+
+  @@index([sharedDriveId], map: "google_project_folder_google_shared_drive_fkey")
+  @@index([projectId], map: "google_project_folder_FK")
+  @@map("google_project_folder")
+}
+
+model GoogleSharedDrive {
+  id                  String  @id @map("id") @db.VarChar(255)
+  residentialFolderId String? @map("residential_folder_id") @db.VarChar(255)
+  commercialFolderId  String? @map("commercial_folder_id") @db.VarChar(255)
+  organizationId      String  @map("organization_id")
+  organizationName    String  @map("organization_name")
+  count               Int?    @default(0) @db.UnsignedMediumInt
+  version             String? @db.Char(3)
+
+  @@index([organizationId], map: "shared_drive_FK")
+  @@map("google_shared_drive")
+}
+
+model GoogleAhjNotesFolder {
+  id    String @id @map("id") @db.VarChar(255)
+  geoId String @map("geo_id") @db.VarChar(20)
+
+  @@index([geoId], map: "google_ahj_notes_folder_ahj_notes_fkey")
+  @@map("google_ahj_notes_folder")
+}
+
+model GoogleJobNoteFolder {
+  id               String  @id @map("id") @db.VarChar(255)
+  shareLink        String? @map("share_link") @db.VarChar(255)
+  jobNotesFolderId String? @map("job_notes_folder_id") @db.VarChar(255)
+  jobNoteId        String? @map("job_note_id") @db.VarChar(255)
+  sharedDriveId    String? @map("shared_drive_id") @db.VarChar(255)
+
+  @@index([jobNotesFolderId], map: "google_job_note_folder_google_job_folder_fkey")
+  @@index([sharedDriveId], map: "google_job_note_folder_google_shared_drive_fkey")
+  @@map("google_job_note_folder")
+}
+
 model ClientNotes {
   id             String                @id @db.VarChar(255)
   organizationId String                @unique @map("organization_id") @db.VarChar(255)

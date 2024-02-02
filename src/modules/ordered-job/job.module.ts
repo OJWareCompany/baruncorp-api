@@ -44,6 +44,8 @@ import { JobMapper } from './job.mapper'
 import { Mailer } from './infrastructure/mailer.infrastructure'
 import { UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler } from './application/event-handlers/update-invoice-id-when-invoice-is-created.domain-event-handler'
 import { OrderDeletionValidator } from './domain/domain-services/order-deletion-validator.domain-service'
+import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
+import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -103,6 +105,8 @@ const domainServices: Provider[] = [
     forwardRef(() => IntegratedOrderModificationHistoryModule),
   ],
   providers: [
+    FilesystemApiService,
+    FilesystemDomainService,
     ...commandHandlers,
     ...queryHandlers,
     ...eventHandlers,

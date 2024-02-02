@@ -539,7 +539,7 @@ export interface JobToInvoiceResponseDto {
 }
 
 export interface SendDeliverablesRequestDto {
-  deliverablesLink: string
+  // deliverablesLink: string
 }
 
 export interface CommercialTier {

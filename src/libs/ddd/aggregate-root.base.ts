@@ -28,4 +28,23 @@ export abstract class AggregateRoot<EntityProps> extends Entity<EntityProps> {
     )
     this.clearEvents()
   }
+
+  public async publishEventByAggregateIdAndThrowIfFailed(
+    eventEmitter: EventEmitter2,
+    aggregateId: string,
+  ): Promise<void> {
+    const foundEvent = this.domainEvents.find(function (event) {
+      return event.aggregateId === aggregateId
+    })
+    if (!foundEvent) {
+      console.log(`Event does not exist: ${aggregateId}`)
+      return
+    }
+    const results = await eventEmitter.emitAsync(foundEvent.constructor.name, foundEvent)
+    results.forEach((result) => {
+      if (result && result instanceof Error) {
+        throw result
+      }
+    })
+  }
 }
