@@ -16,13 +16,9 @@ import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
 import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
-import { FilesystemApiService } from '../../../filesystem/infra/filesystem.api.service'
-import {
-  GoogleDriveSharedDriveNotFoundException,
-  GoogleDriveProjectFolderNotFoundException,
-} from '../../../filesystem/domain/filesystem.error'
 import { JobMapper } from '../../job.mapper'
 import { EventEmitter2 } from '@nestjs/event-emitter'
+import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -33,7 +29,7 @@ export class CreateJobService implements ICommandHandler {
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort, // @ts-ignore
     private readonly durationCalculator: TotalDurationCalculator,
     private readonly prismaService: PrismaService,
-    private readonly filesystemApiService: FilesystemApiService,
+    private readonly filesystemDomainService: FilesystemDomainService,
     private readonly jobMapper: JobMapper,
     protected readonly eventEmitter: EventEmitter2,
   ) {}
@@ -49,24 +45,6 @@ export class CreateJobService implements ICommandHandler {
 
     const services = await this.serviceRepo.find({ id: { in: command.orderedTasks.map((task) => task.serviceId) } })
     const totalDurationInMinutes = await this.durationCalculator.calcTotalDuration(command.orderedTasks, project)
-
-    const googleSharedDrive = await this.prismaService.googleSharedDrive.findFirst({
-      where: { organizationId: organization.id },
-    })
-    if (!googleSharedDrive) {
-      throw new GoogleDriveSharedDriveNotFoundException()
-    }
-
-    const projectFolder = await this.prismaService.googleProjectFolder.findFirst({ where: { projectId: project.id } })
-    if (!projectFolder) {
-      throw new GoogleDriveProjectFolderNotFoundException()
-    }
-
-    const createJobFolderResponseData = await this.filesystemApiService.requestToCreateJobFolder({
-      sharedDriveId: googleSharedDrive.id,
-      projectFolderId: projectFolder.id,
-      jobName: `Job ${project.totalOfJobs + 1}`,
-    })
 
     // Entity에는 Record에 저장 될 모든 필드가 있어야한다.
     const jobEntity = JobEntity.create({
@@ -106,43 +84,31 @@ export class CreateJobService implements ICommandHandler {
     })
 
     const jobRecord = this.jobMapper.toPersistence(jobEntity)
-    const jobFolder = createJobFolderResponseData.jobFolder
-    const deliverablesFolder = createJobFolderResponseData.deliverablesFolder
-    const jobNotesFolder = createJobFolderResponseData.jobNotesFolder
+
+    /**
+     * @FilesystemLogic
+     */
+    const { googleJobFolderData, rollback } = await this.filesystemDomainService.createGoogleJobFolder(
+      command.projectId,
+      project.projectPropertyType,
+      project.projectPropertyAddress.fullAddress,
+      jobEntity.id,
+      project.totalOfJobs,
+    )
 
     try {
       await this.prismaService.$transaction([
         this.prismaService.orderedJobs.create({ data: jobRecord }),
-        this.prismaService.googleJobFolder.create({
-          data: {
-            id: jobFolder.id,
-            shareLink: jobFolder.shareLink,
-            deliverablesFolderId: deliverablesFolder.id,
-            deliverablesFolderShareLink: deliverablesFolder.shareLink,
-            jobNotesFolderId: jobNotesFolder.id,
-            jobNotesFolderShareLink: jobNotesFolder.shareLink,
-            jobId: jobEntity.id,
-          },
-        }),
+        this.prismaService.googleJobFolder.create({ data: googleJobFolderData }),
       ])
 
       jobEntity.publishEvents(this.eventEmitter)
     } catch (error) {
       jobEntity.clearEvents()
-
-      const itemIds = []
-      if (!deliverablesFolder.matchedExistingData) itemIds.push(deliverablesFolder.id)
-      if (!jobFolder.matchedExistingData) itemIds.push(jobFolder.id)
-      if (itemIds.length > 0) {
-        await this.filesystemApiService.requestToDeleteItemsInSharedDrive({
-          sharedDrive: {
-            id: googleSharedDrive.id,
-            delete: false,
-          },
-          itemIds,
-        })
-      }
-
+      /**
+       * @FilesystemLogic
+       */
+      await rollback()
       throw error
     }
 

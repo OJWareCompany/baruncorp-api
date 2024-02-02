@@ -7,8 +7,8 @@ import { CreateOrganizationCommand } from './create-organization.command'
 import { ORGANIZATION_REPOSITORY } from '../../organization.di-token'
 import { OrganizationRepositoryPort } from '../../database/organization.repository.port'
 import { OrganizationConflictException } from '../../domain/organization.error'
-import { FilesystemApiService } from '../../../filesystem/infra/filesystem.api.service'
 import { OrganizationMapper } from '../../organization.mapper'
+import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 
 // TODO: remove id field!
 
@@ -18,7 +18,7 @@ export class CreateOrganizationService implements ICommandHandler {
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepository: OrganizationRepositoryPort,
     private readonly prismaService: PrismaService,
-    private readonly filesystemApiService: FilesystemApiService,
+    private readonly filesystemDomainService: FilesystemDomainService,
     private readonly organizationMapper: OrganizationMapper,
   ) {}
 
@@ -27,11 +27,6 @@ export class CreateOrganizationService implements ICommandHandler {
     const organization = await this.organizationRepository.findOneByName(organizationName)
     if (organization) throw new OrganizationConflictException(organizationName)
 
-    const createGoogleSharedDriveResponseData = await this.filesystemApiService.requestToCreateGoogleSharedDrive(
-      organizationName,
-    )
-
-    const { sharedDrive, residentialFolder, commercialFolder } = createGoogleSharedDriveResponseData
     const organizationEntity = OrganizationEntity.create({
       name: command.name,
       phoneNumber: command.phoneNumber,
@@ -52,29 +47,24 @@ export class CreateOrganizationService implements ICommandHandler {
     const organizationRecord = this.organizationMapper.toPersistence(organizationEntity)
     const organizationId = organizationEntity.id
 
+    /**
+     * @FilesystemLogic
+     */
+    const { googleSharedDriveData, rollback } = await this.filesystemDomainService.createFirstVersionGoogleSharedDrive(
+      organizationId,
+      organizationName,
+    )
+
     try {
       await this.prismaService.$transaction([
         this.prismaService.organizations.create({ data: organizationRecord }),
-        this.prismaService.googleSharedDrive.create({
-          data: {
-            id: sharedDrive.id,
-            residentialFolderId: residentialFolder.id,
-            commercialFolderId: commercialFolder.id,
-            organizationId,
-          },
-        }),
+        this.prismaService.googleSharedDrive.create({ data: googleSharedDriveData }),
       ])
     } catch (error) {
-      const itemIds = []
-      if (!residentialFolder.matchedExistingData) itemIds.push(residentialFolder.id)
-      if (!commercialFolder.matchedExistingData) itemIds.push(commercialFolder.id)
-      await this.filesystemApiService.requestToDeleteItemsInSharedDrive({
-        sharedDrive: {
-          id: sharedDrive.id,
-          delete: !sharedDrive.matchedExistingData,
-        },
-        itemIds,
-      })
+      /**
+       * @FilesystemLogic
+       */
+      await rollback()
       throw error
     }
 

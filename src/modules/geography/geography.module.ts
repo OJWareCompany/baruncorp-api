@@ -14,6 +14,7 @@ import { GeographyController } from './geography.controller'
 import { GeographyService } from './geography.service'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 import { GenerateCensusResourceDomainService } from './domain/domain-services/generate-census-resource.domain-service'
+import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 
 const repositories: Provider[] = [
   { provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository },
@@ -21,7 +22,7 @@ const repositories: Provider[] = [
   { provide: USER_REPOSITORY, useClass: UserRepository },
 ]
 const mappers: Provider[] = [AhjNoteMapper, AhjNoteHistoryMapper, UserMapper, UserRoleMapper]
-const services: Provider[] = [GeographyService, FilesystemApiService]
+const services: Provider[] = [GeographyService, FilesystemApiService, FilesystemDomainService]
 const domainServices: Provider[] = [GenerateCensusResourceDomainService]
 
 @Module({

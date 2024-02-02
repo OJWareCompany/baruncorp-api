@@ -22,11 +22,17 @@ import {
   CreateOrUpdateAhjNoteFoldersResponse,
   CreateOrUpdateAhjNoteFoldersResponseData,
   DeleteItemsInSharedDriveRequestPayload,
+  GetPropertyTypeFolderResponse,
+  GetPropertyTypeFolderResponseData,
+  GetSharedDriveIdByFolderIdResponse,
+  GetSharedDriveIdByFolderIdResponseData,
   RollbackCreateOrUpdateAhjNoteFoldersRequestPayload,
   RollbackCreateOrUpdateAhjNoteFoldersResponse,
-  UpdateGoogleProjectFolderRequestPayload,
-  UpdateGoogleProjectFolderResponse,
-  UpdateGoogleProjectFolderResponseData,
+  RollbackUpdateProjectFoldersRequestPayload,
+  RollbackUpdateProjectFoldersResponse,
+  UpdateGoogleProjectFoldersRequestPayload,
+  UpdateGoogleProjectFoldersResponse,
+  UpdateGoogleProjectFoldersResponseData,
 } from './filesystem.api.type'
 
 const handleRequestError = (errorCode: string) => {
@@ -41,6 +47,28 @@ const handleRequestError = (errorCode: string) => {
 export class FilesystemApiService {
   private baseUrl = `${process.env.FILE_API_URL}/filesystem`
 
+  async requestToGetPropertyTypeFolder(sharedDriveId: string): Promise<GetPropertyTypeFolderResponseData> {
+    try {
+      const url = `${this.baseUrl}/${sharedDriveId}/propertyTypeFolder`
+      const response: GetPropertyTypeFolderResponse = await got.get(url).json()
+      return response.data
+    } catch (error: any) {
+      if (error.code) handleRequestError(error.code)
+      throw new FileServerInternalErrorException()
+    }
+  }
+
+  async requestToGetSharedDriveIdByFolderId(folderId: string): Promise<GetSharedDriveIdByFolderIdResponseData> {
+    try {
+      const url = `${this.baseUrl}/${folderId}/sharedDriveId`
+      const response: GetSharedDriveIdByFolderIdResponse = await got.get(url).json()
+      return response.data
+    } catch (error: any) {
+      if (error.code) handleRequestError(error.code)
+      throw new FileServerInternalErrorException()
+    }
+  }
+
   async requestToCreateGoogleSharedDrive(name: string): Promise<CreateGoogleSharedDriveResponseData> {
     try {
       const url = `${this.baseUrl}/sharedDrive`
@@ -54,14 +82,13 @@ export class FilesystemApiService {
       return response.data
     } catch (error: any) {
       if (error.code) handleRequestError(error.code)
-
       throw new FileServerInternalErrorException()
     }
   }
 
   async requestToCreateProjectFolder({
     sharedDriveId,
-    residentailOrCommercialFolderId,
+    propertyTypeFolderId,
     projectName,
   }: CreateGoogleProjectFolderRequestPayload): Promise<CreateGoogleProjectFolderResponseData> {
     try {
@@ -70,7 +97,7 @@ export class FilesystemApiService {
         .post(url, {
           json: {
             sharedDriveId,
-            residentailOrCommercialFolderId,
+            propertyTypeFolderId,
             projectName,
           },
         })
@@ -117,20 +144,14 @@ export class FilesystemApiService {
     }
   }
 
-  async requestToUpdateProjectFolder({
-    projectFolderId,
-    changeName,
-    changeTypeFolderId,
-  }: UpdateGoogleProjectFolderRequestPayload): Promise<UpdateGoogleProjectFolderResponseData> {
+  async requestToUpdateProjectFolders(
+    payload: UpdateGoogleProjectFoldersRequestPayload,
+  ): Promise<UpdateGoogleProjectFoldersResponseData> {
     try {
       const url = `${this.baseUrl}/project`
-      const response: UpdateGoogleProjectFolderResponse = await got
+      const response: UpdateGoogleProjectFoldersResponse = await got
         .patch(url, {
-          json: {
-            projectFolderId,
-            changeName,
-            changeTypeFolderId,
-          },
+          json: { ...payload },
         })
         .json()
       return response.data
@@ -146,6 +167,23 @@ export class FilesystemApiService {
         throw new GoogleDriveConflictException(message)
       }
 
+      throw new FileServerInternalErrorException()
+    }
+  }
+
+  async requestToRollbackUpdateProjectFolders({
+    updatedProjectInfos,
+  }: RollbackUpdateProjectFoldersRequestPayload): Promise<null> {
+    try {
+      const url = `${this.baseUrl}/project/rollback`
+      const response: RollbackUpdateProjectFoldersResponse = await got
+        .patch(url, {
+          json: { updatedProjectInfos },
+        })
+        .json()
+      return response.data
+    } catch (error: any) {
+      if (error.code) handleRequestError(error.code)
       throw new FileServerInternalErrorException()
     }
   }

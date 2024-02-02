@@ -15,11 +15,9 @@ import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-t
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
 import { PrismaService } from './../../../database/prisma.service'
-import { GoogleDriveSharedDriveNotFoundException } from '../../../filesystem/domain/filesystem.error'
-import { FilesystemApiService } from '../../../filesystem/infra/filesystem.api.service'
 import { ProjectMapper } from '../../project.mapper'
-import { CommonInternalServerException, DataIntegrityException } from '../../../../app.error'
 import { GenerateCensusResourceDomainService } from '../../../geography/domain/domain-services/generate-census-resource.domain-service'
+import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
@@ -37,7 +35,7 @@ export class CreateProjectService implements ICommandHandler {
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
     private readonly projectMapper: ProjectMapper,
     private readonly prismaService: PrismaService,
-    private readonly filesystemApiService: FilesystemApiService,
+    private readonly filesystemDomainService: FilesystemDomainService,
     private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
@@ -47,42 +45,13 @@ export class CreateProjectService implements ICommandHandler {
     // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
     if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-    await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
 
     const organization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
-    const sharedDrive = await this.prismaService.googleSharedDrive.findFirst({
-      where: { organizationId: command.clientOrganizationId },
-    })
-    if (!sharedDrive) throw new GoogleDriveSharedDriveNotFoundException()
 
     /**
-     * @TODO 전체 검색: typeFolderId-refactor
+     * @FilesystemLogic
      */
-    let typeFolderId = null
-    let field = null
-    switch (command.projectPropertyType) {
-      case 'Residential':
-        typeFolderId = sharedDrive.residentialFolderId
-        field = 'residentialFolderId'
-        break
-      case 'Commercial':
-        typeFolderId = sharedDrive.commercialFolderId
-        field = 'commercialFolderId'
-        break
-      default:
-        throw new CommonInternalServerException(
-          'A value must have been selected in the switch case statement, but not selected',
-        )
-    }
-    if (!typeFolderId) {
-      throw new DataIntegrityException(`google_shared_drive table must have ${field} information, but it doesn't exist`)
-    }
-
-    const createProjectFolderResponseData = await this.filesystemApiService.requestToCreateProjectFolder({
-      sharedDriveId: sharedDrive.id,
-      residentailOrCommercialFolderId: typeFolderId,
-      projectName: command.projectPropertyAddress.fullAddress,
-    })
+    await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
 
     const projectEntity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,
@@ -101,31 +70,28 @@ export class CreateProjectService implements ICommandHandler {
         placeId: censusResponse?.place?.geoId,
       }),
     })
-
     const projectRecord = this.projectMapper.toPersistence(projectEntity)
-    const projectFolder = createProjectFolderResponseData.projectFolder
+
+    /**
+     * @FilesystemLogic
+     */
+    const { googleProjectFolderData, rollback } = await this.filesystemDomainService.createGoogleProjectFolder(
+      organization.id,
+      projectEntity.id,
+      command.projectPropertyType,
+      command.projectPropertyAddress.fullAddress,
+    )
 
     try {
       await this.prismaService.$transaction([
         this.prismaService.orderedProjects.create({ data: { ...projectRecord } }),
-        this.prismaService.googleProjectFolder.create({
-          data: {
-            id: projectFolder.id,
-            shareLink: projectFolder.shareLink,
-            projectId: projectEntity.id,
-          },
-        }),
+        this.prismaService.googleProjectFolder.create({ data: googleProjectFolderData }),
       ])
     } catch (error) {
-      if (!projectFolder.matchedExistingData) {
-        await this.filesystemApiService.requestToDeleteItemsInSharedDrive({
-          sharedDrive: {
-            id: sharedDrive.id,
-            delete: false,
-          },
-          itemIds: [projectFolder.id],
-        })
-      }
+      /**
+       * @FilesystemLogic
+       */
+      await rollback()
       throw error
     }
 

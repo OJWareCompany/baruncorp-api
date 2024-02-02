@@ -34,6 +34,7 @@ import { OrganizationMapper } from '../organization/organization.mapper'
 import { ProjectValidatorDomainService } from './domain/domain-services/project-validator.domain-service'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 import { GenerateCensusResourceDomainService } from '../geography/domain/domain-services/generate-census-resource.domain-service'
+import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -47,6 +48,7 @@ const httpControllers = [
 const providers: Provider[] = [
   CensusSearchCoordinatesService,
   FilesystemApiService,
+  FilesystemDomainService,
   GenerateCensusResourceDomainService,
 ]
 

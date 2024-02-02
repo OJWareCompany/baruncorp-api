@@ -21,6 +21,7 @@ import { FindMyMemberPaginatedHttpController } from './queries/find-my-member-pa
 import { FindMyMemberPaginatedQueryHandler } from './queries/find-my-member-paginated/find-my-member-paginated.query-handler'
 import { UpdateOrganizationHttpController } from './commands/update-organization/update-organization.controller.http'
 import { UpdateOrganizationService } from './commands/update-organization/update-organization.service'
+import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 
 const httpControllers = [
@@ -49,6 +50,7 @@ const providers: Provider[] = [
   OrganizationService,
   CreateOrganizationService,
   UpdateOrganizationService,
+  FilesystemDomainService,
   FilesystemApiService,
 ]
 

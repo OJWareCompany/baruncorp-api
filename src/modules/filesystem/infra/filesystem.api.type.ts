@@ -1,9 +1,40 @@
+import { ProjectPropertyType } from '../../project/domain/project.type'
+
+/**
+ * GetPropertyTypeFolder
+ */
+export type GetPropertyTypeFolderResponse = {
+  message: string
+  data: GetPropertyTypeFolderResponseData
+}
+export type GetPropertyTypeFolderResponseData = {
+  residentialFolder: {
+    id: string
+    name: string
+  }
+  commercialFolder: {
+    id: string
+    name: string
+  }
+}
+
+/**
+ * GetSharedDriveIdByFolder
+ */
+export type GetSharedDriveIdByFolderIdResponse = {
+  message: string
+  data: GetSharedDriveIdByFolderIdResponseData
+}
+export type GetSharedDriveIdByFolderIdResponseData = {
+  sharedDriveId: string
+}
+
 /**
  * CreateGoogleProjectFolder
  */
 export type CreateGoogleProjectFolderRequestPayload = {
   sharedDriveId: string
-  residentailOrCommercialFolderId: string
+  propertyTypeFolderId: string
   projectName: string
 }
 export type CreateGoogleProjectFolderResponseData = {
@@ -80,25 +111,62 @@ export type CreateGoogleSharedDriveResponseData = {
 /**
  * UpdateGoogleProjectFolder
  */
-export type UpdateGoogleProjectFolderRequestPayload = {
-  projectFolderId: string
-  changeName: string | null
-  changeTypeFolderId: string | null
+export type UpdateGoogleProjectFoldersRequestPayload = {
+  needUpdateProjectName: boolean
+  toProjectFolderName: string | null
+  needUpdateProjectPropertyType: boolean
+  toProjectPropertyType: ProjectPropertyType | null
+  sharedDrives: {
+    id: string
+    residentialFolderId: string
+    commercialFolderId: string
+  }[]
+  projectFolders: {
+    id: string
+    sharedDriveId: string
+  }[]
 }
-export type UpdateGoogleProjectFolderResponse = {
+export type UpdateGoogleProjectFoldersResponse = {
   message: string
-  data: UpdateGoogleProjectFolderResponseData
+  data: UpdateGoogleProjectFoldersResponseData
 }
-export type UpdateGoogleProjectFolderResponseData = {
-  id: string
-  changeNameInfo: null | {
-    from: string
-    to: string
-  }
-  changeTypeFolderIdInfo: null | {
-    from: string
-    to: string
-  }
+export type UpdateGoogleProjectFoldersResponseData = {
+  updatedProjectInfos: {
+    updateField: 'name' | 'propertyType'
+    projectFolderId: string
+    data:
+      | {
+          originalName: string
+          updatedName: string
+        }
+      | {
+          origanalPropertyTypeFolderId: string
+          movedPropertyTypeFolderId: string
+        }
+  }[]
+}
+
+/**
+ * RollbackUpdateProjectFolders
+ */
+export type RollbackUpdateProjectFoldersRequestPayload = {
+  updatedProjectInfos: {
+    updateField: 'name' | 'propertyType'
+    projectFolderId: string
+    data:
+      | {
+          originalName: string
+          updatedName: string
+        }
+      | {
+          origanalPropertyTypeFolderId: string
+          movedPropertyTypeFolderId: string
+        }
+  }[]
+}
+export type RollbackUpdateProjectFoldersResponse = {
+  message: string
+  data: null
 }
 
 /**
