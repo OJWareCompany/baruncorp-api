@@ -14,7 +14,13 @@ export class CreateGoogleJobNoteFolderService implements ICommandHandler {
     private readonly googleJobNoteFolderRepository: GoogleJobNoteFolderRepository,
   ) {}
   async execute(command: CreateGoogleJobNoteFolderCommand): Promise<void> {
-    const entity = GoogleJobNoteFolderEntity.create(command)
+    const entity = GoogleJobNoteFolderEntity.create({
+      folderId: command.folderId,
+      shareLink: command.shareLink,
+      jobNotesFolderId: command.jobNotesFolderId,
+      jobNoteId: command.jobNoteId,
+      sharedDriveId: command.sharedDriveId,
+    })
     entity.validate()
     await this.googleJobNoteFolderRepository.insertOne(entity)
   }

@@ -3,6 +3,7 @@ export interface CreateGoogleJobNoteFolderProps {
   shareLink: string
   jobNotesFolderId: string
   jobNoteId: string
+  sharedDriveId: string
 }
 
 export type GoogleJobNoteFolderProps = CreateGoogleJobNoteFolderProps

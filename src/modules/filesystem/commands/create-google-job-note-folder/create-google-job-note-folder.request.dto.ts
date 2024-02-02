@@ -17,4 +17,8 @@ export class CreateGoogleJobNoteFolderRequestDto {
   @ApiProperty({ default: '' })
   @IsString()
   readonly jobNoteId: string
+
+  @ApiProperty({ default: '' })
+  @IsString()
+  readonly sharedDriveId: string
 }

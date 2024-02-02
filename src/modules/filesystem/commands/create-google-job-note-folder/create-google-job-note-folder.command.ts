@@ -5,6 +5,7 @@ export class CreateGoogleJobNoteFolderCommand {
   readonly shareLink: string
   readonly jobNotesFolderId: string
   readonly jobNoteId: string
+  readonly sharedDriveId: string
   constructor(props: CreateGoogleJobNoteFolderCommand) {
     initialize(this, props)
   }

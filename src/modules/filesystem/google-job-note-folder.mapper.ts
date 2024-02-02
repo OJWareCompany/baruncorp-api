@@ -13,6 +13,7 @@ export class GoogleJobNoteFolderMapper implements Mapper<GoogleJobNoteFolderEnti
       shareLink: props.shareLink,
       jobNotesFolderId: props.jobNotesFolderId,
       jobNoteId: props.jobNoteId,
+      sharedDriveId: props.sharedDriveId,
     }
     return record
   }
@@ -25,6 +26,7 @@ export class GoogleJobNoteFolderMapper implements Mapper<GoogleJobNoteFolderEnti
         shareLink: record.shareLink ?? '',
         jobNotesFolderId: record.jobNotesFolderId ?? '',
         jobNoteId: record.jobNoteId ?? '',
+        sharedDriveId: record.sharedDriveId ?? '',
       },
     })
     return entity

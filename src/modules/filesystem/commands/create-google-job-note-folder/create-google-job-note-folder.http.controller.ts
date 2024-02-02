@@ -13,6 +13,7 @@ export class CreateGoogleJobNoteFolderHttpController {
       shareLink: request.shareLink,
       jobNotesFolderId: request.jobNotesFolderId,
       jobNoteId: request.jobNoteId,
+      sharedDriveId: request.sharedDriveId,
     })
     await this.commandBus.execute(command)
   }
