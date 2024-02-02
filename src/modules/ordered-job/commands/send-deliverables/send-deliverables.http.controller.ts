@@ -1,10 +1,10 @@
-import { Body, Controller, Param, Patch, UseGuards } from '@nestjs/common'
+import { Controller, Param, Patch, UseGuards } from '@nestjs/common'
 import { CommandBus } from '@nestjs/cqrs'
 import { User } from '../../../../libs/decorators/requests/logged-in-user.decorator'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
 import { UserEntity } from '../../../users/domain/user.entity'
 import { SendDeliverablesCommand } from './send-deliverables.command'
-import { SendDeliverablesParamRequestDto, SendDeliverablesRequestDto } from './send-deliverables.param.request.dto'
+import { SendDeliverablesParamRequestDto } from './send-deliverables.param.request.dto'
 
 @Controller('jobs')
 export class SendDeliverablesHttpController {
@@ -12,11 +12,7 @@ export class SendDeliverablesHttpController {
 
   @Patch(':jobId/send-deliverables')
   @UseGuards(AuthGuard)
-  async updateJob(
-    @User() user: UserEntity,
-    @Param() param: SendDeliverablesParamRequestDto,
-    @Body() request: SendDeliverablesRequestDto,
-  ): Promise<void> {
+  async updateJob(@User() user: UserEntity, @Param() param: SendDeliverablesParamRequestDto): Promise<void> {
     const command = new SendDeliverablesCommand({
       updatedByUserId: user.id,
       jobId: param.jobId,

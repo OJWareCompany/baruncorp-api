@@ -6,7 +6,3 @@ export class SendDeliverablesParamRequestDto {
   @IsString()
   readonly jobId: string
 }
-
-export class SendDeliverablesRequestDto {
-  // readonly deliverablesLink: string
-}
