@@ -28,7 +28,7 @@ export class JobResponseMapper {
   ) {}
   async toResponse(job: OrderedJobs): Promise<JobResponseDto> {
     const jobFolder = await this.prismaService.googleJobFolder.findFirst({ where: { jobId: job.id } })
-    if (!jobFolder) throw new GoogleDriveJobFolderNotFoundException()
+    // if (!jobFolder) throw new GoogleDriveJobFolderNotFoundException()
 
     const currentJobId = await this.prismaService.orderedJobs.findFirst({
       select: { id: true },
@@ -175,7 +175,7 @@ export class JobResponseMapper {
       state: stateName,
       dateSentToClient: job.dateSentToClient,
       dueDate: job.dueDate ? job.dueDate : null,
-      jobFolderId: jobFolder.id,
+      jobFolderId: jobFolder?.id ?? null,
     })
   }
 
