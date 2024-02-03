@@ -1,18 +1,38 @@
-import { Inject } from '@nestjs/common'
-import _ from 'lodash'
 import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs-aop'
+import { BadRequestException, Inject } from '@nestjs/common'
+import { OrderedServices } from '@prisma/client'
+import _ from 'lodash'
+import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
 import { deepCopy } from '../../../../libs/utils/deep-copy.util'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
 import { OrderedServiceMapper } from '../../../ordered-service/ordered-service.mapper'
+import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
-import { NoUpdateException } from '../../../ordered-job/domain/job.error'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { UserEntity } from '../../../users/domain/user.entity'
 import { OrderModificationHistoryGenerator } from './order-modification-history-generator.domain-service'
-import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
+
+type OrderedScopeHistoryOption = {
+  invokedFrom: 'job' | 'task' | 'self'
+}
+
+type InvokedFromJobArg = {
+  jobId: string | null
+}
+
+type InvokedFromTaskArg = {
+  assignedTaskId: string | null
+}
+
+type OrderedScopeHistoryArguments = {
+  orderedScopeId: string | null
+} & InvokedFromJobArg &
+  InvokedFromTaskArg
 
 export const ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR = Symbol('ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR')
-export const GenerateOrderedScopeModificationHistory = createDecorator(ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR)
+export const GenerateOrderedScopeModificationHistory = (options: OrderedScopeHistoryOption) =>
+  createDecorator(ORDERED_SCOPE_MODIFICATION_HISTORY_DECORATOR, options)
 
 /**
  * https://toss.tech/article/nestjs-custom-decorator
@@ -32,34 +52,84 @@ export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
     return async (...args: any) => {
       const editor = await this.userRepo.findOneById(args[0].editorUserId)
 
-      const orderedScope = await this.orderedScopeRepo.findOneOrThrow(
-        args[0].orderedServiceId || args[0].orderedScopeId,
-      )
-      const copyBefore = deepCopy(this.orderedScopeMapper.toPersistence(orderedScope))
+      const jobs = await this.findBeforeOrderedScopes(options, ...args)
+      const copiesBefore = this.createCopies(jobs)
 
       const result = await method(...args)
 
-      const orderedScopeAfterModification = await this.orderedScopeRepo.findOneOrThrow(
-        args[0].orderedServiceId || args[0].orderedScopeId,
-      )
-      const copyAfter = deepCopy(this.orderedScopeMapper.toPersistence(orderedScopeAfterModification))
+      const jobsAfterModification = await this.findAfterOrderedScopes(jobs)
+      const copiesAfter = this.createCopies(jobsAfterModification)
 
-      const modified = getModifiedFields(copyBefore, copyAfter)
-      if (_.isEmpty(modified)) {
-        if (copyAfter.updated_at !== copyBefore.updated_at) {
-          await this.orderedScopeRepo.rollbackUpdatedAtAndEditor(orderedScope)
-        }
-        throw new NoUpdateException()
-      }
-
-      await this.orderModificationHistoryGenerator.generate(
-        orderedScopeAfterModification,
-        copyBefore,
-        copyAfter,
-        editor || undefined,
+      await Promise.all(
+        jobsAfterModification.map(async (job) => {
+          await this.generateHistory(job, copiesBefore, copiesAfter, editor)
+        }),
       )
-      await this.orderedScopeRepo.updateOnlyEditorInfo(orderedScopeAfterModification, editor || undefined)
       return result
     }
+  }
+
+  private async findBeforeOrderedScopes(
+    options: OrderedScopeHistoryOption,
+    ...args: any
+  ): Promise<OrderedServiceEntity[]> {
+    const { orderedScopeId, jobId, assignedTaskId } = this.extractArguments(...args)
+
+    // TODO: to ADD invoked task, invoked self
+    switch (options.invokedFrom) {
+      case 'job':
+        if (_.isNil(jobId)) throw new BadRequestException()
+        return await this.orderedScopeRepo.findBy({ jobId: jobId })
+      case 'task':
+        if (_.isNil(assignedTaskId)) throw new BadRequestException()
+        return await this.orderedScopeRepo.findBy({ assignedTasks: { some: { id: assignedTaskId } } })
+      case 'self':
+        if (_.isNil(orderedScopeId)) throw new BadRequestException()
+        return await this.orderedScopeRepo.findBy({ id: orderedScopeId })
+    }
+  }
+
+  private async findAfterOrderedScopes(orderedScopes: OrderedServiceEntity[]) {
+    return await this.orderedScopeRepo.find(orderedScopes.map((scope) => scope.id))
+  }
+
+  private extractArguments(...args: any): OrderedScopeHistoryArguments {
+    return {
+      jobId: args[0].jobId || args[0].aggregateId || null,
+      orderedScopeId: args[0].orderedScopeId || args[0].orderedServiceId || args[0].aggregateId,
+      assignedTaskId: args[0].assignedTaskId || args[0].aggregateId || null,
+    }
+  }
+
+  private createCopies(orderedScopes: OrderedServiceEntity[]): Map<string, OrderedServices> {
+    return new Map(
+      orderedScopes.map((orderedScope) => [
+        orderedScope.id,
+        deepCopy(this.orderedScopeMapper.toPersistence(orderedScope)),
+      ]),
+    )
+  }
+
+  private async generateHistory(
+    orderedScope: OrderedServiceEntity,
+    copiesBefore: Map<string, OrderedServices>,
+    copiesAfter: Map<string, OrderedServices>,
+    editor?: UserEntity | null,
+  ) {
+    const copyBefore = copiesBefore.get(orderedScope.id)
+    const copyAfter = copiesAfter.get(orderedScope.id)
+    if (!copyBefore || !copyAfter) return
+
+    const modified = getModifiedFields(copyBefore, copyAfter)
+
+    if (_.isEmpty(modified)) {
+      if (copyAfter.updated_at !== copyBefore.updated_at) {
+        await this.orderedScopeRepo.rollbackUpdatedAtAndEditor(orderedScope)
+      }
+      return
+    }
+
+    await this.orderModificationHistoryGenerator.generate(orderedScope, copyBefore, copyAfter, editor || undefined)
+    await this.orderedScopeRepo.updateOnlyEditorInfo(orderedScope, editor || undefined)
   }
 }

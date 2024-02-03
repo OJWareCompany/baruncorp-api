@@ -22,7 +22,7 @@ export class UpdateManualPriceService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @GenerateOrderedScopeModificationHistory
+  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'self' })
   async execute(command: UpdateManualPriceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()

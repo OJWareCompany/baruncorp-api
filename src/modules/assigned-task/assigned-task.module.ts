@@ -43,6 +43,7 @@ import { BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler } from '.
 import { BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-back-to-not-started.domain-event-handler'
 import { CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
 import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
+import { DeleteAssignedTaskWhenOrderedServiceIsDeletedDomainServiceHandler } from './application/event-handlers/delete-assigned-task-when-ordered-service-is-deleted.domain-service-handler'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -82,6 +83,7 @@ const eventHandlers: Provider[] = [
   BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler,
   BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler,
   CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler,
+  DeleteAssignedTaskWhenOrderedServiceIsDeletedDomainServiceHandler,
 ]
 const domainServices: Provider[] = [
   CalculateVendorCostDomainService,

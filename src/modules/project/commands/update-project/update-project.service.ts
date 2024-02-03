@@ -8,6 +8,9 @@ import { UpdateProjectCommand } from './update-project.command'
 import { CoordinatesNotFoundException } from '../../domain/project.error'
 import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
 import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-services/ahj-generator.domain-service'
+import { GenerateCensusResourceDomainService } from '../../../geography/domain/domain-services/generate-census-resource.domain-service'
+import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
+import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -17,18 +20,32 @@ export class UpdateProjectService implements ICommandHandler {
     private readonly censusSearchCoordinatesService: CensusSearchCoordinatesService,
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
     private readonly ahjNoteGeneratorDomainService: AhjNoteGeneratorDomainService,
+    private readonly filesystemDomainService: FilesystemDomainService,
+    private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
     const project = await this.projectRepository.findOneOrThrow({ id: command.projectId })
     await this.projectValidatorDomainService.validateForUpdate(project, command)
 
-    if (project.projectPropertyAddress.coordinates !== command.projectPropertyAddress.coordinates) {
+    /**
+     * @FilesystemLogic
+     */
+    const fromProjectFolderName = project.projectPropertyAddress.fullAddress
+    const fromProjectPropertyType = project.projectPropertyType as ProjectPropertyTypeEnum
+
+    if (!project.deepEqualsPropertyAddressCoordinates(command.projectPropertyAddress.coordinates)) {
       const censusResponse = await this.censusSearchCoordinatesService.search(
         command.projectPropertyAddress.coordinates,
       )
       if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
+      /**
+       * @FilesystemLogic
+       * 문제 있어서 일단 효민님 코드로 대체
+       */
+      // await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
       await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
+
       project.updatePropertyAddress({
         projectPropertyAddress: command.projectPropertyAddress,
         projectAssociatedRegulatory: {
@@ -47,6 +64,30 @@ export class UpdateProjectService implements ICommandHandler {
       updatedBy: command.updatedByUserId,
     })
 
-    await this.projectRepository.update(project)
+    /**
+     * @FilesystemLogic
+     */
+    const toProjectFolderName = command.projectPropertyAddress.fullAddress
+    const toProjectPropertyType = command.projectPropertyType as ProjectPropertyTypeEnum
+    const needUpdateProjectName = toProjectFolderName !== fromProjectFolderName
+    const needUpdateProjectPropertyType = toProjectPropertyType !== fromProjectPropertyType
+    const { rollback } = await this.filesystemDomainService.updateGoogleProjectFolders({
+      organizationId: project.clientOrganizationId,
+      projectId: project.id,
+      toProjectFolderName,
+      toProjectPropertyType,
+      needUpdateProjectName,
+      needUpdateProjectPropertyType,
+    })
+
+    try {
+      await this.projectRepository.update(project)
+    } catch (error) {
+      /**
+       * @FilesystemLogic
+       */
+      rollback && (await rollback())
+      throw error
+    }
   }
 }

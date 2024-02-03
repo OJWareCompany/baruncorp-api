@@ -29,6 +29,7 @@ export class CreateJobHttpController {
       isExpedited: dto.isExpedited,
       loadCalcOrigin: dto.loadCalcOrigin || LoadCalcOriginEnum.Self,
       dueDate: dto.dueDate || null,
+      editorUserId: user.id,
     })
     const result = await this.commandBus.execute(command)
     return new IdResponse(result.id)

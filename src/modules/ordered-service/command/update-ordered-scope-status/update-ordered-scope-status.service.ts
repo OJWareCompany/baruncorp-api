@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import { Inject } from '@nestjs/common'
 import _ from 'lodash'
-import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
 import { IssuedJobUpdateException } from '../../../ordered-job/domain/job.error'
+import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
 import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { OrderedScopeStatusChangeValidator } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
 import { UpdateOrderedScopeStatusCommand } from './update-ordered-scope-status.command'
-import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
 @CommandHandler(UpdateOrderedScopeStatusCommand)
 export class UpdateOrderedScopeStatusService implements ICommandHandler {
   constructor(
@@ -23,7 +23,7 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
     private readonly orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator,
   ) {}
 
-  @GenerateOrderedScopeModificationHistory
+  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'self' })
   async execute(command: UpdateOrderedScopeStatusCommand): Promise<void> {
     const orderedScope = await this.orderedScopeRepo.findOneOrThrow(command.orderedScopeId)
 

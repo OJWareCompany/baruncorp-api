@@ -27,6 +27,7 @@ import { PtoTenurePolicyModule } from './modules/pto-tenure-policy/pto-tenure-po
 import { InformationModule } from './modules/information/information.module'
 import { ClientNoteModule } from './modules/client-note/client-note.module'
 import { AopModule } from '@toss/nestjs-aop'
+import { FilesystemModule } from './modules/filesystem/filesystem.module'
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { AopModule } from '@toss/nestjs-aop'
     PtoTenurePolicyModule,
     InformationModule,
     ClientNoteModule,
+    FilesystemModule,
   ],
   controllers: [],
   providers: [

@@ -55,10 +55,6 @@ export class CreateJobRequestDto {
         description: '',
       },
       {
-        serviceId: '9e773832-ad39-401d-b1c2-16d74f9268ea',
-        description: '',
-      },
-      {
         serviceId: '99ff64ee-fe47-4235-a026-db197628d077',
         description: '',
       },
@@ -89,7 +85,7 @@ export class CreateJobRequestDto {
   @IsBoolean()
   readonly isExpedited: boolean
 
-  @ApiProperty({ description: 'dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.' })
+  @ApiProperty({ description: 'dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.', default: null })
   @IsOptional()
   @IsDate()
   @Type(() => Date)

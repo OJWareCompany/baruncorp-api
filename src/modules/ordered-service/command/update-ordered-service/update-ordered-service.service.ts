@@ -20,7 +20,7 @@ export class UpdateOrderedServiceService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
 
-  @GenerateOrderedScopeModificationHistory
+  @GenerateOrderedScopeModificationHistory({ invokedFrom: 'self' })
   async execute(command: UpdateOrderedServiceCommand): Promise<void> {
     const orderedService = await this.orderedServiceRepo.findOne(command.orderedServiceId)
     if (!orderedService) throw new OrderedServiceNotFoundException()

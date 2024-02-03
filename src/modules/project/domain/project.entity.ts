@@ -115,6 +115,11 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     this.props.updatedBy = props.updatedBy
   }
 
+  deepEqualsPropertyAddressCoordinates(coordinates: number[]): boolean {
+    const currentCoordinates = this.projectPropertyAddress.coordinates
+    return currentCoordinates[0] === coordinates[0] && currentCoordinates[1] === coordinates[1]
+  }
+
   public validate(): void {
     // throw new Error('Method not implemented.')
   }

@@ -5,18 +5,19 @@ import { AssignedTaskStatusEnum } from '../assigned-task.type'
 
 @Injectable()
 export class DetermineActiveStatusDomainService {
-  async isActive(assignedTask: AssignedTaskEntity, prismaService: PrismaService) {
+  constructor(private readonly prismaService: PrismaService) {}
+  async isActive(assignedTask: AssignedTaskEntity) {
     /**
      * Job의 assigned tasks 중에서 해당 태스크의 pre-task가
      * 모두 In Progress, Not Started가 아니라면 활성화 된다.
      */
-    const preTasks = await prismaService.prerequisiteTasks.findMany({
+    const preTasks = await this.prismaService.prerequisiteTasks.findMany({
       where: {
         taskId: assignedTask.taskId,
       },
     })
 
-    const elseAssignedTasks = await prismaService.assignedTasks.findMany({
+    const elseAssignedTasks = await this.prismaService.assignedTasks.findMany({
       where: { jobId: assignedTask.getProps().jobId },
     })
     const preTaskIds = preTasks.map((pre) => pre.prerequisiteTaskId)

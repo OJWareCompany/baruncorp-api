@@ -26,6 +26,17 @@ export class JobRepository implements JobRepositoryPort {
     protected readonly eventEmitter: EventEmitter2,
   ) {}
 
+  async delete(entity: JobEntity | JobEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    // 하위 엔티티를 먼저 제거해야 제거가 된다.
+    for (const entity of entities) {
+      entity.addUpdateEvent()
+      await entity.publishEvents(this.eventEmitter)
+    }
+    const records = entities.map(this.jobMapper.toPersistence)
+    await this.prismaService.orderedJobs.deleteMany({ where: { id: { in: records.map((record) => record.id) } } })
+  }
+
   async updateOnlyEditorInfo(entity: JobEntity, editor?: UserEntity): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.jobMapper.toPersistence)

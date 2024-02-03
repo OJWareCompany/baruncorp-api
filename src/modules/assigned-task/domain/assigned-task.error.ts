@@ -34,3 +34,9 @@ export class InprogressTaskAutoChangeStatusException extends UnprocessableEntity
     super(`In Progress Task Can not be Not Started automatically.`, '30205')
   }
 }
+
+export class CompletedTaskDeletionException extends UnprocessableEntityException {
+  constructor() {
+    super('Completed task is not able to be deleted', '30206')
+  }
+}

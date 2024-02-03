@@ -1,13 +1,14 @@
+import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable } from '@nestjs/common'
+import { Prisma } from '@prisma/client'
+import _ from 'lodash'
+import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { PrismaService } from '../../database/prisma.service'
+import { UserEntity } from '../../users/domain/user.entity'
+import { OrderedServiceNotFoundException } from '../domain/ordered-service.error'
+import { OrderedServiceRepositoryPort } from './ordered-service.repository.port'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 import { OrderedServiceMapper } from '../ordered-service.mapper'
-import { OrderedServiceRepositoryPort } from './ordered-service.repository.port'
-import { OrderedServiceNotFoundException } from '../domain/ordered-service.error'
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { OrderedServices } from '@prisma/client'
-import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
-import { UserEntity } from '../../users/domain/user.entity'
 
 @Injectable()
 export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
@@ -66,12 +67,12 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     return record ? this.orderedServiceMapper.toDomain(record) : null
   }
 
-  async find(ids: string[]): Promise<OrderedServiceEntity[] | null> {
+  async find(ids: string[]): Promise<OrderedServiceEntity[]> {
     const records = await this.prismaService.orderedServices.findMany({
       where: { id: { in: ids } },
       include: { assignedTasks: true },
     })
-    return records.map(this.orderedServiceMapper.toDomain)
+    return _.isEmpty(records) ? [] : records.map(this.orderedServiceMapper.toDomain)
   }
 
   async findOneOrThrow(id: string): Promise<OrderedServiceEntity> {
@@ -80,12 +81,9 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     return entity
   }
 
-  async findBy(
-    propertyName: keyof OrderedServices,
-    values: OrderedServices[typeof propertyName][],
-  ): Promise<OrderedServiceEntity[]> {
+  async findBy(whereInput: Prisma.OrderedServicesWhereInput): Promise<OrderedServiceEntity[]> {
     const records = await this.prismaService.orderedServices.findMany({
-      where: { [propertyName]: { in: values } },
+      where: whereInput,
       include: { assignedTasks: true },
     })
     return records.map(this.orderedServiceMapper.toDomain)
@@ -108,8 +106,14 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     }
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prismaService.orderedServices.delete({ where: { id } })
+  async delete(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void> {
+    const entities = Array.isArray(entity) ? entity : [entity]
+    // 하위 엔티티를 먼저 제거해야 제거가 된다.
+    for (const entity of entities) {
+      await entity.publishEvents(this.eventEmitter)
+    }
+    const records = entities.map(this.orderedServiceMapper.toPersistence)
+    await this.prismaService.orderedServices.deleteMany({ where: { id: { in: records.map((record) => record.id) } } })
   }
 
   async getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]> {

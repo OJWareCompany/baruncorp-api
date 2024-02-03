@@ -1,10 +1,11 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
-import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { OnEvent } from '@nestjs/event-emitter'
-import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 import { OrderedServiceHeldDomainEvent } from '../../../ordered-service/domain/events/ordered-service-held.domain-event'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
+import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 
 @Injectable()
 export class HoldAssignedTaskWhenOrderedScopeIsHeldDomainEventHandler {
@@ -15,6 +16,7 @@ export class HoldAssignedTaskWhenOrderedScopeIsHeldDomainEventHandler {
   ) {}
 
   @OnEvent(OrderedServiceHeldDomainEvent.name, { async: true, promisify: true })
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope', queryScope: null })
   async handle(event: OrderedServiceHeldDomainEvent) {
     const assignedTasks = await this.assignedTaskRepo.find({ orderedServiceId: event.aggregateId })
 

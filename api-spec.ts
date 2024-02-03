@@ -325,7 +325,7 @@ export interface CreateJobRequestDto {
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
   loadCalcOrigin?: 'Self' | 'Client Provided'
-  /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"9e773832-ad39-401d-b1c2-16d74f9268ea","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
+  /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
   mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
@@ -335,6 +335,7 @@ export interface CreateJobRequestDto {
   /**
    * dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.
    * @format date-time
+   * @default null
    */
   dueDate?: string | null
 }
@@ -360,6 +361,7 @@ export interface UpdateJobRequestDto {
   /**
    * dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.
    * @format date-time
+   * @default null
    */
   dueDate: string | null
 }
@@ -374,19 +376,36 @@ export interface PrerequisiteTaskVO {
   prerequisiteTaskName: string
 }
 
-export interface AssignedTaskResponseFields {
-  assignTaskId: string
-  /** @example "Not Started" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
-  taskName: string
+export interface AssignedTaskResponseDto {
+  id: string
   taskId: string
+  taskName: string
   orderedServiceId: string
-  startedAt: string | null
-  assigneeName: string | null
-  assigneeId: string | null
-  doneAt: string | null
+  serviceName: string
+  jobId: string
+  /** @default "Not Started" */
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
   description: string | null
+  assigneeId: string | null
+  assigneeName: string | null
+  assigneeOrganizationId: string | null
+  assigneeOrganizationName: string | null
+  projectId: string
+  organizationId: string
+  organizationName: string
+  projectPropertyType: string
+  mountingType: string
+  serviceId: string
+  vendorInvoiceId: string | null
+  isVendor: boolean
+  /** @format date-time */
+  startedAt: string | null
+  /** @format date-time */
+  doneAt: string | null
+  /** @format date-time */
+  createdAt: string | null
   duration: number | null
+  cost: number | null
   prerequisiteTasks: PrerequisiteTaskVO[]
 }
 
@@ -415,14 +434,15 @@ export interface OrderedServiceResponseFields {
     | 'Custom Commercial GM Price'
     | 'Custom Fixed Price'
     | 'Custom Special Revision Price'
-    | 'Custom Special Revision Fee'
+    | 'Custom Special Revision Free'
+    | 'Base Minor Revision Free'
     | 'No Pricing Type'
   isRevision: boolean
   description: string | null
   price: number | null
   priceOverride: number | null
-  /** @example "Not Started" */
-  status: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)'
+  /** @default "Completed" */
+  status: 'Not Started' | 'In Progress' | 'Canceled' | 'Completed' | 'Canceled (Invoice)' | 'On Hold'
   orderedAt: string
   doneAt: string | null
 }
@@ -480,7 +500,7 @@ export interface JobResponseDto {
     | 'Sent To Client'
   /** @example "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
-  assignedTasks: AssignedTaskResponseFields[]
+  assignedTasks: AssignedTaskResponseDto[]
   orderedServices: OrderedServiceResponseFields[]
   clientInfo: ClientInformationFields
   /** @example "2023-08-11 09:10:31" */
@@ -519,7 +539,7 @@ export interface JobToInvoiceResponseDto {
 }
 
 export interface SendDeliverablesRequestDto {
-  deliverablesLink: string
+  // deliverablesLink: string
 }
 
 export interface CommercialTier {
@@ -916,38 +936,6 @@ export interface AhjNoteHistoryPaginatedResponseDto {
 export interface AssignTaskRequestDto {
   /** @default "295fff4a-b13f-4c42-ba30-c0f39536ee6e" */
   assigneeId: string
-}
-
-export interface AssignedTaskResponseDto {
-  id: string
-  taskId: string
-  taskName: string
-  orderedServiceId: string
-  serviceName: string
-  jobId: string
-  /** @default "Not Started" */
-  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
-  description: string | null
-  assigneeId: string | null
-  assigneeName: string | null
-  assigneeOrganizationId: string | null
-  assigneeOrganizationName: string | null
-  projectId: string
-  organizationId: string
-  organizationName: string
-  projectPropertyType: string
-  mountingType: string
-  serviceId: string
-  vendorInvoiceId: string | null
-  isVendor: boolean
-  /** @format date-time */
-  startedAt: string | null
-  /** @format date-time */
-  doneAt: string | null
-  /** @format date-time */
-  createdAt: string | null
-  duration: number | null
-  cost: number | null
 }
 
 export interface AssignedTaskPaginatedResponseDto {

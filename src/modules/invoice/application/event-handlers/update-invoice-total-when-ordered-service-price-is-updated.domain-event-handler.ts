@@ -2,17 +2,17 @@
 import { OnEvent } from '@nestjs/event-emitter'
 import { Inject } from '@nestjs/common'
 import { OrderedServicePriceUpdatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-price-updated.domain-event'
-import { INVOICE_REPOSITORY } from '../../invoice.di-token'
-import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
-import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
-import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
+import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
+import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
+import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { CalculateInvoiceService } from '../../domain/calculate-invoice-service.domain-service'
+import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
+import { INVOICE_REPOSITORY } from '../../invoice.di-token'
 
 export class UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler {
   constructor(
@@ -39,10 +39,7 @@ export class UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandl
     if (!job.invoiceId) return
 
     const jobs = await this.jobRepo.findManyBy({ invoiceId: job.invoiceId })
-    const orderedServices = await this.orderedServiceRepo.findBy(
-      'jobId',
-      jobs.map((job) => job.id),
-    )
+    const orderedServices = await this.orderedServiceRepo.findBy({ jobId: { in: jobs.map((job) => job.id) } })
 
     const subTotal = orderedServices.reduce((pre, cur) => {
       return pre + Number(cur.price)

@@ -1,26 +1,27 @@
 import { v4 } from 'uuid'
+import _ from 'lodash'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { UserEntity } from '../../users/domain/user.entity'
+import { OrderedServiceBackToNotStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-back-to-not-started.domain-event'
+import { OrderedServiceStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-started.domain-event'
+import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { ExpensePricingEntity } from '../../expense-pricing/domain/expense-pricing.entity'
 import { OrderedServiceEntity } from '../../ordered-service/domain/ordered-service.entity'
-import { PrismaService } from '../../database/prisma.service'
-import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { UserEntity } from '../../users/domain/user.entity'
 import { CreateAssignedTaskProps, AssignedTaskProps, AssignedTaskStatusEnum } from './assigned-task.type'
-import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned.domain-event'
 import { AssignedTaskDurationUpdatedDomainEvent } from './events/assigned-task-duration-updated.domain-event'
-import { CalculateVendorCostDomainService } from './calculate-vendor-cost.domain-service'
-import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.domain-event'
-import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activated.domain-event'
 import { DetermineActiveStatusDomainService } from './domain-services/determine-active-status.domain-service'
+import { AssignedTaskActivatedDomainEvent } from './events/assigned-task-activated.domain-event'
+import { CalculateVendorCostDomainService } from './calculate-vendor-cost.domain-service'
+import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
+import { AssignedTaskAssignedDomainEvent } from './events/assigned-task-assigned.domain-event'
+import { AssignedTaskDeletedDomainEvent } from './events/assigned-task-deleted.domain-event'
+import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.domain-event'
 import {
   AssignedTaskAlreadyCompletedException,
   AssignedTaskDurationExceededException,
   CompletedTaskChangeStatusException,
-  InprogressTaskAutoChangeStatusException,
+  CompletedTaskDeletionException,
 } from './assigned-task.error'
-import { AssignedTaskCompletedDomainEvent } from './events/assigned-task-completed.domain-event'
-import { OrderedServiceBackToNotStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-back-to-not-started.domain-event'
-import { OrderedServiceStartedDomainEvent } from '../../ordered-service/domain/events/ordered-service-started.domain-event'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -47,6 +48,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
       new AssignedTaskCreatedDomainEvent({
         aggregateId: entity.id,
         jobId: entity.getProps().jobId,
+        editorUserId: entity.getProps().editorUserId,
       }),
     )
     return entity
@@ -131,8 +133,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async determineActiveStatus(activeStatusService: DetermineActiveStatusDomainService, prismaService: PrismaService) {
-    const isActive = await activeStatusService.isActive(this, prismaService)
+  async determineActiveStatus(activeStatusService: DetermineActiveStatusDomainService) {
+    const isActive = await activeStatusService.isActive(this)
 
     // active 메서드를 사용하기 위해서는 위의 isActive 로직이 필수임
     if (isActive) this.active()
@@ -174,11 +176,13 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   async backToNotStarted(
     option: OrderedServiceBackToNotStartedDomainEvent | OrderedServiceStartedDomainEvent,
     orderModificationValidator: OrderModificationValidator,
-  ) {
-    if (!option) return
+  ): Promise<this> {
+    const permittedAutoUpdateStatus = [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold]
+    if (!option) return this
+    if (!_.includes(permittedAutoUpdateStatus, this.status)) return this
     await orderModificationValidator.validate(this)
-    if (this.isCompleted) throw new CompletedTaskChangeStatusException()
-    if (this.isInProgress) throw new InprogressTaskAutoChangeStatusException()
+    // if (this.isCompleted) throw new CompletedTaskChangeStatusException()
+    // if (this.isInProgress) throw new InprogressTaskAutoChangeStatusException()
     this.props.status = AssignedTaskStatusEnum.Not_Started
     return this
   }
@@ -272,6 +276,20 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   enterCostManually(cost: number | null) {
     this.props.cost = cost
+    return this
+  }
+
+  async delete(modificationValidator: OrderModificationValidator) {
+    if (this.isCompleted) throw new CompletedTaskDeletionException()
+    await modificationValidator.validate(this)
+    this.addEvent(
+      new AssignedTaskDeletedDomainEvent({
+        aggregateId: this.id,
+        jobId: this.jobId,
+        editorUserId: this.props.editorUserId,
+        deletedAt: new Date(),
+      }),
+    )
     return this
   }
 

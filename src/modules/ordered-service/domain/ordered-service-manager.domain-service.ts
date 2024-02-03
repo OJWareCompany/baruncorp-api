@@ -1,23 +1,24 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
-import { OrganizationEntity } from '../../organization/domain/organization.entity'
-import { OrderedServiceEntity } from './ordered-service.entity'
-import { OrderedServicePricingTypeEnum, OrderedServiceSizeForRevisionEnum } from './ordered-service.type'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
-import { CUSTOM_PRICING_REPOSITORY } from '../../custom-pricing/custom-pricing.di-token'
+import { OrderedServices } from '@prisma/client'
+import { CalcPriceAndPricingReturnType } from '../../custom-pricing/domain/custom-pricing.type'
 import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custom-pricing.repository.port'
-import { ServiceRepositoryPort } from '../../service/database/service.repository.port'
-import { SERVICE_REPOSITORY } from '../../service/service.di-token'
 import { OrganizationRepositoryPort } from '../../organization/database/organization.repository.port'
+import { CUSTOM_PRICING_REPOSITORY } from '../../custom-pricing/custom-pricing.di-token'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { ORGANIZATION_REPOSITORY } from '../../organization/organization.di-token'
+import { ServiceRepositoryPort } from '../../service/database/service.repository.port'
+import { OrganizationEntity } from '../../organization/domain/organization.entity'
+import { SERVICE_REPOSITORY } from '../../service/service.di-token'
 import { JobRepositoryPort } from '../../ordered-job/database/job.repository.port'
 import { JOB_REPOSITORY } from '../../ordered-job/job.di-token'
+import { OrderedServicePricingTypeEnum, OrderedServiceSizeForRevisionEnum } from './ordered-service.type'
 import { OrderedServiceRepositoryPort } from '../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../ordered-service.di-token'
-import { CustomPricingTypeEnum } from '../../custom-pricing/commands/create-custom-pricing/create-custom-pricing.command'
+import { OrderedServiceEntity } from './ordered-service.entity'
 import { Pricing } from '../../service/domain/value-objects/pricing.value-object'
 import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
-import { OrderedServices } from '@prisma/client'
+import { CustomPricingTypeEnum } from '../../custom-pricing/commands/create-custom-pricing/create-custom-pricing.command'
 
 /**
  * 코드가 너무 커졌다, 명확하게 책임에 따라 코드를 분리하자
@@ -43,35 +44,44 @@ export class ServiceInitialPriceManager {
    * 인프라는 생성자에
    * 메서드의 대상이 되는 도메인 객체는 메서드의 인자에
    */
-  async determinePrice(orderedService: OrderedServiceEntity, revisionSize: OrderedServiceSizeForRevisionEnum | null) {
+  async determinePriceAndPricingType(
+    orderedService: OrderedServiceEntity,
+    revisionSize: OrderedServiceSizeForRevisionEnum | null,
+  ): Promise<CalcPriceAndPricingReturnType | null> {
     // TODO: previouslyOrderedServices에 자신이 포함되어있을것임. 추후 수정 필요. (update revision Size에서 사용하는데 이미 revision 대상이므로 상관은 없지만 로직에 모순있음)
     // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
     const isFreeRevision = await this.isFreeRevision(orderedService)
-    if (isFreeRevision) return 0 // Free
-
+    if (isFreeRevision) {
+      return {
+        price: 0,
+        pricingType: OrderedServicePricingTypeEnum.CUSTOM_SPECIAL_REVISION_FREE,
+      }
+    }
     const job = await this.jobRepo.findJobOrThrow(orderedService.jobId)
 
     // TODO: Pricing Type을 명확하게 판별해주는 코드 필요.
     const customPricing = await this.customPricingRepo.findOne(orderedService.organizationId, orderedService.serviceId)
-    if (customPricing) {
-      return customPricing.calcPrice(
-        orderedService.isRevision,
-        job.projectPropertyType,
-        job.mountingType,
-        job.systemSize,
-        revisionSize,
-      )
-    }
+
+    const customPrice = customPricing
+      ? customPricing.calcPriceAndPricingType(
+          orderedService.isRevision,
+          job.projectPropertyType,
+          job.mountingType,
+          job.systemSize,
+          revisionSize,
+        )
+      : null
 
     const service = await this.serviceRepo.findOneOrThrow(orderedService.serviceId)
     // Standard Pricing
-    return service.pricing.calcPrice(
+    const standardPrice = service.pricing.calcPriceAndPricingType(
       orderedService.isRevision,
       job.projectPropertyType,
       job.mountingType,
       job.systemSize,
       revisionSize,
     )
+    return customPrice || standardPrice
   }
 
   async determinePricingType(

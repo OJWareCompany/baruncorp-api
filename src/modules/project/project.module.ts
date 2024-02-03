@@ -25,6 +25,9 @@ import { JobModule } from '../ordered-job/job.module'
 import { UsersModule } from '../users/users.module'
 import { OrganizationModule } from '../organization/organization.module'
 import { FindProjectsCountHttpController } from './queries/find-projects-count/find-projects-count.http.controller'
+import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
+import { GenerateCensusResourceDomainService } from '../geography/domain/domain-services/generate-census-resource.domain-service'
+import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -36,7 +39,12 @@ const httpControllers = [
   FindProjectsCountHttpController,
 ]
 
-const providers: Provider[] = [CensusSearchCoordinatesService]
+const providers: Provider[] = [
+  CensusSearchCoordinatesService,
+  FilesystemApiService,
+  FilesystemDomainService,
+  GenerateCensusResourceDomainService,
+]
 
 const commandHandlers: Provider[] = [
   CreateAhjNoteService,

@@ -16,7 +16,7 @@ export class UpdateTaskCostService implements ICommandHandler {
     private readonly prismaService: PrismaService,
   ) {}
 
-  @GenerateAssignedTaskModificationHistory
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: null, queryScope: 'self' })
   async execute(command: UpdateTaskCostCommand): Promise<void> {
     const entity = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
     entity.enterCostManually(command.cost)

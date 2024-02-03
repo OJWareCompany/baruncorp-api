@@ -18,6 +18,8 @@ import { FindMyMemberPaginatedQueryHandler } from './queries/find-my-member-pagi
 import { UpdateOrganizationHttpController } from './commands/update-organization/update-organization.controller.http'
 import { UpdateOrganizationService } from './commands/update-organization/update-organization.service'
 import { UsersModule } from '../users/users.module'
+import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
+import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 
 const httpControllers = [
   FindOrganizationHttpController,
@@ -37,7 +39,14 @@ const queryHandlers: Provider[] = [
 
 const repositories: Provider[] = [{ provide: ORGANIZATION_REPOSITORY, useClass: OrganizationRepository }]
 
-const providers: Provider[] = [PrismaService, OrganizationService, CreateOrganizationService, UpdateOrganizationService]
+const providers: Provider[] = [
+  PrismaService,
+  OrganizationService,
+  CreateOrganizationService,
+  UpdateOrganizationService,
+  FilesystemDomainService,
+  FilesystemApiService,
+]
 
 const mappers: Provider[] = [OrganizationMapper]
 

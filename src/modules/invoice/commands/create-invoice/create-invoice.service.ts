@@ -32,10 +32,7 @@ export class CreateInvoiceService implements ICommandHandler {
     const jobs = await this.jobRepo.findJobsToInvoice(command.clientOrganizationId, command.serviceMonth)
     if (!jobs.length) throw new JobNotFoundException()
 
-    const orderedServices = await this.orderedServiceRepo.findBy(
-      'jobId',
-      jobs.map((job) => job.id),
-    )
+    const orderedServices = await this.orderedServiceRepo.findBy({ jobId: { in: jobs.map((job) => job.id) } })
 
     const calcCost = orderedServices.map(
       async (orderedService) =>

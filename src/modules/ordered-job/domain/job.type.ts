@@ -43,6 +43,7 @@ export interface CreateJobProps {
   deliverablesEmails: string[]
   mailingAddressForWetStamp: Address | null
   updatedBy: string
+  editorUserId: string | null
   clientInfo: ClientInformation
   additionalInformationFromClient: string | null
 

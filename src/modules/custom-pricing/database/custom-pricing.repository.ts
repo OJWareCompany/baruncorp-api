@@ -112,6 +112,7 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
     await this.prismaService.$executeRaw<CustomPricings>`DELETE FROM custom_pricings WHERE id = ${entity.id}`
   }
 
+  // 조회가 되더라도 실제로는 없을 수 있음 (예를들어 revision pricing이 null일 수 있음, 그런 경우에는 base revision pricing이 적용되어야한다.)
   async findOne(organizationId: string, serviceId: string): Promise<CustomPricingEntity | null> {
     const condition = { serviceId, organizationId }
 

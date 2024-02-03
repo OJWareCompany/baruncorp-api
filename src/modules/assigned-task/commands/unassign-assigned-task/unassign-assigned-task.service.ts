@@ -16,7 +16,7 @@ export class UnassignAssignedTaskService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
-  @GenerateAssignedTaskModificationHistory
+  @GenerateAssignedTaskModificationHistory({ invokedFrom: null, queryScope: 'self' })
   async execute(command: UnassignAssignedTaskCommand): Promise<void> {
     /**
      * unassign 불가 조건

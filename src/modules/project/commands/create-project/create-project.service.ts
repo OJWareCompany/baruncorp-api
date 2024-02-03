@@ -13,6 +13,10 @@ import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-t
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
 import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-services/ahj-generator.domain-service'
+import { PrismaService } from './../../../database/prisma.service'
+import { ProjectMapper } from '../../project.mapper'
+import { GenerateCensusResourceDomainService } from '../../../geography/domain/domain-services/generate-census-resource.domain-service'
+import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
@@ -26,6 +30,10 @@ export class CreateProjectService implements ICommandHandler {
     private readonly censusSearchCoordinatesService: CensusSearchCoordinatesService,
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
     private readonly ahjNoteGeneratorDomainService: AhjNoteGeneratorDomainService,
+    private readonly projectMapper: ProjectMapper,
+    private readonly prismaService: PrismaService,
+    private readonly filesystemDomainService: FilesystemDomainService,
+    private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
   async execute(command: CreateProjectCommand): Promise<{ id: string }> {
@@ -34,11 +42,17 @@ export class CreateProjectService implements ICommandHandler {
     // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
     if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
+
+    /**
+     * @FilesystemLogic
+     * 문제 있어서 일단 효민님 코드로 대체
+     */
+    // await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
     await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
 
     const organization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
 
-    const entity = ProjectEntity.create({
+    const projectEntity = ProjectEntity.create({
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
       projectNumber: command.projectNumber,
@@ -55,10 +69,33 @@ export class CreateProjectService implements ICommandHandler {
         placeId: censusResponse?.place?.geoId,
       }),
     })
+    const projectRecord = this.projectMapper.toPersistence(projectEntity)
 
-    await this.projectRepository.createProject(entity)
+    /**
+     * @FilesystemLogic
+     */
+    const { googleProjectFolderData, rollback } = await this.filesystemDomainService.createGoogleProjectFolder(
+      organization.id,
+      projectEntity.id,
+      command.projectPropertyType,
+      command.projectPropertyAddress.fullAddress,
+    )
+
+    try {
+      await this.prismaService.$transaction([
+        this.prismaService.orderedProjects.create({ data: { ...projectRecord } }),
+        this.prismaService.googleProjectFolder.create({ data: googleProjectFolderData }),
+      ])
+    } catch (error) {
+      /**
+       * @FilesystemLogic
+       */
+      await rollback()
+      throw error
+    }
+
     return {
-      id: entity.id,
+      id: projectEntity.id,
     }
   }
 }

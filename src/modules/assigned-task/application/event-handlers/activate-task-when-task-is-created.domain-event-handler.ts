@@ -1,11 +1,12 @@
-import { Inject } from '@nestjs/common'
-import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
-import { PrismaService } from '../../../database/prisma.service'
-import { AssignedTaskMapper } from '../../assigned-task.mapper'
 import { OnEvent } from '@nestjs/event-emitter'
-import { AssignedTaskCreatedDomainEvent } from '../../domain/events/assigned-task-created.domain-event'
+import { Inject } from '@nestjs/common'
+import { PrismaService } from '../../../database/prisma.service'
 import { DetermineActiveStatusDomainService } from '../../domain/domain-services/determine-active-status.domain-service'
+import { AssignedTaskCreatedDomainEvent } from '../../domain/events/assigned-task-created.domain-event'
+import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
+import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
+import { AssignedTaskMapper } from '../../assigned-task.mapper'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 export class ActivateTaskWhenTaskIsCreatedDomainEventHandler {
@@ -18,6 +19,7 @@ export class ActivateTaskWhenTaskIsCreatedDomainEventHandler {
   ) {}
 
   @OnEvent(AssignedTaskCreatedDomainEvent.name, { async: true, promisify: true })
+  @GenerateAssignedTaskModificationHistory({ queryScope: 'job', invokedFrom: null })
   async handle(event: AssignedTaskCreatedDomainEvent) {
     // const assignedTask = await this.assignedTaskRepo.findOneOrThrow(event.aggregateId)
     // await assignedTask.determineActiveStatus(this.determineActiveStatusService, this.prismaService)
@@ -38,7 +40,7 @@ export class ActivateTaskWhenTaskIsCreatedDomainEventHandler {
     if (tasks.length > assignedTasks.length) return
 
     for (const assignedTask of assignedTaskEntities) {
-      await assignedTask.determineActiveStatus(this.determineActiveStatusService, this.prismaService)
+      await assignedTask.determineActiveStatus(this.determineActiveStatusService)
       await this.assignedTaskRepo.update(assignedTask)
     }
   }

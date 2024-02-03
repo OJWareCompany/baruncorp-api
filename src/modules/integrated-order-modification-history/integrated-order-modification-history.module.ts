@@ -15,6 +15,14 @@ import { OrderModificationHistoryGenerator } from './domain/domain-services/orde
 import { JobModificationHistoryDecorator } from './domain/domain-services/job-modification-history.decorator'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
 import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
+import { INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY } from './integrated-order-modification-history.di-token'
+import { IntegratedOrderModificationHistoryRepository } from './database/integrated-order-modification-history.repository'
+import { GenerateCreationHistoryWhenOrderIsCreatedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-order-is-created.domain-event-handler'
+import { GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-task-is-ordered.domain-event-handler'
+import { GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler } from './application/event-handlers/generate-creation-history-when-scope-is-ordered.domain-event-handler'
+import { GenerateDeletionHistoryWhenTaskIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-task-is-deleted.domain-event-handler'
+import { GenerateDeletionHistoryWhenOrderIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-order-is-deleted.domain-event-handler'
+import { GenerateDeletionHistoryWhenScopeIsDeletedDomainEventHandler } from './application/event-handlers/generate-deletion-history-when-scope-is-deleted.domain-event-handler'
 
 const httpControllers = [
   FindIntegratedOrderModificationHistoryHttpController,
@@ -25,8 +33,20 @@ const queryHandlers: Provider[] = [
   FindIntegratedOrderModificationHistoryQueryHandler,
   FindIntegratedOrderModificationHistoryPaginatedQueryHandler,
 ]
-const repositories: Provider[] = []
-const eventHandlers: Provider[] = []
+const repositories: Provider[] = [
+  {
+    provide: INTEGRATED_ORDER_MODIFICATION_HISTORY_REPOSITORY,
+    useClass: IntegratedOrderModificationHistoryRepository,
+  },
+]
+const eventHandlers: Provider[] = [
+  GenerateCreationHistoryWhenOrderIsCreatedDomainEventHandler,
+  GenerateCreationHistoryWhenScopeIsOrderedDomainEventHandler,
+  GenerateCreationHistoryWhenTaskIsOrderedDomainEventHandler,
+  GenerateDeletionHistoryWhenOrderIsDeletedDomainEventHandler,
+  GenerateDeletionHistoryWhenScopeIsDeletedDomainEventHandler,
+  GenerateDeletionHistoryWhenTaskIsDeletedDomainEventHandler,
+]
 const mappers: Provider[] = [UserMapper]
 const domainServices: Provider[] = [OrderModificationHistoryGenerator]
 const decorators: Provider[] = [
@@ -55,6 +75,6 @@ const decorators: Provider[] = [
     ...decorators,
   ],
   controllers: [...httpControllers],
-  exports: [...domainServices, ...decorators],
+  exports: [...repositories, ...domainServices, ...decorators],
 })
 export class IntegratedOrderModificationHistoryModule {}

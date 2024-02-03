@@ -1,11 +1,12 @@
 import { AssignedTasks, Prisma } from '@prisma/client'
-import { Injectable } from '@nestjs/common'
+import { BadRequestException, HttpException, Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { AssignedTaskResponseDto } from './dtos/assigned-task.response.dto'
 import { AssignedTaskEntity } from './domain/assigned-task.entity'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { VendorInvoiceLineItemResponse } from '../vendor-invoice/dtos/vendor-invoice-line-item.response.dto'
 import { AssignedTaskStatusEnum } from './domain/assigned-task.type'
+import { Exception } from 'handlebars'
 
 @Injectable()
 export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTasks, AssignedTaskResponseDto> {
@@ -45,6 +46,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       created_at: props.createdAt,
       updated_at: props.updatedAt,
       updated_by: props.updatedBy,
+      editor_user_id: props.editorUserId,
     }
     return record
   }
@@ -85,40 +87,14 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         isExpedited: record.is_expedited,
         isActive: record.is_active,
         updatedBy: record.updated_by,
+        editorUserId: record.editor_user_id,
       },
     })
     return entity
   }
 
-  toResponse(entity: AssignedTaskEntity): AssignedTaskResponseDto {
-    const props = entity.getProps()
-    return new AssignedTaskResponseDto({
-      id: props.id,
-      taskId: props.taskId,
-      orderedServiceId: props.orderedServiceId,
-      jobId: props.jobId,
-      status: props.status,
-      description: props.description,
-      assigneeId: props.assigneeId,
-      assigneeName: props.assigneeName,
-      assigneeOrganizationId: props.assigneeOrganizationId,
-      assigneeOrganizationName: props.assigneeOrganizationName,
-      duration: props.duration,
-      startedAt: props.startedAt,
-      doneAt: props.doneAt,
-      taskName: props.taskName,
-      serviceName: props.serviceName,
-      projectId: props.projectId,
-      organizationId: props.organizationId,
-      organizationName: props.organizationName,
-      projectPropertyType: props.projectPropertyType,
-      mountingType: props.mountingType,
-      cost: props.cost ? Number(props.cost) : null,
-      isVendor: props.isVendor,
-      vendorInvoiceId: props.vendorInvoiceId,
-      serviceId: props.serviceId,
-      createdAt: props.createdAt,
-    })
+  toResponse(entity: AssignedTaskEntity, cost: number): AssignedTaskResponseDto {
+    throw new BadRequestException()
   }
 
   toResponseForVendorLineItem(entity: AssignedTaskEntity): VendorInvoiceLineItemResponse {

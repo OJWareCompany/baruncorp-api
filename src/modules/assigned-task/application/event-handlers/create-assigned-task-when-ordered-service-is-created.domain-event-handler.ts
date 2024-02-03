@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
-import { PrismaService } from '../../../database/prisma.service'
-import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { OrderedServiceCreatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-created.domain-event'
+import { PrismaService } from '../../../database/prisma.service'
+import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
+import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 import { AssignedTaskEntity } from '../../domain/assigned-task.entity'
 
 @Injectable()
@@ -41,6 +41,7 @@ export class CreateAssignedTasksWhenOrderedServiceIsCreatedDomainEventHandler {
         jobName: event.jobName,
         isExpedited: event.isExpedited,
         updatedBy: null,
+        editorUserId: event.editorUserId,
       })
       return entity
     })

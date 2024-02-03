@@ -1,29 +1,31 @@
 import { v4 } from 'uuid'
-import { AggregateID } from '../../../libs/ddd/entity.base'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
+import { AggregateID } from '../../../libs/ddd/entity.base'
 import { MountingType, MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
+import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
+import { UserEntity } from '../../users/domain/user.entity'
 import { Address } from '../../organization/domain/value-objects/address.vo'
 import { AutoOnlyJobStatusEnum, CreateJobProps, JobProps, JobStatusEnum } from './job.type'
-import { JobCreatedDomainEvent } from './events/job-created.domain-event'
+import { JobCanceledAndKeptInvoiceDomainEvent } from './events/job-canceled-and-kept-invoice.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
+import { OrderStatusChangeValidator } from './domain-services/order-status-change-validator.domain-service'
+import { OrderModificationValidator } from './domain-services/order-modification-validator.domain-service'
+import { JobNotStartedDomainEvent } from './events/job-not-started.domain-event'
+import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
+import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
+import { OrderDeletionValidator } from './domain-services/order-deletion-validator.domain-service'
+import { JobStartedDomainEvent } from './events/job-started.domain-event'
+import { JobDeletedDomainEvent } from './events/job-deleted.domain-event'
+import { JobCreatedDomainEvent } from './events/job-created.domain-event'
+import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
+import { Mailer } from '../infrastructure/mailer.infrastructure'
 import {
   JobMissingDeliverablesEmailException,
   NumberOfWetStampBadRequestException,
   SystemSizeBadRequestException,
 } from './job.error'
-import { JobCompletedDomainEvent } from './events/job-completed.domain-event'
-import { JobHeldDomainEvent } from './events/job-held.domain-event'
-import { JobCanceledDomainEvent } from './events/job-canceled.domain-event'
-import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
-import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
-import { Mailer } from '../infrastructure/mailer.infrastructure'
-import { JobNotStartedDomainEvent } from './events/job-not-started.domain-event'
-import { OrderStatusChangeValidator } from './domain-services/order-status-change-validator.domain-service'
-import { OrderModificationValidator } from './domain-services/order-modification-validator.domain-service'
-import { JobStartedDomainEvent } from './events/job-started.domain-event'
-import { JobCanceledAndKeptInvoiceDomainEvent } from './events/job-canceled-and-kept-invoice.domain-event'
-import { UserEntity } from '../../users/domain/user.entity'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -56,6 +58,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         mailingAddressForWetStamp: create.mailingAddressForWetStamp,
         mountingType: create.mountingType as MountingTypeEnum,
         projectType: create.projectPropertyType as ProjectPropertyTypeEnum,
+        editorUserId: create.editorUserId,
       }),
     )
     return job
@@ -320,6 +323,20 @@ export class JobEntity extends AggregateRoot<JobProps> {
         isCurrentJop: this.props?.isCurrentJob || false,
       }),
     )
+  }
+
+  async delete(modificationValidator: OrderModificationValidator, deletionValidator: OrderDeletionValidator) {
+    await deletionValidator.validate(this)
+    await modificationValidator.validateJob(this)
+    this.addEvent(
+      new JobDeletedDomainEvent({
+        aggregateId: this.id,
+        jobId: this.id,
+        editorUserId: this.props.editorUserId,
+        deletedAt: new Date(),
+      }),
+    )
+    return this
   }
 
   public validate(): void {

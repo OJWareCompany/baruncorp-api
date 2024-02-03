@@ -57,14 +57,14 @@ export class OrderModificationHistoryGenerator {
     prismaService: PrismaService,
     original: T,
     modified: T,
-    modifiedObj: modificationFields,
+    modifiedObjInfo: modificationFields,
   ) {
     const modifiedFields = getModifiedFields(original, modified)
     await Promise.all(
       _.map(modifiedFields, async ({ propertyTitle, before, after }, key) => {
         await prismaService.integratedOrderModificationHistory.create({
           data: {
-            ...modifiedObj,
+            ...modifiedObjInfo,
             attribute: propertyTitle,
             operation: OrderModificationHistoryOperationEnum.Update,
             beforeValue: before,

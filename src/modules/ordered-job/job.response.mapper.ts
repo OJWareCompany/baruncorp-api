@@ -2,7 +2,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { OrderedJobs } from '@prisma/client'
 import { PrismaService } from '../database/prisma.service'
 import { ServiceInitialPriceManager } from '../ordered-service/domain/ordered-service-manager.domain-service'
-import { OrderedServiceSizeForRevisionEnum } from '../ordered-service/domain/ordered-service.type'
+import {
+  OrderedScopeStatus,
+  OrderedServicePricingTypeEnum,
+  OrderedServiceSizeForRevisionEnum,
+} from '../ordered-service/domain/ordered-service.type'
 import { JobResponseDto } from './dtos/job.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { JobStatusEnum, LoadCalcOriginEnum } from './domain/job.type'
@@ -10,6 +14,8 @@ import { Address } from '../organization/domain/value-objects/address.vo'
 import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
 import { JobRepositoryPort } from './database/job.repository.port'
 import { JOB_REPOSITORY } from './job.di-token'
+import { AssignedTaskResponseDto } from '../assigned-task/dtos/assigned-task.response.dto'
+import { GoogleDriveJobFolderNotFoundException } from '../filesystem/domain/filesystem.error'
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 @Injectable()
@@ -21,6 +27,9 @@ export class JobResponseMapper {
     private readonly serviceManager: ServiceInitialPriceManager,
   ) {}
   async toResponse(job: OrderedJobs): Promise<JobResponseDto> {
+    const jobFolder = await this.prismaService.googleJobFolder.findFirst({ where: { jobId: job.id } })
+    // if (!jobFolder) throw new GoogleDriveJobFolderNotFoundException()
+
     const currentJobId = await this.prismaService.orderedJobs.findFirst({
       select: { id: true },
       where: { projectId: job.projectId },
@@ -60,38 +69,51 @@ export class JobResponseMapper {
           serviceId: scope.serviceId,
           sizeForRevision: scope.sizeForRevision as OrderedServiceSizeForRevisionEnum | null,
           serviceName: scope.serviceName,
-          pricingType: await this.serviceManager.determinePricingType(scope),
+          pricingType: scope.pricing_type as OrderedServicePricingTypeEnum,
           isRevision: scope.isRevision,
           description: scope.description,
           price: scope.price ? Number(scope.price) : null,
           priceOverride: scope.priceOverride ? Number(scope.priceOverride) : null,
-          status: scope.status!,
+          status: scope.status! as OrderedScopeStatus,
           orderedAt: scope.orderedAt.toISOString(),
           doneAt: scope.doneAt ? scope.doneAt.toISOString() : null,
         }
       }),
     )
     const assignedTasks = await this.prismaService.assignedTasks.findMany({ where: { jobId: job.id } })
-    const assignedTasksResponse = await Promise.all(
+    const assignedTasksResponse: AssignedTaskResponseDto[] = await Promise.all(
       assignedTasks.map(async (assignedTask) => {
         const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany({
           where: { taskId: assignedTask.taskId },
         })
-        return {
-          assignTaskId: assignedTask.id,
-          status: assignedTask.status,
-          taskName: assignedTask.taskName,
-          duration: assignedTask.duration,
-          startedAt: assignedTask.startedAt ? assignedTask.startedAt.toISOString() : null,
-          doneAt: assignedTask.doneAt ? assignedTask.doneAt.toISOString() : null,
-          isActive: assignedTask.is_active,
-          prerequisiteTasks: prerequisiteTasks,
+        return new AssignedTaskResponseDto({
+          id: assignedTask.id,
           taskId: assignedTask.taskId,
           orderedServiceId: assignedTask.orderedServiceId,
-          assigneeName: assignedTask.assigneeName,
-          assigneeId: assignedTask.assigneeId,
+          jobId: assignedTask.jobId,
+          status: assignedTask.status,
           description: assignedTask.description,
-        }
+          assigneeId: assignedTask.assigneeId,
+          assigneeName: assignedTask.assigneeName,
+          assigneeOrganizationId: assignedTask.assigneeOrganizationId,
+          assigneeOrganizationName: assignedTask.assigneeOrganizationName,
+          duration: assignedTask.duration,
+          startedAt: assignedTask.startedAt,
+          doneAt: assignedTask.doneAt,
+          taskName: assignedTask.taskName,
+          serviceName: assignedTask.serviceName,
+          projectId: assignedTask.projectId,
+          organizationId: assignedTask.organizationId,
+          organizationName: assignedTask.organizationName,
+          projectPropertyType: assignedTask.projectPropertyType as ProjectPropertyTypeEnum,
+          mountingType: assignedTask.mountingType as MountingTypeEnum,
+          cost: assignedTask.cost ? Number(assignedTask.cost) : null,
+          isVendor: assignedTask.isVendor,
+          vendorInvoiceId: assignedTask.vendorInvoiceId,
+          serviceId: assignedTask.serviceId,
+          createdAt: assignedTask.created_at,
+          prerequisiteTasks: prerequisiteTasks,
+        })
       }),
     )
 
@@ -153,6 +175,7 @@ export class JobResponseMapper {
       state: stateName,
       dateSentToClient: job.dateSentToClient,
       dueDate: job.dueDate ? job.dueDate : null,
+      jobFolderId: jobFolder?.id ?? null,
     })
   }
 
