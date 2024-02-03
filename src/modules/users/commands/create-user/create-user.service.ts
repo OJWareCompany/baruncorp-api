@@ -53,7 +53,7 @@ export class CreateUserService implements ICommandHandler {
 
     const record = this.userMapper.toPersistence(user)
     await this.prismaService.users.create({ data: { ...record } })
-    // PTO 생성 이벤트 호출
+    // 유저 생성 이벤트 호출
     user.publishEvents(this.eventEmitter)
 
     // Give User Role

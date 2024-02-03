@@ -16,6 +16,7 @@ export class DeactivateUserService implements ICommandHandler {
     const user = await this.userRepo.findOneByIdOrThrow(command.userId)
     user.deactivate()
     this.userRepo.update(user)
+    // Todo. IMAP Event
     return user.id
   }
 }

@@ -29,6 +29,16 @@ export class JobNoteRepository implements JobNoteRepositoryPort {
     throw new Error('Method not implemented.')
   }
 
+  async findOneFromMailThreadId(emailThreadId: string): Promise<JobNoteEntity | null> {
+    const record: JobNoteModel | null = await this.prismaService.orderedJobNotes.findFirst({
+      where: {
+        emailThreadId: emailThreadId,
+      },
+    })
+
+    return record ? this.mapper.toDomain(record) : null
+  }
+
   findMany(
     condition: Prisma.OrderedJobNotesWhereInput,
     offset?: number | undefined,
@@ -57,11 +67,30 @@ export class JobNoteRepository implements JobNoteRepositoryPort {
 
   async getMaxJobNoteNumber(jobId: string): Promise<number | null> {
     const maxJobNoteNumber = await this.prismaService.orderedJobNotes.aggregate({
+      where: {
+        jobId: jobId,
+      },
       _max: {
         jobNoteNumber: true,
       },
     })
 
     return maxJobNoteNumber._max.jobNoteNumber
+  }
+
+  async findSendersThreadId(jobId: string, senderEmail: string): Promise<string | null> {
+    const record = await this.prismaService.orderedJobNotes.findFirst({
+      where: {
+        jobId: jobId,
+        senderEmail: senderEmail,
+      },
+      select: {
+        emailThreadId: true,
+      },
+    })
+    console.log(`[findSendersThreadId] jobId : ${jobId}`)
+    console.log(`[findSendersThreadId] record : ${JSON.stringify(record)}`)
+
+    return record?.emailThreadId ?? null
   }
 }

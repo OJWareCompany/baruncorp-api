@@ -9,18 +9,25 @@ import { FindJobNotesQueryHandler } from './queries/find-job-notes/find-job-note
 import { UsersModule } from '../users/users.module'
 import { JOB_NOTE_REPOSITORY } from './job-note.di-token'
 import { JobNoteRepository } from './database/job-note.repository'
+import { RFIMailer } from './infrastructure/mailer.infrastructure'
+import { ImapManagerService } from '@modules/ordered-job-note/infrastructure/imap.manager.service'
+
+import { ImapConnectionWhenUserStatusChangedEventHandler } from '@modules/ordered-job-note/application/event-handler/imap-connection-when-user-status-updated.domain-event-handler'
 
 const httpControllers = [CreateJobNoteHttpController, FindJobNotesHttpController]
 const commandHandlers: Provider[] = [CreateJobNoteService]
 const queryHandlers: Provider[] = [FindJobNotesQueryHandler]
+const eventHandlers: Provider[] = [ImapConnectionWhenUserStatusChangedEventHandler]
 
 const repositories: Provider[] = [{ provide: JOB_NOTE_REPOSITORY, useClass: JobNoteRepository }, JobNoteRepository]
 
 const mappers: Provider[] = [JobNoteMapper]
 
+const infrastructures: Provider[] = [RFIMailer, ImapManagerService]
+
 @Module({
   imports: [CqrsModule, PrismaModule, CqrsModule, forwardRef(() => UsersModule)],
-  providers: [...commandHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...queryHandlers, ...eventHandlers, ...repositories, ...mappers, ...infrastructures],
   controllers: [...httpControllers],
   exports: [...repositories, ...mappers],
 })

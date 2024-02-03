@@ -21,6 +21,14 @@ export class JobNoteEntity extends AggregateRoot<JobNoteProps> {
     return this.props.type
   }
 
+  get senderEmail(): string | null {
+    return this.props.senderEmail
+  }
+
+  set senderEmail(senderEmail: string | null) {
+    this.props.senderEmail = senderEmail
+  }
+
   get receiverEmails(): string[] | null {
     return this.props.receiverEmails
   }
@@ -37,12 +45,28 @@ export class JobNoteEntity extends AggregateRoot<JobNoteProps> {
     this.props.content = content
   }
 
+  get jobId(): string {
+    return this.props.jobId
+  }
+
+  set jobId(jobId: string) {
+    this.props.jobId = jobId
+  }
+
   get jobNoteNumber(): number {
     return this.props.jobNoteNumber
   }
 
   set jobNoteNumber(jobNoteNumber: number) {
     this.props.jobNoteNumber = jobNoteNumber
+  }
+
+  get emailThreadId(): string | null {
+    return this.props.emailThreadId
+  }
+
+  set emailThreadId(emailThreadId: string | null) {
+    this.props.emailThreadId = emailThreadId
   }
 
   public validate(): void {

@@ -420,15 +420,16 @@ model employees {
 }
 
 model OrderedJobNotes {
-  id                String      @id @map("id")             @db.VarChar(255)
-  jobId             String      @map("job_id")             @db.VarChar(255)
-  createdBy         String?     @map("created_by")         @db.VarChar(255)
-  content           String      @map("content")            @db.Text
-  jobNoteNumber     Int         @map("job_note_number")    @db.Int
-  senderEmail       String?     @map("sender_email")
-  receiverEmails    String?     @map("receiver_emails")    @db.Text
-  type              JobNoteType @map("type")
-  createdAt         DateTime    @map("created_at")         @db.DateTime(0)
+  id             String      @id @map("id")             @db.VarChar(255)
+  jobId          String      @map("job_id")             @db.VarChar(255)
+  createdBy      String?     @map("created_by")         @db.VarChar(255)
+  content        String      @map("content")            @db.Text
+  jobNoteNumber  Int         @map("job_note_number")    @db.Int
+  senderEmail    String?     @map("sender_email")
+  receiverEmails String?     @map("receiver_emails")    @db.Text
+  type           JobNoteType @map("type")
+  emailThreadId  String?     @map("email_thread_id")
+  createdAt      DateTime    @map("created_at")         @db.DateTime(0)
 
   @@map("ordered_job_notes")
 }
