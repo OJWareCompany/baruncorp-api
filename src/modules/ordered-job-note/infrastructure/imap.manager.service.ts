@@ -8,13 +8,8 @@ import { inspect } from 'util'
 import { ParsedMail, simpleParser } from 'mailparser'
 import { JobNoteRepository } from '@modules/ordered-job-note/database/job-note.repository'
 import { JobNoteEntity } from '@modules/ordered-job-note/domain/job-note.entity'
-import { JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
+import { IImapConnection, JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
 import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
-
-interface IImapConnection {
-  auth2Client: OAuth2Client
-  imap: Imap
-}
 
 @Injectable()
 export class ImapManagerService {

@@ -2,11 +2,8 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { UserStatusUpdatedDomainEvent } from '../../../users/domain/events/user-status-updated.domain-event'
-import { RFIMailer } from '@modules/ordered-job-note/infrastructure/mailer.infrastructure'
 import { UserStatusEnum } from '@modules/users/domain/user.types'
 import { ImapManagerService } from '@modules/ordered-job-note/infrastructure/imap.manager.service'
-import { JOB_NOTE_REPOSITORY } from '../../job-note.di-token'
-import { JobNoteRepositoryPort } from '../../database/job-note.repository.port'
 
 @Injectable()
 export class ImapConnectionWhenUserStatusChangedEventHandler {
@@ -19,7 +16,7 @@ export class ImapConnectionWhenUserStatusChangedEventHandler {
         // active인 경우 IMAP Connect
         this.imapService.connect(event.email)
       } else {
-        // active가 아닌 경우 IMAP end
+        // active가 아닌 경우 IMAP Disconnect
         this.imapService.disconnect(event.email)
       }
     }
