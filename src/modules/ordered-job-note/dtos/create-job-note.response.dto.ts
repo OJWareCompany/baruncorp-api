@@ -10,5 +10,5 @@ export class CreateJobNoteResponseDto {
   jobNoteNumber: number
 
   @ApiProperty({ default: 'a1918979-a454-4d83-8eb0-31195a5967c6' })
-  jobNoteFolderId: string
+  jobNoteFolderId: string | null
 }

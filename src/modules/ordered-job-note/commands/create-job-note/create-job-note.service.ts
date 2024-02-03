@@ -82,10 +82,19 @@ export class CreateJobNoteService implements ICommandHandler {
 
     await this.jobNoteRepository.insert(entity)
 
+    const targetJobFolder = await this.prismaService.googleJobFolder.findFirst({
+      where: {
+        jobId: entity.jobId,
+      },
+      select: {
+        jobNotesFolderId: true,
+      },
+    })
+
     return {
       id: entity.id,
       jobNoteNumber: entity.jobNoteNumber,
-      jobNoteFolderId: 'sampleFolderId',
+      jobNoteFolderId: targetJobFolder?.jobNotesFolderId ?? null,
     }
   }
 }

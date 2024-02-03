@@ -7,7 +7,7 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { JobNotePagenatedResponseDto } from '../../dtos/job-note.pagenated.response.dto'
 import { JobNotFoundException } from '../../../../modules/ordered-job/domain/job.error'
-import { JobNoteType } from '@prisma/client'
+import { GoogleJobNoteFolder, JobNoteType, OrderedJobNotes, PtoDetails, Ptos, PtoTypes, Users } from '@prisma/client'
 import { JobNoteTypeEnum } from '../../domain/job-note.type'
 
 export class FindJobNotePagenatedQuery extends PaginatedQueryBase {
@@ -29,7 +29,12 @@ export class FindJobNotesQueryHandler implements IQueryHandler {
 
     const records = await this.prismaService.orderedJobNotes.findMany({
       where: { jobId: query.jobId },
+      include: {
+        jobNoteFolder: true,
+      },
       orderBy: { createdAt: 'desc' },
+      skip: query.offset,
+      take: query.limit,
     })
 
     const totalCount: number = await this.prismaService.orderedJobNotes.count({
@@ -71,7 +76,7 @@ export class FindJobNotesQueryHandler implements IQueryHandler {
               senderMail: record.senderEmail,
               receiverMails: record.receiverEmails ? record.receiverEmails.split(',') : null,
               createdAt: record.createdAt,
-              fileShareLink: null, // Todo.
+              fileShareLink: record.jobNoteFolder?.shareLink ?? null,
             }
             return dto
           }),

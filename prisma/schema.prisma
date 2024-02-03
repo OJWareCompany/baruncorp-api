@@ -431,6 +431,8 @@ model OrderedJobNotes {
   emailThreadId  String?     @map("email_thread_id")
   createdAt      DateTime    @map("created_at")         @db.DateTime(0)
 
+  jobNoteFolder  GoogleJobNoteFolder?
+
   @@map("ordered_job_notes")
 }
 
@@ -1165,9 +1167,10 @@ model GoogleJobNoteFolder {
   id               String  @id @map("id") @db.VarChar(255)
   shareLink        String? @map("share_link") @db.VarChar(255)
   jobNotesFolderId String? @map("job_notes_folder_id") @db.VarChar(255)
-  jobNoteId        String? @map("job_note_id") @db.VarChar(255)
+  jobNoteId        String? @unique @map("job_note_id") @db.VarChar(255)
   sharedDriveId    String? @map("shared_drive_id") @db.VarChar(255)
 
+  jobNote          OrderedJobNotes? @relation(fields: [jobNoteId], references: [id])
   @@index([jobNotesFolderId], map: "google_job_note_folder_google_job_folder_fkey")
   @@index([sharedDriveId], map: "google_job_note_folder_google_shared_drive_fkey")
   @@map("google_job_note_folder")
