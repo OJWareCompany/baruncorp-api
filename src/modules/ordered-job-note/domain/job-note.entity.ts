@@ -45,6 +45,14 @@ export class JobNoteEntity extends AggregateRoot<JobNoteProps> {
     this.props.content = content
   }
 
+  get jobId(): string {
+    return this.props.jobId
+  }
+
+  set jobId(jobId: string) {
+    this.props.jobId = jobId
+  }
+
   get jobNoteNumber(): number {
     return this.props.jobNoteNumber
   }

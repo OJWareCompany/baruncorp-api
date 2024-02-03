@@ -6,12 +6,13 @@ import { JobNoteEntity } from '../../domain/job-note.entity'
 import { CreateJobNoteCommand } from './create-job-note.command'
 import { JobNoteTypeEnum, RFISignature } from '../../domain/job-note.type'
 import { JOB_NOTE_REPOSITORY } from '../../job-note.di-token'
-import { ReceiverEmailsFoundException } from '../../domain/job-note.error'
+import { EmailSendFailedException, ReceiverEmailsFoundException } from '../../domain/job-note.error'
 import { JobNoteRepositoryPort } from '../../database/job-note.repository.port'
 import { CreateJobNoteResponseDto } from '../../dtos/create-job-note.response.dto'
 import { JobNotFoundException } from '../../../../modules/ordered-job/domain/job.error'
 import { JobNoteRepository } from '../../../ordered-job-note/database/job-note.repository'
 import { IRFIMail, RFIMailer } from '@modules/ordered-job-note/infrastructure/mailer.infrastructure'
+import { gmail_v1 } from 'googleapis'
 
 @CommandHandler(CreateJobNoteCommand)
 export class CreateJobNoteService implements ICommandHandler {
@@ -26,12 +27,16 @@ export class CreateJobNoteService implements ICommandHandler {
 
     const creatorUser = await this.prismaService.users.findUnique({ where: { id: command.creatorUserId } })
     if (!creatorUser) throw new UserNotFoundException()
-    // Todo. 하드코딩 추후 제거
+
     const senderEmail: string = creatorUser.isVendor ? 'newjobs@baruncorp.com' : creatorUser.email
-    // 메시지 넘버 확인
-    const maxJobNoteNumber: number | null = await this.jobNoteRepository.getMaxJobNoteNumber(command.jobId)
+
+    console.log(`[CreateJobNoteHttpController] command.creatorUserId : ${JSON.stringify(command.creatorUserId)}`)
+    console.log(`[CreateJobNoteHttpController] senderEmail : ${JSON.stringify(senderEmail)}`)
+    console.log(`[CreateJobNoteHttpController] command.receiverEmails : ${JSON.stringify(command.receiverEmails)}`)
 
     let content: string = command.content
+
+    let resData: gmail_v1.Schema$Message | null | undefined = null
     let emailThreadId: string | null = null
 
     if (command.type === JobNoteTypeEnum.RFI) {
@@ -40,7 +45,7 @@ export class CreateJobNoteService implements ICommandHandler {
       }
       const subject = `[BARUN CORP] Job #${targetJob.jobRequestNumber} ${targetJob.propertyAddress}`
 
-      content += content + `\n\n${creatorUser.full_name}` + RFISignature
+      content += `\n\n${creatorUser.full_name}` + RFISignature
       // From의 email에 대한 threadId가 있는지 확인
       emailThreadId = await this.jobNoteRepository.findSendersThreadId(command.jobId, senderEmail)
       console.log(`[execute] finded emailThreadId : ${emailThreadId}`)
@@ -51,17 +56,25 @@ export class CreateJobNoteService implements ICommandHandler {
         text: content,
         subject: subject,
         threadId: emailThreadId,
+        files: command.files,
       }
 
-      emailThreadId = await this.mailer.sendRFI(input)
+      resData = await this.mailer.sendRFI(input)
+
+      emailThreadId = resData?.threadId ?? null
+      if (!emailThreadId) {
+        throw new EmailSendFailedException()
+      }
     }
 
+    // 메시지 넘버 확인
+    let maxJobNoteNumber: number = (await this.jobNoteRepository.getMaxJobNoteNumber(command.jobId)) ?? 0
     const entity: JobNoteEntity = JobNoteEntity.create({
       jobId: command.jobId,
       creatorUserId: command.creatorUserId,
       type: command.type,
       content: content,
-      jobNoteNumber: maxJobNoteNumber ? maxJobNoteNumber + 1 : 1,
+      jobNoteNumber: ++maxJobNoteNumber,
       senderEmail: senderEmail,
       receiverEmails: command.type === JobNoteTypeEnum.RFI ? command.receiverEmails : null,
       emailThreadId: emailThreadId,

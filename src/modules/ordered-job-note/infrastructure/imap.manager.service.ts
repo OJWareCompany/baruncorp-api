@@ -1,25 +1,65 @@
 import { Injectable } from '@nestjs/common'
 import Imap from 'imap'
 import { RFIMailer } from '@modules/ordered-job-note/infrastructure/mailer.infrastructure'
-import keys from '../../../../baruncorp-file-service-1b5ac540d6f3.json' //assert { type: "json" };
 import * as xoauth2 from 'xoauth2'
-import { Credentials, JWT, OAuth2Client } from 'google-auth-library'
+import { Credentials, OAuth2Client } from 'google-auth-library'
 import { gmail_v1 } from 'googleapis'
 import { inspect } from 'util'
-import { AddressObject, ParsedMail, simpleParser } from 'mailparser'
+import { ParsedMail, simpleParser } from 'mailparser'
+import { JobNoteRepository } from '@modules/ordered-job-note/database/job-note.repository'
+import { JobNoteEntity } from '@modules/ordered-job-note/domain/job-note.entity'
+import { JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
+import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
+
+interface IImapConnection {
+  auth2Client: OAuth2Client
+  imap: Imap
+}
 
 @Injectable()
 export class ImapManagerService {
-  private imapConnections: Map<string, Imap> = new Map<string, Imap>()
-  constructor(private readonly mailer: RFIMailer) {}
+  // private imapConnections: Map<string, Imap> = new Map<string, Imap>()
+  private imapConnections: Map<string, IImapConnection> = new Map()
+  constructor(private readonly jobNoteRepository: JobNoteRepository, private readonly mailer: RFIMailer) {}
 
-  async connectToMailbox(targetEmail: string) {
-    const auth2Client: OAuth2Client = await this.mailer.getGoogleAuthClient(targetEmail)
-    const accessToken = await auth2Client.getAccessToken()
+  async connect(targetEmail: string) {
+    try {
+      console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
+      const auth2Client: OAuth2Client = await this.mailer.getGoogleAuthClient(targetEmail)
+      auth2Client.on('tokens', (tokens: Credentials) => {
+        // 자동으로 토큰 만료 직전에 tokens 이벤트 발생
+        if (tokens.access_token) {
+          console.log(`New access_token received: ${tokens.access_token}`)
+          this.resetImapConnection(targetEmail, tokens.access_token, auth2Client)
+        }
+      })
+      await auth2Client.getAccessToken()
+    } catch (error) {
+      console.log(`[ImapManagerService][connectToMailbox] error : ${error}`)
+    }
+  }
+
+  async disconnect(targetEmail: string) {
+    const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
+    if (connection) {
+      connection.auth2Client.removeAllListeners() // auth2Client의 'tokens'이벤트 제거
+      connection.imap.end() // IMAP 연결 제거
+      this.imapConnections.delete(targetEmail)
+    }
+    console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
+  }
+
+  private resetImapConnection(targetEmail: string, newToken: string, auth2Client: OAuth2Client) {
+    console.log(`[ImapManagerService][resetImapConnection]`)
+    const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
+    if (connection) {
+      connection.imap.end() // 기존 연결 종료
+      this.imapConnections.delete(targetEmail) // 맵에서 제거
+    }
 
     const xoauth2gen = xoauth2.createXOAuth2Generator({
       user: targetEmail,
-      accessToken: accessToken.token,
+      accessToken: newToken,
     })
 
     xoauth2gen.getToken((err: string, token: string) => {
@@ -39,30 +79,34 @@ export class ImapManagerService {
       } as Imap.Config
 
       const imap: Imap = new Imap(imapConfig)
-
-      this.setupImapListeners(targetEmail, imap)
+      this.setupImapListeners(auth2Client, imap)
       imap.connect()
 
-      this.imapConnections.set(targetEmail, imap)
-      console.log(`[ImapManagerService][connectToMailbox] imapConnections : ${JSON.stringify(this.imapConnections)}`)
+      const connection: IImapConnection = {
+        auth2Client: auth2Client,
+        imap: imap,
+      }
+      this.imapConnections.set(targetEmail, connection)
+
+      console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
     })
   }
 
-  private setupImapListeners(targetEmail: string, imap: Imap) {
-    imap.once('ready', () => this.onImapReady(targetEmail, imap))
+  private setupImapListeners(auth2Client: OAuth2Client, imap: Imap) {
+    imap.once('ready', () => this.onImapReady(auth2Client, imap))
     imap.once('error', (err: any) => this.onImapError(err))
     imap.once('end', () => this.onImapEnd())
   }
 
   private onImapError(err: any) {
-    console.error(`[ImapManagerService] err: ${JSON.stringify(err)}`)
+    console.error(`[ImapManagerService] ${JSON.stringify(err)}`)
   }
 
   private onImapEnd() {
     console.log('[ImapManagerService] Connection ended')
   }
 
-  private onImapReady(targetEmail: string, imap: Imap) {
+  private onImapReady(auth2Client: OAuth2Client, imap: Imap) {
     console.log(`[ImapManagerService][connectToMailbox][openInbox] ready`)
     imap.openBox('INBOX', false, (err: Error, box: Imap.Box) => {
       if (err) {
@@ -70,30 +114,32 @@ export class ImapManagerService {
         return
       }
       // console.log(`[openInbox] box : ${JSON.stringify(box)}`);
-      imap.on('mail', (numNewMsgs: string) => this.onNewMail(targetEmail, imap, numNewMsgs))
+      imap.on('mail', (numNewMsgs: string) => this.onNewMail(auth2Client, imap, numNewMsgs))
     })
   }
 
-  private onNewMail(targetEmail: string, imap: Imap, numNewMsgs: string) {
+  private onNewMail(auth2Client: OAuth2Client, imap: Imap, numNewMsgs: string) {
     const fetch: Imap.ImapFetch = imap.seq.fetch('*', {
       bodies: '',
       struct: true,
     })
 
-    fetch.on('message', (msg: Imap.ImapMessage, seqno: number) => this.processMessage(msg, seqno, targetEmail))
+    fetch.on('message', (msg: Imap.ImapMessage, seqno: number) => this.processMessage(msg, seqno, auth2Client))
     fetch.once('error', (err: Error) => console.log('Fetch error: ' + err))
     fetch.once('end', () => console.log('Done fetching all messages!'))
   }
 
-  private async processMessage(msg: Imap.ImapMessage, seqno: number, targetEmail: string) {
+  private async processMessage(msg: Imap.ImapMessage, seqno: number, auth2Client: OAuth2Client) {
     const prefix: string = '(#' + seqno + ') '
     // console.log("Message #%d", seqno);
-    msg.on('body', (stream, info) => this.processMessageBody(stream, targetEmail))
-    msg.once('attributes', (attrs) => console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8)))
+    msg.on('body', (stream, info) => this.processMessageBody(stream, auth2Client))
+    msg.once('attributes', (attrs) => {
+      // console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8))
+    })
     msg.once('end', () => console.log(prefix + 'Finished'))
   }
 
-  private async processMessageBody(stream: NodeJS.ReadableStream, targetEmail: string) {
+  private async processMessageBody(stream: NodeJS.ReadableStream, auth2Client: OAuth2Client) {
     let buffer = ''
     for await (const chunk of stream) {
       buffer += chunk.toString('utf8')
@@ -101,13 +147,13 @@ export class ImapManagerService {
     // console.log("🚀 ~ file: index.js:34 ~ buffer:", buffer);
     try {
       const parsed: ParsedMail = await simpleParser(buffer)
-      await this.fetchAndProcessEmails(parsed, targetEmail)
+      await this.fetchAndProcessEmails(parsed, auth2Client)
     } catch (e) {}
   }
 
-  private async fetchAndProcessEmails(parsed: ParsedMail, targetEmail: string) {
+  private async fetchAndProcessEmails(parsed: ParsedMail, auth2Client: OAuth2Client) {
     try {
-      const gmail: gmail_v1.Gmail = await this.mailer.getGmailClient(targetEmail)
+      const gmail: gmail_v1.Gmail = await this.mailer.getGmailClient(auth2Client)
       const res = await gmail.users.messages.list({
         userId: 'me',
         q: `rfc822msgid:${parsed.messageId}`,
@@ -115,43 +161,53 @@ export class ImapManagerService {
 
       const messages = res.data.messages
       if (messages && messages.length > 0) {
-        const threadId = messages[0].threadId
-        // console.log(`messages: ${JSON.stringify(messages)}`);
-        console.log('Found thread ID:', threadId)
-
-        const to: string[] = Array.isArray(parsed.to)
+        const threadId: string | null | undefined = messages[0].threadId
+        const senderEmail: string | undefined = parsed.from?.value[0]?.address
+        const receiverEmails: string[] = Array.isArray(parsed.to)
           ? parsed.to.map((address) => address.text)
           : parsed.to
           ? [parsed.to.text]
           : []
 
-        const from: string | undefined = parsed.from?.value[0]?.address
-        // const to:  string[] =
-        const subject: string = parsed.subject ?? ''
-        const text: string = parsed.text ?? ''
-
-        console.log(`from : ${from}`)
-        console.log(`to : ${to.toString()}`)
-
-        // 들어온 이메일의 subject가 `Re: [BARUN CORP]`로 시작하는지 확인합니다. 맞다면 진행합니다.
-        if (subject.includes('Re: [BARUN CORP]')) {
-          // 이 threadId를 가지고 있는 job이 있는지 확인을 하고, 있다면 그 job의 job note에 데이터를 쌓습니다.
+        console.log(`from : ${senderEmail}`)
+        console.log(`to : ${receiverEmails.toString()}`)
+        console.log(`MessageId : ${parsed.messageId}`)
+        console.log(`Found thread ID: ${threadId}`)
+        console.log(`subject : ${parsed.subject!}`)
+        // 바른코프 직원이 보낸 메일은 버린다(createJobNote에서 이미 RFI 생성)
+        if (!threadId || !senderEmail || senderEmail.toLowerCase().includes('baruncorp.com')) {
+          return
         }
+
+        const equalThreadIdEntity: JobNoteEntity | null = await this.jobNoteRepository.findOneFromMailThreadId(threadId)
+        console.log(`equalThreadEntity : ${JSON.stringify(equalThreadIdEntity)}`)
+
+        // 같은 ThreadId를 가진 메시지가 없다는 것은 바른코프 직원으로부터 받은 RFI 메일의 답장이 아니기에 버린다.
+        if (!equalThreadIdEntity) return
+
+        const maxJobNoteNumber: number | null = await this.jobNoteRepository.getMaxJobNoteNumber(
+          equalThreadIdEntity.jobId,
+        )
+
+        console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
+        console.log(`Add RFI`)
+        await this.jobNoteRepository.insert(
+          JobNoteEntity.create({
+            jobId: equalThreadIdEntity.jobId,
+            creatorUserId: null,
+            type: JobNoteTypeEnum.RFI,
+            content: parsed.text ?? '',
+            jobNoteNumber: maxJobNoteNumber ? maxJobNoteNumber + 1 : 1,
+            senderEmail: senderEmail ?? '',
+            receiverEmails: receiverEmails,
+            emailThreadId: threadId,
+          }),
+        )
       } else {
         console.log('No message found with the specified Message-ID')
       }
     } catch (err) {
       console.error('The API returned an error: ', err)
     }
-  }
-
-  async disconnect(targetEmail: string) {
-    const imap: Imap | undefined = this.imapConnections.get(targetEmail)
-    if (imap) {
-      console.log(`[ImapManagerService] imap end`)
-      imap.end()
-      this.imapConnections.delete(targetEmail)
-    }
-    console.log(`[ImapManagerService][disconnect] imapConnections : ${JSON.stringify(this.imapConnections)}`)
   }
 }

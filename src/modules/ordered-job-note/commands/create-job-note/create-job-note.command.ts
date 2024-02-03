@@ -7,6 +7,7 @@ export class CreateJobNoteCommand {
   readonly content: string
   readonly type: JobNoteTypeEnum
   readonly receiverEmails: string[] | null
+  readonly files: Express.Multer.File[] | null
 
   constructor(props: CreateJobNoteCommand) {
     initialize(this, props)

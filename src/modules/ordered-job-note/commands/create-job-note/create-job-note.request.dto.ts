@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsArray, IsEmail, IsEnum, IsOptional, IsString } from 'class-validator'
 import { JobNoteTypeEnum } from '../../domain/job-note.type'
 
 export class CreateJobNoteRequestDto {
@@ -16,7 +16,6 @@ export class CreateJobNoteRequestDto {
   readonly type: JobNoteTypeEnum
 
   @ApiProperty({ default: ['yunwoo@oj.vision'] })
-  @IsArray()
-  @IsString({ each: true })
+  @IsEmail({}, { each: true })
   readonly receiverEmails: string[] | null
 }

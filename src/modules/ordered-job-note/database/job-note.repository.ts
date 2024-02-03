@@ -29,6 +29,16 @@ export class JobNoteRepository implements JobNoteRepositoryPort {
     throw new Error('Method not implemented.')
   }
 
+  async findOneFromMailThreadId(emailThreadId: string): Promise<JobNoteEntity | null> {
+    const record: JobNoteModel | null = await this.prismaService.orderedJobNotes.findFirst({
+      where: {
+        emailThreadId: emailThreadId,
+      },
+    })
+
+    return record ? this.mapper.toDomain(record) : null
+  }
+
   findMany(
     condition: Prisma.OrderedJobNotesWhereInput,
     offset?: number | undefined,
@@ -78,8 +88,7 @@ export class JobNoteRepository implements JobNoteRepositoryPort {
         emailThreadId: true,
       },
     })
-    // Todo. Thread 관리 디테일하게 어떻게 할 지 생각 해 봐야 함.
-    console.log(`[findSendersThreadId] jobId : ${jobId}, senderEmail : ${senderEmail}`)
+    console.log(`[findSendersThreadId] jobId : ${jobId}`)
     console.log(`[findSendersThreadId] record : ${JSON.stringify(record)}`)
 
     return record?.emailThreadId ?? null

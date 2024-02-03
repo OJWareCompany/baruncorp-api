@@ -18,10 +18,10 @@ export class JobNoteResponseDto {
   jobNoteNumber: number
 
   @ApiProperty({ default: 'yunwoo@oj.vision' })
-  txMail: string | null
+  senderMail: string | null
 
   @ApiProperty({ default: ['yunwoo@oj.vision'] })
-  rxMails: string[] | null
+  receiverMails: string[] | null
 
   @ApiProperty({ default: ['https://drive.google.com/drive/folders/1MFhV8NTBNsPM3pvfBz6UKKTdKntXfWd7'] })
   fileShareLink: string | null

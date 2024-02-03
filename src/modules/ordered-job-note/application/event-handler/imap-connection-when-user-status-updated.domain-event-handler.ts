@@ -10,25 +10,14 @@ import { JobNoteRepositoryPort } from '../../database/job-note.repository.port'
 
 @Injectable()
 export class ImapConnectionWhenUserStatusChangedEventHandler {
-  constructor(
-    // @ts-ignore
-    @Inject(JOB_NOTE_REPOSITORY) private readonly repository: JobNoteRepositoryPort,
-    private readonly imapService: ImapManagerService,
-  ) {}
+  constructor(private readonly imapService: ImapManagerService) {}
   @OnEvent(UserStatusUpdatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: UserStatusUpdatedDomainEvent) {
-    // 바른코프 직원인지 확인
-    console.log(`[UserStatusUpdatedDomainEvent] event : ${JSON.stringify(event)}`)
     if (event.email.includes('@baruncorp')) {
-      console.log(
-        `[UserStatusUpdatedDomainEvent] event.email.includes("@baruncorp") : ${JSON.stringify(
-          event.email.includes('@baruncorp'),
-        )}`,
-      )
       // 유저 상태 확인
       if (event.status === UserStatusEnum.ACTIVE) {
         // active인 경우 IMAP Connect
-        this.imapService.connectToMailbox(event.email)
+        this.imapService.connect(event.email)
       } else {
         // active가 아닌 경우 IMAP end
         this.imapService.disconnect(event.email)

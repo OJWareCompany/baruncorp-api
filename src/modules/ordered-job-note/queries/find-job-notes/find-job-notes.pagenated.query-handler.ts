@@ -68,8 +68,8 @@ export class FindJobNotesQueryHandler implements IQueryHandler {
               content: record.content,
               type: record.type === JobNoteType.JobNote ? JobNoteTypeEnum.JobNote : JobNoteTypeEnum.RFI,
               jobNoteNumber: record.jobNoteNumber,
-              txMail: record.senderEmail,
-              rxMails: record.receiverEmails ? record.receiverEmails.split(',') : null,
+              senderMail: record.senderEmail,
+              receiverMails: record.receiverEmails ? record.receiverEmails.split(',') : null,
               createdAt: record.createdAt,
               fileShareLink: null, // Todo.
             }
