@@ -517,6 +517,8 @@ export interface JobResponseDto {
   state: string
   /** @format date-time */
   dueDate: string | null
+  /** @example "GnpyEmUZfZ1k7e6Jsvy_fcG8r-PWCQswP" */
+  jobFolderId: string | null
 }
 
 export interface JobPaginatedResponseDto {
@@ -536,10 +538,6 @@ export interface JobToInvoiceResponseDto {
   subtotal: number
   discount: number
   total: number
-}
-
-export interface SendDeliverablesRequestDto {
-  // deliverablesLink: string
 }
 
 export interface CommercialTier {
@@ -1733,7 +1731,7 @@ export interface CreateJobNoteRequestDto {
   content: string
   /** @default "JobNote" */
   type: 'JobNote' | 'RFI'
-  /** @default ["yunwoo@oj.vision"] */
+  /** @default ["yunwoo@oj.vision","antifragilista@oj.vision"] */
   receiverEmails: string[] | null
 }
 
@@ -2201,6 +2199,47 @@ export interface ClientNotePaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: ClientNoteResponseDto[]
+}
+
+export interface CreateGoogleJobNoteFolderRequestDto {
+  /** @default "" */
+  id: string
+  /** @default "" */
+  shareLink: string
+  /** @default "" */
+  jobNotesFolderId: string
+  /** @default "" */
+  jobNoteId: string
+  /** @default "" */
+  sharedDriveId: string
+}
+
+export interface JobFolderPaginatedResponseFields {
+  /** @example "1-1Fk8UI8sz0yh-LV1QCCZ04K40ZHJK05" */
+  id: string | null
+  /** @example "93b7-40db58e-d8c42-b391-1af41a7b6b63" */
+  jobId: string | null
+  /** @example "0AN-3RUk9PVA7ZK0JGs" */
+  sharedDriveId: string | null
+}
+
+export interface JobFolderPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: JobFolderPaginatedResponseFields[]
+}
+
+export interface UpdateGoogleSharedDriveCountRequestDto {
+  /** @default "" */
+  jobFolderId: string
+  /** @default "" */
+  count: number
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -3078,6 +3117,25 @@ export interface FindClientNotePaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindNonCountedJobFoldersHttpControllerFindNonCountedJobFoldersParams {
+  /** @format date-time */
+  fromDate: string
+  /** @format date-time */
+  toDate: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 import axios from 'axios'
 
@@ -3915,16 +3973,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name SendDeliverablesHttpControllerUpdateJob
      * @request PATCH:/jobs/{jobId}/send-deliverables
      */
-    sendDeliverablesHttpControllerUpdateJob: (
-      jobId: string,
-      data: SendDeliverablesRequestDto,
-      params: RequestParams = {},
-    ) =>
+    sendDeliverablesHttpControllerUpdateJob: (jobId: string, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/jobs/${jobId}/send-deliverables`,
         method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
         ...params,
       }),
   }
@@ -5420,7 +5472,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/ordered-job-notes`,
         method: 'POST',
         body: data,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         format: 'json',
         ...params,
       }),
@@ -5965,6 +6017,64 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         query: query,
         format: 'json',
+        ...params,
+      }),
+  }
+  googleJobNoteFolder = {
+    /**
+     * No description
+     *
+     * @name CreateGoogleJobNoteFolderHttpControllerPost
+     * @request POST:/google-job-note-folder
+     */
+    createGoogleJobNoteFolderHttpControllerPost: (
+      data: CreateGoogleJobNoteFolderRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/google-job-note-folder`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
+  nonCountedJobFolder = {
+    /**
+     * No description
+     *
+     * @name FindNonCountedJobFoldersHttpControllerFindNonCountedJobFolders
+     * @summary Find non-counted-job-folder
+     * @request GET:/non-counted-job-folder
+     */
+    findNonCountedJobFoldersHttpControllerFindNonCountedJobFolders: (
+      query: FindNonCountedJobFoldersHttpControllerFindNonCountedJobFoldersParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<JobFolderPaginatedResponseDto, any>({
+        path: `/non-counted-job-folder`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
+  googleSharedDriveCount = {
+    /**
+     * No description
+     *
+     * @name UpdateGoogleSharedDriveCountHttpControllerPatch
+     * @request PATCH:/google-shared-drive-count
+     */
+    updateGoogleSharedDriveCountHttpControllerPatch: (
+      data: UpdateGoogleSharedDriveCountRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/google-shared-drive-count`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }

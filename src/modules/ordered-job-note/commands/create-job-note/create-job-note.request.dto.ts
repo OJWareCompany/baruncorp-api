@@ -15,7 +15,7 @@ export class CreateJobNoteRequestDto {
   @IsEnum(JobNoteTypeEnum)
   readonly type: JobNoteTypeEnum
 
-  @ApiProperty({ default: ['yunwoo@oj.vision'] })
+  @ApiProperty({ default: ['yunwoo@oj.vision', 'antifragilista@oj.vision'] })
   @IsEmail({}, { each: true })
   readonly receiverEmails: string[] | null
 }
