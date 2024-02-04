@@ -15,7 +15,7 @@ export class FindPtoAnnualPaginatedHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('/annual')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async get(
     @Query() request: FindPtoAnnualPaginatedRequestDto,
     @Query() queryParams: PaginatedQueryRequestDto,

@@ -15,7 +15,7 @@ export class FindPtoDetailPaginatedHttpController {
   constructor(private readonly queryBus: QueryBus) {}
 
   @Get('/detail')
-  // @UseGuards(AuthGuard)
+  @UseGuards(AuthGuard)
   async get(
     @Query() request: FindPtoDetailPaginatedRequestDto,
     @Query() queryParams: PaginatedQueryRequestDto,

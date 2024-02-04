@@ -44,11 +44,17 @@ import { BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler 
 import { CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
 import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
 import { DeleteAssignedTaskWhenOrderedServiceIsDeletedDomainServiceHandler } from './application/event-handlers/delete-assigned-task-when-ordered-service-is-deleted.domain-service-handler'
+import { FindAssignedTaskSummaryPaginatedHttpController } from './queries/find-assigned-task-summary-paginated/find-assigned-task-summary.paginated.http.controller'
+import {
+  FindAssignedTaskSummaryPaginatedQuery,
+  FindAssignedTaskSummaryPaginatedQueryHandler,
+} from '@modules/assigned-task/queries/find-assigned-task-summary-paginated/find-assigned-task-summary.paginated.query-handler'
 
 const httpControllers = [
   AssignTaskHttpController,
   FindAssignedTaskHttpController,
   FindAssignedTaskPaginatedHttpController,
+  FindAssignedTaskSummaryPaginatedHttpController,
   CompleteAssignedTaskHttpController,
   UpdateTaskDurationHttpController,
   UpdateTaskCostHttpController,
@@ -68,6 +74,7 @@ const commandHandlers: Provider[] = [
 const queryHandlers: Provider[] = [
   FindAssignedTaskQueryHandler,
   FindAssignedTaskPaginatedQueryHandler,
+  FindAssignedTaskSummaryPaginatedQueryHandler,
   FindAvailableWorkersQueryHandler,
   FindRejectedTaskReasonPaginatedQueryHandler,
 ]

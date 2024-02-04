@@ -18,7 +18,7 @@ export class FindPtoTypePaginatedHttpController {
   @Get('/type')
   @UseGuards(AuthGuard)
   async get(@Query() queryParams: PaginatedQueryRequestDto): Promise<PtoTypePaginatedResponseDto> {
-    const query = new FindPtoTypePaginatedQuery({
+    const query: FindPtoTypePaginatedQuery = new FindPtoTypePaginatedQuery({
       ...queryParams,
     })
 
