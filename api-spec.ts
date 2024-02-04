@@ -970,6 +970,25 @@ export interface AssignedTaskSummaryPaginatedResponseDto {
   items: AssignedTaskSummaryResponseDto[]
 }
 
+export interface AssignedTaskSummaryDetailResponseDto {
+  jobName: string
+  taskName: string
+  jobId: string
+  status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
+}
+
+export interface AssignedTaskSummaryDetailPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: AssignedTaskSummaryDetailResponseDto[]
+}
+
 export interface UpdateTaskDurationRequestDto {
   /** @default null */
   duration: number | null
@@ -2677,7 +2696,7 @@ export interface FindAssignedTaskPaginatedHttpControllerGetParams {
 
 export interface FindAssignedTaskSummaryPaginatedHttpControllerGetParams {
   /** @default "Barun Corp" */
-  organizationName?: string | null
+  organizationName?: string
   /** @default "John Doe" */
   userName?: string
   /**
@@ -2690,6 +2709,25 @@ export interface FindAssignedTaskSummaryPaginatedHttpControllerGetParams {
    * @default "2025-01-06"
    */
   endedAt?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindAssignedTaskSummaryDetailPaginatedHttpControllerGetParams {
+  /** @default "e53b4cc2-d527-4a80-895c-a52a8c39d49d" */
+  userId: string
+  /** @default "Completed" */
+  status?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -4488,6 +4526,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<AssignedTaskSummaryPaginatedResponseDto, any>({
         path: `/assigned-tasks/summary/count`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAssignedTaskSummaryDetailPaginatedHttpControllerGet
+     * @request GET:/assigned-tasks/summary/detail
+     */
+    findAssignedTaskSummaryDetailPaginatedHttpControllerGet: (
+      query: FindAssignedTaskSummaryDetailPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<AssignedTaskSummaryDetailPaginatedResponseDto, any>({
+        path: `/assigned-tasks/summary/detail`,
         method: 'GET',
         query: query,
         format: 'json',

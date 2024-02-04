@@ -49,12 +49,15 @@ import {
   FindAssignedTaskSummaryPaginatedQuery,
   FindAssignedTaskSummaryPaginatedQueryHandler,
 } from '@modules/assigned-task/queries/find-assigned-task-summary-paginated/find-assigned-task-summary.paginated.query-handler'
+import { FindAssignedTaskSummaryDetailPaginatedQueryHandler } from '@modules/assigned-task/queries/find-assigned-task-summary-detail-paginated/find-assigned-task-summary-detail.paginated.query-handler'
+import { FindAssignedTaskSummaryDetailPaginatedHttpController } from '@modules/assigned-task/queries/find-assigned-task-summary-detail-paginated/find-assigned-task-summary-detail.paginated.http.controller'
 
 const httpControllers = [
   AssignTaskHttpController,
   FindAssignedTaskHttpController,
   FindAssignedTaskPaginatedHttpController,
   FindAssignedTaskSummaryPaginatedHttpController,
+  FindAssignedTaskSummaryDetailPaginatedHttpController,
   CompleteAssignedTaskHttpController,
   UpdateTaskDurationHttpController,
   UpdateTaskCostHttpController,
@@ -75,6 +78,7 @@ const queryHandlers: Provider[] = [
   FindAssignedTaskQueryHandler,
   FindAssignedTaskPaginatedQueryHandler,
   FindAssignedTaskSummaryPaginatedQueryHandler,
+  FindAssignedTaskSummaryDetailPaginatedQueryHandler,
   FindAvailableWorkersQueryHandler,
   FindRejectedTaskReasonPaginatedQueryHandler,
 ]
