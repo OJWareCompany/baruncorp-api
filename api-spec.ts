@@ -1774,6 +1774,7 @@ export interface CreateJobNoteRequestDto {
   type: 'JobNote' | 'RFI'
   /** @default ["yunwoo@oj.vision","antifragilista@oj.vision"] */
   receiverEmails: string[] | null
+  files: File[]
 }
 
 export interface JobNoteDetailResponseDto {
