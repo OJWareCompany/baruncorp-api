@@ -217,7 +217,6 @@ export class ImapManagerService {
           equalThreadIdEntity.jobId,
         )
 
-        console.log(`headerLine : ${JSON.stringify(parsed.headerLines)}`)
         const filteredContent: string = parsed.text ? this.removeOriginalMessage(parsed.text) : ''
         // console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
         // console.log(`Add RFI`)
