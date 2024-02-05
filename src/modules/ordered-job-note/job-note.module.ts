@@ -1,4 +1,4 @@
-import { Module, Provider, forwardRef } from '@nestjs/common'
+import { Module, Provider, forwardRef, OnModuleInit } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import { CreateJobNoteHttpController } from './commands/create-job-note/create-job-note.http.controller'
@@ -31,4 +31,9 @@ const infrastructures: Provider[] = [RFIMailer, ImapManagerService]
   controllers: [...httpControllers],
   exports: [...repositories, ...mappers],
 })
-export class OrderedJobNoteModule {}
+export class OrderedJobNoteModule implements OnModuleInit {
+  constructor(private readonly imapManagerService: ImapManagerService) {}
+  onModuleInit() {
+    this.imapManagerService.initImapConnection()
+  }
+}

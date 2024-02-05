@@ -10,21 +10,51 @@ import { JobNoteRepository } from '@modules/ordered-job-note/database/job-note.r
 import { JobNoteEntity } from '@modules/ordered-job-note/domain/job-note.entity'
 import { IImapConnection, JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
 import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
+import { PrismaService } from '@modules/database/prisma.service'
+import { UserStatusEnum } from '@modules/users/domain/user.types'
 
 @Injectable()
 export class ImapManagerService {
   // private imapConnections: Map<string, Imap> = new Map<string, Imap>()
   private imapConnections: Map<string, IImapConnection> = new Map()
-  constructor(private readonly jobNoteRepository: JobNoteRepository, private readonly mailer: RFIMailer) {}
+  constructor(
+    private readonly jobNoteRepository: JobNoteRepository,
+    private readonly prismaService: PrismaService,
+    private readonly mailer: RFIMailer,
+  ) {}
+
+  async initImapConnection() {
+    try {
+      // 활성화된 Baruncorp 유저 리스트 받아온다.
+      const users = await this.prismaService.users.findMany({
+        where: {
+          email: { contains: 'baruncorp.com' },
+          status: UserStatusEnum.ACTIVE,
+        },
+        select: {
+          id: true,
+          email: true,
+        },
+      })
+
+      for (const user of users) {
+        await this.connect(user.email)
+      }
+
+      // 각 클라이언트 들에 대해 Imap Connect
+    } catch (error) {
+      console.log(`[initImapConnection] error : ${error}`)
+    }
+  }
 
   async connect(targetEmail: string) {
     try {
-      console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
+      // console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
       const auth2Client: OAuth2Client = await this.mailer.getGoogleAuthClient(targetEmail)
       auth2Client.on('tokens', (tokens: Credentials) => {
         // 자동으로 토큰 만료 직전에 tokens 이벤트 발생
         if (tokens.access_token) {
-          console.log(`New access_token received: ${tokens.access_token}`)
+          // console.log(`New access_token received: ${tokens.access_token}`)
           this.resetImapConnection(targetEmail, tokens.access_token, auth2Client)
         }
       })
@@ -41,11 +71,11 @@ export class ImapManagerService {
       connection.imap.end() // IMAP 연결 제거
       this.imapConnections.delete(targetEmail)
     }
-    console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
+    // console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
   }
 
   private resetImapConnection(targetEmail: string, newToken: string, auth2Client: OAuth2Client) {
-    console.log(`[ImapManagerService][resetImapConnection]`)
+    // console.log(`[ImapManagerService][resetImapConnection]`)
     const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
     if (connection) {
       connection.imap.end() // 기존 연결 종료
@@ -83,7 +113,7 @@ export class ImapManagerService {
       }
       this.imapConnections.set(targetEmail, connection)
 
-      console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
+      // console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
     })
   }
 
@@ -102,7 +132,7 @@ export class ImapManagerService {
   }
 
   private onImapReady(auth2Client: OAuth2Client, imap: Imap) {
-    console.log(`[ImapManagerService][connectToMailbox][openInbox] ready`)
+    // console.log(`[ImapManagerService][connectToMailbox][openInbox] ready`)
     imap.openBox('INBOX', false, (err: Error, box: Imap.Box) => {
       if (err) {
         console.log(`🚀 ~ file: index.js:132 ~ err: ${err}`)
@@ -164,18 +194,18 @@ export class ImapManagerService {
           ? [parsed.to.text]
           : []
 
-        console.log(`from : ${senderEmail}`)
-        console.log(`to : ${receiverEmails.toString()}`)
-        console.log(`MessageId : ${parsed.messageId}`)
-        console.log(`Found thread ID: ${threadId}`)
-        console.log(`subject : ${parsed.subject!}`)
+        // console.log(`from : ${senderEmail}`)
+        // console.log(`to : ${receiverEmails.toString()}`)
+        // console.log(`MessageId : ${parsed.messageId}`)
+        // console.log(`Found thread ID: ${threadId}`)
+        // console.log(`subject : ${parsed.subject!}`)
         // 바른코프 직원이 보낸 메일은 버린다(createJobNote에서 이미 RFI 생성)
         if (!threadId || !senderEmail || senderEmail.toLowerCase().includes('baruncorp.com')) {
           return
         }
 
         const equalThreadIdEntity: JobNoteEntity | null = await this.jobNoteRepository.findOneFromMailThreadId(threadId)
-        console.log(`equalThreadEntity : ${JSON.stringify(equalThreadIdEntity)}`)
+        // console.log(`equalThreadEntity : ${JSON.stringify(equalThreadIdEntity)}`)
 
         // 같은 ThreadId를 가진 메시지가 없다는 것은 바른코프 직원으로부터 받은 RFI 메일의 답장이 아니기에 버린다.
         if (!equalThreadIdEntity) return
@@ -184,8 +214,8 @@ export class ImapManagerService {
           equalThreadIdEntity.jobId,
         )
 
-        console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
-        console.log(`Add RFI`)
+        // console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
+        // console.log(`Add RFI`)
         await this.jobNoteRepository.insert(
           JobNoteEntity.create({
             jobId: equalThreadIdEntity.jobId,
