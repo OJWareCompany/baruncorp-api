@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { compute_v1, gmail_v1, google } from 'googleapis'
 import { OAuth2Client } from 'google-auth-library'
+import { v4 } from 'uuid'
 
 export interface IRFIMail {
   subject: string
@@ -59,7 +60,7 @@ export class RFIMailer {
   }
 
   getEmailLine(input: IRFIMail) {
-    const boundary = 'boundary123456'
+    const boundary = `boundary-${v4()}`
     const emailLines = []
     emailLines.push(`To: ${input.to}`)
     emailLines.push(`From: ${input.from}`)
@@ -88,7 +89,7 @@ export class RFIMailer {
       }
     }
 
-    emailLines.push('') // 메시지 종료
+    emailLines.push('--' + boundary + '--') // 메시지 종료
 
     return emailLines
   }

@@ -151,7 +151,9 @@ export class ImapManagerService {
 
     fetch.on('message', (msg: Imap.ImapMessage, seqno: number) => this.processMessage(msg, seqno, auth2Client))
     fetch.once('error', (err: Error) => console.log('Fetch error: ' + err))
-    fetch.once('end', () => console.log('Done fetching all messages!'))
+    fetch.once('end', () => {
+      // console.log('Done fetching all messages!')
+    })
   }
 
   private async processMessage(msg: Imap.ImapMessage, seqno: number, auth2Client: OAuth2Client) {
@@ -161,7 +163,9 @@ export class ImapManagerService {
     msg.once('attributes', (attrs) => {
       // console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8))
     })
-    msg.once('end', () => console.log(prefix + 'Finished'))
+    msg.once('end', () => {
+      // console.log(prefix + 'Finished')
+    })
   }
 
   private async processMessageBody(stream: NodeJS.ReadableStream, auth2Client: OAuth2Client) {
@@ -193,7 +197,6 @@ export class ImapManagerService {
           : parsed.to
           ? [parsed.to.value[0].address ?? '']
           : []
-
         // console.log(`from : ${senderEmail}`)
         // console.log(`to : ${receiverEmails.toString()}`)
         // console.log(`MessageId : ${parsed.messageId}`)
@@ -214,6 +217,8 @@ export class ImapManagerService {
           equalThreadIdEntity.jobId,
         )
 
+        console.log(`headerLine : ${JSON.stringify(parsed.headerLines)}`)
+        const filteredContent: string = parsed.text ? this.removeOriginalMessage(parsed.text) : ''
         // console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
         // console.log(`Add RFI`)
         await this.jobNoteRepository.insert(
@@ -221,7 +226,7 @@ export class ImapManagerService {
             jobId: equalThreadIdEntity.jobId,
             creatorUserId: null,
             type: JobNoteTypeEnum.RFI,
-            content: parsed.text ?? '',
+            content: filteredContent,
             jobNoteNumber: maxJobNoteNumber ? maxJobNoteNumber + 1 : 1,
             senderEmail: senderEmail ?? '',
             receiverEmails: receiverEmails,
@@ -234,5 +239,23 @@ export class ImapManagerService {
     } catch (err) {
       console.error('The API returned an error: ', err)
     }
+  }
+
+  private removeOriginalMessage(input: string): string {
+    const lines = input.split('\n')
+    let result = ''
+    let skipLines = false
+
+    for (const line of lines) {
+      if (line.includes('Original Message')) {
+        skipLines = true
+      }
+
+      if (!skipLines) {
+        result += line + '\n'
+      }
+    }
+
+    return result.trim() // 마지막에 추가된 개행 문자 제거
   }
 }
