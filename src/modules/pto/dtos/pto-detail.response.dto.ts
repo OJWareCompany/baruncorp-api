@@ -1,5 +1,4 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 export class PtoDetailResponseDto {
   @ApiProperty({ default: 'bd2d7904-136d-4e2e-966a-679fe4f499d0' })
