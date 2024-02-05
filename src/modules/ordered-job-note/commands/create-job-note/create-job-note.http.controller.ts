@@ -29,8 +29,9 @@ export class CreateJobNoteHttpController {
       jobId: request.jobId,
       creatorUserId: user.id,
       content: request.content,
+      emailBody: request.emailBody ?? '',
       type: request.type,
-      receiverEmails: request.receiverEmails,
+      receiverEmails: request.receiverEmails ?? null,
       files: files,
     })
     return await this.commandBus.execute(command)
