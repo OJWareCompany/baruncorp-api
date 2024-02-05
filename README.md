@@ -17,7 +17,7 @@ This is an attempt to combine multiple architectural patterns and styles togethe
 
 ```bash
 $ pnpm install
-$ pnpx prisma generate
+$ pnpm dlx prisma generate
 ```
 
 ## Running the app
@@ -52,8 +52,8 @@ DB에 접속하여 직접 테이블을 추가/수정 합니다.
 그 후 prisma 명령어를 실행합니다.
 
 ```
-pnpx prisma db pull
-pnpx prisma generate
+pnpm dlx db pull
+pnpm dlx generate
 ```
 
 ## Nginx

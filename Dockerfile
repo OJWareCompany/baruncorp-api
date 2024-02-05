@@ -13,10 +13,10 @@ FROM base AS build
 WORKDIR /app
 COPY . .
 COPY --from=dependencies /app/node_modules ./node_modules
-RUN pnpx prisma generate
+RUN pnpm dlx prisma generate
 RUN pnpm build
 RUN pnpm prune --prod
-# RUN pnpx prisma db push
+# RUN pnpm dlx db push
 # "prepare": "node -e \"try { require('husky').install() } catch (e) {if (e.code !== 'MODULE_NOT_FOUND') throw e}\""
 
 
