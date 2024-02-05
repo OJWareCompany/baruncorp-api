@@ -60,7 +60,7 @@ export class ImapManagerService {
       })
       await auth2Client.getAccessToken()
     } catch (error) {
-      console.log(`[ImapManagerService][connectToMailbox] error : ${error}`)
+      console.log(`[ImapManagerService][connectToMailbox] ${error} / targetEmail : ${targetEmail}`)
     }
   }
 
