@@ -26,10 +26,3 @@ export enum JobNoteTypeEnum {
   JobNote = 'JobNote',
   RFI = 'RFI',
 }
-
-// Todo. 하드코딩 추후 제거한다
-export const RFISignature = `
-Barun Corp
-Phone: (610) 202-4506
-Website: baruncorp.com
-`

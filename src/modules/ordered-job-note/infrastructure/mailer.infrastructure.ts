@@ -18,12 +18,12 @@ export class RFIMailer {
     const gmail: gmail_v1.Gmail = await this.getGmailClient(oAuth2Client)
 
     const email: string = this.getEmailLine(input).join('\n').trim()
-    console.log(`input.text : ${input.text}`)
+    // console.log(`input.text : ${input.text}`)
 
     let base64EncodedEmail: string = Buffer.from(email).toString('base64')
     base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
 
-    console.log(`[RFIMailer] input.threadId ${input.threadId}`)
+    // console.log(`[RFIMailer] input.threadId ${input.threadId}`)
     const requestBody = { raw: base64EncodedEmail, ...(input.threadId && { threadId: input.threadId }) }
     const res = await gmail.users.messages
       .send({
@@ -68,7 +68,7 @@ export class RFIMailer {
     emailLines.push(`Subject: ${input.subject}`)
     emailLines.push('')
     emailLines.push('--' + boundary)
-    emailLines.push('Content-Type: text/plain; charset="UTF-8"')
+    emailLines.push('Content-Type: text/html; charset="UTF-8"')
     emailLines.push('MIME-Version: 1.0')
     emailLines.push('')
     emailLines.push(input.text)
@@ -88,8 +88,7 @@ export class RFIMailer {
       }
     }
 
-    emailLines.push('')
-    emailLines.push('--') // 메시지 종료
+    emailLines.push('') // 메시지 종료
 
     return emailLines
   }

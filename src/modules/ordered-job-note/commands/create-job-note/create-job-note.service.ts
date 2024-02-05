@@ -4,7 +4,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { UserNotFoundException } from '../../../users/user.error'
 import { JobNoteEntity } from '../../domain/job-note.entity'
 import { CreateJobNoteCommand } from './create-job-note.command'
-import { JobNoteTypeEnum, RFISignature } from '../../domain/job-note.type'
+import { JobNoteTypeEnum } from '../../domain/job-note.type'
 import { JOB_NOTE_REPOSITORY } from '../../job-note.di-token'
 import { EmailSendFailedException, ReceiverEmailsFoundException } from '../../domain/job-note.error'
 import { JobNoteRepositoryPort } from '../../database/job-note.repository.port'
@@ -30,11 +30,7 @@ export class CreateJobNoteService implements ICommandHandler {
 
     const senderEmail: string = creatorUser.isVendor ? 'newjobs@baruncorp.com' : creatorUser.email
 
-    console.log(`[CreateJobNoteHttpController] command.creatorUserId : ${JSON.stringify(command.creatorUserId)}`)
-    console.log(`[CreateJobNoteHttpController] senderEmail : ${JSON.stringify(senderEmail)}`)
-    console.log(`[CreateJobNoteHttpController] command.receiverEmails : ${JSON.stringify(command.receiverEmails)}`)
-
-    let content: string = command.content
+    const content: string = command.content
 
     let resData: gmail_v1.Schema$Message | null | undefined = null
     let emailThreadId: string | null = null
@@ -43,9 +39,10 @@ export class CreateJobNoteService implements ICommandHandler {
       if (!command.receiverEmails || command.receiverEmails.length === 0) {
         throw new ReceiverEmailsFoundException()
       }
+      let emailBody: string | null = command.emailBody
       const subject = `[BARUN CORP] Job #${targetJob.jobRequestNumber} ${targetJob.propertyAddress}`
 
-      content += `\n\n${creatorUser.full_name}` + RFISignature
+      emailBody += `${creatorUser.full_name}` + process.env.JOB_NOTE_SIGNATURE
       // From의 email에 대한 threadId가 있는지 확인
       emailThreadId = await this.jobNoteRepository.findSendersThreadId(command.jobId, senderEmail)
       console.log(`[execute] finded emailThreadId : ${emailThreadId}`)
@@ -53,7 +50,7 @@ export class CreateJobNoteService implements ICommandHandler {
       const input: IRFIMail = {
         from: senderEmail,
         to: command.receiverEmails,
-        text: content,
+        text: emailBody,
         subject: subject,
         threadId: emailThreadId,
         files: command.files,
