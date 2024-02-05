@@ -32,7 +32,6 @@ export class CreateProjectService implements ICommandHandler {
     private readonly projectMapper: ProjectMapper,
     private readonly prismaService: PrismaService,
     private readonly filesystemDomainService: FilesystemDomainService,
-    private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
   async execute(command: CreateProjectCommand): Promise<{ id: string }> {

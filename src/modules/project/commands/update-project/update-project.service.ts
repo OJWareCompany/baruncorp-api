@@ -20,7 +20,6 @@ export class UpdateProjectService implements ICommandHandler {
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
     private readonly ahjNoteGeneratorDomainService: AhjNoteGeneratorDomainService,
     private readonly filesystemDomainService: FilesystemDomainService,
-    private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
