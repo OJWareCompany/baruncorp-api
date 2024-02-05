@@ -4,43 +4,39 @@ services:
     image: nginx:alpine
     restart: always
     ports:
-        - '80:80'
-        - '443:443'
+      - '80:80'
+      - '443:443'
     volumes:
-        - ./myweb:/usr/share/nginx/html
-        - ./certbot-etc:/etc/letsencrypt
-        - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-          #- ./nginx/proxy.conf:/etc/nginx/proxy.conf
-        #- ./nginx/templates:/etc/nginx/templates
+      - ./myweb:/usr/share/nginx/html
+      - ./certbot-etc:/etc/letsencrypt
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+        #- ./nginx/proxy.conf:/etc/nginx/proxy.conf
+      #- ./nginx/templates:/etc/nginx/templates
     #env_file:
-        #- ./.env
-        #- ./config/.nginx.env
+    #- ./.env
+    #- ./config/.nginx.env
 
   api_prod:
-    build:
-      context: ./baruncorp-api/
-      dockerfile: Dockerfile
+    image: luckyhyom/barun-dev
     tty: true
     restart: always
     command:
       - bash
       - -c
       - |
-          pnpm run start:prod
+        pnpm run start:prod
     env_file:
       - ./baruncorp-api/.env
 
   api_dev:
-    build:
-      context: ./baruncorp-api-dev/
-      dockerfile: Dockerfile
+    image: luckyhyom/barun-dev
     tty: true
     restart: always
     command:
       - bash
       - -c
       - |
-          pnpm run start:prod
+        pnpm run start:prod
     env_file:
       - ./baruncorp-api-dev/.env
 
