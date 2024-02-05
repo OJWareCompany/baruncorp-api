@@ -1226,6 +1226,7 @@ model Couriers {
   trackingUrlParam  String @map("tracking_url_param") @db.Text
 
   trackingNumbers   TrackingNumbers[]
+  @@map("couriers")
 }
 
 model TrackingNumbers {
@@ -1239,6 +1240,7 @@ model TrackingNumbers {
 
   @@index([jobId])
   @@index([courierId])
+  @@map("tracking_numbers")
 }
 
 enum InvoicesStatus {
