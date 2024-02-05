@@ -17,7 +17,7 @@ export class CreateJobNoteHttpController {
 
   @Post()
   @ApiConsumes('multipart/form-data')
-  @ApiResponse({ status: HttpStatus.CREATED, type: IdResponse })
+  @ApiResponse({ status: HttpStatus.CREATED, type: CreateJobNoteResponseDto })
   @UseGuards(AuthGuard)
   @UseInterceptors(FilesInterceptor('files'))
   async create(

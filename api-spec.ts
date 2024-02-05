@@ -1777,6 +1777,15 @@ export interface CreateJobNoteRequestDto {
   files: File[]
 }
 
+export interface CreateJobNoteResponseDto {
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  id: string
+  /** @default 1 */
+  jobNoteNumber: number
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  jobNoteFolderId: string | null
+}
+
 export interface JobNoteDetailResponseDto {
   /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
   id: string
@@ -5613,7 +5622,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/ordered-job-notes
      */
     createJobNoteHttpControllerCreate: (data: CreateJobNoteRequestDto, params: RequestParams = {}) =>
-      this.request<IdResponse, any>({
+      this.request<CreateJobNoteResponseDto, any>({
         path: `/ordered-job-notes`,
         method: 'POST',
         body: data,
