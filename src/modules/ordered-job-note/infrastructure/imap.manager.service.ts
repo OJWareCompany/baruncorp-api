@@ -5,7 +5,7 @@ import * as xoauth2 from 'xoauth2'
 import { Credentials, OAuth2Client } from 'google-auth-library'
 import { gmail_v1 } from 'googleapis'
 import { inspect } from 'util'
-import { ParsedMail, simpleParser } from 'mailparser'
+import { AddressObject, ParsedMail, simpleParser } from 'mailparser'
 import { JobNoteRepository } from '@modules/ordered-job-note/database/job-note.repository'
 import { JobNoteEntity } from '@modules/ordered-job-note/domain/job-note.entity'
 import { IImapConnection, JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
@@ -189,9 +189,9 @@ export class ImapManagerService {
         const threadId: string | null | undefined = messages[0].threadId
         const senderEmail: string | undefined = parsed.from?.value[0]?.address
         const receiverEmails: string[] = Array.isArray(parsed.to)
-          ? parsed.to.map((address) => address.text)
+          ? parsed.to.map((address: AddressObject) => address.value[0].address ?? '')
           : parsed.to
-          ? [parsed.to.text]
+          ? [parsed.to.value[0].address ?? '']
           : []
 
         // console.log(`from : ${senderEmail}`)
