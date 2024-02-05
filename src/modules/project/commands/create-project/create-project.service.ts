@@ -15,7 +15,6 @@ import { ProjectValidatorDomainService } from '../../domain/domain-services/proj
 import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-services/ahj-generator.domain-service'
 import { PrismaService } from './../../../database/prisma.service'
 import { ProjectMapper } from '../../project.mapper'
-import { GenerateCensusResourceDomainService } from '../../../geography/domain/domain-services/generate-census-resource.domain-service'
 import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
@@ -42,12 +41,6 @@ export class CreateProjectService implements ICommandHandler {
     // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
     if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-
-    /**
-     * @FilesystemLogic
-     * 문제 있어서 일단 효민님 코드로 대체
-     */
-    // await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
     await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
 
     const organization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
