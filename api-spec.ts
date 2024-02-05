@@ -1776,9 +1776,28 @@ export interface CreateJobNoteRequestDto {
   receiverEmails: string[] | null
 }
 
-export type Paginated = object
+export interface JobNoteDetailResponseDto {
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  id: string
+  /** @default "JobNote" */
+  type: 'JobNote' | 'RFI'
+  /** @example "Chris Kim" */
+  creatorName: string
+  /** @example "what do you think about Jazz?" */
+  content: string
+  /** @default 1 */
+  jobNoteNumber: number
+  /** @default "yunwoo@oj.vision" */
+  senderMail: string | null
+  /** @default ["yunwoo@oj.vision"] */
+  receiverMails: string[] | null
+  /** @default ["https://drive.google.com/drive/folders/1MFhV8NTBNsPM3pvfBz6UKKTdKntXfWd7"] */
+  fileShareLink: string | null
+  /** @format date-time */
+  createdAt: string
+}
 
-export interface JobNotePagenatedResponseDto {
+export interface JobNoteResponseDto {
   /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
   clientOrganizationName: string
   /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
@@ -1787,7 +1806,7 @@ export interface JobNotePagenatedResponseDto {
   propertyAddress: string
   /** @example 1 */
   jobRequestNumber: number
-  pagenated: Paginated
+  data: JobNoteDetailResponseDto[]
 }
 
 export interface CreateTaskRequestDto {
@@ -5609,7 +5628,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request GET:/ordered-job-notes/{jobId}
      */
     findJobNotesHttpControllerFind: (jobId: string, params: RequestParams = {}) =>
-      this.request<JobNotePagenatedResponseDto, any>({
+      this.request<JobNoteResponseDto, any>({
         path: `/ordered-job-notes/${jobId}`,
         method: 'GET',
         format: 'json',
