@@ -8,7 +8,6 @@ import { UpdateProjectCommand } from './update-project.command'
 import { CoordinatesNotFoundException } from '../../domain/project.error'
 import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
 import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-services/ahj-generator.domain-service'
-import { GenerateCensusResourceDomainService } from '../../../geography/domain/domain-services/generate-census-resource.domain-service'
 import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 
@@ -21,7 +20,6 @@ export class UpdateProjectService implements ICommandHandler {
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
     private readonly ahjNoteGeneratorDomainService: AhjNoteGeneratorDomainService,
     private readonly filesystemDomainService: FilesystemDomainService,
-    private readonly generateCensusResourceDomainService: GenerateCensusResourceDomainService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
@@ -39,11 +37,6 @@ export class UpdateProjectService implements ICommandHandler {
         command.projectPropertyAddress.coordinates,
       )
       if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-      /**
-       * @FilesystemLogic
-       * 문제 있어서 일단 효민님 코드로 대체
-       */
-      // await this.generateCensusResourceDomainService.generateGeographyAndAhjNotes(censusResponse)
       await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
 
       project.updatePropertyAddress({

@@ -12,6 +12,7 @@ import { FindNonCountedJobFoldersQueryHandler } from './queries/find-non-counted
 import { UpdateGoogleSharedDriveCountService } from './commands/update-google-shared-drive-count/update-google-shared-drive-count.service'
 import { UpdateGoogleSharedDriveCountHttpController } from './commands/update-google-shared-drive-count/update-google-shared-drive-count.http.controller'
 import { FilesystemDomainService } from './domain/domain-service/filesystem.domain-service'
+import { GoogleAhjNoteFolderDomainService } from './domain/domain-service/google-ahj-note-folder.domain-service'
 
 const httpControllers = [
   CreateGoogleJobNoteFolderHttpController,
@@ -37,12 +38,13 @@ const mappers: Provider[] = [GoogleJobNoteFolderMapper]
   providers: [
     FilesystemApiService,
     FilesystemDomainService,
+    GoogleAhjNoteFolderDomainService,
     ...commandHandlers,
     ...mappers,
     ...repositories,
     ...queryHandlers,
   ],
   controllers: [...httpControllers],
-  exports: [FilesystemApiService, FilesystemDomainService],
+  exports: [FilesystemApiService, FilesystemDomainService, GoogleAhjNoteFolderDomainService],
 })
 export class FilesystemModule {}
