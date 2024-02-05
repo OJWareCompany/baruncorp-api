@@ -18,4 +18,7 @@ export class CreateJobNoteRequestDto {
   @ApiProperty({ default: ['yunwoo@oj.vision', 'antifragilista@oj.vision'] })
   @IsEmail({}, { each: true })
   readonly receiverEmails: string[] | null
+
+  @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
+  readonly files: any[]
 }
