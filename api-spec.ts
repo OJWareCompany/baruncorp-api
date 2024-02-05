@@ -1770,10 +1770,12 @@ export interface CreateJobNoteRequestDto {
   jobId: string
   /** @default "This is Job Note Content" */
   content: string
+  /** @default "<div class=......>hello world</div>" */
+  emailBody?: string
   /** @default "JobNote" */
   type: 'JobNote' | 'RFI'
   /** @default ["yunwoo@oj.vision","antifragilista@oj.vision"] */
-  receiverEmails: string[] | null
+  receiverEmails?: string[]
   files: File[]
 }
 
