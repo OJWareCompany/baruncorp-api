@@ -145,7 +145,9 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
         })
       : null
   }
-  async findOneOrThrow(organizationId: string, serviceId: string): Promise<CustomPricingEntity> {
+
+  // 여기서 매개 변수 순서가 인터페이스와 달라질수 있는것을 방지하려면 VO를 써야한다.
+  async findOneOrThrow(serviceId: string, organizationId: string): Promise<CustomPricingEntity> {
     const entity = await this.findOne(organizationId, serviceId)
     if (!entity) throw new CustomPricingNotFoundException()
     return entity
