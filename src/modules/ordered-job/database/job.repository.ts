@@ -230,10 +230,4 @@ export class JobRepository implements JobRepositoryPort {
     })
     return records.map((rec) => this.jobMapper.toDomain({ ...rec, prerequisiteTasks }))
   }
-
-  async isExist(id: string): Promise<boolean> {
-    return !!(await this.prismaService.orderedJobs.findUnique({
-      where: { id },
-    }))
-  }
 }

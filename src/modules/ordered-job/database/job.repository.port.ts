@@ -13,5 +13,4 @@ export interface JobRepositoryPort {
   getSubtotalInvoiceAmount(jobId: string): Promise<number>
   rollbackUpdatedAtAndEditor(entity: JobEntity): Promise<void>
   updateOnlyEditorInfo(entity: JobEntity, editor?: UserEntity): Promise<void>
-  isExist(id: string): Promise<boolean>
 }

@@ -30,10 +30,8 @@ export class CreateTrackingNumbersService implements ICommandHandler {
   ) {}
   async execute(command: CreateTrackingNumbersCommand): Promise<AggregateID> {
     // jobId 체크
-    const isExistForJob: boolean = await this.jobRepository.isExist(command.jobId)
-    if (!isExistForJob) {
-      throw new JobNotFoundException()
-    }
+    const jobEntity: JobEntity = await this.jobRepository.findJobOrThrow(command.jobId)
+
     // courierId 체크
     const couriersEntity: CouriersEntity | null = await this.couriersRepository.findOne(command.courierId)
     if (!couriersEntity) {
