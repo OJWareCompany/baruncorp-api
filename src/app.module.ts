@@ -29,6 +29,7 @@ import { ClientNoteModule } from './modules/client-note/client-note.module'
 import { AopModule } from '@toss/nestjs-aop'
 import { FilesystemModule } from './modules/filesystem/filesystem.module'
 import { CouriersModule } from '@modules/couriers/couriers.module'
+import { TrackingNumbersModule } from '@modules/tracking-numbers/tracking-numbers.module'
 
 @Module({
   imports: [
@@ -60,6 +61,7 @@ import { CouriersModule } from '@modules/couriers/couriers.module'
     ClientNoteModule,
     FilesystemModule,
     CouriersModule,
+    TrackingNumbersModule,
   ],
   controllers: [],
   providers: [

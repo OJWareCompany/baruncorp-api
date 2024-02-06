@@ -127,6 +127,7 @@ model Users {
   ptos                       Ptos[]
   ptoDetails                 PtoDetails[]
   informationHistories       InformationHistories[]
+  trackingNumbers            TrackingNumbers[]
   client_note_snapshot       ClientNoteSnapshots[]
 
   @@index([organizationId], map: "users_organization_id_fkey")
@@ -1166,7 +1167,7 @@ model GoogleJobNoteFolder {
   id               String           @id @map("id") @db.VarChar(255)
   shareLink        String?          @map("share_link") @db.VarChar(255)
   jobNotesFolderId String?          @map("job_notes_folder_id") @db.VarChar(255)
-  jobNoteId        String?          @unique(map: "job_note_id") @map("job_note_id") @db.VarChar(255)
+  jobNoteId        String?          @unique @map("job_note_id") @db.VarChar(255)
   sharedDriveId    String?          @map("shared_drive_id") @db.VarChar(255)
   jobNote          OrderedJobNotes? @relation(fields: [jobNoteId], references: [id])
 
@@ -1222,7 +1223,7 @@ model IntegratedOrderModificationHistory {
 
 model Couriers {
   id               String            @id @db.VarChar(255)
-  name             String            @unique(map: "name") @map("name")
+  name             String            @unique @map("name")
   trackingUrlParam String            @map("tracking_url_param") @db.Text
   trackingNumbers  TrackingNumbers[]
 
@@ -1230,15 +1231,20 @@ model Couriers {
 }
 
 model TrackingNumbers {
-  id               String      @id @db.VarChar(255)
-  jobId            String      @map("job_id") @db.VarChar(255)
-  courierId        String      @map("courier_id") @db.VarChar(255)
-  trackingUrlParam String      @map("tracking_url_param") @db.Text
-  job              OrderedJobs @relation(fields: [jobId], references: [id])
-  courier          Couriers    @relation(fields: [courierId], references: [id])
+  id             String      @id @db.VarChar(255)
+  jobId          String      @map("job_id") @db.VarChar(255)
+  courierId      String      @map("courier_id") @db.VarChar(255)
+  trackingNumber String      @map("tracking_number") @db.TinyText
+  createdBy      String      @map("created_by") @db.VarChar(255)
+  createdAt      DateTime    @map("created_at") @db.DateTime(0) @default(now())
+  updatedAt      DateTime    @map("updated_at") @db.DateTime(0)
+  job            OrderedJobs @relation(fields: [jobId], references: [id])
+  courier        Couriers    @relation(fields: [courierId], references: [id])
+  user           Users       @relation(fields: [createdBy], references: [id])
 
-  @@index([courierId], map: "TrackingNumbers_courier_id_idx")
-  @@index([jobId], map: "TrackingNumbers_job_id_idx")
+  @@index([jobId])
+  @@index([courierId])
+  @@index([createdBy])
   @@map("tracking_numbers")
 }
 

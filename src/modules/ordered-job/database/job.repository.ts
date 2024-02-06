@@ -11,6 +11,7 @@ import { endOfMonth, startOfMonth } from 'date-fns'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../domain/job.type'
 import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
 import { UserEntity } from '../../users/domain/user.entity'
+
 type JobModel =
   | OrderedJobs & {
       orderedServices: (OrderedServices & {
@@ -228,5 +229,11 @@ export class JobRepository implements JobRepositoryPort {
       },
     })
     return records.map((rec) => this.jobMapper.toDomain({ ...rec, prerequisiteTasks }))
+  }
+
+  async isExist(id: string): Promise<boolean> {
+    return !!(await this.prismaService.orderedJobs.findUnique({
+      where: { id },
+    }))
   }
 }

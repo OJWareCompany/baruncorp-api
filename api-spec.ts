@@ -2367,6 +2367,17 @@ export interface CouriersPaginatedResponseDto {
   items: CouriersResponseDto[]
 }
 
+export interface CreateTrackingNumbersRequestDto {
+  /** @default "b716ad65-8e06-4077-975e-4e4e0a56018f" */
+  jobId: string
+  /** @default "b716ad65-8e06-4077-975e-4e4e0a56018f" */
+  courierId: string
+  /** @default "b716ad65-8e06-4077-975e-4e4e0a56018f" */
+  createdBy: string
+  /** @default "77331858651" */
+  trackingNumber: string
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -6403,6 +6414,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/couriers/${couriersId}`,
         method: 'DELETE',
+        ...params,
+      }),
+  }
+  trackingNumbers = {
+    /**
+     * No description
+     *
+     * @name CreateTrackingNumbersHttpControllerPost
+     * @request POST:/tracking-numbers
+     */
+    createTrackingNumbersHttpControllerPost: (data: CreateTrackingNumbersRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/tracking-numbers`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
