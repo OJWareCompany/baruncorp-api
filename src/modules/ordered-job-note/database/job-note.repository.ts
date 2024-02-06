@@ -88,8 +88,6 @@ export class JobNoteRepository implements JobNoteRepositoryPort {
         emailThreadId: true,
       },
     })
-    console.log(`[findSendersThreadId] jobId : ${jobId}`)
-    console.log(`[findSendersThreadId] record : ${JSON.stringify(record)}`)
 
     return record?.emailThreadId ?? null
   }

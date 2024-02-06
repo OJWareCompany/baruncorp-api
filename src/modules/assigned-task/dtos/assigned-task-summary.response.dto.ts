@@ -39,10 +39,6 @@ export class AssignedTaskSummaryResponseDto {
 
   @ApiProperty()
   @IsNumber()
-  readonly inProgressAssignedTaskCount: number
-
-  @ApiProperty()
-  @IsNumber()
   readonly canceledAssignedTaskCount: number
 
   constructor(props: AssignedTaskSummaryResponseDto) {

@@ -24,7 +24,7 @@ export class FindAssignedTaskSummaryPaginatedQuery extends PaginatedQueryBase {
 }
 
 @QueryHandler(FindAssignedTaskSummaryPaginatedQuery)
-export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandler {
+export class FindAssignedTaskSummaryInProgressPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindAssignedTaskSummaryPaginatedQuery): Promise<Paginated<AssignedTaskSummaryResponseDto>> {
@@ -73,12 +73,12 @@ export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandl
       const assignedTaskCountCondition: Prisma.AssignedTasksWhereInput = {
         assigneeId: record.id,
         ...(query.startedAt && {
-          doneAt: {
+          created_at: {
             gte: query.startedAt,
           },
         }),
         ...(query.endedAt && {
-          doneAt: {
+          created_at: {
             ...(query.startedAt && { gte: query.startedAt }),
             lt: addDays(query.endedAt, 1),
           },
@@ -105,6 +105,15 @@ export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandl
                 },
               })
             : 0,
+        // inProgressAssignedTaskCount:
+        //   allAssignedTaskCount !== 0
+        //     ? await this.prismaService.assignedTasks.count({
+        //         where: {
+        //           ...assignedTaskCountCondition,
+        //           status: AssignedTaskStatusEnum.In_Progress,
+        //         },
+        //       })
+        //     : 0,
         canceledAssignedTaskCount:
           allAssignedTaskCount !== 0
             ? await this.prismaService.assignedTasks.count({
