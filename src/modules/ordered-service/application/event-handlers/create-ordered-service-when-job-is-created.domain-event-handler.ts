@@ -15,6 +15,7 @@ import { OrderedServiceRepositoryPort } from '../../database/ordered-service.rep
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
+import { ScopeRevisionChecker } from '../../domain/domain-services/scope-revision-checker.domain-service'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -30,6 +31,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    private readonly scopeRevisionChecker: ScopeRevisionChecker,
   ) {}
 
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
@@ -39,17 +41,10 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     const editor = event.editorUserId ? await this.userRepo.findOneById(event.editorUserId) : null
 
     const makeEntities = event.services.map(async (orderedService) => {
-      // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
-      const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
-        event.projectId,
-        orderedService.serviceId,
-      )
-
       const orderedServiceEntity = await OrderedServiceEntity.create(
         {
           projectId: event.projectId,
           jobId: event.aggregateId,
-          isRevision: !!previouslyOrderedServices.length,
           serviceId: orderedService.serviceId,
           serviceName: orderedService.serviceName,
           description: orderedService.description,
@@ -67,6 +62,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
         this.serviceInitialPriceManager,
         this.orderModificationValidator,
         this.revisionTypeUpdateValidator,
+        this.scopeRevisionChecker,
       )
 
       return orderedServiceEntity

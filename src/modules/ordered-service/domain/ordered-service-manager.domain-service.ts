@@ -19,6 +19,7 @@ import { OrderedServiceEntity } from './ordered-service.entity'
 import { Pricing } from '../../service/domain/value-objects/pricing.value-object'
 import { CustomPricingEntity } from '../../custom-pricing/domain/custom-pricing.entity'
 import { CustomPricingTypeEnum } from '../../custom-pricing/commands/create-custom-pricing/create-custom-pricing.command'
+import { ValidScopeStatus } from './value-objects/valid-previously-scope-status.value-object'
 
 /**
  * 코드가 너무 커졌다, 명확하게 책임에 따라 코드를 분리하자
@@ -154,9 +155,11 @@ export class ServiceInitialPriceManager {
     orderedService: OrderedServiceEntity | OrderedServices,
     organization: OrganizationEntity,
   ) {
-    const preOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
+    const preOrderedServices = await this.orderedServiceRepo.findPreviousSameScopesInProject(
       orderedService.projectId,
       orderedService.serviceId,
+      orderedService.orderedAt,
+      new ValidScopeStatus(),
     )
     const receivedFreeRevisionsCount = preOrderedServices.filter((service) => Number(service.price) === 0).length
     return Number(organization.numberOfFreeRevisionCount) > receivedFreeRevisionsCount

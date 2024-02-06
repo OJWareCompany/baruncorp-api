@@ -31,7 +31,6 @@ export class CreateJobService implements ICommandHandler {
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort, // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
-    private readonly durationCalculator: TotalDurationCalculator,
     private readonly prismaService: PrismaService,
     private readonly filesystemDomainService: FilesystemDomainService,
     private readonly jobMapper: JobMapper,
@@ -45,7 +44,6 @@ export class CreateJobService implements ICommandHandler {
     const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)
 
     const services = await this.serviceRepo.find({ id: { in: command.orderedTasks.map((task) => task.serviceId) } })
-    const totalDurationInMinutes = await this.durationCalculator.calcTotalDuration(command.orderedTasks, project)
 
     // Entity에는 Record에 저장 될 모든 필드가 있어야한다.
     const jobEntity = JobEntity.create({
@@ -81,7 +79,7 @@ export class CreateJobService implements ICommandHandler {
       mountingType: command.mountingType,
       totalOfJobs: project.totalOfJobs,
       projectPropertyType: project.projectPropertyType as ProjectPropertyTypeEnum,
-      dueDate: command.dueDate ? command.dueDate : totalDurationInMinutes,
+      dueDate: command.dueDate,
       editorUserId: command.editorUserId,
     })
     const jobRecord = this.jobMapper.toPersistence(jobEntity)
@@ -103,7 +101,7 @@ export class CreateJobService implements ICommandHandler {
         this.prismaService.googleJobFolder.create({ data: googleJobFolderData }),
       ])
 
-      jobEntity.publishEvents(this.eventEmitter)
+      await jobEntity.publishEvents(this.eventEmitter)
     } catch (error) {
       jobEntity.clearEvents()
       /**

@@ -46,6 +46,7 @@ import { UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler } from './applica
 import { OrderDeletionValidator } from './domain/domain-services/order-deletion-validator.domain-service'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
+import { UpdateDueDateWhenScopeIsOrderedDomainEventHandler } from './application/event-handlers/update-due-date-when-scope-is-ordered.domain-event-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -79,6 +80,7 @@ const eventHandlers: Provider[] = [
   UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler,
   UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler,
   UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler,
+  UpdateDueDateWhenScopeIsOrderedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 const mappers: Provider[] = [JobMapper, JobResponseMapper]

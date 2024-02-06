@@ -2,13 +2,13 @@ import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import _ from 'lodash'
-import { AssignedTaskStatusEnum } from '../../assigned-task/domain/assigned-task.type'
 import { PrismaService } from '../../database/prisma.service'
 import { UserEntity } from '../../users/domain/user.entity'
 import { OrderedServiceNotFoundException } from '../domain/ordered-service.error'
 import { OrderedServiceRepositoryPort } from './ordered-service.repository.port'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 import { OrderedServiceMapper } from '../ordered-service.mapper'
+import { ValidScopeStatus } from '../domain/value-objects/valid-previously-scope-status.value-object'
 
 @Injectable()
 export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
@@ -116,13 +116,18 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     await this.prismaService.orderedServices.deleteMany({ where: { id: { in: records.map((record) => record.id) } } })
   }
 
-  async getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]> {
+  async findPreviousSameScopesInProject(
+    projectId: string,
+    scopeId: string,
+    orderedAt: Date,
+    status: ValidScopeStatus,
+  ): Promise<OrderedServiceEntity[]> {
     const records = await this.prismaService.orderedServices.findMany({
       where: {
         projectId: projectId,
-        serviceId: serviceId,
-        // id: { not: orderedServiceId },
-        status: { notIn: [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold] },
+        serviceId: scopeId,
+        status: { in: status.value },
+        orderedAt: { lt: orderedAt },
       },
       include: { assignedTasks: true },
     })

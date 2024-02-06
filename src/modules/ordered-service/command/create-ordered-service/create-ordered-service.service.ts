@@ -17,7 +17,9 @@ import { OrderedServiceRepositoryPort } from '../../database/ordered-service.rep
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
+import { ValidScopeStatus } from '../../domain/value-objects/valid-previously-scope-status.value-object'
 import { CreateOrderedServiceCommand } from './create-ordered-service.command'
+import { ScopeRevisionChecker } from '../../domain/domain-services/scope-revision-checker.domain-service'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -35,6 +37,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    private readonly scopeRevisionChecker: ScopeRevisionChecker,
   ) {}
 
   /**
@@ -51,17 +54,10 @@ export class CreateOrderedServiceService implements ICommandHandler {
     const project = await this.projectRepo.findOneOrThrow({ id: job.projectId })
     const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)
 
-    // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
-    const previouslyOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(
-      job.projectId,
-      command.serviceId,
-    )
-
     const orderedServiceEntity = await OrderedServiceEntity.create(
       {
         projectId: job.projectId,
         jobId: command.jobId,
-        isRevision: !!previouslyOrderedServices.length,
         serviceId: command.serviceId,
         serviceName: service.name,
         description: command.description,
@@ -79,6 +75,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
       this.serviceInitialPriceManager,
       this.orderModificationValidator,
       this.revisionTypeUpdateValidator,
+      this.scopeRevisionChecker,
     )
 
     await this.orderedServiceRepo.insert(orderedServiceEntity)

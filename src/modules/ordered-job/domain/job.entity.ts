@@ -45,8 +45,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
       orderedServices: [],
       pricingType: null,
       dateSentToClient: null,
+      isManualDueDate: !!create.dueDate,
     }
+
     const job = new JobEntity({ id, props })
+
     job.addEvent(
       new JobCreatedDomainEvent({
         aggregateId: id,

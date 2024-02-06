@@ -1,6 +1,7 @@
 import { Prisma } from '@prisma/client'
 import { UserEntity } from '../../users/domain/user.entity'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
+import { ValidScopeStatus } from '../domain/value-objects/valid-previously-scope-status.value-object'
 
 /**
  * 원칙상 Repository Port(인터페이스)는 Domain 모듈의 파일이다.
@@ -19,7 +20,12 @@ export interface OrderedServiceRepositoryPort {
   findBy(whereInput: Prisma.OrderedServicesWhereInput): Promise<OrderedServiceEntity[]>
   update(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void>
   delete(entity: OrderedServiceEntity | OrderedServiceEntity[]): Promise<void>
-  getPreviouslyOrderedServices(projectId: string, serviceId: string): Promise<OrderedServiceEntity[]>
+  findPreviousSameScopesInProject(
+    projectId: string,
+    scopeId: string,
+    orderedAt: Date,
+    status: ValidScopeStatus,
+  ): Promise<OrderedServiceEntity[]>
   rollbackUpdatedAtAndEditor(orderedScope: OrderedServiceEntity): Promise<void>
   updateOnlyEditorInfo(entity: OrderedServiceEntity, editor?: UserEntity): Promise<void>
 }

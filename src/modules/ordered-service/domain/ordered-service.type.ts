@@ -75,7 +75,6 @@ export enum OrderedServicePricingTypeEnum {
 export interface CreateOrderedServiceProps {
   serviceId: string
   serviceName: string
-  isRevision: boolean
   projectId: string
   jobId: string
   description: string | null
@@ -101,4 +100,5 @@ export interface OrderedServiceProps extends CreateOrderedServiceProps {
   assignedTasks: AssignedTasks[]
   isManualPrice: boolean
   pricingType: OrderedServicePricingTypeEnum | null
+  isRevision: boolean
 }

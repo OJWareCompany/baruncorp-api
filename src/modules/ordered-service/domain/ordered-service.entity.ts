@@ -44,6 +44,7 @@ import { JobNotStartedDomainEvent } from '../../ordered-job/domain/events/job-no
 import { JobStartedDomainEvent } from '../../ordered-job/domain/events/job-started.domain-event'
 import { OrderedServiceDeletedDomainEvent } from './events/ordered-service-deleted.domain-event'
 import { OrderDeletionValidator } from '../../ordered-job/domain/domain-services/order-deletion-validator.domain-service'
+import { ScopeRevisionChecker } from './domain-services/scope-revision-checker.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -53,6 +54,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     calcService: ServiceInitialPriceManager,
     orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    scopeRevisionChecker: ScopeRevisionChecker,
   ) {
     const id = v4()
     const props: OrderedServiceProps = {
@@ -66,9 +68,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       price: null,
       sizeForRevision: null,
       pricingType: null,
+      isRevision: false,
     }
 
     const entity = new OrderedServiceEntity({ id, props })
+
+    entity.props.isRevision = await scopeRevisionChecker.isRevision(entity)
 
     await entity.determineInitialValues(calcService, orderModificationValidator, revisionTypeUpdateValidator)
 
@@ -121,6 +126,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   get organizationId() {
     return this.props.organizationId
+  }
+
+  get orderedAt(): Date {
+    return this.props.orderedAt
   }
 
   get isRevision() {
