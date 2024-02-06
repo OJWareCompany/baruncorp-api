@@ -4,8 +4,8 @@ import { CustomMax } from '../../../../libs/decorators/custom/custom-max.decorat
 import { CustomMin } from '../../../../libs/decorators/custom/custom-min.decorator'
 import { TotalRangeException } from '../../../pto/domain/pto.error'
 
-export class DeleteCouriersParamRequestDto {
+export class DeleteTrackingNumbersParamRequestDto {
   @ApiProperty({ default: '529cec06-1fb7-4284-b56f-9f31219cd099' })
   @IsString()
-  readonly couriersId: string
+  readonly trackingNumbersId: string
 }

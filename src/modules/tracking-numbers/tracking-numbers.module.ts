@@ -14,10 +14,12 @@ import { JOB_REPOSITORY } from '@modules/ordered-job/job.di-token'
 import { JobRepository } from '@modules/ordered-job/database/job.repository'
 import { JobModule } from '@modules/ordered-job/job.module'
 import { CouriersModule } from '@modules/couriers/couriers.module'
+import { DeleteTrackingNumbersHttpController } from '@modules/tracking-numbers/commands/delete-tracking-numbers/delete-tracking-numbers.http.controller'
+import { DeleteTrackingNumbersService } from '@modules/tracking-numbers/commands/delete-tracking-numbers/delete-tracking-numbers.service'
 
-const httpControllers = [CreateTrackingNumbersHttpController]
+const httpControllers = [CreateTrackingNumbersHttpController, DeleteTrackingNumbersHttpController]
 
-const commandHandlers: Provider[] = [CreateTrackingNumbersService]
+const commandHandlers: Provider[] = [CreateTrackingNumbersService, DeleteTrackingNumbersService]
 
 const queryHandlers: Provider[] = []
 
