@@ -1222,7 +1222,7 @@ model IntegratedOrderModificationHistory {
 
 model Couriers {
   id                String @id @db.VarChar(255)
-  name              String @map("name")
+  name              String @unique @map("name")
   trackingUrlParam  String @map("tracking_url_param") @db.Text
 
   trackingNumbers   TrackingNumbers[]

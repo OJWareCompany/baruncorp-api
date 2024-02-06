@@ -2314,6 +2314,13 @@ export interface UpdateGoogleSharedDriveCountRequestDto {
   count: number
 }
 
+export interface CreateCouriersRequestDto {
+  /** @default "USP" */
+  name: string
+  /** @default "https://www.usp.com/track?InqueryNumber1=" */
+  urlParam: string
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -6231,6 +6238,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+  }
+  couriers = {
+    /**
+     * No description
+     *
+     * @name CreateCouriersHttpControllerPatch
+     * @request POST:/couriers
+     */
+    createCouriersHttpControllerPatch: (data: CreateCouriersRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/couriers`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }

@@ -28,6 +28,7 @@ import { InformationModule } from './modules/information/information.module'
 import { ClientNoteModule } from './modules/client-note/client-note.module'
 import { AopModule } from '@toss/nestjs-aop'
 import { FilesystemModule } from './modules/filesystem/filesystem.module'
+import { CouriersModule } from '@modules/couriers/couriers.module'
 
 @Module({
   imports: [
@@ -58,6 +59,7 @@ import { FilesystemModule } from './modules/filesystem/filesystem.module'
     InformationModule,
     ClientNoteModule,
     FilesystemModule,
+    CouriersModule,
   ],
   controllers: [],
   providers: [
