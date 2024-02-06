@@ -954,7 +954,6 @@ export interface AssignedTaskSummaryResponseDto {
   userName: string
   allAssignedTaskCount: number
   completedAssignedTaskCount: number
-  inProgressAssignedTaskCount: number
   canceledAssignedTaskCount: number
 }
 
@@ -987,6 +986,25 @@ export interface AssignedTaskSummaryDetailPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: AssignedTaskSummaryDetailResponseDto[]
+}
+
+export interface AssignedTaskSummaryInProgressResponseDto {
+  userId: string
+  organizationName: string
+  userName: string
+  inProgressAssignedTaskCount: number
+}
+
+export interface AssignedTaskSummaryInProgressPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: AssignedTaskSummaryInProgressResponseDto[]
 }
 
 export interface UpdateTaskDurationRequestDto {
@@ -2808,6 +2826,25 @@ export interface FindAssignedTaskSummaryDetailPaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindAssignedTaskSummaryInProgressPaginatedHttpControllerGetParams {
+  /** @default "Barun Corp" */
+  organizationName?: string
+  /** @default "John Doe" */
+  userName?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
 export interface FindRejectedTaskReasonHttpControllerGetParams {
   userName?: string | null
 }
@@ -4599,14 +4636,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name FindAssignedTaskSummaryPaginatedHttpControllerGet
-     * @request GET:/assigned-tasks/summary/count
+     * @request GET:/assigned-tasks/summary/total
      */
     findAssignedTaskSummaryPaginatedHttpControllerGet: (
       query: FindAssignedTaskSummaryPaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
       this.request<AssignedTaskSummaryPaginatedResponseDto, any>({
-        path: `/assigned-tasks/summary/count`,
+        path: `/assigned-tasks/summary/total`,
         method: 'GET',
         query: query,
         format: 'json',
@@ -4625,6 +4662,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<AssignedTaskSummaryDetailPaginatedResponseDto, any>({
         path: `/assigned-tasks/summary/detail`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAssignedTaskSummaryInProgressPaginatedHttpControllerGet
+     * @request GET:/assigned-tasks/summary/in-progress
+     */
+    findAssignedTaskSummaryInProgressPaginatedHttpControllerGet: (
+      query: FindAssignedTaskSummaryInProgressPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<AssignedTaskSummaryInProgressPaginatedResponseDto, any>({
+        path: `/assigned-tasks/summary/in-progress`,
         method: 'GET',
         query: query,
         format: 'json',
