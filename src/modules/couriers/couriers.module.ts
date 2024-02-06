@@ -7,10 +7,12 @@ import { CouriersRepository } from '@modules/couriers/database/couriers.reposito
 import { UsersModule } from '@modules/users/users.module'
 import { CreateCouriersHttpController } from '@modules/couriers/commands/create-couriers/create-couriers.http.controller'
 import { CreateCouriersService } from '@modules/couriers/commands/create-couriers/create-couriers.service'
+import { UpdateCouriersHttpController } from '@modules/couriers/commands/update-couriers/update-couriers.http.controller'
+import { UpdateCouriersService } from '@modules/couriers/commands/update-couriers/update-couriers.service'
 
-const httpControllers = [CreateCouriersHttpController]
+const httpControllers = [CreateCouriersHttpController, UpdateCouriersHttpController]
 
-const commandHandlers: Provider[] = [CreateCouriersService]
+const commandHandlers: Provider[] = [CreateCouriersService, UpdateCouriersService]
 
 const queryHandlers: Provider[] = []
 
