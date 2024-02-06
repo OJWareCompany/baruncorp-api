@@ -30,6 +30,7 @@ import { ORDERED_SERVICE_REPOSITORY } from './ordered-service.di-token'
 import { UpdateRevisionSizeService } from './command/update-revision-size/update-revision-size.service'
 import { UpdateManualPriceService } from './command/update-manual-price/update-manual-price-service.service'
 import { OrderedServiceRepository } from './database/ordered-service.repository'
+import { TieredPricingCalculator } from './domain/domain-services/tiered-pricing-calculator.domain-service'
 import { OrderedServiceMapper } from './ordered-service.mapper'
 import { ScopeRevisionChecker } from './domain/domain-services/scope-revision-checker.domain-service'
 import { CustomPricingModule } from '../custom-pricing/custom-pricing.module'
@@ -82,6 +83,7 @@ const domainServices: Provider[] = [
   RevisionTypeUpdateValidationDomainService,
   ScopeRevisionChecker,
   SameScopeCompletionOrderCalculator,
+  TieredPricingCalculator,
 ]
 
 const mappers: Provider[] = [OrderedServiceMapper]

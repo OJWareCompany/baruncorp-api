@@ -3,9 +3,7 @@ import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
-import { CustomPricingRepositoryPort } from '../../../custom-pricing/database/custom-pricing.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
-import { CUSTOM_PRICING_REPOSITORY } from '../../../custom-pricing/custom-pricing.di-token'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
@@ -24,7 +22,6 @@ export class CreateInvoiceService implements ICommandHandler {
     @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort, // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort, // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort, // @ts-ignore
-    @Inject(CUSTOM_PRICING_REPOSITORY) private readonly customPricingRepo: CustomPricingRepositoryPort, // @ts-ignore
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
     private readonly calcInvoiceService: CalculateInvoiceService,
   ) {}
@@ -33,17 +30,6 @@ export class CreateInvoiceService implements ICommandHandler {
     if (!jobs.length) throw new JobNotFoundException()
 
     const orderedServices = await this.orderedServiceRepo.findBy({ jobId: { in: jobs.map((job) => job.id) } })
-
-    const calcCost = orderedServices.map(
-      async (orderedService) =>
-        await orderedService.determinePriceWhenInvoice(
-          this.calcInvoiceService,
-          orderedServices,
-          this.customPricingRepo,
-        ),
-    )
-
-    await Promise.all(calcCost)
 
     const subTotal = orderedServices.reduce((pre, cur) => {
       return pre + Number(cur.price)

@@ -44,6 +44,7 @@ import { JobNotStartedDomainEvent } from '../../ordered-job/domain/events/job-no
 import { JobStartedDomainEvent } from '../../ordered-job/domain/events/job-started.domain-event'
 import { OrderedServiceDeletedDomainEvent } from './events/ordered-service-deleted.domain-event'
 import { OrderDeletionValidator } from '../../ordered-job/domain/domain-services/order-deletion-validator.domain-service'
+import { TieredPricingCalculator } from './domain-services/tiered-pricing-calculator.domain-service'
 import { ScopeRevisionChecker } from './domain-services/scope-revision-checker.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
@@ -363,10 +364,15 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return 1
   }
 
-  async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator) {
+  async validateAndComplete(
+    orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator,
+    tieredPricingCalculator: TieredPricingCalculator,
+  ) {
     if (this.isRevision && !this.isRevisionTypeEntered) return
     await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
     this.complete()
+    const price = await tieredPricingCalculator.calc(this)
+    this.setPrice(price)
     return this
   }
 
