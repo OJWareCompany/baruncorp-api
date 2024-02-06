@@ -11,12 +11,10 @@ export enum MountingTypeEnum {
   Ground_Mount = 'Ground Mount',
 }
 
-export type ProjectPropertyType = 'Residential' | 'Commercial'
-
 export type MountingType = 'Roof Mount' | 'Ground Mount'
 
 export interface CreateProjectProps {
-  projectPropertyType: ProjectPropertyType
+  projectPropertyType: ProjectPropertyTypeEnum
   projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
@@ -37,7 +35,7 @@ export interface ProjectProps extends CreateProjectProps {
 }
 
 export interface UpdateProjectProps {
-  projectPropertyType: ProjectPropertyType
+  projectPropertyType: ProjectPropertyTypeEnum
   projectPropertyOwner: string | null
   projectNumber: string | null
   updatedBy: string

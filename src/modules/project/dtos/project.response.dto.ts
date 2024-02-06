@@ -1,10 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsOptional, IsString } from 'class-validator'
-import {
-  MountingTypeEnum,
-  ProjectPropertyType,
-  ProjectPropertyTypeEnum,
-} from '../../../modules/project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../modules/project/domain/project.type'
 import { JobResponseDto } from '../../ordered-job/dtos/job.response.dto'
 import { AddressDto } from '../../ordered-job/dtos/address.dto'
 
@@ -65,7 +61,7 @@ export class ProjectResponseDto {
   numberOfWetStamp: number | null
 
   @ApiProperty({ enum: ProjectPropertyTypeEnum, example: 'Residential' })
-  propertyType: ProjectPropertyType
+  propertyType: ProjectPropertyTypeEnum
 
   @ApiProperty({ example: null })
   projectNumber: string | null

@@ -1,4 +1,4 @@
-import { ProjectPropertyType } from '../../project/domain/project.type'
+import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 /**
  * GetPropertyTypeFolder
@@ -115,7 +115,7 @@ export type UpdateGoogleProjectFoldersRequestPayload = {
   needUpdateProjectName: boolean
   toProjectFolderName: string | null
   needUpdateProjectPropertyType: boolean
-  toProjectPropertyType: ProjectPropertyType | null
+  toProjectPropertyType: ProjectPropertyTypeEnum | null
   sharedDrives: {
     id: string
     residentialFolderId: string

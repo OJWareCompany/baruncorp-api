@@ -5,6 +5,7 @@ import { Address } from '../../organization/domain/value-objects/address.vo'
 import {
   CreateProjectProps,
   MountingType,
+  ProjectPropertyTypeEnum,
   ProjectProps,
   UpdateProjectProps,
   UpdatePropertyAddressProps,
@@ -53,6 +54,14 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
 
   get projectNumber() {
     return this.props.projectNumber
+  }
+
+  get isResidential(): boolean {
+    return this.props.projectPropertyType === ProjectPropertyTypeEnum.Residential
+  }
+
+  get isCommercial(): boolean {
+    return this.props.projectPropertyType === ProjectPropertyTypeEnum.Commercial
   }
 
   setTotalOfJobs(totalOfJobs: number) {

@@ -4,7 +4,7 @@ import { Prisma, OrderedProjects } from '@prisma/client'
 import { ProjectResponseDto } from './dtos/project.response.dto'
 import { Address } from '../organization/domain/value-objects/address.vo'
 import { ProjectAssociatedRegulatoryBody } from './domain/value-objects/project-associated-regulatory-body.value-object'
-import { MountingType, ProjectPropertyType } from './domain/project.type'
+import { MountingType, ProjectPropertyTypeEnum } from './domain/project.type'
 import { Injectable } from '@nestjs/common'
 
 /**
@@ -84,7 +84,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
       createdAt: new Date(record.dateCreated),
       updatedAt: new Date(record.updatedAt),
       props: {
-        projectPropertyType: record.projectPropertyType as ProjectPropertyType,
+        projectPropertyType: record.projectPropertyType as ProjectPropertyTypeEnum,
         projectPropertyOwner: record.propertyOwnerName,
         projectNumber: record.projectNumber,
         systemSize: record.systemSize === null ? null : Number(record.systemSize),

@@ -1,5 +1,5 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { ProjectPropertyType } from '../../domain/project.type'
+import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 
 /**
  * Service와 Controller 사이의 DTO다.
@@ -8,7 +8,7 @@ import { ProjectPropertyType } from '../../domain/project.type'
 export class CreateProjectCommand {
   readonly userId: string
   readonly clientOrganizationId: string
-  readonly projectPropertyType: ProjectPropertyType
+  readonly projectPropertyType: ProjectPropertyTypeEnum
   readonly projectPropertyOwner: string | null
 
   readonly projectPropertyAddress: {

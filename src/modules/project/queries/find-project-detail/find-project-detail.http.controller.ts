@@ -4,7 +4,7 @@ import { QueryBus } from '@nestjs/cqrs'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
 import { ProjectResponseDto } from '../../dtos/project.response.dto'
-import { ProjectPropertyType } from '../../domain/project.type'
+import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 import { FindProjectDetailQuery, FindProjectDetailReturnType } from './find-project-detail.query-handler'
 import { FindProjectDetailRequestDto } from './find-project-detail.request.dto'
 import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
@@ -57,7 +57,7 @@ export class FindProjectDetailHttpController {
     response.projectFolderLink = result.projectFolder || null
 
     response.numberOfWetStamp = result.numberOfWetStamps
-    response.propertyType = result.projectPropertyType as ProjectPropertyType
+    response.propertyType = result.projectPropertyType as ProjectPropertyTypeEnum
     response.projectNumber = result.projectNumber || null
     response.createdAt = result.dateCreated.toISOString()
     response.totalOfJobs = result.totalOfJobs

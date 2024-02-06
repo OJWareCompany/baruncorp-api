@@ -63,8 +63,8 @@ export class ServiceEntity extends AggregateRoot<ServiceProps> {
     return this
   }
 
-  getTaskDuration(project: ProjectEntity, isRevision: boolean) {
-    return project.projectPropertyType === ProjectPropertyTypeEnum.Residential
+  getTaskDuration(projectPropertyType: ProjectPropertyTypeEnum, isRevision: boolean) {
+    return projectPropertyType === ProjectPropertyTypeEnum.Residential
       ? this.getResidentialEstimatedTaskDuration(isRevision)
       : this.getCommercialEstimatedTaskDuration(isRevision)
   }

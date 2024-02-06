@@ -24,7 +24,7 @@ export class TotalDurationCalculator {
       services.map(async (service) => {
         const preOrderedServices = await this.orderedServiceRepo.getPreviouslyOrderedServices(project.id, service.id)
         const isRevision = preOrderedServices.length > 0
-        const duration = service.getTaskDuration(project, isRevision) || 0
+        const duration = service.getTaskDuration(project.projectPropertyType, isRevision) || 0
         totalDurationInMinutes = addMinutes(totalDurationInMinutes, duration * DAY_TO_MINUTES)
       }),
     )

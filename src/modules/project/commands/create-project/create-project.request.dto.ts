@@ -1,12 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsIn, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsObject, IsOptional, IsString } from 'class-validator'
 import { AddressDto } from '../../../ordered-job/dtos/address.dto'
-import { ProjectPropertyType } from '../../domain/project.type'
+import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 
 export class CreateProjectRequestDto {
-  @ApiProperty({ default: 'Residential' })
-  @IsIn(['Residential', 'Commercial'])
-  readonly projectPropertyType: ProjectPropertyType
+  @ApiProperty({ default: ProjectPropertyTypeEnum.Residential })
+  @IsEnum(ProjectPropertyTypeEnum)
+  readonly projectPropertyType: ProjectPropertyTypeEnum
 
   @ApiProperty({ default: 'Chris Kim' })
   @IsString()

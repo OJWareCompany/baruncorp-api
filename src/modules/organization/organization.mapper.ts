@@ -3,15 +3,10 @@ import { Organizations } from '@prisma/client'
 import { Address } from './domain/value-objects/address.vo'
 import { Injectable } from '@nestjs/common'
 import { OrganizationEntity } from './domain/organization.entity'
-import { CreateOrganizationProps, OrganizationProps } from './domain/organization.types'
+import { OrganizationProps } from './domain/organization.types'
 import { OrganizationResponseDto } from './dtos/organization.response.dto'
 import { Mapper } from '@libs/ddd/mapper.interface'
-import {
-  MountingType,
-  MountingTypeEnum,
-  ProjectPropertyType,
-  ProjectPropertyTypeEnum,
-} from '../project/domain/project.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { OrganizationPaginatedResponseFields } from './dtos/organization.paginated.response.dto'
 
 /**
