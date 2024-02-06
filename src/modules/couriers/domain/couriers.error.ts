@@ -5,3 +5,9 @@ export class CouriersNotFoundException extends NotFoundException {
     super('Not Couriers found', '21201')
   }
 }
+
+export class UniqueCouriersException extends NotFoundException {
+  constructor() {
+    super(`Name field must be unique`, '20811')
+  }
+}
