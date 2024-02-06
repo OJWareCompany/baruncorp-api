@@ -11,12 +11,19 @@ import { UpdateCouriersHttpController } from '@modules/couriers/commands/update-
 import { UpdateCouriersService } from '@modules/couriers/commands/update-couriers/update-couriers.service'
 import { DeleteCouriersHttpController } from '@modules/couriers/commands/delete-couriers/delete-couriers.http.controller'
 import { DeleteCouriersService } from '@modules/couriers/commands/delete-couriers/delete-couriers.service'
+import { FindCouriersPaginatedQueryHandler } from '@modules/couriers/queries/find-couriers-paginated/find-couriers.paginated.query-handler'
+import { FindCouriersPaginatedHttpController } from '@modules/couriers/queries/find-couriers-paginated/find-couriers.paginated.http.controller'
 
-const httpControllers = [CreateCouriersHttpController, UpdateCouriersHttpController, DeleteCouriersHttpController]
+const httpControllers = [
+  CreateCouriersHttpController,
+  UpdateCouriersHttpController,
+  DeleteCouriersHttpController,
+  FindCouriersPaginatedHttpController,
+]
 
 const commandHandlers: Provider[] = [CreateCouriersService, UpdateCouriersService, DeleteCouriersService]
 
-const queryHandlers: Provider[] = []
+const queryHandlers: Provider[] = [FindCouriersPaginatedQueryHandler]
 
 const repositories: Provider[] = [{ provide: COURIERS_REPOSITORY, useClass: CouriersRepository }]
 const mappers: Provider[] = [CouriersMapper]

@@ -22,8 +22,6 @@ export class CreateCouriersService implements ICommandHandler {
       urlParam: command.urlParam,
     })
 
-    console.log(`entity : ${JSON.stringify(entity)}`)
-
     await this.couriersRepository.insert(entity)
     return entity.id
   }

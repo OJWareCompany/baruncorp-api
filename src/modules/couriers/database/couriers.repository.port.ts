@@ -8,5 +8,5 @@ export interface CouriersRepositoryPort {
   findOne(id: string): Promise<CouriersEntity | null>
   findMany(offset?: number, limit?: number): Promise<CouriersEntity[]>
 
-  getCount(condition: Prisma.CouriersWhereInput): Promise<number>
+  getCount(): Promise<number>
 }

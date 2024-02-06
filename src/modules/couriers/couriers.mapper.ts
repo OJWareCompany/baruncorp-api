@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
-import { Couriers } from '@prisma/client'
 import { CouriersEntity } from '@modules/couriers/domain/couriers.entity'
 import { CouriersModel } from '@modules/couriers/database/couriers.repository'
+import { CouriersResponseDto } from '@modules/couriers/dtos/couriers.response.dto'
 
 @Injectable()
-export class CouriersMapper implements Mapper<CouriersEntity, CouriersModel> {
+export class CouriersMapper implements Mapper<CouriersEntity, CouriersModel, CouriersResponseDto> {
   toPersistence(entity: CouriersEntity): CouriersModel {
     const record: CouriersModel = {
       id: entity.id,
@@ -28,7 +28,11 @@ export class CouriersMapper implements Mapper<CouriersEntity, CouriersModel> {
     return entity
   }
 
-  toResponse(entity: CouriersEntity, ...dtos: any) {
-    throw new Error('Method not implemented.')
+  toResponse(entity: CouriersEntity): CouriersResponseDto {
+    return new CouriersResponseDto({
+      id: entity.id,
+      name: entity.name,
+      urlParam: entity.urlParam,
+    })
   }
 }
