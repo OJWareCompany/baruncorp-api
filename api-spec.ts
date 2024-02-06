@@ -2314,6 +2314,41 @@ export interface UpdateGoogleSharedDriveCountRequestDto {
   count: number
 }
 
+export interface CreateCouriersRequestDto {
+  /** @default "USP" */
+  name: string
+  /** @default "https://www.usp.com/track?InqueryNumber1=" */
+  urlParam: string
+}
+
+export interface UpdateCouriersRequestDto {
+  /** @default "USP" */
+  name?: string
+  /** @default "https://www.usp.com/track?InqueryNumber1=" */
+  urlParam?: string
+}
+
+export interface CouriersResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "USP" */
+  name: string
+  /** @default "https://www.usp.com/track?InqueryNumber1=" */
+  urlParam: string
+}
+
+export interface CouriersPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: CouriersResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -3242,6 +3277,21 @@ export interface FindNonCountedJobFoldersHttpControllerFindNonCountedJobFoldersP
   fromDate: string
   /** @format date-time */
   toDate: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindCouriersPaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -6231,6 +6281,73 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+  }
+  couriers = {
+    /**
+     * No description
+     *
+     * @name CreateCouriersHttpControllerPost
+     * @request POST:/couriers
+     */
+    createCouriersHttpControllerPost: (data: CreateCouriersRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/couriers`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindCouriersPaginatedHttpControllerGet
+     * @request GET:/couriers
+     */
+    findCouriersPaginatedHttpControllerGet: (
+      query: FindCouriersPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<CouriersPaginatedResponseDto, any>({
+        path: `/couriers`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateCouriersHttpControllerPatch
+     * @request PATCH:/couriers/{couriersId}
+     */
+    updateCouriersHttpControllerPatch: (
+      couriersId: string,
+      data: UpdateCouriersRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/couriers/${couriersId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteCouriersHttpControllerPatch
+     * @request DELETE:/couriers/{couriersId}
+     */
+    deleteCouriersHttpControllerPatch: (couriersId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/couriers/${couriersId}`,
+        method: 'DELETE',
         ...params,
       }),
   }

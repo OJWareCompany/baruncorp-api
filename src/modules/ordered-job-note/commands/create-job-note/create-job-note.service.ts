@@ -42,7 +42,7 @@ export class CreateJobNoteService implements ICommandHandler {
       let emailBody: string | null = command.emailBody
       const subject = `[BARUN CORP] Job #${targetJob.jobRequestNumber} ${targetJob.propertyAddress}`
 
-      emailBody += `${creatorUser.full_name}` + process.env.JOB_NOTE_SIGNATURE
+      emailBody += `${creatorUser.full_name}<br>` + process.env.JOB_NOTE_SIGNATURE
       // From의 email에 대한 threadId가 있는지 확인
       emailThreadId = await this.jobNoteRepository.findSendersThreadId(command.jobId, senderEmail)
       console.log(`[execute] finded emailThreadId : ${emailThreadId}`)

@@ -1,0 +1,1 @@
+export const COURIERS_REPOSITORY = Symbol('COURIERS_REPOSITORY')
