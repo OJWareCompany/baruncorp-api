@@ -1,5 +1,6 @@
 import { Prisma } from '@prisma/client'
 import { UserEntity } from '../../users/domain/user.entity'
+import { OrderedServiceStatusEnum } from '../domain/ordered-service.type'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 import { ValidScopeStatus } from '../domain/value-objects/valid-previously-scope-status.value-object'
 
@@ -25,6 +26,12 @@ export interface OrderedServiceRepositoryPort {
     scopeId: string,
     orderedAt: Date,
     status: ValidScopeStatus,
+  ): Promise<OrderedServiceEntity[]>
+  findPreviousSameScopesCompletedInOrderedMonth(
+    clientOrganizationId: string,
+    scopeId: string,
+    orderedAt: Date,
+    status: OrderedServiceStatusEnum.Completed,
   ): Promise<OrderedServiceEntity[]>
   rollbackUpdatedAtAndEditor(orderedScope: OrderedServiceEntity): Promise<void>
   updateOnlyEditorInfo(entity: OrderedServiceEntity, editor?: UserEntity): Promise<void>

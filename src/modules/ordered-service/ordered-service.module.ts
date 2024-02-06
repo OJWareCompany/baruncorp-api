@@ -16,6 +16,7 @@ import { FindOrderedServicePaginatedQueryHandler } from './queries/find-ordered-
 import { UpdateOrderedScopeStatusHttpController } from './command/update-ordered-scope-status/update-ordered-scope-status.http.controller'
 import { UpdateOrderedServiceHttpController } from './command/update-ordered-service/update-ordered-service.http.controller'
 import { CreateOrderedServiceHttpController } from './command/create-ordered-service/create-ordered-service.http.controller'
+import { SameScopeCompletionOrderCalculator } from './domain/domain-services/same-scope-completion-order-calculator.domain-service'
 import { OrderedScopeStatusChangeValidator } from './domain/domain-services/check-all-related-tasks-completed.domain-service'
 import { FindOrderedServiceHttpController } from './queries/find-ordered-service/find-ordered-service.http.controller'
 import { UpdateRevisionSizeHttpController } from './command/update-revision-size/update-revision-size.http.controller'
@@ -80,6 +81,7 @@ const domainServices: Provider[] = [
   OrderedScopeStatusChangeValidator,
   RevisionTypeUpdateValidationDomainService,
   ScopeRevisionChecker,
+  SameScopeCompletionOrderCalculator,
 ]
 
 const mappers: Provider[] = [OrderedServiceMapper]

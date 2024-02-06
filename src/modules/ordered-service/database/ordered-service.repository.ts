@@ -1,4 +1,6 @@
 import { EventEmitter2 } from '@nestjs/event-emitter'
+import { endOfMonth, startOfMonth } from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import _ from 'lodash'
@@ -6,6 +8,7 @@ import { PrismaService } from '../../database/prisma.service'
 import { UserEntity } from '../../users/domain/user.entity'
 import { OrderedServiceNotFoundException } from '../domain/ordered-service.error'
 import { OrderedServiceRepositoryPort } from './ordered-service.repository.port'
+import { OrderedServiceStatusEnum } from '../domain/ordered-service.type'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 import { OrderedServiceMapper } from '../ordered-service.mapper'
 import { ValidScopeStatus } from '../domain/value-objects/valid-previously-scope-status.value-object'
@@ -17,6 +20,27 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     private readonly orderedServiceMapper: OrderedServiceMapper,
     protected readonly eventEmitter: EventEmitter2,
   ) {}
+
+  async findPreviousSameScopesCompletedInOrderedMonth(
+    clientOrganizationId: string,
+    scopeId: string,
+    orderedAt: Date,
+    status: OrderedServiceStatusEnum.Completed,
+  ): Promise<OrderedServiceEntity[]> {
+    const records = await this.prismaService.orderedServices.findMany({
+      where: {
+        organizationId: clientOrganizationId,
+        serviceId: scopeId,
+        status,
+        orderedAt: {
+          gte: zonedTimeToUtc(startOfMonth(orderedAt), 'Etc/UTC'),
+          lt: zonedTimeToUtc(endOfMonth(orderedAt), 'Etc/UTC'),
+        },
+      },
+      include: { assignedTasks: true },
+    })
+    return records.map(this.orderedServiceMapper.toDomain)
+  }
 
   async updateOnlyEditorInfo(entity: OrderedServiceEntity, editor?: UserEntity): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
