@@ -22,7 +22,11 @@ export class CouriersRepository implements CouriersRepositoryPort {
   }
 
   async delete(id: string): Promise<void> {
-    await this.prismaService.$executeRaw<Couriers>`DELETE FROM pto_tenure_policies WHERE id = ${id}`
+    await this.prismaService.couriers.delete({
+      where: {
+        id: id,
+      },
+    })
   }
 
   async findOne(id: string): Promise<CouriersEntity | null> {

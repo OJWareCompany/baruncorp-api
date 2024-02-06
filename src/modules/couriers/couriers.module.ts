@@ -9,10 +9,12 @@ import { CreateCouriersHttpController } from '@modules/couriers/commands/create-
 import { CreateCouriersService } from '@modules/couriers/commands/create-couriers/create-couriers.service'
 import { UpdateCouriersHttpController } from '@modules/couriers/commands/update-couriers/update-couriers.http.controller'
 import { UpdateCouriersService } from '@modules/couriers/commands/update-couriers/update-couriers.service'
+import { DeleteCouriersHttpController } from '@modules/couriers/commands/delete-couriers/delete-couriers.http.controller'
+import { DeleteCouriersService } from '@modules/couriers/commands/delete-couriers/delete-couriers.service'
 
-const httpControllers = [CreateCouriersHttpController, UpdateCouriersHttpController]
+const httpControllers = [CreateCouriersHttpController, UpdateCouriersHttpController, DeleteCouriersHttpController]
 
-const commandHandlers: Provider[] = [CreateCouriersService, UpdateCouriersService]
+const commandHandlers: Provider[] = [CreateCouriersService, UpdateCouriersService, DeleteCouriersService]
 
 const queryHandlers: Provider[] = []
 

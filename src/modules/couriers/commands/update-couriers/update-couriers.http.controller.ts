@@ -11,7 +11,7 @@ export class UpdateCouriersHttpController {
   @UseGuards(AuthGuard)
   async patch(@Param() param: UpdateCouriersParamRequestDto, @Body() request: UpdateCouriersRequestDto): Promise<void> {
     const command: UpdateCouriersCommand = new UpdateCouriersCommand({
-      courierId: param.couriersId,
+      couriersId: param.couriersId,
       ...request,
     })
     await this.commandBus.execute(command)
