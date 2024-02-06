@@ -66,7 +66,16 @@ export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandl
           },
         },
       },
-      orderBy: { full_name: 'asc' },
+      orderBy: [
+        {
+          full_name: 'asc',
+        },
+        {
+          organization: {
+            name: 'asc',
+          },
+        },
+      ],
     })
 
     const promises: Promise<AssignedTaskSummaryResponseDto>[] = userRecords.map(async (record) => {

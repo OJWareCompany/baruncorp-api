@@ -4,30 +4,25 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
-import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
-import { MountingType, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
-import { PrerequisiteTaskVO } from '../../../ordered-job/domain/value-objects/assigned-task.value-object'
-import { AssignedTaskSummaryResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary.response.dto'
-import { response } from 'express'
-import { addDays } from 'date-fns'
+import { AssignedTaskSummaryInProgressResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary-in-progress.response.dto'
 
-export class FindAssignedTaskSummaryPaginatedQuery extends PaginatedQueryBase {
+export class FindAssignedTaskSummaryInProgressPaginatedQuery extends PaginatedQueryBase {
   readonly organizationName?: string | null
   readonly userName?: string | null
-  readonly startedAt?: Date | null
-  readonly endedAt?: Date | null
-  constructor(props: PaginatedParams<FindAssignedTaskSummaryPaginatedQuery>) {
+  constructor(props: PaginatedParams<FindAssignedTaskSummaryInProgressPaginatedQuery>) {
     super(props)
     initialize(this, props)
   }
 }
 
-@QueryHandler(FindAssignedTaskSummaryPaginatedQuery)
+@QueryHandler(FindAssignedTaskSummaryInProgressPaginatedQuery)
 export class FindAssignedTaskSummaryInProgressPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindAssignedTaskSummaryPaginatedQuery): Promise<Paginated<AssignedTaskSummaryResponseDto>> {
+  async execute(
+    query: FindAssignedTaskSummaryInProgressPaginatedQuery,
+  ): Promise<Paginated<AssignedTaskSummaryInProgressResponseDto>> {
     const userCondition: Prisma.UsersWhereInput = {
       ...(query.userName && {
         full_name: {
@@ -53,8 +48,7 @@ export class FindAssignedTaskSummaryInProgressPaginatedQueryHandler implements I
         },
       ],
     }
-
-    // 모든 유저 레코드 조회
+    // 전체 유저 레코드 조회
     const userRecords = await this.prismaService.users.findMany({
       where: userCondition,
       select: {
@@ -66,74 +60,46 @@ export class FindAssignedTaskSummaryInProgressPaginatedQueryHandler implements I
           },
         },
       },
-      orderBy: { full_name: 'asc' },
+      orderBy: [
+        {
+          full_name: 'asc',
+        },
+        {
+          organization: {
+            name: 'asc',
+          },
+        },
+      ],
     })
 
-    const promises: Promise<AssignedTaskSummaryResponseDto>[] = userRecords.map(async (record) => {
+    const promises: Promise<AssignedTaskSummaryInProgressResponseDto>[] = userRecords.map(async (record) => {
       const assignedTaskCountCondition: Prisma.AssignedTasksWhereInput = {
         assigneeId: record.id,
-        ...(query.startedAt && {
-          created_at: {
-            gte: query.startedAt,
-          },
-        }),
-        ...(query.endedAt && {
-          created_at: {
-            ...(query.startedAt && { gte: query.startedAt }),
-            lt: addDays(query.endedAt, 1),
-          },
-        }),
       }
 
-      const allAssignedTaskCount: number = await this.prismaService.assignedTasks.count({
-        where: {
-          ...assignedTaskCountCondition,
-        },
-      })
-
-      const responseDto: AssignedTaskSummaryResponseDto = {
+      const responseDto: AssignedTaskSummaryInProgressResponseDto = {
         userId: record.id,
         organizationName: record.organization.name,
         userName: record.full_name,
-        allAssignedTaskCount: allAssignedTaskCount,
-        completedAssignedTaskCount:
-          allAssignedTaskCount !== 0
-            ? await this.prismaService.assignedTasks.count({
-                where: {
-                  ...assignedTaskCountCondition,
-                  status: AssignedTaskStatusEnum.Completed,
-                },
-              })
-            : 0,
-        // inProgressAssignedTaskCount:
-        //   allAssignedTaskCount !== 0
-        //     ? await this.prismaService.assignedTasks.count({
-        //         where: {
-        //           ...assignedTaskCountCondition,
-        //           status: AssignedTaskStatusEnum.In_Progress,
-        //         },
-        //       })
-        //     : 0,
-        canceledAssignedTaskCount:
-          allAssignedTaskCount !== 0
-            ? await this.prismaService.assignedTasks.count({
-                where: {
-                  ...assignedTaskCountCondition,
-                  status: AssignedTaskStatusEnum.Canceled,
-                },
-              })
-            : 0,
+        inProgressAssignedTaskCount: await this.prismaService.assignedTasks.count({
+          where: {
+            ...assignedTaskCountCondition,
+            status: AssignedTaskStatusEnum.In_Progress,
+          },
+        }),
       }
       return responseDto
     })
 
-    const dtos: AssignedTaskSummaryResponseDto[] = await Promise.all(promises)
+    const dtos: AssignedTaskSummaryInProgressResponseDto[] = await Promise.all(promises)
     // 조건을 만족하는 유저의 통계만 필터링
-    const filteredDtos: AssignedTaskSummaryResponseDto[] = dtos.filter((dto) => dto.allAssignedTaskCount !== 0)
+    const filteredDtos: AssignedTaskSummaryInProgressResponseDto[] = dtos.filter(
+      (dto) => dto.inProgressAssignedTaskCount !== 0,
+    )
     // 조건을 만족하는 유저의 총 수
     const totalValidCount: number = filteredDtos.length
     // 필요한 페이지 크기에 맞춰 데이터 반환
-    const validResponseDtos: AssignedTaskSummaryResponseDto[] = filteredDtos.slice(
+    const validResponseDtos: AssignedTaskSummaryInProgressResponseDto[] = filteredDtos.slice(
       query.offset,
       query.offset + query.limit,
     )

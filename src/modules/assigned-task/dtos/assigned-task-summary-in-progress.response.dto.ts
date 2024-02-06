@@ -4,7 +4,7 @@ import { initialize } from '../../../libs/utils/constructor-initializer'
 import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
 import { PrerequisiteTaskVO } from '../../ordered-job/domain/value-objects/assigned-task.value-object'
 
-export class AssignedTaskSummaryResponseDto {
+export class AssignedTaskSummaryInProgressResponseDto {
   @ApiProperty()
   @IsString()
   readonly userId: string
@@ -19,17 +19,9 @@ export class AssignedTaskSummaryResponseDto {
 
   @ApiProperty()
   @IsNumber()
-  readonly allAssignedTaskCount: number
+  readonly inProgressAssignedTaskCount: number
 
-  @ApiProperty()
-  @IsNumber()
-  readonly completedAssignedTaskCount: number
-
-  @ApiProperty()
-  @IsNumber()
-  readonly canceledAssignedTaskCount: number
-
-  constructor(props: AssignedTaskSummaryResponseDto) {
+  constructor(props: AssignedTaskSummaryInProgressResponseDto) {
     initialize(this, props)
   }
 }

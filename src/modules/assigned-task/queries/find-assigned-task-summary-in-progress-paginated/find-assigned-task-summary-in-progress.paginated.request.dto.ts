@@ -1,9 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
-import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
-import { Transform, Type } from 'class-transformer'
+import { IsOptional, IsString } from 'class-validator'
 
 export class FindAssignedTaskSummaryInProgressPaginatedRequestDto {
   @ApiProperty({ default: 'Barun Corp', required: false })
@@ -15,16 +11,4 @@ export class FindAssignedTaskSummaryInProgressPaginatedRequestDto {
   @IsOptional()
   @IsString()
   readonly userName?: string
-
-  @ApiProperty({ default: '2024-01-05', required: false })
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  readonly startedAt?: Date
-
-  @ApiProperty({ default: '2025-01-06', required: false })
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  readonly endedAt?: Date
 }
