@@ -16,10 +16,20 @@ import { JobModule } from '@modules/ordered-job/job.module'
 import { CouriersModule } from '@modules/couriers/couriers.module'
 import { DeleteTrackingNumbersHttpController } from '@modules/tracking-numbers/commands/delete-tracking-numbers/delete-tracking-numbers.http.controller'
 import { DeleteTrackingNumbersService } from '@modules/tracking-numbers/commands/delete-tracking-numbers/delete-tracking-numbers.service'
+import { UpdateTrackingNumbersHttpController } from '@modules/tracking-numbers/commands/update-tracking-numbers/update-tracking-numbers.http.controller'
+import { UpdateTrackingNumbersService } from '@modules/tracking-numbers/commands/update-tracking-numbers/update-tracking-numbers.service'
 
-const httpControllers = [CreateTrackingNumbersHttpController, DeleteTrackingNumbersHttpController]
+const httpControllers = [
+  CreateTrackingNumbersHttpController,
+  UpdateTrackingNumbersHttpController,
+  DeleteTrackingNumbersHttpController,
+]
 
-const commandHandlers: Provider[] = [CreateTrackingNumbersService, DeleteTrackingNumbersService]
+const commandHandlers: Provider[] = [
+  CreateTrackingNumbersService,
+  UpdateTrackingNumbersService,
+  DeleteTrackingNumbersService,
+]
 
 const queryHandlers: Provider[] = []
 

@@ -4,19 +4,19 @@ import { CustomMax } from '../../../../libs/decorators/custom/custom-max.decorat
 import { CustomMin } from '../../../../libs/decorators/custom/custom-min.decorator'
 import { TotalRangeException } from '../../../pto/domain/pto.error'
 
-export class UpdateCouriersParamRequestDto {
+export class UpdateTrackingNumbersParamRequestDto {
   @ApiProperty({ default: '529cec06-1fb7-4284-b56f-9f31219cd099' })
   @IsString()
-  readonly couriersId: string
+  readonly trackingNumberId: string
 }
 
-export class UpdateCouriersRequestDto {
-  @ApiProperty({ default: 'USP' })
+export class UpdateTrackingNumbersRequestDto {
+  @ApiProperty({ default: '529cec06-1fb7-4284-b56f-9f31219cd099' })
   @IsOptional()
   @IsString()
-  readonly name?: string
-  @ApiProperty({ default: 'https://www.usp.com/track?InqueryNumber1=' })
+  readonly courierId?: string
+  @ApiProperty({ default: '77331858651' })
   @IsOptional()
   @IsString()
-  readonly urlParam?: string
+  readonly trackingNumber?: string
 }
