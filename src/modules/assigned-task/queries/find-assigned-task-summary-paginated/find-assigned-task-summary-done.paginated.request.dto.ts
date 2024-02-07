@@ -5,7 +5,7 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/doma
 import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
 import { Transform, Type } from 'class-transformer'
 
-export class FindAssignedTaskSummaryPaginatedRequestDto {
+export class FindAssignedTaskSummaryDonePaginatedRequestDto {
   @ApiProperty({ default: 'Barun Corp', required: false })
   @IsString()
   @IsOptional()
