@@ -45,10 +45,6 @@ export class TrackingNumbersMapper
   }
 
   toResponse(entity: TrackingNumbersEntity): any {
-    return new TrackingNumbersResponseDto({
-      id: entity.id,
-      name: '',
-      urlParam: '',
-    })
+    return true
   }
 }

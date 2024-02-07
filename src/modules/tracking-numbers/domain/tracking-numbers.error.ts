@@ -11,3 +11,9 @@ export class TooLongTrackingNumberException extends NotFoundException {
     super('The tracking number is too long. Please within 50 characters', '21302')
   }
 }
+
+export class AlreadyExistException extends NotFoundException {
+  constructor() {
+    super(`Already exists same data.`, '21303')
+  }
+}

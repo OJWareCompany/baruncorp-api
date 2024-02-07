@@ -18,11 +18,17 @@ import { DeleteTrackingNumbersHttpController } from '@modules/tracking-numbers/c
 import { DeleteTrackingNumbersService } from '@modules/tracking-numbers/commands/delete-tracking-numbers/delete-tracking-numbers.service'
 import { UpdateTrackingNumbersHttpController } from '@modules/tracking-numbers/commands/update-tracking-numbers/update-tracking-numbers.http.controller'
 import { UpdateTrackingNumbersService } from '@modules/tracking-numbers/commands/update-tracking-numbers/update-tracking-numbers.service'
+import { FindTrackingNumbersPaginatedHttpController } from '@modules/tracking-numbers/queries/find-tracking-numbers-paginated/find-tracking-numbers.paginated.http.controller'
+import {
+  FindTrackingNumbersPaginatedQuery,
+  FindTrackingNumbersPaginatedQueryHandler,
+} from '@modules/tracking-numbers/queries/find-tracking-numbers-paginated/find-tracking-numbers.paginated.query-handler'
 
 const httpControllers = [
   CreateTrackingNumbersHttpController,
   UpdateTrackingNumbersHttpController,
   DeleteTrackingNumbersHttpController,
+  FindTrackingNumbersPaginatedHttpController,
 ]
 
 const commandHandlers: Provider[] = [
@@ -31,7 +37,7 @@ const commandHandlers: Provider[] = [
   DeleteTrackingNumbersService,
 ]
 
-const queryHandlers: Provider[] = []
+const queryHandlers: Provider[] = [FindTrackingNumbersPaginatedQueryHandler]
 
 const repositories: Provider[] = [{ provide: TRACKING_NUMBERS_REPOSITORY, useClass: TrackingNumbersRepository }]
 const mappers: Provider[] = [TrackingNumbersMapper]

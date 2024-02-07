@@ -2372,10 +2372,49 @@ export interface CreateTrackingNumbersRequestDto {
   jobId: string
   /** @default "b716ad65-8e06-4077-975e-4e4e0a56018f" */
   courierId: string
-  /** @default "b716ad65-8e06-4077-975e-4e4e0a56018f" */
-  createdBy: string
   /** @default "77331858651" */
   trackingNumber: string
+}
+
+export interface UpdateTrackingNumbersRequestDto {
+  /** @default "529cec06-1fb7-4284-b56f-9f31219cd099" */
+  courierId?: string
+  /** @default "77331858651" */
+  trackingNumber?: string
+}
+
+export interface TrackingNumbersResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  jobId: string
+  /** @default "Job #2 sample..." */
+  jobName: string
+  /** @default "FedEx" */
+  courierName: string
+  /** @default "77331858651" */
+  trackingNumber: string
+  /** @default "77331858651" */
+  trackingNumberUri: string
+  /** @default "chris.kim" */
+  createdBy: string
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  createdAt: string
+}
+
+export interface TrackingNumbersPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: TrackingNumbersResponseDto[]
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -3340,6 +3379,23 @@ export interface FindNonCountedJobFoldersHttpControllerFindNonCountedJobFoldersP
 }
 
 export interface FindCouriersPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindTrackingNumbersPaginatedHttpControllerGetParams {
+  /** @default "674e3b83-0255-46fe-bc4b-047fca3c43cf" */
+  jobId?: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -6431,6 +6487,56 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindTrackingNumbersPaginatedHttpControllerGet
+     * @request GET:/tracking-numbers
+     */
+    findTrackingNumbersPaginatedHttpControllerGet: (
+      query: FindTrackingNumbersPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<TrackingNumbersPaginatedResponseDto, any>({
+        path: `/tracking-numbers`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateTrackingNumbersHttpControllerPatch
+     * @request PATCH:/tracking-numbers/{trackingNumberId}
+     */
+    updateTrackingNumbersHttpControllerPatch: (
+      trackingNumberId: string,
+      data: UpdateTrackingNumbersRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/tracking-numbers/${trackingNumberId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name DeleteTrackingNumbersHttpControllerPatch
+     * @request DELETE:/tracking-numbers/{trackingNumbersId}
+     */
+    deleteTrackingNumbersHttpControllerPatch: (trackingNumbersId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/tracking-numbers/${trackingNumbersId}`,
+        method: 'DELETE',
         ...params,
       }),
   }
