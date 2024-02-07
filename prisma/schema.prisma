@@ -1168,7 +1168,7 @@ model GoogleJobNoteFolder {
   id               String           @id @map("id") @db.VarChar(255)
   shareLink        String?          @map("share_link") @db.VarChar(255)
   jobNotesFolderId String?          @map("job_notes_folder_id") @db.VarChar(255)
-  jobNoteId        String?          @unique @map("job_note_id") @db.VarChar(255)
+  jobNoteId        String?          @unique(map: "job_note_id") @map("job_note_id") @db.VarChar(255)
   sharedDriveId    String?          @map("shared_drive_id") @db.VarChar(255)
   jobNote          OrderedJobNotes? @relation(fields: [jobNoteId], references: [id])
 
@@ -1224,7 +1224,7 @@ model IntegratedOrderModificationHistory {
 
 model Couriers {
   id               String            @id @db.VarChar(255)
-  name             String            @unique @map("name")
+  name             String            @unique(map: "name") @map("name")
   trackingUrlParam String            @map("tracking_url_param") @db.Text
   trackingNumbers  TrackingNumbers[]
 
@@ -1237,7 +1237,7 @@ model TrackingNumbers {
   courierId      String      @map("courier_id") @db.VarChar(255)
   trackingNumber String      @map("tracking_number") @db.VarChar(255)
   createdBy      String      @map("created_by") @db.VarChar(255)
-  createdAt      DateTime    @map("created_at") @db.DateTime(0) @default(now())
+  createdAt      DateTime    @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt      DateTime    @map("updated_at") @db.DateTime(0)
   job            OrderedJobs @relation(fields: [jobId], references: [id])
   courier        Couriers    @relation(fields: [courierId], references: [id])
