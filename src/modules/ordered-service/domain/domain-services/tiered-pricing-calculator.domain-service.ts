@@ -19,25 +19,38 @@ export class TieredPricingCalculator {
     private readonly sameScopeCompletionOrderCalculator: SameScopeCompletionOrderCalculator,
   ) {}
 
-  /**
-   * property Type대신 프로젝트 엔티티를 받는 이유는 주문된 스코프에 중복 저장된 데이터 대신 더 신뢰성 있는 데이터를 사용하기 위함이다.
-   * 따라서, 그럴거면 그냥 여기서 프로젝트를 인자로 받지 말고 repository를 이용해서 조회하자.
-   */
-  async calc(orderedScope: OrderedServiceEntity): Promise<number | null> {
+  async isTieredPricingScope(orderedScope: OrderedServiceEntity): Promise<boolean> {
     const project = await this.projectRepo.findOneOrThrow({ id: orderedScope.projectId })
-    const job = await this.jobRepo.findJobOrThrow(orderedScope.jobId)
     const customPricing = await this.customPricingRepo.findOneOrThrow(
       orderedScope.serviceId,
       orderedScope.organizationId,
     )
 
     if (project.isCommercial) {
-      return orderedScope.price
+      return false
     }
 
     if (await this.scopeRevisionChecker.isRevision(orderedScope)) {
-      return orderedScope.price
+      return false
     }
+
+    if (!customPricing.hasNewResidentialTieredPricing) {
+      return false
+    }
+
+    return true
+  }
+
+  /**
+   * property Type대신 프로젝트 엔티티를 받는 이유는 주문된 스코프에 중복 저장된 데이터 대신 더 신뢰성 있는 데이터를 사용하기 위함이다.
+   * 따라서, 그럴거면 그냥 여기서 프로젝트를 인자로 받지 말고 repository를 이용해서 조회하자.
+   */
+  async calc(orderedScope: OrderedServiceEntity): Promise<number | null> {
+    const job = await this.jobRepo.findJobOrThrow(orderedScope.jobId)
+    const customPricing = await this.customPricingRepo.findOneOrThrow(
+      orderedScope.serviceId,
+      orderedScope.organizationId,
+    )
 
     // 클라이언트가 이번 달에 주문한 동일한 New Scope 중에서 몇번째로 완료된 Scope인가?
     const currentQuantity = await this.sameScopeCompletionOrderCalculator.calc(orderedScope)

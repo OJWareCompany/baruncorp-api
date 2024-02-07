@@ -12,7 +12,6 @@ import { OrderedScopeStatusChangeValidator } from '../../domain/domain-services/
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
-import { TieredPricingCalculator } from '../../domain/domain-services/tiered-pricing-calculator.domain-service'
 import { UpdateOrderedScopeStatusCommand } from './update-ordered-scope-status.command'
 
 @CommandHandler(UpdateOrderedScopeStatusCommand)
@@ -23,7 +22,6 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort, // @ts-ignore
     @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort,
     private readonly orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator,
-    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
 
   @GenerateOrderedScopeModificationHistory({ invokedFrom: 'self' })
@@ -52,7 +50,7 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
          * 주문된 순서와 동일하게 완료되지는 않을텐데..
          * 하지만 완료할때마다 가격이 매번 달라지는 것도 주의해야함
          */
-        await orderedScope.validateAndComplete(this.orderedScopeStatusChangeValidator, this.tieredPricingCalculator)
+        await orderedScope.validateAndComplete(this.orderedScopeStatusChangeValidator)
         break
       case OrderedServiceStatusEnum.Canceled:
         orderedScope.cancel('manually')

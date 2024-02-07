@@ -4,6 +4,7 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
+import { TieredPricingCalculator } from '../../../ordered-service/domain/domain-services/tiered-pricing-calculator.domain-service'
 import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
 import { JobNotFoundException } from '../../../ordered-job/domain/job.error'
 import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
@@ -24,12 +25,19 @@ export class CreateInvoiceService implements ICommandHandler {
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort, // @ts-ignore
     @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
     private readonly calcInvoiceService: CalculateInvoiceService,
+    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
   async execute(command: CreateInvoiceCommand): Promise<AggregateID> {
     const jobs = await this.jobRepo.findJobsToInvoice(command.clientOrganizationId, command.serviceMonth)
     if (!jobs.length) throw new JobNotFoundException()
 
     const orderedServices = await this.orderedServiceRepo.findBy({ jobId: { in: jobs.map((job) => job.id) } })
+
+    const calcCost = orderedServices.map(
+      async (orderedService) => await orderedService.determinePriceWhenInvoice(this.tieredPricingCalculator),
+    )
+
+    await Promise.all(calcCost)
 
     const subTotal = orderedServices.reduce((pre, cur) => {
       return pre + Number(cur.price)

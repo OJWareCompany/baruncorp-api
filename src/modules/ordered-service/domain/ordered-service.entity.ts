@@ -1,5 +1,35 @@
+import { Service } from '@prisma/client'
 import { v4 } from 'uuid'
+import _ from 'lodash'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { JobCanceledAndKeptInvoiceDomainEvent } from '../../ordered-job/domain/events/job-canceled-and-kept-invoice.domain-event'
+import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { JobNotStartedDomainEvent } from '../../ordered-job/domain/events/job-not-started.domain-event'
+import { JobCanceledDomainEvent } from '../../ordered-job/domain/events/job-canceled.domain-event'
+import { OrderDeletionValidator } from '../../ordered-job/domain/domain-services/order-deletion-validator.domain-service'
+import { JobStartedDomainEvent } from '../../ordered-job/domain/events/job-started.domain-event'
+import {
+  JobSendableToClientPriceNotSetException,
+  JobSendableToClientScopesInCompletedException,
+} from '../../ordered-job/domain/job.error'
+import { OrderedServiceCanceledAndKeptInvoiceDomainEvent } from './events/ordered-service-canceled-and-ketp-invoice.domain-event'
+import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-service-invoiced.domain-event'
+import { OrderedServiceUpdatedRevisionSizeDomainEvent } from './events/ordered-service-updated-revision-size.domain-event'
+import { RevisionTypeUpdateValidationDomainService } from './domain-services/revision-type-update-validation.domain-service'
+import { OrderedServiceBackToNotStartedDomainEvent } from './events/ordered-service-back-to-not-started.domain-event'
+import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
+import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
+import { OrderedScopeStatusChangeValidator } from './domain-services/check-all-related-tasks-completed.domain-service'
+import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
+import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
+import { OrderedServiceDeletedDomainEvent } from './events/ordered-service-deleted.domain-event'
+import { OrderedServiceStartedDomainEvent } from './events/ordered-service-started.domain-event'
+import { OrderedServiceResetDomainEvent } from './events/ordered-service-reset.domain-event'
+import { OrderedServiceHeldDomainEvent } from './events/ordered-service-held.domain-event'
+import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
+import { TieredPricingCalculator } from './domain-services/tiered-pricing-calculator.domain-service'
+import { ScopeRevisionChecker } from './domain-services/scope-revision-checker.domain-service'
 import {
   AutoOnlyOrderedServiceStatusEnum,
   CreateOrderedServiceProps,
@@ -8,44 +38,11 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from './ordered-service.type'
-import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import {
-  OrderedServiceAutoCancelableException,
   OrderedServiceFreeRevisionManualPriceUpdateException,
   OrderedServiceHoldableException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
-  OrderedServiceAutoStartableException,
 } from './ordered-service.error'
-import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
-import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
-import { Service } from '@prisma/client'
-import { OrderedServiceUpdatedRevisionSizeDomainEvent } from './events/ordered-service-updated-revision-size.domain-event'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
-import { CalculateInvoiceService } from '../../invoice/domain/calculate-invoice-service.domain-service'
-import { CustomPricingRepositoryPort } from '../../custom-pricing/database/custom-pricing.repository.port'
-import { OrderedServiceAppliedTieredPricingDomainEvent } from './events/ordered-service-invoiced.domain-event'
-import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
-import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
-import { OrderedScopeStatusChangeValidator } from './domain-services/check-all-related-tasks-completed.domain-service'
-import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
-import { RevisionTypeUpdateValidationDomainService } from './domain-services/revision-type-update-validation.domain-service'
-import {
-  JobSendableToClientPriceNotSetException,
-  JobSendableToClientScopesInCompletedException,
-} from '../../ordered-job/domain/job.error'
-import { OrderedServiceBackToNotStartedDomainEvent } from './events/ordered-service-back-to-not-started.domain-event'
-import { OrderedServiceCanceledAndKeptInvoiceDomainEvent } from './events/ordered-service-canceled-and-ketp-invoice.domain-event'
-import { OrderedServiceHeldDomainEvent } from './events/ordered-service-held.domain-event'
-import { OrderedServiceStartedDomainEvent } from './events/ordered-service-started.domain-event'
-import { OrderedServiceResetDomainEvent } from './events/ordered-service-reset.domain-event'
-import { JobCanceledDomainEvent } from '../../ordered-job/domain/events/job-canceled.domain-event'
-import { JobCanceledAndKeptInvoiceDomainEvent } from '../../ordered-job/domain/events/job-canceled-and-kept-invoice.domain-event'
-import { JobNotStartedDomainEvent } from '../../ordered-job/domain/events/job-not-started.domain-event'
-import { JobStartedDomainEvent } from '../../ordered-job/domain/events/job-started.domain-event'
-import { OrderedServiceDeletedDomainEvent } from './events/ordered-service-deleted.domain-event'
-import { OrderDeletionValidator } from '../../ordered-job/domain/domain-services/order-deletion-validator.domain-service'
-import { TieredPricingCalculator } from './domain-services/tiered-pricing-calculator.domain-service'
-import { ScopeRevisionChecker } from './domain-services/scope-revision-checker.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -364,15 +361,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return 1
   }
 
-  async validateAndComplete(
-    orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator,
-    tieredPricingCalculator: TieredPricingCalculator,
-  ) {
-    if (this.isRevision && !this.isRevisionTypeEntered) return
+  async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator): Promise<this> {
+    if (this.isRevision && !this.isRevisionTypeEntered) return this
     await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
     this.complete()
-    const price = await tieredPricingCalculator.calc(this)
-    this.setPrice(price)
     return this
   }
 
@@ -385,6 +377,22 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
         jobId: this.props.jobId,
       }),
     )
+    return this
+  }
+
+  async setTieredPrice(tieredPricingCalculator: TieredPricingCalculator): Promise<this> {
+    if (this.props.isManualPrice) return this
+
+    if (await tieredPricingCalculator.isTieredPricingScope(this)) {
+      const price = await tieredPricingCalculator.calc(this)
+      this.setPrice(price)
+      this.addEvent(
+        new OrderedServiceAppliedTieredPricingDomainEvent({
+          aggregateId: this.id,
+          jobId: this.props.jobId,
+        }),
+      )
+    }
     return this
   }
 
@@ -417,10 +425,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   private freeCost() {
+    if (this.props.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major) return this
     const NO_COST = 0
-    // 왜 Minor Completed로 했었을까? 도메인 정보를 문서화 할 필요가 있다.
-    // if (this.isCanceledOrMinorCompleted) this.setPrice(NO_COST)
-    if (this.props.sizeForRevision !== OrderedServiceSizeForRevisionEnum.Major) this.setPrice(NO_COST)
+    this.setPrice(NO_COST)
+    return this
   }
 
   private setPricingType(pricingType: OrderedServicePricingTypeEnum | null): this {
@@ -460,25 +468,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return totalCost
   }
 
-  async determinePriceWhenInvoice(
-    calcService: CalculateInvoiceService,
-    orderedServices: OrderedServiceEntity[],
-    customPricingRepo: CustomPricingRepositoryPort,
-  ) {
+  async determinePriceWhenInvoice(tieredPricingCalculator: TieredPricingCalculator): Promise<this> {
+    const permittedAutoUpdateStatus = [OrderedServiceStatusEnum.Completed, OrderedServiceStatusEnum.Canceled_Invoice]
     if (this.isCanceledOrMinorCompleted) return this.freeCost()
-    if (!this.isNewResidentialPurePrice) return
-
-    const tier = await calcService.getTier(this, orderedServices, customPricingRepo)
-    if (!tier) return
-
-    const price = this.isGroundMount ? tier.gmPrice : tier.price
-    this.setPrice(price)
-    this.addEvent(
-      new OrderedServiceAppliedTieredPricingDomainEvent({
-        aggregateId: this.id,
-        jobId: this.props.jobId,
-      }),
-    )
+    if (!this.isNewResidentialPurePrice) return this
+    if (!_.includes(permittedAutoUpdateStatus, this.status)) return this
+    return await this.setTieredPrice(tieredPricingCalculator)
   }
 
   get isCanceledOrMinorCompleted(): boolean {

@@ -5,18 +5,6 @@ import { ServiceRepositoryPort } from '../../service/database/service.repository
 
 @Injectable()
 export class CalculateInvoiceService {
-  async getTier(
-    target: OrderedServiceEntity,
-    orderedServices: OrderedServiceEntity[],
-    customPricingRepo: CustomPricingRepositoryPort,
-  ) {
-    const customPricing = await customPricingRepo.findOne(target.organizationId, target.serviceId)
-    if (!customPricing) return // TODO: 예외처리 필요?
-    if (!customPricing.hasNewResidentialTieredPricing) return
-    const numberOfServices = this.calcNewResiServices(target, orderedServices)
-    return customPricing.getVolumeTieredPrice(numberOfServices)
-  }
-
   /**
    * 1. New Residential Service를 리스트한다. Standard와 현재 가격을 비교한다.
    * 2. 원래 가격과 현재 가격
@@ -49,15 +37,5 @@ export class CalculateInvoiceService {
     }
 
     return discountAmount
-  }
-
-  private calcNewResiServices(target: OrderedServiceEntity, orderedServices: OrderedServiceEntity[]): number {
-    let count = 0
-    for (const orderedService of orderedServices) {
-      if (orderedService.serviceId === target.serviceId && orderedService.isNewResidentialService) {
-        count++
-      }
-    }
-    return count
   }
 }

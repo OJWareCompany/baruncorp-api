@@ -1,6 +1,6 @@
-import { EventEmitter2 } from '@nestjs/event-emitter'
-import { endOfMonth, startOfMonth } from 'date-fns'
 import { zonedTimeToUtc } from 'date-fns-tz'
+import { EventEmitter2 } from '@nestjs/event-emitter'
+import { startOfMonth } from 'date-fns'
 import { Injectable } from '@nestjs/common'
 import { Prisma } from '@prisma/client'
 import _ from 'lodash'
@@ -34,11 +34,31 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
         status,
         orderedAt: {
           gte: zonedTimeToUtc(startOfMonth(orderedAt), 'Etc/UTC'),
-          lt: zonedTimeToUtc(endOfMonth(orderedAt), 'Etc/UTC'),
+          lt: orderedAt,
         },
       },
       include: { assignedTasks: true },
     })
+
+    // console.log(orderedAt) // 2024-02-06T18:03:17.261Z
+    // console.log(orderedAt.toUTCString()) // 2024-02-06T18:03:17.261Z
+    // console.log(startOfMonth(orderedAt)) // 2024-01-31T15:00:00.000Z
+    // console.log(startOfMonth(orderedAt).toUTCString()) // Wed, 31 Jan 2024 15:00:00 GMT
+    // console.log(zonedTimeToUtc(startOfMonth(orderedAt), 'Etc/UTC')) // 2024-02-01T00:00:00.000Z
+    // console.log(zonedTimeToUtc(startOfMonth(orderedAt), 'Etc/UTC').toUTCString()) // Thu, 01 Feb 2024 00:00:00 GMT
+
+    // /**
+    //  * startOfMonth(orderedAt)
+    //  * 한국 기준 1월 1일로 계산후 표현은 UTC로 한다. (즉, UTC 기준 1월 1일이 아님)
+    //  *
+    //  * DB에서 가져오거나 직접 입력 받은 시간도 Date 객체가 로컬 타임존을 사용하지만 toString하지 않으면 받은 시간 그대로 표현한다.
+    //  * toUTC 하더라도 변함이 없을 것이다.
+    //  *
+    //  * TODO: 아래 케이스에 대해서 명확히 이해해야한다.
+    //  * 1. DB에서 직접 생성하고 DB에서 조회해서 사용하는 시간
+    //  * 2. 클라이언트에게 받은 시간
+    //  * 3. 1,2번이 혼용되었을 때(?)
+    //  */
     return records.map(this.orderedServiceMapper.toDomain)
   }
 
