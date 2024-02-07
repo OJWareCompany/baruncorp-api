@@ -26,8 +26,16 @@ export class CouriersRepository implements CouriersRepositoryPort {
   }
 
   async update(entity: CouriersEntity): Promise<void> {
-    const record = this.mapper.toPersistence(entity)
-    await this.prismaService.couriers.update({ where: { id: entity.id }, data: record })
+    try {
+      const record = this.mapper.toPersistence(entity)
+      await this.prismaService.couriers.update({ where: { id: entity.id }, data: record })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new UniqueCouriersException()
+      } else {
+        throw e
+      }
+    }
   }
 
   async delete(id: string): Promise<void> {
