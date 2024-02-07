@@ -16,7 +16,7 @@ export class DeleteTrackingNumbersService implements ICommandHandler {
     @Inject(TRACKING_NUMBERS_REPOSITORY) private readonly trackingNumbersRepository: TrackingNumbersRepositoryPort,
   ) {}
   async execute(command: DeleteTrackingNumbersCommand): Promise<void> {
-    const entity: TrackingNumbersEntity | null = await this.trackingNumbersRepository.findOne(command.trackingNumbersId)
+    const entity: TrackingNumbersEntity | null = await this.trackingNumbersRepository.findOne(command.trackingNumberId)
     if (!entity) throw new TrackingNumbersNotFoundException()
 
     await this.trackingNumbersRepository.delete(entity.id)
