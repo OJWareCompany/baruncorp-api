@@ -4,12 +4,8 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
-import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
-import { MountingType, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
-import { PrerequisiteTaskVO } from '../../../ordered-job/domain/value-objects/assigned-task.value-object'
 import { AssignedTaskSummaryDoneResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary-done.response.dto'
-import { response } from 'express'
 import { addDays } from 'date-fns'
 
 export class FindAssignedTaskSummaryDonePaginatedQuery extends PaginatedQueryBase {

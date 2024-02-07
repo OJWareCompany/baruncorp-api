@@ -44,12 +44,12 @@ import { BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler 
 import { CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
 import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
 import { DeleteAssignedTaskWhenOrderedServiceIsDeletedDomainServiceHandler } from './application/event-handlers/delete-assigned-task-when-ordered-service-is-deleted.domain-service-handler'
-import { FindAssignedTaskSummaryDonePaginatedHttpController } from './queries/find-assigned-task-summary-paginated/find-assigned-task-summary-done.paginated.http.controller'
-import { FindAssignedTaskSummaryDonePaginatedQueryHandler } from '@modules/assigned-task/queries/find-assigned-task-summary-paginated/find-assigned-task-summary-done.paginated.query-handler'
 import { FindAssignedTaskSummaryDetailPaginatedQueryHandler } from '@modules/assigned-task/queries/find-assigned-task-summary-detail-paginated/find-assigned-task-summary-detail.paginated.query-handler'
 import { FindAssignedTaskSummaryDetailPaginatedHttpController } from '@modules/assigned-task/queries/find-assigned-task-summary-detail-paginated/find-assigned-task-summary-detail.paginated.http.controller'
 import { FindAssignedTaskSummaryInProgressPaginatedHttpController } from '@modules/assigned-task/queries/find-assigned-task-summary-in-progress-paginated/find-assigned-task-summary-in-progress.paginated.http.controller'
 import { FindAssignedTaskSummaryInProgressPaginatedQueryHandler } from '@modules/assigned-task/queries/find-assigned-task-summary-in-progress-paginated/find-assigned-task-summary-in-progress.paginated.query-handler'
+import { FindAssignedTaskSummaryDonePaginatedHttpController } from '@modules/assigned-task/queries/find-assigned-task-summary-done-paginated/find-assigned-task-summary-done.paginated.http.controller'
+import { FindAssignedTaskSummaryDonePaginatedQueryHandler } from '@modules/assigned-task/queries/find-assigned-task-summary-done-paginated/find-assigned-task-summary-done.paginated.query-handler'
 
 const httpControllers = [
   AssignTaskHttpController,

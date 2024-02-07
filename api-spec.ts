@@ -948,16 +948,16 @@ export interface AssignedTaskPaginatedResponseDto {
   items: AssignedTaskResponseDto[]
 }
 
-export interface AssignedTaskSummaryResponseDto {
+export interface AssignedTaskSummaryDoneResponseDto {
   userId: string
   organizationName: string
   userName: string
-  allAssignedTaskCount: number
+  doneAssignedTaskCount: number
   completedAssignedTaskCount: number
   canceledAssignedTaskCount: number
 }
 
-export interface AssignedTaskSummaryPaginatedResponseDto {
+export interface AssignedTaskSummaryDonePaginatedResponseDto {
   /** @default 1 */
   page: number
   /** @default 20 */
@@ -966,7 +966,7 @@ export interface AssignedTaskSummaryPaginatedResponseDto {
   totalCount: number
   /** @example 500 */
   totalPage: number
-  items: AssignedTaskSummaryResponseDto[]
+  items: AssignedTaskSummaryDoneResponseDto[]
 }
 
 export interface AssignedTaskSummaryDetailResponseDto {
@@ -2390,6 +2390,8 @@ export interface TrackingNumbersResponseDto {
   jobId: string
   /** @default "Job #2 sample..." */
   jobName: string
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  courierId: string
   /** @default "FedEx" */
   courierName: string
   /** @default "77331858651" */
@@ -2828,7 +2830,7 @@ export interface FindAssignedTaskPaginatedHttpControllerGetParams {
   page?: number
 }
 
-export interface FindAssignedTaskSummaryPaginatedHttpControllerGetParams {
+export interface FindAssignedTaskSummaryDonePaginatedHttpControllerGetParams {
   /** @default "Barun Corp" */
   organizationName?: string
   /** @default "John Doe" */
@@ -2862,6 +2864,16 @@ export interface FindAssignedTaskSummaryDetailPaginatedHttpControllerGetParams {
   userId: string
   /** @default "Completed" */
   status?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
+  /**
+   * @format date-time
+   * @default "2024-01-05"
+   */
+  startedAt?: string
+  /**
+   * @format date-time
+   * @default "2025-01-06"
+   */
+  endedAt?: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -4702,15 +4714,15 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name FindAssignedTaskSummaryPaginatedHttpControllerGet
-     * @request GET:/assigned-tasks/summary/total
+     * @name FindAssignedTaskSummaryDonePaginatedHttpControllerGet
+     * @request GET:/assigned-tasks/summary/done
      */
-    findAssignedTaskSummaryPaginatedHttpControllerGet: (
-      query: FindAssignedTaskSummaryPaginatedHttpControllerGetParams,
+    findAssignedTaskSummaryDonePaginatedHttpControllerGet: (
+      query: FindAssignedTaskSummaryDonePaginatedHttpControllerGetParams,
       params: RequestParams = {},
     ) =>
-      this.request<AssignedTaskSummaryPaginatedResponseDto, any>({
-        path: `/assigned-tasks/summary/total`,
+      this.request<AssignedTaskSummaryDonePaginatedResponseDto, any>({
+        path: `/assigned-tasks/summary/done`,
         method: 'GET',
         query: query,
         format: 'json',
