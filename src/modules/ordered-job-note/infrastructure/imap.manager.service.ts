@@ -4,12 +4,10 @@ import { RFIMailer } from '@modules/ordered-job-note/infrastructure/mailer.infra
 import * as xoauth2 from 'xoauth2'
 import { Credentials, OAuth2Client } from 'google-auth-library'
 import { gmail_v1 } from 'googleapis'
-import { inspect } from 'util'
 import { AddressObject, ParsedMail, simpleParser } from 'mailparser'
 import { JobNoteRepository } from '@modules/ordered-job-note/database/job-note.repository'
 import { JobNoteEntity } from '@modules/ordered-job-note/domain/job-note.entity'
 import { IImapConnection, JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
-import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
 import { PrismaService } from '@modules/database/prisma.service'
 import { UserStatusEnum } from '@modules/users/domain/user.types'
 
@@ -216,8 +214,8 @@ export class ImapManagerService {
         const maxJobNoteNumber: number | null = await this.jobNoteRepository.getMaxJobNoteNumber(
           equalThreadIdEntity.jobId,
         )
-
-        const filteredContent: string = parsed.text ? this.removeOriginalMessage(parsed.text) : ''
+        const filteredContent: string = parsed.text ? this.parseEmailMainContent(parsed.text) : ''
+        // const filteredContent: string = parsed.text ?? ''
         // console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
         // console.log(`Add RFI`)
         await this.jobNoteRepository.insert(
@@ -240,21 +238,35 @@ export class ImapManagerService {
     }
   }
 
-  private removeOriginalMessage(input: string): string {
-    const lines = input.split('\n')
-    let result = ''
-    let skipLines = false
-
-    for (const line of lines) {
-      if (line.includes('Original Message')) {
-        skipLines = true
-      }
-
-      if (!skipLines) {
-        result += line + '\n'
-      }
+  private parseEmailMainContent(input: string): string {
+    // Gmail Case
+    // 콜론(:)이 이메일 주소와 같은 라인에 바로 이어지는 경우, 이메일 주소 다음 라인에 있을 경우,
+    // 그리고 이메일 주소와 같은 라인에 있지만 그 앞에 다른 문자열(예: "wrote")이 있는 경우를 모두 포함.
+    // const gmailReplyHeaderPattern: RegExp = /<[^>]+@[^>]+>(?:.*\n)?\s*.*:/g
+    const gmailReplyHeaderPattern = /[^@\s]+@[^@\s]+\.[^@\s]+(?:.*\n)?\s*.*:/g
+    // 기타 이메일(Ecount, Namer)
+    const replyHeaderPattern = /.*(-{4,}\s*[^-\s].*?\s*-{4,}).*/
+    // 답장 헤더의 위치를 찾습니다.
+    const replyHeaderMatches: RegExpMatchArray[] = Array.from(input.matchAll(gmailReplyHeaderPattern))
+    // 초기 cutOffIndex 설정
+    let cutOffIndex: number = input.length
+    if (replyHeaderMatches.length > 0) {
+      // 가장 첫 번째 매치의 시작 인덱스를 사용.
+      const firstMatchIndex: number | undefined = replyHeaderMatches[0].index
+      // 해당 매치의 첫 번째 줄바꿈 문자 이전까지를 기준으로 본문을 추출.
+      const prevNewLineIndex: number = input.lastIndexOf('\n', firstMatchIndex)
+      cutOffIndex = prevNewLineIndex > -1 ? prevNewLineIndex : 0
     }
+    // 서명 구분자의 위치
+    const signatureMatch: RegExpExecArray | null = replyHeaderPattern.exec(input)
+    if (signatureMatch) {
+      const signatureIndex: number = signatureMatch.index
+      const prevNewLineIndex: number = input.lastIndexOf('\n', signatureIndex)
+      cutOffIndex = Math.min(cutOffIndex, prevNewLineIndex > -1 ? prevNewLineIndex : 0)
+    }
+    // 결정된 위치 이전의 텍스트를 본문으로 간주
+    const replyContent: string = input.substring(0, cutOffIndex).trim()
 
-    return result.trim() // 마지막에 추가된 개행 문자 제거
+    return replyContent
   }
 }

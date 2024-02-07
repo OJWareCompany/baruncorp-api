@@ -75,6 +75,7 @@ export class FindTrackingNumbersPaginatedQueryHandler implements IQueryHandler {
           jobId: record.jobId,
           jobName: record.job.jobName,
           trackingNumberUri: `${record.courier.trackingUrlParam}${record.trackingNumber}`,
+          courierId: record.courierId,
           courierName: record.courier.name,
           createdBy: record.user.full_name,
           trackingNumber: record.trackingNumber,

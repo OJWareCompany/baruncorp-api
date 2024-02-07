@@ -4,30 +4,28 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
-import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
-import { MountingType, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
-import { PrerequisiteTaskVO } from '../../../ordered-job/domain/value-objects/assigned-task.value-object'
-import { AssignedTaskSummaryResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary.response.dto'
-import { response } from 'express'
+import { AssignedTaskSummaryDoneResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary-done.response.dto'
 import { addDays } from 'date-fns'
 
-export class FindAssignedTaskSummaryPaginatedQuery extends PaginatedQueryBase {
+export class FindAssignedTaskSummaryDonePaginatedQuery extends PaginatedQueryBase {
   readonly organizationName?: string | null
   readonly userName?: string | null
   readonly startedAt?: Date | null
   readonly endedAt?: Date | null
-  constructor(props: PaginatedParams<FindAssignedTaskSummaryPaginatedQuery>) {
+  constructor(props: PaginatedParams<FindAssignedTaskSummaryDonePaginatedQuery>) {
     super(props)
     initialize(this, props)
   }
 }
 
-@QueryHandler(FindAssignedTaskSummaryPaginatedQuery)
-export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandler {
+@QueryHandler(FindAssignedTaskSummaryDonePaginatedQuery)
+export class FindAssignedTaskSummaryDonePaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
-  async execute(query: FindAssignedTaskSummaryPaginatedQuery): Promise<Paginated<AssignedTaskSummaryResponseDto>> {
+  async execute(
+    query: FindAssignedTaskSummaryDonePaginatedQuery,
+  ): Promise<Paginated<AssignedTaskSummaryDoneResponseDto>> {
     const userCondition: Prisma.UsersWhereInput = {
       ...(query.userName && {
         full_name: {
@@ -78,7 +76,7 @@ export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandl
       ],
     })
 
-    const promises: Promise<AssignedTaskSummaryResponseDto>[] = userRecords.map(async (record) => {
+    const promises: Promise<AssignedTaskSummaryDoneResponseDto>[] = userRecords.map(async (record) => {
       const assignedTaskCountCondition: Prisma.AssignedTasksWhereInput = {
         assigneeId: record.id,
         ...(query.startedAt && {
@@ -97,14 +95,22 @@ export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandl
       const allAssignedTaskCount: number = await this.prismaService.assignedTasks.count({
         where: {
           ...assignedTaskCountCondition,
+          OR: [
+            {
+              status: AssignedTaskStatusEnum.Completed,
+            },
+            {
+              status: AssignedTaskStatusEnum.Canceled,
+            },
+          ],
         },
       })
 
-      const responseDto: AssignedTaskSummaryResponseDto = {
+      const responseDto: AssignedTaskSummaryDoneResponseDto = {
         userId: record.id,
         organizationName: record.organization.name,
         userName: record.full_name,
-        allAssignedTaskCount: allAssignedTaskCount,
+        doneAssignedTaskCount: allAssignedTaskCount,
         completedAssignedTaskCount:
           allAssignedTaskCount !== 0
             ? await this.prismaService.assignedTasks.count({
@@ -127,13 +133,13 @@ export class FindAssignedTaskSummaryPaginatedQueryHandler implements IQueryHandl
       return responseDto
     })
 
-    const dtos: AssignedTaskSummaryResponseDto[] = await Promise.all(promises)
+    const dtos: AssignedTaskSummaryDoneResponseDto[] = await Promise.all(promises)
     // 조건을 만족하는 유저의 통계만 필터링
-    const filteredDtos: AssignedTaskSummaryResponseDto[] = dtos.filter((dto) => dto.allAssignedTaskCount !== 0)
+    const filteredDtos: AssignedTaskSummaryDoneResponseDto[] = dtos.filter((dto) => dto.doneAssignedTaskCount !== 0)
     // 조건을 만족하는 유저의 총 수
     const totalValidCount: number = filteredDtos.length
     // 필요한 페이지 크기에 맞춰 데이터 반환
-    const validResponseDtos: AssignedTaskSummaryResponseDto[] = filteredDtos.slice(
+    const validResponseDtos: AssignedTaskSummaryDoneResponseDto[] = filteredDtos.slice(
       query.offset,
       query.offset + query.limit,
     )

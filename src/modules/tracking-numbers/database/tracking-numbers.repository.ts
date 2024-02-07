@@ -27,8 +27,16 @@ export class TrackingNumbersRepository implements TrackingNumbersRepositoryPort 
   }
 
   async update(entity: TrackingNumbersEntity): Promise<void> {
-    const record = this.mapper.toPersistence(entity)
-    await this.prismaService.trackingNumbers.update({ where: { id: entity.id }, data: record })
+    try {
+      const record = this.mapper.toPersistence(entity)
+      await this.prismaService.trackingNumbers.update({ where: { id: entity.id }, data: record })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new AlreadyExistException()
+      } else {
+        throw e
+      }
+    }
   }
 
   async delete(id: string): Promise<void> {

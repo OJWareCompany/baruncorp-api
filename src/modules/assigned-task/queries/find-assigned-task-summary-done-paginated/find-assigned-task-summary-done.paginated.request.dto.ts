@@ -1,11 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
-import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
-import { Transform, Type } from 'class-transformer'
+import { IsDate, IsOptional, IsString } from 'class-validator'
+import { Type } from 'class-transformer'
 
-export class FindAssignedTaskSummaryPaginatedRequestDto {
+export class FindAssignedTaskSummaryDonePaginatedRequestDto {
   @ApiProperty({ default: 'Barun Corp', required: false })
   @IsString()
   @IsOptional()

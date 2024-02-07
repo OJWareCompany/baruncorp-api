@@ -39,7 +39,7 @@ export class RFIMailer {
         }
       })
 
-    console.log(`[sendRFI] threadId : ${res?.data.threadId}`)
+    // console.log(`[sendRFI] threadId : ${res?.data.threadId}`)
     return res?.data
   }
 

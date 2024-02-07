@@ -7,10 +7,13 @@ import { PrismaService } from '../../../database/prisma.service'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
 
 import { AssignedTaskSummaryDetailResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary-detail.response.dto'
+import { addDays } from 'date-fns'
 
 export class FindAssignedTaskSummaryDetailPaginatedQuery extends PaginatedQueryBase {
   readonly userId: string
   readonly status?: AssignedTaskStatusEnum
+  readonly startedAt?: Date | null
+  readonly endedAt?: Date | null
   constructor(props: PaginatedParams<FindAssignedTaskSummaryDetailPaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -24,9 +27,43 @@ export class FindAssignedTaskSummaryDetailPaginatedQueryHandler implements IQuer
   async execute(
     query: FindAssignedTaskSummaryDetailPaginatedQuery,
   ): Promise<Paginated<AssignedTaskSummaryDetailResponseDto>> {
-    const condition: Prisma.AssignedTasksWhereInput = {
+    let condition: Prisma.AssignedTasksWhereInput = {
       assigneeId: query.userId,
-      ...(query.status && { status: query.status }),
+      ...(query.status && {
+        status: query.status,
+      }),
+    }
+
+    if (query.status === AssignedTaskStatusEnum.Completed || query.status === AssignedTaskStatusEnum.Canceled) {
+      condition = {
+        ...condition,
+        ...(query.startedAt && {
+          doneAt: {
+            gte: query.startedAt,
+          },
+        }),
+        ...(query.endedAt && {
+          doneAt: {
+            ...(query.startedAt && { gte: query.startedAt }),
+            lt: addDays(query.endedAt, 1),
+          },
+        }),
+      }
+    } else {
+      condition = {
+        ...condition,
+        ...(query.startedAt && {
+          created_at: {
+            gte: query.startedAt,
+          },
+        }),
+        ...(query.endedAt && {
+          created_at: {
+            ...(query.startedAt && { gte: query.startedAt }),
+            lt: addDays(query.endedAt, 1),
+          },
+        }),
+      }
     }
 
     const records = await this.prismaService.assignedTasks.findMany({
