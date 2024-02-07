@@ -14,6 +14,8 @@ export class TrackingNumbersResponseDto {
   jobId: string
   @ApiProperty({ default: 'Job #2 sample...' })
   jobName: string
+  @ApiProperty({ default: 'bd2d7904-136d-4e2e-966a-679fe4f499d0' })
+  courierId: string
   @ApiProperty({ default: 'FedEx' })
   courierName: string
   @ApiProperty({ default: '77331858651' })
