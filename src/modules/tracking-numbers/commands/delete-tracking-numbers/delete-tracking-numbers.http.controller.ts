@@ -11,7 +11,7 @@ export class DeleteTrackingNumbersHttpController {
   @UseGuards(AuthGuard)
   async patch(@Param() param: DeleteTrackingNumbersParamRequestDto): Promise<void> {
     const command: DeleteTrackingNumbersCommand = new DeleteTrackingNumbersCommand({
-      trackingNumbersId: param.trackingNumbersId,
+      trackingNumberId: param.trackingNumberId,
     })
     await this.commandBus.execute(command)
   }

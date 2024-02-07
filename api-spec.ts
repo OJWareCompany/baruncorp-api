@@ -6533,7 +6533,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name DeleteTrackingNumbersHttpControllerPatch
      * @request DELETE:/tracking-numbers/{trackingNumbersId}
      */
-    deleteTrackingNumbersHttpControllerPatch: (trackingNumbersId: string, params: RequestParams = {}) =>
+    deleteTrackingNumbersHttpControllerPatch: (
+      trackingNumberId: string,
+      trackingNumbersId: string,
+      params: RequestParams = {},
+    ) =>
       this.request<void, any>({
         path: `/tracking-numbers/${trackingNumbersId}`,
         method: 'DELETE',
