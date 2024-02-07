@@ -79,8 +79,6 @@ export class FindPtoDetailPaginatedQueryHandler implements IQueryHandler {
       items: records.map((record) => {
         const ptoDetailDtos: PtoDetailResponseDto = {
           id: record.id,
-          // userFirstName: record.pto.user.firstName,
-          // userLastName: record.pto.user.lastName,
           userFirstName: record.user.firstName,
           userLastName: record.user.lastName,
           startedAt: record.startedAt.toISOString().split('T')[0],

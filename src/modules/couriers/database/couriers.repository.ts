@@ -1,9 +1,10 @@
 import { Injectable } from '@nestjs/common'
-import { Couriers } from '@prisma/client'
+import { Couriers, Prisma } from '@prisma/client'
 import { PrismaService } from '../../database/prisma.service'
 import { CouriersMapper } from '../couriers.mapper'
 import { CouriersEntity } from '../domain/couriers.entity'
 import { CouriersRepositoryPort } from './couriers.repository.port'
+import { UniqueCouriersException } from '@modules/couriers/domain/couriers.error'
 
 export type CouriersModel = Couriers
 export type CouriersQueryModel = Couriers
@@ -12,8 +13,16 @@ export class CouriersRepository implements CouriersRepositoryPort {
   constructor(private readonly prismaService: PrismaService, private readonly mapper: CouriersMapper) {}
 
   async insert(entity: CouriersEntity): Promise<void> {
-    const record = this.mapper.toPersistence(entity)
-    await this.prismaService.couriers.create({ data: record })
+    try {
+      const record = this.mapper.toPersistence(entity)
+      await this.prismaService.couriers.create({ data: record })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new UniqueCouriersException()
+      } else {
+        throw e
+      }
+    }
   }
 
   async update(entity: CouriersEntity): Promise<void> {
