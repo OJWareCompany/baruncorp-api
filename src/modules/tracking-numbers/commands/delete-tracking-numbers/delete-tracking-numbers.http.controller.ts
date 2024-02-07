@@ -7,7 +7,7 @@ import { DeleteTrackingNumbersParamRequestDto } from './delete-tracking-numbers.
 @Controller('tracking-numbers')
 export class DeleteTrackingNumbersHttpController {
   constructor(private readonly commandBus: CommandBus) {}
-  @Delete(':trackingNumbersId')
+  @Delete(':trackingNumberId')
   @UseGuards(AuthGuard)
   async patch(@Param() param: DeleteTrackingNumbersParamRequestDto): Promise<void> {
     const command: DeleteTrackingNumbersCommand = new DeleteTrackingNumbersCommand({

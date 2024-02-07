@@ -6531,15 +6531,11 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name DeleteTrackingNumbersHttpControllerPatch
-     * @request DELETE:/tracking-numbers/{trackingNumbersId}
+     * @request DELETE:/tracking-numbers/{trackingNumberId}
      */
-    deleteTrackingNumbersHttpControllerPatch: (
-      trackingNumberId: string,
-      trackingNumbersId: string,
-      params: RequestParams = {},
-    ) =>
+    deleteTrackingNumbersHttpControllerPatch: (trackingNumberId: string, params: RequestParams = {}) =>
       this.request<void, any>({
-        path: `/tracking-numbers/${trackingNumbersId}`,
+        path: `/tracking-numbers/${trackingNumberId}`,
         method: 'DELETE',
         ...params,
       }),
