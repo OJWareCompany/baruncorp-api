@@ -7,6 +7,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
 import { AssignedTaskSummaryDoneResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary-done.response.dto'
 import { addDays } from 'date-fns'
+import { UserStatusEnum } from '@modules/users/domain/user.types'
 
 export class FindAssignedTaskSummaryDonePaginatedQuery extends PaginatedQueryBase {
   readonly organizationName?: string | null
@@ -50,6 +51,7 @@ export class FindAssignedTaskSummaryDonePaginatedQueryHandler implements IQueryH
           },
         },
       ],
+      status: UserStatusEnum.ACTIVE,
     }
 
     // 모든 유저 레코드 조회

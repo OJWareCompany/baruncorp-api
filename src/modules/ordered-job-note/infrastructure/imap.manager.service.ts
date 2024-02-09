@@ -13,7 +13,6 @@ import { UserStatusEnum } from '@modules/users/domain/user.types'
 
 @Injectable()
 export class ImapManagerService {
-  // private imapConnections: Map<string, Imap> = new Map<string, Imap>()
   private imapConnections: Map<string, IImapConnection> = new Map()
   constructor(
     private readonly jobNoteRepository: JobNoteRepository,
@@ -47,12 +46,12 @@ export class ImapManagerService {
 
   async connect(targetEmail: string) {
     try {
-      // console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
+      console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
       const auth2Client: OAuth2Client = await this.mailer.getGoogleAuthClient(targetEmail)
       auth2Client.on('tokens', (tokens: Credentials) => {
         // 자동으로 토큰 만료 직전에 tokens 이벤트 발생
         if (tokens.access_token) {
-          // console.log(`New access_token received: ${tokens.access_token}`)
+          console.log(`[ImapManagerService][connect][auth2Client/tokens] targetEmail: ${targetEmail}`)
           this.resetImapConnection(targetEmail, tokens.access_token, auth2Client)
         }
       })
@@ -65,19 +64,19 @@ export class ImapManagerService {
   async disconnect(targetEmail: string) {
     const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
     if (connection) {
+      this.imapConnections.delete(targetEmail)
       connection.auth2Client.removeAllListeners() // auth2Client의 'tokens'이벤트 제거
       connection.imap.end() // IMAP 연결 제거
-      this.imapConnections.delete(targetEmail)
     }
-    // console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
+    console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
   }
 
   private resetImapConnection(targetEmail: string, newToken: string, auth2Client: OAuth2Client) {
-    // console.log(`[ImapManagerService][resetImapConnection]`)
+    console.log(`[ImapManagerService][resetImapConnection]`)
+
     const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
     if (connection) {
-      connection.imap.end() // 기존 연결 종료
-      this.imapConnections.delete(targetEmail) // 맵에서 제거
+      this.disconnect(targetEmail)
     }
 
     const xoauth2gen = xoauth2.createXOAuth2Generator({
@@ -105,13 +104,13 @@ export class ImapManagerService {
       this.setupImapListeners(auth2Client, imap)
       imap.connect()
 
-      const connection: IImapConnection = {
+      const newConnection: IImapConnection = {
         auth2Client: auth2Client,
         imap: imap,
       }
-      this.imapConnections.set(targetEmail, connection)
+      this.imapConnections.set(targetEmail, newConnection)
 
-      // console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
+      console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
     })
   }
 
@@ -122,18 +121,29 @@ export class ImapManagerService {
   }
 
   private onImapError(err: any) {
-    console.error(`[ImapManagerService] ${JSON.stringify(err)}`)
+    console.error(`[ImapManagerService][onImapError] ${JSON.stringify(err)}`)
   }
 
   private onImapEnd() {
     console.log('[ImapManagerService] Connection ended')
+    // 어떤 소켓이 끊겼는지 모르는게 문제다.
+    // 그렇다면 전체 세션을 검사해서 상태를 확인해보자.
+    const disconnectedConnections: [string, IImapConnection][] = [...this.imapConnections].filter(
+      ([key, value]) => value.imap.state === 'disconnected',
+    )
+
+    disconnectedConnections.forEach(([targetEmail, connection]) => {
+      console.log(`[ImapManagerService][onImapEnd] retry : ${targetEmail}`)
+      this.disconnect(targetEmail)
+      this.connect(targetEmail)
+    })
   }
 
   private onImapReady(auth2Client: OAuth2Client, imap: Imap) {
     // console.log(`[ImapManagerService][connectToMailbox][openInbox] ready`)
     imap.openBox('INBOX', false, (err: Error, box: Imap.Box) => {
       if (err) {
-        console.log(`🚀 ~ file: index.js:132 ~ err: ${err}`)
+        // console.log(`🚀 ~ file: index.js:132 ~ err: ${err}`)
         return
       }
       // console.log(`[openInbox] box : ${JSON.stringify(box)}`);
@@ -150,7 +160,7 @@ export class ImapManagerService {
     fetch.on('message', (msg: Imap.ImapMessage, seqno: number) => this.processMessage(msg, seqno, auth2Client))
     fetch.once('error', (err: Error) => console.log('Fetch error: ' + err))
     fetch.once('end', () => {
-      // console.log('Done fetching all messages!')
+      console.log('[ImapManagerService][onNewMail]')
     })
   }
 

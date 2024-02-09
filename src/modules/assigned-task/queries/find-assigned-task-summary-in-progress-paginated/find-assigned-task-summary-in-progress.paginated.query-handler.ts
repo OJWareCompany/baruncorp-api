@@ -6,6 +6,7 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { PrismaService } from '../../../database/prisma.service'
 import { AssignedTaskStatusEnum } from '../../domain/assigned-task.type'
 import { AssignedTaskSummaryInProgressResponseDto } from '@modules/assigned-task/dtos/assigned-task-summary-in-progress.response.dto'
+import { UserStatusEnum } from '@modules/users/domain/user.types'
 
 export class FindAssignedTaskSummaryInProgressPaginatedQuery extends PaginatedQueryBase {
   readonly organizationName?: string | null
@@ -47,6 +48,7 @@ export class FindAssignedTaskSummaryInProgressPaginatedQueryHandler implements I
           },
         },
       ],
+      status: UserStatusEnum.ACTIVE,
     }
     // 전체 유저 레코드 조회
     const userRecords = await this.prismaService.users.findMany({
