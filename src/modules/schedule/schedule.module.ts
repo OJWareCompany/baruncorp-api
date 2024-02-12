@@ -9,10 +9,12 @@ import { UsersModule } from '../users/users.module'
 import { PutScheduleService } from '@modules/schedule/commands/update-information/put-schedule.service'
 import { USER_REPOSITORY } from '@modules/users/user.di-tokens'
 import { UserRepository } from '@modules/users/database/user.repository'
+import { FindSchedulePaginatedHttpController } from '@modules/schedule/queries/find-schedule-paginated/find-schedule.paginated.http.controller'
+import { FindSchedulePaginatedQueryHandler } from '@modules/schedule/queries/find-schedule-paginated/find-schedule.paginated.query-handler'
 
-const httpControllers = [PutScheduleHttpController]
+const httpControllers = [PutScheduleHttpController, FindSchedulePaginatedHttpController]
 const commandHandlers: Provider[] = [PutScheduleService]
-const queryHandlers: Provider[] = []
+const queryHandlers: Provider[] = [FindSchedulePaginatedQueryHandler]
 const repositories: Provider[] = [
   {
     provide: SCHEDULE_REPOSITORY,

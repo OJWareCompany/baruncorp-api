@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
-import { InformationResponseDto } from './dtos/information.response.dto'
+import { ScheduleResponseDto } from './dtos/schedule.response.dto'
 import { ScheduleModel, ScheduleQueryModel } from './database/schedule.repository'
 import { ScheduleEntity } from './domain/schedule.entity'
 import { ScheduleDto } from '@modules/schedule/commands/update-information/put-schedule.request.dto'
 
 @Injectable()
-export class ScheduleMapper implements Mapper<ScheduleEntity, ScheduleModel, InformationResponseDto> {
+export class ScheduleMapper implements Mapper<ScheduleEntity, ScheduleModel, ScheduleResponseDto> {
   toPersistence(entity: ScheduleEntity): ScheduleModel {
     const props = entity.getProps()
 

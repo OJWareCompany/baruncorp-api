@@ -2455,6 +2455,27 @@ export interface PutScheduleRequestDto {
   schedules: ScheduleDto
 }
 
+export interface ScheduleResponseDto {
+  /** @default "John Doe" */
+  userName: string
+  /** @default "S- PE" */
+  position: string
+  /** @default [{"start":"09:00:00","end":"13:00:00"},{"start":"14:00:00","end":"18:00:00"}] */
+  schedules: ScheduleDto
+}
+
+export interface SchedulePaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: ScheduleResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -3483,6 +3504,21 @@ export interface FindTrackingNumbersPaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindSchedulePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
 import axios from 'axios'
 
@@ -4014,6 +4050,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PUT',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindSchedulePaginatedHttpControllerGet
+     * @request GET:/users/schedule/total
+     */
+    findSchedulePaginatedHttpControllerGet: (
+      query: FindSchedulePaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<SchedulePaginatedResponseDto, any>({
+        path: `/users/schedule/total`,
+        method: 'GET',
+        query: query,
+        format: 'json',
         ...params,
       }),
   }
