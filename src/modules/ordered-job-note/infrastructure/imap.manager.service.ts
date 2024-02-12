@@ -68,7 +68,7 @@ export class ImapManagerService {
       connection.auth2Client.removeAllListeners() // auth2Client의 'tokens'이벤트 제거
       connection.imap.end() // IMAP 연결 제거
     }
-    console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
+    // console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
   }
 
   private resetImapConnection(targetEmail: string, newToken: string, auth2Client: OAuth2Client) {
@@ -125,7 +125,7 @@ export class ImapManagerService {
   }
 
   private onImapEnd() {
-    console.log('[ImapManagerService] Connection ended')
+    // console.log('[ImapManagerService] Connection ended')
     // 어떤 소켓이 끊겼는지 모르는게 문제다.
     // 그렇다면 전체 세션을 검사해서 상태를 확인해보자.
     const disconnectedConnections: [string, IImapConnection][] = [...this.imapConnections].filter(
@@ -133,7 +133,7 @@ export class ImapManagerService {
     )
 
     disconnectedConnections.forEach(([targetEmail, connection]) => {
-      console.log(`[ImapManagerService][onImapEnd] retry : ${targetEmail}`)
+      // console.log(`[ImapManagerService][onImapEnd] retry : ${targetEmail}`)
       this.disconnect(targetEmail)
       this.connect(targetEmail)
     })
