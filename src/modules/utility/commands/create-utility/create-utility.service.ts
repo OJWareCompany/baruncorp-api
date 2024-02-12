@@ -10,6 +10,7 @@ import { StateNotFoundException } from '@modules/license/domain/license.error'
 import { PrismaService } from '@modules/database/prisma.service'
 import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
 import { v4 } from 'uuid'
+import { UtilityEntity } from '@modules/utility/domain/utility.entity'
 
 @CommandHandler(CreateUtilityCommand)
 export class CreateUtilityService implements ICommandHandler {
@@ -32,10 +33,14 @@ export class CreateUtilityService implements ICommandHandler {
     }
     // UtilityEntity.create({})를 하는 경우 props에 담을 필드가 없어서 에러가 발생한다.
     // Utility 테이블과 Entity가 추가적으로 확장되기 전까지는 Entity를 생성하지 않도록 한다.
-    const utilityId: string = v4()
+    const entity: UtilityEntity = UtilityEntity.create({
+      name: command.name,
+      stateAbbreviations: command.stateAbbreviations,
+      notes: command.notes,
+    })
 
     const snapshotEntity: UtilitySnapshotEntity = UtilitySnapshotEntity.create({
-      utilityId: utilityId,
+      utilityId: entity.id,
       updatedBy: command.updatedBy,
       name: command.name,
       stateAbbreviations: command.stateAbbreviations,
@@ -43,8 +48,8 @@ export class CreateUtilityService implements ICommandHandler {
       type: UtilitySnapshotTypeEnum.Create,
     })
 
-    await this.utilityRepository.insert(utilityId)
+    await this.utilityRepository.insert(entity)
     await this.utilityRepository.insertSnapshot(snapshotEntity)
-    return utilityId
+    return entity.id
   }
 }

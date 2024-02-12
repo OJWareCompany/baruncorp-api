@@ -9,6 +9,9 @@ import { StateNotFoundException } from '@modules/license/domain/license.error'
 import { UtilitySnapshotEntity } from '@modules/utility/domain/utility-snapshot.entity'
 import { UtilitySnapshotTypeEnum } from '@modules/utility/domain/utility-snapshot.type'
 import { UtilityNotFoundException } from '@modules/utility/domain/utilty.error'
+import { PtoEntity } from '@modules/pto/domain/pto.entity'
+import { PtoNotFoundException } from '@modules/pto/domain/pto.error'
+import { UtilityEntity } from '@modules/utility/domain/utility.entity'
 
 @CommandHandler(UpdateUtilityCommand)
 export class UpdateUtilityService implements ICommandHandler {
@@ -32,27 +35,21 @@ export class UpdateUtilityService implements ICommandHandler {
       }
     }
 
-    const latestSnapshot = await this.prismaService.utilitySnapshots.findFirst({
-      where: {
-        utilityId: command.utilityId,
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    })
+    const entity: UtilityEntity | null = await this.utilityRepository.findOne(command.utilityId)
+    if (!entity) throw new PtoNotFoundException()
 
-    if (!latestSnapshot) {
-      throw new UtilityNotFoundException()
-    }
+    if (command.name) entity.name = command.name
+    if (command.stateAbbreviations) entity.stateAbbreviations = command.stateAbbreviations
+    if (command.notes) entity.notes = command.notes
+
+    await this.utilityRepository.update(entity)
 
     const historyEntitiy: UtilitySnapshotEntity = UtilitySnapshotEntity.create({
       utilityId: command.utilityId,
       updatedBy: command.updatedBy,
-      name: command.name ? command.name : latestSnapshot.name,
-      stateAbbreviations: command.stateAbbreviations
-        ? command.stateAbbreviations
-        : latestSnapshot.stateAbbreviations.split(','),
-      notes: command.notes ? command.notes : latestSnapshot.notes,
+      name: entity.name,
+      stateAbbreviations: entity.stateAbbreviations,
+      notes: entity.notes,
       type: UtilitySnapshotTypeEnum.Modify,
     })
     await this.utilityRepository.insertSnapshot(historyEntitiy)

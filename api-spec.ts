@@ -2494,6 +2494,29 @@ export interface UpdateUtilityRequestDto {
   notes?: string
 }
 
+export interface UtilityResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "Sample Utility" */
+  name: string
+  /** @default ["AL","AK","AZ"] */
+  stateAbbreviations: string[]
+  /** @default "Blah - Blah" */
+  notes: string
+}
+
+export interface UtilityPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: UtilityResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -3523,6 +3546,23 @@ export interface FindTrackingNumbersPaginatedHttpControllerGetParams {
 }
 
 export interface FindSchedulePaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindUtilityPaginatedHttpControllerGetParams {
+  /** @default "674e3b83-0255-46fe-bc4b-047fca3c43cf" */
+  stateAbbreviation?: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -6738,6 +6778,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
+     * @name FindUtilityPaginatedHttpControllerGet
+     * @request GET:/utilities
+     */
+    findUtilityPaginatedHttpControllerGet: (
+      query: FindUtilityPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UtilityPaginatedResponseDto, any>({
+        path: `/utilities`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
      * @name UpdateUtilityHttpControllerPatch
      * @request PATCH:/utilities/{utilityId}
      */
@@ -6747,6 +6805,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'PATCH',
         body: data,
         type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindUtilityHttpControllerGet
+     * @request GET:/utilities/{utilityId}
+     */
+    findUtilityHttpControllerGet: (utilityId: string, params: RequestParams = {}) =>
+      this.request<UtilityResponseDto, any>({
+        path: `/utilities/${utilityId}`,
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   }

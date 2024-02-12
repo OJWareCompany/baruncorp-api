@@ -1,13 +1,28 @@
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
-import { ClientNoteResponseDto } from './dtos/client-note.response.dto'
-import { UtilitySnapshotModel, UtilitySnapshotQueryModel } from './database/utility.repository'
+import {
+  UtilityModel,
+  UtilityQueryModel,
+  UtilitySnapshotModel,
+  UtilitySnapshotQueryModel,
+} from './database/utility.repository'
 import { UtilitySnapshotEntity } from './domain/utility-snapshot.entity'
-import { UtilitySnapshotTypeEnum } from '@modules/utility/domain/utility-snapshot.type'
+import { UtilityEntity } from '@modules/utility/domain/utility.entity'
+import { UtilityResponseDto } from '@modules/utility/dtos/utility.response.dto'
 
 @Injectable()
-export class UtilityMapper implements Mapper<UtilitySnapshotEntity, UtilitySnapshotModel, ClientNoteResponseDto> {
-  toPersistence(entity: UtilitySnapshotEntity): UtilitySnapshotModel {
+export class UtilityMapper implements Mapper<UtilityEntity, UtilityModel, UtilityResponseDto> {
+  toPersistence(entity: UtilityEntity): UtilityModel {
+    const record: UtilityModel = {
+      id: entity.id,
+      name: entity.name,
+      stateAbbreviations: entity.stateAbbreviations.toString(),
+      notes: entity.notes,
+    }
+    return record
+  }
+
+  toSnapshotPersistence(entity: UtilitySnapshotEntity): UtilitySnapshotModel {
     const props = entity.getProps()
 
     const record: UtilitySnapshotModel = {
@@ -24,22 +39,19 @@ export class UtilityMapper implements Mapper<UtilitySnapshotEntity, UtilitySnaps
     return record
   }
 
-  toDomain(record: UtilitySnapshotQueryModel): UtilitySnapshotEntity {
-    const entity: UtilitySnapshotEntity = new UtilitySnapshotEntity({
+  toDomain(record: UtilityQueryModel): UtilityEntity {
+    const entity: UtilityEntity = new UtilityEntity({
       id: record.id,
       props: {
-        utilityId: record.utilityId,
-        updatedBy: record.updatedBy,
         name: record.name,
-        stateAbbreviations: record.stateAbbreviations?.split(',') || [],
+        stateAbbreviations: record.stateAbbreviations.split(','),
         notes: record.notes,
-        type: record.type.toString() === 'Create' ? UtilitySnapshotTypeEnum.Create : UtilitySnapshotTypeEnum.Modify,
       },
     })
     return entity
   }
   // 사용 하지 않음
-  toResponse(entity: UtilitySnapshotEntity): any {
+  toResponse(entity: UtilityEntity): any {
     return
   }
 }

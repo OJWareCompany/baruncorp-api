@@ -9,10 +9,22 @@ import { CreateUtilityService } from '@modules/utility/commands/create-utility/c
 import { UtilityMapper } from '@modules/utility/utility.mapper'
 import { UpdateUtilityHttpController } from '@modules/utility/commands/update-utility/update-utility.http.controller'
 import { UpdateUtilityService } from '@modules/utility/commands/update-utility/update-utility.service'
+import { FindUtilityHttpController } from '@modules/utility/queries/find-utility/find-utility.http.controller'
+import { FindUtilityQueryHandler } from '@modules/utility/queries/find-utility/find-utility.query-handler'
+import {
+  FindUtilityPaginatedQuery,
+  FindUtilityPaginatedQueryHandler,
+} from '@modules/utility/queries/find-utility-paginated/utility.paginated.query-handler'
+import { FindUtilityPaginatedHttpController } from '@modules/utility/queries/find-utility-paginated/utility.paginated.http.controller'
 
-const httpControllers = [CreateUtilityHttpController, UpdateUtilityHttpController]
+const httpControllers = [
+  CreateUtilityHttpController,
+  UpdateUtilityHttpController,
+  FindUtilityHttpController,
+  FindUtilityPaginatedHttpController,
+]
 const commandHandlers: Provider[] = [CreateUtilityService, UpdateUtilityService]
-const queryHandlers: Provider[] = []
+const queryHandlers: Provider[] = [FindUtilityQueryHandler, FindUtilityPaginatedQueryHandler]
 const repositories: Provider[] = [
   {
     provide: UTILITY_REPOSITORY,
