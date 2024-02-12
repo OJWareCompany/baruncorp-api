@@ -41,7 +41,7 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
       totalCount: totalCount,
       items: records.map((record) => {
         const response: ScheduleResponseDto = {
-          userName: record.full_name,
+          name: record.full_name,
           position: record.userPosition ? record.userPosition.position.name : '',
           schedules: record.userSchedule ? (record.userSchedule.schedules as unknown as ScheduleDto[]) : [],
         }

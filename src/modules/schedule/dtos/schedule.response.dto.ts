@@ -9,7 +9,7 @@ export class ScheduleResponseDto {
     initialize(this, props)
   }
   @ApiProperty({ default: 'John Doe' })
-  readonly userName: string
+  readonly name: string
   @ApiProperty({ default: 'S- PE' })
   readonly position: string
   @ApiProperty({

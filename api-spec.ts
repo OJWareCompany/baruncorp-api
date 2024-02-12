@@ -2457,7 +2457,7 @@ export interface PutScheduleRequestDto {
 
 export interface ScheduleResponseDto {
   /** @default "John Doe" */
-  userName: string
+  name: string
   /** @default "S- PE" */
   position: string
   /** @default [{"start":"09:00:00","end":"13:00:00"},{"start":"14:00:00","end":"18:00:00"}] */
