@@ -30,6 +30,7 @@ import { AopModule } from '@toss/nestjs-aop'
 import { FilesystemModule } from './modules/filesystem/filesystem.module'
 import { CouriersModule } from '@modules/couriers/couriers.module'
 import { TrackingNumbersModule } from '@modules/tracking-numbers/tracking-numbers.module'
+import { ScheduleModule } from '@modules/schedule/schedule.module'
 
 @Module({
   imports: [
@@ -62,6 +63,7 @@ import { TrackingNumbersModule } from '@modules/tracking-numbers/tracking-number
     FilesystemModule,
     CouriersModule,
     TrackingNumbersModule,
+    ScheduleModule,
   ],
   controllers: [],
   providers: [

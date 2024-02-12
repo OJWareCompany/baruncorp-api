@@ -1007,6 +1007,30 @@ export interface AssignedTaskSummaryInProgressPaginatedResponseDto {
   items: AssignedTaskSummaryInProgressResponseDto[]
 }
 
+export interface CompletedTaskCountDto {
+  taskId: string
+  taskName: string
+  count: number
+}
+
+export interface AssignedTaskSummaryTotalResponseDto {
+  userId: string
+  userName: string
+  tasks: CompletedTaskCountDto[]
+}
+
+export interface AssignedTaskSummaryTotalPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: AssignedTaskSummaryTotalResponseDto[]
+}
+
 export interface UpdateTaskDurationRequestDto {
   /** @default null */
   duration: number | null
@@ -2419,6 +2443,18 @@ export interface TrackingNumbersPaginatedResponseDto {
   items: TrackingNumbersResponseDto[]
 }
 
+export interface ScheduleDto {
+  /** @default "09:00:00" */
+  start: string
+  /** @default "13:00:00" */
+  end: string
+}
+
+export interface PutScheduleRequestDto {
+  /** @default [{"start":"09:00:00","end":"13:00:00"},{"start":"14:00:00","end":"18:00:00"}] */
+  schedules: ScheduleDto
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -2893,6 +2929,31 @@ export interface FindAssignedTaskSummaryInProgressPaginatedHttpControllerGetPara
   organizationName?: string
   /** @default "John Doe" */
   userName?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindAssignedTaskSummaryTotalPaginatedHttpControllerGetParams {
+  /**
+   * @format date-time
+   * @default "2024-01-05"
+   */
+  startedAt?: string
+  /**
+   * @format date-time
+   * @default "2025-01-06"
+   */
+  endedAt?: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -3940,6 +4001,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         format: 'json',
         ...params,
       }),
+
+    /**
+     * No description
+     *
+     * @name PutScheduleHttpControllerPut
+     * @request PUT:/users/{userId}/schedules
+     */
+    putScheduleHttpControllerPut: (userId: string, data: PutScheduleRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/users/${userId}/schedules`,
+        method: 'PUT',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
   }
   licenses = {
     /**
@@ -4759,6 +4835,24 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<AssignedTaskSummaryInProgressPaginatedResponseDto, any>({
         path: `/assigned-tasks/summary/in-progress`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindAssignedTaskSummaryTotalPaginatedHttpControllerGet
+     * @request GET:/assigned-tasks/summary/total
+     */
+    findAssignedTaskSummaryTotalPaginatedHttpControllerGet: (
+      query: FindAssignedTaskSummaryTotalPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<AssignedTaskSummaryTotalPaginatedResponseDto, any>({
+        path: `/assigned-tasks/summary/total`,
         method: 'GET',
         query: query,
         format: 'json',

@@ -120,6 +120,7 @@ model Users {
   passwordEntity             Passwords?
   userRole                   UserRole?
   userPosition               UserPosition?
+  userSchedule               UserSchedules?
   organization               Organizations          @relation(fields: [organizationId], references: [id])
   assignedTasks              AssignedTasks[]
   availableTasks             UserAvailableTasks[]
@@ -243,6 +244,18 @@ model UserPosition {
   @@id([userId, positionId])
   @@index([positionId], map: "user_position_position_id_fkey")
   @@map("user_position")
+}
+
+model UserSchedules {
+  id           String    @id @map("id")
+  schedules    Json      @map("schedules")
+  createdAt    DateTime  @map("created_at") @default(now())  @db.DateTime(0)
+  updatedAt    DateTime  @map("updated_at") @updatedAt @db.DateTime(0)
+
+  user         Users     @relation(fields: [id], references: [id])
+
+  @@index([id])
+  @@map("user_schedules")
 }
 
 model CountySubdivisions {

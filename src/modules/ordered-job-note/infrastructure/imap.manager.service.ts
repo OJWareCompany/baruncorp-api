@@ -46,12 +46,12 @@ export class ImapManagerService {
 
   async connect(targetEmail: string) {
     try {
-      console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
+      // console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
       const auth2Client: OAuth2Client = await this.mailer.getGoogleAuthClient(targetEmail)
       auth2Client.on('tokens', (tokens: Credentials) => {
         // 자동으로 토큰 만료 직전에 tokens 이벤트 발생
         if (tokens.access_token) {
-          console.log(`[ImapManagerService][connect][auth2Client/tokens] targetEmail: ${targetEmail}`)
+          // console.log(`[ImapManagerService][connect][auth2Client/tokens] targetEmail: ${targetEmail}`)
           this.resetImapConnection(targetEmail, tokens.access_token, auth2Client)
         }
       })
@@ -72,7 +72,7 @@ export class ImapManagerService {
   }
 
   private resetImapConnection(targetEmail: string, newToken: string, auth2Client: OAuth2Client) {
-    console.log(`[ImapManagerService][resetImapConnection]`)
+    // console.log(`[ImapManagerService][resetImapConnection]`)
 
     const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
     if (connection) {
@@ -110,7 +110,7 @@ export class ImapManagerService {
       }
       this.imapConnections.set(targetEmail, newConnection)
 
-      console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
+      // console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
     })
   }
 
