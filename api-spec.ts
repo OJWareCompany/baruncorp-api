@@ -2476,6 +2476,15 @@ export interface SchedulePaginatedResponseDto {
   items: ScheduleResponseDto[]
 }
 
+export interface CreateUtilityRequestDto {
+  /** @default "Blah - Blah" */
+  name: string
+  /** @default ["AL","AK","AZ"] */
+  stateAbbreviations: string[]
+  /** @default "Blah - Blah" */
+  notes: string
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -6697,6 +6706,23 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/tracking-numbers/${trackingNumberId}`,
         method: 'DELETE',
+        ...params,
+      }),
+  }
+  utilities = {
+    /**
+     * No description
+     *
+     * @name CreateUtilityHttpControllerPost
+     * @request POST:/utilities
+     */
+    createUtilityHttpControllerPost: (data: CreateUtilityRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/utilities`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }
