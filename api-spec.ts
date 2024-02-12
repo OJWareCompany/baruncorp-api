@@ -2477,12 +2477,21 @@ export interface SchedulePaginatedResponseDto {
 }
 
 export interface CreateUtilityRequestDto {
-  /** @default "Blah - Blah" */
+  /** @default "Sample Utility" */
   name: string
   /** @default ["AL","AK","AZ"] */
   stateAbbreviations: string[]
   /** @default "Blah - Blah" */
   notes: string
+}
+
+export interface UpdateUtilityRequestDto {
+  /** @default "Sample Utility" */
+  name?: string
+  /** @default ["AL","AK","AZ"] */
+  stateAbbreviations?: string[]
+  /** @default "Blah - Blah" */
+  notes?: string
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -6723,6 +6732,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateUtilityHttpControllerPatch
+     * @request PATCH:/utilities/{utilityId}
+     */
+    updateUtilityHttpControllerPatch: (utilityId: string, data: UpdateUtilityRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/utilities/${utilityId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }

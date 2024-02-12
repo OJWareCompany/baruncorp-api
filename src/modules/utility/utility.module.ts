@@ -7,9 +7,11 @@ import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
 import { CreateUtilityHttpController } from '@modules/utility/commands/create-utility/create-utility.http.controller'
 import { CreateUtilityService } from '@modules/utility/commands/create-utility/create-utility.service'
 import { UtilityMapper } from '@modules/utility/utility.mapper'
+import { UpdateUtilityHttpController } from '@modules/utility/commands/update-utility/update-utility.http.controller'
+import { UpdateUtilityService } from '@modules/utility/commands/update-utility/update-utility.service'
 
-const httpControllers = [CreateUtilityHttpController]
-const commandHandlers: Provider[] = [CreateUtilityService]
+const httpControllers = [CreateUtilityHttpController, UpdateUtilityHttpController]
+const commandHandlers: Provider[] = [CreateUtilityService, UpdateUtilityService]
 const queryHandlers: Provider[] = []
 const repositories: Provider[] = [
   {

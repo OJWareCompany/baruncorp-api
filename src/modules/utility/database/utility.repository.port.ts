@@ -1,4 +1,5 @@
 import { UtilitySnapshotEntity } from '../domain/utility-snapshot.entity'
+import { Prisma } from '@prisma/client'
 
 export interface UtilityRepositoryPort {
   // insert(entity: UtilityEntity): Promise<void>
