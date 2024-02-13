@@ -27,6 +27,9 @@ import { OrganizationModule } from '../organization/organization.module'
 import { FindProjectsCountHttpController } from './queries/find-projects-count/find-projects-count.http.controller'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
+import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
+import { UtilityRepository } from '@modules/utility/database/utility.repository'
+import { UtilityModule } from '@modules/utility/utility.module'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -54,7 +57,16 @@ const eventHandlers: Provider[] = [
 
 const queryHandlers: Provider[] = [FindProjectsQueryHandler, FindProjectDetailQueryHandler]
 
-const repositories: Provider[] = [{ provide: PROJECT_REPOSITORY, useClass: ProjectRepository }]
+const repositories: Provider[] = [
+  {
+    provide: PROJECT_REPOSITORY,
+    useClass: ProjectRepository,
+  },
+  {
+    provide: UTILITY_REPOSITORY,
+    useClass: UtilityRepository,
+  },
+]
 
 const mappers: Provider[] = [ProjectMapper]
 
@@ -68,6 +80,7 @@ const domainServices: Provider[] = [ProjectValidatorDomainService]
     OrganizationModule,
     forwardRef(() => JobModule),
     forwardRef(() => UsersModule),
+    forwardRef(() => UtilityModule),
   ],
   providers: [
     ...commandHandlers,

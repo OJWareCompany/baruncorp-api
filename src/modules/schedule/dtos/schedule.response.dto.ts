@@ -18,6 +18,7 @@ export class ScheduleResponseDto {
       { start: '14:00:00', end: '18:00:00' },
     ],
     type: ScheduleDto,
+    isArray: true,
   })
   readonly schedules: ScheduleDto[]
 }

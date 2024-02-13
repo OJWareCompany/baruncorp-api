@@ -126,7 +126,6 @@ export abstract class Entity<EntityProps> {
 
   private validateProps(props: EntityProps): void {
     const MAX_PROPS = 50
-
     if (Guard.isEmpty(props)) {
       throw new ArgumentNotProvidedException('Entity props should not be empty')
     }

@@ -31,6 +31,7 @@ import { FilesystemModule } from './modules/filesystem/filesystem.module'
 import { CouriersModule } from '@modules/couriers/couriers.module'
 import { TrackingNumbersModule } from '@modules/tracking-numbers/tracking-numbers.module'
 import { ScheduleModule } from '@modules/schedule/schedule.module'
+import { UtilityModule } from '@modules/utility/utility.module'
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { ScheduleModule } from '@modules/schedule/schedule.module'
     CouriersModule,
     TrackingNumbersModule,
     ScheduleModule,
+    UtilityModule,
   ],
   controllers: [],
   providers: [

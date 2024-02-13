@@ -23,6 +23,7 @@ export class CreateProjectCommand {
   }
 
   readonly projectNumber: string | null
+  readonly utilityId?: string
 
   constructor(props: CreateProjectCommand) {
     initialize(this, props)

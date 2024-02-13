@@ -22,6 +22,7 @@ export interface CreateProjectProps {
   organizationName: string
   projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody
   updatedBy: string
+  utilityId: string | null
 }
 
 export interface ProjectProps extends CreateProjectProps {
@@ -39,6 +40,7 @@ export interface UpdateProjectProps {
   projectPropertyOwner: string | null
   projectNumber: string | null
   updatedBy: string
+  utilityId: string | null
 }
 
 export interface UpdatePropertyAddressProps {

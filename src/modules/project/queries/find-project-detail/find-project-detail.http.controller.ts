@@ -83,6 +83,7 @@ export class FindProjectDetailHttpController {
       countySubdivisionsId: result.countySubdivisionsId || null,
       placeId: result.placeId || null,
     })
+    response.utilityId = result.utilityId
 
     return response
   }
