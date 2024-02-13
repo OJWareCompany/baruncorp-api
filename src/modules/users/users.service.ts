@@ -67,7 +67,7 @@ export class UserService {
     isVendor?: boolean,
     dateOfJoining?: Date | null,
   ): Promise<void> {
-    const user = await this.userRepository.findOneByIdIncludePtos(userId)
+    const user = await this.userRepository.findOneByIdOrThrow(userId)
     if (!user) throw new UserNotFoundException()
 
     user.updateName(userName).updatePhoneNumber(phoneNumber).updateDeliverableEmails(deliverablesEmails)
