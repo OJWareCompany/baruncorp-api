@@ -4,26 +4,25 @@ import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
-import { ServiceRepositoryPort } from '../../database/service.repository.port'
-import { ServiceEntity } from '../../domain/service.entity'
 import { ServiceNameConflictException, ServiceBillingCodeConflictException } from '../../domain/service.error'
-import { SERVICE_REPOSITORY } from '../../service.di-token'
-import { CreateServiceCommand } from './create-service.command'
-import { Pricing } from '../../domain/value-objects/pricing.value-object'
-import { CommercialStandardPricingTier } from '../../domain/value-objects/commercial-standard-pricing-tier.value-object'
-import { CommercialStandardPricing } from '../../domain/value-objects/commercial-standard-pricing.value-object'
 import { CommercialRevisionStandardPricing } from '../../domain/value-objects/commercial-revision-standard-pricing.value-object'
+import { CommercialStandardPricingTier } from '../../domain/value-objects/commercial-standard-pricing-tier.value-object'
 import { ResidentialStandardPricing } from '../../domain/value-objects/residential-standard-pricing.value-object'
-import { FixedPrice } from '../../domain/value-objects/fixed-price.value-object'
-import { StandardPricing } from '../../domain/value-objects/standard-pricing.value-object'
+import { CommercialStandardPricing } from '../../domain/value-objects/commercial-standard-pricing.value-object'
 import { ServicePricingTypeEnum } from '../../domain/service.type'
+import { ServiceRepositoryPort } from '../../database/service.repository.port'
+import { SERVICE_REPOSITORY } from '../../service.di-token'
+import { StandardPricing } from '../../domain/value-objects/standard-pricing.value-object'
+import { ServiceEntity } from '../../domain/service.entity'
+import { FixedPrice } from '../../domain/value-objects/fixed-price.value-object'
+import { Pricing } from '../../domain/value-objects/pricing.value-object'
+import { CreateServiceCommand } from './create-service.command'
 
 @CommandHandler(CreateServiceCommand)
 export class CreateServiceService implements ICommandHandler {
   constructor(
     // @ts-ignore
-    @Inject(SERVICE_REPOSITORY)
-    private readonly serviceRepo: ServiceRepositoryPort,
+    @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
   ) {}
   async execute(command: CreateServiceCommand): Promise<AggregateID> {
     // Residential
