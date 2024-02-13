@@ -19,6 +19,7 @@ export class ExpensePricingRepository implements ExpensePricingRepositoryPort {
   find(): Promise<Paginated<ExpensePricingEntity>> {
     throw new Error('Method not implemented.')
   }
+
   async insert(entity: ExpensePricingEntity): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.expensePricingMapper.toPersistence)
@@ -59,6 +60,7 @@ export class ExpensePricingRepository implements ExpensePricingRepositoryPort {
     const record = await this.prismaService.expensePricings.findFirst({ where: { organizationId, taskId } })
     return record ? this.expensePricingMapper.toDomain(record) : null
   }
+
   async findOneOrThrow(organizationId: string, taskId: string): Promise<ExpensePricingEntity> {
     const record = await this.prismaService.expensePricings.findFirst({ where: { organizationId, taskId } })
     if (!record) throw new ExpensePricingNotFoundException()
