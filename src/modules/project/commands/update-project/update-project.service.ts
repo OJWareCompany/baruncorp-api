@@ -10,6 +10,8 @@ import { ProjectValidatorDomainService } from '../../domain/domain-services/proj
 import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-services/ahj-generator.domain-service'
 import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 import { ProjectPropertyTypeEnum } from '../../domain/project.type'
+import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
+import { UtilityRepositoryPort } from '@modules/utility/database/utility.repository.port'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -50,11 +52,14 @@ export class UpdateProjectService implements ICommandHandler {
       })
     }
 
+    console.log(`command.utilityId : ${command.utilityId}`)
+    console.log(`project.getProps().utilityId : ${project.getProps().utilityId}`)
     project.update({
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
       projectNumber: command.projectNumber,
       updatedBy: command.updatedByUserId,
+      utilityId: command.utilityId ?? project.getProps().utilityId,
     })
 
     /**

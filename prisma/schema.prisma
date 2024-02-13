@@ -249,7 +249,7 @@ model UserPosition {
 
 model UserSchedules {
   id        String   @id @map("id")
-  schedules String   @map("schedules") @db.LongText
+  schedules Json     @map("schedules")
   createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
   user      Users    @relation(fields: [id], references: [id])
@@ -590,6 +590,7 @@ model OrderedProjects {
   countySubdivisionsId                          String?        @map("county_subdivisions_id") @db.VarChar(255)
   placeId                                       String?        @map("place_id") @db.VarChar(255)
   ahjId                                         String?        @map("ahj_id") @db.VarChar(255)
+  utilityId                                     String?        @map("utilityId") @db.VarChar(255)
   isGroundMount                                 Boolean?       @map("is_ground_mount")
   mailingAddressForStructuralWetStamp           String?        @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
   mailingAddressForElectricalWetStamp           String?        @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
@@ -599,6 +600,7 @@ model OrderedProjects {
   propertyAddressCountry                        String?        @map("property_address_country") @db.VarChar(255)
   organization                                  Organizations? @relation(fields: [clientOrganizationId], references: [id])
   jobs                                          OrderedJobs[]
+  utility                                       Utilities?     @relation(fields: [utilityId], references: [id])
 
   @@map("ordered_projects")
 }
@@ -1269,6 +1271,7 @@ model Utilities {
   notes              String             @map("notes") @db.Text
   stateAbbreviations String             @map("state_abbreviations") @db.VarChar(255)
   snapshots          UtilitySnapshots[]
+  projects           OrderedProjects[]
 
   @@map("utilities")
 }

@@ -660,6 +660,8 @@ export interface CreateProjectRequestDto {
   /** @default "000152" */
   projectNumber: string | null
   projectPropertyAddress: AddressDto
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  utilityId?: string
 }
 
 export interface UpdateProjectRequestDto {
@@ -670,6 +672,8 @@ export interface UpdateProjectRequestDto {
   /** @default "50021" */
   projectNumber: string | null
   projectPropertyAddress: AddressDto
+  /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
+  utilityId?: string
 }
 
 export interface ProjectPaginatedResponseFields {
@@ -768,6 +772,8 @@ export interface ProjectResponseDto {
   hasHistoryElectricalPEStamp: boolean
   /** @example false */
   hasHistoryStructuralPEStamp: boolean
+  /** @example "eaefe251-0f1f-49ac-88cb-3582ec76601d" */
+  utilityId: string | null
   /** @example [] */
   jobs: JobResponseDto[]
 }
@@ -1807,6 +1813,98 @@ export interface IntegratedOrderModificationHistoryPaginatedResponseDto {
   items: IntegratedOrderModificationHistoryResponseDto[]
 }
 
+export interface CreateUtilityRequestDto {
+  /** @default "Sample Utility" */
+  name: string
+  /** @default ["AL","AK","AZ"] */
+  stateAbbreviations: string[]
+  /** @default "Blah - Blah" */
+  notes?: string
+}
+
+export interface UpdateUtilityRequestDto {
+  /** @default "Sample Utility" */
+  name?: string
+  /** @default ["AL","AK","AZ"] */
+  stateAbbreviations?: string[]
+  /** @default "Blah - Blah" */
+  notes?: string
+}
+
+export interface UtilityResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "Sample Utility" */
+  name: string
+  /** @default ["AL","AK","AZ"] */
+  stateAbbreviations: string[]
+  /** @default "Blah - Blah" */
+  notes: string
+}
+
+export interface UtilityPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: UtilityResponseDto[]
+}
+
+export interface UtilityHistoryDetail {
+  /** @default "Sample Utility" */
+  name: string
+  /** @default ["AL","AK","AZ"] */
+  stateAbbreviations: string[]
+  /** @default "Blah - Blah" */
+  notes: string
+}
+
+export interface UtilityHistoryDetailResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "dglee" */
+  userName: string
+  /** @default "Create" */
+  type: string
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  updatedAt: string
+  beforeModificationDetail: UtilityHistoryDetail | null
+  afterModificationDetail: UtilityHistoryDetail
+}
+
+export interface UtilityHistoryResponseDto {
+  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
+  id: string
+  /** @default "dglee" */
+  userName: string
+  /** @default "Create" */
+  type: string
+  /**
+   * @format date-time
+   * @default "2024-01-07T23:56:28.493Z"
+   */
+  updatedAt: string
+}
+
+export interface UtilityHistoryPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: UtilityHistoryResponseDto[]
+}
+
 export interface CreateJobNoteRequestDto {
   /** @default "hs8da-cdef-gh22321ask-xzcm12e3" */
   jobId: string
@@ -2452,7 +2550,7 @@ export interface ScheduleDto {
 
 export interface PutScheduleRequestDto {
   /** @default [{"start":"09:00:00","end":"13:00:00"},{"start":"14:00:00","end":"18:00:00"}] */
-  schedules: ScheduleDto
+  schedules: ScheduleDto[]
 }
 
 export interface ScheduleResponseDto {
@@ -2461,7 +2559,7 @@ export interface ScheduleResponseDto {
   /** @default "S- PE" */
   position: string
   /** @default [{"start":"09:00:00","end":"13:00:00"},{"start":"14:00:00","end":"18:00:00"}] */
-  schedules: ScheduleDto
+  schedules: ScheduleDto[]
 }
 
 export interface SchedulePaginatedResponseDto {
@@ -2474,98 +2572,6 @@ export interface SchedulePaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: ScheduleResponseDto[]
-}
-
-export interface CreateUtilityRequestDto {
-  /** @default "Sample Utility" */
-  name: string
-  /** @default ["AL","AK","AZ"] */
-  stateAbbreviations: string[]
-  /** @default "Blah - Blah" */
-  notes?: string
-}
-
-export interface UpdateUtilityRequestDto {
-  /** @default "Sample Utility" */
-  name?: string
-  /** @default ["AL","AK","AZ"] */
-  stateAbbreviations?: string[]
-  /** @default "Blah - Blah" */
-  notes?: string
-}
-
-export interface UtilityResponseDto {
-  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
-  id: string
-  /** @default "Sample Utility" */
-  name: string
-  /** @default ["AL","AK","AZ"] */
-  stateAbbreviations: string[]
-  /** @default "Blah - Blah" */
-  notes: string
-}
-
-export interface UtilityPaginatedResponseDto {
-  /** @default 1 */
-  page: number
-  /** @default 20 */
-  pageSize: number
-  /** @example 10000 */
-  totalCount: number
-  /** @example 500 */
-  totalPage: number
-  items: UtilityResponseDto[]
-}
-
-export interface UtilityHistoryDetail {
-  /** @default "Sample Utility" */
-  name: string
-  /** @default ["AL","AK","AZ"] */
-  stateAbbreviations: string[]
-  /** @default "Blah - Blah" */
-  notes: string
-}
-
-export interface UtilityHistoryDetailResponseDto {
-  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
-  id: string
-  /** @default "dglee" */
-  userName: string
-  /** @default "Create" */
-  type: string
-  /**
-   * @format date-time
-   * @default "2024-01-07T23:56:28.493Z"
-   */
-  updatedAt: string
-  beforeModificationDetail: UtilityHistoryDetail | null
-  afterModificationDetail: UtilityHistoryDetail
-}
-
-export interface UtilityHistoryResponseDto {
-  /** @default "bd2d7904-136d-4e2e-966a-679fe4f499d0" */
-  id: string
-  /** @default "dglee" */
-  userName: string
-  /** @default "Create" */
-  type: string
-  /**
-   * @format date-time
-   * @default "2024-01-07T23:56:28.493Z"
-   */
-  updatedAt: string
-}
-
-export interface UtilityHistoryPaginatedResponseDto {
-  /** @default 1 */
-  page: number
-  /** @default 20 */
-  pageSize: number
-  /** @example 10000 */
-  totalCount: number
-  /** @example 500 */
-  totalPage: number
-  items: UtilityHistoryResponseDto[]
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -3360,6 +3366,40 @@ export interface FindIntegratedOrderModificationHistoryPaginatedHttpControllerGe
   page?: number
 }
 
+export interface FindUtilityPaginatedHttpControllerGetParams {
+  /** @default "AL" */
+  stateAbbreviation?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindUtilityHistoryPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+  /** @default "674e3b83-0255-46fe-bc4b-047fca3c43cf" */
+  utilityId: string
+}
+
 export interface FindTaskPaginatedHttpControllerGetParams {
   /**
    * Specifies a limit of returned records
@@ -3609,40 +3649,6 @@ export interface FindSchedulePaginatedHttpControllerGetParams {
    * @example 1
    */
   page?: number
-}
-
-export interface FindUtilityPaginatedHttpControllerGetParams {
-  /** @default "AL" */
-  stateAbbreviation?: string
-  /**
-   * Specifies a limit of returned records
-   * @default 20
-   * @example 20
-   */
-  limit?: number
-  /**
-   * Page number
-   * @default 1
-   * @example 1
-   */
-  page?: number
-}
-
-export interface FindUtilityHistoryPaginatedHttpControllerGetParams {
-  /**
-   * Specifies a limit of returned records
-   * @default 20
-   * @example 20
-   */
-  limit?: number
-  /**
-   * Page number
-   * @default 1
-   * @example 1
-   */
-  page?: number
-  /** @default "674e3b83-0255-46fe-bc4b-047fca3c43cf" */
-  utilityId: string
 }
 
 import type { AxiosInstance, AxiosRequestConfig, AxiosResponse, HeadersDefaults, ResponseType } from 'axios'
@@ -6074,6 +6080,102 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
+  utilities = {
+    /**
+     * No description
+     *
+     * @name CreateUtilityHttpControllerPost
+     * @request POST:/utilities
+     */
+    createUtilityHttpControllerPost: (data: CreateUtilityRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/utilities`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindUtilityPaginatedHttpControllerGet
+     * @request GET:/utilities
+     */
+    findUtilityPaginatedHttpControllerGet: (
+      query: FindUtilityPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UtilityPaginatedResponseDto, any>({
+        path: `/utilities`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateUtilityHttpControllerPatch
+     * @request PATCH:/utilities/{utilityId}
+     */
+    updateUtilityHttpControllerPatch: (utilityId: string, data: UpdateUtilityRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/utilities/${utilityId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindUtilityHttpControllerGet
+     * @request GET:/utilities/{utilityId}
+     */
+    findUtilityHttpControllerGet: (utilityId: string, params: RequestParams = {}) =>
+      this.request<UtilityResponseDto, any>({
+        path: `/utilities/${utilityId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindUtilityHistoryHttpControllerGet
+     * @request GET:/utilities/histories/{utilityHistoryId}
+     */
+    findUtilityHistoryHttpControllerGet: (utilityHistoryId: string, params: RequestParams = {}) =>
+      this.request<UtilityHistoryDetailResponseDto, any>({
+        path: `/utilities/histories/${utilityHistoryId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindUtilityHistoryPaginatedHttpControllerGet
+     * @request GET:/utilities/{utilityId}/histories
+     */
+    findUtilityHistoryPaginatedHttpControllerGet: (
+      { utilityId, ...query }: FindUtilityHistoryPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<UtilityHistoryPaginatedResponseDto, any>({
+        path: `/utilities/${utilityId}/histories`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+  }
   orderedJobNotes = {
     /**
      * No description
@@ -6823,102 +6925,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/tracking-numbers/${trackingNumberId}`,
         method: 'DELETE',
-        ...params,
-      }),
-  }
-  utilities = {
-    /**
-     * No description
-     *
-     * @name CreateUtilityHttpControllerPost
-     * @request POST:/utilities
-     */
-    createUtilityHttpControllerPost: (data: CreateUtilityRequestDto, params: RequestParams = {}) =>
-      this.request<IdResponse, any>({
-        path: `/utilities`,
-        method: 'POST',
-        body: data,
-        type: ContentType.Json,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindUtilityPaginatedHttpControllerGet
-     * @request GET:/utilities
-     */
-    findUtilityPaginatedHttpControllerGet: (
-      query: FindUtilityPaginatedHttpControllerGetParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<UtilityPaginatedResponseDto, any>({
-        path: `/utilities`,
-        method: 'GET',
-        query: query,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateUtilityHttpControllerPatch
-     * @request PATCH:/utilities/{utilityId}
-     */
-    updateUtilityHttpControllerPatch: (utilityId: string, data: UpdateUtilityRequestDto, params: RequestParams = {}) =>
-      this.request<void, any>({
-        path: `/utilities/${utilityId}`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindUtilityHttpControllerGet
-     * @request GET:/utilities/{utilityId}
-     */
-    findUtilityHttpControllerGet: (utilityId: string, params: RequestParams = {}) =>
-      this.request<UtilityResponseDto, any>({
-        path: `/utilities/${utilityId}`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindUtilityHistoryHttpControllerGet
-     * @request GET:/utilities/histories/{utilityHistoryId}
-     */
-    findUtilityHistoryHttpControllerGet: (utilityHistoryId: string, params: RequestParams = {}) =>
-      this.request<UtilityHistoryDetailResponseDto, any>({
-        path: `/utilities/histories/${utilityHistoryId}`,
-        method: 'GET',
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindUtilityHistoryPaginatedHttpControllerGet
-     * @request GET:/utilities/{utilityId}/histories
-     */
-    findUtilityHistoryPaginatedHttpControllerGet: (
-      { utilityId, ...query }: FindUtilityHistoryPaginatedHttpControllerGetParams,
-      params: RequestParams = {},
-    ) =>
-      this.request<UtilityHistoryPaginatedResponseDto, any>({
-        path: `/utilities/${utilityId}/histories`,
-        method: 'GET',
-        query: query,
-        format: 'json',
         ...params,
       }),
   }

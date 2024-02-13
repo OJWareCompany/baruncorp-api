@@ -8,6 +8,8 @@ import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
+import { UtilityRepositoryPort } from '@modules/utility/database/utility.repository.port'
 
 @Injectable()
 export class ProjectValidatorDomainService {
@@ -16,15 +18,19 @@ export class ProjectValidatorDomainService {
     @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
     // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
+    // @ts-ignore
+    @Inject(UTILITY_REPOSITORY) private readonly utilityRepository: UtilityRepositoryPort,
   ) {}
 
   async validateForCreation(command: CreateProjectCommand) {
+    if (command.utilityId) await this.validateUtilityId(command.utilityId)
     await this.validateExistOrganization(command.clientOrganizationId)
     await this.checkProjectNumberConflict(command.clientOrganizationId, command.projectNumber)
     await this.checkPropertyAddressConflict(command.clientOrganizationId, command.projectPropertyAddress.fullAddress)
   }
 
   async validateForUpdate(projectEntity: ProjectEntity, command: UpdateProjectCommand) {
+    if (command.utilityId) await this.validateUtilityId(command.utilityId)
     await this.validateExistOrganization(projectEntity.clientOrganizationId)
     await this.checkProjectNumberConflict(projectEntity.clientOrganizationId, command.projectNumber, projectEntity)
     await this.checkPropertyAddressConflict(
@@ -36,6 +42,10 @@ export class ProjectValidatorDomainService {
 
   private async validateExistOrganization(clientOrganizationId: string) {
     await this.organizationRepo.findOneOrThrow(clientOrganizationId)
+  }
+
+  private async validateUtilityId(utilityId: string) {
+    await this.utilityRepository.findOne(utilityId)
   }
 
   private async checkProjectNumberConflict(

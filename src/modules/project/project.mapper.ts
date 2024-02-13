@@ -45,6 +45,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
 
       clientOrganizationId: props.clientOrganizationId,
       lastModifiedBy: props.updatedBy,
+      utilityId: props.utilityId,
 
       // clientUserId: props.clientOrganizationId,
       // clientUserName: props.clientUserName,
@@ -110,6 +111,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         }),
         updatedBy: record.lastModifiedBy,
         totalOfJobs: record.totalOfJobs,
+        utilityId: record.utilityId,
         // clientUserId: record.clientUserId,
         // clientUserName: record.clientUserName,
         numberOfWetStamp: null,

@@ -16,6 +16,8 @@ import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-
 import { PrismaService } from './../../../database/prisma.service'
 import { ProjectMapper } from '../../project.mapper'
 import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
+import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
+import { UtilityRepositoryPort } from '@modules/utility/database/utility.repository.port'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
@@ -60,6 +62,7 @@ export class CreateProjectService implements ICommandHandler {
         countySubdivisionsId: censusResponse?.countySubdivisions?.geoId || null,
         placeId: censusResponse?.place?.geoId,
       }),
+      utilityId: command.utilityId ?? null,
     })
     const projectRecord = this.projectMapper.toPersistence(projectEntity)
 

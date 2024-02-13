@@ -122,6 +122,7 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     this.props.projectPropertyOwner = props.projectPropertyOwner
     this.props.projectNumber = props.projectNumber
     this.props.updatedBy = props.updatedBy
+    this.props.utilityId = props.utilityId
   }
 
   deepEqualsPropertyAddressCoordinates(coordinates: number[]): boolean {

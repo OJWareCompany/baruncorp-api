@@ -26,6 +26,7 @@ export class PutScheduleRequestDto {
       { start: '14:00:00', end: '18:00:00' },
     ],
     type: ScheduleDto,
+    isArray: true,
   })
   @IsArray()
   @ValidateNested({ each: true }) // 배열 내 각 객체에 대해 유효성 검사 활성화

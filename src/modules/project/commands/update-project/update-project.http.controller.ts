@@ -27,6 +27,7 @@ export class UpdateProjectHttpController {
       projectPropertyAddress: new Address(request.projectPropertyAddress),
       // projectAssociatedRegulatory: request.projectAssociatedRegulatory,
       updatedByUserId: user.id,
+      utilityId: request.utilityId,
     })
     await this.commandBus.execute(command)
   }

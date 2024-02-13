@@ -25,4 +25,9 @@ export class CreateProjectRequestDto {
   @ApiProperty({ default: AddressDto })
   @IsObject()
   readonly projectPropertyAddress: AddressDto
+
+  @ApiProperty({ default: '07ec8e89-6877-4fa1-a029-c58360b57f43' })
+  @IsString()
+  @IsOptional()
+  readonly utilityId?: string
 }

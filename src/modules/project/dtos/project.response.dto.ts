@@ -87,6 +87,9 @@ export class ProjectResponseDto {
   @ApiProperty({ example: false })
   hasHistoryStructuralPEStamp: boolean
 
+  @ApiProperty({ example: 'eaefe251-0f1f-49ac-88cb-3582ec76601d' })
+  utilityId: string | null
+
   @ApiProperty({ example: [] })
   jobs: JobResponseDto[]
 }
