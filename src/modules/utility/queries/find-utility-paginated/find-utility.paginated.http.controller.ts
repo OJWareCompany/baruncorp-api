@@ -3,9 +3,9 @@ import { QueryBus } from '@nestjs/cqrs'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { AuthGuard } from '../../../auth/guards/authentication.guard'
-import { FindUtilityPaginatedQuery } from './utility.paginated.query-handler'
+import { FindUtilityPaginatedQuery } from './find-utility.paginated.query-handler'
 import { UtilityResponseDto } from '../../dtos/utility.response.dto'
-import { FindUtilityPaginatedRequestDto } from './utility.paginated.request.dto'
+import { FindUtilityPaginatedRequestDto } from './find-utility.paginated.request.dto'
 import { UtilityPaginatedResponseDto } from '@modules/utility/dtos/utility.paginated.response.dto'
 
 @Controller('utilities')

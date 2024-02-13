@@ -14,17 +14,29 @@ import { FindUtilityQueryHandler } from '@modules/utility/queries/find-utility/f
 import {
   FindUtilityPaginatedQuery,
   FindUtilityPaginatedQueryHandler,
-} from '@modules/utility/queries/find-utility-paginated/utility.paginated.query-handler'
-import { FindUtilityPaginatedHttpController } from '@modules/utility/queries/find-utility-paginated/utility.paginated.http.controller'
+} from '@modules/utility/queries/find-utility-paginated/find-utility.paginated.query-handler'
+import { FindUtilityPaginatedHttpController } from '@modules/utility/queries/find-utility-paginated/find-utility.paginated.http.controller'
+import { FindUtilityHistoryPaginatedParamRequestDto } from '@modules/utility/queries/find-utility-history-paginated/find-utility-history.paginated.request.dto'
+import { FindUtilityHistoryHttpController } from '@modules/utility/queries/find-utility-history/find-utility-history.http.controller'
+import { FindUtilityHistoryPaginatedHttpController } from '@modules/utility/queries/find-utility-history-paginated/find-utility-history.paginated.http.controller'
+import { FindUtilityHistoryQueryHandler } from '@modules/utility/queries/find-utility-history/find-utility-history.query-handler'
+import { FindUtilityHistoryPaginatedQueryHandler } from '@modules/utility/queries/find-utility-history-paginated/find-utility-history.paginated.query-handler'
 
 const httpControllers = [
   CreateUtilityHttpController,
   UpdateUtilityHttpController,
   FindUtilityHttpController,
   FindUtilityPaginatedHttpController,
+  FindUtilityHistoryHttpController,
+  FindUtilityHistoryPaginatedHttpController,
 ]
 const commandHandlers: Provider[] = [CreateUtilityService, UpdateUtilityService]
-const queryHandlers: Provider[] = [FindUtilityQueryHandler, FindUtilityPaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindUtilityQueryHandler,
+  FindUtilityPaginatedQueryHandler,
+  FindUtilityHistoryQueryHandler,
+  FindUtilityHistoryPaginatedQueryHandler,
+]
 const repositories: Provider[] = [
   {
     provide: UTILITY_REPOSITORY,

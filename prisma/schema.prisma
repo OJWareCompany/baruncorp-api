@@ -248,12 +248,11 @@ model UserPosition {
 }
 
 model UserSchedules {
-  id           String    @id @map("id")
-  schedules    Json      @map("schedules")
-  createdAt    DateTime  @map("created_at") @default(now())  @db.DateTime(0)
-  updatedAt    DateTime  @map("updated_at") @updatedAt @db.DateTime(0)
-
-  user         Users     @relation(fields: [id], references: [id])
+  id        String   @id @map("id")
+  schedules String   @map("schedules") @db.LongText
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  user      Users    @relation(fields: [id], references: [id])
 
   @@index([id])
   @@map("user_schedules")
@@ -469,7 +468,6 @@ model OrderedJobs {
   jobName                                       String            @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int               @map("job_request_number")
   receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
-  isManualDueDate                               Boolean           @default(false) @map("is_manual_due_date")
   dueDate                                       DateTime?         @map("due_date") @db.DateTime(0)
   mountingType                                  String            @map("mounting_type") @db.VarChar(255)
   projectType                                   String            @map("project_type") @db.VarChar(255)
@@ -540,6 +538,7 @@ model OrderedJobs {
   mailingAdderssPostalCode                      String?           @map("mailing_adderss_postal_code") @db.VarChar(255)
   mailingAdderssPostalCountry                   String?           @map("mailing_adderss_country") @db.VarChar(255)
   editor_user_id                                String?           @db.VarChar(255)
+  isManualDueDate                               Boolean           @default(false) @map("is_manual_due_date")
   project                                       OrderedProjects?  @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
@@ -1265,11 +1264,10 @@ model TrackingNumbers {
 }
 
 model Utilities {
-  id                 String @id @db.VarChar(255)
-  name               String       @map("name")
-  stateAbbreviations String       @map("state_abbreviations")  @db.VarChar(255)
-  notes              String       @map("notes")   @db.Text
-
+  id                 String             @id @db.VarChar(255)
+  name               String             @map("name")
+  notes              String             @map("notes") @db.Text
+  stateAbbreviations String             @map("state_abbreviations") @db.VarChar(255)
   snapshots          UtilitySnapshots[]
 
   @@map("utilities")
@@ -1277,21 +1275,20 @@ model Utilities {
 
 model UtilitySnapshots {
   id                 String       @id @db.VarChar(255)
-  utilityId          String       @db.VarChar(255)
   updatedBy          String       @db.VarChar(255)
+  utilityId          String       @db.VarChar(255)
   name               String       @map("name")
-  stateAbbreviations String       @map("state_abbreviations")  @db.VarChar(255)
-  notes              String       @map("notes")   @db.Text
-  type               SnapshotType @map("type")
-  createdAt          DateTime     @map("created_at") @db.DateTime(0) @default(now())
+  notes              String       @map("notes") @db.Text
+  createdAt          DateTime     @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt          DateTime     @map("updated_at") @db.DateTime(0)
+  type               SnapshotType @map("type")
+  stateAbbreviations String       @map("state_abbreviations") @db.VarChar(255)
+  user               Users        @relation(fields: [updatedBy], references: [id])
+  base               Utilities    @relation(fields: [utilityId], references: [id])
 
-  updator   Users       @relation(fields: [updatedBy], references: [id])
-  base      Utilities   @relation(fields: [utilityId], references: [id])
-
-  @@map("utility_snapshots")
   @@index([updatedBy])
   @@index([utilityId])
+  @@map("utility_snapshots")
 }
 
 enum InvoicesStatus {

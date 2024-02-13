@@ -30,6 +30,9 @@ export class FindUtilityPaginatedQueryHandler implements IQueryHandler {
       where: condition,
       skip: query.offset,
       take: query.limit,
+      orderBy: {
+        name: 'asc',
+      },
     })
 
     return new Paginated({
