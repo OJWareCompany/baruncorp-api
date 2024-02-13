@@ -42,7 +42,7 @@ export class UpdateUtilityService implements ICommandHandler {
     if (command.stateAbbreviations) entity.stateAbbreviations = command.stateAbbreviations
     if (command.notes) entity.notes = command.notes
 
-    await this.utilityRepository.update(entity)
+    entity.checkValidation()
 
     const historyEntitiy: UtilitySnapshotEntity = UtilitySnapshotEntity.create({
       utilityId: command.utilityId,
@@ -52,6 +52,8 @@ export class UpdateUtilityService implements ICommandHandler {
       notes: entity.notes,
       type: UtilitySnapshotTypeEnum.Modify,
     })
+
+    await this.utilityRepository.update(entity)
     await this.utilityRepository.insertSnapshot(historyEntitiy)
   }
 }

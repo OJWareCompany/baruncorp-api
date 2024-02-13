@@ -1,7 +1,7 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { UtilitySnapshotProps, CreateUtilitySnapshotProps } from './utility-snapshot.type'
 import { CreateUtilityProps, UtilityProps } from '@modules/utility/domain/utility.type'
+import { UtilityNameLengthException, UtilityNotFoundException } from '@modules/utility/domain/utilty.error'
 
 export class UtilityEntity extends AggregateRoot<UtilityProps> {
   protected _id: string
@@ -37,6 +37,12 @@ export class UtilityEntity extends AggregateRoot<UtilityProps> {
 
   set notes(notes: string) {
     this.props.notes = notes
+  }
+
+  public checkValidation() {
+    if (this.props.name.length < 2) {
+      throw new UtilityNameLengthException()
+    }
   }
 
   public validate(): void {

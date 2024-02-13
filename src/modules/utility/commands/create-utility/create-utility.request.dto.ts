@@ -25,6 +25,7 @@ export class CreateUtilityRequestDto {
   @IsString({ each: true })
   readonly stateAbbreviations: string[]
   @ApiProperty({ default: 'Blah - Blah' })
+  @IsOptional()
   @IsString()
-  readonly notes: string
+  readonly notes?: string
 }

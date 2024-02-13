@@ -31,20 +31,21 @@ export class CreateUtilityService implements ICommandHandler {
     if (statesFound.length !== command.stateAbbreviations.length) {
       throw new StateNotFoundException()
     }
-    // UtilityEntity.create({})를 하는 경우 props에 담을 필드가 없어서 에러가 발생한다.
-    // Utility 테이블과 Entity가 추가적으로 확장되기 전까지는 Entity를 생성하지 않도록 한다.
+
     const entity: UtilityEntity = UtilityEntity.create({
       name: command.name,
       stateAbbreviations: command.stateAbbreviations,
-      notes: command.notes,
+      notes: command.notes ?? '',
     })
+
+    entity.checkValidation()
 
     const snapshotEntity: UtilitySnapshotEntity = UtilitySnapshotEntity.create({
       utilityId: entity.id,
       updatedBy: command.updatedBy,
       name: command.name,
       stateAbbreviations: command.stateAbbreviations,
-      notes: command.notes,
+      notes: command.notes ?? '',
       type: UtilitySnapshotTypeEnum.Create,
     })
 

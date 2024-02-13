@@ -2482,7 +2482,7 @@ export interface CreateUtilityRequestDto {
   /** @default ["AL","AK","AZ"] */
   stateAbbreviations: string[]
   /** @default "Blah - Blah" */
-  notes: string
+  notes?: string
 }
 
 export interface UpdateUtilityRequestDto {
