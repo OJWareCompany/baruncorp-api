@@ -247,12 +247,11 @@ model UserPosition {
 }
 
 model UserSchedules {
-  id           String    @id @map("id")
-  schedules    Json      @map("schedules")
-  createdAt    DateTime  @map("created_at") @default(now())  @db.DateTime(0)
-  updatedAt    DateTime  @map("updated_at") @updatedAt @db.DateTime(0)
-
-  user         Users     @relation(fields: [id], references: [id])
+  id        String   @id @map("id")
+  schedules String   @map("schedules") @db.LongText
+  createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
+  user      Users    @relation(fields: [id], references: [id])
 
   @@index([id])
   @@map("user_schedules")
