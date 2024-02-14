@@ -1820,6 +1820,7 @@ export interface IntegratedOrderModificationHistoryResponseDto {
   entityId: string
   scopeOrTaskName: string | null
   attribute: string | null
+  isDateType: boolean
   operation: 'Create' | 'Update' | 'Delete'
   afterValue: string | null
   beforeValue: string | null
