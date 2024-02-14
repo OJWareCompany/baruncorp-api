@@ -85,36 +85,6 @@ export class ServiceInitialPriceManager {
     return customPrice || standardPrice
   }
 
-  async determinePricingType(
-    orderedService: OrderedServiceEntity | OrderedServices,
-  ): Promise<OrderedServicePricingTypeEnum> {
-    const job = await this.jobRepo.findJobOrThrow(orderedService.jobId)
-    const projectType = job.projectPropertyType
-    const mountingType = job.mountingType
-    const isRevision = orderedService.isRevision
-    const customPricing = await this.customPricingRepo.findOne(orderedService.organizationId, orderedService.serviceId)
-    const service = await this.serviceRepo.findOneOrThrow(orderedService.serviceId)
-    const organization = await this.organizationRepo.findOneOrThrow(orderedService.organizationId)
-
-    const freeRevisionType = await this.checkFreeRevisionType(orderedService, organization, isRevision)
-
-    const result = this.determinePricingTypeFor(isRevision, projectType, mountingType, customPricing || service.pricing)
-    return freeRevisionType || result || OrderedServicePricingTypeEnum.NO_PRICING_TYPE
-  }
-
-  private async checkFreeRevisionType(
-    orderedService: OrderedServiceEntity | OrderedServices,
-    organization: OrganizationEntity,
-    isRevision: boolean,
-  ): Promise<OrderedServicePricingTypeEnum | null> {
-    const isFreeRevision = await this.isFreeRevision(orderedService)
-    if (isFreeRevision) return OrderedServicePricingTypeEnum.CUSTOM_SPECIAL_REVISION_FREE // ?
-
-    if (isRevision && organization.isSpecialRevisionPricing)
-      return OrderedServicePricingTypeEnum.CUSTOM_SPECIAL_REVISION_PRICE // ?
-    return null
-  }
-
   async isFreeRevision(orderedService: OrderedServiceEntity | OrderedServices): Promise<boolean> {
     const organization = await this.organizationRepo.findOneOrThrow(orderedService.organizationId)
 
@@ -172,126 +142,156 @@ export class ServiceInitialPriceManager {
     return customPricing?.hasFixedPricing || service.pricing.fixedPrice
   }
 
-  private determinePricingTypeFor(
-    isRevision: boolean,
-    projectType: ProjectPropertyTypeEnum,
-    mountingType: MountingTypeEnum,
-    pricing: Pricing | CustomPricingEntity,
-  ): OrderedServicePricingTypeEnum | null {
-    const pricingType = this.determineNoneFixedPricingType(isRevision, projectType, mountingType, pricing)
-    const fixedPricingType = this.determineFixedPricingType(pricing)
-    if (pricingType) return pricingType
-    if (fixedPricingType) return fixedPricingType
-    return null
-  }
+  // private async checkFreeRevisionType(
+  //   orderedService: OrderedServiceEntity | OrderedServices,
+  //   organization: OrganizationEntity,
+  //   isRevision: boolean,
+  // ): Promise<OrderedServicePricingTypeEnum | null> {
+  //   const isFreeRevision = await this.isFreeRevision(orderedService)
+  //   if (isFreeRevision) return OrderedServicePricingTypeEnum.CUSTOM_SPECIAL_REVISION_FREE // ?
 
-  private determineFixedPricingType(pricing: Pricing | CustomPricingEntity): OrderedServicePricingTypeEnum | null {
-    return pricing instanceof Pricing && pricing.fixedPrice
-      ? OrderedServicePricingTypeEnum.BASE_FIXED_PRICE
-      : pricing instanceof CustomPricingEntity && pricing.customPricingType === CustomPricingTypeEnum.custom_fixed
-      ? OrderedServicePricingTypeEnum.CUSTOM_FIXED_PRICE
-      : null
-  }
+  //   if (isRevision && organization.isSpecialRevisionPricing)
+  //     return OrderedServicePricingTypeEnum.CUSTOM_SPECIAL_REVISION_PRICE // ?
+  //   return null
+  // }
 
-  private determineNoneFixedPricingType(
-    isRevision: boolean,
-    projectType: ProjectPropertyTypeEnum,
-    mountingType: MountingTypeEnum,
-    pricing: Pricing | CustomPricingEntity,
-  ): OrderedServicePricingTypeEnum | null {
-    return isRevision
-      ? this.determineRevisionPricingType(projectType, mountingType, pricing)
-      : this.determineNewPricingType(projectType, mountingType, pricing)
-  }
+  // async determinePricingType(
+  //   orderedService: OrderedServiceEntity | OrderedServices,
+  // ): Promise<OrderedServicePricingTypeEnum> {
+  //   const job = await this.jobRepo.findJobOrThrow(orderedService.jobId)
+  //   const projectType = job.projectPropertyType
+  //   const mountingType = job.mountingType
+  //   const isRevision = orderedService.isRevision
+  //   const customPricing = await this.customPricingRepo.findOne(orderedService.organizationId, orderedService.serviceId)
+  //   const service = await this.serviceRepo.findOneOrThrow(orderedService.serviceId)
+  //   const organization = await this.organizationRepo.findOneOrThrow(orderedService.organizationId)
 
-  private determineNewPricingType(
-    projectType: ProjectPropertyTypeEnum,
-    mountingType: MountingTypeEnum,
-    pricing: Pricing | CustomPricingEntity,
-  ): OrderedServicePricingTypeEnum | null {
-    if (projectType === ProjectPropertyTypeEnum.Commercial && mountingType === MountingTypeEnum.Roof_Mount) {
-      if (pricing instanceof CustomPricingEntity && pricing.hasNewCommercialPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_COMMERCIAL_NEW_PRICE
-      }
-      if (pricing instanceof Pricing) {
-        return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_NEW_PRICE
-      }
-    }
+  //   const freeRevisionType = await this.checkFreeRevisionType(orderedService, organization, isRevision)
 
-    if (projectType === ProjectPropertyTypeEnum.Commercial && mountingType === MountingTypeEnum.Ground_Mount) {
-      if (pricing instanceof CustomPricingEntity && pricing.hasNewCommercialPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_COMMERCIAL_GM_PRICE
-      }
-      if (pricing instanceof Pricing) {
-        return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_GM_PRICE
-      }
-    }
+  //   const result = this.determinePricingTypeFor(isRevision, projectType, mountingType, customPricing || service.pricing)
+  //   return freeRevisionType || result || OrderedServicePricingTypeEnum.NO_PRICING_TYPE
+  // }
 
-    if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Roof_Mount) {
-      if (pricing instanceof CustomPricingEntity && pricing.hasNewResidentialTieredPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE
-      }
-      if (pricing instanceof CustomPricingEntity && pricing.isResidentialNewServiceFlatPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_FLAT_PRICE
-      }
-      if (pricing instanceof Pricing) {
-        OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_NEW_PRICE
-      }
-    }
+  // private determinePricingTypeFor(
+  //   isRevision: boolean,
+  //   projectType: ProjectPropertyTypeEnum,
+  //   mountingType: MountingTypeEnum,
+  //   pricing: Pricing | CustomPricingEntity,
+  // ): OrderedServicePricingTypeEnum | null {
+  //   const pricingType = this.determineNoneFixedPricingType(isRevision, projectType, mountingType, pricing)
+  //   const fixedPricingType = this.determineFixedPricingType(pricing)
+  //   if (pricingType) return pricingType
+  //   if (fixedPricingType) return fixedPricingType
+  //   return null
+  // }
 
-    if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Ground_Mount) {
-      if (pricing instanceof CustomPricingEntity && pricing.hasNewResidentialTieredPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_PRICE
-      }
-      if (pricing instanceof CustomPricingEntity && pricing.isResidentialNewServiceFlatPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_FLAT_PRICE
-      }
-      if (pricing instanceof Pricing) {
-        return OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_GM_PRICE
-      }
-    }
-    return null
-  }
+  // private determineFixedPricingType(pricing: Pricing | CustomPricingEntity): OrderedServicePricingTypeEnum | null {
+  //   return pricing instanceof Pricing && pricing.fixedPrice
+  //     ? OrderedServicePricingTypeEnum.BASE_FIXED_PRICE
+  //     : pricing instanceof CustomPricingEntity && pricing.customPricingType === CustomPricingTypeEnum.custom_fixed
+  //     ? OrderedServicePricingTypeEnum.CUSTOM_FIXED_PRICE
+  //     : null
+  // }
 
-  private determineRevisionPricingType(
-    projectType: ProjectPropertyTypeEnum,
-    mountingType: MountingTypeEnum,
-    pricing: Pricing | CustomPricingEntity,
-  ): OrderedServicePricingTypeEnum | null {
-    if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Roof_Mount) {
-      if (pricing instanceof CustomPricingEntity && pricing.hasRevisionResidentialPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_REVISION_PRICE
-      }
-      if (pricing instanceof Pricing) {
-        return OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_REVISION_PRICE
-      }
-    }
+  // private determineNoneFixedPricingType(
+  //   isRevision: boolean,
+  //   projectType: ProjectPropertyTypeEnum,
+  //   mountingType: MountingTypeEnum,
+  //   pricing: Pricing | CustomPricingEntity,
+  // ): OrderedServicePricingTypeEnum | null {
+  //   return isRevision
+  //     ? this.determineRevisionPricingType(projectType, mountingType, pricing)
+  //     : this.determineNewPricingType(projectType, mountingType, pricing)
+  // }
 
-    if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Ground_Mount) {
-      if (pricing instanceof CustomPricingEntity && pricing.hasRevisionResidentialPricing) {
-        return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_REVISION_GM_PRICE
-      }
-      if (pricing instanceof Pricing) {
-        return OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_REVISION_GM_PRICE
-      }
-    }
+  // private determineNewPricingType(
+  //   projectType: ProjectPropertyTypeEnum,
+  //   mountingType: MountingTypeEnum,
+  //   pricing: Pricing | CustomPricingEntity,
+  // ): OrderedServicePricingTypeEnum | null {
+  //   if (projectType === ProjectPropertyTypeEnum.Commercial && mountingType === MountingTypeEnum.Roof_Mount) {
+  //     if (pricing instanceof CustomPricingEntity && pricing.hasNewCommercialPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_COMMERCIAL_NEW_PRICE
+  //     }
+  //     if (pricing instanceof Pricing) {
+  //       return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_NEW_PRICE
+  //     }
+  //   }
 
-    if (
-      pricing instanceof Pricing &&
-      projectType === ProjectPropertyTypeEnum.Commercial &&
-      mountingType === MountingTypeEnum.Ground_Mount
-    ) {
-      return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_REVISION_PRICE
-    }
+  //   if (projectType === ProjectPropertyTypeEnum.Commercial && mountingType === MountingTypeEnum.Ground_Mount) {
+  //     if (pricing instanceof CustomPricingEntity && pricing.hasNewCommercialPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_COMMERCIAL_GM_PRICE
+  //     }
+  //     if (pricing instanceof Pricing) {
+  //       return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_GM_PRICE
+  //     }
+  //   }
 
-    if (
-      pricing instanceof Pricing &&
-      projectType === ProjectPropertyTypeEnum.Commercial &&
-      mountingType === MountingTypeEnum.Ground_Mount
-    ) {
-      return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_REVISION_GM_PRICE
-    }
+  //   if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Roof_Mount) {
+  //     if (pricing instanceof CustomPricingEntity && pricing.hasNewResidentialTieredPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE
+  //     }
+  //     if (pricing instanceof CustomPricingEntity && pricing.isResidentialNewServiceFlatPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_FLAT_PRICE
+  //     }
+  //     if (pricing instanceof Pricing) {
+  //       OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_NEW_PRICE
+  //     }
+  //   }
 
-    return null
-  }
+  //   if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Ground_Mount) {
+  //     if (pricing instanceof CustomPricingEntity && pricing.hasNewResidentialTieredPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_PRICE
+  //     }
+  //     if (pricing instanceof CustomPricingEntity && pricing.isResidentialNewServiceFlatPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_FLAT_PRICE
+  //     }
+  //     if (pricing instanceof Pricing) {
+  //       return OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_GM_PRICE
+  //     }
+  //   }
+  //   return null
+  // }
+
+  // private determineRevisionPricingType(
+  //   projectType: ProjectPropertyTypeEnum,
+  //   mountingType: MountingTypeEnum,
+  //   pricing: Pricing | CustomPricingEntity,
+  // ): OrderedServicePricingTypeEnum | null {
+  //   if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Roof_Mount) {
+  //     if (pricing instanceof CustomPricingEntity && pricing.hasRevisionResidentialPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_REVISION_PRICE
+  //     }
+  //     if (pricing instanceof Pricing) {
+  //       return OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_REVISION_PRICE
+  //     }
+  //   }
+
+  //   if (projectType === ProjectPropertyTypeEnum.Residential && mountingType === MountingTypeEnum.Ground_Mount) {
+  //     if (pricing instanceof CustomPricingEntity && pricing.hasRevisionResidentialPricing) {
+  //       return OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_REVISION_GM_PRICE
+  //     }
+  //     if (pricing instanceof Pricing) {
+  //       return OrderedServicePricingTypeEnum.BASE_RESIDENTIAL_REVISION_GM_PRICE
+  //     }
+  //   }
+
+  //   if (
+  //     pricing instanceof Pricing &&
+  //     projectType === ProjectPropertyTypeEnum.Commercial &&
+  //     mountingType === MountingTypeEnum.Ground_Mount
+  //   ) {
+  //     return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_REVISION_PRICE
+  //   }
+
+  //   if (
+  //     pricing instanceof Pricing &&
+  //     projectType === ProjectPropertyTypeEnum.Commercial &&
+  //     mountingType === MountingTypeEnum.Ground_Mount
+  //   ) {
+  //     return OrderedServicePricingTypeEnum.BASE_COMMERCIAL_REVISION_GM_PRICE
+  //   }
+
+  //   return null
+  // }
 }
