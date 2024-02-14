@@ -21,7 +21,6 @@ export class CreateGoogleJobNoteFolderService implements ICommandHandler {
       jobNoteId: command.jobNoteId,
       sharedDriveId: command.sharedDriveId,
     })
-    entity.validate()
     await this.googleJobNoteFolderRepository.insertOne(entity)
   }
 }

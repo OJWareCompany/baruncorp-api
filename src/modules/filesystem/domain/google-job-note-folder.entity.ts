@@ -14,9 +14,9 @@ export class GoogleJobNoteFolderEntity extends AggregateRoot<GoogleJobNoteFolder
   }
 
   public validate(): void {
-    Object.entries(this.props).map(([key, value]) => {
-      if (typeof value !== 'string') return
-      if (Guard.isEmpty(value)) throw new StringIsEmptyException(key)
-    })
+    // Object.entries(this.props).map(([key, value]) => {
+    //   if (typeof value !== 'string') return
+    //   if (Guard.isEmpty(value)) throw new StringIsEmptyException(key)
+    // })
   }
 }
