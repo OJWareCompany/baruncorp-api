@@ -17,11 +17,6 @@ export interface JobNoteProps extends CreateJobNoteProps {
   creatorUser: JobNoteUser | null
 }
 
-export interface IImapConnection {
-  auth2Client: OAuth2Client
-  imap: Imap
-}
-
 export enum JobNoteTypeEnum {
   JobNote = 'JobNote',
   RFI = 'RFI',

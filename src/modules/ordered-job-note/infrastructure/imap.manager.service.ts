@@ -2,28 +2,30 @@ import { Injectable } from '@nestjs/common'
 import Imap from 'imap'
 import { RFIMailer } from '@modules/ordered-job-note/infrastructure/mailer.infrastructure'
 import * as xoauth2 from 'xoauth2'
-import { Credentials, OAuth2Client } from 'google-auth-library'
+import { OAuth2Client } from 'google-auth-library'
 import { gmail_v1 } from 'googleapis'
 import { AddressObject, ParsedMail, simpleParser } from 'mailparser'
 import { JobNoteRepository } from '@modules/ordered-job-note/database/job-note.repository'
 import { JobNoteEntity } from '@modules/ordered-job-note/domain/job-note.entity'
-import { IImapConnection, JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
+import { JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
 import { PrismaService } from '@modules/database/prisma.service'
 import { UserStatusEnum } from '@modules/users/domain/user.types'
+import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
 
 @Injectable()
 export class ImapManagerService {
-  private imapConnections: Map<string, IImapConnection> = new Map()
+  private imapSessions: Map<string, Imap> = new Map()
   constructor(
     private readonly jobNoteRepository: JobNoteRepository,
     private readonly prismaService: PrismaService,
     private readonly mailer: RFIMailer,
   ) {}
 
+  // 앱 실행 시 Imap Server에 Connection 요청
   async initImapConnection() {
     try {
       // 활성화된 Baruncorp 유저 리스트 받아온다.
-      const users = await this.prismaService.users.findMany({
+      const users: { id: string; email: string }[] = await this.prismaService.users.findMany({
         where: {
           email: { contains: 'baruncorp.com' },
           status: UserStatusEnum.ACTIVE,
@@ -34,107 +36,101 @@ export class ImapManagerService {
         },
       })
 
-      for (const user of users) {
-        await this.connect(user.email)
-      }
+      Promise.all(
+        users.map((user) =>
+          this.connect(user.email).catch((error) => {
+            // console.log(`Failed to connect to ${user.email}: ${error}`);
+          }),
+        ),
+      )
+        .then((results) => {
+          // console.log(`[initImapConnection] complete`);
+        })
+        .catch((error) => {
+          // console.error(`[initImapConnection] err: ${error}`);
+        })
 
       // 각 클라이언트 들에 대해 Imap Connect
     } catch (error) {
-      console.log(`[initImapConnection] error : ${error}`)
+      // console.log(`[initImapConnection] error : ${error}`)
     }
   }
 
   async connect(targetEmail: string) {
     try {
-      // console.log(`[connectToMailbox] targetEmail : ${targetEmail}`)
+      // 무조건 targetEmail에 대한 세션을 검사 한 후 connection 진행한다.
+      this.disconnect(targetEmail)
+      // 인증 진행
       const auth2Client: OAuth2Client = await this.mailer.getGoogleAuthClient(targetEmail)
-      auth2Client.on('tokens', (tokens: Credentials) => {
-        // 자동으로 토큰 만료 직전에 tokens 이벤트 발생
-        if (tokens.access_token) {
-          // console.log(`[ImapManagerService][connect][auth2Client/tokens] targetEmail: ${targetEmail}`)
-          this.resetImapConnection(targetEmail, tokens.access_token, auth2Client)
-        }
+
+      const response: GetAccessTokenResponse = await auth2Client.getAccessToken()
+      if (!response.token) return
+
+      const xoauth2gen = xoauth2.createXOAuth2Generator({
+        user: targetEmail,
+        accessToken: response.token,
       })
-      await auth2Client.getAccessToken()
+
+      xoauth2gen.getToken((err: string, token: string) => {
+        if (err) {
+          return console.log(err)
+        }
+
+        const imapConfig: Imap.Config = {
+          user: targetEmail,
+          xoauth2: token,
+          host: 'imap.gmail.com',
+          port: 993,
+          tls: true,
+          tlsOptions: {
+            rejectUnauthorized: false,
+          },
+        } as Imap.Config
+
+        const imapSession: Imap = new Imap(imapConfig)
+
+        this.initImapListeners(auth2Client, imapSession)
+        imapSession.connect()
+
+        this.imapSessions.set(targetEmail, imapSession)
+
+        // console.log(`[ImapManagerService][connect] targetEmail : ${targetEmail} / imapSessionsSize : ${this.imapSessions.size}`)
+      })
     } catch (error) {
-      console.log(`[ImapManagerService][connectToMailbox] ${error} / targetEmail : ${targetEmail}`)
+      // console.log(`[ImapManagerService][connect] ${error} / targetEmail : ${targetEmail}`)
     }
   }
 
   async disconnect(targetEmail: string) {
-    const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
-    if (connection) {
-      this.imapConnections.delete(targetEmail)
-      connection.auth2Client.removeAllListeners() // auth2Client의 'tokens'이벤트 제거
-      connection.imap.end() // IMAP 연결 제거
+    const imapSession: Imap | undefined = this.imapSessions.get(targetEmail)
+    if (imapSession) {
+      this.imapSessions.delete(targetEmail)
+      imapSession.removeAllListeners()
+      imapSession.end()
+
+      // console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapSessions.size)}`)
     }
-    // console.log(`[ImapManagerService][disconnect] imapConnectionsSize : ${JSON.stringify(this.imapConnections.size)}`)
   }
 
-  private resetImapConnection(targetEmail: string, newToken: string, auth2Client: OAuth2Client) {
-    // console.log(`[ImapManagerService][resetImapConnection]`)
-
-    const connection: IImapConnection | undefined = this.imapConnections.get(targetEmail)
-    if (connection) {
-      this.disconnect(targetEmail)
-    }
-
-    const xoauth2gen = xoauth2.createXOAuth2Generator({
-      user: targetEmail,
-      accessToken: newToken,
-    })
-
-    xoauth2gen.getToken((err: string, token: string) => {
-      if (err) {
-        return console.log(err)
-      }
-
-      const imapConfig: Imap.Config = {
-        user: targetEmail,
-        xoauth2: token,
-        host: 'imap.gmail.com',
-        port: 993,
-        tls: true,
-        tlsOptions: {
-          rejectUnauthorized: false,
-        },
-      } as Imap.Config
-
-      const imap: Imap = new Imap(imapConfig)
-      this.setupImapListeners(auth2Client, imap)
-      imap.connect()
-
-      const newConnection: IImapConnection = {
-        auth2Client: auth2Client,
-        imap: imap,
-      }
-      this.imapConnections.set(targetEmail, newConnection)
-
-      // console.log(`[ImapManagerService][connectToMailbox] imapConnectionsSize : ${this.imapConnections.size}`)
-    })
-  }
-
-  private setupImapListeners(auth2Client: OAuth2Client, imap: Imap) {
+  private initImapListeners(auth2Client: OAuth2Client, imap: Imap) {
     imap.once('ready', () => this.onImapReady(auth2Client, imap))
     imap.once('error', (err: any) => this.onImapError(err))
     imap.once('end', () => this.onImapEnd())
   }
 
   private onImapError(err: any) {
-    console.error(`[ImapManagerService][onImapError] ${JSON.stringify(err)}`)
+    // console.error(`[ImapManagerService][onImapError] ${JSON.stringify(err)}`)
   }
 
   private onImapEnd() {
     // console.log('[ImapManagerService] Connection ended')
-    // 어떤 소켓이 끊겼는지 모르는게 문제다.
-    // 그렇다면 전체 세션을 검사해서 상태를 확인해보자.
-    const disconnectedConnections: [string, IImapConnection][] = [...this.imapConnections].filter(
-      ([key, value]) => value.imap.state === 'disconnected',
+    // 어떤 소켓이 끊겼는지 정보를 해당 콜백에서 제공 하지 않음. => 전체 세션에서 상태 검사
+    const disconnectedConnections: [string, Imap][] = [...this.imapSessions].filter(
+      ([targetMail, imapClient]) => imapClient.state === 'disconnected',
     )
 
     disconnectedConnections.forEach(([targetEmail, connection]) => {
       // console.log(`[ImapManagerService][onImapEnd] retry : ${targetEmail}`)
-      this.disconnect(targetEmail)
       this.connect(targetEmail)
     })
   }
@@ -156,18 +152,24 @@ export class ImapManagerService {
       bodies: '',
       struct: true,
     })
-
-    fetch.on('message', (msg: Imap.ImapMessage, seqno: number) => this.processMessage(msg, seqno, auth2Client))
-    fetch.once('error', (err: Error) => console.log('Fetch error: ' + err))
+    fetch.on('message', (msg: Imap.ImapMessage, seqno: number) => {
+      this.processMessage(msg, seqno, auth2Client)
+    })
+    fetch.once('error', (err: Error) => {
+      // console.log('[ImapManagerService][onNewMail][error]')
+      // console.log('Fetch error: ' + err)
+    })
     fetch.once('end', () => {
-      console.log('[ImapManagerService][onNewMail]')
+      // console.log('[ImapManagerService][onNewMail][end]')
     })
   }
 
   private async processMessage(msg: Imap.ImapMessage, seqno: number, auth2Client: OAuth2Client) {
     const prefix: string = '(#' + seqno + ') '
     // console.log("Message #%d", seqno);
-    msg.on('body', (stream, info) => this.processMessageBody(stream, auth2Client))
+    msg.on('body', (stream, info) => {
+      this.processMessageBody(stream, auth2Client)
+    })
     msg.once('attributes', (attrs) => {
       // console.log(prefix + 'Attributes: %s', inspect(attrs, false, 8))
     })
@@ -200,16 +202,18 @@ export class ImapManagerService {
       if (messages && messages.length > 0) {
         const threadId: string | null | undefined = messages[0].threadId
         const senderEmail: string | undefined = parsed.from?.value[0]?.address
+
         const receiverEmails: string[] = Array.isArray(parsed.to)
           ? parsed.to.map((address: AddressObject) => address.value[0].address ?? '')
           : parsed.to
           ? [parsed.to.value[0].address ?? '']
           : []
-        // console.log(`from : ${senderEmail}`)
-        // console.log(`to : ${receiverEmails.toString()}`)
+        // console.log(`[fetchAndProcessEmails] from : ${senderEmail}`)
+        // console.log(`[fetchAndProcessEmails] to : ${receiverEmails.toString()}`)
         // console.log(`MessageId : ${parsed.messageId}`)
         // console.log(`Found thread ID: ${threadId}`)
         // console.log(`subject : ${parsed.subject!}`)
+
         // 바른코프 직원이 보낸 메일은 버린다(createJobNote에서 이미 RFI 생성)
         if (!threadId || !senderEmail || senderEmail.toLowerCase().includes('baruncorp.com')) {
           return
@@ -217,7 +221,6 @@ export class ImapManagerService {
 
         const equalThreadIdEntity: JobNoteEntity | null = await this.jobNoteRepository.findOneFromMailThreadId(threadId)
         // console.log(`equalThreadEntity : ${JSON.stringify(equalThreadIdEntity)}`)
-
         // 같은 ThreadId를 가진 메시지가 없다는 것은 바른코프 직원으로부터 받은 RFI 메일의 답장이 아니기에 버린다.
         if (!equalThreadIdEntity) return
 
@@ -241,10 +244,10 @@ export class ImapManagerService {
           }),
         )
       } else {
-        console.log('No message found with the specified Message-ID')
+        // console.log('No message found with the specified Message-ID')
       }
     } catch (err) {
-      console.error('The API returned an error: ', err)
+      // console.error('The API returned an error: ', err)
     }
   }
 
