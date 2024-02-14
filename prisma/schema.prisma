@@ -468,6 +468,7 @@ model OrderedJobs {
   jobName                                       String            @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int               @map("job_request_number")
   receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
+  isManualDueDate                               Boolean           @default(false) @map("is_manual_due_date")
   dueDate                                       DateTime?         @map("due_date") @db.DateTime(0)
   mountingType                                  String            @map("mounting_type") @db.VarChar(255)
   projectType                                   String            @map("project_type") @db.VarChar(255)
@@ -538,7 +539,6 @@ model OrderedJobs {
   mailingAdderssPostalCode                      String?           @map("mailing_adderss_postal_code") @db.VarChar(255)
   mailingAdderssPostalCountry                   String?           @map("mailing_adderss_country") @db.VarChar(255)
   editor_user_id                                String?           @db.VarChar(255)
-  isManualDueDate                               Boolean           @default(false) @map("is_manual_due_date")
   project                                       OrderedProjects?  @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
@@ -590,7 +590,6 @@ model OrderedProjects {
   countySubdivisionsId                          String?        @map("county_subdivisions_id") @db.VarChar(255)
   placeId                                       String?        @map("place_id") @db.VarChar(255)
   ahjId                                         String?        @map("ahj_id") @db.VarChar(255)
-  utilityId                                     String?        @map("utilityId") @db.VarChar(255)
   isGroundMount                                 Boolean?       @map("is_ground_mount")
   mailingAddressForStructuralWetStamp           String?        @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
   mailingAddressForElectricalWetStamp           String?        @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
@@ -598,6 +597,7 @@ model OrderedProjects {
   designOrPeStampPreviouslyDoneOnProjectOutside Int?           @map("design_or_pe_stamp_previously_done_on_project_outside")
   totalOfJobs                                   Int            @default(1) @map("total_of_jobs")
   propertyAddressCountry                        String?        @map("property_address_country") @db.VarChar(255)
+  utilityId                                     String?        @map("utilityId") @db.VarChar(255)
   organization                                  Organizations? @relation(fields: [clientOrganizationId], references: [id])
   jobs                                          OrderedJobs[]
   utility                                       Utilities?     @relation(fields: [utilityId], references: [id])
@@ -1229,6 +1229,7 @@ model IntegratedOrderModificationHistory {
   entityId        String   @map("entity_id") @db.VarChar(255)
   scopeOrTaskName String?  @map("scope_or_task_name") @db.VarChar(255)
   attribute       String   @default("None") @map("attribute") @db.VarChar(255)
+  isDateType    Boolean @map("is_date_type")
   operation       String   @default("Create") @map("operation") @db.VarChar(22)
   afterValue      String?  @map("after_value") @db.Text
   beforeValue     String?  @map("before_value") @db.Text

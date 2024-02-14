@@ -27,6 +27,7 @@ export class IntegratedOrderModificationHistoryRepository implements IntegratedO
         operation: OrderModificationHistoryOperationEnum.Create,
         beforeValue: null,
         afterValue: null,
+        isDateType: false,
       },
     })
   }
@@ -51,6 +52,7 @@ export class IntegratedOrderModificationHistoryRepository implements IntegratedO
         operation: OrderModificationHistoryOperationEnum.Delete,
         beforeValue: null,
         afterValue: null,
+        isDateType: false,
       },
     })
   }

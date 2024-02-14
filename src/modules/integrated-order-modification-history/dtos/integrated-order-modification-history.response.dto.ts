@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { OrderModificationHistoryOperationEnum } from '../domain/integrated-order-modification-history.type'
 
@@ -36,6 +36,10 @@ export class IntegratedOrderModificationHistoryResponseDto {
   @IsString()
   @IsOptional()
   attribute: string | null
+
+  @ApiProperty()
+  @IsBoolean()
+  isDateType: boolean
 
   @ApiProperty()
   @IsEnum(OrderModificationHistoryOperationEnum)

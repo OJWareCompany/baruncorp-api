@@ -38,6 +38,7 @@ export class FindIntegratedOrderModificationHistoryPaginatedHttpController {
             entityId: item.entityId,
             scopeOrTaskName: item.scopeOrTaskName,
             attribute: item.attribute,
+            isDateType: item.isDateType,
             operation: item.operation as OrderModificationHistoryOperationEnum,
             afterValue: item.afterValue,
             beforeValue: item.beforeValue,
