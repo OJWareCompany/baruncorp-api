@@ -2554,6 +2554,8 @@ export interface PutScheduleRequestDto {
 }
 
 export interface ScheduleResponseDto {
+  /** @default "529cec06-1fb7-4284-b56f-9f31219cd099" */
+  userId: string
   /** @default "John Doe" */
   name: string
   /** @default "S- PE" */
