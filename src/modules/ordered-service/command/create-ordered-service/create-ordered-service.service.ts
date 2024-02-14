@@ -16,10 +16,10 @@ import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-s
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { DuplicatedScopeChecker } from '../../domain/domain-services/duplicated-scope-checker.domain-service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
-import { ValidScopeStatus } from '../../domain/value-objects/valid-previously-scope-status.value-object'
-import { CreateOrderedServiceCommand } from './create-ordered-service.command'
 import { ScopeRevisionChecker } from '../../domain/domain-services/scope-revision-checker.domain-service'
+import { CreateOrderedServiceCommand } from './create-ordered-service.command'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -38,6 +38,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
     private readonly scopeRevisionChecker: ScopeRevisionChecker,
+    private readonly checkDuplicatedScope: DuplicatedScopeChecker,
   ) {}
 
   /**
@@ -76,6 +77,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
       this.orderModificationValidator,
       this.revisionTypeUpdateValidator,
       this.scopeRevisionChecker,
+      this.checkDuplicatedScope,
     )
 
     await this.orderedServiceRepo.insert(orderedServiceEntity)
