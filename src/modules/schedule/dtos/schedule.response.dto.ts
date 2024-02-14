@@ -8,6 +8,8 @@ export class ScheduleResponseDto {
   constructor(props: ScheduleResponseDto) {
     initialize(this, props)
   }
+  @ApiProperty({ default: '529cec06-1fb7-4284-b56f-9f31219cd099' })
+  readonly userId: string
   @ApiProperty({ default: 'John Doe' })
   readonly name: string
   @ApiProperty({ default: 'S- PE' })

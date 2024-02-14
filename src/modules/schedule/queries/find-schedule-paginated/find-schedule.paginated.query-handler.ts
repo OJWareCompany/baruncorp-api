@@ -41,6 +41,7 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
       totalCount: totalCount,
       items: records.map((record) => {
         const response: ScheduleResponseDto = {
+          userId: record.id,
           name: record.full_name,
           position: record.userPosition ? record.userPosition.position.name : '',
           schedules: record.userSchedule ? (record.userSchedule.schedules as unknown as ScheduleDto[]) : [],
@@ -73,14 +74,14 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
       },
       orderBy: [
         {
-          full_name: 'asc',
-        },
-        {
           userPosition: {
             position: {
               name: 'asc',
             },
           },
+        },
+        {
+          full_name: 'asc',
         },
       ],
       skip: offset,
