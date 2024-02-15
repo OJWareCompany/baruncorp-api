@@ -30,7 +30,7 @@ export class Mailer {
 
     try {
       const sent = await transporter.sendMail(mailOptions)
-      console.log('Email sent!: ' + sent.response)
+      // console.log('Email sent!: ' + sent.response)
     } catch (error) {
       console.log(error)
     }
