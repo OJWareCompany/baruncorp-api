@@ -2,12 +2,10 @@ import { Module, Provider } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import { CreateVendorInvoiceHttpController } from './commands/create-vendor-invoice/create-vendor-invoice.http.controller'
-import { UpdateVendorInvoiceHttpController } from './commands/update-vendor-invoice/update-vendor-invoice.http.controller'
 import { DeleteVendorInvoiceHttpController } from './commands/delete-vendor-invoice/delete-vendor-invoice.http.controller'
 import { FindVendorInvoiceHttpController } from './queries/find-vendor-invoice/find-vendor-invoice.http.controller'
 import { FindVendorInvoicePaginatedHttpController } from './queries/find-vendor-invoice-paginated/find-vendor-invoice.paginated.http.controller'
 import { CreateVendorInvoiceService } from './commands/create-vendor-invoice/create-vendor-invoice.service'
-import { UpdateVendorInvoiceService } from './commands/update-vendor-invoice/update-vendor-invoice.service'
 import { DeleteVendorInvoiceService } from './commands/delete-vendor-invoice/delete-vendor-invoice.service'
 import { FindVendorInvoiceQueryHandler } from './queries/find-vendor-invoice/find-vendor-invoice.query-handler'
 import { FindVendorInvoicePaginatedQueryHandler } from './queries/find-vendor-invoice-paginated/find-vendor-invoice.paginated.query-handler'
@@ -29,7 +27,6 @@ import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
-  UpdateVendorInvoiceHttpController,
   DeleteVendorInvoiceHttpController,
   FindVendorInvoiceHttpController,
   FindVendorInvoicePaginatedHttpController,
@@ -37,7 +34,7 @@ const httpControllers = [
   FindVendorToInvoiceLineItemsPaginatedHttpController,
   FindVendorInvoiceLineItemHttpController,
 ]
-const commandHandlers: Provider[] = [CreateVendorInvoiceService, UpdateVendorInvoiceService, DeleteVendorInvoiceService]
+const commandHandlers: Provider[] = [CreateVendorInvoiceService, DeleteVendorInvoiceService]
 const queryHandlers: Provider[] = [
   FindVendorInvoiceQueryHandler,
   FindVendorInvoicePaginatedQueryHandler,

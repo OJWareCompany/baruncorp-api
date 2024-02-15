@@ -2144,11 +2144,6 @@ export interface CreateVendorInvoiceRequestDto {
   note: string | null
 }
 
-export interface UpdateVendorInvoiceRequestDto {
-  /** @default "" */
-  id: string
-}
-
 export interface VendorInvoiceResponseDto {
   /** @default "" */
   id: string
@@ -6466,25 +6461,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         query: query,
         format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name UpdateVendorInvoiceHttpControllerPatch
-     * @request PATCH:/vendor-invoices/{vendorInvoiceId}
-     */
-    updateVendorInvoiceHttpControllerPatch: (
-      vendorInvoiceId: string,
-      data: UpdateVendorInvoiceRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/vendor-invoices/${vendorInvoiceId}`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
         ...params,
       }),
 
