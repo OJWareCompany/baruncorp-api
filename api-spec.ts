@@ -2144,11 +2144,6 @@ export interface CreateVendorInvoiceRequestDto {
   note: string | null
 }
 
-export interface UpdateVendorInvoiceRequestDto {
-  /** @default "" */
-  id: string
-}
-
 export interface VendorInvoiceResponseDto {
   /** @default "" */
   id: string
@@ -2241,6 +2236,11 @@ export interface VendorInvoiceLineItemPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: VendorInvoiceLineItemResponse[]
+}
+
+export interface UpdateVendorInvoicedTotalRequestDto {
+  /** @default 1000 */
+  total: number
 }
 
 export interface CreateVendorPaymentRequestDto {
@@ -2625,6 +2625,8 @@ export interface FindUsersHttpControllerGetFindUsersParams {
    * @default null
    */
   userName?: string | null
+  /** @default "Active" */
+  status?: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active' | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -6470,25 +6472,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UpdateVendorInvoiceHttpControllerPatch
-     * @request PATCH:/vendor-invoices/{vendorInvoiceId}
-     */
-    updateVendorInvoiceHttpControllerPatch: (
-      vendorInvoiceId: string,
-      data: UpdateVendorInvoiceRequestDto,
-      params: RequestParams = {},
-    ) =>
-      this.request<void, any>({
-        path: `/vendor-invoices/${vendorInvoiceId}`,
-        method: 'PATCH',
-        body: data,
-        type: ContentType.Json,
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
      * @name DeleteVendorInvoiceHttpControllerDelete
      * @request DELETE:/vendor-invoices/{vendorInvoiceId}
      */
@@ -6510,6 +6493,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/vendor-invoices/${vendorInvoiceId}`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateVendorInvoicedTotalHttpControllerPatch
+     * @request PATCH:/vendor-invoices/{vendorInvoiceId}
+     */
+    updateVendorInvoicedTotalHttpControllerPatch: (
+      vendorInvoiceId: string,
+      data: UpdateVendorInvoicedTotalRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/vendor-invoices/${vendorInvoiceId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

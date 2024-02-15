@@ -1,8 +1,9 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 
-export class UpdateVendorInvoiceCommand {
+export class UpdateVendorInvoicedTotalCommand {
   readonly vendorInvoiceId: string
-  constructor(props: UpdateVendorInvoiceCommand) {
+  readonly total: number
+  constructor(props: UpdateVendorInvoicedTotalCommand) {
     initialize(this, props)
   }
 }
