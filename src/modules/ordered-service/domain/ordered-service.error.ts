@@ -1,4 +1,4 @@
-import { BadRequestException, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
+import { BadRequestException, ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 
 export class OrderedServiceNotFoundException extends NotFoundException {
   constructor() {
@@ -82,5 +82,14 @@ export class OrderedServiceAutoCancelableException extends UnprocessableEntityEx
 export class OrderedScopeIncludingCompletedTaskDeleteException extends UnprocessableEntityException {
   constructor() {
     super('Ordered Scope including completed task can`t be deleted.', '40313')
+  }
+}
+
+export class OrderedScopeConflictException extends ConflictException {
+  constructor() {
+    super(
+      'Within a single job, the same type of scope cannot be duplicated orders (excluding other type scope).',
+      '40314',
+    )
   }
 }

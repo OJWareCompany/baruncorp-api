@@ -33,3 +33,10 @@ export class ServiceWithAssociatedTasksDeleteException extends BadRequestExcepti
     super('The service with associated tasks cannot be deleted.', '40105')
   }
 }
+
+export class ServiceDurationExceededException extends BadRequestException {
+  static value = 9
+  constructor() {
+    super('Exceeded Max Value', '40106')
+  }
+}

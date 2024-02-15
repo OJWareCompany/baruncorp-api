@@ -11,3 +11,9 @@ export class ExpensePricingConflictException extends ConflictException {
     super('Already ExpensePricing is Existed.', '30302')
   }
 }
+
+export class ExpensePricingAdministrationCreationException extends ConflictException {
+  constructor() {
+    super('Administration can not create expense pricing.', '30303')
+  }
+}

@@ -42,6 +42,7 @@ import { ServiceModule } from '../service/service.module'
 import { PrismaModule } from '../database/prisma.module'
 import { UsersModule } from '../users/users.module'
 import { JobModule } from '../ordered-job/job.module'
+import { DuplicatedScopeChecker } from './domain/domain-services/duplicated-scope-checker.domain-service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -84,6 +85,7 @@ const domainServices: Provider[] = [
   ScopeRevisionChecker,
   SameScopeCompletionOrderCalculator,
   TieredPricingCalculator,
+  DuplicatedScopeChecker,
 ]
 
 const mappers: Provider[] = [OrderedServiceMapper]

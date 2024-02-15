@@ -39,10 +39,12 @@ import {
   OrderedServiceStatusEnum,
 } from './ordered-service.type'
 import {
+  OrderedScopeConflictException,
   OrderedServiceFreeRevisionManualPriceUpdateException,
   OrderedServiceHoldableException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
 } from './ordered-service.error'
+import { DuplicatedScopeChecker } from './domain-services/duplicated-scope-checker.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -53,6 +55,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
     scopeRevisionChecker: ScopeRevisionChecker,
+    duplicatedScopeChecker: DuplicatedScopeChecker,
   ) {
     const id = v4()
     const props: OrderedServiceProps = {
@@ -70,7 +73,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     }
 
     const entity = new OrderedServiceEntity({ id, props })
-
+    if (await duplicatedScopeChecker.isDuplicated(entity)) {
+      throw new OrderedScopeConflictException()
+    }
     entity.props.isRevision = await scopeRevisionChecker.isRevision(entity)
 
     await entity.determineInitialValues(calcService, orderModificationValidator, revisionTypeUpdateValidator)

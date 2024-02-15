@@ -11,6 +11,8 @@ import { JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
 import { PrismaService } from '@modules/database/prisma.service'
 import { UserStatusEnum } from '@modules/users/domain/user.types'
 import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
+import { FilesystemApiService } from '../../filesystem/infra/filesystem.api.service'
+import { GoogleDriveJobNotesFolderNotFoundException } from '../../filesystem/domain/filesystem.error'
 
 @Injectable()
 export class ImapManagerService {
@@ -19,6 +21,7 @@ export class ImapManagerService {
     private readonly jobNoteRepository: JobNoteRepository,
     private readonly prismaService: PrismaService,
     private readonly mailer: RFIMailer,
+    private readonly filesystemAPiService: FilesystemApiService,
   ) {}
 
   // 앱 실행 시 Imap Server에 Connection 요청
@@ -225,22 +228,51 @@ export class ImapManagerService {
         const maxJobNoteNumber: number | null = await this.jobNoteRepository.getMaxJobNoteNumber(
           equalThreadIdEntity.jobId,
         )
+        const jobNoteNumber = maxJobNoteNumber ? maxJobNoteNumber + 1 : 1
         const filteredContent: string = parsed.text ? this.parseEmailMainContent(parsed.text) : ''
         // const filteredContent: string = parsed.text ?? ''
         // console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
         // console.log(`Add RFI`)
-        await this.jobNoteRepository.insert(
-          JobNoteEntity.create({
-            jobId: equalThreadIdEntity.jobId,
-            creatorUserId: null,
-            type: JobNoteTypeEnum.RFI,
-            content: filteredContent,
-            jobNoteNumber: maxJobNoteNumber ? maxJobNoteNumber + 1 : 1,
-            senderEmail: senderEmail ?? '',
-            receiverEmails: receiverEmails,
-            emailThreadId: threadId,
-          }),
-        )
+        const jobNoteEntity = JobNoteEntity.create({
+          jobId: equalThreadIdEntity.jobId,
+          creatorUserId: null,
+          type: JobNoteTypeEnum.RFI,
+          content: filteredContent,
+          jobNoteNumber,
+          senderEmail: senderEmail ?? '',
+          receiverEmails: receiverEmails,
+          emailThreadId: threadId,
+        })
+        await this.jobNoteRepository.insert(jobNoteEntity)
+
+        if (parsed.attachments && parsed.attachments.length >= 0) {
+          const googleJobFolder = await this.prismaService.googleJobFolder.findFirstOrThrow({
+            where: { jobId: equalThreadIdEntity.jobId },
+          })
+          if (!googleJobFolder.jobNotesFolderId) {
+            throw new GoogleDriveJobNotesFolderNotFoundException()
+          }
+
+          try {
+            const data = await this.filesystemAPiService.requestToPostRfiReplyFiles({
+              attachments: parsed.attachments,
+              jobNoteNumber,
+              jobNotesFolderId: googleJobFolder.jobNotesFolderId,
+              jobNoteId: jobNoteEntity.id,
+            })
+            await this.prismaService.googleJobNoteFolder.create({
+              data: {
+                id: data.id,
+                shareLink: data.shareLink,
+                jobNotesFolderId: data.jobNotesFolderId,
+                jobNoteId: data.jobNoteId,
+                sharedDriveId: data.sharedDriveId,
+              },
+            })
+          } catch (error) {
+            console.error('Error uploading attached files on rfi reply mail:', error)
+          }
+        }
       } else {
         // console.log('No message found with the specified Message-ID')
       }

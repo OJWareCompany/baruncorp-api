@@ -26,6 +26,9 @@ import {
   GetPropertyTypeFolderResponseData,
   GetSharedDriveIdByFolderIdResponse,
   GetSharedDriveIdByFolderIdResponseData,
+  PostRfiReplyFilesRequestPayload,
+  PostRfiReplyFilesResponse,
+  PostRfiReplyFilesResponseData,
   RollbackCreateOrUpdateAhjNoteFoldersRequestPayload,
   RollbackCreateOrUpdateAhjNoteFoldersResponse,
   RollbackUpdateProjectFoldersRequestPayload,
@@ -34,6 +37,8 @@ import {
   UpdateGoogleProjectFoldersResponse,
   UpdateGoogleProjectFoldersResponseData,
 } from './filesystem.api.type'
+import { Attachment } from 'mailparser'
+import FormData from 'form-data'
 
 const handleRequestError = (errorCode: string) => {
   if (errorCode === 'ECONNREFUSED') {
@@ -46,6 +51,39 @@ const handleRequestError = (errorCode: string) => {
 @Injectable()
 export class FilesystemApiService {
   private baseUrl = `${process.env.FILE_API_URL}/filesystem`
+
+  async requestToPostRfiReplyFiles({
+    attachments,
+    jobNoteNumber,
+    jobNotesFolderId,
+    jobNoteId,
+  }: PostRfiReplyFilesRequestPayload): Promise<PostRfiReplyFilesResponseData> {
+    const formData = new FormData()
+    attachments.forEach((attachment: Attachment) => {
+      formData.append('files', Buffer.from(attachment.content), {
+        filename: attachment.filename,
+        contentType: attachment.contentType,
+      })
+    })
+    formData.append('jobNoteNumber', jobNoteNumber)
+    formData.append('jobNotesFolderId', jobNotesFolderId)
+    formData.append('jobNoteId', jobNoteId)
+    try {
+      const url = `${this.baseUrl}/rfiReplyFiles`
+      const response: PostRfiReplyFilesResponse = await got
+        .post(url, {
+          body: formData,
+          headers: {
+            'content-type': 'multipart/form-data; boundary=' + formData.getBoundary(),
+          },
+        })
+        .json()
+      return response.data
+    } catch (error: any) {
+      if (error.code) handleRequestError(error.code)
+      throw new FileServerInternalErrorException()
+    }
+  }
 
   async requestToGetPropertyTypeFolder(sharedDriveId: string): Promise<GetPropertyTypeFolderResponseData> {
     try {

@@ -578,13 +578,25 @@ export interface CreateServiceRequestDto {
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   residentialNewEstimatedTaskDuration: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   residentialRevisionEstimatedTaskDuration: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   commercialNewEstimatedTaskDuration: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   commercialRevisionEstimatedTaskDuration: number | null
 }
 
@@ -598,13 +610,25 @@ export interface UpdateServiceRequestDto {
   standardPricing: StandardPricingRequestDtoFields | null
   /** @default null */
   fixedPrice: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   residentialNewEstimatedTaskDuration: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   residentialRevisionEstimatedTaskDuration: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   commercialNewEstimatedTaskDuration: number | null
-  /** @default null */
+  /**
+   * @max 9
+   * @default null
+   */
   commercialRevisionEstimatedTaskDuration: number | null
 }
 
@@ -1796,6 +1820,7 @@ export interface IntegratedOrderModificationHistoryResponseDto {
   entityId: string
   scopeOrTaskName: string | null
   attribute: string | null
+  isDateType: boolean
   operation: 'Create' | 'Update' | 'Delete'
   afterValue: string | null
   beforeValue: string | null

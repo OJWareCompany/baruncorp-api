@@ -57,6 +57,7 @@ export class AppointUserLicenseService implements ICommandHandler {
         userId: user.id,
         userName: user.userName.fullName,
         abbreviation: state.abbreviation,
+        expiryDate: command.expiryDate,
         type: command.type,
         issuingCountryName: state.stateName,
         updatedAt: new Date(),

@@ -16,6 +16,7 @@ import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
 import { ScopeRevisionChecker } from '../../domain/domain-services/scope-revision-checker.domain-service'
+import { DuplicatedScopeChecker } from '../../domain/domain-services/duplicated-scope-checker.domain-service'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -32,6 +33,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
     private readonly scopeRevisionChecker: ScopeRevisionChecker,
+    private readonly duplicatedScopeChecker: DuplicatedScopeChecker,
   ) {}
 
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
@@ -63,6 +65,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
         this.orderModificationValidator,
         this.revisionTypeUpdateValidator,
         this.scopeRevisionChecker,
+        this.duplicatedScopeChecker,
       )
 
       return orderedServiceEntity
@@ -73,33 +76,6 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     await this.orderedServiceRepo.insert(orderedServiceEntities)
   }
 }
-
-// New Residential (Fixed / 0)
-// Residential Revision (Size, Mounting Type)
-//    - Free Revision
-// New Commercial Tier (System Size, Mounting Type)
-// Commercial Revision X
-// Fixed Price
-
-/**
- * isFixed?
- *  return price
- *
- * isRevision?
- *  return null -> price is when it turns out it's gm
- *          or Free Revision? Yes -> Done? -> input price
- *
- * new zone
- *
- * is Commercial?
- *  return null
- *
- * isResidential?
- *  return isFixed? -> price or null
- *
- * commercial Zone
- *  return match tier! OR 0
- */
 
 /**
  * NOTE:

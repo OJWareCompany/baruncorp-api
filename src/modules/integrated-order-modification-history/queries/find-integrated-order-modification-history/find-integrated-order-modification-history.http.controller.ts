@@ -26,6 +26,7 @@ export class FindIntegratedOrderModificationHistoryHttpController {
       entityId: result.entityId,
       scopeOrTaskName: result.scopeOrTaskName,
       attribute: result.attribute,
+      isDateType: result.isDateType,
       operation: result.operation as OrderModificationHistoryOperationEnum,
       afterValue: result.afterValue,
       beforeValue: result.beforeValue,

@@ -42,14 +42,6 @@ export class UserRepository implements UserRepositoryPort {
     userPosition: { include: { position: true } },
     licenses: true,
     availableTasks: { include: { task: true } },
-  }
-
-  static userQueryIncludePtoInput = {
-    organization: true,
-    userRole: { include: { role: true } },
-    userPosition: { include: { position: true } },
-    licenses: true,
-    availableTasks: { include: { task: true } },
     ptos: true,
     ptoDetails: true,
   }
@@ -77,15 +69,6 @@ export class UserRepository implements UserRepositoryPort {
     const user = await this.findOneById(id)
     if (!user) throw new UserNotFoundException()
     return user
-  }
-
-  async findOneByIdIncludePtos(id: string): Promise<UserEntity> {
-    const user: UserQueryModel | null = await this.prismaService.users.findUnique({
-      where: { id },
-      include: UserRepository.userQueryIncludePtoInput,
-    })
-    if (!user) throw new UserNotFoundException()
-    return this.userMapper.toDomain(user)
   }
 
   /**

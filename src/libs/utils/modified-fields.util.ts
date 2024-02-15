@@ -1,13 +1,11 @@
 import _ from 'lodash'
 
+type ModifiedFieldsType = Record<string, { propertyTitle: string; before: any; after: any; isDateType: boolean }>
 /**
  * updated at, updated by 이외의 수정된 필드를 검색합니다.
  */
-export function getModifiedFields<T>(
-  original: T,
-  modified: T,
-): Record<string, { propertyTitle: string; before: any; after: any }> {
-  const changes: Record<string, { propertyTitle: string; before: any; after: any }> = {}
+export function getModifiedFields<T>(original: T, modified: T): ModifiedFieldsType {
+  const changes: ModifiedFieldsType = {}
   const excludingFields = ['updated_at', 'updatedAt', 'modified_by', 'modifiedBy', 'updated_by', 'updatedBy']
 
   function findChanges(originalObj: any, modifiedObj: any, path = ''): void {
@@ -37,6 +35,7 @@ export function getModifiedFields<T>(
             propertyTitle: _.startCase(key),
             before: beforeValue,
             after: afterValue,
+            isDateType: isISO8601Date(beforeValue) || isISO8601Date(afterValue),
           })
         }
       })
@@ -57,4 +56,12 @@ function transformValue(value: any) {
   }
 
   return String(value)
+}
+
+// 날짜 형식 패턴 분석 함수
+function isISO8601Date(str: any): boolean {
+  // 문자열이 아니거나 빈 문자열인 경우 false 반환
+  if (typeof str !== 'string' || str.trim() === '' || str === null) return false
+  const regex = /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}.\d{3}Z$/
+  return regex.test(str)
 }

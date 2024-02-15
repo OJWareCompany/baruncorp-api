@@ -1,5 +1,7 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { IsArray, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { CustomMax } from '../../../../libs/decorators/custom/custom-max.decorator'
+import { ServiceDurationExceededException } from '../../domain/service.error'
 import { ServicePricingTypeEnum } from '../../domain/service.type'
 
 export class CommercialTier {
@@ -82,23 +84,27 @@ export class CreateServiceRequestDto {
   @IsOptional()
   readonly fixedPrice: number | null
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: null, maximum: ServiceDurationExceededException.value })
   @IsNumber()
+  @CustomMax(ServiceDurationExceededException.value, new ServiceDurationExceededException())
   @IsOptional()
   readonly residentialNewEstimatedTaskDuration: number | null
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: null, maximum: ServiceDurationExceededException.value })
   @IsNumber()
+  @CustomMax(ServiceDurationExceededException.value, new ServiceDurationExceededException())
   @IsOptional()
   readonly residentialRevisionEstimatedTaskDuration: number | null
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: null, maximum: ServiceDurationExceededException.value })
   @IsNumber()
+  @CustomMax(ServiceDurationExceededException.value, new ServiceDurationExceededException())
   @IsOptional()
   readonly commercialNewEstimatedTaskDuration: number | null
 
-  @ApiProperty({ default: null })
+  @ApiProperty({ default: null, maximum: ServiceDurationExceededException.value })
   @IsNumber()
+  @CustomMax(ServiceDurationExceededException.value, new ServiceDurationExceededException())
   @IsOptional()
   readonly commercialRevisionEstimatedTaskDuration: number | null
 }

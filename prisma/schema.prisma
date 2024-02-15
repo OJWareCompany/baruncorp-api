@@ -468,6 +468,7 @@ model OrderedJobs {
   jobName                                       String            @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int               @map("job_request_number")
   receivedAt                                    DateTime          @map("received_at") @db.DateTime(0)
+  isManualDueDate                               Boolean           @default(false) @map("is_manual_due_date")
   dueDate                                       DateTime?         @map("due_date") @db.DateTime(0)
   mountingType                                  String            @map("mounting_type") @db.VarChar(255)
   projectType                                   String            @map("project_type") @db.VarChar(255)
@@ -538,7 +539,6 @@ model OrderedJobs {
   mailingAdderssPostalCode                      String?           @map("mailing_adderss_postal_code") @db.VarChar(255)
   mailingAdderssPostalCountry                   String?           @map("mailing_adderss_country") @db.VarChar(255)
   editor_user_id                                String?           @db.VarChar(255)
-  isManualDueDate                               Boolean           @default(false) @map("is_manual_due_date")
   project                                       OrderedProjects?  @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
@@ -1229,6 +1229,7 @@ model IntegratedOrderModificationHistory {
   entityId        String   @map("entity_id") @db.VarChar(255)
   scopeOrTaskName String?  @map("scope_or_task_name") @db.VarChar(255)
   attribute       String   @default("None") @map("attribute") @db.VarChar(255)
+  isDateType    Boolean @map("is_date_type")
   operation       String   @default("Create") @map("operation") @db.VarChar(22)
   afterValue      String?  @map("after_value") @db.Text
   beforeValue     String?  @map("before_value") @db.Text

@@ -1,4 +1,26 @@
+import { Attachment } from 'mailparser'
 import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+
+/**
+ * CreateGoogleProjectFolder
+ */
+export type PostRfiReplyFilesRequestPayload = {
+  attachments: Attachment[]
+  jobNoteNumber: number
+  jobNotesFolderId: string
+  jobNoteId: string
+}
+export type PostRfiReplyFilesResponse = {
+  message: string
+  data: PostRfiReplyFilesResponseData
+}
+export type PostRfiReplyFilesResponseData = {
+  id: string
+  shareLink: string
+  jobNotesFolderId: string
+  jobNoteId: string
+  sharedDriveId: string
+}
 
 /**
  * GetPropertyTypeFolder

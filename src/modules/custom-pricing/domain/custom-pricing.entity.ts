@@ -252,11 +252,12 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   }
 
   private calculateResidentialPrice(mountingType: MountingTypeEnum): CalcPriceAndPricingReturnType | null {
-    if (!this.residentialNewFlatPricing || this.getProps().residentialNewServiceTiers.length > 1)
+    if (!this.residentialNewFlatPricing || this.getProps().residentialNewServiceTiers.length > 1) {
       return {
-        price: null, // TODO: 바로 적용되어야함.
+        price: null, // Auto Update Price When Invoice Is Created
         pricingType: OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE,
       }
+    }
 
     return mountingType === MountingTypeEnum.Ground_Mount
       ? {

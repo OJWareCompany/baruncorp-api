@@ -43,13 +43,6 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
         orderedScope.start()
         break
       case OrderedServiceStatusEnum.Completed:
-        /**
-         * TODO: 스코프가 주문 되기전 완료된 개수를 조회하는 것이 맞나?
-         * 아니면 이번달에서 완료된 개수를 조회하는 것이 맞나?
-         *
-         * 주문된 순서와 동일하게 완료되지는 않을텐데..
-         * 하지만 완료할때마다 가격이 매번 달라지는 것도 주의해야함
-         */
         await orderedScope.validateAndComplete(this.orderedScopeStatusChangeValidator)
         break
       case OrderedServiceStatusEnum.Canceled:

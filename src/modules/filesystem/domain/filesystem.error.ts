@@ -72,3 +72,9 @@ export class GoogleDriveBadRequestException extends BadRequestException {
     super(message, '11012')
   }
 }
+
+export class GoogleDriveJobNotesFolderNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not Parent Folder Found', '11013')
+  }
+}
