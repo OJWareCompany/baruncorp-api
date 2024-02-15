@@ -43,6 +43,7 @@ import {
   OrderedServiceFreeRevisionManualPriceUpdateException,
   OrderedServiceHoldableException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
+  OrderedServiceRevisionTypeNotEnteredException,
 } from './ordered-service.error'
 import { DuplicatedScopeChecker } from './domain-services/duplicated-scope-checker.domain-service'
 
@@ -367,7 +368,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator): Promise<this> {
-    if (this.isRevision && !this.isRevisionTypeEntered) return this
+    if (this.isRevision && !this.isRevisionTypeEntered) {
+      throw new OrderedServiceRevisionTypeNotEnteredException()
+    }
     await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
     this.complete()
     return this

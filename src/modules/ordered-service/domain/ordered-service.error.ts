@@ -99,3 +99,9 @@ export class OrderedServicePendingException extends UnprocessableEntityException
     super('There are pending tasks, please try again.', '40315')
   }
 }
+
+export class OrderedServiceRevisionTypeNotEnteredException extends UnprocessableEntityException {
+  constructor() {
+    super('The Revision Scope can be updated to a completed status after entering the Revision Type.', '40316')
+  }
+}
