@@ -180,10 +180,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     const permittedAutoUpdateStatus = [AssignedTaskStatusEnum.Canceled, AssignedTaskStatusEnum.On_Hold]
     if (!option) return this
     if (!_.includes(permittedAutoUpdateStatus, this.status)) return this
-    await orderModificationValidator.validate(this)
-    // if (this.isCompleted) throw new CompletedTaskChangeStatusException()
-    // if (this.isInProgress) throw new InprogressTaskAutoChangeStatusException()
-    this.props.status = AssignedTaskStatusEnum.Not_Started
+    await this.unassign(orderModificationValidator)
     return this
   }
 
