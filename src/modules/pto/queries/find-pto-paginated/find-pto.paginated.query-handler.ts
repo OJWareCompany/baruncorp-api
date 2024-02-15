@@ -41,7 +41,7 @@ export class FindPtoPaginatedQueryHandler implements IQueryHandler {
 
     const entities: PtoEntity[] = await this.ptoRepository.findMany(condition, query.offset, query.limit)
 
-    const totalCount = await this.ptoRepository.getCount(condition)
+    const totalCount: number = await this.ptoRepository.getCount(condition)
 
     return new Paginated({
       page: query.page,
