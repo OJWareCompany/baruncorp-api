@@ -93,3 +93,9 @@ export class OrderedScopeConflictException extends ConflictException {
     )
   }
 }
+
+export class OrderedServicePendingException extends UnprocessableEntityException {
+  constructor() {
+    super('There are pending tasks, please try again.', '40315')
+  }
+}

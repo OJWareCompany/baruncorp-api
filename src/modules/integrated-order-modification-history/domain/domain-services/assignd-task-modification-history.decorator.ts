@@ -1,11 +1,13 @@
 import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs-aop'
 import { BadRequestException, Inject } from '@nestjs/common'
-import { AssignedTasks } from '@prisma/client'
+import { AssignedTasks, Prisma } from '@prisma/client'
 import _ from 'lodash'
 import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
 import { deepCopy } from '../../../../libs/utils/deep-copy.util'
+import { AssignedTaskPendingException } from '../../../assigned-task/domain/assigned-task.error'
 import { AssignedTaskRepositoryPort } from '../../../assigned-task/database/assigned-task.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../../assigned-task/assigned-task.di-token'
+import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { AssignedTaskMapper } from '../../../assigned-task/assigned-task.mapper'
 import { AssignedTaskEntity } from '../../../assigned-task/domain/assigned-task.entity'
@@ -61,12 +63,20 @@ export class AssignedTaskModificationHistoryDecorator implements LazyDecorator {
 
       const jobsAfterModification = await this.findAfterOrderedScopes(jobs)
       const copiesAfter = this.createCopies(jobsAfterModification)
-
-      await Promise.all(
-        jobsAfterModification.map(async (job) => {
-          await this.generateHistory(job, copiesBefore, copiesAfter, editor)
-        }),
-      )
+      try {
+        await Promise.all(
+          jobsAfterModification.map(async (job) => {
+            await this.generateHistory(job, copiesBefore, copiesAfter, editor)
+          }),
+        )
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === UNIQUE_CONSTRAINT_FAILED) {
+            throw new AssignedTaskPendingException()
+          }
+        }
+        throw e
+      }
       return result
     }
   }

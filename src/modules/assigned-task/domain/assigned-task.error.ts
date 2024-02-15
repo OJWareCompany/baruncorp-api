@@ -40,3 +40,9 @@ export class CompletedTaskDeletionException extends UnprocessableEntityException
     super('Completed task is not able to be deleted', '30206')
   }
 }
+
+export class AssignedTaskPendingException extends UnprocessableEntityException {
+  constructor() {
+    super('There are pending tasks for setting the assignee of this task, please try again.', '30207')
+  }
+}

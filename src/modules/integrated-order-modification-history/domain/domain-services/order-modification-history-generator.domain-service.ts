@@ -1,13 +1,13 @@
-import _ from 'lodash'
-import { PrismaService } from '../../../database/prisma.service'
-import { OrderModificationHistoryOperationEnum } from '../integrated-order-modification-history.type'
-import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
-import { JobEntity } from '../../../ordered-job/domain/job.entity'
-import { UserEntity } from '../../../users/domain/user.entity'
-import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
-import { AssignedTaskEntity } from '../../../assigned-task/domain/assigned-task.entity'
 import { AssignedTasks, OrderedJobs, OrderedServices } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
+import _ from 'lodash'
+import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
+import { AssignedTaskEntity } from '../../../assigned-task/domain/assigned-task.entity'
+import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
+import { PrismaService } from '../../../database/prisma.service'
+import { UserEntity } from '../../../users/domain/user.entity'
+import { JobEntity } from '../../../ordered-job/domain/job.entity'
+import { OrderModificationHistoryOperationEnum } from '../integrated-order-modification-history.type'
 
 type modificationFields = {
   jobId: string

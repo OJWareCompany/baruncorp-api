@@ -76,3 +76,9 @@ export class NoUpdateException extends BadRequestException {
     super('To update, different data from the existing ones must be entered', '40014')
   }
 }
+
+export class JobPendingException extends UnprocessableEntityException {
+  constructor() {
+    super('There are pending tasks, please try again.', '40015')
+  }
+}

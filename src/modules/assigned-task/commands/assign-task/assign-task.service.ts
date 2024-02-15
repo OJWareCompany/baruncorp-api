@@ -1,13 +1,16 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import { Prisma } from '@prisma/client'
+import { Inject } from '@nestjs/common'
+import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
+import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
+import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { AssignedTaskPendingException } from '../../domain/assigned-task.error'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
-import { USER_REPOSITORY } from '../../../users/user.di-tokens'
-import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { AssignTaskCommand } from './assign-task.command'
-import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
-import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 
 @CommandHandler(AssignTaskCommand)
 export class AssignTaskService implements ICommandHandler {

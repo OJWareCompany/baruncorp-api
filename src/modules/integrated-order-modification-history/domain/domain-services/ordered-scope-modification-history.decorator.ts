@@ -1,11 +1,13 @@
 import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs-aop'
 import { BadRequestException, Inject } from '@nestjs/common'
-import { OrderedServices } from '@prisma/client'
+import { OrderedServices, Prisma } from '@prisma/client'
 import _ from 'lodash'
 import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
 import { deepCopy } from '../../../../libs/utils/deep-copy.util'
+import { OrderedServicePendingException } from '../../../ordered-service/domain/ordered-service.error'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
+import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
 import { OrderedServiceMapper } from '../../../ordered-service/ordered-service.mapper'
 import { OrderedServiceEntity } from '../../../ordered-service/domain/ordered-service.entity'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
@@ -60,11 +62,21 @@ export class OrderedScopeModificationHistoryDecorator implements LazyDecorator {
       const jobsAfterModification = await this.findAfterOrderedScopes(jobs)
       const copiesAfter = this.createCopies(jobsAfterModification)
 
-      await Promise.all(
-        jobsAfterModification.map(async (job) => {
-          await this.generateHistory(job, copiesBefore, copiesAfter, editor)
-        }),
-      )
+      try {
+        await Promise.all(
+          jobsAfterModification.map(async (job) => {
+            await this.generateHistory(job, copiesBefore, copiesAfter, editor)
+          }),
+        )
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === UNIQUE_CONSTRAINT_FAILED) {
+            throw new OrderedServicePendingException()
+          }
+        }
+        throw e
+      }
+
       return result
     }
   }

@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Aspect, LazyDecorator, WrapParams, createDecorator } from '@toss/nestjs-aop'
 import { BadRequestException, Inject } from '@nestjs/common'
-import { OrderedJobs } from '@prisma/client'
+import { OrderedJobs, Prisma } from '@prisma/client'
 import _ from 'lodash'
 import { getModifiedFields } from '../../../../libs/utils/modified-fields.util'
 import { deepCopy } from '../../../../libs/utils/deep-copy.util'
+import { UNIQUE_CONSTRAINT_FAILED } from '../../../database/error-code'
+import { JobPendingException } from '../../../ordered-job/domain/job.error'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
@@ -66,11 +68,20 @@ export class JobModificationHistoryDecorator implements LazyDecorator {
       const jobsAfterModification = await this.findAfterJobs(jobs)
       const copiesAfter = this.createCopies(jobsAfterModification)
 
-      await Promise.all(
-        jobsAfterModification.map(async (job) => {
-          await this.generateHistory(job, copiesBefore, copiesAfter, editor)
-        }),
-      )
+      try {
+        await Promise.all(
+          jobsAfterModification.map(async (job) => {
+            await this.generateHistory(job, copiesBefore, copiesAfter, editor)
+          }),
+        )
+      } catch (e) {
+        if (e instanceof Prisma.PrismaClientKnownRequestError) {
+          if (e.code === UNIQUE_CONSTRAINT_FAILED) {
+            throw new JobPendingException()
+          }
+        }
+        throw e
+      }
 
       return result
     }
