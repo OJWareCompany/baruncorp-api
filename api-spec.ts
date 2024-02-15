@@ -2625,6 +2625,8 @@ export interface FindUsersHttpControllerGetFindUsersParams {
    * @default null
    */
   userName?: string | null
+  /** @default "Active" */
+  status?: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active' | null
   /**
    * Specifies a limit of returned records
    * @default 20

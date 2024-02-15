@@ -27,7 +27,9 @@ export class FindUserQueryHandler implements IQueryHandler {
       ...(query.organizationName && { organization: { name: { contains: query.organizationName } } }),
       ...(query.isContractor !== null && query.isContractor !== undefined && { isVendor: query.isContractor }),
       ...(query.userName && { full_name: { contains: query.userName } }),
+      ...(query.status && { status: query.status }),
     }
+
     const records = await this.prismaService.users.findMany({
       where: whereInput,
       include: UserRepository.userQueryIncludeInput,

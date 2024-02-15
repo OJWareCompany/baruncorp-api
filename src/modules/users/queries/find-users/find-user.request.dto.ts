@@ -1,7 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
-import { IsBoolean, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { DESCRIPTION } from '../../../ordered-job/queries/find-job-paginated/find-job.paginated.request.dto'
+import { UserStatusEnum } from '../../domain/user.types'
 
 export class FindUserRqeustDto {
   @ApiProperty({ default: 'hyomin@ojware.com' })
@@ -32,4 +33,9 @@ export class FindUserRqeustDto {
   @IsOptional()
   @IsString()
   readonly userName?: string | null
+
+  @ApiProperty({ default: UserStatusEnum.ACTIVE, enum: UserStatusEnum })
+  @IsEnum(UserStatusEnum)
+  @IsOptional()
+  readonly status?: UserStatusEnum | null
 }
