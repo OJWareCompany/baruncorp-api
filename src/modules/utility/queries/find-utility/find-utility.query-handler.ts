@@ -30,7 +30,7 @@ export class FindUtilityQueryHandler implements IQueryHandler {
     }
 
     const dto: UtilityResponseDto = {
-      id: latestSnapshotRecord.id,
+      id: query.utilityId,
       name: latestSnapshotRecord.name,
       notes: latestSnapshotRecord.notes,
       stateAbbreviations: latestSnapshotRecord.stateAbbreviations.split(','),
