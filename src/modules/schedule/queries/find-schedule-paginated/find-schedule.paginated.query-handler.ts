@@ -11,6 +11,7 @@ import { ScheduleResponseDto } from '@modules/schedule/dtos/schedule.response.dt
 import { ScheduleDto } from '@modules/schedule/commands/update-information/put-schedule.request.dto'
 
 export class FindSchedulePaginatedQuery extends PaginatedQueryBase {
+  readonly userName?: string
   constructor(props: PaginatedParams<FindSchedulePaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -25,7 +26,23 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
     const emailDomain = 'baruncorp.com'
     const inactiveStatus: UserStatusEnum = UserStatusEnum.INACTIVE
 
-    const records: any[] = await this.prismaService.$queryRaw`
+    const records: any[] = query.userName
+      ? await this.prismaService.$queryRaw`
+        SELECT 
+            u.id        As userId,
+            u.full_name AS userName,
+            p.name AS positionName,
+            s.schedules AS schedules
+        FROM users u
+        LEFT JOIN user_position up ON u.id = up.user_id
+        LEFT JOIN positions p ON up.position_id = p.id
+        LEFT JOIN user_schedules s ON u.id = s.id
+        WHERE u.email LIKE CONCAT('%', ${emailDomain}, '%')
+        AND u.status != ${inactiveStatus}
+        AND u.full_name LIKE CONCAT('%', ${query.userName}, '%')
+        ORDER BY CASE WHEN positionName IS NULL THEN 1 ELSE 0 END, positionName ASC, userName ASC
+        LIMIT ${query.limit} OFFSET ${query.offset}; `
+      : await this.prismaService.$queryRaw`
         SELECT 
             u.id        As userId,
             u.full_name AS userName,
@@ -39,17 +56,24 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
         AND u.status != ${inactiveStatus}
         ORDER BY CASE WHEN positionName IS NULL THEN 1 ELSE 0 END, positionName ASC, userName ASC
         LIMIT ${query.limit} OFFSET ${query.offset};
-    `
+      `
+
+    const whereCondition: Prisma.UsersWhereInput = {
+      email: {
+        contains: emailDomain,
+      },
+      status: {
+        not: inactiveStatus,
+      },
+      ...(query.userName && {
+        full_name: {
+          contains: query.userName,
+        },
+      }),
+    }
 
     const totalCount: number = await this.prismaService.users.count({
-      where: {
-        email: {
-          contains: emailDomain,
-        },
-        status: {
-          not: inactiveStatus,
-        },
-      },
+      where: whereCondition,
     })
 
     return new Paginated({

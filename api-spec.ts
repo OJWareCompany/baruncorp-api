@@ -3664,6 +3664,8 @@ export interface FindTrackingNumbersPaginatedHttpControllerGetParams {
 }
 
 export interface FindSchedulePaginatedHttpControllerGetParams {
+  /** @default "John Doe" */
+  userName?: string
   /**
    * Specifies a limit of returned records
    * @default 20
