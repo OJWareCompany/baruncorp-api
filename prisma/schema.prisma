@@ -1229,7 +1229,7 @@ model IntegratedOrderModificationHistory {
   entityId        String   @map("entity_id") @db.VarChar(255)
   scopeOrTaskName String?  @map("scope_or_task_name") @db.VarChar(255)
   attribute       String   @default("None") @map("attribute") @db.VarChar(255)
-  isDateType    Boolean @map("is_date_type")
+  isDateType      Boolean  @map("is_date_type")
   operation       String   @default("Create") @map("operation") @db.VarChar(22)
   afterValue      String?  @map("after_value") @db.Text
   beforeValue     String?  @map("before_value") @db.Text
