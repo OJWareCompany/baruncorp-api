@@ -24,6 +24,8 @@ import { ProjectModule } from '../project/project.module'
 import { OrganizationModule } from '../organization/organization.module'
 import { UsersModule } from '../users/users.module'
 import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
+import { UpdateVendorInvoicedTotalHttpController } from './commands/update-vendor-invoiced-total/update-vendor-invoiced-total.http.controller'
+import { UpdateVendorInvoicedTotalService } from './commands/update-vendor-invoiced-total/update-vendor-invoiced-total.service'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -33,8 +35,13 @@ const httpControllers = [
   FindVendorToInvoicePaginatedHttpController,
   FindVendorToInvoiceLineItemsPaginatedHttpController,
   FindVendorInvoiceLineItemHttpController,
+  UpdateVendorInvoicedTotalHttpController,
 ]
-const commandHandlers: Provider[] = [CreateVendorInvoiceService, DeleteVendorInvoiceService]
+const commandHandlers: Provider[] = [
+  CreateVendorInvoiceService,
+  DeleteVendorInvoiceService,
+  UpdateVendorInvoicedTotalService,
+]
 const queryHandlers: Provider[] = [
   FindVendorInvoiceQueryHandler,
   FindVendorInvoicePaginatedQueryHandler,

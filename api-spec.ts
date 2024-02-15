@@ -2238,6 +2238,11 @@ export interface VendorInvoiceLineItemPaginatedResponseDto {
   items: VendorInvoiceLineItemResponse[]
 }
 
+export interface UpdateVendorInvoicedTotalRequestDto {
+  /** @default 1000 */
+  total: number
+}
+
 export interface CreateVendorPaymentRequestDto {
   vendorInvoiceId: string
   /** @default 100 */
@@ -6488,6 +6493,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/vendor-invoices/${vendorInvoiceId}`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateVendorInvoicedTotalHttpControllerPatch
+     * @request PATCH:/vendor-invoices/{vendorInvoiceId}
+     */
+    updateVendorInvoicedTotalHttpControllerPatch: (
+      vendorInvoiceId: string,
+      data: UpdateVendorInvoicedTotalRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/vendor-invoices/${vendorInvoiceId}`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 
