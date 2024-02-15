@@ -50,7 +50,8 @@ export class CreateInvoiceService implements ICommandHandler {
       organizationName: jobs[0].organizationName,
       subTotal,
       discount,
-      total: subTotal - discount,
+      // total: subTotal - discount,
+      total: subTotal, // TODO: Job의 Override Price가 생기면 의미 있어지는 필드
     })
 
     await this.orderedServiceRepo.update(orderedServices)
