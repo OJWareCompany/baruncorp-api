@@ -12,7 +12,7 @@ export class ScheduleMapper implements Mapper<ScheduleEntity, ScheduleModel, Sch
 
     const record: ScheduleModel = {
       id: props.id,
-      schedules: JSON.parse(JSON.stringify(props.schedules)),
+      schedules: JSON.stringify(props.schedules),
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
     }
@@ -25,7 +25,7 @@ export class ScheduleMapper implements Mapper<ScheduleEntity, ScheduleModel, Sch
       createdAt: record.createdAt,
       updatedAt: record.updatedAt,
       props: {
-        schedules: (record.schedules as unknown as ScheduleDto[]) ?? [],
+        schedules: record.schedules ? (JSON.parse(record.schedules) as ScheduleDto[]) : [],
       },
     })
     return entity

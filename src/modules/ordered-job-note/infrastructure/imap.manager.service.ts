@@ -52,8 +52,6 @@ export class ImapManagerService {
         .catch((error) => {
           // console.error(`[initImapConnection] err: ${error}`);
         })
-
-      // 각 클라이언트 들에 대해 Imap Connect
     } catch (error) {
       // console.log(`[initImapConnection] error : ${error}`)
     }

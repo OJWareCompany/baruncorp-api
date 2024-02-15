@@ -249,7 +249,7 @@ model UserPosition {
 
 model UserSchedules {
   id        String   @id @map("id")
-  schedules Json     @map("schedules")
+  schedules String   @map("schedules") @db.LongText
   createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
   user      Users    @relation(fields: [id], references: [id])
