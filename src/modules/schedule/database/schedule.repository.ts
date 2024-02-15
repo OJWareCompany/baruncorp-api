@@ -13,7 +13,12 @@ export class ScheduleRepository implements ScheduleRepositoryPort {
   constructor(private readonly prismaService: PrismaService, private readonly mapper: ScheduleMapper) {}
 
   async upsert(entity: ScheduleEntity): Promise<void> {
-    const record = this.mapper.toPersistence(entity)
+    const record: {
+      id: string
+      schedules: string
+      createdAt: Date
+      updatedAt: Date
+    } = this.mapper.toPersistence(entity)
     await this.prismaService.userSchedules.upsert({
       where: { id: entity.id },
       update: {

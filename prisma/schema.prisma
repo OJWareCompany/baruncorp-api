@@ -249,7 +249,7 @@ model UserPosition {
 
 model UserSchedules {
   id        String   @id @map("id")
-  schedules Json     @map("schedules")
+  schedules String   @map("schedules") @db.LongText
   createdAt DateTime @default(now()) @map("created_at") @db.DateTime(0)
   updatedAt DateTime @updatedAt @map("updated_at") @db.DateTime(0)
   user      Users    @relation(fields: [id], references: [id])
@@ -590,7 +590,6 @@ model OrderedProjects {
   countySubdivisionsId                          String?        @map("county_subdivisions_id") @db.VarChar(255)
   placeId                                       String?        @map("place_id") @db.VarChar(255)
   ahjId                                         String?        @map("ahj_id") @db.VarChar(255)
-  utilityId                                     String?        @map("utilityId") @db.VarChar(255)
   isGroundMount                                 Boolean?       @map("is_ground_mount")
   mailingAddressForStructuralWetStamp           String?        @map("mailing_address_for_structural_wet_stamp") @db.VarChar(255)
   mailingAddressForElectricalWetStamp           String?        @map("mailing_address_for_electrical_wet_stamp") @db.VarChar(255)
@@ -598,6 +597,7 @@ model OrderedProjects {
   designOrPeStampPreviouslyDoneOnProjectOutside Int?           @map("design_or_pe_stamp_previously_done_on_project_outside")
   totalOfJobs                                   Int            @default(1) @map("total_of_jobs")
   propertyAddressCountry                        String?        @map("property_address_country") @db.VarChar(255)
+  utilityId                                     String?        @map("utilityId") @db.VarChar(255)
   organization                                  Organizations? @relation(fields: [clientOrganizationId], references: [id])
   jobs                                          OrderedJobs[]
   utility                                       Utilities?     @relation(fields: [utilityId], references: [id])

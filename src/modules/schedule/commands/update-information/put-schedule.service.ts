@@ -27,9 +27,7 @@ export class PutScheduleService implements ICommandHandler {
         schedules: command.schedules,
       },
     })
-
     entity.checkValidation()
-
     // Put
     await this.scheduleRepository.upsert(entity)
   }

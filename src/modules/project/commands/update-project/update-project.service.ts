@@ -52,8 +52,6 @@ export class UpdateProjectService implements ICommandHandler {
       })
     }
 
-    console.log(`command.utilityId : ${command.utilityId}`)
-    console.log(`project.getProps().utilityId : ${project.getProps().utilityId}`)
     project.update({
       projectPropertyType: command.projectPropertyType,
       projectPropertyOwner: command.projectPropertyOwner,
