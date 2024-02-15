@@ -11,6 +11,7 @@ import { UserRepositoryPort } from '../../../users/database/user.repository.port
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { PrismaService } from '../../../database/prisma.service'
 import { AssignedTaskNotFoundException } from '../../domain/assigned-task.error'
+import { UserStatusEnum } from '../../../users/domain/user.types'
 
 export class FindAvailableWorkersQuery {
   readonly assignedTaskId: string
@@ -52,7 +53,7 @@ export class FindAvailableWorkersQueryHandler implements IQueryHandler {
       })
 
       const users: (Users & { userPosition: UserPosition | null })[] = await this.prisma.users.findMany({
-        where: { id: { in: userLicenses.map((ul) => ul.userId) } },
+        where: { id: { in: userLicenses.map((ul) => ul.userId) }, status: UserStatusEnum.ACTIVE },
         include: { userPosition: true },
       })
 
@@ -63,7 +64,7 @@ export class FindAvailableWorkersQueryHandler implements IQueryHandler {
       })
 
       const users: (Users & { userPosition: UserPosition | null })[] = await this.prisma.users.findMany({
-        where: { id: { in: availableTasks.map((at) => at.userId) } },
+        where: { id: { in: availableTasks.map((at) => at.userId) }, status: UserStatusEnum.ACTIVE },
         include: { userPosition: true },
       })
 
