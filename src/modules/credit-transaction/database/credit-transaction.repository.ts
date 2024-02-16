@@ -1,6 +1,5 @@
 import { CreditTransactions } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
-import { Paginated } from '../../../libs/ddd/repository.port'
 import { PrismaService } from '../../database/prisma.service'
 import { CreditTransactionMapper } from '../credit-transaction.mapper'
 import { CreditTransactionEntity } from '../domain/credit-transaction.entity'
@@ -15,8 +14,14 @@ export class CreditTransactionRepository implements CreditTransactionRepositoryP
     private readonly creditTransactionMapper: CreditTransactionMapper,
     private readonly eventEmitter: EventEmitter2,
   ) {}
-  find(): Promise<Paginated<CreditTransactionEntity>> {
-    throw new Error('Method not implemented.')
+  async find(clientOrganizationId: string): Promise<CreditTransactionEntity[]> {
+    const records = await this.prismaService.creditTransactions.findMany({
+      where: {
+        clientOrganizationId,
+      },
+    })
+
+    return records.map(this.creditTransactionMapper.toDomain)
   }
 
   async insert(entity: CreditTransactionEntity): Promise<void> {

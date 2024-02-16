@@ -1,6 +1,10 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateCreditTransactionProps, CreditTransactionProps } from './credit-transaction.type'
+import {
+  CreateCreditTransactionProps,
+  CreditTransactionProps,
+  CreditTransactionTypeEnum,
+} from './credit-transaction.type'
 import { CreditTransactionCreatedDomainEvent } from './domain-events/credit-transaction-created.domain-event'
 
 export class CreditTransactionEntity extends AggregateRoot<CreditTransactionProps> {
@@ -20,7 +24,13 @@ export class CreditTransactionEntity extends AggregateRoot<CreditTransactionProp
     return entity
   }
 
-  get isValid() {
+  get amount(): number {
+    return this.props.creditTransactionType === CreditTransactionTypeEnum.Reload
+      ? this.props.amount
+      : -this.props.amount
+  }
+
+  get isValid(): boolean {
     return this.props.canceledAt === null
   }
 

@@ -7,5 +7,5 @@ export interface CreditTransactionRepositoryPort {
   delete(id: string): Promise<void>
   findOne(id: string): Promise<CreditTransactionEntity | null>
   findOneOrThrow(id: string): Promise<CreditTransactionEntity>
-  find(): Promise<Paginated<CreditTransactionEntity>>
+  find(clientOrganizationId: string): Promise<CreditTransactionEntity[]>
 }

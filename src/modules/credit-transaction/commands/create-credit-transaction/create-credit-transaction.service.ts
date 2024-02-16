@@ -13,6 +13,11 @@ import { CreateCreditTransactionCommand } from './create-credit-transaction.comm
 import { InvoiceEntity } from '../../../invoice/domain/invoice.entity'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
+import { CreditTransactionTypeEnum } from '../../domain/credit-transaction.type'
+import {
+  CreditDeductionMissingInvoiceIdException,
+  CreditInsufficientException,
+} from '../../domain/credit-transaction.error'
 
 @CommandHandler(CreateCreditTransactionCommand)
 export class CreateCreditTransactionService implements ICommandHandler {
@@ -44,6 +49,27 @@ export class CreateCreditTransactionService implements ICommandHandler {
       relatedInvoiceId: command.relatedInvoiceId,
       creditTransactionType: command.creditTransactionType,
     })
+
+    /**
+     * 인보이스를 크레딧 결제 시 해당 api를 사용한다.
+     * 인보이스는 페이먼트와 크레딧을 조회하여 미결제 금액을 계산한다.
+     * 인보이스 입금 내역은 페이먼트와 크레딧 두개 내역을 조회하여 날짜순으로 표현한다.
+     */
+    if (command.creditTransactionType === CreditTransactionTypeEnum.Deduction) {
+      if (!command.relatedInvoiceId) {
+        throw new CreditDeductionMissingInvoiceIdException()
+      }
+
+      const creditHistory = await this.creditTransactionRepo.find(command.clientOrganizationId)
+      const creditTotal = creditHistory //
+        .filter((credit) => credit.isValid)
+        .reduce((pre, cur) => pre + cur.amount, 0)
+
+      if (creditTotal - command.amount < 0) {
+        throw new CreditInsufficientException()
+      }
+    }
+
     await this.creditTransactionRepo.insert(entity)
     return entity.id
   }
