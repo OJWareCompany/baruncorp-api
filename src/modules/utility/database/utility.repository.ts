@@ -5,10 +5,8 @@ import { UtilityRepositoryPort } from './utility.repository.port'
 import { UtilityMapper } from '../utility.mapper'
 import { UtilitySnapshotEntity } from '../domain/utility-snapshot.entity'
 import { UtilityEntity } from '@modules/utility/domain/utility.entity'
-import { UtilityNotFoundException } from '@modules/utility/domain/utilty.error'
-import { PtoTargetUser } from '@modules/pto/domain/value-objects/target.user.vo'
+import { UniqueUtilitiesException, UtilityNotFoundException } from '@modules/utility/domain/utilty.error'
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library'
-import { TargetUserNotFoundException } from '@modules/pto/domain/pto.error'
 
 export type UtilityModel = Utilities
 export type UtilityQueryModel = Utilities
@@ -21,8 +19,16 @@ export class UtilityRepository implements UtilityRepositoryPort {
   constructor(private readonly prismaService: PrismaService, private readonly mapper: UtilityMapper) {}
 
   async insert(entity: UtilityEntity): Promise<void> {
-    const record: UtilityModel = this.mapper.toPersistence(entity)
-    await this.prismaService.utilities.create({ data: record })
+    try {
+      const record: UtilityModel = this.mapper.toPersistence(entity)
+      await this.prismaService.utilities.create({ data: record })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new UniqueUtilitiesException()
+      } else {
+        throw e
+      }
+    }
   }
 
   async insertSnapshot(entity: UtilitySnapshotEntity): Promise<void> {
@@ -33,8 +39,16 @@ export class UtilityRepository implements UtilityRepositoryPort {
   }
 
   async update(entity: UtilityEntity): Promise<void> {
-    const record = this.mapper.toPersistence(entity)
-    await this.prismaService.utilities.update({ where: { id: entity.id }, data: record })
+    try {
+      const record = this.mapper.toPersistence(entity)
+      await this.prismaService.utilities.update({ where: { id: entity.id }, data: record })
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError && e.code === 'P2002') {
+        throw new UniqueUtilitiesException()
+      } else {
+        throw e
+      }
+    }
   }
 
   async findOne(id: string): Promise<UtilityEntity | null> {
