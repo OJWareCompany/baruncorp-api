@@ -1268,7 +1268,7 @@ model TrackingNumbers {
 
 model Utilities {
   id                 String             @id @db.VarChar(255)
-  name               String             @map("name")
+  name               String             @unique(map: "name") @map("name")
   notes              String             @map("notes") @db.Text
   stateAbbreviations String             @map("state_abbreviations") @db.VarChar(255)
   snapshots          UtilitySnapshots[]
