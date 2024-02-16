@@ -32,6 +32,7 @@ import { CouriersModule } from '@modules/couriers/couriers.module'
 import { TrackingNumbersModule } from '@modules/tracking-numbers/tracking-numbers.module'
 import { ScheduleModule } from '@modules/schedule/schedule.module'
 import { UtilityModule } from '@modules/utility/utility.module'
+import { CreditTransactionModule } from './modules/credit-transaction/credit-transaction.module'
 
 @Module({
   imports: [
@@ -66,6 +67,7 @@ import { UtilityModule } from '@modules/utility/utility.module'
     TrackingNumbersModule,
     ScheduleModule,
     UtilityModule,
+    CreditTransactionModule,
   ],
   controllers: [],
   providers: [

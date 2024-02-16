@@ -2601,6 +2601,41 @@ export interface SchedulePaginatedResponseDto {
   items: ScheduleResponseDto[]
 }
 
+export interface CreateCreditTransactionRequestDto {
+  amount: number
+  /** @default "Reload" */
+  creditTransactionType: 'Reload' | 'Deduction'
+  relatedInvoiceId?: string | null
+  clientOrganizationId: string
+}
+
+export interface CreditTransactionResponseDto {
+  id: string
+  clientOrganizationId: string
+  createdBy: string
+  createdByUserId: string
+  amount: number
+  /** @default "Reload" */
+  creditTransactionType: 'Reload' | 'Deduction'
+  relatedInvoiceId: string | null
+  /** @format date-time */
+  transactionDate: string
+  /** @format date-time */
+  canceledAt: string | null
+}
+
+export interface CreditTransactionPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: CreditTransactionResponseDto[]
+}
+
 export interface AuthenticationControllerPostSignInTimeParams {
   /** @default 20 */
   jwt: number
@@ -3668,6 +3703,23 @@ export interface FindTrackingNumbersPaginatedHttpControllerGetParams {
 export interface FindSchedulePaginatedHttpControllerGetParams {
   /** @default "John Doe" */
   userName?: string
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindCreditTransactionPaginatedHttpControllerGetParams {
+  /** @default "" */
+  creditTransactionId: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -6956,6 +7008,68 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/tracking-numbers/${trackingNumberId}`,
         method: 'DELETE',
+        ...params,
+      }),
+  }
+  creditTransactions = {
+    /**
+     * No description
+     *
+     * @name CreateCreditTransactionHttpControllerPost
+     * @request POST:/credit-transactions
+     */
+    createCreditTransactionHttpControllerPost: (data: CreateCreditTransactionRequestDto, params: RequestParams = {}) =>
+      this.request<IdResponse, any>({
+        path: `/credit-transactions`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindCreditTransactionPaginatedHttpControllerGet
+     * @request GET:/credit-transactions
+     */
+    findCreditTransactionPaginatedHttpControllerGet: (
+      query: FindCreditTransactionPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<CreditTransactionPaginatedResponseDto, any>({
+        path: `/credit-transactions`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CancelCreditTransactionHttpControllerPatch
+     * @request PATCH:/credit-transactions/{creditTransactionId}/cancel
+     */
+    cancelCreditTransactionHttpControllerPatch: (creditTransactionId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/credit-transactions/${creditTransactionId}/cancel`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindCreditTransactionHttpControllerGet
+     * @request GET:/credit-transactions/{creditTransactionId}
+     */
+    findCreditTransactionHttpControllerGet: (creditTransactionId: string, params: RequestParams = {}) =>
+      this.request<CreditTransactionResponseDto, any>({
+        path: `/credit-transactions/${creditTransactionId}`,
+        method: 'GET',
+        format: 'json',
         ...params,
       }),
   }

@@ -37,6 +37,10 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     return this.props.status
   }
 
+  get clientOrganizationId() {
+    return this.props.clientOrganizationId
+  }
+
   updateCost(subTotal: number, discount: number) {
     this.props.subTotal = subTotal
     this.props.discount = discount
