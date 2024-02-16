@@ -1232,6 +1232,8 @@ export interface InvoiceResponseDto {
   lineItems: JobResponseDto[]
   payments: InvoicePayments[]
   totalOfPayment: number
+  /** @format date-time */
+  issuedAt: string | null
 }
 
 export interface InvoicePaginatedResponseDto {

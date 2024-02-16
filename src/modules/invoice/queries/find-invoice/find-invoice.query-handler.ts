@@ -1,14 +1,14 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { Invoices, Organizations } from '@prisma/client'
-import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { PrismaService } from '../../../database/prisma.service'
-import { JobEntity } from '../../../ordered-job/domain/job.entity'
-import { InvoiceResponseDto } from '../../dtos/invoice.response.dto'
-import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
-import { InvoiceNotFoundException } from '../../domain/invoice.error'
 import { formatDateWithTime } from '../../../../libs/utils/formatDate'
+import { initialize } from '../../../../libs/utils/constructor-initializer'
+import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
 import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
 import { JobResponseDto } from '../../../ordered-job/dtos/job.response.dto'
+import { PrismaService } from '../../../database/prisma.service'
+import { JobEntity } from '../../../ordered-job/domain/job.entity'
+import { InvoiceNotFoundException } from '../../domain/invoice.error'
+import { InvoiceResponseDto } from '../../dtos/invoice.response.dto'
 
 export class FindInvoiceQuery {
   readonly invoiceId: string
@@ -92,6 +92,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
         }
       }),
       totalOfPayment: Number(invoice.paymentTotal),
+      issuedAt: invoice.issuedAt,
     }
   }
 }

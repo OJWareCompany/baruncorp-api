@@ -787,6 +787,7 @@ model Invoices {
   discount             Decimal        @db.Decimal(13, 4)
   total                Decimal        @db.Decimal(13, 4)
   paymentTotal         Decimal        @default(0.0000) @map("payment_total") @db.Decimal(13, 4)
+  issuedAt            DateTime?      @db.DateTime(0) @map("issued_at")
   organization         Organizations  @relation(fields: [clientOrganizationId], references: [id])
   jobs                 OrderedJobs[]
   payments             Payments[]

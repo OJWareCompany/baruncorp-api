@@ -1,25 +1,18 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { Controller, Get, Inject, Query } from '@nestjs/common'
+import { Controller, Get, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
+import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
 import { InvoicePaginatedResponseDto } from '../../dtos/invoice.paginated.response.dto'
+import { FindInvoiceOverduePaginatedRequestDto } from './find-overdue-invoices.paginated.request.dto'
 import {
   FindOverdueInvoicePaginatedQuery,
   FindOverdueInvoicePaginatedReturnType,
 } from './find-overdue-invoices.paginated.query-handler'
-import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { FindInvoiceOverduePaginatedRequestDto } from './find-overdue-invoices.paginated.request.dto'
 
 @Controller('overdue-invoices')
 export class FindOverdueInvoicePaginatedHttpController {
-  constructor(
-    private readonly queryBus: QueryBus,
-    private readonly jobResponseMapper: JobResponseMapper,
-    // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
-  ) {}
+  constructor(private readonly queryBus: QueryBus, private readonly jobResponseMapper: JobResponseMapper) {}
 
   @Get('')
   async get(
@@ -63,6 +56,7 @@ export class FindOverdueInvoicePaginatedHttpController {
             ),
             payments: [],
             totalOfPayment: Number(invoice.paymentTotal),
+            issuedAt: invoice.issuedAt,
           }
         }),
       ),

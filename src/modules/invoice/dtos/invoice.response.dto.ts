@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsOptional, IsNumber } from 'class-validator'
+import { IsString, IsOptional, IsNumber, IsDate } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { InvoiceStatusEnum, InvoiceTermsEnum } from '../domain/invoice.type'
 import { PaymentMethodEnum } from '../../payment/domain/payment.type'
@@ -105,6 +105,11 @@ export class InvoiceResponseDto {
   @ApiProperty()
   @IsNumber()
   readonly totalOfPayment: number
+
+  @ApiProperty()
+  @IsOptional()
+  @IsDate()
+  readonly issuedAt: Date | null
 
   constructor(props: InvoiceResponseDto) {
     initialize(this, props)

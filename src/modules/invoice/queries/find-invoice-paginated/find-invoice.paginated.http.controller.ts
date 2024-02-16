@@ -58,6 +58,7 @@ export class FindInvoicePaginatedHttpController {
             lineItems: await Promise.all(invoice.jobs.map(async (job) => await this.jobResponseMapper.toResponse(job))),
             payments: [],
             totalOfPayment: Number(invoice.paymentTotal),
+            issuedAt: invoice.issuedAt,
           }
         }),
       ),

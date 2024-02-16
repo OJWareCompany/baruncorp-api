@@ -16,6 +16,7 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
       status: InvoiceStatusEnum.Unissued,
       paymentTotal: 0,
       payments: [],
+      issuedAt: null,
     }
 
     const entity = new InvoiceEntity({ id, props })
@@ -70,6 +71,7 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
 
   issue(): this {
     this.props.status = InvoiceStatusEnum.Issued
+    this.props.issuedAt = new Date()
     return this
   }
 

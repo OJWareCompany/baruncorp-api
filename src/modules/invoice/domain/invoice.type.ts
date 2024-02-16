@@ -31,4 +31,5 @@ export interface InvoiceProps extends CreateInvoiceProps {
   dueDate: Date
   paymentTotal: number
   payments: PaymentVO[]
+  issuedAt: Date | null
 }

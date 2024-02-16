@@ -2,8 +2,8 @@ import { Invoices, Prisma } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { InvoiceResponseDto } from './dtos/invoice.response.dto'
-import { InvoiceEntity } from './domain/invoice.entity'
 import { InvoiceStatusEnum } from './domain/invoice.type'
+import { InvoiceEntity } from './domain/invoice.entity'
 
 @Injectable()
 export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceResponseDto> {
@@ -25,6 +25,7 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
       discount: new Prisma.Decimal(props.discount),
       total: new Prisma.Decimal(props.total),
       paymentTotal: new Prisma.Decimal(props.paymentTotal),
+      issuedAt: props.issuedAt,
     }
     return record
   }
@@ -48,6 +49,7 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
         total: Number(record.total),
         payments: [], //records.payments,
         paymentTotal: Number(record.paymentTotal),
+        issuedAt: record.issuedAt,
       },
     })
     return entity
