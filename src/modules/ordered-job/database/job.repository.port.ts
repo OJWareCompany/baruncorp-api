@@ -9,8 +9,6 @@ export interface JobRepositoryPort {
   findJobOrThrow(id: string): Promise<JobEntity>
   findManyBy(whereInput: Prisma.OrderedJobsWhereInput): Promise<JobEntity[]>
   findJobsToInvoice(clientOrganizationId: string, serviceMonth: Date): Promise<JobEntity[]>
-  getTotalInvoiceAmount(jobId: string): Promise<number>
-  getSubtotalInvoiceAmount(jobId: string): Promise<number>
   rollbackUpdatedAtAndEditor(entity: JobEntity): Promise<void>
   updateOnlyEditorInfo(entity: JobEntity, editor?: UserEntity): Promise<void>
 }

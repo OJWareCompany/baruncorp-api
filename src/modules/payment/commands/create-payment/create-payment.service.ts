@@ -2,60 +2,41 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
-import { PrismaService } from '../../../database/prisma.service'
+import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.repository.port'
+import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
+import { InvoiceCalculator } from '../../../invoice/domain/domain-services/invoice-calculator.domain-service'
+import { PaymentOverException, UnissuedInvoicePayException, ZeroPaymentException } from '../../domain/payment.error'
 import { PaymentRepositoryPort } from '../../database/payment.repository.port'
 import { PAYMENT_REPOSITORY } from '../../payment.di-token'
 import { PaymentEntity } from '../../domain/payment.entity'
 import { CreatePaymentCommand } from './create-payment.command'
-import { InvoiceNotFoundException } from '../../../invoice/domain/invoice.error'
-import { PaymentOverException, UnissuedInvoicePayException, ZeroPaymentException } from '../../domain/payment.error'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 
 @CommandHandler(CreatePaymentCommand)
 export class CreatePaymentService implements ICommandHandler {
   constructor(
     // @ts-ignore
     @Inject(PAYMENT_REPOSITORY) private readonly paymentRepo: PaymentRepositoryPort, // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
-    private readonly prismaService: PrismaService,
+    // @ts-ignore
+    @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort, // @ts-ignore
+    private readonly invoiceCalculator: InvoiceCalculator,
   ) {}
   async execute(command: CreatePaymentCommand): Promise<AggregateID> {
+    if (command.amount <= 0) throw new ZeroPaymentException()
+
     const entity = PaymentEntity.create({
       ...command,
     })
 
-    if (command.amount <= 0) throw new ZeroPaymentException()
-
-    const invoice = await this.prismaService.invoices.findUnique({ where: { id: command.invoiceId } })
-    if (!invoice) throw new InvoiceNotFoundException()
+    const invoice = await this.invoiceRepo.findOneOrThrow(command.invoiceId)
     if (invoice.status === 'Unissued') {
       throw new UnissuedInvoicePayException()
     }
 
-    const jobs = await this.prismaService.orderedJobs.findMany({
-      where: { invoiceId: invoice.id },
-    })
-
-    const payments = await this.prismaService.payments.findMany({ where: { invoiceId: invoice.id, canceledAt: null } })
-    const totalOfPayment = payments.reduce((pre, cur) => pre + Number(cur.amount), 0)
-
-    let subtotal = 0
-    let total = 0
-
-    await Promise.all(
-      jobs.map(async (job) => {
-        const eachSubtotal = await this.jobRepo.getSubtotalInvoiceAmount(job.id)
-        const eachTotal = await this.jobRepo.getTotalInvoiceAmount(job.id)
-        subtotal += eachSubtotal
-        total += eachTotal
-      }),
-    )
-
-    if (total <= totalOfPayment || total < command.amount + totalOfPayment) {
-      throw new PaymentOverException()
+    const { isValid, exceededAmount } = await this.invoiceCalculator.isValidAmount(invoice, command.amount)
+    if (!isValid) {
+      throw new PaymentOverException(exceededAmount)
     }
-    //
+
     await this.paymentRepo.insert(entity)
     return entity.id
   }

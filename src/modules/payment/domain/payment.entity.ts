@@ -25,6 +25,14 @@ export class PaymentEntity extends AggregateRoot<PaymentProps> {
     return payment
   }
 
+  get amount(): number {
+    return this.props.amount
+  }
+
+  get isValid(): boolean {
+    return this.props.canceledAt === null
+  }
+
   cancel(): this {
     this.props.canceledAt = new Date()
     this.addEvent(

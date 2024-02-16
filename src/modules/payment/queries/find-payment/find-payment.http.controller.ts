@@ -1,11 +1,10 @@
 import { Controller, Get, Param } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
-import { Payments } from '@prisma/client'
+import { FindPaymentPaginatedReturnType } from '../find-payment-paginated/find-payment.paginated.query-handler'
 import { PaymentResponseDto } from '../../dtos/payment.response.dto'
+import { PaymentMethodEnum } from '../../domain/payment.type'
 import { FindPaymentRequestDto } from './find-payment.request.dto'
 import { FindPaymentQuery } from './find-payment.query-handler'
-import { PaymentMethodEnum } from '../../domain/payment.type'
-import { FindPaymentPaginatedReturnType } from '../find-payment-paginated/find-payment.paginated.query-handler'
 
 @Controller('payments')
 export class FindPaymentHttpController {
@@ -21,7 +20,7 @@ export class FindPaymentHttpController {
       id: result.id,
       invoiceId: result.invoiceId,
       amount: Number(result.amount),
-      paymentMethod: PaymentMethodEnum[result.paymentMethod],
+      paymentMethod: result.paymentMethod as PaymentMethodEnum,
       paymentDate: result.paymentDate.toISOString(),
       notes: result.notes,
       canceledAt: result.canceledAt?.toISOString() || null,

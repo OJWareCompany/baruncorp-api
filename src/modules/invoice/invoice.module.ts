@@ -30,6 +30,10 @@ import { CustomPricingModule } from '../custom-pricing/custom-pricing.module'
 import { FindClientWithOutstandingBalancesHttpController } from './queries/find-client-with-outstanding-balances/find-client-with-outstanding-balances.http.controller'
 import { FindOverdueInvoicePaginatedHttpController } from './queries/find-overdue-invoices-paginated/find-overdue-invoices.paginated.http.controller'
 import { FindOverdueInvoicePaginatedQueryHandler } from './queries/find-overdue-invoices-paginated/find-overdue-invoices.paginated.query-handler'
+import { InvoiceCalculator } from './domain/domain-services/invoice-calculator.domain-service'
+import { OrganizationModule } from '../organization/organization.module'
+import { PaymentModule } from '../payment/payment.module'
+import { CreditTransactionModule } from '../credit-transaction/credit-transaction.module'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -69,24 +73,22 @@ const eventHandlers: Provider[] = [
 
 const mappers: Provider[] = [InvoiceMapper]
 
-const domainServices: Provider[] = [CalculateInvoiceService]
+const domainServices: Provider[] = [CalculateInvoiceService, InvoiceCalculator]
 @Module({
   imports: [
     CqrsModule,
     PrismaModule,
     ServiceModule,
     CustomPricingModule,
+    OrganizationModule,
+    forwardRef(() => CreditTransactionModule),
+    forwardRef(() => PaymentModule),
     forwardRef(() => UsersModule),
     forwardRef(() => OrderedServiceModule),
     forwardRef(() => JobModule),
   ],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
-  exports: [
-    {
-      provide: INVOICE_REPOSITORY,
-      useClass: InvoiceRepository,
-    },
-  ],
+  exports: [...repositories, ...domainServices],
 })
 export class InvoiceModule {}

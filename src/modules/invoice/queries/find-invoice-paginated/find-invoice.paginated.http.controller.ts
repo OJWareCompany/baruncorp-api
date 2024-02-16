@@ -1,12 +1,12 @@
 import { Controller, Get, Inject, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
+import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
+import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
+import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { InvoicePaginatedResponseDto } from '../../dtos/invoice.paginated.response.dto'
 import { FindInvoicePaginatedQuery, FindInvoicePaginatedReturnType } from './find-invoice.paginated.query-handler'
 import { FindInvoicePaginatedRequestDto } from './find-invoice.paginated.request.dto'
-import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
-import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 
 @Controller('invoices')
@@ -37,18 +37,6 @@ export class FindInvoicePaginatedHttpController {
       ...result,
       items: await Promise.all(
         result.items.map(async (invoice) => {
-          let subtotal = 0
-          let total = 0
-
-          await Promise.all(
-            invoice.jobs.map(async (job) => {
-              const eachSubtotal = await this.jobRepo.getSubtotalInvoiceAmount(job.id)
-              const eachTotal = await this.jobRepo.getTotalInvoiceAmount(job.id)
-              subtotal += eachSubtotal
-              total += eachTotal
-            }),
-          )
-
           return {
             id: invoice.id,
             invoiceName: invoice.invoiceDate.toISOString(),
@@ -60,16 +48,16 @@ export class FindInvoicePaginatedHttpController {
             createdAt: invoice.createdAt.toISOString(),
             updatedAt: invoice.updatedAt.toISOString(),
             servicePeriodDate: invoice.serviceMonth.toISOString(),
-            subtotal: subtotal,
-            total: total,
-            discount: subtotal - total,
+            subtotal: Number(invoice.subTotal),
+            total: Number(invoice.total),
+            discount: Number(invoice.discount),
             clientOrganization: {
               id: invoice.organization.id,
               name: invoice.organization.name,
             },
             lineItems: await Promise.all(invoice.jobs.map(async (job) => await this.jobResponseMapper.toResponse(job))),
             payments: [],
-            totalOfPayment: 0,
+            totalOfPayment: Number(invoice.paymentTotal),
           }
         }),
       ),

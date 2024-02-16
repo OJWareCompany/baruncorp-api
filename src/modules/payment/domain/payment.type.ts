@@ -1,6 +1,6 @@
-export type PaymentMethod = 'Credit' | 'Direct'
+// export type PaymentMethod = 'Credit' | 'Direct'
 export enum PaymentMethodEnum {
-  Credit = 'Credit',
+  // Credit = 'Credit',
   Direct = 'Direct',
 }
 

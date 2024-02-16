@@ -1,15 +1,19 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { zonedTimeToUtc } from 'date-fns-tz'
 import { endOfMonth, startOfMonth } from 'date-fns'
+import { zonedTimeToUtc } from 'date-fns-tz'
+import { Inject } from '@nestjs/common'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { JobStatusEnum } from '../../domain/job.type'
+import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
+import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
+import { OrderedServiceStatusEnum } from '../../../ordered-service/domain/ordered-service.type'
+import { CalculateInvoiceService } from '../../../invoice/domain/calculate-invoice-service.domain-service'
+import { ServiceRepositoryPort } from '../../../service/database/service.repository.port'
+import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobToInvoiceResponseDto } from '../../dtos/job-to-invoice.response.dto'
 import { JobResponseMapper } from '../../job.response.mapper'
-import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JOB_REPOSITORY } from '../../job.di-token'
-import { Inject } from '@nestjs/common'
+import { JobStatusEnum } from '../../domain/job.type'
 
 export class FindJobToInvoiceQuery {
   readonly clientOrganizationId: string
@@ -22,10 +26,13 @@ export class FindJobToInvoiceQuery {
 @QueryHandler(FindJobToInvoiceQuery)
 export class FindJobToInvoiceQueryHandler implements IQueryHandler {
   constructor(
-    private readonly prismaService: PrismaService,
-    private readonly jobResponseMapper: JobResponseMapper,
     // @ts-ignore
-    @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
+    @Inject(SERVICE_REPOSITORY) private readonly serviceRepo: ServiceRepositoryPort,
+    // @ts-ignore
+    @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
+    private readonly jobResponseMapper: JobResponseMapper,
+    private readonly calcInvoiceService: CalculateInvoiceService,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async execute(query: FindJobToInvoiceQuery): Promise<JobToInvoiceResponseDto> {
@@ -52,17 +59,15 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
       },
     })
 
-    let subtotal = 0
-    let total = 0
-
-    await Promise.all(
-      jobs.map(async (job) => {
-        const eachSubtotal = await this.jobRepo.getSubtotalInvoiceAmount(job.id)
-        const eachTotal = await this.jobRepo.getTotalInvoiceAmount(job.id)
-        subtotal += eachSubtotal
-        total += eachTotal
-      }),
-    )
+    const orderedServices = await this.orderedServiceRepo.findBy({ jobId: { in: jobs.map((job) => job.id) } })
+    const discount = await this.calcInvoiceService.calcDiscountAmount(orderedServices, this.serviceRepo)
+    const total = orderedServices //
+      .filter(
+        (scope) =>
+          scope.status === OrderedServiceStatusEnum.Completed ||
+          scope.status === OrderedServiceStatusEnum.Canceled_Invoice,
+      )
+      .reduce((pre, cur) => pre + Number(cur.price), 0)
 
     return {
       items: await Promise.all(
@@ -70,8 +75,8 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
           return await this.jobResponseMapper.toResponse(job)
         }),
       ),
-      subtotal: subtotal,
-      discount: subtotal - total,
+      subtotal: total,
+      discount: discount,
       total: total,
     }
   }

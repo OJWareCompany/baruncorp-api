@@ -72,38 +72,6 @@ export class JobRepository implements JobRepositoryPort {
     )
   }
 
-  async getTotalInvoiceAmount(jobId: string): Promise<number> {
-    const total = await this.prismaService.orderedServices.aggregate({
-      _sum: { price: true },
-      where: {
-        jobId: jobId,
-        status: {
-          in: [
-            OrderedServiceStatusEnum.Completed,
-            OrderedServiceStatusEnum.Canceled_Invoice, //
-          ],
-        },
-      },
-    })
-    return Number(total._sum)
-  }
-
-  async getSubtotalInvoiceAmount(jobId: string): Promise<number> {
-    const total = await this.prismaService.orderedServices.aggregate({
-      _sum: { price: true },
-      where: {
-        jobId: jobId,
-        status: {
-          in: [
-            OrderedServiceStatusEnum.Completed,
-            OrderedServiceStatusEnum.Canceled_Invoice, //
-          ],
-        },
-      },
-    })
-    return Number(total._sum)
-  }
-
   async insert(entity: JobEntity | JobEntity[]): Promise<void> {
     const entities = Array.isArray(entity) ? entity : [entity]
     const records = entities.map(this.jobMapper.toPersistence)

@@ -29,5 +29,6 @@ export interface CreateInvoiceProps {
 export interface InvoiceProps extends CreateInvoiceProps {
   status: InvoiceStatusEnum
   dueDate: Date
+  paymentTotal: number
   payments: PaymentVO[]
 }

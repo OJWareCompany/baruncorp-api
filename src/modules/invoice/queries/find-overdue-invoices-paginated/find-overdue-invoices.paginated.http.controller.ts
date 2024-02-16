@@ -38,18 +38,7 @@ export class FindOverdueInvoicePaginatedHttpController {
       ...result,
       items: await Promise.all(
         result.items.map(async (invoice) => {
-          let subtotal = 0
-          let total = 0
-
-          await Promise.all(
-            invoice.jobs.map(async (job) => {
-              const eachSubtotal = await this.jobRepo.getSubtotalInvoiceAmount(job.id)
-              const eachTotal = await this.jobRepo.getTotalInvoiceAmount(job.id)
-              subtotal += eachSubtotal
-              total += eachTotal
-            }),
-          )
-
+          // const payments = await this.
           return {
             id: invoice.id,
             status: invoice.status,
@@ -60,9 +49,9 @@ export class FindOverdueInvoicePaginatedHttpController {
             createdAt: invoice.createdAt.toISOString(),
             updatedAt: invoice.updatedAt.toISOString(),
             servicePeriodDate: invoice.serviceMonth.toISOString(),
-            subtotal,
-            total,
-            discount: subtotal - total,
+            subtotal: Number(invoice.subTotal),
+            total: Number(invoice.total),
+            discount: Number(invoice.discount),
             clientOrganization: {
               id: invoice.organization.id,
               name: invoice.organization.name,
@@ -73,7 +62,7 @@ export class FindOverdueInvoicePaginatedHttpController {
               }),
             ),
             payments: [],
-            totalOfPayment: 0,
+            totalOfPayment: Number(invoice.paymentTotal),
           }
         }),
       ),

@@ -7,8 +7,8 @@ export class CreditTransactionNotFoundException extends NotFoundException {
 }
 
 export class CreditInsufficientException extends UnprocessableEntityException {
-  constructor() {
-    super('You have insufficient credit.', '50402')
+  constructor(insufficientAmount: number) {
+    super(`You have insufficient credit. (${insufficientAmount})`, '50402')
   }
 }
 

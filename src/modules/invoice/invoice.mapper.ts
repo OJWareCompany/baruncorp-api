@@ -24,6 +24,7 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
       subTotal: new Prisma.Decimal(props.subTotal),
       discount: new Prisma.Decimal(props.discount),
       total: new Prisma.Decimal(props.total),
+      paymentTotal: new Prisma.Decimal(props.paymentTotal),
     }
     return record
   }
@@ -46,34 +47,13 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
         discount: Number(record.discount),
         total: Number(record.total),
         payments: [], //records.payments,
+        paymentTotal: Number(record.paymentTotal),
       },
     })
     return entity
   }
 
   toResponse(entity: InvoiceEntity): InvoiceResponseDto {
-    const props = entity.getProps()
-    const response = new InvoiceResponseDto({
-      id: props.id,
-      status: props.status,
-      invoiceDate: props.invoiceDate.toISOString(),
-      terms: props.terms,
-      dueDate: props.dueDate.toISOString(),
-      notesToClient: props.notesToClient,
-      createdAt: props.createdAt.toISOString(),
-      updatedAt: props.updatedAt.toISOString(),
-      servicePeriodDate: props.serviceMonth.toISOString(),
-      subtotal: 1,
-      discount: 1,
-      total: 1,
-      clientOrganization: {
-        id: entity.getProps().clientOrganizationId,
-        name: '',
-      },
-      lineItems: [],
-      payments: [],
-      totalOfPayment: 0,
-    })
-    return response
+    return {} as InvoiceResponseDto
   }
 }

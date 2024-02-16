@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { FindCreditTransactionPaginatedHttpController } from './queries/find-credit-transaction-paginated/find-credit-transaction.paginated.http.controller'
 import { FindCreditTransactionPaginatedQueryHandler } from './queries/find-credit-transaction-paginated/find-credit-transaction.paginated.query-handler'
@@ -16,6 +16,7 @@ import { InvoiceModule } from '../invoice/invoice.module'
 import { PrismaModule } from '../database/prisma.module'
 import { UsersModule } from '../users/users.module'
 import UserMapper from '../users/user.mapper'
+import { CreditCalculator } from './domain/domain-services/credit-calculator.domain-service'
 
 const httpControllers = [
   CreateCreditTransactionHttpController,
@@ -33,10 +34,19 @@ const repositories: Provider[] = [
 ]
 const eventHandlers: Provider[] = []
 const mappers: Provider[] = [CreditTransactionMapper, UserMapper]
+const domainServices: Provider[] = [CreditCalculator]
 
 @Module({
-  imports: [CqrsModule, PrismaModule, InvoiceModule, UsersModule, OrganizationModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  imports: [
+    CqrsModule,
+    PrismaModule,
+    OrganizationModule,
+    forwardRef(() => InvoiceModule),
+    forwardRef(() => UsersModule),
+    forwardRef(() => InvoiceModule),
+  ],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
+  exports: [...domainServices, ...repositories],
 })
 export class CreditTransactionModule {}

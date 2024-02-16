@@ -34,6 +34,10 @@ export class CreditTransactionEntity extends AggregateRoot<CreditTransactionProp
     return this.props.canceledAt === null
   }
 
+  isMatched(invoiceId: string): boolean {
+    return this.props.relatedInvoiceId === invoiceId
+  }
+
   cancel(): this {
     this.props.canceledAt = new Date()
     return this

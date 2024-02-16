@@ -6,5 +6,5 @@ export interface PaymentRepositoryPort {
   update(entity: PaymentEntity): Promise<void>
   delete(id: string): Promise<void>
   findOne(id: string): Promise<PaymentEntity | null>
-  find(): Promise<Paginated<PaymentEntity>>
+  findByInvoiceId(invoiceId: string): Promise<PaymentEntity[]>
 }

@@ -14,8 +14,10 @@ export class PaymentRepository implements PaymentRepositoryPort {
     private readonly paymentMapper: PaymentMapper,
     private readonly eventEmitter: EventEmitter2,
   ) {}
-  find(): Promise<Paginated<PaymentEntity>> {
-    throw new Error('Method not implemented.')
+
+  async findByInvoiceId(invoiceId: string): Promise<PaymentEntity[]> {
+    const records = await this.prismaService.payments.findMany({ where: { invoiceId: invoiceId } })
+    return records.map(this.paymentMapper.toDomain)
   }
 
   async insert(entity: PaymentEntity): Promise<void> {

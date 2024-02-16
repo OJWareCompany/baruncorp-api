@@ -10,7 +10,6 @@ import { CreditTransactionRepositoryPort } from '../../database/credit-transacti
 import { CREDIT_TRANSACTION_REPOSITORY } from '../../credit-transaction.di-token'
 import { CreditTransactionEntity } from '../../domain/credit-transaction.entity'
 import { CreateCreditTransactionCommand } from './create-credit-transaction.command'
-import { InvoiceEntity } from '../../../invoice/domain/invoice.entity'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { CreditTransactionTypeEnum } from '../../domain/credit-transaction.type'
@@ -18,6 +17,9 @@ import {
   CreditDeductionMissingInvoiceIdException,
   CreditInsufficientException,
 } from '../../domain/credit-transaction.error'
+import { InvoiceCalculator } from '../../../invoice/domain/domain-services/invoice-calculator.domain-service'
+import { PaymentOverException, UnissuedInvoicePayException } from '../../../payment/domain/payment.error'
+import { CreditCalculator } from '../../domain/domain-services/credit-calculator.domain-service'
 
 @CommandHandler(CreateCreditTransactionCommand)
 export class CreateCreditTransactionService implements ICommandHandler {
@@ -30,14 +32,11 @@ export class CreateCreditTransactionService implements ICommandHandler {
     @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort,
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
+    private readonly invoiceCalculator: InvoiceCalculator,
+    private readonly creditCalculator: CreditCalculator,
   ) {}
   async execute(command: CreateCreditTransactionCommand): Promise<AggregateID> {
     const clientOrganization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
-
-    let invoice: InvoiceEntity | null
-    if (command.relatedInvoiceId) {
-      invoice = await this.invoiceRepo.findOneOrThrow(command.relatedInvoiceId)
-    }
 
     const user = await this.userRepo.findOneByIdOrThrow(command.createdByUserId)
 
@@ -60,13 +59,23 @@ export class CreateCreditTransactionService implements ICommandHandler {
         throw new CreditDeductionMissingInvoiceIdException()
       }
 
-      const creditHistory = await this.creditTransactionRepo.find(command.clientOrganizationId)
-      const creditTotal = creditHistory //
-        .filter((credit) => credit.isValid)
-        .reduce((pre, cur) => pre + cur.amount, 0)
+      const invoice = await this.invoiceRepo.findOneOrThrow(command.relatedInvoiceId)
+      if (invoice.status === 'Unissued') {
+        throw new UnissuedInvoicePayException()
+      }
 
-      if (creditTotal - command.amount < 0) {
-        throw new CreditInsufficientException()
+      const { isValid, exceededAmount } = await this.invoiceCalculator.isValidAmount(invoice, command.amount)
+      if (!isValid) {
+        throw new PaymentOverException(exceededAmount)
+      }
+
+      const { isAfford, insufficientAmount } = await this.creditCalculator.isAfford(
+        command.clientOrganizationId,
+        command.amount,
+      )
+
+      if (!isAfford) {
+        throw new CreditInsufficientException(insufficientAmount)
       }
     }
 

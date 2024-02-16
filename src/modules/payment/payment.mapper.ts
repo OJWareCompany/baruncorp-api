@@ -2,8 +2,8 @@ import { Payments, Prisma } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
 import { PaymentResponseDto } from './dtos/payment.response.dto'
-import { PaymentEntity } from './domain/payment.entity'
 import { PaymentMethodEnum } from './domain/payment.type'
+import { PaymentEntity } from './domain/payment.entity'
 
 @Injectable()
 export class PaymentMapper implements Mapper<PaymentEntity, Payments, PaymentResponseDto> {
@@ -28,7 +28,7 @@ export class PaymentMapper implements Mapper<PaymentEntity, Payments, PaymentRes
       props: {
         invoiceId: record.invoiceId,
         amount: Number(record.amount),
-        paymentMethod: PaymentMethodEnum[record.paymentMethod],
+        paymentMethod: record.paymentMethod as PaymentMethodEnum,
         paymentDate: record.paymentDate,
         notes: record.notes,
         canceledAt: record.canceledAt,

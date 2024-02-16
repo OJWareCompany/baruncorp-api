@@ -42,20 +42,6 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       },
     })
 
-    const organization = await this.prismaService.organizations.findUnique({
-      where: { id: invoice.clientOrganizationId },
-    })
-
-    const payments = await this.prismaService.payments.findMany({
-      where: { invoiceId: invoice.id, canceledAt: null },
-      orderBy: { paymentDate: 'desc' },
-    })
-
-    const paymentsWithCanceled = await this.prismaService.payments.findMany({
-      where: { invoiceId: invoice.id },
-      orderBy: { paymentDate: 'desc' },
-    })
-
     // TODO: 조회에서 단순 조회가 아닌 계산 로직이 생긴다. 이게 맞나
     const lineItems: JobResponseDto[] = await Promise.all(
       jobs.map(async (job) => {
@@ -63,11 +49,17 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       }),
     )
 
+    const organization = await this.prismaService.organizations.findUnique({
+      where: { id: invoice.clientOrganizationId },
+    })
+
+    const paymentsWithCanceled = await this.prismaService.payments.findMany({
+      where: { invoiceId: invoice.id },
+      orderBy: { paymentDate: 'desc' },
+    })
+
     return {
       id: invoice.id,
-      // invoiceName: organization
-      //   ? organization.name + ' ' + formatDate(invoice.serviceMonth)
-      //   : formatDate(invoice.serviceMonth),
       status: invoice.status,
       invoiceDate: invoice.invoiceDate.toISOString(),
       terms: invoice.terms,
@@ -92,14 +84,14 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
             ? organization.name + ' ' + formatDateWithTime(payment.paymentDate)
             : formatDateWithTime(payment.paymentDate),
           amount: Number(payment.amount),
-          paymentMethod: PaymentMethodEnum[payment.paymentMethod],
+          paymentMethod: payment.paymentMethod as PaymentMethodEnum,
           paymentDate: payment.paymentDate.toISOString(),
           canceledAt: payment.canceledAt?.toISOString() || null,
           createdByUserId: payment.createdBy,
           createdByUserName: payment.createdBy,
         }
       }),
-      totalOfPayment: payments.reduce((pre, cur) => pre + Number(cur.amount), 0),
+      totalOfPayment: Number(invoice.paymentTotal),
     }
   }
 }

@@ -3,6 +3,7 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateInvoiceProps, InvoiceProps, InvoiceStatusEnum, InvoiceTermsEnum } from './invoice.type'
 import addDays from 'date-fns/addDays'
 import { InvoiceCreatedDomainEvent } from './domain-events/invoice-created.domain-event'
+import { InvoiceCalculator } from './domain-services/invoice-calculator.domain-service'
 
 export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   protected _id: string
@@ -13,6 +14,7 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
       ...create,
       dueDate: addDays(create.invoiceDate, create.terms),
       status: InvoiceStatusEnum.Unissued,
+      paymentTotal: 0,
       payments: [],
     }
 
@@ -39,6 +41,24 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
 
   get clientOrganizationId() {
     return this.props.clientOrganizationId
+  }
+
+  get total(): number {
+    return this.props.total
+  }
+
+  get subtotal(): number {
+    return this.props.subTotal
+  }
+
+  async determinePaymentTotalAndStatus(invoiceCalculator: InvoiceCalculator) {
+    this.props.paymentTotal = await invoiceCalculator.calcPaymentTotal(this)
+    if (this.props.paymentTotal >= this.props.total) {
+      this.props.status = InvoiceStatusEnum.Paid
+    } else {
+      this.props.status = InvoiceStatusEnum.Issued
+    }
+    return this
   }
 
   updateCost(subTotal: number, discount: number) {
