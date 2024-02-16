@@ -787,7 +787,7 @@ model Invoices {
   discount             Decimal        @db.Decimal(13, 4)
   total                Decimal        @db.Decimal(13, 4)
   paymentTotal         Decimal        @default(0.0000) @map("payment_total") @db.Decimal(13, 4)
-  issuedAt            DateTime?      @db.DateTime(0) @map("issued_at")
+  issuedAt             DateTime?      @map("issued_at") @db.DateTime(0)
   organization         Organizations  @relation(fields: [clientOrganizationId], references: [id])
   jobs                 OrderedJobs[]
   payments             Payments[]
@@ -1272,7 +1272,7 @@ model TrackingNumbers {
 
 model Utilities {
   id                 String             @id @db.VarChar(255)
-  name               String             @map("name")
+  name               String             @unique(map: "name") @map("name")
   notes              String             @map("notes") @db.Text
   stateAbbreviations String             @map("state_abbreviations") @db.VarChar(255)
   snapshots          UtilitySnapshots[]
