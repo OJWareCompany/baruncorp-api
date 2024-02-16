@@ -6057,6 +6057,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * No description
      *
      * @name CreatePaymentHttpControllerPost
+     * @summary 크레딧 결제는 POST /credit-transactions API를 사용합니다.
      * @request POST:/payments
      */
     createPaymentHttpControllerPost: (data: CreatePaymentRequestDto, params: RequestParams = {}) =>
