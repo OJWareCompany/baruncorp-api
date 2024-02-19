@@ -173,6 +173,7 @@ export class JobResponseMapper {
       dateSentToClient: job.dateSentToClient,
       dueDate: job.dueDate ? job.dueDate : null,
       jobFolderId: jobFolder?.id ?? null,
+      shareLink: jobFolder?.shareLink ?? null,
     })
   }
 
