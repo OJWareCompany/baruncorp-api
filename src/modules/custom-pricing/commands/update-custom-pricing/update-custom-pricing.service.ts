@@ -14,7 +14,7 @@ export class UpdateCustomPricingService implements ICommandHandler {
     private readonly customPricingRepo: CustomPricingRepositoryPort,
   ) {}
   async execute(command: UpdateCustomPricingCommand): Promise<void> {
-    const entity = await this.customPricingRepo.findOneOrThrow(command.organizationId, command.serviceId)
+    const entity = await this.customPricingRepo.findOneOrThrow(command.serviceId, command.organizationId)
     const residentialRevisionPricing =
       command.residentialRevisionPrice && command.residentialRevisionGmPrice
         ? {
