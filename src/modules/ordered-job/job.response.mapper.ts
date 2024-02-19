@@ -1,7 +1,7 @@
 import { OrderedJobs } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
-import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { JobStatusEnum, LoadCalcOriginEnum, OrderedJobsPriorityEnum } from './domain/job.type'
+import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { AssignedTaskResponseDto } from '../assigned-task/dtos/assigned-task.response.dto'
 import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
 import { JobResponseDto } from './dtos/job.response.dto'
@@ -176,6 +176,7 @@ export class JobResponseMapper {
       shareLink: jobFolder?.shareLink ?? null,
       inReview: job.inReview,
       priority: job.priority as OrderedJobsPriorityEnum,
+      completedCancelledDate: job.completedCancelledDate,
     })
   }
 

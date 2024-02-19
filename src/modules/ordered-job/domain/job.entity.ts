@@ -48,6 +48,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       isManualDueDate: !!create.dueDate,
       inReview: false,
       priority: OrderedJobsPriorityEnum.Medium,
+      completedCancelledDate: null,
     }
 
     const job = new JobEntity({ id, props })
@@ -152,6 +153,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     this.props.jobStatus = AutoOnlyJobStatusEnum.Sent_To_Client
     this.props.updatedBy = editor.userName.fullName
     this.props.dateSentToClient = new Date()
+    this.props.completedCancelledDate = this.props.dateSentToClient
     return this
   }
 
@@ -200,12 +202,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   cancel(): this {
     this.props.jobStatus = JobStatusEnum.Canceled
+    this.props.completedCancelledDate = new Date()
     this.addEvent(new JobCanceledDomainEvent({ aggregateId: this.id }))
     return this
   }
 
   cancelAndKeepInvoice(): this {
     this.props.jobStatus = JobStatusEnum.Canceled_Invoice
+    this.props.completedCancelledDate = new Date()
     this.addEvent(new JobCanceledAndKeptInvoiceDomainEvent({ aggregateId: this.id }))
     return this
   }

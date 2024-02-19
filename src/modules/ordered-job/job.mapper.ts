@@ -250,6 +250,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         isManualDueDate: record.isManualDueDate,
         inReview: record.inReview,
         priority: record.priority as OrderedJobsPriorityEnum,
+        completedCancelledDate: record.completedCancelledDate,
       },
     })
   }

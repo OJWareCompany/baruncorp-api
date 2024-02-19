@@ -79,6 +79,7 @@ export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
   isCurrentJob?: boolean
   dateSentToClient: Date | null
   isManualDueDate: boolean
+  completedCancelledDate: Date | null
 
   // 인보이스에 영향받는 필드들
   invoiceId: string | null

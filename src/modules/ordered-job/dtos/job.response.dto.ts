@@ -208,6 +208,11 @@ export class JobResponseDto {
   @IsOptional()
   dueDate: Date | null
 
+  @ApiProperty()
+  @IsDate()
+  @IsOptional()
+  completedCancelledDate: Date | null
+
   @ApiProperty({ example: 'GnpyEmUZfZ1k7e6Jsvy_fcG8r-PWCQswP' })
   @IsString()
   jobFolderId: string | null
