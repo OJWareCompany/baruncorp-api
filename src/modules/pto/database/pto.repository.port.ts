@@ -18,4 +18,5 @@ export interface PtoRepositoryPort {
   insertDetail(entity: PtoDetailEntity): Promise<void>
   updateDetail(entity: PtoDetailEntity): Promise<void>
   updateMany(entities: PtoEntity[]): Promise<void>
+  hasPtoDetailOnToday(userId: string): Promise<boolean>
 }

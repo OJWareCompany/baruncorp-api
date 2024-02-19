@@ -184,6 +184,20 @@ export class PtoRepository implements PtoRepositoryPort {
     return await this.prismaService.ptos.count({ where: condition })
   }
 
+  async hasPtoDetailOnToday(userId: string): Promise<boolean> {
+    const now: Date = new Date()
+
+    const records: any[] = await this.prismaService.$queryRaw`
+        SELECT *
+        FROM pto_details
+        WHERE user_id = ${userId}
+        AND started_at <= ${now}
+        AND DATE_ADD(started_at, INTERVAL days DAY) >= ${now}
+    `
+
+    return records.length > 0
+  }
+
   async getCountDetail(condition: Prisma.PtosWhereInput): Promise<number> {
     return await this.prismaService.ptos.count({ where: condition })
   }
