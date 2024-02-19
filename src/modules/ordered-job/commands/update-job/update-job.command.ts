@@ -1,5 +1,6 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
+import { OrderedJobsPriorityEnum } from '../../domain/job.type'
 
 export class UpdateJobCommand {
   readonly jobId: string
@@ -13,6 +14,8 @@ export class UpdateJobCommand {
   readonly mountingType: string
   readonly isExpedited: boolean
   readonly dueDate: Date
+  readonly inReview: boolean
+  readonly priority: OrderedJobsPriorityEnum
 
   constructor(props: UpdateJobCommand) {
     initialize(this, props)

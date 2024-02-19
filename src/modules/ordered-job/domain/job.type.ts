@@ -6,6 +6,13 @@ import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
+export enum OrderedJobsPriorityEnum {
+  Immediate = 'Immediate',
+  High = 'High',
+  Medium = 'Medium',
+  Low = 'Low',
+}
+
 export enum JobStatusEnum {
   Not_Started = 'Not Started',
   In_Progress = 'In Progress',
@@ -83,4 +90,6 @@ export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
 
   orderedServices: OrderedService[]
   assignedTasks: AssignedTask[]
+  priority: OrderedJobsPriorityEnum
+  inReview: boolean
 }

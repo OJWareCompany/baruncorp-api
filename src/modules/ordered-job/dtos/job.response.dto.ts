@@ -11,7 +11,13 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from '../../ordered-service/domain/ordered-service.type'
-import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
+import {
+  AutoOnlyJobStatusEnum,
+  JobStatus,
+  JobStatusEnum,
+  LoadCalcOriginEnum,
+  OrderedJobsPriorityEnum,
+} from '../domain/job.type'
 import { AddressDto } from './address.dto'
 
 export class OrderedServiceResponseFields {
@@ -163,6 +169,13 @@ export class JobResponseDto {
   @ApiProperty({ example: true })
   isExpedited: boolean
 
+  @ApiProperty({ example: true })
+  inReview: boolean
+
+  @ApiProperty({ example: OrderedJobsPriorityEnum.High, enum: OrderedJobsPriorityEnum })
+  @IsEnum(OrderedJobsPriorityEnum)
+  priority: OrderedJobsPriorityEnum
+
   @ApiProperty()
   jobName: string
 
@@ -207,6 +220,7 @@ export class JobResponseDto {
     initialize(this, props)
   }
 }
+
 // pricingType
 // state
 // taskSubtotal

@@ -23,7 +23,7 @@ import {
 } from '../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
-import { JobStatusEnum } from './domain/job.type'
+import { JobStatusEnum, OrderedJobsPriorityEnum } from './domain/job.type'
 import { LoadCalcOriginEnum } from './domain/job.type'
 import { AssignedTaskStatusEnum } from '../assigned-task/domain/assigned-task.type'
 
@@ -71,6 +71,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       dateSentToClient: props.dateSentToClient,
       editor_user_id: props.editorUserId,
       isManualDueDate: props.isManualDueDate,
+      inReview: props.inReview,
+      priority: props.priority,
 
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
@@ -110,7 +112,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       formulaSandbox6: null,
       googleDriveJobDeliverablesFolderId: null,
       googleDriveJobFolderId: null,
-      inReview: null,
       isDesignJob: null,
       isLocked: null,
       isRevision: null,
@@ -247,6 +248,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         dateSentToClient: record.dateSentToClient,
         editorUserId: record.editor_user_id,
         isManualDueDate: record.isManualDueDate,
+        inReview: record.inReview,
+        priority: record.priority as OrderedJobsPriorityEnum,
       },
     })
   }

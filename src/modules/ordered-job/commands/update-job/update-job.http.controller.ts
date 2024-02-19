@@ -29,6 +29,8 @@ export class UpdateJobHttpController {
       numberOfWetStamp: dto.numberOfWetStamp,
       mountingType: dto.mountingType,
       isExpedited: dto.isExpedited,
+      inReview: dto.inReview,
+      priority: dto.priority,
       dueDate: dto.dueDate || null,
     })
 

@@ -364,6 +364,9 @@ export interface UpdateJobRequestDto {
    * @default null
    */
   dueDate: string | null
+  inReview: boolean
+  /** @default "Medium" */
+  priority: 'Immediate' | 'High' | 'Medium' | 'Low'
 }
 
 export interface UpdateJobStatusRequestDto {
@@ -507,6 +510,10 @@ export interface JobResponseDto {
   receivedAt: string
   /** @example true */
   isExpedited: boolean
+  /** @example true */
+  inReview: boolean
+  /** @example "High" */
+  priority: 'Immediate' | 'High' | 'Medium' | 'Low'
   jobName: string
   isCurrentJob?: boolean
   /** @format date-time */

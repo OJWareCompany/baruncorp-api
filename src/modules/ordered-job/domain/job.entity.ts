@@ -6,7 +6,7 @@ import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 import { UserEntity } from '../../users/domain/user.entity'
 import { Address } from '../../organization/domain/value-objects/address.vo'
-import { AutoOnlyJobStatusEnum, CreateJobProps, JobProps, JobStatusEnum } from './job.type'
+import { AutoOnlyJobStatusEnum, CreateJobProps, JobProps, JobStatusEnum, OrderedJobsPriorityEnum } from './job.type'
 import { JobCanceledAndKeptInvoiceDomainEvent } from './events/job-canceled-and-kept-invoice.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { OrderStatusChangeValidator } from './domain-services/order-status-change-validator.domain-service'
@@ -46,6 +46,8 @@ export class JobEntity extends AggregateRoot<JobProps> {
       pricingType: null,
       dateSentToClient: null,
       isManualDueDate: !!create.dueDate,
+      inReview: false,
+      priority: OrderedJobsPriorityEnum.Medium,
     }
 
     const job = new JobEntity({ id, props })
@@ -247,6 +249,15 @@ export class JobEntity extends AggregateRoot<JobProps> {
   updateAdditionalInformationFromClient(additionalInformationFromClient: string | null) {
     this.props.additionalInformationFromClient = additionalInformationFromClient
     return
+  }
+
+  setPriority(priority: OrderedJobsPriorityEnum) {
+    this.props.priority = priority
+    return this
+  }
+
+  setInReview(inReview: boolean) {
+    return (this.props.inReview = inReview)
   }
 
   updateDueDate(dueDate: Date) {
