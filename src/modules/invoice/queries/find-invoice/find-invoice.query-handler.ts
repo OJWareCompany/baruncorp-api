@@ -115,7 +115,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
             createdByUserName: credit.createdBy,
           }
         }),
-      ],
+      ].sort((a, b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime()),
       totalOfPayment: Number(invoice.paymentTotal),
       issuedAt: invoice.issuedAt,
     }

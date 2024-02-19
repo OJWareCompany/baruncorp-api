@@ -19,7 +19,11 @@ import {
   CreditWrongReloadException,
 } from '../../domain/credit-transaction.error'
 import { InvoiceCalculator } from '../../../invoice/domain/domain-services/invoice-calculator.domain-service'
-import { PaymentOverException, UnissuedInvoicePayException } from '../../../payment/domain/payment.error'
+import {
+  PaymentOverException,
+  UnissuedInvoicePayException,
+  ZeroPaymentException,
+} from '../../../payment/domain/payment.error'
 import { CreditCalculator } from '../../domain/domain-services/credit-calculator.domain-service'
 
 @CommandHandler(CreateCreditTransactionCommand)
@@ -37,6 +41,7 @@ export class CreateCreditTransactionService implements ICommandHandler {
     private readonly creditCalculator: CreditCalculator,
   ) {}
   async execute(command: CreateCreditTransactionCommand): Promise<AggregateID> {
+    if (command.amount <= 0) throw new ZeroPaymentException()
     if (command.creditTransactionType === CreditTransactionTypeEnum.Reload && command.relatedInvoiceId) {
       throw new CreditWrongReloadException()
     }
