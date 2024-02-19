@@ -12,6 +12,7 @@ export enum InvoiceStatusEnum {
 export enum InvoiceTermsEnum {
   Days21 = 21,
   Days30 = 30,
+  Days60 = 60,
 }
 
 export interface CreateInvoiceProps {

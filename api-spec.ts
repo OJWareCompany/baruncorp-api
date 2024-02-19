@@ -1197,7 +1197,7 @@ export interface CreateInvoiceRequestDto {
    * @default "2023-10-01T05:14:33.599Z"
    */
   invoiceDate: string
-  terms: 21 | 30
+  terms: 21 | 30 | 60
   notesToClient: string | null
   clientOrganizationId: string
   /**
@@ -1210,7 +1210,7 @@ export interface CreateInvoiceRequestDto {
 export interface UpdateInvoiceRequestDto {
   /** @format date-time */
   invoiceDate: string
-  terms: 21 | 30
+  terms: 21 | 30 | 60
   notesToClient: string | null
 }
 
@@ -1234,7 +1234,7 @@ export interface InvoiceResponseDto {
   id: string
   status: 'Unissued' | 'Issued' | 'Paid'
   invoiceDate: string
-  terms: 21 | 30
+  terms: 21 | 30 | 60
   dueDate: string
   notesToClient: string | null
   createdAt: string
@@ -1765,6 +1765,7 @@ export interface CreateCreditTransactionRequestDto {
   creditTransactionType: 'Reload' | 'Deduction'
   relatedInvoiceId?: string | null
   clientOrganizationId: string
+  note: string | null
 }
 
 export interface CreditTransactionResponseDto {
@@ -2191,7 +2192,7 @@ export interface CreateVendorInvoiceRequestDto {
   serviceMonth: string
   /** @default "" */
   invoiceNumber: string
-  terms: 21 | 30
+  terms: 21 | 30 | 60
   /** @default "" */
   note: string | null
 }

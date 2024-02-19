@@ -7,6 +7,7 @@ export class CreateCreditTransactionCommand {
   readonly creditTransactionType: CreditTransactionTypeEnum
   readonly relatedInvoiceId?: string | null
   readonly clientOrganizationId: string
+  readonly note: string | null
   constructor(props: CreateCreditTransactionCommand) {
     initialize(this, props)
   }

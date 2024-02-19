@@ -500,7 +500,7 @@ model OrderedJobs {
   clientContactEmail                            String                @map("client_contact_email") @db.VarChar(255)
   clientContactEmailOverride                    String?               @map("client_contact_email_override") @db.VarChar(255)
   commercialJobPrice                            Decimal?              @map("commercial_job_price") @db.Decimal(10, 2)
-  completedCancelledDate                        DateTime?             @map("completed_cancelled_date") @db.Date
+  completedCancelledDate                        DateTime?             @map("completed_cancelled_date") @db.DateTime(0)
   deliverablesLink                              String?               @map("deliverables_link") @db.Text
   deliverablesEmail                             String?               @map("deliverables_email") @db.Text
   electricalPEAndWetStampGlSolargraf            Boolean?              @map("electrical_pe_and_wet_stamp_gl_solargraf")
@@ -766,6 +766,7 @@ model CreditTransactions {
   relatedInvoiceId     String?                           @map("related_invoice_id") @db.VarChar(255)
   transactionDate      DateTime                          @map("transaction_date") @db.DateTime(0)
   canceledAt           DateTime?                         @map("canceled_at") @db.DateTime(0)
+  note                 String?                           @db.Text
 
   @@index([clientOrganizationId], map: "client_organization_id")
   @@index([relatedInvoiceId], map: "related_invoice_id")

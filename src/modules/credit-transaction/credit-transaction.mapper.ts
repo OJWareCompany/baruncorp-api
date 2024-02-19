@@ -21,6 +21,7 @@ export class CreditTransactionMapper
       transactionDate: props.transactionDate,
       canceledAt: props.canceledAt,
       createdByUserId: props.createdByUserId,
+      note: props.note,
     }
     return record
   }
@@ -37,6 +38,7 @@ export class CreditTransactionMapper
         relatedInvoiceId: record.relatedInvoiceId,
         transactionDate: record.transactionDate,
         canceledAt: record.canceledAt,
+        note: record.note,
       },
     })
     return entity

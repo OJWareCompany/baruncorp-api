@@ -19,4 +19,9 @@ export class CreateCreditTransactionRequestDto {
   @ApiProperty()
   @IsString()
   readonly clientOrganizationId: string
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly note: string | null
 }

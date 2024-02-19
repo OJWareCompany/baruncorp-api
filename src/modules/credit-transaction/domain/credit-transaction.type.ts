@@ -10,6 +10,7 @@ export interface CreateCreditTransactionProps {
   amount: number
   creditTransactionType: CreditTransactionTypeEnum
   relatedInvoiceId?: string | null
+  note: string | null
 }
 
 export interface CreditTransactionProps extends CreateCreditTransactionProps {

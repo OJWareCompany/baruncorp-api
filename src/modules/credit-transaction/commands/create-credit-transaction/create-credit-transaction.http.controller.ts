@@ -20,6 +20,7 @@ export class CreateCreditTransactionHttpController {
       creditTransactionType: request.creditTransactionType,
       relatedInvoiceId: request.relatedInvoiceId,
       clientOrganizationId: request.clientOrganizationId,
+      note: request.note,
     })
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)

@@ -47,6 +47,7 @@ export class CreateCreditTransactionService implements ICommandHandler {
       amount: command.amount,
       relatedInvoiceId: command.relatedInvoiceId,
       creditTransactionType: command.creditTransactionType,
+      note: command.note,
     })
 
     /**
