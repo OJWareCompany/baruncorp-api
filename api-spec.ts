@@ -519,6 +519,8 @@ export interface JobResponseDto {
   dueDate: string | null
   /** @example "GnpyEmUZfZ1k7e6Jsvy_fcG8r-PWCQswP" */
   jobFolderId: string | null
+  /** @example "https://drive.google.com/drive/folders/Qzjm63Ja6SAezk1QT0kUcC1x7Oo3gn8WL" */
+  shareLink: string | null
 }
 
 export interface JobPaginatedResponseDto {
@@ -800,6 +802,10 @@ export interface ProjectResponseDto {
   utilityId: string | null
   /** @example [] */
   jobs: JobResponseDto[]
+  /** @example "GnpyEmUZfZ1k7e6Jsvy_fcG8r-PWCQswP" */
+  projectFolderId: string | null
+  /** @example "https://drive.google.com/drive/folders/Qzjm63Ja6SAezk1QT0kUcC1x7Oo3gn8WL" */
+  shareLink: string | null
 }
 
 export interface ProjectsCountResponseDto {
