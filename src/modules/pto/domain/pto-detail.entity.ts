@@ -117,8 +117,8 @@ export class PtoDetailEntity extends AggregateRoot<PtoDetailProps> {
     }
 
     // pto 요청한 날짜 중간에 입사기념일 걸쳤는지 체크
-    const startDateTenure = this.calcTenure(parentPtoProps.dateOfJoining, this.props.startedAt)
-    const endDateTenure = this.calcTenure(parentPtoProps.dateOfJoining, this.endedAt)
+    const startDateTenure: number = this.calcTenure(parentPtoProps.dateOfJoining, this.props.startedAt)
+    const endDateTenure: number = this.calcTenure(parentPtoProps.dateOfJoining, this.endedAt)
     if (startDateTenure !== endDateTenure) {
       throw new DaysRangeIssueException()
     }
