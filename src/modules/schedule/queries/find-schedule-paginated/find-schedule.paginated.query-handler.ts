@@ -23,7 +23,6 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindSchedulePaginatedQuery): Promise<Paginated<ScheduleResponseDto>> {
-    const emailDomain = 'baruncorp.com'
     const inactiveStatus: UserStatusEnum = UserStatusEnum.INACTIVE
 
     const records: any[] = query.userName
@@ -37,7 +36,8 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
         LEFT JOIN user_position up ON u.id = up.user_id
         LEFT JOIN positions p ON up.position_id = p.id
         LEFT JOIN user_schedules s ON u.id = s.id
-        WHERE u.email LIKE CONCAT('%', ${emailDomain}, '%')
+        LEFT JOIN organizations o ON u.organization_id = o.id
+        WHERE o.organization_type = 'administration'
         AND u.status != ${inactiveStatus}
         AND u.full_name LIKE CONCAT('%', ${query.userName}, '%')
         ORDER BY CASE WHEN positionName IS NULL THEN 1 ELSE 0 END, positionName ASC, userName ASC
@@ -52,15 +52,16 @@ export class FindSchedulePaginatedQueryHandler implements IQueryHandler {
         LEFT JOIN user_position up ON u.id = up.user_id
         LEFT JOIN positions p ON up.position_id = p.id
         LEFT JOIN user_schedules s ON u.id = s.id
-        WHERE u.email LIKE CONCAT('%', ${emailDomain}, '%')
+        LEFT JOIN organizations o ON u.organization_id = o.id
+        WHERE o.organization_type = 'administration'
         AND u.status != ${inactiveStatus}
         ORDER BY CASE WHEN positionName IS NULL THEN 1 ELSE 0 END, positionName ASC, userName ASC
         LIMIT ${query.limit} OFFSET ${query.offset};
       `
 
     const whereCondition: Prisma.UsersWhereInput = {
-      email: {
-        contains: emailDomain,
+      organization: {
+        organizationType: 'administration',
       },
       status: {
         not: inactiveStatus,

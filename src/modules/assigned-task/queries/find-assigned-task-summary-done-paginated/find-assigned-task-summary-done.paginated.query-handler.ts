@@ -45,9 +45,8 @@ export class FindAssignedTaskSummaryDonePaginatedQueryHandler implements IQueryH
           isVendor: true,
         },
         {
-          email: {
-            // Todo. 메일주소 말고 baruncorp 직원 판단 조건 확인 필요
-            contains: 'baruncorp.com',
+          organization: {
+            organizationType: 'administration',
           },
         },
       ],
@@ -63,6 +62,7 @@ export class FindAssignedTaskSummaryDonePaginatedQueryHandler implements IQueryH
         organization: {
           select: {
             name: true,
+            organizationType: true,
           },
         },
       },
