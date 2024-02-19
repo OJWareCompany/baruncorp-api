@@ -1,6 +1,7 @@
 import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
+import { PayInvoiceWhenCreditPaymentIsCreatedEventHandler } from './application/event-handlers/pay-invoice-when-credit-payment-is-created.domain-event-handler'
 import { CreateInvoiceHttpController } from './commands/create-invoice/create-invoice.http.controller'
 import { UpdateInvoiceHttpController } from './commands/update-invoice/update-invoice.http.controller'
 import { DeleteInvoiceHttpController } from './commands/delete-invoice/delete-invoice.http.controller'
@@ -21,7 +22,7 @@ import { IssueInvoiceService } from './commands/issue-invoice/issue-invoice.serv
 import { PayInvoiceWhenPaymentIsCreatedEventHandler } from './application/event-handlers/pay-invoice-when-payment-is-created.domain-event-handler'
 import { UpdatedInvoiceWhenPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-payment-is-canceled.domain-event-handler'
 import { CalculateInvoiceService } from './domain/calculate-invoice-service.domain-service'
-import { UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler } from './application/event-handlers/update-invoice-total-when-ordered-service-price-is-updated.domain-event-handler'
+import { UpdateInvoiceTotalWhenOrderedServicePriceIsUpdatedDomainEventHandler } from './application/event-handlers/update-invoice-total-when-ordered-service-price-is-updated.domain-event-handler'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
 import { JobModule } from '../ordered-job/job.module'
 import { UsersModule } from '../users/users.module'
@@ -32,8 +33,8 @@ import { FindOverdueInvoicePaginatedHttpController } from './queries/find-overdu
 import { FindOverdueInvoicePaginatedQueryHandler } from './queries/find-overdue-invoices-paginated/find-overdue-invoices.paginated.query-handler'
 import { InvoiceCalculator } from './domain/domain-services/invoice-calculator.domain-service'
 import { OrganizationModule } from '../organization/organization.module'
-import { PaymentModule } from '../payment/payment.module'
 import { CreditTransactionModule } from '../credit-transaction/credit-transaction.module'
+import { PaymentModule } from '../payment/payment.module'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -68,7 +69,8 @@ const repositories: Provider[] = [
 const eventHandlers: Provider[] = [
   PayInvoiceWhenPaymentIsCreatedEventHandler,
   UpdatedInvoiceWhenPaymentIsCanceledEventHandler,
-  UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler,
+  UpdateInvoiceTotalWhenOrderedServicePriceIsUpdatedDomainEventHandler,
+  PayInvoiceWhenCreditPaymentIsCreatedEventHandler,
 ]
 
 const mappers: Provider[] = [InvoiceMapper]

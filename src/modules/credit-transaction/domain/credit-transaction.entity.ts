@@ -18,6 +18,7 @@ export class CreditTransactionEntity extends AggregateRoot<CreditTransactionProp
     entity.addEvent(
       new CreditTransactionCreatedDomainEvent({
         aggregateId: entity.id,
+        invoiceId: entity.getProps().relatedInvoiceId,
       }),
     )
 

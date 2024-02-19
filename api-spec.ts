@@ -1224,7 +1224,7 @@ export interface InvoicePayments {
   paymentName: string
   invoiceId: string
   amount: number
-  paymentMethod: 'Direct'
+  paymentMethod: 'Direct' | 'Deduction'
   notes: string | null
   paymentDate: string
   canceledAt: string | null

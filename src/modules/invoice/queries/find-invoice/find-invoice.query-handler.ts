@@ -2,13 +2,14 @@ import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { Invoices, Organizations } from '@prisma/client'
 import { formatDateWithTime } from '../../../../libs/utils/formatDate'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
-import { PaymentMethodEnum } from '../../../payment/domain/payment.type'
+import { InvoicePaymentType, PaymentMethodEnum } from '../../../payment/domain/payment.type'
 import { JobResponseMapper } from '../../../ordered-job/job.response.mapper'
 import { JobResponseDto } from '../../../ordered-job/dtos/job.response.dto'
 import { PrismaService } from '../../../database/prisma.service'
 import { JobEntity } from '../../../ordered-job/domain/job.entity'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
 import { InvoiceResponseDto } from '../../dtos/invoice.response.dto'
+import { CreditTransactionTypeEnum } from '../../../credit-transaction/domain/credit-transaction.type'
 
 export class FindInvoiceQuery {
   readonly invoiceId: string
@@ -58,6 +59,10 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       orderBy: { paymentDate: 'desc' },
     })
 
+    const creditHistory = await this.prismaService.creditTransactions.findMany({
+      where: { relatedInvoiceId: invoice.id },
+    })
+
     return {
       id: invoice.id,
       status: invoice.status,
@@ -76,21 +81,41 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
         name: invoice.organizationName,
       },
       lineItems: lineItems,
-      payments: paymentsWithCanceled.map((payment) => {
-        // const user = await this.prismaService.users.findUnique({ where: { id: payment.createdBy } })
-        return {
-          ...payment,
-          paymentName: organization
-            ? organization.name + ' ' + formatDateWithTime(payment.paymentDate)
-            : formatDateWithTime(payment.paymentDate),
-          amount: Number(payment.amount),
-          paymentMethod: payment.paymentMethod as PaymentMethodEnum,
-          paymentDate: payment.paymentDate.toISOString(),
-          canceledAt: payment.canceledAt?.toISOString() || null,
-          createdByUserId: payment.createdBy,
-          createdByUserName: payment.createdBy,
-        }
-      }),
+      payments: [
+        ...paymentsWithCanceled.map((payment) => {
+          // const user = await this.prismaService.users.findUnique({ where: { id: payment.createdBy } })
+          return {
+            id: payment.id,
+            invoiceId: payment.invoiceId,
+            notes: payment.notes,
+            paymentName: organization
+              ? organization.name + ' ' + formatDateWithTime(payment.paymentDate)
+              : formatDateWithTime(payment.paymentDate),
+            amount: Number(payment.amount),
+            paymentMethod: payment.paymentMethod as PaymentMethodEnum,
+            paymentDate: payment.paymentDate.toISOString(),
+            canceledAt: payment.canceledAt?.toISOString() || null,
+            createdByUserId: payment.createdBy,
+            createdByUserName: payment.createdBy,
+          }
+        }),
+        ...creditHistory.map((credit) => {
+          return {
+            id: credit.id,
+            invoiceId: credit.relatedInvoiceId!,
+            notes: credit.note,
+            paymentName: organization
+              ? organization.name + ' ' + formatDateWithTime(credit.transactionDate)
+              : formatDateWithTime(credit.transactionDate),
+            amount: Number(credit.amount),
+            paymentMethod: credit.transactionType as InvoicePaymentType,
+            paymentDate: credit.transactionDate.toISOString(),
+            canceledAt: credit.canceledAt?.toISOString() || null,
+            createdByUserId: credit.createdByUserId,
+            createdByUserName: credit.createdBy,
+          }
+        }),
+      ],
       totalOfPayment: Number(invoice.paymentTotal),
       issuedAt: invoice.issuedAt,
     }

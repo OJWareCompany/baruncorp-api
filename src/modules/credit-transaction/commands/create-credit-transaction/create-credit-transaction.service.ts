@@ -16,6 +16,7 @@ import { CreditTransactionTypeEnum } from '../../domain/credit-transaction.type'
 import {
   CreditDeductionMissingInvoiceIdException,
   CreditInsufficientException,
+  CreditWrongReloadException,
 } from '../../domain/credit-transaction.error'
 import { InvoiceCalculator } from '../../../invoice/domain/domain-services/invoice-calculator.domain-service'
 import { PaymentOverException, UnissuedInvoicePayException } from '../../../payment/domain/payment.error'
@@ -36,6 +37,9 @@ export class CreateCreditTransactionService implements ICommandHandler {
     private readonly creditCalculator: CreditCalculator,
   ) {}
   async execute(command: CreateCreditTransactionCommand): Promise<AggregateID> {
+    if (command.creditTransactionType === CreditTransactionTypeEnum.Reload && command.relatedInvoiceId) {
+      throw new CreditWrongReloadException()
+    }
     const clientOrganization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
 
     const user = await this.userRepo.findOneByIdOrThrow(command.createdByUserId)

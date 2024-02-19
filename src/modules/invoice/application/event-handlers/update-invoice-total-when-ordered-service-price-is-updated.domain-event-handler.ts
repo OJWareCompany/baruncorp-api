@@ -14,7 +14,7 @@ import { CalculateInvoiceService } from '../../domain/calculate-invoice-service.
 import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
 import { INVOICE_REPOSITORY } from '../../invoice.di-token'
 
-export class UpdateInvoiceTotalWhenOrderedServicePriceIsUpddatedDomainEventHandler {
+export class UpdateInvoiceTotalWhenOrderedServicePriceIsUpdatedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(INVOICE_REPOSITORY)
