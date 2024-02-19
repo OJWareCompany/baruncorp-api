@@ -199,6 +199,10 @@ export class JobResponseDto {
   @IsString()
   jobFolderId: string | null
 
+  @ApiProperty({ example: 'https://drive.google.com/drive/folders/Qzjm63Ja6SAezk1QT0kUcC1x7Oo3gn8WL' })
+  @IsString()
+  shareLink: string | null
+
   constructor(props: JobResponseDto) {
     initialize(this, props)
   }

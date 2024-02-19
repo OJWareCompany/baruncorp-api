@@ -14,7 +14,11 @@ export class FindProjectDetailQuery {
 
 export type FindProjectDetailReturnType = OrderedProjects & { organization: Organizations | null } & {
   jobs: OrderedJobs[]
+} & {
+  projectFolderId?: string | null
+  shareLink?: string | null
 }
+
 @QueryHandler(FindProjectDetailQuery)
 export class FindProjectDetailQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
@@ -39,6 +43,11 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
       },
     })
     if (!record) throw new ProjectNotFoundException()
+
+    const projectFolder = await this.prismaService.googleProjectFolder.findFirst({ where: { projectId: record.id } })
+    record.projectFolderId = projectFolder?.id ?? null
+    record.shareLink = projectFolder?.shareLink ?? null
+
     return record
   }
 }

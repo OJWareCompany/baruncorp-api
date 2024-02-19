@@ -92,4 +92,12 @@ export class ProjectResponseDto {
 
   @ApiProperty({ example: [] })
   jobs: JobResponseDto[]
+
+  @ApiProperty({ example: 'GnpyEmUZfZ1k7e6Jsvy_fcG8r-PWCQswP' })
+  @IsString()
+  projectFolderId: string | null
+
+  @ApiProperty({ example: 'https://drive.google.com/drive/folders/Qzjm63Ja6SAezk1QT0kUcC1x7Oo3gn8WL' })
+  @IsString()
+  shareLink: string | null
 }
