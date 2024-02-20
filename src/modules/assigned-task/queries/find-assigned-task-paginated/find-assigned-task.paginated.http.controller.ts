@@ -43,7 +43,7 @@ export class FindAssignedTaskPaginatedHttpController {
         assigneeName: item.assigneeName,
         assigneeOrganizationId: item.assigneeOrganizationId,
         assigneeOrganizationName: item.assigneeOrganizationName,
-        duration: item.duration,
+        duration: item.duration ? Number(item.duration) : null,
         startedAt: item.startedAt,
         doneAt: item.doneAt,
         taskName: item.taskName,

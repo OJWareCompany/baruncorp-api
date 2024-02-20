@@ -154,7 +154,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
             assigneeId: assignedTask.assigneeId,
             doneAt: assignedTask.doneAt,
             description: orderedService.description,
-            duration: assignedTask.duration,
+            duration: assignedTask.duration ? Number(assignedTask.duration) : null,
             isActive: assignedTask.is_active,
             prerequisiteTasks: record.prerequisiteTasks
               ? record.prerequisiteTasks

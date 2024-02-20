@@ -454,11 +454,11 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     )
   }
 
-  setPriceForCommercialRevision(minutesWorked: number, service: Service): this {
+  setPriceForCommercialRevision(hoursWorked: number, service: Service): this {
     if (this.props.isManualPrice || this.props.projectPropertyType !== ProjectPropertyTypeEnum.Commercial) return this
 
     const price = this.calculateCost(
-      minutesWorked,
+      hoursWorked,
       Number(service.commercialRevisionMinutesPerUnit) + Number.EPSILON,
       Number(service.commercialRevisionCostPerUnit) + Number.EPSILON,
     )
@@ -466,13 +466,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  private calculateCost(minutesWorked: number, minutesPerUnit: number, costPerUnit: number): number {
+  private calculateCost(hoursWorked: number, minutesPerUnit: number, costPerUnit: number): number {
     // 작업 시간을 단위 시간으로 나누어 필요한 단위의 수를 계산합니다.
-    const units: number = minutesWorked / minutesPerUnit
-
-    // 필요한 단위의 수를 반올림하여 총 비용을 계산합니다.
-    const totalCost: number = Math.round(units) * costPerUnit
-
+    const units: number = (hoursWorked * 60) / minutesPerUnit
+    const totalCost: number = units * costPerUnit
     return totalCost
   }
 
