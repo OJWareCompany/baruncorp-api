@@ -2,6 +2,7 @@ import { Exclude, Expose } from 'class-transformer'
 import { IsArray } from 'class-validator'
 import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
+import { language } from 'googleapis/build/src/apis/language'
 
 export class AddressFromMapBox {
   @ApiProperty({ default: [-97.87, 34] })
@@ -224,6 +225,8 @@ export class CensusPlace {
   private AREALAND: number
   @Exclude()
   private AREAWATER: number
+  @Exclude()
+  private DISP_CLR: number
 
   @Expose({ name: 'BASENAME' })
   placeName: string
@@ -245,24 +248,7 @@ export class CensusPlace {
   stateCode: string
 
   getNoteInputData(state: CensusState, county: CensusCounties, countySubdivisions: CensusCountySubdivisions | null) {
-    const placeCopy: {
-      placeName?: string
-      funcStat: string
-      geoId: string
-      lsadCode: string
-      placeLongName?: string
-      placeFips?: string
-      placeC?: string
-      ansiCode: string
-      stateCode: string
-    } = { ...this }
-
-    delete placeCopy['placeName']
-    delete placeCopy['placeFips']
-    delete placeCopy['placeLongName']
-    delete placeCopy['placeC']
     return {
-      ...placeCopy,
       geoId: this.geoId,
       geoIdState: state.geoId,
       geoIdCounty: county.geoId,
@@ -272,6 +258,13 @@ export class CensusPlace {
       fullAhjName: this.placeLongName,
       longName: this.placeLongName,
       type: AHJType.PLACE,
+      funcStat: this.funcStat,
+      lsadCode: this.lsadCode,
+      placeLongName: this.placeLongName,
+      placeFips: this.placeFips,
+      placeC: this.placeC,
+      ansiCode: this.ansiCode,
+      stateCode: this.stateCode,
     }
   }
 }
