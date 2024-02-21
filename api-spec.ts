@@ -3401,8 +3401,6 @@ export interface FindPtoTenurePolicyPaginatedHttpControllerGetParams {
 }
 
 export interface FindCreditTransactionPaginatedHttpControllerGetParams {
-  /** @default "" */
-  creditTransactionId: string
   /**
    * Specifies a limit of returned records
    * @default 20
