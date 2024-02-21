@@ -10,7 +10,7 @@
  */
 
 export interface SignInRequestDto {
-  /** @default "ejsvk3284@kakao.com" */
+  /** @default "admin-test@baruncorp.com" */
   email: string
   /** @default "WkdWkdaos123!" */
   password: string
@@ -2727,6 +2727,7 @@ export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginated
   organizationType?: string | null
   projectPropertyTypeDefaultValue?: string | null
   mountingTypeDefaultValue?: string | null
+  invoiceRecipientEmail?: string | null
   isVendor?: boolean | null
   /**
    * Specifies a limit of returned records
