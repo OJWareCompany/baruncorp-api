@@ -73,7 +73,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       isManualDueDate: props.isManualDueDate,
       inReview: props.inReview,
       priority: props.priority,
-
+      completedCancelledDate: props.completedCancelledDate,
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
 
       // 퀵베이스에 있던 컬럼중 아직 사용하지 않는 것
@@ -95,7 +95,6 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       chargeForAnyRevisionOverride: null,
       chargeForAnyRevisionSnapshot: null,
       clientContactEmailOverride: null,
-      completedCancelledDate: null,
       deliverablesLink: null,
       electricalPEAndWetStampGlSolargraf: null,
       estimatedDaysToComplete: null,
@@ -154,7 +153,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
             assigneeId: assignedTask.assigneeId,
             doneAt: assignedTask.doneAt,
             description: orderedService.description,
-            duration: assignedTask.duration,
+            duration: assignedTask.duration ? Number(assignedTask.duration) : null,
             isActive: assignedTask.is_active,
             prerequisiteTasks: record.prerequisiteTasks
               ? record.prerequisiteTasks

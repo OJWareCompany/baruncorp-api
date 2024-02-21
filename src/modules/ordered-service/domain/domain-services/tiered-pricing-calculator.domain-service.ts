@@ -21,10 +21,7 @@ export class TieredPricingCalculator {
 
   async isTieredPricingScope(orderedScope: OrderedServiceEntity): Promise<boolean> {
     const project = await this.projectRepo.findOneOrThrow({ id: orderedScope.projectId })
-    const customPricing = await this.customPricingRepo.findOneOrThrow(
-      orderedScope.serviceId,
-      orderedScope.organizationId,
-    )
+    const customPricing = await this.customPricingRepo.findOne(orderedScope.serviceId, orderedScope.organizationId)
 
     if (project.isCommercial) {
       return false
@@ -34,7 +31,7 @@ export class TieredPricingCalculator {
       return false
     }
 
-    if (!customPricing.hasNewResidentialTieredPricing) {
+    if (!customPricing?.hasNewResidentialTieredPricing) {
       return false
     }
 

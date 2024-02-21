@@ -18,12 +18,20 @@ export abstract class AggregateRoot<EntityProps> extends Entity<EntityProps> {
   }
 
   public async publishEvents(eventEmitter: EventEmitter2): Promise<void> {
-    await Promise.all(
-      this.domainEvents.map(async (event) => {
-        console.log(`"${event.constructor.name}" event published for aggregate ${this.constructor.name} : ${this.id}`)
-        return eventEmitter.emitAsync(event.constructor.name, event)
-      }),
-    )
+    // await Promise.all(
+    //   this.domainEvents.map(async (event) => {
+    //     console.log(`"${event.constructor.name}" event published for aggregate ${this.constructor.name} : ${this.id}`)
+    //     return eventEmitter.emitAsync(event.constructor.name, event)
+    //   }),
+    // )
+
+    // TODO: 동시에 동일한 엔티티에 여러가지 이벤트 핸들러가 실행된다면 동시성 이슈가 생긴다.
+    // 따라서 일단 이벤트를 동기적으로 실행. (서비스 취소시 서비스 가격 업데이트, 취소로 업데이트 두가지 이벤트가 발생해서 동시성 이슈 발생했었음)
+    for (const event of this.domainEvents) {
+      console.log(`"${event.constructor.name}" event published for aggregate ${this.constructor.name} : ${this.id}`)
+      await eventEmitter.emitAsync(event.constructor.name, event)
+    }
+
     this.clearEvents()
   }
 

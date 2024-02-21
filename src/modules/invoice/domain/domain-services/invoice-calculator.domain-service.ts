@@ -4,6 +4,7 @@ import { CREDIT_TRANSACTION_REPOSITORY } from '../../../credit-transaction/credi
 import { PaymentRepositoryPort } from '../../../payment/database/payment.repository.port'
 import { PAYMENT_REPOSITORY } from '../../../payment/payment.di-token'
 import { InvoiceEntity } from '../invoice.entity'
+import { CreditTransactionTypeEnum } from '../../../credit-transaction/domain/credit-transaction.type'
 
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 export class InvoiceCalculator {
@@ -40,8 +41,10 @@ export class InvoiceCalculator {
   private async calcCreditPaymentAmount(invoice: InvoiceEntity): Promise<number> {
     const creditHistory = await this.clientCreditRepo.find(invoice.clientOrganizationId)
     return creditHistory //
-      .filter((credit) => credit.isValid)
+      .filter(
+        (credit) => credit.isValid && credit.getProps().creditTransactionType === CreditTransactionTypeEnum.Deduction,
+      )
       .filter((credit) => credit.isMatched(invoice.id))
-      .reduce((pre, cur) => pre + cur.amount, 0)
+      .reduce((pre, cur) => pre + cur.amount * -1, 0)
   }
 }

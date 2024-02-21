@@ -8,7 +8,7 @@ import { PrismaService } from '../../../database/prisma.service'
 import { CreditTransactionNotFoundException } from '../../domain/credit-transaction.error'
 
 export class FindCreditTransactionPaginatedQuery extends PaginatedQueryBase {
-  readonly creditTransactionId: string
+  // readonly creditTransactionId: string
   constructor(props: PaginatedParams<FindCreditTransactionPaginatedQuery>) {
     super(props)
     initialize(this, props)

@@ -2,8 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { IsString, IsOptional, IsNumber, IsDate } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { InvoiceStatusEnum, InvoiceTermsEnum } from '../domain/invoice.type'
-import { PaymentMethodEnum } from '../../payment/domain/payment.type'
+import { InvoicePaymentType, PaymentMethodEnum } from '../../payment/domain/payment.type'
 import { JobResponseDto } from '../../ordered-job/dtos/job.response.dto'
+import { CreditTransactionTypeEnum } from '../../credit-transaction/domain/credit-transaction.type'
 
 export enum PricingTypeEnum {
   Standard = 'Standard',
@@ -23,8 +24,8 @@ export class InvoicePayments {
   @ApiProperty()
   amount: number
 
-  @ApiProperty({ enum: PaymentMethodEnum })
-  paymentMethod: PaymentMethodEnum
+  @ApiProperty({ enum: [...Object.values(PaymentMethodEnum), CreditTransactionTypeEnum.Deduction] })
+  paymentMethod: InvoicePaymentType
 
   @ApiProperty()
   notes: string | null

@@ -10,7 +10,7 @@
  */
 
 export interface SignInRequestDto {
-  /** @default "ejsvk3284@kakao.com" */
+  /** @default "admin-test@baruncorp.com" */
   email: string
   /** @default "WkdWkdaos123!" */
   password: string
@@ -1224,7 +1224,7 @@ export interface InvoicePayments {
   paymentName: string
   invoiceId: string
   amount: number
-  paymentMethod: 'Direct'
+  paymentMethod: 'Direct' | 'Deduction'
   notes: string | null
   paymentDate: string
   canceledAt: string | null
@@ -2504,6 +2504,11 @@ export interface CreateGoogleJobNoteFolderRequestDto {
   sharedDriveId: string
 }
 
+export interface CreateGoogleAhjNoteFolderRequestDto {
+  /** @default "" */
+  geoId: string
+}
+
 export interface JobFolderPaginatedResponseFields {
   /** @example "1-1Fk8UI8sz0yh-LV1QCCZ04K40ZHJK05" */
   id: string | null
@@ -2722,6 +2727,7 @@ export interface FindOrganizationPaginatedHttpControllerGetOrganizationPaginated
   organizationType?: string | null
   projectPropertyTypeDefaultValue?: string | null
   mountingTypeDefaultValue?: string | null
+  invoiceRecipientEmail?: string | null
   isVendor?: boolean | null
   /**
    * Specifies a limit of returned records
@@ -3395,8 +3401,6 @@ export interface FindPtoTenurePolicyPaginatedHttpControllerGetParams {
 }
 
 export interface FindCreditTransactionPaginatedHttpControllerGetParams {
-  /** @default "" */
-  creditTransactionId: string
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -6913,6 +6917,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     ) =>
       this.request<void, any>({
         path: `/google-job-note-folder`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+  }
+  googleAhjNoteFolder = {
+    /**
+     * No description
+     *
+     * @name CreateGoogleAhjNoteFolderHttpControllerPost
+     * @request POST:/google-ahj-note-folder
+     */
+    createGoogleAhjNoteFolderHttpControllerPost: (
+      data: CreateGoogleAhjNoteFolderRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/google-ahj-note-folder`,
         method: 'POST',
         body: data,
         type: ContentType.Json,

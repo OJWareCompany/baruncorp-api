@@ -27,7 +27,7 @@ export class FindAssignedTaskHttpController {
       assigneeName: result.assigneeName,
       assigneeOrganizationId: result.assigneeOrganizationId,
       assigneeOrganizationName: result.assigneeOrganizationName,
-      duration: result.duration,
+      duration: result.duration ? Number(result.duration) : null,
       startedAt: result.startedAt,
       doneAt: result.doneAt,
       taskName: result.taskName,

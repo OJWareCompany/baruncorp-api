@@ -17,3 +17,9 @@ export class CreditDeductionMissingInvoiceIdException extends UnprocessableEntit
     super('Enter the relatedInvoiceId, Please.', '50403')
   }
 }
+
+export class CreditWrongReloadException extends UnprocessableEntityException {
+  constructor() {
+    super('Credit Reload Method can not have related invoice id.', '50404')
+  }
+}

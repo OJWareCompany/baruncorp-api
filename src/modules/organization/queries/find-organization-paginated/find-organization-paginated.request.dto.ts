@@ -7,37 +7,42 @@ export class FindOrganizationPaginatedRequestDto {
   @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
-  name?: string | null
+  readonly name?: string | null
 
   @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
-  fullAddress?: string | null
+  readonly fullAddress?: string | null
 
   @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
-  email?: string | null
+  readonly email?: string | null
 
   @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
-  phoneNumber?: string | null
+  readonly phoneNumber?: string | null
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  organizationType?: string | null
+  readonly organizationType?: string | null
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  projectPropertyTypeDefaultValue?: string | null
+  readonly projectPropertyTypeDefaultValue?: string | null
 
   @ApiProperty()
   @IsString()
   @IsOptional()
-  mountingTypeDefaultValue?: string | null
+  readonly mountingTypeDefaultValue?: string | null
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly invoiceRecipientEmail?: string | null
 
   @ApiProperty()
   @IsBoolean()
@@ -46,5 +51,5 @@ export class FindOrganizationPaginatedRequestDto {
     return isBoolean ? value === 'true' : null
   })
   @IsOptional()
-  isVendor?: boolean | null
+  readonly isVendor?: boolean | null
 }

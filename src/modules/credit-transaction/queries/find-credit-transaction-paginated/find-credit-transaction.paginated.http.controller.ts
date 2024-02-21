@@ -18,7 +18,7 @@ export class FindCreditTransactionPaginatedHttpController {
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<CreditTransactionPaginatedResponseDto> {
     const command = new FindCreditTransactionPaginatedQuery({
-      ...request,
+      // ...request,
       ...queryParams,
     })
 

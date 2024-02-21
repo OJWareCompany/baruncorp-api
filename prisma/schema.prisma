@@ -724,7 +724,7 @@ model AssignedTasks {
   isVendor                 Boolean         @map("is_vendor")
   startedAt                DateTime?       @map("started_at") @db.DateTime(0)
   doneAt                   DateTime?       @map("done_at") @db.DateTime(0)
-  duration                 Int?            @db.TinyInt
+  duration                 Decimal?        @db.Decimal(4, 2)
   description              String?         @db.Text
   vendorInvoiceId          String?         @map("vendor_invoice_id") @db.VarChar(255)
   assigneeId               String?         @map("assignee_id") @db.VarChar(255)

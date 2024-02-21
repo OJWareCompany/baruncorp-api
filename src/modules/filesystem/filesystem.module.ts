@@ -13,14 +13,21 @@ import { UpdateGoogleSharedDriveCountService } from './commands/update-google-sh
 import { UpdateGoogleSharedDriveCountHttpController } from './commands/update-google-shared-drive-count/update-google-shared-drive-count.http.controller'
 import { FilesystemDomainService } from './domain/domain-service/filesystem.domain-service'
 import { GoogleAhjNoteFolderDomainService } from './domain/domain-service/google-ahj-note-folder.domain-service'
+import { CreateGoogleAhjNoteFolderHttpController } from './commands/create-google-ahj-note-folder/create-google-ahj-note-folder.http.controller'
+import { CreateGoogleAhjNoteFolderService } from './commands/create-google-ahj-note-folder/create-google-ahj-note-folder.service'
 
 const httpControllers = [
   CreateGoogleJobNoteFolderHttpController,
+  CreateGoogleAhjNoteFolderHttpController,
   FindNonCountedJobFoldersHttpController,
   UpdateGoogleSharedDriveCountHttpController,
 ]
 
-const commandHandlers: Provider[] = [CreateGoogleJobNoteFolderService, UpdateGoogleSharedDriveCountService]
+const commandHandlers: Provider[] = [
+  CreateGoogleJobNoteFolderService,
+  CreateGoogleAhjNoteFolderService,
+  UpdateGoogleSharedDriveCountService,
+]
 
 const queryHandlers: Provider[] = [FindNonCountedJobFoldersQueryHandler]
 

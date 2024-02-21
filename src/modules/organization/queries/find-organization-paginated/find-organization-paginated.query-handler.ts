@@ -14,6 +14,7 @@ export class FindOrganizationPaginatedQuery extends PaginatedQueryBase {
   readonly projectPropertyTypeDefaultValue?: string | null
   readonly mountingTypeDefaultValue?: string | null
   readonly isVendor?: boolean | null
+  readonly invoiceRecipientEmail?: string | null
 
   constructor(props: PaginatedParams<FindOrganizationPaginatedQuery>) {
     super(props)
@@ -28,7 +29,7 @@ export class FindOrganizationPaginatedQueryHandler implements IQueryHandler {
     const whereInput: Prisma.OrganizationsWhereInput = {
       ...(query.name && { name: { contains: query.name } }),
       ...(query.fullAddress && { fullAddress: { contains: query.fullAddress } }),
-      ...(query.email && { email: { contains: query.email } }),
+      ...(query.invoiceRecipientEmail && { invoiceRecipientEmail: { contains: query.invoiceRecipientEmail } }),
       ...(query.phoneNumber && { phoneNumber: { contains: query.phoneNumber } }),
       ...(query.organizationType && { organizationType: query.organizationType }),
       ...(query.projectPropertyTypeDefaultValue && {

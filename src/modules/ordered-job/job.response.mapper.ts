@@ -89,7 +89,7 @@ export class JobResponseMapper {
           assigneeName: assignedTask.assigneeName,
           assigneeOrganizationId: assignedTask.assigneeOrganizationId,
           assigneeOrganizationName: assignedTask.assigneeOrganizationName,
-          duration: assignedTask.duration,
+          duration: assignedTask.duration ? Number(assignedTask.duration) : null,
           startedAt: assignedTask.startedAt,
           doneAt: assignedTask.doneAt,
           taskName: assignedTask.taskName,
