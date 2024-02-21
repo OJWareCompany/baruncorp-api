@@ -30,7 +30,9 @@ export class ImapManagerService {
       // 활성화된 Baruncorp 유저 리스트 받아온다.
       const users: { id: string; email: string }[] = await this.prismaService.users.findMany({
         where: {
-          email: { contains: 'baruncorp.com' },
+          organization: {
+            organizationType: 'administration',
+          },
           status: UserStatusEnum.ACTIVE,
         },
         select: {
@@ -120,7 +122,18 @@ export class ImapManagerService {
   }
 
   private onImapError(err: any) {
+    // ECONNRESET 에러가 발생하는 경우, IMAP 서버 쪽에서 연결을 끊는 케이스. 재연결 시도
     // console.error(`[ImapManagerService][onImapError] ${JSON.stringify(err)}`)
+
+    // 어떤 소켓이 끊겼는지 정보를 해당 콜백에서 제공 하지 않음. => 전체 세션에서 상태 검사
+    const disconnectedConnections: [string, Imap][] = [...this.imapSessions].filter(
+      ([targetMail, imapClient]) => imapClient.state === 'disconnected',
+    )
+
+    disconnectedConnections.forEach(([targetEmail, connection]) => {
+      // console.log(`[ImapManagerService][onImapError] retry : ${targetEmail}`)
+      this.connect(targetEmail)
+    })
   }
 
   private onImapEnd() {
@@ -140,10 +153,10 @@ export class ImapManagerService {
     // console.log(`[ImapManagerService][connectToMailbox][openInbox] ready`)
     imap.openBox('INBOX', false, (err: Error, box: Imap.Box) => {
       if (err) {
-        // console.log(`🚀 ~ file: index.js:132 ~ err: ${err}`)
+        console.log(`🚀 ~ file: index.js:132 ~ err: ${err}`)
         return
       }
-      // console.log(`[openInbox] box : ${JSON.stringify(box)}`);
+      // console.log(`[ImapManagerService][connectToMailbox][openInbox] box : ${JSON.stringify(box)}`);
       imap.on('mail', (numNewMsgs: string) => this.onNewMail(auth2Client, imap, numNewMsgs))
     })
   }
@@ -215,10 +228,12 @@ export class ImapManagerService {
         // console.log(`Found thread ID: ${threadId}`)
         // console.log(`subject : ${parsed.subject!}`)
 
+        if (!threadId || !senderEmail) return
+
         // 바른코프 직원이 보낸 메일은 버린다(createJobNote에서 이미 RFI 생성)
-        if (!threadId || !senderEmail || senderEmail.toLowerCase().includes('baruncorp.com')) {
-          return
-        }
+        const isBarunUser: boolean = await this.isBaruncorpUserEmail(senderEmail)
+        // console.log(`isBarunUser : ${isBarunUser}`)
+        if (isBarunUser) return
 
         const equalThreadIdEntity: JobNoteEntity | null = await this.jobNoteRepository.findOneFromMailThreadId(threadId)
         // console.log(`equalThreadEntity : ${JSON.stringify(equalThreadIdEntity)}`)
@@ -230,9 +245,7 @@ export class ImapManagerService {
         )
         const jobNoteNumber = maxJobNoteNumber ? maxJobNoteNumber + 1 : 1
         const filteredContent: string = parsed.text ? this.parseEmailMainContent(parsed.text) : ''
-        // const filteredContent: string = parsed.text ?? ''
-        // console.log(`maxJobNoteNumber : ${maxJobNoteNumber}`)
-        // console.log(`Add RFI`)
+
         const jobNoteEntity = JobNoteEntity.create({
           jobId: equalThreadIdEntity.jobId,
           creatorUserId: null,
@@ -270,7 +283,7 @@ export class ImapManagerService {
               },
             })
           } catch (error) {
-            console.error('Error uploading attached files on rfi reply mail:', error)
+            // console.error('Error uploading attached files on rfi reply mail:', error)
           }
         }
       } else {
@@ -311,5 +324,21 @@ export class ImapManagerService {
     const replyContent: string = input.substring(0, cutOffIndex).trim()
 
     return replyContent
+  }
+
+  private async isBaruncorpUserEmail(email: string) {
+    const barunUser = await this.prismaService.users.findFirst({
+      where: {
+        email: email,
+        organization: {
+          organizationType: 'administration',
+        },
+      },
+      select: {
+        id: true,
+        email: true,
+      },
+    })
+    return !!barunUser
   }
 }
