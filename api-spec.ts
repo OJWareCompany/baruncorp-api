@@ -1795,6 +1795,11 @@ export interface CreditTransactionPaginatedResponseDto {
   items: CreditTransactionResponseDto[]
 }
 
+export interface CreditOrganizationTransactionResponseDto {
+  clientOrganizationId: string
+  creditAmount: number
+}
+
 export interface CreatePaymentRequestDto {
   invoiceId: string
   /** @default 100 */
@@ -6069,6 +6074,20 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     findCreditTransactionHttpControllerGet: (creditTransactionId: string, params: RequestParams = {}) =>
       this.request<CreditTransactionResponseDto, any>({
         path: `/credit-transactions/${creditTransactionId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindOrganizationCreditTransactionHttpControllerGet
+     * @request GET:/credit-transactions/organizations/{organizationId}
+     */
+    findOrganizationCreditTransactionHttpControllerGet: (organizationId: string, params: RequestParams = {}) =>
+      this.request<CreditOrganizationTransactionResponseDto, any>({
+        path: `/credit-transactions/organizations/${organizationId}`,
         method: 'GET',
         format: 'json',
         ...params,

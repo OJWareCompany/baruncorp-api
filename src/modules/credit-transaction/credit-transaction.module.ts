@@ -17,15 +17,22 @@ import { PrismaModule } from '../database/prisma.module'
 import { UsersModule } from '../users/users.module'
 import UserMapper from '../users/user.mapper'
 import { CreditCalculator } from './domain/domain-services/credit-calculator.domain-service'
+import { FindOrganizationCreditTransactionQueryHandler } from './queries/find-organization-credit-transaction/find-organization-credit-transaction.query-handler'
+import { FindOrganizationCreditTransactionHttpController } from './queries/find-organization-credit-transaction/find-organization-credit-transaction.http.controller'
 
 const httpControllers = [
   CreateCreditTransactionHttpController,
   CancelCreditTransactionHttpController,
   FindCreditTransactionHttpController,
   FindCreditTransactionPaginatedHttpController,
+  FindOrganizationCreditTransactionHttpController,
 ]
 const commandHandlers: Provider[] = [CreateCreditTransactionService, CancelCreditTransactionService]
-const queryHandlers: Provider[] = [FindCreditTransactionQueryHandler, FindCreditTransactionPaginatedQueryHandler]
+const queryHandlers: Provider[] = [
+  FindCreditTransactionQueryHandler,
+  FindCreditTransactionPaginatedQueryHandler,
+  FindOrganizationCreditTransactionQueryHandler,
+]
 const repositories: Provider[] = [
   {
     provide: CREDIT_TRANSACTION_REPOSITORY,
