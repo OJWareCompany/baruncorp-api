@@ -5,6 +5,7 @@ import { VendorInvoiceNotFoundException } from '../../domain/vendor-invoice.erro
 import { VendorInvoiceRepositoryPort } from '../../database/vendor-invoice.repository.port'
 import { VENDOR_INVOICE_REPOSITORY } from '../../vendor-invoice.di-token'
 import { UpdateVendorInvoicedTotalCommand } from './update-vendor-invoiced-total.command'
+import { VendorInvoiceCalculator } from '../../domain/domain-services/vendor-invoice-calculator.domain-service'
 
 @CommandHandler(UpdateVendorInvoicedTotalCommand)
 export class UpdateVendorInvoicedTotalService implements ICommandHandler {
@@ -12,11 +13,12 @@ export class UpdateVendorInvoicedTotalService implements ICommandHandler {
     // @ts-ignore
     @Inject(VENDOR_INVOICE_REPOSITORY)
     private readonly vendorInvoiceRepo: VendorInvoiceRepositoryPort,
+    private readonly vendorInvoiceCalculator: VendorInvoiceCalculator,
   ) {}
   async execute(command: UpdateVendorInvoicedTotalCommand): Promise<void> {
     const entity = await this.vendorInvoiceRepo.findOne(command.vendorInvoiceId)
     if (!entity) throw new VendorInvoiceNotFoundException()
-    entity.enterVendorInvoicedTotal(command.total)
-    await this.vendorInvoiceRepo.update(entity)
+    await entity.enterVendorInvoicedTotal(command.total, this.vendorInvoiceCalculator)
+    await this.vendorInvoiceRepo.updateTotal(entity)
   }
 }

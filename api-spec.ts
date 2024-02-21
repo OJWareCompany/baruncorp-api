@@ -2333,6 +2333,47 @@ export interface VendorPaymentPaginatedResponseDto {
   items: VendorPaymentResponseDto[]
 }
 
+export interface CreateVendorCreditTransactionRequestDto {
+  amount: number
+  /** @default "Reload" */
+  creditTransactionType: 'Reload' | 'Deduction'
+  relatedInvoiceId?: string | null
+  clientOrganizationId: string
+  note: string | null
+}
+
+export interface VendorCreditTransactionResponseDto {
+  id: string
+  vendorOrganizationId: string
+  createdBy: string
+  createdByUserId: string
+  amount: number
+  /** @default "Reload" */
+  creditTransactionType: 'Reload' | 'Deduction'
+  relatedVendorInvoiceId: string | null
+  /** @format date-time */
+  transactionDate: string
+  /** @format date-time */
+  canceledAt: string | null
+}
+
+export interface VendorCreditTransactionPaginatedResponseDto {
+  /** @default 1 */
+  page: number
+  /** @default 20 */
+  pageSize: number
+  /** @example 10000 */
+  totalCount: number
+  /** @example 500 */
+  totalPage: number
+  items: VendorCreditTransactionResponseDto[]
+}
+
+export interface VendorCreditOrganizationTransactionResponseDto {
+  vendorOrganizationId: string
+  creditAmount: number
+}
+
 export interface LicensedWorker {
   userId: string
   userName: string
@@ -3616,6 +3657,22 @@ export interface FindVendorInvoiceLineItemHttpControllerGetParams {
 }
 
 export interface FindVendorPaymentPaginatedHttpControllerGetParams {
+  /**
+   * Specifies a limit of returned records
+   * @default 20
+   * @example 20
+   */
+  limit?: number
+  /**
+   * Page number
+   * @default 1
+   * @example 1
+   */
+  page?: number
+}
+
+export interface FindVendorCreditTransactionPaginatedHttpControllerGetParams {
+  organizationId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -6781,6 +6838,88 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     findVendorPaymentHttpControllerGet: (vendorPaymentId: string, params: RequestParams = {}) =>
       this.request<VendorPaymentResponseDto, any>({
         path: `/vendor-payments/${vendorPaymentId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
+  vendorCreditTransactions = {
+    /**
+     * No description
+     *
+     * @name CreateVendorCreditTransactionHttpControllerPost
+     * @request POST:/vendor-credit-transactions
+     */
+    createVendorCreditTransactionHttpControllerPost: (
+      data: CreateVendorCreditTransactionRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<IdResponse, any>({
+        path: `/vendor-credit-transactions`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorCreditTransactionPaginatedHttpControllerGet
+     * @request GET:/vendor-credit-transactions
+     */
+    findVendorCreditTransactionPaginatedHttpControllerGet: (
+      query: FindVendorCreditTransactionPaginatedHttpControllerGetParams,
+      params: RequestParams = {},
+    ) =>
+      this.request<VendorCreditTransactionPaginatedResponseDto, any>({
+        path: `/vendor-credit-transactions`,
+        method: 'GET',
+        query: query,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name CancelVendorCreditTransactionHttpControllerPatch
+     * @request PATCH:/vendor-credit-transactions/{vendorCreditTransactionId}/cancel
+     */
+    cancelVendorCreditTransactionHttpControllerPatch: (vendorCreditTransactionId: string, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/vendor-credit-transactions/${vendorCreditTransactionId}/cancel`,
+        method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorCreditTransactionHttpControllerGet
+     * @request GET:/vendor-credit-transactions/{vendorCreditTransactionId}
+     */
+    findVendorCreditTransactionHttpControllerGet: (vendorCreditTransactionId: string, params: RequestParams = {}) =>
+      this.request<VendorCreditTransactionResponseDto, any>({
+        path: `/vendor-credit-transactions/${vendorCreditTransactionId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindVendorOrganizationCreditTransactionHttpControllerGet
+     * @request GET:/vendor-credit-transactions/organizations/{vendorOrganizationId}
+     */
+    findVendorOrganizationCreditTransactionHttpControllerGet: (
+      vendorOrganizationId: string,
+      params: RequestParams = {},
+    ) =>
+      this.request<VendorCreditOrganizationTransactionResponseDto, any>({
+        path: `/vendor-credit-transactions/organizations/${vendorOrganizationId}`,
         method: 'GET',
         format: 'json',
         ...params,
