@@ -29,7 +29,7 @@ services:
       - ./baruncorp-api/.env
 
   api_dev:
-    image: luckyhyom/barun-dev
+    image: luckyhyom/barun-api-dev
     tty: true
     restart: always
     command:
