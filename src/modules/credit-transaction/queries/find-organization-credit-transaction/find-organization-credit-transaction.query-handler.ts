@@ -1,6 +1,7 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PrismaService } from '../../../database/prisma.service'
+import { CreditTransactionTypeEnum } from '../../domain/credit-transaction.type'
 
 export class FindOrganizationCreditTransactionQuery {
   readonly organizationId: string
@@ -14,11 +15,13 @@ export class FindOrganizationCreditTransactionQueryHandler implements IQueryHand
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindOrganizationCreditTransactionQuery): Promise<number> {
-    const result = await this.prismaService.creditTransactions.aggregate({
-      _sum: { amount: true },
-      where: { clientOrganizationId: query.organizationId },
+    const result = await this.prismaService.creditTransactions.findMany({
+      where: { clientOrganizationId: query.organizationId, canceledAt: null },
     })
 
-    return Number(result._sum.amount)
+    return result.reduce((pre, cur) => {
+      const amount = cur.transactionType === CreditTransactionTypeEnum.Reload ? cur.amount : -cur.amount
+      return pre + Number(amount)
+    }, 0)
   }
 }
