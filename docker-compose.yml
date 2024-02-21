@@ -17,7 +17,7 @@ services:
     #- ./config/.nginx.env
 
   api_prod:
-    image: luckyhyom/barun-dev
+    image: luckyhyom/barun-api-prod
     tty: true
     restart: always
     command:
