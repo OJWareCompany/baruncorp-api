@@ -3406,6 +3406,7 @@ export interface FindPtoTenurePolicyPaginatedHttpControllerGetParams {
 }
 
 export interface FindCreditTransactionPaginatedHttpControllerGetParams {
+  organizationId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20

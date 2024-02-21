@@ -4,9 +4,9 @@ import { CreditTransactions } from '@prisma/client'
 import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { CreditTransactionPaginatedResponseDto } from '../../dtos/credit-transaction.paginated.response.dto'
+import { CreditTransactionTypeEnum } from '../../domain/credit-transaction.type'
 import { FindCreditTransactionPaginatedRequestDto } from './find-credit-transaction.paginated.request.dto'
 import { FindCreditTransactionPaginatedQuery } from './find-credit-transaction.paginated.query-handler'
-import { CreditTransactionTypeEnum } from '../../domain/credit-transaction.type'
 
 @Controller('credit-transactions')
 export class FindCreditTransactionPaginatedHttpController {
@@ -18,7 +18,7 @@ export class FindCreditTransactionPaginatedHttpController {
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<CreditTransactionPaginatedResponseDto> {
     const command = new FindCreditTransactionPaginatedQuery({
-      // ...request,
+      ...request,
       ...queryParams,
     })
 
