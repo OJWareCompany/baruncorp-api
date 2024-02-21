@@ -3,7 +3,7 @@ import { PasswordOption } from '../../../users/domain/value-objects/password.vo'
 import { ApiProperty } from '@nestjs/swagger'
 
 export class SignInRequestDto {
-  @ApiProperty({ default: 'ejsvk3284@kakao.com' })
+  @ApiProperty({ default: 'admin-test@baruncorp.com' })
   @IsEmail()
   readonly email: string
 
