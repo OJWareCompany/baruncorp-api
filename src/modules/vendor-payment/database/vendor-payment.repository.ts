@@ -11,7 +11,7 @@ import { VendorPayments } from '@prisma/client'
 export class VendorPaymentRepository implements VendorPaymentRepositoryPort {
   constructor(
     private readonly prismaService: PrismaService,
-    private readonly paymentMapper: VendorPaymentMapper,
+    private readonly vendorPaymentMapper: VendorPaymentMapper,
     private readonly eventEmitter: EventEmitter2,
   ) {}
   find(): Promise<Paginated<VendorPaymentEntity>> {
@@ -19,13 +19,13 @@ export class VendorPaymentRepository implements VendorPaymentRepositoryPort {
   }
 
   async insert(entity: VendorPaymentEntity): Promise<void> {
-    const record = this.paymentMapper.toPersistence(entity)
+    const record = this.vendorPaymentMapper.toPersistence(entity)
     await this.prismaService.vendorPayments.create({ data: record })
     await entity.publishEvents(this.eventEmitter)
   }
 
   async update(entity: VendorPaymentEntity): Promise<void> {
-    const record = this.paymentMapper.toPersistence(entity)
+    const record = this.vendorPaymentMapper.toPersistence(entity)
     await this.prismaService.vendorPayments.update({ where: { id: entity.id }, data: record })
     await entity.publishEvents(this.eventEmitter)
   }
@@ -36,6 +36,11 @@ export class VendorPaymentRepository implements VendorPaymentRepositoryPort {
 
   async findOne(id: string): Promise<VendorPaymentEntity | null> {
     const record = await this.prismaService.vendorPayments.findUnique({ where: { id } })
-    return record ? this.paymentMapper.toDomain(record) : null
+    return record ? this.vendorPaymentMapper.toDomain(record) : null
+  }
+
+  async findByVendorInvoiceId(vendorInvoiceId: string): Promise<VendorPaymentEntity[]> {
+    const records = await this.prismaService.vendorPayments.findMany({ where: { vendorInvoiceId: vendorInvoiceId } })
+    return records.map(this.vendorPaymentMapper.toDomain)
   }
 }

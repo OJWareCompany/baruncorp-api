@@ -33,6 +33,7 @@ import { TrackingNumbersModule } from '@modules/tracking-numbers/tracking-number
 import { ScheduleModule } from '@modules/schedule/schedule.module'
 import { UtilityModule } from '@modules/utility/utility.module'
 import { CreditTransactionModule } from './modules/credit-transaction/credit-transaction.module'
+import { VendorCreditTransactionModule } from './modules/vendor-credit-transaction/vendor-credit-transaction.module'
 
 @Module({
   imports: [
@@ -68,6 +69,7 @@ import { CreditTransactionModule } from './modules/credit-transaction/credit-tra
     ScheduleModule,
     UtilityModule,
     CreditTransactionModule,
+    VendorCreditTransactionModule,
   ],
   controllers: [],
   providers: [

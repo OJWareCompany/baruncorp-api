@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import { CreateVendorInvoiceHttpController } from './commands/create-vendor-invoice/create-vendor-invoice.http.controller'
@@ -26,6 +26,9 @@ import { UsersModule } from '../users/users.module'
 import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
 import { UpdateVendorInvoicedTotalHttpController } from './commands/update-vendor-invoiced-total/update-vendor-invoiced-total.http.controller'
 import { UpdateVendorInvoicedTotalService } from './commands/update-vendor-invoiced-total/update-vendor-invoiced-total.service'
+import { VendorInvoiceCalculator } from './domain/domain-services/vendor-invoice-calculator.domain-service'
+import { VendorPaymentModule } from '../vendor-payment/vendor-payment.module'
+import { VendorCreditTransactionModule } from '../vendor-credit-transaction/vendor-credit-transaction.module'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -56,6 +59,7 @@ const repositories: Provider[] = [
   },
 ]
 const eventHandlers: Provider[] = []
+const domainServices: Provider[] = [VendorInvoiceCalculator]
 const mappers: Provider[] = [VendorInvoiceMapper]
 
 @Module({
@@ -68,8 +72,11 @@ const mappers: Provider[] = [VendorInvoiceMapper]
     OrganizationModule,
     UsersModule,
     AssignedTaskModule,
+    VendorPaymentModule,
+    forwardRef(() => VendorCreditTransactionModule),
   ],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
+  exports: [...repositories, ...domainServices],
 })
 export class VendorInvoiceModule {}

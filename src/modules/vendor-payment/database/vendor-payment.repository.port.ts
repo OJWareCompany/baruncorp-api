@@ -7,4 +7,5 @@ export interface VendorPaymentRepositoryPort {
   delete(id: string): Promise<void>
   findOne(id: string): Promise<VendorPaymentEntity | null>
   find(): Promise<Paginated<VendorPaymentEntity>>
+  findByVendorInvoiceId(vendorInvoiceId: string): Promise<VendorPaymentEntity[]>
 }

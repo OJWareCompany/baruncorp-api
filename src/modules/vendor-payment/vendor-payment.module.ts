@@ -35,5 +35,6 @@ const mappers: Provider[] = [VendorPaymentMapper]
   imports: [CqrsModule, PrismaModule, UsersModule],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
+  exports: [...repositories],
 })
 export class VendorPaymentModule {}

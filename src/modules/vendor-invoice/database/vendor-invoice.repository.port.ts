@@ -6,5 +6,6 @@ export interface VendorInvoiceRepositoryPort {
   update(entity: VendorInvoiceEntity): Promise<void>
   delete(id: string): Promise<void>
   findOne(id: string): Promise<VendorInvoiceEntity | null>
+  findOneOrThrow(id: string): Promise<VendorInvoiceEntity>
   find(): Promise<Paginated<VendorInvoiceEntity>>
 }

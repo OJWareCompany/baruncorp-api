@@ -20,6 +20,14 @@ export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
     return
   }
 
+  get total(): number {
+    return this.props.total
+  }
+
+  get vendorOrganizationId(): string {
+    return this.props.organizationId
+  }
+
   enterVendorInvoicedTotal(total: number): this {
     const paidAmount = 0
     this.props.total = total

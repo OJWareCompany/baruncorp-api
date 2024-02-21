@@ -5,6 +5,7 @@ import { VendorInvoiceMapper } from '../vendor-invoice.mapper'
 import { VendorInvoiceRepositoryPort } from './vendor-invoice.repository.port'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { VendorInvoiceEntity } from '../domain/vendor-invoice.entity'
+import { VendorInvoiceNotFoundException } from '../domain/vendor-invoice.error'
 
 @Injectable()
 export class VendorInvoiceRepository implements VendorInvoiceRepositoryPort {
@@ -52,5 +53,11 @@ export class VendorInvoiceRepository implements VendorInvoiceRepositoryPort {
   async findOne(id: string): Promise<VendorInvoiceEntity | null> {
     const record = await this.prismaService.vendorInvoices.findUnique({ where: { id } })
     return record ? this.vendorInvoiceMapper.toDomain(record) : null
+  }
+
+  async findOneOrThrow(id: string): Promise<VendorInvoiceEntity> {
+    const entity = await this.findOne(id)
+    if (!entity) throw new VendorInvoiceNotFoundException()
+    return entity
   }
 }
