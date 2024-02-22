@@ -13,6 +13,7 @@ import { UserStatusEnum } from '@modules/users/domain/user.types'
 import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
 import { FilesystemApiService } from '../../filesystem/infra/filesystem.api.service'
 import { GoogleDriveJobNotesFolderNotFoundException } from '../../filesystem/domain/filesystem.error'
+import { htmlToText } from 'html-to-text'
 
 @Injectable()
 export class ImapManagerService {
@@ -76,7 +77,8 @@ export class ImapManagerService {
 
       xoauth2gen.getToken((err: string, token: string) => {
         if (err) {
-          return console.log(err)
+          // console.log(err)
+          return
         }
 
         const imapConfig: Imap.Config = {
@@ -153,7 +155,7 @@ export class ImapManagerService {
     // console.log(`[ImapManagerService][connectToMailbox][openInbox] ready`)
     imap.openBox('INBOX', false, (err: Error, box: Imap.Box) => {
       if (err) {
-        console.log(`🚀 ~ file: index.js:132 ~ err: ${err}`)
+        // console.log(`🚀 ~ file: index.js:132 ~ err: ${err}`)
         return
       }
       // console.log(`[ImapManagerService][connectToMailbox][openInbox] box : ${JSON.stringify(box)}`);
@@ -227,12 +229,17 @@ export class ImapManagerService {
         // console.log(`MessageId : ${parsed.messageId}`)
         // console.log(`Found thread ID: ${threadId}`)
         // console.log(`subject : ${parsed.subject!}`)
+        // console.log(`parsed.attachments.length : ${parsed.attachments.length!}`)
+        // console.log(`parsed.text : ${parsed.text}`)
+        // console.log(`parsed.html : ${parsed.html}`)
+        const plainText: string = htmlToText(parsed.html ? parsed.html : '')
+
+        // console.log(`plainText : ${plainText}`)
 
         if (!threadId || !senderEmail) return
 
         // 바른코프 직원이 보낸 메일은 버린다(createJobNote에서 이미 RFI 생성)
         const isBarunUser: boolean = await this.isBaruncorpUserEmail(senderEmail)
-        // console.log(`isBarunUser : ${isBarunUser}`)
         if (isBarunUser) return
 
         const equalThreadIdEntity: JobNoteEntity | null = await this.jobNoteRepository.findOneFromMailThreadId(threadId)
@@ -244,7 +251,10 @@ export class ImapManagerService {
           equalThreadIdEntity.jobId,
         )
         const jobNoteNumber = maxJobNoteNumber ? maxJobNoteNumber + 1 : 1
-        const filteredContent: string = parsed.text ? this.parseEmailMainContent(parsed.text) : ''
+
+        // const filteredContent: string = parsed.text ? this.parseEmailMainContent(parsed.text) : ''
+        const filteredContent: string = plainText ? this.parseEmailMainContent(plainText) : ''
+        // console.log(`filteredContent : ${filteredContent}`)
 
         const jobNoteEntity = JobNoteEntity.create({
           jobId: equalThreadIdEntity.jobId,
