@@ -22,6 +22,7 @@ import {
   CompletedTaskChangeStatusException,
   CompletedTaskDeletionException,
 } from './assigned-task.error'
+import { AssignedTaskCostUpdatedDomainEvent } from './events/assigned-task-cost-updated.domain-event'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -155,7 +156,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     orderModificationValidator: OrderModificationValidator,
   ) {
     await orderModificationValidator.validate(this)
-    this.props.cost = calcService.calcVendorCost(expensePricing, orderedService)
+    this.setCost(calcService.calcVendorCost(expensePricing, orderedService))
   }
 
   // residential revision은 size가 정해지지 않은 경우 complete 될 수 없음
@@ -272,7 +273,13 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   }
 
   enterCostManually(cost: number | null) {
+    this.setCost(cost)
+    return this
+  }
+
+  private setCost(cost: number | null) {
     this.props.cost = cost
+    this.addEvent(new AssignedTaskCostUpdatedDomainEvent({ aggregateId: this.id, cost: Number(this.props.cost) }))
     return this
   }
 
