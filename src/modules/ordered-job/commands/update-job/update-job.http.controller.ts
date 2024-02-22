@@ -27,7 +27,7 @@ export class UpdateJobHttpController {
       jobId: param.jobId,
       mailingAddressForWetStamp: dto.mailingAddressForWetStamp,
       numberOfWetStamp: dto.numberOfWetStamp,
-      mountingType: dto.mountingType,
+      // mountingType: dto.mountingType,
       isExpedited: dto.isExpedited,
       inReview: dto.inReview,
       priority: dto.priority,

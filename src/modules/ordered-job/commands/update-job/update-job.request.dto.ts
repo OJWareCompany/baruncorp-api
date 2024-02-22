@@ -4,7 +4,11 @@ import { Type } from 'class-transformer'
 import { OrderedJobsPriorityEnum } from '../../domain/job.type'
 import { CreateJobRequestDto } from '../create-job/create-job.request.dto'
 
-export class UpdateJobRequestDto extends OmitType(CreateJobRequestDto, ['taskIds', 'projectId'] as const) {
+export class UpdateJobRequestDto extends OmitType(CreateJobRequestDto, [
+  'taskIds',
+  'projectId',
+  'mountingType',
+] as const) {
   @ApiProperty()
   @IsOptional()
   @IsDate()

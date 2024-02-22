@@ -351,8 +351,6 @@ export interface UpdateJobRequestDto {
   /** @default 300.1 */
   systemSize: number | null
   structuralUpgradeNote: string | null
-  /** @example "Ground Mount" */
-  mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
   loadCalcOrigin?: 'Self' | 'Client Provided'
   mailingAddressForWetStamp: AddressDto | null
