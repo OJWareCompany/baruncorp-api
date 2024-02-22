@@ -177,6 +177,7 @@ export class JobResponseMapper {
       inReview: job.inReview,
       priority: job.priority as OrderedJobsPriorityEnum,
       completedCancelledDate: job.completedCancelledDate,
+      structuralUpgradeNote: job.structuralUpgradeNote,
     })
   }
 

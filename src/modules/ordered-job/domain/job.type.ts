@@ -46,6 +46,7 @@ export interface CreateJobProps {
   propertyFullAddress: string
   projectPropertyType: ProjectPropertyTypeEnum
   totalOfJobs: number
+  structuralUpgradeNote: string | null
 
   deliverablesEmails: string[]
   mailingAddressForWetStamp: Address | null

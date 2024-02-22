@@ -142,6 +142,9 @@ export class JobResponseDto {
   @ApiProperty({ example: '176 Morningmist Road, Naugatuck, Connecticut 06770' })
   propertyFullAddress: string
 
+  @ApiProperty()
+  structuralUpgradeNote: string | null
+
   @ApiProperty({ example: 5 })
   jobRequestNumber: number
 

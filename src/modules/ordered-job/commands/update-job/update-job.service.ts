@@ -73,6 +73,7 @@ export class UpdateJobService implements ICommandHandler {
     job.updateDueDate(command.dueDate)
     job.setInReview(command.inReview)
     job.setPriority(command.priority)
+    job.setStructuralUpgradeNote(command.structuralUpgradeNote)
 
     await this.jobRepository.update(job)
   }

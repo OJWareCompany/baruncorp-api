@@ -39,6 +39,11 @@ export class CreateJobRequestDto {
   @IsString()
   readonly projectId: string
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly structuralUpgradeNote: string | null
+
   @ApiProperty({ enum: MountingTypeEnum, example: MountingTypeEnum.Ground_Mount })
   @IsEnum(MountingTypeEnum)
   readonly mountingType: MountingTypeEnum

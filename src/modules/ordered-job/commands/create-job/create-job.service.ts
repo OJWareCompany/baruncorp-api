@@ -81,6 +81,7 @@ export class CreateJobService implements ICommandHandler {
       projectPropertyType: project.projectPropertyType as ProjectPropertyTypeEnum,
       dueDate: command.dueDate,
       editorUserId: command.editorUserId,
+      structuralUpgradeNote: command.structuralUpgradeNote,
     })
     const jobRecord = this.jobMapper.toPersistence(jobEntity)
 

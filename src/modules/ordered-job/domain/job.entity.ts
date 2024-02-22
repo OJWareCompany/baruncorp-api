@@ -260,6 +260,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
+  setStructuralUpgradeNote(structuralUpgradeNote: string | null) {
+    this.props.structuralUpgradeNote = structuralUpgradeNote
+    return this
+  }
+
   setInReview(inReview: boolean) {
     return (this.props.inReview = inReview)
   }

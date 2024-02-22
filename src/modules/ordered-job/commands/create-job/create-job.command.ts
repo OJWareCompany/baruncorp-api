@@ -19,6 +19,7 @@ export class CreateJobCommand {
   readonly loadCalcOrigin: LoadCalcOriginEnum
   readonly dueDate: Date | null
   readonly editorUserId: string
+  readonly structuralUpgradeNote: string | null
 
   constructor(props: CreateJobCommand) {
     initialize(this, props)
