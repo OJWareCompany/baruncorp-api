@@ -321,6 +321,7 @@ export interface CreateJobRequestDto {
   systemSize: number | null
   /** @default "d6935a65-2ec5-4df0-a8b5-a4e39f124d05" */
   projectId: string
+  structuralUpgradeNote: string | null
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
@@ -349,6 +350,7 @@ export interface UpdateJobRequestDto {
   additionalInformationFromClient: string | null
   /** @default 300.1 */
   systemSize: number | null
+  structuralUpgradeNote: string | null
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
@@ -490,6 +492,7 @@ export interface JobResponseDto {
   updatedBy: string
   /** @example "176 Morningmist Road, Naugatuck, Connecticut 06770" */
   propertyFullAddress: string
+  structuralUpgradeNote: string | null
   /** @example 5 */
   jobRequestNumber: number
   /** @example "In Progress" */
