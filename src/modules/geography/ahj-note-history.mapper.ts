@@ -1,12 +1,11 @@
+import { AHJNoteHistory } from '@prisma/client'
+import { Injectable } from '@nestjs/common'
 import { Mapper } from '@libs/ddd/mapper.interface'
-import { AHJNoteHistoryModel } from './database/geography.repository'
-import { AHJType } from './dto/ahj-note.response.dto'
 import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.response.dto'
 import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
-import { Injectable } from '@nestjs/common'
-import { AHJNoteHistory } from '@prisma/client'
 import { AhjNoteHistoryTypeEnum } from './domain/ahj-job-note.type'
-import { before } from 'node:test'
+import { AHJNoteHistoryModel } from './database/geography.repository'
+import { AHJType } from './dto/ahj-note.response.dto'
 
 @Injectable()
 export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, AhjNoteHistoryResponseDto> {
@@ -62,12 +61,11 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
       windUpliftCalculationRequired: model.windUpliftCalculationRequired,
       wetStampsRequired: model.wetStampsRequired,
       digitalSignatureType: model.digitalSignatureType,
-      windExposure: model.windExposure,
       wetStampSize: model.wetStampSize,
-      windSpeed: model.windSpeed,
+      windSpeedRiskCatFirst: model.windSpeedRiskCatFirst,
+      windSpeedRiskCatSecond: model.windSpeedRiskCatSecond,
       snowLoadGround: model.snowLoadGround,
       snowLoadFlatRoof: model.snowLoadFlatRoof,
-      // snowLoadSlopedRoof: model.snowLoadSlopedRoof,
       ofWetStamps: model.ofWetStamps,
     }
 

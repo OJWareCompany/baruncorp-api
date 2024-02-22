@@ -896,9 +896,9 @@ export interface Engineering {
   /** @default "See Notes" */
   windUpliftCalculationRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "115" */
-  windSpeed: string | null
-  /** @default "See Notes" */
-  windExposure: 'B' | 'C' | 'D' | 'See Notes' | null
+  windSpeedRiskCatFirst: string | null
+  /** @default "115" */
+  windSpeedRiskCatSecond: string | null
   /** @default "30" */
   snowLoadGround: string | null
   /** @default "30" */

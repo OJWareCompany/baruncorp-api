@@ -55,12 +55,11 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
       windUpliftCalculationRequired: model.windUpliftCalculationRequired,
       wetStampsRequired: model.wetStampsRequired,
       digitalSignatureType: model.digitalSignatureType,
-      windExposure: model.windExposure,
       wetStampSize: model.wetStampSize,
-      windSpeed: model.windSpeed,
+      windSpeedRiskCatFirst: model.windSpeedRiskCatFirst,
+      windSpeedRiskCatSecond: model.windSpeedRiskCatSecond,
       snowLoadGround: model.snowLoadGround,
       snowLoadFlatRoof: model.snowLoadFlatRoof,
-      // snowLoadSlopedRoof: model.snowLoadSlopedRoof,
       ofWetStamps: model.ofWetStamps,
     }
 

@@ -18,9 +18,9 @@ export class UpdateAhjNoteCommand {
   readonly windUpliftCalculationRequired: string | null
   readonly wetStampsRequired: string | null
   readonly digitalSignatureType: string | null
-  readonly windExposure: string | null
   readonly wetStampSize: string | null
-  readonly windSpeed: string | null
+  readonly windSpeedRiskCatFirst: string | null
+  readonly windSpeedRiskCatSecond: string | null
   readonly snowLoadGround: string | null
   readonly snowLoadFlatRoof: string | null
   readonly snowLoadSlopedRoof?: string | null

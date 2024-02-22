@@ -102,20 +102,16 @@ export class Engineering {
   windUpliftCalculationRequired: string | null
 
   @ApiProperty({ default: '115', nullable: true })
-  windSpeed: string | null
+  windSpeedRiskCatFirst: string | null
 
-  @ApiProperty({ enum: WindExposure, default: WindExposure.SeeNotes, nullable: true })
-  windExposure: string | null
+  @ApiProperty({ default: '115', nullable: true })
+  windSpeedRiskCatSecond: string | null
 
   @ApiProperty({ default: '30', nullable: true })
   snowLoadGround: string | null
 
   @ApiProperty({ default: '30', nullable: true })
   snowLoadFlatRoof: string | null
-
-  // @IsOptional()
-  // @ApiProperty({ default: '30', nullable: true })
-  // snowLoadSlopedRoof?: string | null
 
   @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
   wetStampsRequired: string | null
