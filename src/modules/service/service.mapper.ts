@@ -32,35 +32,35 @@ export class ServiceMapper
       name: props.name,
       billingCode: props.billingCode,
       basePrice: props.pricing.standard?.residential?.price
-        ? new Prisma.Decimal(props.pricing.standard.residential.price)
+        ? new Prisma.Decimal(props.pricing.standard.residential.price.toFixed(4))
         : null,
       gmPrice: props.pricing.standard?.residential?.gmPrice
-        ? new Prisma.Decimal(props.pricing.standard.residential.gmPrice)
+        ? new Prisma.Decimal(props.pricing.standard.residential.gmPrice.toFixed(4))
         : null,
       revisionPrice: props.pricing.standard?.residential?.revisionPrice
-        ? new Prisma.Decimal(props.pricing.standard.residential.revisionPrice)
+        ? new Prisma.Decimal(props.pricing.standard.residential.revisionPrice.toFixed(4))
         : null,
       revisionGmPrice: props.pricing.standard?.residential?.revisionGmPrice
-        ? new Prisma.Decimal(props.pricing.standard.residential.revisionGmPrice)
+        ? new Prisma.Decimal(props.pricing.standard.residential.revisionGmPrice.toFixed(4))
         : null,
-      fixedPrice: props.pricing.fixedPrice ? new Prisma.Decimal(props.pricing.fixedPrice) : null,
+      fixedPrice: props.pricing.fixedPrice ? new Prisma.Decimal(props.pricing.fixedPrice.toFixed(4)) : null,
       commercialRevisionCostPerUnit: props.pricing.standard?.commercial?.revision.costPerUnit
-        ? new Prisma.Decimal(props.pricing.standard.commercial.revision.costPerUnit)
+        ? new Prisma.Decimal(props.pricing.standard.commercial.revision.costPerUnit.toFixed(4))
         : null,
       commercialRevisionMinutesPerUnit: props.pricing.standard?.commercial
         ? props.pricing.standard.commercial.revision.minutesPerUnit
         : null,
       residentialNewEstimatedTaskDuration: props.residentialNewEstimatedTaskDuration
-        ? new Prisma.Decimal(props.residentialNewEstimatedTaskDuration)
+        ? new Prisma.Decimal(props.residentialNewEstimatedTaskDuration.toFixed(4))
         : null,
       residentialRevisionEstimatedTaskDuration: props.residentialRevisionEstimatedTaskDuration
-        ? new Prisma.Decimal(props.residentialRevisionEstimatedTaskDuration)
+        ? new Prisma.Decimal(props.residentialRevisionEstimatedTaskDuration.toFixed(4))
         : null,
       commercialNewEstimatedTaskDuration: props.commercialNewEstimatedTaskDuration
-        ? new Prisma.Decimal(props.commercialNewEstimatedTaskDuration)
+        ? new Prisma.Decimal(props.commercialNewEstimatedTaskDuration.toFixed(4))
         : null,
       commercialRevisionEstimatedTaskDuration: props.commercialRevisionEstimatedTaskDuration
-        ? new Prisma.Decimal(props.commercialRevisionEstimatedTaskDuration)
+        ? new Prisma.Decimal(props.commercialRevisionEstimatedTaskDuration.toFixed(4))
         : null,
     }
     const commercialStandardPricingTiersRecord: CommercialStandardPricingTiers[] = props.pricing.standard?.commercial
@@ -68,10 +68,10 @@ export class ServiceMapper
           return {
             serviceId: props.id,
             serviceName: props.name,
-            startingPoint: new Prisma.Decimal(tier.startingPoint),
-            finishingPoint: new Prisma.Decimal(tier.finishingPoint),
-            price: new Prisma.Decimal(tier.price),
-            gmPrice: new Prisma.Decimal(tier.gmPrice),
+            startingPoint: new Prisma.Decimal(tier.startingPoint.toFixed(4)),
+            finishingPoint: new Prisma.Decimal(tier.finishingPoint.toFixed(4)),
+            price: new Prisma.Decimal(tier.price.toFixed(4)),
+            gmPrice: new Prisma.Decimal(tier.gmPrice.toFixed(4)),
           }
         })
       : []

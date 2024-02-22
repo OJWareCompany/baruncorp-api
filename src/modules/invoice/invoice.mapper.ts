@@ -21,10 +21,10 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
       clientOrganizationId: props.clientOrganizationId,
       organizationName: props.organizationName,
       serviceMonth: props.serviceMonth,
-      subTotal: new Prisma.Decimal(props.subTotal),
-      discount: new Prisma.Decimal(props.discount),
-      total: new Prisma.Decimal(props.total),
-      paymentTotal: new Prisma.Decimal(props.paymentTotal),
+      subTotal: new Prisma.Decimal(props.subTotal.toFixed(4)),
+      discount: new Prisma.Decimal(props.discount.toFixed(4)),
+      total: new Prisma.Decimal(props.total.toFixed(4)),
+      paymentTotal: new Prisma.Decimal(props.paymentTotal.toFixed(4)),
       issuedAt: props.issuedAt,
     }
     return record

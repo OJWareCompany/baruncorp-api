@@ -12,7 +12,7 @@ export class PaymentMapper implements Mapper<PaymentEntity, Payments, PaymentRes
     const record: Payments = {
       id: props.id,
       invoiceId: props.invoiceId,
-      amount: new Prisma.Decimal(props.amount),
+      amount: new Prisma.Decimal(props.amount.toFixed(4)),
       paymentMethod: props.paymentMethod,
       paymentDate: props.paymentDate,
       notes: props.notes,

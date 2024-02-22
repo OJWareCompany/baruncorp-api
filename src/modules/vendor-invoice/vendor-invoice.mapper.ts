@@ -20,10 +20,12 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
       terms: props.terms,
       note: props.note,
       serviceMonth: props.serviceMonth,
-      subTotal: new Decimal(props.subTotal),
-      total: new Decimal(props.total),
-      invoiceTotalDifference: new Decimal(props.invoiceTotalDifference),
-      internalTotalBalanceDue: props.internalTotalBalanceDue ? new Decimal(props.internalTotalBalanceDue) : null,
+      subTotal: new Decimal(props.subTotal.toFixed(4)),
+      total: new Decimal(props.total.toFixed(4)),
+      invoiceTotalDifference: new Decimal(props.invoiceTotalDifference.toFixed(4)),
+      internalTotalBalanceDue: props.internalTotalBalanceDue
+        ? new Decimal(props.internalTotalBalanceDue.toFixed(4))
+        : null,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
       transaction_type: props.transactionType,

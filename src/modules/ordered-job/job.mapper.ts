@@ -48,7 +48,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       updatedAt: props.updatedAt,
       receivedAt: props.receivedAt,
       projectId: props.projectId,
-      systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize) : null,
+      systemSize: props.systemSize ? new Prisma.Decimal(props.systemSize.toFixed(4)) : null,
       mailingFullAddressForWetStamp: props.mailingAddressForWetStamp?.fullAddress || null,
       mailingAdderssState: props.mailingAddressForWetStamp?.state || null,
       mailingAdderssCity: props.mailingAddressForWetStamp?.city || null,

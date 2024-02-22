@@ -1,5 +1,5 @@
 import { IQueryHandler, QueryHandler } from '@nestjs/cqrs'
-import { AssignedTasks, OrderedServices, Prisma, Users } from '@prisma/client'
+import { AssignedTasks, Prisma } from '@prisma/client'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'

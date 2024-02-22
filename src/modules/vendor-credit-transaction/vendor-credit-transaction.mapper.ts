@@ -15,7 +15,7 @@ export class VendorCreditTransactionMapper
       id: props.id,
       vendorOrganizationId: props.vendorOrganizationId,
       createdBy: props.createdBy,
-      amount: new Prisma.Decimal(props.amount),
+      amount: new Prisma.Decimal(props.amount.toFixed(4)),
       transactionType: props.creditTransactionType,
       relatedVendorInvoiceId: props.relatedVendorInvoiceId ? props.relatedVendorInvoiceId : null,
       transactionDate: props.transactionDate,

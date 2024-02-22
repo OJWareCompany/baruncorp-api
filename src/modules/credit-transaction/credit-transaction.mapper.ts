@@ -15,7 +15,7 @@ export class CreditTransactionMapper
       id: props.id,
       clientOrganizationId: props.clientOrganizationId,
       createdBy: props.createdBy,
-      amount: new Prisma.Decimal(props.amount),
+      amount: new Prisma.Decimal(props.amount.toFixed(4)),
       transactionType: props.creditTransactionType,
       relatedInvoiceId: props.relatedInvoiceId ? props.relatedInvoiceId : null,
       transactionDate: props.transactionDate,

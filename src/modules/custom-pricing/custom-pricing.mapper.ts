@@ -38,7 +38,7 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
     const customFixedPricingsRecord: CustomFixedPricings | null = props.fixedPricing
       ? {
           ...foreignKey,
-          price: new Prisma.Decimal(props.fixedPricing?.value),
+          price: new Prisma.Decimal(props.fixedPricing?.value.toFixed(4)),
         }
       : null
 
@@ -46,10 +46,10 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
       (tier) => {
         return {
           ...foreignKey,
-          startingPoint: new Prisma.Decimal(tier.startingPoint),
-          finishingPoint: tier.finishingPoint ? new Prisma.Decimal(tier.finishingPoint) : null,
-          price: new Prisma.Decimal(tier.price),
-          gmPrice: new Prisma.Decimal(tier.gmPrice),
+          startingPoint: new Prisma.Decimal(tier.startingPoint.toFixed(4)),
+          finishingPoint: tier.finishingPoint ? new Prisma.Decimal(tier.finishingPoint.toFixed(4)) : null,
+          price: new Prisma.Decimal(tier.price.toFixed(4)),
+          gmPrice: new Prisma.Decimal(tier.gmPrice.toFixed(4)),
         }
       },
     )
@@ -60,8 +60,8 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
           ...foreignKey,
           startingPoint: Number(tier.startingPoint),
           finishingPoint: tier.finishingPoint ? Number(tier.finishingPoint) : null,
-          price: new Prisma.Decimal(tier.price),
-          gmPrice: new Prisma.Decimal(tier.gmPrice),
+          price: new Prisma.Decimal(tier.price.toFixed(4)),
+          gmPrice: new Prisma.Decimal(tier.gmPrice.toFixed(4)),
         }
       },
     )
@@ -70,8 +70,8 @@ export class CustomPricingMapper implements Mapper<CustomPricingEntity, CustomPr
       props.residentialRevisionPricing
         ? {
             ...foreignKey,
-            price: new Prisma.Decimal(props.residentialRevisionPricing.price),
-            gmPrice: new Prisma.Decimal(props.residentialRevisionPricing.gmPrice),
+            price: new Prisma.Decimal(props.residentialRevisionPricing.price.toFixed(4)),
+            gmPrice: new Prisma.Decimal(props.residentialRevisionPricing.gmPrice.toFixed(4)),
           }
         : null
 

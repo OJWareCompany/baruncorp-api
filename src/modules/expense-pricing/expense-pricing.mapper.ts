@@ -16,13 +16,13 @@ export class ExpensePricingMapper implements Mapper<ExpensePricingEntity, Expens
       organizationId: props.organizationId,
       taskName: props.taskName,
       resiNewExpenseType: props.resiNewExpenseType,
-      resiNewValue: new Decimal(props.resiNewValue),
+      resiNewValue: new Decimal(props.resiNewValue.toFixed(4)),
       resiRevExpenseType: props.resiRevExpenseType,
-      resiRevValue: new Decimal(props.resiRevValue),
+      resiRevValue: new Decimal(props.resiRevValue.toFixed(4)),
       comNewExpenseType: props.comNewExpenseType,
-      comNewValue: new Decimal(props.comNewValue),
+      comNewValue: new Decimal(props.comNewValue.toFixed(4)),
       comRevExpenseType: props.comRevExpenseType,
-      comRevValue: new Decimal(props.comRevValue),
+      comRevValue: new Decimal(props.comRevValue.toFixed(4)),
     }
     return record
   }

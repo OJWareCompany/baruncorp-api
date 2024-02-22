@@ -12,7 +12,7 @@ export class VendorPaymentMapper implements Mapper<VendorPaymentEntity, VendorPa
     const record: VendorPayments = {
       id: props.id,
       vendorInvoiceId: props.vendorInvoiceId,
-      amount: new Prisma.Decimal(props.amount),
+      amount: new Prisma.Decimal(props.amount.toFixed(4)),
       paymentMethod: props.paymentMethod,
       paymentDate: props.paymentDate,
       notes: props.notes,
