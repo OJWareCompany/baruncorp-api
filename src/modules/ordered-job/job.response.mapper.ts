@@ -178,6 +178,8 @@ export class JobResponseMapper {
       priority: job.priority as OrderedJobsPriorityEnum,
       completedCancelledDate: job.completedCancelledDate,
       structuralUpgradeNote: job.structuralUpgradeNote,
+      propertyOwner: job.propertyOwner!,
+      projectNumber: job.project_number,
     })
   }
 

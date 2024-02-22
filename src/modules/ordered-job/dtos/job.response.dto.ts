@@ -183,6 +183,12 @@ export class JobResponseDto {
   jobName: string
 
   @ApiProperty()
+  propertyOwner: string
+
+  @ApiProperty()
+  projectNumber: string | null
+
+  @ApiProperty()
   isCurrentJob?: boolean
 
   @ApiProperty()

@@ -76,6 +76,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       completedCancelledDate: props.completedCancelledDate,
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
       structuralUpgradeNote: props.structuralUpgradeNote,
+      propertyOwner: props.propertyOwner,
 
       // 퀵베이스에 있던 컬럼중 아직 사용하지 않는 것
       otherComments: null,
@@ -252,6 +253,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         priority: record.priority as OrderedJobsPriorityEnum,
         completedCancelledDate: record.completedCancelledDate,
         structuralUpgradeNote: record.structuralUpgradeNote,
+        propertyOwner: record.propertyOwner,
       },
     })
   }

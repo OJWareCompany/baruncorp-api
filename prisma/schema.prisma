@@ -541,6 +541,7 @@ model OrderedJobs {
   mailingAdderssPostalCountry                   String?               @map("mailing_adderss_country") @db.VarChar(255)
   editor_user_id                                String?               @db.VarChar(255)
   structuralUpgradeNote                         String?               @map("structural_upgrade_note") @db.Text
+  propertyOwner                                 String                @map("property_owner") @db.VarChar(255)
   project                                       OrderedProjects?      @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
