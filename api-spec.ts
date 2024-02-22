@@ -518,6 +518,8 @@ export interface JobResponseDto {
   /** @example "High" */
   priority: 'Immediate' | 'High' | 'Medium' | 'Low'
   jobName: string
+  propertyOwner: string
+  projectNumber: string | null
   isCurrentJob?: boolean
   /** @format date-time */
   dateSentToClient: string | null
@@ -2855,6 +2857,15 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
   isExpedited?: boolean | null
+  /** @default false */
+  inReview?: boolean | null
+  /** @default "Medium" */
+  priority?: 'Immediate' | 'High' | 'Medium' | 'Low' | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  propertyOwner?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -2901,6 +2912,15 @@ export interface FindMyJobPaginatedHttpControllerFindJobParams {
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
   isExpedited?: boolean | null
+  /** @default false */
+  inReview?: boolean | null
+  /** @default "Medium" */
+  priority?: 'Immediate' | 'High' | 'Medium' | 'Low' | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  propertyOwner?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
@@ -2969,6 +2989,15 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
   isExpedited?: boolean | null
+  /** @default false */
+  inReview?: boolean | null
+  /** @default "Medium" */
+  priority?: 'Immediate' | 'High' | 'Medium' | 'Low' | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default ""
+   */
+  propertyOwner?: string | null
 }
 
 export interface FindServicePaginatedHttpControllerGetParams {

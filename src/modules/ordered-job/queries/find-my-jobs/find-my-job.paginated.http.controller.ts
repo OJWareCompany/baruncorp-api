@@ -39,6 +39,9 @@ export class FindMyJobPaginatedHttpController {
       projectPropertyType: request.projectPropertyType,
       mountingType: request.mountingType,
       isExpedited: request.isExpedited,
+      propertyOwner: request.propertyOwner,
+      inReview: request.inReview,
+      priority: request.priority,
     })
 
     const result: Paginated<OrderedJobs> = await this.queryBus.execute(query)

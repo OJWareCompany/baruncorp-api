@@ -24,9 +24,18 @@ export class FindJobPaginatedHttpController {
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<JobPaginatedResponseDto> {
     const query = new FindJobPaginatedQuery({
-      ...request,
       page: queryParams.page,
       limit: queryParams.limit,
+      jobStatus: request.jobStatus,
+      projectNumber: request.projectNumber,
+      jobName: request.jobName,
+      propertyFullAddress: request.propertyFullAddress,
+      projectPropertyType: request.projectPropertyType,
+      mountingType: request.mountingType,
+      isExpedited: request.isExpedited,
+      propertyOwner: request.propertyOwner,
+      inReview: request.inReview,
+      priority: request.priority,
     })
 
     const result: Paginated<OrderedJobs> = await this.queryBus.execute(query)

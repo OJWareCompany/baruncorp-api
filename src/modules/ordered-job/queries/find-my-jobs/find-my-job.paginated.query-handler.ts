@@ -5,7 +5,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrderedJobs } from '@prisma/client'
-import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 export class FindMyJobPaginatedQuery extends PaginatedQueryBase {
@@ -17,6 +17,9 @@ export class FindMyJobPaginatedQuery extends PaginatedQueryBase {
   readonly projectPropertyType?: ProjectPropertyTypeEnum | null
   readonly mountingType?: MountingTypeEnum | null
   readonly isExpedited?: boolean | null
+  readonly propertyOwner?: string | null
+  readonly inReview?: boolean | null
+  readonly priority?: OrderedJobsPriorityEnum | null
 
   constructor(props: PaginatedParams<FindMyJobPaginatedQuery>) {
     super(props)
@@ -37,14 +40,17 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
       ...(query.projectPropertyType && { projectType: query.projectPropertyType }),
       ...(query.mountingType && { mountingType: query.mountingType }),
+      ...(query.propertyOwner && { propertyOwner: { contains: query.propertyOwner } }),
+      ...(query.priority && { priority: query.priority }),
       ...(query.isExpedited !== undefined && query.isExpedited !== null && { isExpedited: query.isExpedited }),
+      ...(query.inReview !== undefined && query.inReview !== null && { inReview: query.inReview }),
       assignedTasks: {
         some: {
           assigneeId: query.userId,
         },
       },
     }
-
+    console.log(condition)
     const myJobs = await this.prismaService.orderedJobs.findMany({
       where: condition,
       orderBy: { createdAt: 'desc' },

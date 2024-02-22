@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
 import { Transform } from 'class-transformer'
 
 export enum DESCRIPTION {
@@ -51,4 +51,23 @@ export class FindJobPaginatedRequestDto {
   })
   @IsOptional()
   readonly isExpedited?: boolean | null
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  @Transform(({ value }) => {
+    const isBoolean = ['true', 'false'].includes(value)
+    return isBoolean ? value === 'true' : null
+  })
+  @IsOptional()
+  readonly inReview?: boolean | null
+
+  @ApiProperty({ default: OrderedJobsPriorityEnum.Medium, enum: OrderedJobsPriorityEnum })
+  @IsEnum(OrderedJobsPriorityEnum)
+  @IsOptional()
+  readonly priority?: OrderedJobsPriorityEnum | null
+
+  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
+  @IsString()
+  @IsOptional()
+  readonly propertyOwner?: string | null
 }

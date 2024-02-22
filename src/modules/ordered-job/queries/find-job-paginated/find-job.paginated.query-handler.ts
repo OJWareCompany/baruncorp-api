@@ -5,7 +5,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrderedJobs, Prisma } from '@prisma/client'
-import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 export class FindJobPaginatedQuery extends PaginatedQueryBase {
@@ -16,6 +16,9 @@ export class FindJobPaginatedQuery extends PaginatedQueryBase {
   readonly jobStatus?: JobStatusEnum | AutoOnlyJobStatusEnum | null
   readonly mountingType?: MountingTypeEnum | null
   readonly isExpedited?: boolean | null
+  readonly propertyOwner?: string | null
+  readonly inReview?: boolean | null
+  readonly priority?: OrderedJobsPriorityEnum | null
 
   constructor(props: PaginatedParams<FindJobPaginatedQuery>) {
     super(props)
@@ -35,7 +38,10 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.projectPropertyType && { projectType: query.projectPropertyType }),
       ...(query.jobStatus && { jobStatus: query.jobStatus }),
       ...(query.mountingType && { mountingType: query.mountingType }),
+      ...(query.propertyOwner && { propertyOwner: { contains: query.propertyOwner } }),
+      ...(query.priority && { priority: query.priority }),
       ...(query.isExpedited !== undefined && query.isExpedited !== null && { isExpedited: query.isExpedited }),
+      ...(query.inReview !== undefined && query.inReview !== null && { inReview: query.inReview }),
     }
 
     const records = await this.prismaService.orderedJobs.findMany({
