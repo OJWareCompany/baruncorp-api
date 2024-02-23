@@ -19,9 +19,10 @@ export class FindOrganizationCreditTransactionQueryHandler implements IQueryHand
       where: { clientOrganizationId: query.organizationId, canceledAt: null },
     })
 
-    return result.reduce((pre, cur) => {
+    const creditAmount = result.reduce((pre, cur) => {
       const amount = cur.transactionType === CreditTransactionTypeEnum.Reload ? cur.amount : -cur.amount
       return pre + Number(amount)
     }, 0)
+    return Number(creditAmount.toFixed(2))
   }
 }
