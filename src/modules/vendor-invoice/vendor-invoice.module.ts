@@ -29,6 +29,8 @@ import { UpdateVendorInvoicedTotalService } from './commands/update-vendor-invoi
 import { VendorInvoiceCalculator } from './domain/domain-services/vendor-invoice-calculator.domain-service'
 import { VendorPaymentModule } from '../vendor-payment/vendor-payment.module'
 import { VendorCreditTransactionModule } from '../vendor-credit-transaction/vendor-credit-transaction.module'
+import { UpdateVendorInvoiceHttpController } from './commands/update-vendor-invoice/update-vendor-invoice.http.controller'
+import { UpdateVendorInvoiceService } from './commands/update-vendor-invoice/update-vendor-invoice.service'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -39,11 +41,13 @@ const httpControllers = [
   FindVendorToInvoiceLineItemsPaginatedHttpController,
   FindVendorInvoiceLineItemHttpController,
   UpdateVendorInvoicedTotalHttpController,
+  UpdateVendorInvoiceHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateVendorInvoiceService,
   DeleteVendorInvoiceService,
   UpdateVendorInvoicedTotalService,
+  UpdateVendorInvoiceService,
 ]
 const queryHandlers: Provider[] = [
   FindVendorInvoiceQueryHandler,

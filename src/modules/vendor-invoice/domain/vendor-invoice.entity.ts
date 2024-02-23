@@ -1,7 +1,7 @@
-import { addDays } from 'date-fns'
+import { add, addDays } from 'date-fns'
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateVendorInvoiceProps, VendorInvoiceProps } from './vendor-invoice.type'
+import { CreateVendorInvoiceProps, VendorInvoiceProps, VendorInvoiceTermsEnum } from './vendor-invoice.type'
 import { VendorInvoiceCalculator } from './domain-services/vendor-invoice-calculator.domain-service'
 
 export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
@@ -34,6 +34,31 @@ export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
     this.props.total = total
     this.props.invoiceTotalDifference = this.props.subTotal - this.props.total // internal subtotal에서 실제 청구된 금액을 뺀다.
     this.props.internalTotalBalanceDue = this.props.total - paidAmount // find how much paid, 지불 해야할 남은 금액
+    return this
+  }
+
+  setInvoiceDate(invoiceDate: Date, term: VendorInvoiceTermsEnum) {
+    this.props.invoiceDate = invoiceDate
+    this.props.terms = term
+    // this.setDueDate()
+    return this
+  }
+
+  // Auto updated column in database
+  private setDueDate() {
+    this.props.dueDate = add(this.props.invoiceDate, {
+      days:
+        this.props.terms === VendorInvoiceTermsEnum.Days21
+          ? 21
+          : this.props.terms === VendorInvoiceTermsEnum.Days30
+          ? 30
+          : 60,
+    })
+    return this
+  }
+
+  setNote(note: string | null) {
+    this.props.note = note
     return this
   }
 }

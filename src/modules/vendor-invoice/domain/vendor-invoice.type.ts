@@ -1,10 +1,16 @@
+export enum VendorInvoiceTermsEnum {
+  Days21 = 21,
+  Days30 = 30,
+  Days60 = 60,
+}
+
 export interface CreateVendorInvoiceProps {
   organizationId: string
   organizationName: string
   daysPastDue: Date | null
   invoiceDate: Date
   invoiceNumber: string
-  terms: number
+  terms: VendorInvoiceTermsEnum
   note: string | null
   serviceMonth: Date
   subTotal: number // 파악 필요

@@ -26,9 +26,17 @@ export class VendorInvoiceRepository implements VendorInvoiceRepositoryPort {
     })
   }
 
+  async update(entity: VendorInvoiceEntity): Promise<void> {
+    const record = this.vendorInvoiceMapper.toPersistence(entity)
+    await this.prismaService.vendorInvoices.update({
+      where: { id: entity.id },
+      data: { ...record, dueDate: undefined },
+    })
+  }
+
   async insert(entity: VendorInvoiceEntity): Promise<void> {
     const record = this.vendorInvoiceMapper.toPersistence(entity)
-    await this.prismaService.vendorInvoices.create({ data: { ...record, dueDate: null } })
+    await this.prismaService.vendorInvoices.create({ data: { ...record, dueDate: undefined } })
   }
 
   async updateTotal(entity: VendorInvoiceEntity): Promise<void> {
