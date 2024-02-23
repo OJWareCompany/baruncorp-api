@@ -1,7 +1,7 @@
 import { VendorInvoices } from '@prisma/client'
 import { Injectable } from '@nestjs/common'
 import { Mapper } from '../../libs/ddd/mapper.interface'
-import { VendorInvoiceResponseDto } from './dtos/vendor-invoice.response.dto'
+import { VendorInvoicePayment, VendorInvoiceResponseDto } from './dtos/vendor-invoice.response.dto'
 import { VendorInvoiceEntity } from './domain/vendor-invoice.entity'
 import { Decimal } from '@prisma/client/runtime/library'
 
@@ -58,7 +58,7 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
     return entity
   }
 
-  toResponse(entity: VendorInvoiceEntity): VendorInvoiceResponseDto {
+  toResponse(entity: VendorInvoiceEntity, vendorInvoicePayments?: VendorInvoicePayment[]): VendorInvoiceResponseDto {
     const props = entity.getProps()
     const response = new VendorInvoiceResponseDto()
     response.id = props.id
@@ -77,6 +77,7 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
     response.internalTotalBalanceDue = props.internalTotalBalanceDue
     response.createdAt = props.createdAt.toISOString()
     response.updatedAt = props.updatedAt.toISOString()
+    response.vendorPayments = vendorInvoicePayments ? vendorInvoicePayments : []
     return response
   }
 }

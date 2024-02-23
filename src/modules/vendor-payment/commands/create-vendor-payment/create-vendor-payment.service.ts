@@ -54,10 +54,6 @@ export class CreateVendorPaymentService implements ICommandHandler {
 
     vendorInvoice.transaction_type = PaymentMethodEnum.Direct
 
-    if (command.paymentMethod === PaymentMethodEnum.Credit) {
-      vendorInvoice.transaction_type = PaymentMethodEnum.Credit
-    }
-
     await this.prismaService.vendorInvoices.update({
       where: { id: vendorInvoice.id },
       data: {

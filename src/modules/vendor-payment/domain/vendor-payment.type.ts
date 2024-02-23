@@ -1,8 +1,11 @@
-export type PaymentMethod = 'Credit' | 'Direct'
+import { VendorCreditTransactionTypeEnum } from '../../vendor-credit-transaction/domain/vendor-credit-transaction.type'
+
+export type PaymentMethod = 'Direct'
 export enum PaymentMethodEnum {
-  Credit = 'Credit',
   Direct = 'Direct',
 }
+
+export type VendorInvoicePaymentType = PaymentMethodEnum | VendorCreditTransactionTypeEnum.Deduction
 
 export interface CreateVendorPaymentProps {
   vendorInvoiceId: string

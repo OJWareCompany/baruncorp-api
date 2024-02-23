@@ -35,12 +35,13 @@ export class FindVendorInvoicePaginatedQueryHandler implements IQueryHandler {
     })
 
     const totalCount = await this.prismaService.vendorInvoices.count({ where: condition })
-
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
       totalCount,
-      items: records.map(this.mapper.toDomain).map(this.mapper.toResponse),
+      items: records.map(this.mapper.toDomain).map((domain) => {
+        return this.mapper.toResponse(domain)
+      }),
     })
   }
 }

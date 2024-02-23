@@ -28,7 +28,7 @@ export class VendorPaymentMapper implements Mapper<VendorPaymentEntity, VendorPa
       props: {
         vendorInvoiceId: record.vendorInvoiceId,
         amount: Number(record.amount),
-        paymentMethod: PaymentMethodEnum[record.paymentMethod],
+        paymentMethod: record.paymentMethod as PaymentMethodEnum,
         paymentDate: record.paymentDate,
         notes: record.notes,
         canceledAt: record.canceledAt,

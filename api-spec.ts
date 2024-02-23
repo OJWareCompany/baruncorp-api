@@ -2205,6 +2205,19 @@ export interface CreateVendorInvoiceRequestDto {
   note: string | null
 }
 
+export interface VendorInvoicePayment {
+  id: string
+  paymentName: string
+  vendorInvoiceId: string
+  amount: number
+  paymentMethod: 'Direct' | 'Deduction'
+  notes: string | null
+  /** @format date-time */
+  paymentDate: string
+  /** @format date-time */
+  canceledAt: string | null
+}
+
 export interface VendorInvoiceResponseDto {
   /** @default "" */
   id: string
@@ -2238,6 +2251,7 @@ export interface VendorInvoiceResponseDto {
   invoiceTotalDifference: number
   /** @default "" */
   internalTotalBalanceDue: number | null
+  vendorPayments: VendorInvoicePayment
   /** @default "" */
   createdAt: string
   /** @default "" */
@@ -2316,7 +2330,7 @@ export interface CreateVendorPaymentRequestDto {
   vendorInvoiceId: string
   /** @default 100 */
   amount: number
-  paymentMethod: 'Credit' | 'Direct'
+  paymentMethod: 'Direct'
   notes: string | null
 }
 
@@ -2324,7 +2338,7 @@ export interface VendorPaymentResponseDto {
   id: string
   vendorInvoiceId: string
   amount: number
-  paymentMethod: 'Credit' | 'Direct'
+  paymentMethod: 'Direct'
   paymentDate: string
   notes: string | null
   canceledAt: string | null

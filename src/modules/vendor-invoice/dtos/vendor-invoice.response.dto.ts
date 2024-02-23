@@ -1,5 +1,39 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { IsNumber, IsOptional, IsString } from 'class-validator'
+import { ApiProperty } from '@nestjs/swagger'
+import { initialize } from '../../../libs/utils/constructor-initializer'
+import { PaymentMethodEnum, VendorInvoicePaymentType } from '../../vendor-payment/domain/vendor-payment.type'
+import { VendorCreditTransactionTypeEnum } from '../../vendor-credit-transaction/domain/vendor-credit-transaction.type'
+
+export class VendorInvoicePayment {
+  @ApiProperty()
+  id: string
+
+  @ApiProperty()
+  paymentName: string
+
+  @ApiProperty()
+  vendorInvoiceId: string
+
+  @ApiProperty()
+  amount: number
+
+  @ApiProperty({ enum: [...Object.values(PaymentMethodEnum), VendorCreditTransactionTypeEnum.Deduction] })
+  paymentMethod: VendorInvoicePaymentType
+
+  @ApiProperty()
+  notes: string | null
+
+  @ApiProperty()
+  paymentDate: Date
+
+  @ApiProperty()
+  @IsOptional()
+  canceledAt: Date | null
+
+  constructor(props: VendorInvoicePayment) {
+    initialize(this, props)
+  }
+}
 
 export class VendorInvoiceResponseDto {
   @ApiProperty({ default: '' })
@@ -69,6 +103,9 @@ export class VendorInvoiceResponseDto {
   @IsNumber()
   @IsOptional()
   internalTotalBalanceDue: number | null
+
+  @ApiProperty({ type: VendorInvoicePayment })
+  vendorPayments: VendorInvoicePayment[]
 
   @ApiProperty({ default: '' })
   @IsString()
