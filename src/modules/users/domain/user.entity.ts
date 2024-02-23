@@ -143,13 +143,9 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return this
   }
 
-  isWorker() {
-    return (
-      this.isVendor ||
-      this.role === UserRoleNameEnum.admin ||
-      this.role === UserRoleNameEnum.member ||
-      this.role === UserRoleNameEnum.special_admin
-    )
+  isAvailableWorker() {
+    const permittedRoles = [UserRoleNameEnum.admin, UserRoleNameEnum.member, UserRoleNameEnum.special_admin]
+    return this.props.status === UserStatusEnum.ACTIVE && (this.isVendor || permittedRoles.includes(this.role))
   }
 
   invite() {
