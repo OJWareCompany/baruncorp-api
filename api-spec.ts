@@ -2304,6 +2304,14 @@ export interface UpdateVendorInvoicedTotalRequestDto {
   total: number
 }
 
+export interface UpdateVendorInvoiceRequestDto {
+  /** @format date-time */
+  invoiceDate: string
+  /** @default 30 */
+  terms: 21 | 30 | 60
+  note: string | null
+}
+
 export interface CreateVendorPaymentRequestDto {
   vendorInvoiceId: string
   /** @default 100 */
@@ -6743,12 +6751,12 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
     /**
      * No description
      *
-     * @name UpdateVendorInvoicedTotalHttpControllerPatch
+     * @name UpdateVendorInvoiceHttpControllerPatch
      * @request PATCH:/vendor-invoices/{vendorInvoiceId}
      */
-    updateVendorInvoicedTotalHttpControllerPatch: (
+    updateVendorInvoiceHttpControllerPatch: (
       vendorInvoiceId: string,
-      data: UpdateVendorInvoicedTotalRequestDto,
+      data: UpdateVendorInvoiceRequestDto,
       params: RequestParams = {},
     ) =>
       this.request<void, any>({
@@ -6774,6 +6782,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         method: 'GET',
         query: query,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateVendorInvoicedTotalHttpControllerPatch
+     * @request PATCH:/vendor-invoices/{vendorInvoiceId}/total
+     */
+    updateVendorInvoicedTotalHttpControllerPatch: (
+      vendorInvoiceId: string,
+      data: UpdateVendorInvoicedTotalRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/vendor-invoices/${vendorInvoiceId}/total`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }
