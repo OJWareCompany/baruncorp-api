@@ -45,7 +45,7 @@ export interface CreateJobProps {
   projectNumber: string | null
   propertyFullAddress: string
   projectPropertyType: ProjectPropertyTypeEnum
-  propertyOwner: string
+  propertyOwner: string | null
   totalOfJobs: number
   structuralUpgradeNote: string | null
 

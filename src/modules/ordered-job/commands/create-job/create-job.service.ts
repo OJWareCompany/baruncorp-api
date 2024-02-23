@@ -75,7 +75,7 @@ export class CreateJobService implements ICommandHandler {
       updatedBy: editor.userName.fullName,
       projectId: command.projectId,
       projectNumber: project.projectNumber,
-      propertyOwner: project.projectPropertyOwnerName!,
+      propertyOwner: project.projectPropertyOwnerName,
       totalOfJobs: project.totalOfJobs,
       isExpedited: command.isExpedited,
       mountingType: command.mountingType,
