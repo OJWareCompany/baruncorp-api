@@ -3147,6 +3147,7 @@ export interface FindAssignedTaskPaginatedHttpControllerGetParams {
    * @default ""
    */
   organizationName?: string | null
+  vendorInvoiceId?: string | null
   /** @default "Completed" */
   status?: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed' | null
   /** @default "Commercial" */

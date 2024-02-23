@@ -33,6 +33,11 @@ export class FindAssignedTaskPaginatedRequestDto {
   @IsOptional()
   readonly organizationName?: string | null
 
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly vendorInvoiceId?: string | null
+
   @ApiProperty({ default: AssignedTaskStatusEnum.Completed, enum: AssignedTaskStatusEnum })
   @IsEnum(AssignedTaskStatusEnum)
   @IsOptional()

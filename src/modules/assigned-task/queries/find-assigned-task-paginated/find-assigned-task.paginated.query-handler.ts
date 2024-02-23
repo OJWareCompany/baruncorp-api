@@ -21,6 +21,7 @@ export class FindAssignedTaskPaginatedQuery extends PaginatedQueryBase {
   readonly mountingType?: MountingType | null
   readonly isVendor?: boolean | null
   readonly isRevision?: boolean | null
+  readonly vendorInvoiceId?: string | null
   constructor(props: PaginatedParams<FindAssignedTaskPaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -44,9 +45,11 @@ export class FindAssignedTaskPaginatedQueryHandler implements IQueryHandler {
       ...(query.status && { status: query.status }),
       ...(query.projectPropertyType && { projectPropertyType: query.projectPropertyType }),
       ...(query.mountingType && { mountingType: query.mountingType }),
+      ...(query.vendorInvoiceId && { vendorInvoiceId: query.vendorInvoiceId }),
       ...(query.isRevision !== undefined && query.isRevision !== null && { isRevision: query.isRevision }),
       ...(query.isVendor !== undefined && query.isVendor !== null && { isVendor: query.isVendor }),
     }
+
     const result = await this.prismaService.assignedTasks.findMany({
       where: condition,
       include: { user: true, orderedService: true },
