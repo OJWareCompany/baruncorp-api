@@ -18,8 +18,8 @@ export class FindVendorCreditTransactionPaginatedHttpController {
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<VendorCreditTransactionPaginatedResponseDto> {
     const command = new FindVendorCreditTransactionPaginatedQuery({
-      ...request,
       ...queryParams,
+      vendorOrganizationId: request.vendorOrganizationId,
     })
 
     const result: Paginated<VendorCreditTransactions> = await this.queryBus.execute(command)

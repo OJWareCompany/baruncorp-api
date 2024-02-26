@@ -5,5 +5,5 @@ export class FindVendorCreditTransactionPaginatedRequestDto {
   @ApiProperty()
   @IsString()
   @IsOptional()
-  readonly organizationId?: string | null
+  readonly vendorOrganizationId?: string | null
 }

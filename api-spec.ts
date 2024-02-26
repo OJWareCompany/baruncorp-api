@@ -3735,7 +3735,7 @@ export interface FindVendorPaymentPaginatedHttpControllerGetParams {
 }
 
 export interface FindVendorCreditTransactionPaginatedHttpControllerGetParams {
-  organizationId?: string | null
+  vendorOrganizationId?: string | null
   /**
    * Specifies a limit of returned records
    * @default 20
