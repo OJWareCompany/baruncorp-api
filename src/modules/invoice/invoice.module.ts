@@ -35,6 +35,7 @@ import { InvoiceCalculator } from './domain/domain-services/invoice-calculator.d
 import { OrganizationModule } from '../organization/organization.module'
 import { CreditTransactionModule } from '../credit-transaction/credit-transaction.module'
 import { PaymentModule } from '../payment/payment.module'
+import { UpdatedInvoiceWhenCreditPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-credit-payment-is-canceled.domain-event-handler'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -71,6 +72,7 @@ const eventHandlers: Provider[] = [
   UpdatedInvoiceWhenPaymentIsCanceledEventHandler,
   UpdateInvoiceTotalWhenOrderedServicePriceIsUpdatedDomainEventHandler,
   PayInvoiceWhenCreditPaymentIsCreatedEventHandler,
+  UpdatedInvoiceWhenCreditPaymentIsCanceledEventHandler,
 ]
 
 const mappers: Provider[] = [InvoiceMapper]

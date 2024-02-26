@@ -6,6 +6,7 @@ import {
   CreditTransactionTypeEnum,
 } from './credit-transaction.type'
 import { CreditTransactionCreatedDomainEvent } from './domain-events/credit-transaction-created.domain-event'
+import { CreditTransactionCanceledDomainEvent } from './domain-events/credit-transaction-canceled.domain-event'
 
 export class CreditTransactionEntity extends AggregateRoot<CreditTransactionProps> {
   protected _id: string
@@ -41,6 +42,7 @@ export class CreditTransactionEntity extends AggregateRoot<CreditTransactionProp
 
   cancel(): this {
     this.props.canceledAt = new Date()
+    this.addEvent(new CreditTransactionCanceledDomainEvent({ aggregateId: this.id }))
     return this
   }
 
