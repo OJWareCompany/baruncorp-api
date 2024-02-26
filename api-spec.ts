@@ -2261,7 +2261,8 @@ export interface VendorInvoiceResponseDto {
   invoiceTotalDifference: number
   /** @default "" */
   internalTotalBalanceDue: number | null
-  vendorPayments: VendorInvoicePayment
+  internalTotalPayment: number
+  vendorPayments: VendorInvoicePayment[]
   /** @default "" */
   createdAt: string
   /** @default "" */

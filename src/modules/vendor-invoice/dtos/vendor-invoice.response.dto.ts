@@ -104,7 +104,11 @@ export class VendorInvoiceResponseDto {
   @IsOptional()
   internalTotalBalanceDue: number | null
 
-  @ApiProperty({ type: VendorInvoicePayment })
+  @ApiProperty()
+  @IsNumber()
+  internalTotalPayment: number
+
+  @ApiProperty({ type: VendorInvoicePayment, isArray: true })
   vendorPayments: VendorInvoicePayment[]
 
   @ApiProperty({ default: '' })
