@@ -129,9 +129,6 @@ export class Engineering {
   @ApiProperty({ default: '30', nullable: true })
   snowLoadFlatRoof: string | null
 
-  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes, nullable: true })
-  wetStampsRequired: string | null
-
   @ApiProperty({ default: 'ofWetStamps...', nullable: true })
   ofWetStamps: string | null
 

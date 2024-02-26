@@ -909,8 +909,6 @@ export interface Engineering {
   snowLoadGround: string | null
   /** @default "30" */
   snowLoadFlatRoof: string | null
-  /** @default "See Notes" */
-  wetStampsRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "ofWetStamps..." */
   ofWetStamps: string | null
   /** @default "ANSI B (11x17 INCH)" */

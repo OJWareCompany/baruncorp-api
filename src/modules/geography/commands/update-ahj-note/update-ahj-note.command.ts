@@ -17,7 +17,6 @@ export class UpdateAhjNoteCommand {
   readonly iebcAccepted: string | null
   readonly structuralObservationRequired: string | null
   readonly windUpliftCalculationRequired: string | null
-  readonly wetStampsRequired: string | null
   readonly digitalSignatureType: string | null
   readonly wetStampSize: string | null
   readonly windSpeedRiskCatFirst: string | null

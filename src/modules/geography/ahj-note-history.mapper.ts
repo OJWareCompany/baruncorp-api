@@ -62,7 +62,6 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
       iebcAccepted: model.iebcAccepted,
       structuralObservationRequired: model.structuralObservationRequired,
       windUpliftCalculationRequired: model.windUpliftCalculationRequired,
-      wetStampsRequired: model.wetStampsRequired,
       digitalSignatureType: model.digitalSignatureType,
       wetStampSize: model.wetStampSize,
       windSpeedRiskCatFirst: model.windSpeedRiskCatFirst,

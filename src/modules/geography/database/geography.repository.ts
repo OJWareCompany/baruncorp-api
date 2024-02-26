@@ -284,7 +284,7 @@ export class GeographyRepository implements GeographyRepositoryPort {
         specificFormRequired: update.specificFormRequired,
         structuralStampRequired: update.structuralStampRequired,
         electricalStampRequired: update.electricalStampRequired,
-        wetStampsRequired: update.wetStampsRequired,
+        wetStampsRequired: update.wetStampRequired,
         generalNotes: update.generalNotes,
         buildingCodes: update.buildingCodes,
         fireSetBack: update.fireSetBack,
