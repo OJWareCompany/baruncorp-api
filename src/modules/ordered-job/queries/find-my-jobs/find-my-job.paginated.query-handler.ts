@@ -4,7 +4,7 @@ import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
-import { OrderedJobs } from '@prisma/client'
+import { OrderedJobs, Prisma } from '@prisma/client'
 import { AutoOnlyJobStatusEnum, JobStatusEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
@@ -33,9 +33,9 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
 
   async execute(query: FindMyJobPaginatedQuery): Promise<Paginated<OrderedJobs>> {
     // TODO: totalCount때문에 풀스캔하게됨
-    const condition = {
+    const condition: Prisma.OrderedJobsWhereInput = {
       ...(query.jobStatus && { jobStatus: query.jobStatus }),
-      ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
+      ...(query.projectNumber && { project_number: { contains: query.projectNumber } }),
       ...(query.jobName && { jobName: { contains: query.jobName } }),
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
       ...(query.projectPropertyType && { projectType: query.projectPropertyType }),

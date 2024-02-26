@@ -34,7 +34,7 @@ export class FindMyOrderedJobPaginatedQueryHandler implements IQueryHandler {
   async execute(query: FindMyOrderedJobPaginatedQuery): Promise<Paginated<OrderedJobs>> {
     const condition: Prisma.OrderedJobsWhereInput = {
       clientUserId: query.userId,
-      ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
+      ...(query.projectNumber && { project_number: { contains: query.projectNumber } }),
       ...(query.jobName && { jobName: { contains: query.jobName } }),
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
       ...(query.projectPropertyType && { projectType: query.projectPropertyType }),

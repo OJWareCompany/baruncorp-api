@@ -33,6 +33,7 @@ export class UpdateJobHttpController {
       priority: dto.priority,
       dueDate: dto.dueDate || null,
       structuralUpgradeNote: dto.structuralUpgradeNote,
+      loadCalcOrigin: dto.loadCalcOrigin,
     })
 
     await this.commandBus.execute(command)

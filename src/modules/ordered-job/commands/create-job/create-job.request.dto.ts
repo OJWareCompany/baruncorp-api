@@ -51,7 +51,7 @@ export class CreateJobRequestDto {
   @ApiProperty({ enum: LoadCalcOriginEnum, default: LoadCalcOriginEnum.Self })
   @IsEnum(LoadCalcOriginEnum)
   @IsOptional()
-  readonly loadCalcOrigin?: LoadCalcOriginEnum = LoadCalcOriginEnum.Self
+  readonly loadCalcOrigin: LoadCalcOriginEnum
 
   @ApiProperty({
     default: [

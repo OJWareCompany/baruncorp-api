@@ -6,7 +6,14 @@ import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 import { UserEntity } from '../../users/domain/user.entity'
 import { Address } from '../../organization/domain/value-objects/address.vo'
-import { AutoOnlyJobStatusEnum, CreateJobProps, JobProps, JobStatusEnum, OrderedJobsPriorityEnum } from './job.type'
+import {
+  AutoOnlyJobStatusEnum,
+  CreateJobProps,
+  JobProps,
+  JobStatusEnum,
+  LoadCalcOriginEnum,
+  OrderedJobsPriorityEnum,
+} from './job.type'
 import { JobCanceledAndKeptInvoiceDomainEvent } from './events/job-canceled-and-kept-invoice.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
 import { OrderStatusChangeValidator } from './domain-services/order-status-change-validator.domain-service'
@@ -262,6 +269,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   setStructuralUpgradeNote(structuralUpgradeNote: string | null) {
     this.props.structuralUpgradeNote = structuralUpgradeNote
+    return this
+  }
+
+  setLoadCalcOrigin(loadCalcOrigin: LoadCalcOriginEnum) {
+    this.props.loadCalcOrigin = loadCalcOrigin
     return this
   }
 

@@ -35,7 +35,7 @@ export class FindProjectsQueryHandler implements IQueryHandler {
   ): Promise<Paginated<{ organization: Organizations | null } & OrderedProjects>> {
     const condition: Prisma.OrderedProjectsWhereInput = {
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
-      ...(query.projectNumber && { projectNumber: { contains: query.projectNumber } }),
+      ...(query.projectNumber && { project_number: { contains: query.projectNumber } }),
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
       ...(query.projectPropertyOwner && { propertyOwnerName: { contains: query.projectPropertyOwner } }),
       ...(query.propertyType && { projectPropertyType: query.propertyType }),
