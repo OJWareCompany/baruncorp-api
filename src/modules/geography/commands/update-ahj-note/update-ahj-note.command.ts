@@ -1,4 +1,5 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
+import { SelectOption } from '../../dto/ahj-note.response.dto'
 
 export class UpdateAhjNoteCommand {
   readonly website: string | null
@@ -28,6 +29,9 @@ export class UpdateAhjNoteCommand {
   readonly electricalNotes: string | null
   readonly editorUserId: string
   readonly geoId: string
+  readonly structuralStampRequired: SelectOption | null
+  readonly electricalStampRequired: SelectOption | null
+  readonly wetStampRequired: SelectOption | null
   /**
    * 클래스에 정의되지 않은 필드를 수정하는 것을 방지
    */

@@ -5,7 +5,7 @@ import { AhjNoteHistoryListResponseDto } from './dto/ahj-note-history.paginated.
 import { AhjNoteHistoryResponseDto } from './dto/ahj-note-history.response.dto'
 import { AhjNoteHistoryTypeEnum } from './domain/ahj-job-note.type'
 import { AHJNoteHistoryModel } from './database/geography.repository'
-import { AHJType } from './dto/ahj-note.response.dto'
+import { AHJType, SelectOption } from './dto/ahj-note.response.dto'
 
 @Injectable()
 export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, AhjNoteHistoryResponseDto> {
@@ -35,6 +35,9 @@ export class AhjNoteHistoryMapper implements Mapper<any, AHJNoteHistoryModel, Ah
       website: model.website,
       specificFormRequired: model.specificFormRequired,
       generalNotes: model.generalNotes,
+      wetStampRequired: model.wetStampsRequired as SelectOption | null,
+      electricalStampRequired: model.electricalStampRequired as SelectOption | null,
+      structuralStampRequired: model.structuralStampRequired as SelectOption | null,
       buildingCodes: model.buildingCodes,
       name: model.name,
       fullAhjName: model.fullAhjName,

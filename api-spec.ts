@@ -855,6 +855,12 @@ export interface General {
   generalNotes: string | null
   /** @default "2015 IBC2" */
   buildingCodes: string | null
+  /** @default "See Notes" */
+  structuralStampRequired: 'No' | 'Yes' | 'See Notes' | null
+  /** @default "See Notes" */
+  electricalStampRequired: 'No' | 'Yes' | 'See Notes' | null
+  /** @default "See Notes" */
+  wetStampRequired: 'No' | 'Yes' | 'See Notes' | null
   /** @default "Arcata city" */
   name: string
   /** @default "Arroyo Grande city, California" */
@@ -940,6 +946,12 @@ export interface UpdateAhjGeneral {
   generalNotes: string | null
   /** @example "buildingCodes..." */
   buildingCodes: string | null
+  /** @default "See Notes" */
+  structuralStampRequired: 'No' | 'Yes' | 'See Notes' | null
+  /** @default "See Notes" */
+  electricalStampRequired: 'No' | 'Yes' | 'See Notes' | null
+  /** @default "See Notes" */
+  wetStampRequired: 'No' | 'Yes' | 'See Notes' | null
 }
 
 export interface UpdateAhjNoteRequestDto {

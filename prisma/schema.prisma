@@ -343,6 +343,8 @@ model AHJNotes {
   wetStampsRequired             String?  @map("wet_stamps_required") @db.VarChar(300)
   ofWetStamps                   String?  @map("of_wet_stamps") @db.VarChar(300)
   wetStampSize                  String?  @map("wet_stamp_size") @db.VarChar(300)
+  structuralStampRequired       String?  @map("structural_stamp_required") @db.VarChar(300)
+  electricalStampRequired       String?  @map("electrical_stamp_required") @db.VarChar(300)
   engineeringNotes              String?  @map("engineering_notes") @db.Text
   electricalNotes               String?  @map("electrical_notes") @db.Text
   stateCode                     String?  @map("state_code") @db.VarChar(20)
@@ -393,6 +395,8 @@ model AHJNoteHistory {
   wetStampsRequired             String?  @map("wet_stamps_required") @db.VarChar(300)
   ofWetStamps                   String?  @map("of_wet_stamps") @db.VarChar(300)
   wetStampSize                  String?  @map("wet_stamp_size") @db.VarChar(300)
+  structuralStampRequired       String?  @map("structural_stamp_required") @db.VarChar(300)
+  electricalStampRequired       String?  @map("electrical_stamp_required") @db.VarChar(300)
   engineeringNotes              String?  @map("engineering_notes") @db.Text
   electricalNotes               String?  @map("electrical_notes") @db.Text
   stateCode                     String?  @map("state_code") @db.VarChar(20)

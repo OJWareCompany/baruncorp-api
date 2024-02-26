@@ -1,6 +1,6 @@
 import { Mapper } from '@libs/ddd/mapper.interface'
 import { AHJNotesModel } from './database/geography.repository'
-import { AHJType, AhjNoteResponseDto } from './dto/ahj-note.response.dto'
+import { AHJType, AhjNoteResponseDto, SelectOption } from './dto/ahj-note.response.dto'
 import { AhjNoteListResponseDto } from './dto/ahj-note.paginated.response.dto'
 import { Injectable } from '@nestjs/common'
 
@@ -28,6 +28,9 @@ export class AhjNoteMapper implements Mapper<any, AHJNotesModel, AhjNoteResponse
     response.general = {
       website: model.website,
       specificFormRequired: model.specificFormRequired,
+      wetStampRequired: model.wetStampsRequired as SelectOption,
+      electricalStampRequired: model.electricalStampRequired as SelectOption,
+      structuralStampRequired: model.structuralStampRequired as SelectOption,
       generalNotes: model.generalNotes,
       buildingCodes: model.buildingCodes,
       name: model.name,

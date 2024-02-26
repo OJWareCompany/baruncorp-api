@@ -282,6 +282,9 @@ export class GeographyRepository implements GeographyRepositoryPort {
       data: {
         website: update.website,
         specificFormRequired: update.specificFormRequired,
+        structuralStampRequired: update.structuralStampRequired,
+        electricalStampRequired: update.electricalStampRequired,
+        wetStampsRequired: update.wetStampsRequired,
         generalNotes: update.generalNotes,
         buildingCodes: update.buildingCodes,
         fireSetBack: update.fireSetBack,
@@ -295,7 +298,6 @@ export class GeographyRepository implements GeographyRepositoryPort {
         iebcAccepted: update.iebcAccepted,
         structuralObservationRequired: update.structuralObservationRequired,
         windUpliftCalculationRequired: update.windUpliftCalculationRequired,
-        wetStampsRequired: update.wetStampsRequired,
         digitalSignatureType: update.digitalSignatureType,
         windSpeedRiskCatFirst: update.windSpeedRiskCatFirst,
         windSpeedRiskCatSecond: update.windSpeedRiskCatSecond,

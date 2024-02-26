@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsString, IsDefined, IsOptional } from 'class-validator'
+import { IsString, IsDefined, IsOptional, IsEnum } from 'class-validator'
 import { Design, ElectricalEngineering, Engineering, SelectOption } from '../../dto/ahj-note.response.dto'
 
 /**
@@ -27,6 +27,21 @@ class UpdateAhjGeneral {
   @IsString()
   @IsOptional()
   buildingCodes: string | null
+
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
+  @IsOptional()
+  @IsEnum(SelectOption)
+  structuralStampRequired: SelectOption | null
+
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
+  @IsOptional()
+  @IsEnum(SelectOption)
+  electricalStampRequired: SelectOption | null
+
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
+  @IsOptional()
+  @IsEnum(SelectOption)
+  wetStampRequired: SelectOption | null
 }
 
 export class UpdateAhjNoteRequestDto {

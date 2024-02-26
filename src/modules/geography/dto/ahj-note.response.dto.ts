@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { IsEnum, IsOptional } from 'class-validator'
 
 export enum AHJType {
   STATE = 'STATE',
@@ -45,6 +46,21 @@ export class General {
 
   @ApiProperty({ default: '2015 IBC2', nullable: true })
   buildingCodes: string | null
+
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
+  @IsOptional()
+  @IsEnum(SelectOption)
+  structuralStampRequired: SelectOption | null
+
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
+  @IsOptional()
+  @IsEnum(SelectOption)
+  electricalStampRequired: SelectOption | null
+
+  @ApiProperty({ enum: SelectOption, default: SelectOption.SeeNotes })
+  @IsOptional()
+  @IsEnum(SelectOption)
+  wetStampRequired: SelectOption | null
 
   @ApiProperty({ default: 'Arcata city' })
   name: string
