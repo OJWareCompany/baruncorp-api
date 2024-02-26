@@ -325,7 +325,7 @@ export interface CreateJobRequestDto {
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
-  loadCalcOrigin?: 'Self' | 'Client Provided'
+  loadCalcOrigin: 'Self' | 'Client Provided'
   /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
   mailingAddressForWetStamp: AddressDto | null
@@ -352,7 +352,7 @@ export interface UpdateJobRequestDto {
   systemSize: number | null
   structuralUpgradeNote: string | null
   /** @default "Self" */
-  loadCalcOrigin?: 'Self' | 'Client Provided'
+  loadCalcOrigin: 'Self' | 'Client Provided'
   mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
