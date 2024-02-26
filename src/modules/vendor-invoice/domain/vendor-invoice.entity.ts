@@ -29,6 +29,19 @@ export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
     return this.props.organizationId
   }
 
+  async setSubtotal(subtotal: number, calculator: VendorInvoiceCalculator) {
+    if (this.props.subTotal === this.props.total) {
+      // total을 직접 수정 하지 않았을때는 subtotal과 함께 수정되도록한다.
+      this.props.total = subtotal
+    }
+
+    const paidAmount = await calculator.calcPaymentTotal(this)
+    this.props.subTotal = subtotal
+    this.props.invoiceTotalDifference = this.props.subTotal - this.props.total // internal subtotal에서 실제 청구된 금액을 뺀다.
+    this.props.internalTotalBalanceDue = this.props.total - paidAmount // find how much paid, 지불 해야할 남은 금액
+    return this
+  }
+
   async enterVendorInvoicedTotal(total: number, calculator: VendorInvoiceCalculator): Promise<this> {
     const paidAmount = await calculator.calcPaymentTotal(this)
     this.props.total = total
@@ -41,6 +54,12 @@ export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
     this.props.invoiceDate = invoiceDate
     this.props.terms = term
     // this.setDueDate()
+    return this
+  }
+
+  async determinePaymentTotalAndStatus(calculator: VendorInvoiceCalculator) {
+    const paidAmount = await calculator.calcPaymentTotal(this)
+    this.props.internalTotalBalanceDue = this.props.total - paidAmount // find how much paid, 지불 해야할 남은 금액
     return this
   }
 

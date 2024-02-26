@@ -5,7 +5,8 @@ import {
   VendorCreditTransactionProps,
   VendorCreditTransactionTypeEnum,
 } from './vendor-credit-transaction.type'
-import { CreditTransactionCreatedDomainEvent } from './domain-events/vendor-credit-transaction-created.domain-event'
+import { VendorCreditTransactionCreatedDomainEvent } from './domain-events/vendor-credit-transaction-created.domain-event'
+import { VendorCreditTransactionCanceledDomainEvent } from './domain-events/vendor-credit-transaction-canceled.domain-event'
 
 export class VendorCreditTransactionEntity extends AggregateRoot<VendorCreditTransactionProps> {
   protected _id: string
@@ -16,7 +17,7 @@ export class VendorCreditTransactionEntity extends AggregateRoot<VendorCreditTra
     const entity = new VendorCreditTransactionEntity({ id, props })
 
     entity.addEvent(
-      new CreditTransactionCreatedDomainEvent({
+      new VendorCreditTransactionCreatedDomainEvent({
         aggregateId: entity.id,
         invoiceId: entity.getProps().relatedVendorInvoiceId,
       }),
@@ -41,6 +42,12 @@ export class VendorCreditTransactionEntity extends AggregateRoot<VendorCreditTra
 
   cancel(): this {
     this.props.canceledAt = new Date()
+    this.addEvent(
+      new VendorCreditTransactionCanceledDomainEvent({
+        aggregateId: this.id,
+        vendorInvoiceId: this.props.relatedVendorInvoiceId,
+      }),
+    )
     return this
   }
 

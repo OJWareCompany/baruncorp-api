@@ -13,7 +13,6 @@ export class CancelVendorPaymentService implements ICommandHandler {
     // @ts-ignore
     @Inject(VENDOR_PAYMENT_REPOSITORY)
     private readonly paymentRepo: VendorPaymentRepositoryPort,
-    private readonly prismaService: PrismaService,
   ) {}
   async execute(command: CancelVendorPaymentCommand): Promise<void> {
     const entity = await this.paymentRepo.findOne(command.vendorPaymentId)
