@@ -11,7 +11,6 @@ import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-t
 import { ASSIGNED_TASK_REPOSITORY } from '../../../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../../assigned-task/database/assigned-task.repository.port'
 import { AssignedTaskNotFoundException } from '../../../assigned-task/domain/assigned-task.error'
-import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 
 @CommandHandler(CreateVendorInvoiceCommand)
 export class CreateVendorInvoiceService implements ICommandHandler {
@@ -25,7 +24,6 @@ export class CreateVendorInvoiceService implements ICommandHandler {
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY)
     private readonly assignTaskRepo: AssignedTaskRepositoryPort,
-    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
   async execute(command: CreateVendorInvoiceCommand): Promise<AggregateID> {
     const organization = await this.organizationRepo.findOneOrThrow(command.organizationId)
@@ -53,7 +51,7 @@ export class CreateVendorInvoiceService implements ICommandHandler {
     })
 
     const loop = tasksToInvoice.map(async (task) => {
-      await task.invoice(entity.id, this.orderModificationValidator)
+      await task.invoice(entity.id)
     })
 
     await Promise.all(loop)

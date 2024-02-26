@@ -143,8 +143,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async invoice(vendorInvoiceId: string, orderModificationValidator: OrderModificationValidator) {
-    await orderModificationValidator.validate(this)
+  async invoice(vendorInvoiceId: string) {
     this.props.vendorInvoiceId = vendorInvoiceId
     return this
   }
