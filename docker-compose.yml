@@ -10,7 +10,7 @@ services:
       - ./myweb:/usr/share/nginx/html
       - ./certbot-etc:/etc/letsencrypt
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-        #- ./nginx/proxy.conf:/etc/nginx/proxy.conf
+        - ./nginx/proxy.conf:/etc/nginx/proxy.conf
       #- ./nginx/templates:/etc/nginx/templates
     #env_file:
     #- ./.env
