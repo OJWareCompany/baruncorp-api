@@ -6,6 +6,8 @@ import { InvitationMailRepositoryPort } from '../../database/invitationMail.repo
 import { UserEntity } from '../user.entity'
 import { EmailVO } from '../value-objects/email.vo'
 import { UserStatusEnum } from '../user.types'
+import { PTO_REPOSITORY } from '../../../pto/pto.di-token'
+import { PtoRepositoryPort } from '../../../pto/database/pto.repository.port'
 
 @Injectable()
 export class UserManager {
@@ -13,6 +15,7 @@ export class UserManager {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationRepo: InvitationMailRepositoryPort,
+    @Inject(PTO_REPOSITORY) private readonly ptoRepo: PtoRepositoryPort,
   ) {}
 
   async determineUserStatus(user: UserEntity): Promise<UserStatusEnum> {
@@ -21,5 +24,9 @@ export class UserManager {
     const invitation = await this.invitationRepo.findOne(new EmailVO(user.getProps().email))
     if (invitation) return UserStatusEnum.INVITATION_SENT
     return UserStatusEnum.INVITATION_NOT_SENT
+  }
+
+  async isPto(user: UserEntity): Promise<boolean> {
+    return await this.ptoRepo.hasPtoDetailOnToday(user.id)
   }
 }

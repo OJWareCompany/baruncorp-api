@@ -143,7 +143,10 @@ export class UserEntity extends AggregateRoot<UserProps> {
     return this
   }
 
-  isAvailableWorker() {
+  async isAvailableWorker(userManager: UserManager) {
+    if (await userManager.isPto(this)) {
+      return false
+    }
     const permittedRoles = [UserRoleNameEnum.admin, UserRoleNameEnum.member, UserRoleNameEnum.special_admin]
     return this.props.status === UserStatusEnum.ACTIVE && (this.isVendor || permittedRoles.includes(this.role))
   }

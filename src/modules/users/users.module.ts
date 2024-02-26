@@ -104,7 +104,7 @@ const mappers: Provider[] = [UserMapper, UserRoleMapper]
   ],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
-  exports: [UserService, ...repositories, ...mappers],
+  exports: [UserService, ...repositories, ...mappers, ...domainServices],
 })
 export class UsersModule {}
 
