@@ -15,22 +15,27 @@ import { VendorInvoiceMapper } from './vendor-invoice.mapper'
 import { FindVendorToInvoicePaginatedHttpController } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.http.controller'
 import { FindVendorToInvoiceLineItemsPaginatedHttpController } from './queries/find-vendor-to-invoice-line-items-paginated/find-vendor-to-invoice-line-items.paginated.http.controller'
 import { FindVendorToInvoicePaginatedQueryHandler } from './queries/find-vendor-to-invoice-paginated/find-vendor-to-invoice.paginated.query-handler'
-import { FindVendorInvoiceLineItemQueryHandler } from './queries/find-vendor-invoice-line-item/find-vendor-invoice-line-item.query-handler'
 import { FindVendorToInvoiceLineItemsQueryHandler } from './queries/find-vendor-to-invoice-line-items-paginated/find-vendor-to-invoice-line-items.paginated.query-handler'
 import { FindVendorInvoiceLineItemHttpController } from './queries/find-vendor-invoice-line-item/find-vendor-invoice-line-item.http.controller'
-import { InvoiceModule } from '../invoice/invoice.module'
-import { JobModule } from '../ordered-job/job.module'
-import { ProjectModule } from '../project/project.module'
-import { OrganizationModule } from '../organization/organization.module'
-import { UsersModule } from '../users/users.module'
-import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
+import { FindVendorInvoiceLineItemQueryHandler } from './queries/find-vendor-invoice-line-item/find-vendor-invoice-line-item.query-handler'
+import { UpdateVendorInvoiceSubtotalWhenTaskCostIsUpdatedDomainEventHandler } from './application/event-handlers/update-vendor-invoice-subtotal-when-task-cost-is-updated.domain-event-handler'
+import { UpdatedVendorInvoiceWhenVendorCreditPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-credit-payment-is-canceled.domain-event-handler'
+import { PayVendorInvoiceWhenVendorCreditPaymentIsCreatedEventHandler } from './application/event-handlers/pay-vendor-invoice-when-vendor-credit-payment-is-created.domain-event-handler'
+import { UpdatedVendorInvoiceWhenVendorPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-payment-is-canceled.domain-event-handler'
+import { VendorPayInvoiceWhenVendorPaymentIsCreatedEventHandler } from './application/event-handlers/pay-vendor-invoice-when-vendor-payment-is-created.domain-event-handler'
 import { UpdateVendorInvoicedTotalHttpController } from './commands/update-vendor-invoiced-total/update-vendor-invoiced-total.http.controller'
+import { UpdateVendorInvoiceHttpController } from './commands/update-vendor-invoice/update-vendor-invoice.http.controller'
 import { UpdateVendorInvoicedTotalService } from './commands/update-vendor-invoiced-total/update-vendor-invoiced-total.service'
+import { VendorCreditTransactionModule } from '../vendor-credit-transaction/vendor-credit-transaction.module'
+import { UpdateVendorInvoiceService } from './commands/update-vendor-invoice/update-vendor-invoice.service'
 import { VendorInvoiceCalculator } from './domain/domain-services/vendor-invoice-calculator.domain-service'
 import { VendorPaymentModule } from '../vendor-payment/vendor-payment.module'
-import { VendorCreditTransactionModule } from '../vendor-credit-transaction/vendor-credit-transaction.module'
-import { UpdateVendorInvoiceHttpController } from './commands/update-vendor-invoice/update-vendor-invoice.http.controller'
-import { UpdateVendorInvoiceService } from './commands/update-vendor-invoice/update-vendor-invoice.service'
+import { OrganizationModule } from '../organization/organization.module'
+import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
+import { InvoiceModule } from '../invoice/invoice.module'
+import { ProjectModule } from '../project/project.module'
+import { UsersModule } from '../users/users.module'
+import { JobModule } from '../ordered-job/job.module'
 
 const httpControllers = [
   CreateVendorInvoiceHttpController,
@@ -62,7 +67,13 @@ const repositories: Provider[] = [
     useClass: VendorInvoiceRepository,
   },
 ]
-const eventHandlers: Provider[] = []
+const eventHandlers: Provider[] = [
+  PayVendorInvoiceWhenVendorCreditPaymentIsCreatedEventHandler,
+  VendorPayInvoiceWhenVendorPaymentIsCreatedEventHandler,
+  UpdatedVendorInvoiceWhenVendorCreditPaymentIsCanceledEventHandler,
+  UpdatedVendorInvoiceWhenVendorPaymentIsCanceledEventHandler,
+  UpdateVendorInvoiceSubtotalWhenTaskCostIsUpdatedDomainEventHandler,
+]
 const domainServices: Provider[] = [VendorInvoiceCalculator]
 const mappers: Provider[] = [VendorInvoiceMapper]
 
