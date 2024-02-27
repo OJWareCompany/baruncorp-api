@@ -116,6 +116,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
         assigneeOrganizationId: organizationId,
         status: AssignedTaskStatusEnum.Completed,
         isVendor: true,
+        vendorInvoiceId: null,
         NOT: { cost: null },
         // TODO: 검토필요, createdAt으로 교체?
         startedAt: {
@@ -132,6 +133,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
       where: {
         assigneeOrganizationId: organizationId,
         status: AssignedTaskStatusEnum.Completed,
+        vendorInvoiceId: null,
         isVendor: true,
         NOT: { cost: null },
         // TODO: 검토필요, createdAt으로 교체?
