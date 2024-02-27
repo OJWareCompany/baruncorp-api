@@ -105,6 +105,7 @@ export class JobResponseMapper {
           serviceId: assignedTask.serviceId,
           createdAt: assignedTask.created_at,
           prerequisiteTasks: prerequisiteTasks,
+          jobDescription: assignedTask.jobName,
         })
       }),
     )

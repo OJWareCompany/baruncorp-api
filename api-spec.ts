@@ -386,6 +386,7 @@ export interface AssignedTaskResponseDto {
   orderedServiceId: string
   serviceName: string
   jobId: string
+  jobDescription: string | null
   /** @default "Not Started" */
   status: 'Not Started' | 'In Progress' | 'On Hold' | 'Canceled' | 'Completed'
   description: string | null
@@ -2307,6 +2308,8 @@ export interface VendorInvoiceLineItemResponse {
   jobDescription: string | null
   propertyOwnerName: string | null
   serviceName: string
+  serviceId: string
+  orderedServiceId: string
   serviceDescription: string | null
   taskExpenseTotal: number
   isRevision: boolean

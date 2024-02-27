@@ -43,6 +43,7 @@ export class FindAssignedTaskHttpController {
       serviceId: result.serviceId,
       createdAt: result.created_at,
       prerequisiteTasks: result.prerequisiteTasks,
+      jobDescription: result.jobName,
     })
   }
 }

@@ -119,6 +119,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
     response.doneAt = entity.getProps().doneAt!.toISOString()
     response.jobId = entity.getProps().jobId
     response.taskName = entity.getProps().taskName
+    response.serviceId = entity.getProps().serviceId
+    response.orderedServiceId = entity.getProps().orderedServiceId
     return response
   }
 }

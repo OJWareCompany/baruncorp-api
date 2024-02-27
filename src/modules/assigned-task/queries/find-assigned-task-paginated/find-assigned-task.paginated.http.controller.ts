@@ -59,6 +59,7 @@ export class FindAssignedTaskPaginatedHttpController {
         serviceId: item.serviceId,
         createdAt: item.created_at,
         prerequisiteTasks: item.prerequisiteTasks,
+        jobDescription: item.jobName,
       })),
     })
   }

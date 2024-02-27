@@ -29,6 +29,10 @@ export class AssignedTaskResponseDto {
   @IsString()
   readonly jobId: string
 
+  @ApiProperty()
+  @IsString()
+  readonly jobDescription: string | null
+
   // @ApiProperty({ example: 5 })
   // @IsString()
   // readonly jobRequestNumber: number

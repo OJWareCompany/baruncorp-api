@@ -67,6 +67,14 @@ export class VendorInvoiceLineItemResponse {
 
   @ApiProperty()
   @IsString()
+  serviceId: string
+
+  @ApiProperty()
+  @IsString()
+  orderedServiceId: string
+
+  @ApiProperty()
+  @IsString()
   @IsOptional()
   serviceDescription: string | null
 
