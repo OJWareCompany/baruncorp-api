@@ -2300,6 +2300,8 @@ export interface VendorInvoiceLineItemResponse {
   assigneeOrganizationName: string
   clientOrganizationId: string
   clientOrganizationName: string
+  taskName: string
+  jobId: string
   projectId: string
   projectNumber: string | null
   jobDescription: string | null

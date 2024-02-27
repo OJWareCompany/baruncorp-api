@@ -36,6 +36,14 @@ export class VendorInvoiceLineItemResponse {
 
   @ApiProperty()
   @IsString()
+  taskName: string
+
+  @ApiProperty()
+  @IsString()
+  jobId: string
+
+  @ApiProperty()
+  @IsString()
   projectId: string
 
   @ApiProperty()
