@@ -149,8 +149,23 @@ export class GeographyRepository implements GeographyRepositoryPort {
     }
 
     if (!placeNotes) {
+      const data = create.getNoteInputData(state, county, subdivision)
       const newNotes = await this.prismaService.aHJNotes.create({
-        data: { ...create.getNoteInputData(state, county, subdivision) },
+        data: {
+          geoId: data.geoId,
+          type: data.type,
+          geoIdState: data.geoIdState,
+          geoIdCounty: data.geoIdCounty,
+          geoIdCountySubdivision: data.geoIdCountySubdivision,
+          geoIdPlace: data.geoIdPlace,
+          name: data.name,
+          fullAhjName: data.fullAhjName,
+          stateCode: data.stateCode,
+          funcStat: data.funcStat,
+          lsadCode: data.lsadCode,
+          ansiCode: data.ansiCode,
+          longName: data.longName,
+        },
       })
       await this.prismaService.aHJNoteHistory.create({
         data: { ...newNotes, createdAt: new Date(), history_type: AhjNoteHistoryTypeEnum.Create, updatedBy: 'System' },
