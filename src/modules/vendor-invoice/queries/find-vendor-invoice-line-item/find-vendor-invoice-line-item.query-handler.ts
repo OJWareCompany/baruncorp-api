@@ -28,6 +28,9 @@ export class FindVendorInvoiceLineItemQueryHandler implements IQueryHandler {
       where: {
         vendorInvoiceId: query.vendorInvoiceId,
       },
+      orderBy: {
+        doneAt: 'desc',
+      },
     })
     const totalCount = await this.prismaService.assignedTasks.count({
       where: {

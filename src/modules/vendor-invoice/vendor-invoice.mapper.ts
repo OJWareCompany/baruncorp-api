@@ -79,7 +79,9 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
     response.internalTotalBalanceDue = props.internalTotalBalanceDue
     response.createdAt = props.createdAt.toISOString()
     response.updatedAt = props.updatedAt.toISOString()
-    response.vendorPayments = vendorInvoicePayments ? vendorInvoicePayments : []
+    response.vendorPayments = vendorInvoicePayments
+      ? vendorInvoicePayments.sort((a, b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime())
+      : []
     response.internalTotalPayment = props.total - Number(props.internalTotalBalanceDue)
     return response
   }

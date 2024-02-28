@@ -22,6 +22,9 @@ export class FindCreditTransactionPaginatedQueryHandler implements IQueryHandler
       where: {
         ...(query.organizationId && { clientOrganizationId: query.organizationId }),
       },
+      orderBy: {
+        transactionDate: 'desc',
+      },
       skip: query.offset,
       take: query.limit,
     })
