@@ -41,12 +41,12 @@ import { CreateJobService } from './commands/create-job/create-job.service'
 import { JOB_REPOSITORY } from './job.di-token'
 import { JobRepository } from './database/job.repository'
 import { JobMapper } from './job.mapper'
-import { Mailer } from './infrastructure/mailer.infrastructure'
 import { UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler } from './application/event-handlers/update-invoice-id-when-invoice-is-created.domain-event-handler'
 import { OrderDeletionValidator } from './domain/domain-services/order-deletion-validator.domain-service'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 import { UpdateDueDateWhenScopeIsOrderedDomainEventHandler } from './application/event-handlers/update-due-date-when-scope-is-ordered.domain-event-handler'
+import { OrderedJobNoteModule } from '../ordered-job-note/job-note.module'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -84,7 +84,7 @@ const eventHandlers: Provider[] = [
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 const mappers: Provider[] = [JobMapper, JobResponseMapper]
-const infrastructures: Provider[] = [Mailer]
+const infrastructures: Provider[] = []
 const domainServices: Provider[] = [
   TotalDurationCalculator,
   OrderStatusChangeValidator,
@@ -98,6 +98,7 @@ const domainServices: Provider[] = [
     CqrsModule,
     ServiceModule,
     OrganizationModule,
+    OrderedJobNoteModule,
     forwardRef(() => AuthenticationModule),
     forwardRef(() => ProjectModule),
     forwardRef(() => OrderedServiceModule),

@@ -9,6 +9,7 @@ import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-t
 import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
 import { INVOICE_REPOSITORY } from '../../invoice.di-token'
 import { IssueInvoiceCommand } from './issue-invoice.command'
+import { IRFIMail, RFIMailer } from '../../../ordered-job-note/infrastructure/mailer.infrastructure'
 
 ConfigModule.forRoot()
 
@@ -20,6 +21,7 @@ export class IssueInvoiceService implements ICommandHandler {
     // @ts-ignore
     @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort, // @ts-ignore
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
+    private readonly mailer: RFIMailer,
   ) {}
   async execute(command: IssueInvoiceCommand): Promise<void> {
     const invoice = await this.invoiceRepo.findOneOrThrow(command.invoiceId)
@@ -29,35 +31,19 @@ export class IssueInvoiceService implements ICommandHandler {
     // TODO: issued_at 필드 추가
     await this.invoiceRepo.update(invoice)
 
-    const transporter = nodemailer.createTransport({
-      // host: 'smtp.gmail.com',
-      host: 'wsmtp.ecounterp.com',
-      port: 587,
-      secure: false, // upgrade later with STARTTLS
-      auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASS,
-      },
-    })
-
-    const mailOptions = {
-      from: EMAIL_USER,
-      to: organization.getProps().invoiceRecipientEmail || 'bs_khm@naver.com',
+    const input: IRFIMail = {
       subject: `BarunCorp ${formatDate(invoice.getProps().serviceMonth)} Invoice mail`,
       text: `
-      subtotal: $${invoice.getProps().subTotal}
-      discount: $${invoice.getProps().discount}
-      total: $${invoice.total}
+        subtotal: $${invoice.getProps().subTotal}
+        discount: $${invoice.getProps().discount}
+        total: $${invoice.total}
       `,
-      attachments: command.attachments,
+      from: 'automation@baruncorp.com',
+      to: [organization.getProps().invoiceRecipientEmail || 'bs_khm@naver.com'],
+      threadId: null,
+      files: command.attachments,
     }
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error)
-      } else {
-        console.log('Email sent!: ' + info.response)
-      }
-    })
+    await this.mailer.sendRFI(input)
   }
 }

@@ -36,6 +36,7 @@ import { OrganizationModule } from '../organization/organization.module'
 import { CreditTransactionModule } from '../credit-transaction/credit-transaction.module'
 import { PaymentModule } from '../payment/payment.module'
 import { UpdatedInvoiceWhenCreditPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-credit-payment-is-canceled.domain-event-handler'
+import { OrderedJobNoteModule } from '../ordered-job-note/job-note.module'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -83,8 +84,9 @@ const domainServices: Provider[] = [CalculateInvoiceService, InvoiceCalculator]
     CqrsModule,
     PrismaModule,
     ServiceModule,
-    CustomPricingModule,
     OrganizationModule,
+    CustomPricingModule,
+    OrderedJobNoteModule,
     forwardRef(() => CreditTransactionModule),
     forwardRef(() => PaymentModule),
     forwardRef(() => UsersModule),

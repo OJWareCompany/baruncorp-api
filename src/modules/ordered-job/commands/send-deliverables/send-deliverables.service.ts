@@ -8,13 +8,13 @@ import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { OrderStatusChangeValidator } from '../../domain/domain-services/order-status-change-validator.domain-service'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
-import { Mailer } from '../../infrastructure/mailer.infrastructure'
 import { SendDeliverablesCommand } from './send-deliverables.command'
 import { PrismaService } from '../../../database/prisma.service'
 import {
   GoogleDriveDeliverablesFolderShareLinkNoExistException,
   GoogleDriveJobFolderNotFoundException,
 } from '../../../filesystem/domain/filesystem.error'
+import { RFIMailer } from '../../../ordered-job-note/infrastructure/mailer.infrastructure'
 
 @CommandHandler(SendDeliverablesCommand)
 export class SendDeliverablesService implements ICommandHandler {
@@ -22,8 +22,8 @@ export class SendDeliverablesService implements ICommandHandler {
     // @ts-ignore
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort, // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepository: JobRepositoryPort,
-    private readonly mailer: Mailer,
     private readonly orderStatusChangeValidator: OrderStatusChangeValidator,
+    private readonly mailer: RFIMailer,
     private readonly prismaService: PrismaService,
   ) {}
 

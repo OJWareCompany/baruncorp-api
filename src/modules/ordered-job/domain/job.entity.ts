@@ -27,12 +27,12 @@ import { JobDeletedDomainEvent } from './events/job-deleted.domain-event'
 import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
-import { Mailer } from '../infrastructure/mailer.infrastructure'
 import {
   JobMissingDeliverablesEmailException,
   NumberOfWetStampBadRequestException,
   SystemSizeBadRequestException,
 } from './job.error'
+import { IRFIMail, RFIMailer } from '../../ordered-job-note/infrastructure/mailer.infrastructure'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -151,12 +151,22 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   async sendToClient(
     editor: UserEntity,
-    mailer: Mailer,
+    mailer: RFIMailer,
     deliverablesLink: string,
     orderStatusChangeValidator: OrderStatusChangeValidator,
   ) {
     await orderStatusChangeValidator.validateJob(this, AutoOnlyJobStatusEnum.Sent_To_Client)
-    await mailer.sendDeliverablesEmail({ to: this.props.deliverablesEmails, deliverablesLink: deliverablesLink })
+
+    const input: IRFIMail = {
+      subject: `BarunCorp Deliverables`,
+      text: `deliverables link: ${deliverablesLink}`,
+      from: 'automation@baruncorp.com',
+      to: this.props.deliverablesEmails,
+      threadId: null,
+      files: null,
+    }
+
+    await mailer.sendRFI(input)
     this.props.jobStatus = AutoOnlyJobStatusEnum.Sent_To_Client
     this.props.updatedBy = editor.userName.fullName
     this.props.dateSentToClient = new Date()
