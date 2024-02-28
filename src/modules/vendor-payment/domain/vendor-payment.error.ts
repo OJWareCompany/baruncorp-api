@@ -7,8 +7,8 @@ export class VendorPaymentNotFoundException extends NotFoundException {
 }
 
 export class VendorPaymentOverException extends BadRequestException {
-  constructor() {
-    super('Payment Over', '70300')
+  constructor(exceededAmount: number) {
+    super(`Payment Over, Exceeded ${exceededAmount}.`, '70200')
   }
 }
 

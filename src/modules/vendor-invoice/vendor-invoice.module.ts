@@ -87,7 +87,7 @@ const mappers: Provider[] = [VendorInvoiceMapper]
     OrganizationModule,
     UsersModule,
     AssignedTaskModule,
-    VendorPaymentModule,
+    forwardRef(() => VendorPaymentModule),
     forwardRef(() => VendorCreditTransactionModule),
   ],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],

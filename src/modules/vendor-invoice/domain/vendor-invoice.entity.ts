@@ -3,6 +3,7 @@ import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateVendorInvoiceProps, VendorInvoiceProps, VendorInvoiceTermsEnum } from './vendor-invoice.type'
 import { VendorInvoiceCalculator } from './domain-services/vendor-invoice-calculator.domain-service'
+import { VendorInvoiceInvalidTotalUpdateException } from './vendor-invoice.error'
 
 export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
   protected _id: string
@@ -44,6 +45,7 @@ export class VendorInvoiceEntity extends AggregateRoot<VendorInvoiceProps> {
 
   async enterVendorInvoicedTotal(total: number, calculator: VendorInvoiceCalculator): Promise<this> {
     const paidAmount = await calculator.calcPaymentTotal(this)
+    if (total < paidAmount) throw new VendorInvoiceInvalidTotalUpdateException()
     this.props.total = total
     this.props.invoiceTotalDifference = this.props.subTotal - this.props.total // internal subtotal에서 실제 청구된 금액을 뺀다.
     this.props.internalTotalBalanceDue = this.props.total - paidAmount // find how much paid, 지불 해야할 남은 금액

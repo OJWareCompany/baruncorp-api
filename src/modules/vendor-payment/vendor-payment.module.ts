@@ -1,4 +1,4 @@
-import { Module, Provider } from '@nestjs/common'
+import { Module, Provider, forwardRef } from '@nestjs/common'
 import { CqrsModule } from '@nestjs/cqrs'
 import { PrismaModule } from '../database/prisma.module'
 import { CreateVendorPaymentHttpController } from './commands/create-vendor-payment/create-vendor-payment.http.controller'
@@ -13,6 +13,7 @@ import { VENDOR_PAYMENT_REPOSITORY } from './vendor-payment.di-token'
 import { VendorPaymentRepository } from './database/vendor-payment.repository'
 import { VendorPaymentMapper } from './vendor-payment.mapper'
 import { UsersModule } from '../users/users.module'
+import { VendorInvoiceModule } from '../vendor-invoice/vendor-invoice.module'
 
 const httpControllers = [
   CreateVendorPaymentHttpController,
@@ -32,7 +33,7 @@ const eventHandlers: Provider[] = []
 const mappers: Provider[] = [VendorPaymentMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule, UsersModule],
+  imports: [CqrsModule, PrismaModule, UsersModule, forwardRef(() => VendorInvoiceModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
   exports: [...repositories],

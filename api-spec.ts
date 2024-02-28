@@ -1773,6 +1773,62 @@ export interface PtoTenurePolicyPaginatedResponseDto {
   items: PtoTenurePolicyResponseDto[]
 }
 
+export interface CreateJobNoteRequestDto {
+  /** @default "hs8da-cdef-gh22321ask-xzcm12e3" */
+  jobId: string
+  /** @default "This is Job Note Content" */
+  content: string
+  /** @default "<div class=......>hello world</div>" */
+  emailBody?: string
+  /** @default "JobNote" */
+  type: 'JobNote' | 'RFI'
+  /** @default ["yunwoo@oj.vision","antifragilista@oj.vision"] */
+  receiverEmails?: string[]
+  files: File[]
+}
+
+export interface CreateJobNoteResponseDto {
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  id: string
+  /** @default 1 */
+  jobNoteNumber: number
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  jobNoteFolderId: string | null
+}
+
+export interface JobNoteDetailResponseDto {
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  id: string
+  /** @default "JobNote" */
+  type: 'JobNote' | 'RFI'
+  /** @example "Chris Kim" */
+  creatorName: string
+  /** @example "what do you think about Jazz?" */
+  content: string
+  /** @default 1 */
+  jobNoteNumber: number
+  /** @default "yunwoo@oj.vision" */
+  senderMail: string | null
+  /** @default ["yunwoo@oj.vision"] */
+  receiverMails: string[] | null
+  /** @default ["https://drive.google.com/drive/folders/1MFhV8NTBNsPM3pvfBz6UKKTdKntXfWd7"] */
+  fileShareLink: string | null
+  /** @format date-time */
+  createdAt: string
+}
+
+export interface JobNoteResponseDto {
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  clientOrganizationName: string
+  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
+  projectType: string
+  /** @example "Chris Kim" */
+  propertyAddress: string
+  /** @example 1 */
+  jobRequestNumber: number
+  data: JobNoteDetailResponseDto[]
+}
+
 export interface CreateCreditTransactionRequestDto {
   amount: number
   /** @default "Reload" */
@@ -2032,62 +2088,6 @@ export interface UtilityHistoryPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: UtilityHistoryResponseDto[]
-}
-
-export interface CreateJobNoteRequestDto {
-  /** @default "hs8da-cdef-gh22321ask-xzcm12e3" */
-  jobId: string
-  /** @default "This is Job Note Content" */
-  content: string
-  /** @default "<div class=......>hello world</div>" */
-  emailBody?: string
-  /** @default "JobNote" */
-  type: 'JobNote' | 'RFI'
-  /** @default ["yunwoo@oj.vision","antifragilista@oj.vision"] */
-  receiverEmails?: string[]
-  files: File[]
-}
-
-export interface CreateJobNoteResponseDto {
-  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
-  id: string
-  /** @default 1 */
-  jobNoteNumber: number
-  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
-  jobNoteFolderId: string | null
-}
-
-export interface JobNoteDetailResponseDto {
-  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
-  id: string
-  /** @default "JobNote" */
-  type: 'JobNote' | 'RFI'
-  /** @example "Chris Kim" */
-  creatorName: string
-  /** @example "what do you think about Jazz?" */
-  content: string
-  /** @default 1 */
-  jobNoteNumber: number
-  /** @default "yunwoo@oj.vision" */
-  senderMail: string | null
-  /** @default ["yunwoo@oj.vision"] */
-  receiverMails: string[] | null
-  /** @default ["https://drive.google.com/drive/folders/1MFhV8NTBNsPM3pvfBz6UKKTdKntXfWd7"] */
-  fileShareLink: string | null
-  /** @format date-time */
-  createdAt: string
-}
-
-export interface JobNoteResponseDto {
-  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
-  clientOrganizationName: string
-  /** @default "a1918979-a454-4d83-8eb0-31195a5967c6" */
-  projectType: string
-  /** @example "Chris Kim" */
-  propertyAddress: string
-  /** @example 1 */
-  jobRequestNumber: number
-  data: JobNoteDetailResponseDto[]
 }
 
 export interface CreateTaskRequestDto {
@@ -6144,6 +6144,37 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         ...params,
       }),
   }
+  orderedJobNotes = {
+    /**
+     * No description
+     *
+     * @name CreateJobNoteHttpControllerCreate
+     * @request POST:/ordered-job-notes
+     */
+    createJobNoteHttpControllerCreate: (data: CreateJobNoteRequestDto, params: RequestParams = {}) =>
+      this.request<CreateJobNoteResponseDto, any>({
+        path: `/ordered-job-notes`,
+        method: 'POST',
+        body: data,
+        type: ContentType.FormData,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindJobNotesHttpControllerFind
+     * @request GET:/ordered-job-notes/{jobId}
+     */
+    findJobNotesHttpControllerFind: (jobId: string, params: RequestParams = {}) =>
+      this.request<JobNoteResponseDto, any>({
+        path: `/ordered-job-notes/${jobId}`,
+        method: 'GET',
+        format: 'json',
+        ...params,
+      }),
+  }
   creditTransactions = {
     /**
      * No description
@@ -6548,37 +6579,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/utilities/${utilityId}/histories`,
         method: 'GET',
         query: query,
-        format: 'json',
-        ...params,
-      }),
-  }
-  orderedJobNotes = {
-    /**
-     * No description
-     *
-     * @name CreateJobNoteHttpControllerCreate
-     * @request POST:/ordered-job-notes
-     */
-    createJobNoteHttpControllerCreate: (data: CreateJobNoteRequestDto, params: RequestParams = {}) =>
-      this.request<CreateJobNoteResponseDto, any>({
-        path: `/ordered-job-notes`,
-        method: 'POST',
-        body: data,
-        type: ContentType.FormData,
-        format: 'json',
-        ...params,
-      }),
-
-    /**
-     * No description
-     *
-     * @name FindJobNotesHttpControllerFind
-     * @request GET:/ordered-job-notes/{jobId}
-     */
-    findJobNotesHttpControllerFind: (jobId: string, params: RequestParams = {}) =>
-      this.request<JobNoteResponseDto, any>({
-        path: `/ordered-job-notes/${jobId}`,
-        method: 'GET',
         format: 'json',
         ...params,
       }),
