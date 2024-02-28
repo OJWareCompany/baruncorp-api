@@ -18,10 +18,10 @@ export class FindClientToInvoiceQueryHandler implements IQueryHandler {
     const jobs = (await this.prismaService.$queryRaw`
     SELECT oj.id, oj.client_organization_id, oj.created_at
     FROM ordered_jobs oj
-    INNER JOIN ordered_services os
+    INNER JOIN ordered_services os ON oj.id = os.job_id
     WHERE oj.job_status IN('Completed','Canceled','Sent To Client','Canceled (Invoice)')
     AND oj.invoice_id IS NULL
-    AND os.status = 'Completed'
+    AND os.status IN('Completed', 'Canceled (Invoice)')
     GROUP BY client_organization_id, DATE_FORMAT(created_at, '%Y-%m')
     ORDER BY created_at DESC;
     `) as {
