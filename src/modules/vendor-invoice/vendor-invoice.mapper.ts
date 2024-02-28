@@ -37,6 +37,8 @@ export class VendorInvoiceMapper implements Mapper<VendorInvoiceEntity, VendorIn
   toDomain(record: VendorInvoices): VendorInvoiceEntity {
     const entity = new VendorInvoiceEntity({
       id: record.id,
+      createdAt: record.createdAt || undefined,
+      updatedAt: record.updatedAt || undefined,
       props: {
         organizationId: record.organizationId,
         organizationName: record.organizationName,
