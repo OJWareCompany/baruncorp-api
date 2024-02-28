@@ -46,6 +46,7 @@ import { OrganizationModule } from '../organization/organization.module'
 import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
 import { PositionModule } from '../position/position.module'
 import { PtoModule } from '../pto/pto.module'
+import { OrderedJobNoteModule } from '../ordered-job-note/job-note.module'
 
 const httpControllers = [
   UsersController,
@@ -101,6 +102,7 @@ const mappers: Provider[] = [UserMapper, UserRoleMapper]
     forwardRef(() => InvoiceModule),
     forwardRef(() => PositionModule),
     forwardRef(() => PtoModule),
+    forwardRef(() => OrderedJobNoteModule),
   ],
   providers: [UserService, ...commandHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],

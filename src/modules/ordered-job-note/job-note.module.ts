@@ -38,7 +38,7 @@ const infrastructures: Provider[] = [RFIMailer, ImapManagerService]
     FilesystemApiService,
   ],
   controllers: [...httpControllers],
-  exports: [...repositories, ...mappers],
+  exports: [...repositories, ...mappers, ...infrastructures],
 })
 export class OrderedJobNoteModule implements OnModuleInit {
   constructor(private readonly imapManagerService: ImapManagerService) {}

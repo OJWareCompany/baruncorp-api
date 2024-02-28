@@ -2,7 +2,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigModule } from '@nestjs/config'
 import { Inject } from '@nestjs/common'
-import nodemailer from 'nodemailer'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { UserRepositoryPort } from '../../database/user.repository.port'
@@ -11,6 +10,7 @@ import { INVITATION_MAIL_REPOSITORY, USER_REPOSITORY } from '../../user.di-token
 import { InvitationMailRepositoryPort } from '../../database/invitationMail.repository.port'
 import { InviteCommand } from './invite.command'
 import { InvitationEmailResponseDto } from '../../dtos/invitation-email.response.dto'
+import { IRFIMail, RFIMailer } from '../../../ordered-job-note/infrastructure/mailer.infrastructure'
 
 ConfigModule.forRoot()
 
@@ -25,6 +25,7 @@ export class InviteService implements ICommandHandler {
     @Inject(ORGANIZATION_REPOSITORY) private readonly organizationRepo: OrganizationRepositoryPort,
     // @ts-ignore
     @Inject(INVITATION_MAIL_REPOSITORY) private readonly invitationMailRepo: InvitationMailRepositoryPort,
+    private readonly mailer: RFIMailer,
   ) {}
   async execute(command: InviteCommand): Promise<InvitationEmailResponseDto> {
     const user = await this.userRepo.findUserByEmailOrThrow(new EmailVO(command.email))
@@ -37,31 +38,16 @@ export class InviteService implements ICommandHandler {
       organizationId: organization.id,
     })
 
-    const transporter = nodemailer.createTransport({
-      // host: 'smtp.gmail.com',
-      host: 'wsmtp.ecounterp.com',
-      port: 587,
-      secure: false, // upgrade later with STARTTLS
-      auth: {
-        user: EMAIL_USER,
-        pass: EMAIL_PASS,
-      },
-    })
-
-    const mailOptions = {
-      from: EMAIL_USER,
-      to: command.email,
+    const input: IRFIMail = {
       subject: 'BarunCorp Invitation Email',
       text: `https://baruncorp-web.vercel.app/signup?userId=${user.id}`,
+      from: 'automation@baruncorp.com',
+      to: [command.email],
+      threadId: null,
+      files: null,
     }
 
-    transporter.sendMail(mailOptions, function (error, info) {
-      if (error) {
-        console.log(error)
-      } else {
-        console.log('Email sent!: ' + info.response)
-      }
-    })
+    await this.mailer.sendRFI(input)
 
     user.invite()
     await this.userRepo.update(user)
