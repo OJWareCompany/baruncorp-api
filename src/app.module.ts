@@ -34,6 +34,7 @@ import { ScheduleModule } from '@modules/schedule/schedule.module'
 import { UtilityModule } from '@modules/utility/utility.module'
 import { CreditTransactionModule } from './modules/credit-transaction/credit-transaction.module'
 import { VendorCreditTransactionModule } from './modules/vendor-credit-transaction/vendor-credit-transaction.module'
+import { DepartmentModule } from './modules/department/department.module'
 
 @Module({
   imports: [
@@ -70,6 +71,7 @@ import { VendorCreditTransactionModule } from './modules/vendor-credit-transacti
     UtilityModule,
     CreditTransactionModule,
     VendorCreditTransactionModule,
+    DepartmentModule,
   ],
   controllers: [],
   providers: [
