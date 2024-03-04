@@ -15,6 +15,12 @@ import { FindDepartmentPaginatedQueryHandler } from './queries/find-department-p
 import { DEPARTMENT_REPOSITORY } from './department.di-token'
 import { DepartmentRepository } from './database/department.repository'
 import { DepartmentMapper } from './department.mapper'
+import { AddUserHttpController } from './commands/add-user/add-user.http.controller'
+import { AddUserService } from './commands/add-user/add-user.service'
+import { UsersModule } from '../users/users.module'
+import { AddUserToDepartment } from './domain/domain-services/add-user-to-department.domain-service'
+import { RemoveUserHttpController } from './commands/remove-user/remove-user.http.controller'
+import { RemoveUserService } from './commands/remove-user/remove-user.service'
 
 const httpControllers = [
   CreateDepartmentHttpController,
@@ -22,8 +28,16 @@ const httpControllers = [
   DeleteDepartmentHttpController,
   FindDepartmentHttpController,
   FindDepartmentPaginatedHttpController,
+  AddUserHttpController,
+  RemoveUserHttpController,
 ]
-const commandHandlers: Provider[] = [CreateDepartmentService, UpdateDepartmentService, DeleteDepartmentService]
+const commandHandlers: Provider[] = [
+  CreateDepartmentService,
+  UpdateDepartmentService,
+  DeleteDepartmentService,
+  AddUserService,
+  RemoveUserService,
+]
 const queryHandlers: Provider[] = [FindDepartmentQueryHandler, FindDepartmentPaginatedQueryHandler]
 const repositories: Provider[] = [
   {
@@ -33,10 +47,11 @@ const repositories: Provider[] = [
 ]
 const eventHandlers: Provider[] = []
 const mappers: Provider[] = [DepartmentMapper, UserMapper]
+const domainServices: Provider[] = [AddUserToDepartment]
 
 @Module({
-  imports: [CqrsModule, PrismaModule],
-  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
+  imports: [CqrsModule, PrismaModule, UsersModule],
+  providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers, ...domainServices],
   controllers: [...httpControllers],
 })
 export class DepartmentModule {}

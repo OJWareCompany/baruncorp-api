@@ -117,6 +117,8 @@ model Users {
   revisionRevenueShare       Boolean?               @map("revision_revenue_share")
   updatedBy                  String                 @map("updated_by") @db.VarChar(255)
   isVendor                   Boolean                @default(false) @map("is_vendor")
+  departmentId               String?                @map("department_id") @db.VarChar(255)
+  departmentName             String?                @map("department_name") @db.VarChar(255)
   passwordEntity             Passwords?
   userRole                   UserRole?
   userPosition               UserPosition?

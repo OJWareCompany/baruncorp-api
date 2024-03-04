@@ -42,6 +42,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       isVendor: copy.isVendor,
       isHandRaisedForTask: copy.isHandRaisedForTask,
       status: copy.status,
+      departmentId: copy.departmentId,
+      departmentName: copy.departmentName,
     }
     return record
   }
@@ -52,6 +54,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
       updatedAt: record.updatedAt,
       createdAt: record.createdAt,
       props: {
+        departmentId: record.departmentId,
+        departmentName: record.departmentName,
         email: record.email,
         status: record.status as UserStatusEnum,
         userName: new UserName({ firstName: record.firstName, lastName: record.lastName }),
@@ -139,6 +143,8 @@ export default class UserMapper implements Mapper<UserEntity, UserModel, UserRes
     response.availableTasks = props.availableTasks
     response.status = props.status
     response.dateOfJoining = props.dateOfJoining
+    response.departmentId = props.departmentId
+    response.departmentName = props.departmentName
     return response
   }
 }

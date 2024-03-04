@@ -32,6 +32,8 @@ export interface UserProps extends CreateUserProps {
   type: string
   isHandRaisedForTask: boolean
   status: UserStatusEnum
+  departmentId: string | null
+  departmentName: string | null
 }
 
 export enum UserStatusEnum {

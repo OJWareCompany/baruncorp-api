@@ -83,6 +83,8 @@ export interface UserResponseDto {
   status: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active'
   /** @format date-time */
   dateOfJoining: string | null
+  departmentId: string | null
+  departmentName: string | null
 }
 
 export interface UpdateUserRequestDto {
@@ -2765,6 +2767,14 @@ export interface DepartmentPaginatedResponseDto {
   /** @example 500 */
   totalPage: number
   items: DepartmentResponseDto[]
+}
+
+export interface AddUserRequestDto {
+  userId: string
+}
+
+export interface RemoveUserRequestDto {
+  userId: string
 }
 
 export interface AuthenticationControllerPostSignInTimeParams {
@@ -7483,6 +7493,36 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/departments/${departmentId}`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name AddUserHttpControllerAdd
+     * @request POST:/departments/{departmentId}/add-user
+     */
+    addUserHttpControllerAdd: (departmentId: string, data: AddUserRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/departments/${departmentId}/add-user`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name RemoveUserHttpControllerRemove
+     * @request POST:/departments/{departmentId}/remove-user
+     */
+    removeUserHttpControllerRemove: (departmentId: string, data: RemoveUserRequestDto, params: RequestParams = {}) =>
+      this.request<void, any>({
+        path: `/departments/${departmentId}/remove-user`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }

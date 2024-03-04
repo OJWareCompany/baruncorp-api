@@ -56,4 +56,10 @@ export class UserResponseDto {
   @IsDate()
   @IsOptional()
   dateOfJoining: Date | null
+
+  @ApiProperty()
+  departmentId: string | null
+
+  @ApiProperty()
+  departmentName: string | null
 }

@@ -18,6 +18,7 @@ import { UserDateOfJoiningUpdatedDomainEvent } from './events/user-date-of-joini
 import { Pto } from './value-objects/pto.vo'
 import { PtoDetail } from './value-objects/pto-detail.vo'
 import { UserStatusUpdatedDomainEvent } from '@modules/users/domain/events/user-status-updated.domain-event'
+import { DepartmentEntity } from '../../department/domain/department.entity'
 
 export class UserEntity extends AggregateRoot<UserProps> {
   protected _id: string
@@ -41,6 +42,8 @@ export class UserEntity extends AggregateRoot<UserProps> {
       isHandRaisedForTask: false,
       status: UserStatusEnum.INVITATION_NOT_SENT,
       isVendor: create.organization.organizationType === 'administration' ? false : create.isVendor,
+      departmentId: null,
+      departmentName: null,
     }
     return new UserEntity({ id, props })
   }
@@ -220,6 +223,16 @@ export class UserEntity extends AggregateRoot<UserProps> {
         email: this.props.email,
       }),
     )
+  }
+
+  setDepartment(department: DepartmentEntity): void {
+    this.props.departmentId = department.id
+    this.props.departmentName = department.getProps().name
+  }
+
+  removeDepartment(): void {
+    this.props.departmentId = null
+    this.props.departmentName = null
   }
 
   public validate(): void {
