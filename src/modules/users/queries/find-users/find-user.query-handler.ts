@@ -27,6 +27,13 @@ export class FindUserQueryHandler implements IQueryHandler {
       ...(query.organizationName && { organization: { name: { contains: query.organizationName } } }),
       ...(query.isContractor !== null && query.isContractor !== undefined && { isVendor: query.isContractor }),
       ...(query.userName && { full_name: { contains: query.userName } }),
+      ...(query.hasDepartment !== null &&
+        query.hasDepartment !== undefined &&
+        query.hasDepartment === true && { departmentName: { not: null } }),
+      ...(query.hasDepartment !== null &&
+        query.hasDepartment !== undefined &&
+        query.hasDepartment === false && { departmentName: null }),
+      ...(query.departmentName && { departmentName: { contains: query.departmentName } }),
       ...(query.status && { status: query.status }),
     }
 

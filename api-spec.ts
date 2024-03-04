@@ -2791,16 +2791,18 @@ export interface FindUsersHttpControllerGetFindUsersParams {
   organizationId?: string | null
   /** @default "BarunCorp" */
   organizationName?: string | null
-  /**
-   * Using LIKE (중간 값 검색)
-   * @default null
-   */
   isContractor?: boolean | null
   /**
    * Using LIKE (중간 값 검색)
    * @default null
    */
   userName?: string | null
+  /**
+   * Using LIKE (중간 값 검색)
+   * @default null
+   */
+  departmentName?: string | null
+  hasDepartment?: boolean | null
   /** @default "Active" */
   status?: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active' | null
   /**

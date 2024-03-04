@@ -25,6 +25,8 @@ export class FindUsersHttpController {
       isContractor: dto.isContractor,
       userName: dto.userName,
       status: dto.status,
+      hasDepartment: dto.hasDepartment,
+      departmentName: dto.departmentName,
     })
     const result: Paginated<UserResponseDto> = await this.queryBus.execute(query)
 

@@ -20,7 +20,7 @@ export class FindUserRqeustDto {
   @IsString()
   readonly organizationName?: string | null
 
-  @ApiProperty({ default: null, description: DESCRIPTION.using_like })
+  @ApiProperty()
   @IsOptional()
   @IsBoolean()
   @Transform(({ value }) => {
@@ -33,6 +33,20 @@ export class FindUserRqeustDto {
   @IsOptional()
   @IsString()
   readonly userName?: string | null
+
+  @ApiProperty({ default: null, description: DESCRIPTION.using_like })
+  @IsOptional()
+  @IsString()
+  readonly departmentName?: string | null
+
+  @ApiProperty()
+  @IsOptional()
+  @IsBoolean()
+  @Transform(({ value }) => {
+    const isBoolean = ['true', 'false'].includes(value)
+    return isBoolean ? value === 'true' : null
+  })
+  readonly hasDepartment?: boolean | null
 
   @ApiProperty({ default: UserStatusEnum.ACTIVE, enum: UserStatusEnum })
   @IsEnum(UserStatusEnum)
