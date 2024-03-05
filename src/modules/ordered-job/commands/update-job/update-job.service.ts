@@ -13,7 +13,6 @@ import { WrongClientException } from '../../../organization/domain/organization.
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
-import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { IssuedJobUpdateException, JobCompletedUpdateException, NoUpdateException } from '../../domain/job.error'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'

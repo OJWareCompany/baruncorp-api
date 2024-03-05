@@ -10,6 +10,7 @@ export class FindUsersQuery extends PaginatedQueryBase {
   readonly userName?: string | null
   readonly hasDepartment?: boolean | null
   readonly departmentName?: string | null
+  readonly departmentId?: string | null
   readonly status?: UserStatusEnum | null
 
   constructor(props: PaginatedParams<FindUsersQuery>) {

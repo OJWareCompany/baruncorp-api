@@ -39,6 +39,11 @@ export class FindUserRqeustDto {
   @IsString()
   readonly departmentName?: string | null
 
+  @ApiProperty({ default: null })
+  @IsOptional()
+  @IsString()
+  readonly departmentId?: string | null
+
   @ApiProperty()
   @IsOptional()
   @IsBoolean()

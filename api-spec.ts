@@ -2742,26 +2742,36 @@ export interface SchedulePaginatedResponseDto {
 export interface CreateDepartmentRequestDto {
   name: string
   description: string | null
+  /** @default false */
   viewClientInvoice: boolean
+  /** @default false */
   viewVendorInvoice: boolean
+  /** @default false */
   viewCustomPricing: boolean
+  /** @default false */
   viewExpensePricing: boolean
+  /** @default false */
   viewScopePrice: boolean
+  /** @default false */
   viewTaskCost: boolean
 }
 
 export interface UpdateDepartmentRequestDto {
   name: string
   description: string | null
+  /** @default false */
   viewClientInvoice: boolean
+  /** @default false */
   viewVendorInvoice: boolean
+  /** @default false */
   viewCustomPricing: boolean
+  /** @default false */
   viewExpensePricing: boolean
+  /** @default false */
   viewScopePrice: boolean
+  /** @default false */
   viewTaskCost: boolean
 }
-
-export type DeleteDepartmentRequestDto = object
 
 export interface DepartmentResponseDto {
   id: string
@@ -2820,6 +2830,8 @@ export interface FindUsersHttpControllerGetFindUsersParams {
    * @default null
    */
   departmentName?: string | null
+  /** @default null */
+  departmentId?: string | null
   hasDepartment?: boolean | null
   /** @default "Active" */
   status?: 'Invitation Not Sent' | 'Invitation Sent' | 'Inactive' | 'Active' | null
@@ -7489,16 +7501,10 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name DeleteDepartmentHttpControllerDelete
      * @request DELETE:/departments/{departmentId}
      */
-    deleteDepartmentHttpControllerDelete: (
-      departmentId: string,
-      data: DeleteDepartmentRequestDto,
-      params: RequestParams = {},
-    ) =>
+    deleteDepartmentHttpControllerDelete: (departmentId: string, params: RequestParams = {}) =>
       this.request<void, any>({
         path: `/departments/${departmentId}`,
         method: 'DELETE',
-        body: data,
-        type: ContentType.Json,
         ...params,
       }),
 

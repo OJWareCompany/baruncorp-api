@@ -35,6 +35,7 @@ export class FindUserQueryHandler implements IQueryHandler {
         query.hasDepartment === false && { departmentName: null }),
       ...(query.departmentName && { departmentName: { contains: query.departmentName } }),
       ...(query.status && { status: query.status }),
+      ...(query.departmentId && { departmentId: query.departmentId }),
     }
 
     const records = await this.prismaService.users.findMany({

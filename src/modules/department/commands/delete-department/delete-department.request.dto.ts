@@ -7,4 +7,4 @@ export class DeleteDepartmentParamRequestDto {
   readonly departmentId: string
 }
 
-export class DeleteDepartmentRequestDto {}
+// export class DeleteDepartmentRequestDto {}
