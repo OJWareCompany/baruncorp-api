@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsOptional, IsString } from 'class-validator'
+import { CreateDepartmentRequestDto } from '../create-department/create-department.request.dto'
 
 export class UpdateDepartmentParamRequestDto {
   @ApiProperty()
@@ -7,13 +8,4 @@ export class UpdateDepartmentParamRequestDto {
   readonly departmentId: string
 }
 
-export class UpdateDepartmentRequestDto {
-  @ApiProperty()
-  @IsString()
-  readonly name: string
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  readonly description: string | null
-}
+export class UpdateDepartmentRequestDto extends CreateDepartmentRequestDto {}

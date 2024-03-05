@@ -27,9 +27,7 @@ export class FindDepartmentPaginatedHttpController {
       ...queryParams,
       ...result,
       items: result.items.map((item) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description,
+        ...item,
       })),
     })
   }

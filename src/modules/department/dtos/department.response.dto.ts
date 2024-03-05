@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsOptional, IsString } from 'class-validator'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 
 export class DepartmentResponseDto {
@@ -15,6 +15,30 @@ export class DepartmentResponseDto {
   @IsString()
   @IsOptional()
   readonly description: string | null
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly viewClientInvoice: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly viewVendorInvoice: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly viewCustomPricing: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly viewExpensePricing: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly viewScopePrice: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly viewTaskCost: boolean
 
   constructor(props: DepartmentResponseDto) {
     initialize(this, props)

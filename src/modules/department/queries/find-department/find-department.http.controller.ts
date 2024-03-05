@@ -16,9 +16,7 @@ export class FindDepartmentHttpController {
     const result: Departments = await this.queryBus.execute(command)
 
     return new DepartmentResponseDto({
-      id: result.id,
-      name: result.name,
-      description: result.description,
+      ...result,
     })
   }
 }

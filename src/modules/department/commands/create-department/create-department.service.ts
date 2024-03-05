@@ -18,13 +18,18 @@ export class CreateDepartmentService implements ICommandHandler {
   ) {}
   async execute(command: CreateDepartmentCommand): Promise<AggregateID> {
     const isExist = await this.departmentRepo.findOneByName(command.name)
-    console.log(2)
     if (isExist) {
       throw new DepartmentNameConflictException()
     }
     const entity = DepartmentEntity.create({
       name: command.name,
       description: command.description,
+      viewClientInvoice: command.viewClientInvoice,
+      viewVendorInvoice: command.viewVendorInvoice,
+      viewCustomPricing: command.viewCustomPricing,
+      viewExpensePricing: command.viewExpensePricing,
+      viewScopePrice: command.viewScopePrice,
+      viewTaskCost: command.viewTaskCost,
     })
     await this.departmentRepo.insert(entity)
     return entity.id

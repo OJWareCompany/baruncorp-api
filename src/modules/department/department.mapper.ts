@@ -14,6 +14,12 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
       description: props.description,
       createdAt: props.createdAt,
       updatedAt: props.updatedAt,
+      viewClientInvoice: props.viewClientInvoice,
+      viewVendorInvoice: props.viewVendorInvoice,
+      viewCustomPricing: props.viewCustomPricing,
+      viewExpensePricing: props.viewExpensePricing,
+      viewScopePrice: props.viewScopePrice,
+      viewTaskCost: props.viewTaskCost,
     }
     return record
   }
@@ -26,6 +32,12 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
       props: {
         name: record.name,
         description: record.description,
+        viewClientInvoice: record.viewClientInvoice,
+        viewVendorInvoice: record.viewVendorInvoice,
+        viewCustomPricing: record.viewCustomPricing,
+        viewExpensePricing: record.viewExpensePricing,
+        viewScopePrice: record.viewScopePrice,
+        viewTaskCost: record.viewTaskCost,
       },
     })
     return entity
@@ -37,6 +49,12 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
       id: props.id,
       name: props.name,
       description: props.description,
+      viewClientInvoice: props.viewClientInvoice,
+      viewVendorInvoice: props.viewVendorInvoice,
+      viewCustomPricing: props.viewCustomPricing,
+      viewExpensePricing: props.viewExpensePricing,
+      viewScopePrice: props.viewScopePrice,
+      viewTaskCost: props.viewTaskCost,
     })
     return response
   }

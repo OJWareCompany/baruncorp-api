@@ -11,12 +11,44 @@ export class DepartmentEntity extends AggregateRoot<DepartmentProps> {
     return new DepartmentEntity({ id, props })
   }
 
-  setName(name: string) {
+  setName(name: string): this {
     this.props.name = name
+    return this
   }
 
-  setDescription(description: string | null) {
+  setDescription(description: string | null): this {
     this.props.description = description
+    return this
+  }
+
+  setViewClientInvoice(viewClientInvoice: boolean): this {
+    this.props.viewClientInvoice = viewClientInvoice
+    return this
+  }
+
+  setViewVendorInvoice(viewVendorInvoice: boolean): this {
+    this.props.viewVendorInvoice = viewVendorInvoice
+    return this
+  }
+
+  setViewCustomPricing(viewCustomPricing: boolean): this {
+    this.props.viewCustomPricing = viewCustomPricing
+    return this
+  }
+
+  setViewExpensePricing(viewExpensePricing: boolean): this {
+    this.props.viewExpensePricing = viewExpensePricing
+    return this
+  }
+
+  setViewScopePrice(viewScopePrice: boolean): this {
+    this.props.viewScopePrice = viewScopePrice
+    return this
+  }
+
+  setViewTaskCost(viewTaskCost: boolean): this {
+    this.props.viewTaskCost = viewTaskCost
+    return this
   }
 
   public validate(): void {

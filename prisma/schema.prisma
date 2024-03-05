@@ -1325,11 +1325,17 @@ model VendorCreditTransactions {
 }
 
 model Departments {
-  id          String   @id @db.VarChar(255)
-  name        String   @db.VarChar(255)
-  description String?  @db.Text
-  createdAt   DateTime @map("created_at") @db.DateTime(0)
-  updatedAt   DateTime @map("updated_at") @db.DateTime(0)
+  id                   String   @id @db.VarChar(255)
+  name                 String   @db.VarChar(255)
+  description          String?  @db.Text
+  createdAt            DateTime @map("created_at") @db.DateTime(0)
+  updatedAt            DateTime @map("updated_at") @db.DateTime(0)
+  viewClientInvoice  Boolean  @default(false) @map("view_client_invoice")
+  viewVendorInvoice  Boolean  @default(false) @map("view_vendor_invoice")
+  viewCustomPricing  Boolean  @default(false) @map("view_custom_pricing")
+  viewExpensePricing Boolean  @default(false) @map("view_expense_pricing")
+  viewScopePrice     Boolean  @default(false) @map("view_scope_price")
+  viewTaskCost       Boolean  @default(false) @map("view_task_cost")
 
   @@map("departments")
 }

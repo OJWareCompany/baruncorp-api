@@ -2742,11 +2742,23 @@ export interface SchedulePaginatedResponseDto {
 export interface CreateDepartmentRequestDto {
   name: string
   description: string | null
+  viewClientInvoice: boolean
+  viewVendorInvoice: boolean
+  viewCustomPricing: boolean
+  viewExpensePricing: boolean
+  viewScopePrice: boolean
+  viewTaskCost: boolean
 }
 
 export interface UpdateDepartmentRequestDto {
   name: string
   description: string | null
+  viewClientInvoice: boolean
+  viewVendorInvoice: boolean
+  viewCustomPricing: boolean
+  viewExpensePricing: boolean
+  viewScopePrice: boolean
+  viewTaskCost: boolean
 }
 
 export type DeleteDepartmentRequestDto = object
@@ -2755,6 +2767,12 @@ export interface DepartmentResponseDto {
   id: string
   name: string
   description: string | null
+  viewClientInvoice: boolean
+  viewVendorInvoice: boolean
+  viewCustomPricing: boolean
+  viewExpensePricing: boolean
+  viewScopePrice: boolean
+  viewTaskCost: boolean
 }
 
 export interface DepartmentPaginatedResponseDto {

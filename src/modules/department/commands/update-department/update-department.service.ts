@@ -24,9 +24,14 @@ export class UpdateDepartmentService implements ICommandHandler {
       entity.setName(command.name)
     }
 
-    if (entity.getProps().description !== command.description) {
-      entity.setDescription(command.description)
-    }
+    entity
+      .setDescription(command.description)
+      .setViewClientInvoice(command.viewClientInvoice)
+      .setViewVendorInvoice(command.viewVendorInvoice)
+      .setViewCustomPricing(command.viewCustomPricing)
+      .setViewExpensePricing(command.viewExpensePricing)
+      .setViewScopePrice(command.viewScopePrice)
+      .setViewTaskCost(command.viewTaskCost)
 
     await this.departmentRepo.update(entity)
   }
