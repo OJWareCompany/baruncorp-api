@@ -353,6 +353,8 @@ export interface UpdateJobRequestDto {
   /** @default 300.1 */
   systemSize: number | null
   structuralUpgradeNote: string | null
+  /** @example "Ground Mount" */
+  mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
   mailingAddressForWetStamp: AddressDto | null
@@ -1597,6 +1599,8 @@ export interface AddressFromMapBox {
 export interface CreateProjectRequestDto {
   /** @default "Residential" */
   projectPropertyType: 'Residential' | 'Commercial'
+  /** @default 100 */
+  systemSize?: number | null
   /** @default "Chris Kim" */
   projectPropertyOwner: string | null
   /** @default "07ec8e89-6877-4fa1-a029-c58360b57f43" */
@@ -1611,6 +1615,8 @@ export interface CreateProjectRequestDto {
 export interface UpdateProjectRequestDto {
   /** @default "Residential" */
   projectPropertyType: 'Residential' | 'Commercial'
+  /** @default 100 */
+  systemSize?: number | null
   /** @default "Chris Kim" */
   projectPropertyOwner: string | null
   /** @default "50021" */

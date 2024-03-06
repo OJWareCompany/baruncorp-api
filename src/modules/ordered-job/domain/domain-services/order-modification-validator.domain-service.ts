@@ -26,7 +26,7 @@ export class OrderModificationValidator {
    * -> 잡이 전송되었으면 변경 불가되도록 수정
    */
   async validate(assignedTask: AssignedTaskEntity | OrderedServiceEntity, editor?: UserEntity): Promise<void> {
-    if (editor?.canEditOrderPostInvoice) return
+    if (editor && !editor.canEditOrderPostInvoice) return
 
     const job = await this.jobRepo.findJobOrThrow(assignedTask.getProps().jobId)
     const invoice = await this.invoiceRepo.findOne(job.invoiceId || '')
@@ -34,7 +34,7 @@ export class OrderModificationValidator {
   }
 
   async validateJob(job: JobEntity, editor?: UserEntity): Promise<void> {
-    if (editor?.canEditOrderPostInvoice) return
+    if (editor && !editor.canEditOrderPostInvoice) return
 
     const invoice = await this.invoiceRepo.findOne(job.invoiceId || '')
     if (invoice && invoice.isIssuedOrPaid) throw new IssuedJobUpdateException()

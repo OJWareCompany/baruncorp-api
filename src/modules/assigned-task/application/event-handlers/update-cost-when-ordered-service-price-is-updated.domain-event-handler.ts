@@ -11,6 +11,9 @@ import { OrderModificationValidator } from '../../../ordered-job/domain/domain-s
 import { CalculateVendorCostDomainService } from '../../domain/calculate-vendor-cost.domain-service'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
+import { USER_REPOSITORY } from '../../../users/user.di-tokens'
+import { UserRepositoryPort } from '../../../users/database/user.repository.port'
+import { DetermineActiveStatusDomainService } from '../../domain/domain-services/determine-active-status.domain-service'
 
 export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
   constructor(
@@ -20,17 +23,44 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     // @ts-ignore
     @Inject(EXPENSE_PRICING_REPOSITORY) private readonly expensePricingRepo: ExpensePricingRepositoryPort,
+    // @ts-ignore
+    @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly calculateVendorCostDomainService: CalculateVendorCostDomainService,
     private readonly orderModificationValidator: OrderModificationValidator,
+    private readonly activeStatusService: DetermineActiveStatusDomainService,
   ) {}
   @OnEvent(OrderedServicePriceUpdatedDomainEvent.name)
   @GenerateAssignedTaskModificationHistory({ invokedFrom: 'scope', queryScope: null })
   async handle(event: OrderedServicePriceUpdatedDomainEvent) {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.aggregateId)
-    await Promise.all(
-      orderedService.getProps().assignedTasks.map(async (task) => {
-        const expensePricing = await this.expensePricingRepo.findOneOrThrow(orderedService.organizationId, task.taskId)
-        const assignedTask = await this.assignedTaskRepo.findOneOrThrow(task.id)
+    const assignedTasks = await Promise.all(
+      orderedService.getProps().assignedTasks.map(async (assignedTaskData) => {
+        return this.assignedTaskRepo.findOneOrThrow(assignedTaskData.id)
+      }),
+    )
+
+    const isUpdatedProjectProperty = assignedTasks.some(
+      (assignedTask) => assignedTask.projectPropertyType !== orderedService.projectPropertyType,
+    )
+
+    if (isUpdatedProjectProperty) {
+      for (const assignedTask of assignedTasks) {
+        await assignedTask.reset(orderedService.projectPropertyType, this.orderModificationValidator)
+        await this.assignedTaskRepo.update(assignedTask)
+      }
+
+      for (const assignedTaskAfterReset of assignedTasks) {
+        const assignedTask = await this.assignedTaskRepo.findOneOrThrow(assignedTaskAfterReset.id)
+        await assignedTask.determineActiveStatus(this.activeStatusService)
+        await this.assignedTaskRepo.update(assignedTask)
+      }
+    } else {
+      for (const assignedTask of assignedTasks) {
+        const assigneeId = assignedTask.getProps().assigneeId
+        if (!assigneeId) continue
+        const user = await this.userRepo.findOneById(assigneeId)
+        if (!user) continue
+        const expensePricing = await this.expensePricingRepo.findOneOrThrow(user.organization.id, assignedTask.taskId)
         await assignedTask.updateCost(
           this.calculateVendorCostDomainService,
           expensePricing,
@@ -38,7 +68,7 @@ export class UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler {
           this.orderModificationValidator,
         )
         await this.assignedTaskRepo.update(assignedTask)
-      }),
-    )
+      }
+    }
   }
 }

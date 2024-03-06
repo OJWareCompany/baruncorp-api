@@ -9,6 +9,7 @@ export class CreateProjectCommand {
   readonly userId: string
   readonly clientOrganizationId: string
   readonly projectPropertyType: ProjectPropertyTypeEnum
+  readonly systemSize?: number | null
   readonly projectPropertyOwner: string | null
 
   readonly projectPropertyAddress: {

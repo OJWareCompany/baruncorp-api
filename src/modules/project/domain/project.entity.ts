@@ -13,6 +13,7 @@ import {
 import { ProjectAssociatedRegulatoryBody } from './value-objects/project-associated-regulatory-body.value-object'
 import { ProjectPropertyAddressUpdatedDomainEvent } from './events/project-property-address-updated.domain-event'
 import { SystemSizeBadRequestException } from '../../ordered-job/domain/job.error'
+import { ProjectPropertyTypeUpdatedDomainEvent } from './events/project-property-type-updated.domain-event'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -23,7 +24,7 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
       ...create,
       totalOfJobs: 0,
       mailingFullAddressForWetStamp: null,
-      systemSize: null,
+      systemSize: create.systemSize ? create.systemSize : null,
       numberOfWetStamp: null,
       mountingType: null,
       hasHistoryElectricalPEStamp: false,
@@ -118,7 +119,17 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
   }
 
   update(props: UpdateProjectProps) {
-    this.props.projectPropertyType = props.projectPropertyType
+    if (this.props.projectPropertyType !== props.projectPropertyType) {
+      this.props.projectPropertyType = props.projectPropertyType
+      this.addEvent(
+        new ProjectPropertyTypeUpdatedDomainEvent({
+          aggregateId: this.id,
+          projectPropertyType: this.props.projectPropertyType,
+          systemSize: this.props.systemSize,
+        }),
+      )
+    }
+    this.props.systemSize = props.systemSize ? props.systemSize : null
     this.props.projectPropertyOwner = props.projectPropertyOwner
     this.props.projectNumber = props.projectNumber
     this.props.updatedBy = props.updatedBy

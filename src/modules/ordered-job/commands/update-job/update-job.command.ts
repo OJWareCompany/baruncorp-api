@@ -1,5 +1,6 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
+import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { LoadCalcOriginEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
 
 export class UpdateJobCommand {
@@ -11,7 +12,7 @@ export class UpdateJobCommand {
   readonly additionalInformationFromClient: string | null
   readonly numberOfWetStamp: number | null
   readonly editorUserId: string
-  // readonly mountingType: string
+  readonly mountingType: MountingTypeEnum
   readonly structuralUpgradeNote: string | null
   readonly isExpedited: boolean
   readonly dueDate: Date

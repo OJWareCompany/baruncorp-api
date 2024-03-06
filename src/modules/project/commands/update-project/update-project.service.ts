@@ -1,17 +1,15 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
+import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-services/ahj-generator.domain-service'
+import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
+import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
+import { CoordinatesNotFoundException } from '../../domain/project.error'
+import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { UpdateProjectCommand } from './update-project.command'
-import { CoordinatesNotFoundException } from '../../domain/project.error'
-import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
-import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-services/ahj-generator.domain-service'
-import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
-import { ProjectPropertyTypeEnum } from '../../domain/project.type'
-import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
-import { UtilityRepositoryPort } from '@modules/utility/database/utility.repository.port'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -54,6 +52,7 @@ export class UpdateProjectService implements ICommandHandler {
 
     project.update({
       projectPropertyType: command.projectPropertyType,
+      systemSize: command.systemSize,
       projectPropertyOwner: command.projectPropertyOwner,
       projectNumber: command.projectNumber,
       updatedBy: command.updatedByUserId,

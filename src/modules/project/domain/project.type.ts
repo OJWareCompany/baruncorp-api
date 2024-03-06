@@ -15,6 +15,7 @@ export type MountingType = 'Roof Mount' | 'Ground Mount'
 
 export interface CreateProjectProps {
   projectPropertyType: ProjectPropertyTypeEnum
+  systemSize?: number | null
   projectPropertyOwner: string | null
   projectNumber: string | null
   projectPropertyAddress: Address
@@ -37,6 +38,7 @@ export interface ProjectProps extends CreateProjectProps {
 
 export interface UpdateProjectProps {
   projectPropertyType: ProjectPropertyTypeEnum
+  systemSize?: number | null
   projectPropertyOwner: string | null
   projectNumber: string | null
   updatedBy: string

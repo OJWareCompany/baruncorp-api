@@ -23,6 +23,7 @@ import {
   CompletedTaskDeletionException,
 } from './assigned-task.error'
 import { AssignedTaskCostUpdatedDomainEvent } from './events/assigned-task-cost-updated.domain-event'
+import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -155,7 +156,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     orderModificationValidator: OrderModificationValidator,
   ) {
     await orderModificationValidator.validate(this)
-    this.setCost(calcService.calcVendorCost(expensePricing, orderedService))
+    const cost = calcService.calcVendorCost(expensePricing, orderedService)
+    this.setCost(cost)
   }
 
   // residential revision은 size가 정해지지 않은 경우 complete 될 수 없음
@@ -202,13 +204,21 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  async reset(orderModificationValidator: OrderModificationValidator): Promise<this> {
+  async reset(
+    projectPropertyType: ProjectPropertyTypeEnum,
+    orderModificationValidator: OrderModificationValidator,
+  ): Promise<this> {
     await orderModificationValidator.validate(this)
     this.props.status = AssignedTaskStatusEnum.Not_Started
     this.props.doneAt = null
     this.props.assigneeId = null
     this.props.assigneeName = null
     this.props.startedAt = null
+    this.props.assigneeOrganizationId = null
+    this.props.assigneeOrganizationName = null
+    this.props.cost = null
+    this.props.duration = null
+    this.props.projectPropertyType = projectPropertyType
     return this
   }
 

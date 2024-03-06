@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsObject, IsOptional, IsString } from 'class-validator'
+import { IsNumber, IsObject, IsOptional, IsString } from 'class-validator'
 import { AddressDto } from '../../../ordered-job/dtos/address.dto'
 import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 import { ProjectAssociatedRegulatoryBodyDto } from '../../dtos/project.response.dto'
@@ -8,6 +8,11 @@ export class UpdateProjectRequestDto {
   @ApiProperty({ default: ProjectPropertyTypeEnum.Residential, enum: ProjectPropertyTypeEnum })
   @IsString()
   readonly projectPropertyType: ProjectPropertyTypeEnum
+
+  @ApiProperty({ default: 100 })
+  @IsNumber()
+  @IsOptional()
+  readonly systemSize?: number | null
 
   @ApiProperty({ default: 'Chris Kim' })
   @IsString()

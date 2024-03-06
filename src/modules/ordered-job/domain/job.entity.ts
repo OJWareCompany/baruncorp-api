@@ -33,6 +33,9 @@ import {
   SystemSizeBadRequestException,
 } from './job.error'
 import { IRFIMail, RFIMailer } from '../../ordered-job-note/infrastructure/mailer.infrastructure'
+import { JobProjectPropertyTypeUpdatedDomainEvent } from './events/job-project-property-type-updated.domain-event'
+import { JobSystemSizeUpdatedDomainEvent } from './events/job-system-size-updated.domain-event'
+import { JobMountingTypeUpdatedDomainEvent } from './events/job-mounting-type-updated.domain-event'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -304,6 +307,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
   updateSystemSize(systemSize: number | null): JobEntity {
     if (systemSize && 99999999.99999999 < systemSize) throw new SystemSizeBadRequestException()
     this.props.systemSize = systemSize
+    if (systemSize !== null) {
+      this.addEvent(new JobSystemSizeUpdatedDomainEvent({ aggregateId: this.id, systemSize: systemSize }))
+    }
     return this
   }
 
@@ -329,6 +335,24 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   updateMountingType(mountingType: MountingTypeEnum): JobEntity {
     this.props.mountingType = mountingType
+    this.addEvent(
+      new JobMountingTypeUpdatedDomainEvent({
+        aggregateId: this.id,
+        mountingType: mountingType,
+      }),
+    )
+    return this
+  }
+
+  updateProjectPropertyType(projectPropertyType: ProjectPropertyTypeEnum, systemSize: number | null) {
+    this.props.projectPropertyType = projectPropertyType
+    this.addEvent(
+      new JobProjectPropertyTypeUpdatedDomainEvent({
+        aggregateId: this.id,
+        projectPropertyType: this.props.projectPropertyType,
+      }),
+    )
+    this.props.systemSize = systemSize // 시스템 사이즈 수정 업데이트는 하지 않는다. (property type 수정 이벤트에서 필요한 작업 처리), 현재는 이 메서드를 쓰는 Application Service에서 처리됨
     return this
   }
 

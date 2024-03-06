@@ -178,7 +178,18 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     if (this.props.price === null) throw new JobSendableToClientPriceNotSetException()
   }
 
-  private async determineInitialValues(
+  async setProjectPropertyType(
+    projectPropertyType: ProjectPropertyTypeEnum,
+    calcService: ServiceInitialPriceManager,
+    orderModificationValidator: OrderModificationValidator,
+    revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+  ) {
+    this.props.projectPropertyType = projectPropertyType
+    await this.determineInitialValues(calcService, orderModificationValidator, revisionTypeUpdateValidator)
+    return this
+  }
+
+  async determineInitialValues(
     calcService: ServiceInitialPriceManager,
     orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,

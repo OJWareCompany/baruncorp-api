@@ -7,7 +7,7 @@ import { CreateJobRequestDto } from '../create-job/create-job.request.dto'
 export class UpdateJobRequestDto extends OmitType(CreateJobRequestDto, [
   'taskIds',
   'projectId',
-  'mountingType',
+  // 'mountingType',
 ] as const) {
   @ApiProperty()
   @IsOptional()

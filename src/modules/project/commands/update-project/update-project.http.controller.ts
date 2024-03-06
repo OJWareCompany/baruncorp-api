@@ -26,6 +26,7 @@ export class UpdateProjectHttpController {
       projectNumber: request.projectNumber,
       projectPropertyAddress: new Address(request.projectPropertyAddress),
       // projectAssociatedRegulatory: request.projectAssociatedRegulatory,
+      systemSize: request.systemSize,
       updatedByUserId: user.id,
       utilityId: request.utilityId,
     })
