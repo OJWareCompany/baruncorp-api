@@ -1040,7 +1040,7 @@ export interface ClientToInvoiceResponseDto {
 }
 
 export interface IssueInvoiceRequestDto {
-  attachments: File[]
+  files: File[]
 }
 
 export interface ClientWithOutstandingBalancesResponseDto {
@@ -5474,7 +5474,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/invoices/${invoiceId}/issue`,
         method: 'PATCH',
         body: data,
-        type: ContentType.Json,
+        type: ContentType.FormData,
         ...params,
       }),
   }

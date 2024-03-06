@@ -41,5 +41,5 @@ export class IssueInvoiceParamRequestDto {
 
 export class IssueInvoiceRequestDto {
   @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
-  readonly attachments: any[]
+  readonly files: any[]
 }

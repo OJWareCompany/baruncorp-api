@@ -3,7 +3,7 @@ import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export class IssueInvoiceCommand {
   readonly invoiceId: string
-  readonly attachments: Express.Multer.File[] | null
+  readonly files: Express.Multer.File[] | null
 
   constructor(props: IssueInvoiceCommand) {
     initialize(this, props)

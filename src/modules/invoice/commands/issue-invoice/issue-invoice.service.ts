@@ -2,7 +2,6 @@
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { ConfigModule } from '@nestjs/config'
 import { Inject } from '@nestjs/common'
-import nodemailer from 'nodemailer'
 import { formatDate } from '../../../../libs/utils/formatDate'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
@@ -41,7 +40,7 @@ export class IssueInvoiceService implements ICommandHandler {
       from: 'automation@baruncorp.com',
       to: [organization.getProps().invoiceRecipientEmail || 'bs_khm@naver.com'],
       threadId: null,
-      files: command.attachments,
+      files: command.files,
     }
 
     await this.mailer.sendRFI(input)
