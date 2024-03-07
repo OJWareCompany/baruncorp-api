@@ -8,7 +8,7 @@ import { InvoiceRepositoryPort } from '../../../invoice/database/invoice.reposit
 import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
 import { JobRepositoryPort } from '../../../ordered-job/database/job.repository.port'
 import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
-import { OrderedScopeStatusChangeValidator } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
+// import { OrderedScopeStatusChangeValidator } from '../../domain/domain-services/check-all-related-tasks-completed.domain-service'
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceStatusEnum } from '../../domain/ordered-service.type'
@@ -20,8 +20,7 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
     // @ts-ignore
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedScopeRepo: OrderedServiceRepositoryPort, // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort, // @ts-ignore
-    @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort,
-    private readonly orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator,
+    @Inject(INVOICE_REPOSITORY) private readonly invoiceRepo: InvoiceRepositoryPort, // private readonly orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator,
   ) {}
 
   @GenerateOrderedScopeModificationHistory({ invokedFrom: 'self' })
@@ -43,7 +42,7 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
         orderedScope.start()
         break
       case OrderedServiceStatusEnum.Completed:
-        await orderedScope.validateAndComplete(this.orderedScopeStatusChangeValidator)
+        await orderedScope.validateAndComplete()
         break
       case OrderedServiceStatusEnum.Canceled:
         orderedScope.cancel('manually')

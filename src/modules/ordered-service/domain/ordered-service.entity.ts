@@ -378,11 +378,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return 1
   }
 
-  async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator): Promise<this> {
+  // async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator): Promise<this> {
+  async validateAndComplete(): Promise<this> {
     if (this.isRevision && !this.isRevisionTypeEntered) {
       throw new OrderedServiceRevisionTypeNotEnteredException()
     }
-    await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
+    // await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
     this.complete()
     return this
   }
