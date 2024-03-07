@@ -30,6 +30,9 @@ export class CreateDepartmentService implements ICommandHandler {
       viewExpensePricing: command.viewExpensePricing,
       viewScopePrice: command.viewScopePrice,
       viewTaskCost: command.viewTaskCost,
+      editUserTask: command.editUserTask,
+      editUserLicense: command.editUserLicense,
+      editUserPosition: command.editUserPosition,
     })
     await this.departmentRepo.insert(entity)
     return entity.id

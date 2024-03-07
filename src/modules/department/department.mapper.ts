@@ -20,6 +20,9 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
       viewExpensePricing: props.viewExpensePricing,
       viewScopePrice: props.viewScopePrice,
       viewTaskCost: props.viewTaskCost,
+      editUserTask: props.editUserTask,
+      editUserLicense: props.editUserLicense,
+      editUserPosition: props.editUserPosition,
     }
     return record
   }
@@ -38,6 +41,9 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
         viewExpensePricing: record.viewExpensePricing,
         viewScopePrice: record.viewScopePrice,
         viewTaskCost: record.viewTaskCost,
+        editUserTask: record.editUserTask,
+        editUserLicense: record.editUserLicense,
+        editUserPosition: record.editUserPosition,
       },
     })
     return entity
@@ -55,6 +61,9 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
       viewExpensePricing: props.viewExpensePricing,
       viewScopePrice: props.viewScopePrice,
       viewTaskCost: props.viewTaskCost,
+      editUserTask: props.editUserTask,
+      editUserLicense: props.editUserLicense,
+      editUserPosition: props.editUserPosition,
     })
     return response
   }

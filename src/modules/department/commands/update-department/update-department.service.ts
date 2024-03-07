@@ -32,6 +32,9 @@ export class UpdateDepartmentService implements ICommandHandler {
       .setViewExpensePricing(command.viewExpensePricing)
       .setViewScopePrice(command.viewScopePrice)
       .setViewTaskCost(command.viewTaskCost)
+      .setEditUserTask(command.editUserTask)
+      .setEditUserLicense(command.editUserLicense)
+      .setEditUserPosition(command.editUserPosition)
 
     await this.departmentRepo.update(entity)
   }

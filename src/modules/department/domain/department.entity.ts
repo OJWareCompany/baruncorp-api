@@ -51,6 +51,21 @@ export class DepartmentEntity extends AggregateRoot<DepartmentProps> {
     return this
   }
 
+  setEditUserTask(editUserTask: boolean): this {
+    this.props.editUserTask = editUserTask
+    return this
+  }
+
+  setEditUserLicense(editUserLicense: boolean): this {
+    this.props.editUserLicense = editUserLicense
+    return this
+  }
+
+  setEditUserPosition(editUserPosition: boolean): this {
+    this.props.editUserPosition = editUserPosition
+    return this
+  }
+
   public validate(): void {
     return
   }

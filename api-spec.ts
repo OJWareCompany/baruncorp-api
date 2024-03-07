@@ -2760,6 +2760,12 @@ export interface CreateDepartmentRequestDto {
   viewScopePrice: boolean
   /** @default false */
   viewTaskCost: boolean
+  /** @default false */
+  editUserTask: boolean
+  /** @default false */
+  editUserLicense: boolean
+  /** @default false */
+  editUserPosition: boolean
 }
 
 export interface UpdateDepartmentRequestDto {
@@ -2777,6 +2783,12 @@ export interface UpdateDepartmentRequestDto {
   viewScopePrice: boolean
   /** @default false */
   viewTaskCost: boolean
+  /** @default false */
+  editUserTask: boolean
+  /** @default false */
+  editUserLicense: boolean
+  /** @default false */
+  editUserPosition: boolean
 }
 
 export interface DepartmentResponseDto {
@@ -2789,6 +2801,9 @@ export interface DepartmentResponseDto {
   viewExpensePricing: boolean
   viewScopePrice: boolean
   viewTaskCost: boolean
+  editUserTask: boolean
+  editUserLicense: boolean
+  editUserPosition: boolean
 }
 
 export interface DepartmentPaginatedResponseDto {

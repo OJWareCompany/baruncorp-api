@@ -34,4 +34,16 @@ export class CreateDepartmentRequestDto {
   @ApiProperty({ default: false })
   @IsBoolean()
   readonly viewTaskCost: boolean
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly editUserTask: boolean
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly editUserLicense: boolean
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly editUserPosition: boolean
 }

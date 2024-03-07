@@ -7,5 +7,8 @@ export interface CreateDepartmentProps {
   viewExpensePricing: boolean
   viewScopePrice: boolean
   viewTaskCost: boolean
+  editUserTask: boolean
+  editUserLicense: boolean
+  editUserPosition: boolean
 }
 export type DepartmentProps = CreateDepartmentProps

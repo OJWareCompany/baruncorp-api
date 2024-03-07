@@ -9,6 +9,10 @@ export class CreateDepartmentCommand {
   readonly viewExpensePricing: boolean
   readonly viewScopePrice: boolean
   readonly viewTaskCost: boolean
+  readonly editUserTask: boolean
+  readonly editUserLicense: boolean
+  readonly editUserPosition: boolean
+
   constructor(props: CreateDepartmentCommand) {
     initialize(this, props)
   }

@@ -40,6 +40,18 @@ export class DepartmentResponseDto {
   @IsBoolean()
   readonly viewTaskCost: boolean
 
+  @ApiProperty()
+  @IsBoolean()
+  readonly editUserTask: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly editUserLicense: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly editUserPosition: boolean
+
   constructor(props: DepartmentResponseDto) {
     initialize(this, props)
   }
