@@ -46,3 +46,15 @@ export class AssignedTaskPendingException extends UnprocessableEntityException {
     super('There are pending tasks for setting the assignee of this task, please try again.', '30207')
   }
 }
+
+export class AssignedTaskBackToNotStartedException extends UnprocessableEntityException {
+  constructor() {
+    super('Tasks assigned to a person cannot be modified to the Not Started status.', '30208')
+  }
+}
+
+export class UnassignedTaskProgressException extends UnprocessableEntityException {
+  constructor() {
+    super('Tasks without an assigned person cannot be modified to the In Progress status.', '30209')
+  }
+}

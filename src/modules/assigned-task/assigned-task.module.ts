@@ -36,8 +36,8 @@ import { DetermineActiveStatusDomainService } from './domain/domain-services/det
 import { AssignTaskWhenTaskIsActivatedDomainEventHandler } from './application/event-handlers/assign-task-when-task-is-activated.domain-event-handler'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
 import { InvoiceModule } from '../invoice/invoice.module'
-import { JobModule } from '../ordered-job/job.module'
 import { UsersModule } from '../users/users.module'
+import { JobModule } from '../ordered-job/job.module'
 import { ExpensePricingModule } from '../expense-pricing/expense-pricing.module'
 import { BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-started.domain-event-handler'
 import { BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-back-to-not-started.domain-event-handler'
@@ -51,10 +51,15 @@ import { FindAssignedTaskSummaryInProgressPaginatedQueryHandler } from '@modules
 import { FindAssignedTaskSummaryDonePaginatedHttpController } from '@modules/assigned-task/queries/find-assigned-task-summary-done-paginated/find-assigned-task-summary-done.paginated.http.controller'
 import { FindAssignedTaskSummaryDonePaginatedQueryHandler } from '@modules/assigned-task/queries/find-assigned-task-summary-done-paginated/find-assigned-task-summary-done.paginated.query-handler'
 import { FindAssignedTaskSummaryTotalPaginatedHttpController } from '@modules/assigned-task/queries/find-assigned-task-summary-total-paginated/find-assigned-task-summary-total.paginated.http.controller'
-import {
-  FindAssignedTaskSummaryTotalPaginatedQuery,
-  FindAssignedTaskSummaryTotalPaginatedQueryHandler,
-} from '@modules/assigned-task/queries/find-assigned-task-summary-total-paginated/find-assigned-task-summary-total.paginated.query-handler'
+import { FindAssignedTaskSummaryTotalPaginatedQueryHandler } from '@modules/assigned-task/queries/find-assigned-task-summary-total-paginated/find-assigned-task-summary-total.paginated.query-handler'
+import { BackToNotStartedAssignedTaskHttpController } from './commands/back-to-not-started-assigned-task/back-to-not-started-assigned-task.http.controller'
+import { BackToNotStartedAssignedTaskService } from './commands/back-to-not-started-assigned-task/back-to-not-started-assigned-task.service'
+import { CancelAssignedTaskHttpController } from './commands/cancel-assigned-task/cancel-assigned-task.http.controller'
+import { CancelAssignedTaskService } from './commands/cancel-assigned-task/cancel-assigned-task.service'
+import { HoldAssignedTaskHttpController } from './commands/hold-assigned-task/hold-assigned-task.http.controller'
+import { HoldAssignedTaskService } from './commands/hold-assigned-task/hold-assigned-task.service'
+import { UpdateStatusToInProgressAssignedTaskHttpController } from './commands/update-status-to-in-progress-assigned-task/update-status-to-in-progress-assigned-task.http.controller'
+import { UpdateStatusToInProgressAssignedTaskService } from './commands/update-status-to-in-progress-assigned-task/update-status-to-in-progress-assigned-task.service'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -71,6 +76,10 @@ const httpControllers = [
   FindRejectedTaskReasonHttpController,
   UnassignAssignedTaskHttpController,
   RejectAssignedTaskHttpController,
+  BackToNotStartedAssignedTaskHttpController,
+  CancelAssignedTaskHttpController,
+  HoldAssignedTaskHttpController,
+  UpdateStatusToInProgressAssignedTaskHttpController,
 ]
 const commandHandlers: Provider[] = [
   AssignTaskService,
@@ -79,6 +88,10 @@ const commandHandlers: Provider[] = [
   UpdateTaskCostService,
   UnassignAssignedTaskService,
   RejectAssignedTaskService,
+  BackToNotStartedAssignedTaskService,
+  CancelAssignedTaskService,
+  HoldAssignedTaskService,
+  UpdateStatusToInProgressAssignedTaskService,
 ]
 const queryHandlers: Provider[] = [
   FindAssignedTaskQueryHandler,

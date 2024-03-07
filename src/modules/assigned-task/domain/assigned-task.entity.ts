@@ -18,9 +18,11 @@ import { AssignedTaskDeletedDomainEvent } from './events/assigned-task-deleted.d
 import { AssignedTaskCreatedDomainEvent } from './events/assigned-task-created.domain-event'
 import {
   AssignedTaskAlreadyCompletedException,
+  AssignedTaskBackToNotStartedException,
   AssignedTaskDurationExceededException,
   CompletedTaskChangeStatusException,
   CompletedTaskDeletionException,
+  UnassignedTaskProgressException,
 } from './assigned-task.error'
 import { AssignedTaskCostUpdatedDomainEvent } from './events/assigned-task-cost-updated.domain-event'
 import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
@@ -186,12 +188,38 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
+  async backToNotStartedManually(orderModificationValidator: OrderModificationValidator): Promise<this> {
+    if (this.props.assigneeId) {
+      throw new AssignedTaskBackToNotStartedException()
+    }
+    await orderModificationValidator.validate(this)
+    this.props.status = AssignedTaskStatusEnum.Not_Started
+    return this
+  }
+
+  async updateToInProgressManually(orderModificationValidator: OrderModificationValidator) {
+    if (!this.props.assigneeId) {
+      throw new UnassignedTaskProgressException()
+    }
+    await orderModificationValidator.validate(this)
+    this.props.status = AssignedTaskStatusEnum.In_Progress
+    return this
+  }
+
   async cancel(orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
-    if (this.isCompleted) throw new CompletedTaskChangeStatusException()
+    // if (this.isCompleted) throw new CompletedTaskChangeStatusException()
+    if (this.isCompleted) return this
     this.props.status = AssignedTaskStatusEnum.Canceled
     this.props.doneAt = new Date()
     // this.deActive()
+    return this
+  }
+
+  async cancelManually(orderModificationValidator: OrderModificationValidator): Promise<this> {
+    await orderModificationValidator.validate(this)
+    this.props.status = AssignedTaskStatusEnum.Canceled
+    this.props.doneAt = new Date()
     return this
   }
 
@@ -200,6 +228,12 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     if (this.isCompleted || this.isCanceled) {
       return this
     }
+    this.props.status = AssignedTaskStatusEnum.On_Hold
+    return this
+  }
+
+  async holdManually(orderModificationValidator: OrderModificationValidator): Promise<this> {
+    await orderModificationValidator.validate(this)
     this.props.status = AssignedTaskStatusEnum.On_Hold
     return this
   }
@@ -223,7 +257,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   }
 
   async unassign(orderModificationValidator: OrderModificationValidator) {
-    if (this.isCompleted) throw new AssignedTaskAlreadyCompletedException()
+    // if (this.isCompleted) throw new AssignedTaskAlreadyCompletedException()
     await orderModificationValidator.validate(this)
     this.props.assigneeId = null
     this.props.assigneeName = null
@@ -232,6 +266,8 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     this.props.status = AssignedTaskStatusEnum.Not_Started
     this.props.startedAt = null
     this.props.doneAt = null
+    this.props.isVendor = false
+    this.props.cost = 0
     return this
   }
 
