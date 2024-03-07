@@ -12,7 +12,7 @@ export class UpdateJobCommand {
   readonly additionalInformationFromClient: string | null
   readonly numberOfWetStamp: number | null
   readonly editorUserId: string
-  readonly mountingType: MountingTypeEnum
+  readonly mountingType?: MountingTypeEnum | null
   readonly structuralUpgradeNote: string | null
   readonly isExpedited: boolean
   readonly dueDate: Date

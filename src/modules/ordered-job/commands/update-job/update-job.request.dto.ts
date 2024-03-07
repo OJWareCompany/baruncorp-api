@@ -3,17 +3,23 @@ import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import { OrderedJobsPriorityEnum } from '../../domain/job.type'
 import { CreateJobRequestDto } from '../create-job/create-job.request.dto'
+import { MountingTypeEnum } from '../../../project/domain/project.type'
 
 export class UpdateJobRequestDto extends OmitType(CreateJobRequestDto, [
   'taskIds',
   'projectId',
-  // 'mountingType',
+  'mountingType',
 ] as const) {
   @ApiProperty()
   @IsOptional()
   @IsDate()
   @Type(() => Date)
   readonly dueDate: Date
+
+  @ApiProperty({ enum: MountingTypeEnum, example: MountingTypeEnum.Ground_Mount })
+  @IsEnum(MountingTypeEnum)
+  @IsOptional()
+  readonly mountingType?: MountingTypeEnum | null
 
   @ApiProperty()
   @IsBoolean()

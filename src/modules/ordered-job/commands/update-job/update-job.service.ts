@@ -52,7 +52,7 @@ export class UpdateJobService implements ICommandHandler {
 
     if (clientUserRecord.organization.id !== project.clientOrganizationId) throw new WrongClientException()
 
-    job.updateMountingType(command.mountingType)
+    job.updateMountingType(command.mountingType || job.mountingType)
     job.updateClientInfo(
       new ClientInformation({
         clientOrganizationId: organization.id,
