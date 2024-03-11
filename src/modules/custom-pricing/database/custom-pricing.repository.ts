@@ -6,6 +6,7 @@ import { CustomPricingRepositoryPort } from './custom-pricing.repository.port'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { CustomPricingEntity } from '../domain/custom-pricing.entity'
 import { CustomPricingNotFoundException } from '../domain/custom-pricing.error'
+import { ServiceId } from '../../service/domain/value-objects/service-id.value-object'
 
 @Injectable()
 export class CustomPricingRepository implements CustomPricingRepositoryPort {
@@ -113,8 +114,8 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
   }
 
   // 조회가 되더라도 실제로는 없을 수 있음 (예를들어 revision pricing이 null일 수 있음, 그런 경우에는 base revision pricing이 적용되어야한다.)
-  async findOne(organizationId: string, serviceId: string): Promise<CustomPricingEntity | null> {
-    const condition = { serviceId, organizationId }
+  async findOne(serviceId: ServiceId, organizationId: string): Promise<CustomPricingEntity | null> {
+    const condition = { serviceId: serviceId.value, organizationId }
 
     const record = await this.prismaService.customPricings.findFirst({ where: { ...condition } })
     if (!record) return null
@@ -147,8 +148,8 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
   }
 
   // 여기서 매개 변수 순서가 인터페이스와 달라질수 있는것을 방지하려면 VO를 써야한다.
-  async findOneOrThrow(serviceId: string, organizationId: string): Promise<CustomPricingEntity> {
-    const entity = await this.findOne(organizationId, serviceId)
+  async findOneOrThrow(serviceId: ServiceId, organizationId: string): Promise<CustomPricingEntity> {
+    const entity = await this.findOne(serviceId, organizationId)
     if (!entity) throw new CustomPricingNotFoundException()
     return entity
   }

@@ -6,6 +6,7 @@ import { CUSTOM_PRICING_REPOSITORY } from '../../custom-pricing.di-token'
 import { CustomPricingRepositoryPort } from '../../database/custom-pricing.repository.port'
 import { CustomPricingMapper } from '../../custom-pricing.mapper'
 import { CustomPricingNotFoundException } from '../../domain/custom-pricing.error'
+import { ServiceId } from '../../../service/domain/value-objects/service-id.value-object'
 
 @Controller('custom-pricings')
 export class FindCustomPricingHttpController {
@@ -18,7 +19,10 @@ export class FindCustomPricingHttpController {
 
   @Get(':organizationId/:serviceId')
   async get(@Param() request: FindCustomPricingRequestDto): Promise<CustomPricingResponseDto> {
-    const entity = await this.customPricingRepo.findOne(request.organizationId, request.serviceId)
+    const entity = await this.customPricingRepo.findOne(
+      new ServiceId({ value: request.serviceId }),
+      request.organizationId,
+    )
     if (!entity) throw new CustomPricingNotFoundException()
     return this.mapper.toResponse(entity)
   }

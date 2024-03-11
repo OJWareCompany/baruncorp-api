@@ -5,6 +5,7 @@ import { CustomPricingRepositoryPort } from '../../database/custom-pricing.repos
 import { CUSTOM_PRICING_REPOSITORY } from '../../custom-pricing.di-token'
 import { UpdateCustomPricingCommand } from './update-custom-pricing.command'
 import { ResidentialNewServicePricingTypeEnum } from '../create-custom-pricing/create-custom-pricing.command'
+import { ServiceId } from '../../../service/domain/value-objects/service-id.value-object'
 
 @CommandHandler(UpdateCustomPricingCommand)
 export class UpdateCustomPricingService implements ICommandHandler {
@@ -14,7 +15,10 @@ export class UpdateCustomPricingService implements ICommandHandler {
     private readonly customPricingRepo: CustomPricingRepositoryPort,
   ) {}
   async execute(command: UpdateCustomPricingCommand): Promise<void> {
-    const entity = await this.customPricingRepo.findOneOrThrow(command.serviceId, command.organizationId)
+    const entity = await this.customPricingRepo.findOneOrThrow(
+      new ServiceId({ value: command.serviceId }),
+      command.organizationId,
+    )
     const residentialRevisionPricing =
       command.residentialRevisionPrice && command.residentialRevisionGmPrice
         ? {

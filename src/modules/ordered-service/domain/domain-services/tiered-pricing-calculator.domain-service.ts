@@ -9,6 +9,7 @@ import { JOB_REPOSITORY } from '../../../ordered-job/job.di-token'
 import { SameScopeCompletionOrderCalculator } from './same-scope-completion-order-calculator.domain-service'
 import { OrderedServiceEntity } from '../ordered-service.entity'
 import { ScopeRevisionChecker } from './scope-revision-checker.domain-service'
+import { ServiceId } from '../../../service/domain/value-objects/service-id.value-object'
 
 export class TieredPricingCalculator {
   constructor(
@@ -21,7 +22,10 @@ export class TieredPricingCalculator {
 
   async isTieredPricingScope(orderedScope: OrderedServiceEntity): Promise<boolean> {
     const project = await this.projectRepo.findOneOrThrow({ id: orderedScope.projectId })
-    const customPricing = await this.customPricingRepo.findOne(orderedScope.serviceId, orderedScope.organizationId)
+    const customPricing = await this.customPricingRepo.findOne(
+      new ServiceId({ value: orderedScope.serviceId }),
+      orderedScope.organizationId,
+    )
 
     if (project.isCommercial) {
       return false
@@ -45,7 +49,7 @@ export class TieredPricingCalculator {
   async calc(orderedScope: OrderedServiceEntity): Promise<number | null> {
     const job = await this.jobRepo.findJobOrThrow(orderedScope.jobId)
     const customPricing = await this.customPricingRepo.findOneOrThrow(
-      orderedScope.serviceId,
+      new ServiceId({ value: orderedScope.serviceId }),
       orderedScope.organizationId,
     )
 
