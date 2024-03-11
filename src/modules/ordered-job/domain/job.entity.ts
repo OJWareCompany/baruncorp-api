@@ -36,6 +36,7 @@ import { IRFIMail, RFIMailer } from '../../ordered-job-note/infrastructure/maile
 import { JobProjectPropertyTypeUpdatedDomainEvent } from './events/job-project-property-type-updated.domain-event'
 import { JobSystemSizeUpdatedDomainEvent } from './events/job-system-size-updated.domain-event'
 import { JobMountingTypeUpdatedDomainEvent } from './events/job-mounting-type-updated.domain-event'
+import { JobExpeditedStatusUpdatedDomainEvent } from './events/job-expedited-status-updated.domain-event'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -315,6 +316,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   updateIsExpedited(isExpedited: boolean): JobEntity {
     this.props.isExpedited = isExpedited
+    this.addEvent(
+      new JobExpeditedStatusUpdatedDomainEvent({ aggregateId: this.id, isExpedited: this.props.isExpedited }),
+    )
     return this
   }
 

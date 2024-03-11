@@ -271,6 +271,10 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
+  setIsExpedited(isExpedited: boolean) {
+    this.props.isExpedited = isExpedited
+  }
+
   async assign(user: UserEntity, orderModificationValidator: OrderModificationValidator): Promise<this> {
     await orderModificationValidator.validate(this)
     this.props.assigneeId = user.id
