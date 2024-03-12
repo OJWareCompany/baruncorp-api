@@ -2,7 +2,6 @@
 import { Inject } from '@nestjs/common'
 import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
-import { PrismaService } from '../../../database/prisma.service'
 import { DEPARTMENT_REPOSITORY } from '../../department.di-token'
 import { DepartmentEntity } from '../../domain/department.entity'
 import { CreateDepartmentCommand } from './create-department.command'
@@ -33,6 +32,7 @@ export class CreateDepartmentService implements ICommandHandler {
       editUserTask: command.editUserTask,
       editUserLicense: command.editUserLicense,
       editUserPosition: command.editUserPosition,
+      sendDeliverables: command.sendDeliverables,
     })
     await this.departmentRepo.insert(entity)
     return entity.id

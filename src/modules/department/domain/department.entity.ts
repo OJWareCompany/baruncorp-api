@@ -66,6 +66,11 @@ export class DepartmentEntity extends AggregateRoot<DepartmentProps> {
     return this
   }
 
+  setSendDeliverables(sendDeliverables: boolean): this {
+    this.props.sendDeliverables = sendDeliverables
+    return this
+  }
+
   public validate(): void {
     return
   }

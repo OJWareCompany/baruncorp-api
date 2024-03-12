@@ -46,4 +46,8 @@ export class CreateDepartmentRequestDto {
   @ApiProperty({ default: false })
   @IsBoolean()
   readonly editUserPosition: boolean
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly sendDeliverables: boolean
 }

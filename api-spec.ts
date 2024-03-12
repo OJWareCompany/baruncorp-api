@@ -2766,6 +2766,8 @@ export interface CreateDepartmentRequestDto {
   editUserLicense: boolean
   /** @default false */
   editUserPosition: boolean
+  /** @default false */
+  sendDeliverables: boolean
 }
 
 export interface UpdateDepartmentRequestDto {
@@ -2789,6 +2791,8 @@ export interface UpdateDepartmentRequestDto {
   editUserLicense: boolean
   /** @default false */
   editUserPosition: boolean
+  /** @default false */
+  sendDeliverables: boolean
 }
 
 export interface DepartmentResponseDto {
@@ -2804,6 +2808,7 @@ export interface DepartmentResponseDto {
   editUserTask: boolean
   editUserLicense: boolean
   editUserPosition: boolean
+  sendDeliverables: boolean
 }
 
 export interface DepartmentPaginatedResponseDto {

@@ -10,5 +10,6 @@ export interface CreateDepartmentProps {
   editUserTask: boolean
   editUserLicense: boolean
   editUserPosition: boolean
+  sendDeliverables: boolean
 }
 export type DepartmentProps = CreateDepartmentProps
