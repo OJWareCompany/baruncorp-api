@@ -171,10 +171,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
     }
 
     await mailer.sendRFI(input)
-    this.props.jobStatus = AutoOnlyJobStatusEnum.Sent_To_Client
+    if (this.props.jobStatus !== JobStatusEnum.Canceled_Invoice) {
+      this.props.jobStatus = AutoOnlyJobStatusEnum.Sent_To_Client
+    }
     this.props.updatedBy = editor.userName.fullName
     this.props.dateSentToClient = new Date()
-    this.props.completedCancelledDate = this.props.dateSentToClient
     return this
   }
 
@@ -213,6 +214,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   complete(): this {
     this.props.jobStatus = JobStatusEnum.Completed
+    this.props.completedCancelledDate = new Date()
     this.addEvent(
       new JobCompletedDomainEvent({
         aggregateId: this.id,
