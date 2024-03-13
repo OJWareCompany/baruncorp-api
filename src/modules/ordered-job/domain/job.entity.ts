@@ -10,6 +10,7 @@ import {
   AutoOnlyJobStatusEnum,
   CreateJobProps,
   JobProps,
+  JobStatus,
   JobStatusEnum,
   LoadCalcOriginEnum,
   OrderedJobsPriorityEnum,
@@ -215,6 +216,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   async determineCurrentStatus(checkCompletionJob: CheckCompletionJob) {
     this.props.jobStatus = await checkCompletionJob.determineCurrentStatus(this)
+    const is: JobStatus[] = [(JobStatusEnum.Canceled, JobStatusEnum.Canceled_Invoice, JobStatusEnum.Completed)]
+    if (is.includes(this.props.jobStatus)) {
+      this.props.completedCancelledDate = new Date()
+    }
     return this
   }
 

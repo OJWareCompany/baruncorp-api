@@ -52,6 +52,7 @@ import { CompleteJobWhenOrderedServiceIsCompletedDomainEventHandler } from './ap
 import { CheckCompletionJob } from './domain/domain-services/check-completion-job.domain-service'
 import { CompleteJobWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
 import { CompleteJobWhenOrderedServiceIsCanceledDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-canceled.domain-event-handler'
+import { JobToInvoiceResponseMapper } from './job-to-invoice.response.mapper'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -92,7 +93,7 @@ const eventHandlers: Provider[] = [
   CompleteJobWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
-const mappers: Provider[] = [JobMapper, JobResponseMapper]
+const mappers: Provider[] = [JobMapper, JobResponseMapper, JobToInvoiceResponseMapper]
 const infrastructures: Provider[] = []
 const domainServices: Provider[] = [
   TotalDurationCalculator,

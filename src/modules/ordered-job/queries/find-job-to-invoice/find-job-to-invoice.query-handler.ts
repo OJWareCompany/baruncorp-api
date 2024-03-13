@@ -13,6 +13,8 @@ import { JobResponseMapper } from '../../job.response.mapper'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JobMapper } from '../../job.mapper'
+import { TieredPricingCalculator } from '../../../ordered-service/domain/domain-services/tiered-pricing-calculator.domain-service'
+import { JobToInvoiceResponseMapper } from '../../job-to-invoice.response.mapper'
 
 export class FindJobToInvoiceQuery {
   readonly clientOrganizationId: string
@@ -31,9 +33,10 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
     @Inject(ORDERED_SERVICE_REPOSITORY) private readonly orderedServiceRepo: OrderedServiceRepositoryPort,
     // @ts-ignore
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
-    private readonly jobResponseMapper: JobResponseMapper,
+    private readonly jobToInvoiceResponseMapper: JobToInvoiceResponseMapper,
     private readonly jobMapper: JobMapper,
     private readonly calcInvoiceService: CalculateInvoiceService,
+    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
 
   async execute(query: FindJobToInvoiceQuery): Promise<JobToInvoiceResponseDto> {
@@ -51,19 +54,17 @@ export class FindJobToInvoiceQueryHandler implements IQueryHandler {
     const jobs = await this.jobRepo.findJobsToInvoice(query.clientOrganizationId, query.serviceMonth)
 
     const orderedServices = await this.orderedServiceRepo.findBy({ jobId: { in: jobs.map((job) => job.id) } })
+    const calcCost = orderedServices.map(
+      async (orderedService) => await orderedService.determinePriceWhenInvoice(this.tieredPricingCalculator),
+    )
+    await Promise.all(calcCost)
     const discount = await this.calcInvoiceService.calcDiscountAmount(orderedServices, this.serviceRepo)
-    const total = orderedServices //
-      .filter(
-        (scope) =>
-          scope.status === OrderedServiceStatusEnum.Completed ||
-          scope.status === OrderedServiceStatusEnum.Canceled_Invoice,
-      )
-      .reduce((pre, cur) => pre + Number(cur.price), 0)
+    const total = orderedServices.reduce((pre, cur) => pre + Number(cur.price), 0)
 
     return {
       items: await Promise.all(
         jobs.map(async (job) => {
-          return await this.jobResponseMapper.toResponse(this.jobMapper.toPersistence(job))
+          return await this.jobToInvoiceResponseMapper.toResponse(this.jobMapper.toPersistence(job))
         }),
       ),
       subtotal: total,
