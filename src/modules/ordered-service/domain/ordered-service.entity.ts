@@ -33,6 +33,7 @@ import { ScopeRevisionChecker } from './domain-services/scope-revision-checker.d
 import {
   AutoOnlyOrderedServiceStatusEnum,
   CreateOrderedServiceProps,
+  OrderedScopeStatus,
   OrderedServicePricingTypeEnum,
   OrderedServiceProps,
   OrderedServiceSizeForRevisionEnum,
@@ -317,7 +318,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   backToNotStarted(option: JobNotStartedDomainEvent | JobStartedDomainEvent | 'manually'): this {
-    const permittedAutoUpdateStatus = [OrderedServiceStatusEnum.Canceled, AutoOnlyOrderedServiceStatusEnum.On_Hold]
+    const permittedAutoUpdateStatus: OrderedScopeStatus[] = [
+      // OrderedServiceStatusEnum.Canceled,
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
+    ]
     const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
     if (option !== 'manually' && !isIncludedFromAutoUpdate) {
       // throw new OrderedServiceAutoStartableException()
@@ -342,7 +346,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     ]
 
     if (invalidStatus.includes(this.props.status)) {
-      throw new OrderedServiceHoldableException()
+      // throw new OrderedServiceHoldableException()
+      return
     }
 
     this.props.status = AutoOnlyOrderedServiceStatusEnum.On_Hold

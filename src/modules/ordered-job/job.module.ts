@@ -48,6 +48,10 @@ import { CreateJobService } from './commands/create-job/create-job.service'
 import { JOB_REPOSITORY } from './job.di-token'
 import { JobRepository } from './database/job.repository'
 import { JobMapper } from './job.mapper'
+import { CompleteJobWhenOrderedServiceIsCompletedDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-completed.domain-event-handler'
+import { CheckCompletionJob } from './domain/domain-services/check-completion-job.domain-service'
+import { CompleteJobWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
+import { CompleteJobWhenOrderedServiceIsCanceledDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-canceled.domain-event-handler'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -83,6 +87,9 @@ const eventHandlers: Provider[] = [
   UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler,
   UpdateDueDateWhenScopeIsOrderedDomainEventHandler,
   UpdateProjectPropertyTypeWhenProjectIdUpdatedDomainEventHandler,
+  CompleteJobWhenOrderedServiceIsCompletedDomainEventHandler,
+  CompleteJobWhenOrderedServiceIsCanceledDomainEventHandler,
+  CompleteJobWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 const mappers: Provider[] = [JobMapper, JobResponseMapper]
@@ -92,6 +99,7 @@ const domainServices: Provider[] = [
   OrderStatusChangeValidator,
   OrderModificationValidator,
   OrderDeletionValidator,
+  CheckCompletionJob,
 ]
 
 @Module({
