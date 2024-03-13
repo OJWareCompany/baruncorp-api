@@ -14,7 +14,7 @@ export class SendDeliverablesHttpController {
   @UseGuards(AuthGuard)
   async updateJob(@User() user: UserEntity, @Param() param: SendDeliverablesParamRequestDto): Promise<void> {
     const command = new SendDeliverablesCommand({
-      updatedByUserId: user.id,
+      editorUserId: user.id,
       jobId: param.jobId,
     })
 

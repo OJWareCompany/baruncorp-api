@@ -36,7 +36,7 @@ export class SendDeliverablesService implements ICommandHandler {
     if (!jobFolder) throw new GoogleDriveJobFolderNotFoundException()
     if (!jobFolder.deliverablesFolderShareLink) throw new GoogleDriveDeliverablesFolderShareLinkNoExistException()
 
-    const editor = await this.userRepo.findOneByIdOrThrow(command.updatedByUserId)
+    const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)
 
     await job.sendToClient(editor, this.mailer, jobFolder.deliverablesFolderShareLink, this.orderStatusChangeValidator)
     await this.jobRepository.update(job) // 업데이트 코드가 실행되기전까지 예외처리 되지 않으면 이력 생성해도 무관하다.
