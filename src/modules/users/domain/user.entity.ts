@@ -103,6 +103,7 @@ export class UserEntity extends AggregateRoot<UserProps> {
       throw new InvalidMemberRoleAssignmentException()
     }
 
+    this.props.type = newRole
     this.props.role = newRole
     return this
   }
