@@ -2768,6 +2768,10 @@ export interface CreateDepartmentRequestDto {
   editUserPosition: boolean
   /** @default false */
   sendDeliverables: boolean
+  /** @default false */
+  editMemberRole: boolean
+  /** @default false */
+  editClientRole: boolean
 }
 
 export interface UpdateDepartmentRequestDto {
@@ -2793,6 +2797,10 @@ export interface UpdateDepartmentRequestDto {
   editUserPosition: boolean
   /** @default false */
   sendDeliverables: boolean
+  /** @default false */
+  editMemberRole: boolean
+  /** @default false */
+  editClientRole: boolean
 }
 
 export interface DepartmentResponseDto {
@@ -2809,6 +2817,8 @@ export interface DepartmentResponseDto {
   editUserLicense: boolean
   editUserPosition: boolean
   sendDeliverables: boolean
+  editMemberRole: boolean
+  editClientRole: boolean
 }
 
 export interface DepartmentPaginatedResponseDto {

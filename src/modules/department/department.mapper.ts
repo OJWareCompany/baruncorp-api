@@ -24,6 +24,8 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
       editUserLicense: props.editUserLicense,
       editUserPosition: props.editUserPosition,
       sendDeliverables: props.sendDeliverables,
+      editMemberRole: props.editMemberRole,
+      editClientRole: props.editClientRole,
     }
     return record
   }
@@ -46,6 +48,8 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
         editUserLicense: record.editUserLicense,
         editUserPosition: record.editUserPosition,
         sendDeliverables: record.sendDeliverables,
+        editMemberRole: record.editMemberRole,
+        editClientRole: record.editClientRole,
       },
     })
     return entity
@@ -67,6 +71,8 @@ export class DepartmentMapper implements Mapper<DepartmentEntity, Departments, D
       editUserLicense: props.editUserLicense,
       editUserPosition: props.editUserPosition,
       sendDeliverables: props.sendDeliverables,
+      editMemberRole: props.editMemberRole,
+      editClientRole: props.editClientRole,
     })
     return response
   }

@@ -70,6 +70,15 @@ export class DepartmentEntity extends AggregateRoot<DepartmentProps> {
     this.props.sendDeliverables = sendDeliverables
     return this
   }
+  setEditMemberRole(editMemberRole: boolean): this {
+    this.props.editMemberRole = editMemberRole
+    return this
+  }
+
+  setEditClientRole(editClientRole: boolean): this {
+    this.props.editClientRole = editClientRole
+    return this
+  }
 
   public validate(): void {
     return

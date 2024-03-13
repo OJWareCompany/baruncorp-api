@@ -1340,6 +1340,8 @@ model Departments {
   editUserLicense    Boolean  @default(false) @map("edit_user_license")
   editUserPosition   Boolean  @default(false) @map("edit_user_position")
   sendDeliverables   Boolean  @default(false) @map("send_deliverables")
+  editMemberRole   Boolean  @default(false) @map("edit_member_role")
+  editClientRole   Boolean  @default(false) @map("edit_client_role")
 
   @@map("departments")
 }

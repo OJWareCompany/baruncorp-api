@@ -56,6 +56,14 @@ export class DepartmentResponseDto {
   @IsBoolean()
   readonly sendDeliverables: boolean
 
+  @ApiProperty()
+  @IsBoolean()
+  readonly editMemberRole: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly editClientRole: boolean
+
   constructor(props: DepartmentResponseDto) {
     initialize(this, props)
   }

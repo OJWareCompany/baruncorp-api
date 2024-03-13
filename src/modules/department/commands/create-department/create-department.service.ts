@@ -33,6 +33,8 @@ export class CreateDepartmentService implements ICommandHandler {
       editUserLicense: command.editUserLicense,
       editUserPosition: command.editUserPosition,
       sendDeliverables: command.sendDeliverables,
+      editMemberRole: command.editMemberRole,
+      editClientRole: command.editClientRole,
     })
     await this.departmentRepo.insert(entity)
     return entity.id

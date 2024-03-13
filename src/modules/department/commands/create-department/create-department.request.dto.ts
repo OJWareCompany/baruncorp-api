@@ -50,4 +50,12 @@ export class CreateDepartmentRequestDto {
   @ApiProperty({ default: false })
   @IsBoolean()
   readonly sendDeliverables: boolean
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly editMemberRole: boolean
+
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  readonly editClientRole: boolean
 }
