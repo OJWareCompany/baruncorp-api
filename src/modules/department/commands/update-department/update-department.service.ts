@@ -36,6 +36,8 @@ export class UpdateDepartmentService implements ICommandHandler {
       .setEditUserLicense(command.editUserLicense)
       .setEditUserPosition(command.editUserPosition)
       .setSendDeliverables(command.sendDeliverables)
+      .setEditMemberRole(command.editMemberRole)
+      .setEditClientRole(command.editClientRole)
 
     await this.departmentRepo.update(entity)
   }

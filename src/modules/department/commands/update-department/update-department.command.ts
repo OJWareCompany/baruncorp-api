@@ -14,6 +14,8 @@ export class UpdateDepartmentCommand {
   readonly editUserLicense: boolean
   readonly editUserPosition: boolean
   readonly sendDeliverables: boolean
+  readonly editMemberRole: boolean
+  readonly editClientRole: boolean
 
   constructor(props: UpdateDepartmentCommand) {
     initialize(this, props)
