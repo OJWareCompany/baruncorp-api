@@ -1,13 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { ProjectPropertyTypeUpdatedDomainEvent } from '../../../project/domain/events/project-property-type-updated.domain-event'
-import { JobRepositoryPort } from '../../database/job.repository.port'
-import { JOB_REPOSITORY } from '../../job.di-token'
 import { OrderedServiceRepositoryPort } from '../../../ordered-service/database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../../ordered-service/ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../../ordered-service/domain/ordered-service-manager.domain-service'
-import { OrderModificationValidator } from '../../domain/domain-services/order-modification-validator.domain-service'
+import { TieredPricingCalculator } from '../../../ordered-service/domain/domain-services/tiered-pricing-calculator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from '../../../ordered-service/domain/domain-services/revision-type-update-validation.domain-service'
+import { OrderModificationValidator } from '../../domain/domain-services/order-modification-validator.domain-service'
+import { JobRepositoryPort } from '../../database/job.repository.port'
+import { JOB_REPOSITORY } from '../../job.di-token'
 
 @Injectable()
 export class UpdateProjectPropertyTypeWhenProjectIdUpdatedDomainEventHandler {
@@ -17,6 +18,7 @@ export class UpdateProjectPropertyTypeWhenProjectIdUpdatedDomainEventHandler {
     private readonly calcService: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
   @OnEvent(ProjectPropertyTypeUpdatedDomainEvent.name, { async: true, promisify: true })
   async handle(event: ProjectPropertyTypeUpdatedDomainEvent) {
@@ -35,6 +37,7 @@ export class UpdateProjectPropertyTypeWhenProjectIdUpdatedDomainEventHandler {
         this.calcService,
         this.orderModificationValidator,
         this.revisionTypeUpdateValidator,
+        this.tieredPricingCalculator,
       )
     }
 

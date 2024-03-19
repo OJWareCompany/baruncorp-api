@@ -20,6 +20,7 @@ import { DuplicatedScopeChecker } from '../../domain/domain-services/duplicated-
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
 import { ScopeRevisionChecker } from '../../domain/domain-services/scope-revision-checker.domain-service'
 import { CreateOrderedServiceCommand } from './create-ordered-service.command'
+import { TieredPricingCalculator } from '../../domain/domain-services/tiered-pricing-calculator.domain-service'
 
 @CommandHandler(CreateOrderedServiceCommand)
 export class CreateOrderedServiceService implements ICommandHandler {
@@ -39,6 +40,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
     private readonly scopeRevisionChecker: ScopeRevisionChecker,
     private readonly checkDuplicatedScope: DuplicatedScopeChecker,
+    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
 
   /**
@@ -78,6 +80,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
       this.revisionTypeUpdateValidator,
       this.scopeRevisionChecker,
       this.checkDuplicatedScope,
+      this.tieredPricingCalculator,
     )
 
     await this.orderedServiceRepo.insert(orderedServiceEntity)

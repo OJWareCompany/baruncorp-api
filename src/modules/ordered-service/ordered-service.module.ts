@@ -45,6 +45,7 @@ import { JobModule } from '../ordered-job/job.module'
 import { DuplicatedScopeChecker } from './domain/domain-services/duplicated-scope-checker.domain-service'
 import { ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-job-system-size-is-updated.domain-service'
 import { ResetOrderedServicePriceWhenMountingTypeIsUpdatedDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-mounting-type-is-updated.domain-service'
+import { ResetOrderedServicePriceWhenJobIsSentToClientDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-job-is-sent-to-client.domain-service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -79,6 +80,7 @@ const eventHandlers: Provider[] = [
   DeleteOrderedServiceWhenJobIsDeletedDomainServiceHandler,
   ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandler,
   ResetOrderedServicePriceWhenMountingTypeIsUpdatedDomainEventHandler,
+  ResetOrderedServicePriceWhenJobIsSentToClientDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]
 

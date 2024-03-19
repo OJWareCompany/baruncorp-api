@@ -32,7 +32,6 @@ export class CreateInvoiceService implements ICommandHandler {
     if (!jobs.length) throw new JobNotFoundException()
 
     const orderedServices = await this.orderedServiceRepo.findBy({ jobId: { in: jobs.map((job) => job.id) } })
-
     const calcCost = orderedServices.map(
       async (orderedService) => await orderedService.determinePriceWhenInvoice(this.tieredPricingCalculator),
     )
@@ -56,7 +55,6 @@ export class CreateInvoiceService implements ICommandHandler {
 
     await this.orderedServiceRepo.update(orderedServices)
     await this.invoiceRepo.insert(invoice)
-
     return invoice.id
   }
 }

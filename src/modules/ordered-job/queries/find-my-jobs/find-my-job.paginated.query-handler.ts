@@ -50,7 +50,7 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
         },
       },
     }
-    console.log(condition)
+
     const myJobs = await this.prismaService.orderedJobs.findMany({
       where: condition,
       orderBy: { createdAt: 'desc' },

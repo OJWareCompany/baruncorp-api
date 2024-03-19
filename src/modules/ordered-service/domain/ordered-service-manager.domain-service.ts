@@ -18,6 +18,7 @@ import { ORDERED_SERVICE_REPOSITORY } from '../ordered-service.di-token'
 import { OrderedServiceEntity } from './ordered-service.entity'
 import { ValidScopeStatus } from './value-objects/valid-previously-scope-status.value-object'
 import { ServiceId } from '../../service/domain/value-objects/service-id.value-object'
+import { TieredPricingCalculator } from './domain-services/tiered-pricing-calculator.domain-service'
 
 /**
  * 코드가 너무 커졌다, 명확하게 책임에 따라 코드를 분리하자
@@ -46,6 +47,7 @@ export class ServiceInitialPriceManager {
   async determinePriceAndPricingType(
     orderedService: OrderedServiceEntity,
     revisionSize: OrderedServiceSizeForRevisionEnum | null,
+    tieredPricingCalculator: TieredPricingCalculator,
   ): Promise<CalcPriceAndPricingReturnType | null> {
     // TODO: previouslyOrderedServices에 자신이 포함되어있을것임. 추후 수정 필요. (update revision Size에서 사용하는데 이미 revision 대상이므로 상관은 없지만 로직에 모순있음)
     // 새로운 스코프가 주문되기 전이라 자신이 포함되지 않음
@@ -65,8 +67,9 @@ export class ServiceInitialPriceManager {
     )
 
     const customPrice = customPricing
-      ? customPricing.calcPriceAndPricingType(
-          orderedService.isRevision,
+      ? await customPricing.calcPriceAndPricingType(
+          orderedService,
+          tieredPricingCalculator,
           job.projectPropertyType,
           job.mountingType,
           job.systemSize,

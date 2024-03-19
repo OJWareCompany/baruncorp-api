@@ -17,6 +17,7 @@ import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
 import { ScopeRevisionChecker } from '../../domain/domain-services/scope-revision-checker.domain-service'
 import { DuplicatedScopeChecker } from '../../domain/domain-services/duplicated-scope-checker.domain-service'
+import { TieredPricingCalculator } from '../../domain/domain-services/tiered-pricing-calculator.domain-service'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -34,6 +35,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
     private readonly scopeRevisionChecker: ScopeRevisionChecker,
     private readonly duplicatedScopeChecker: DuplicatedScopeChecker,
+    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
 
   @OnEvent(JobCreatedDomainEvent.name, { async: true, promisify: true })
@@ -66,6 +68,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
         this.revisionTypeUpdateValidator,
         this.scopeRevisionChecker,
         this.duplicatedScopeChecker,
+        this.tieredPricingCalculator,
       )
 
       return orderedServiceEntity

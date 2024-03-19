@@ -12,6 +12,7 @@ import { OrderedServiceStatusEnum } from '../domain/ordered-service.type'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 import { OrderedServiceMapper } from '../ordered-service.mapper'
 import { ValidScopeStatus } from '../domain/value-objects/valid-previously-scope-status.value-object'
+import { TieredPricingApplicableStatuses } from '../domain/value-objects/tiered-pricing-applicable-statuses.value-object'
 
 @Injectable()
 export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
@@ -21,17 +22,17 @@ export class OrderedServiceRepository implements OrderedServiceRepositoryPort {
     protected readonly eventEmitter: EventEmitter2,
   ) {}
 
-  async findPreviousSameScopesCompletedInOrderedMonth(
+  async findPreviousSameScopesInOrderedMonth(
     clientOrganizationId: string,
     scopeId: string,
     orderedAt: Date,
-    status: OrderedServiceStatusEnum.Completed,
+    status: TieredPricingApplicableStatuses,
   ): Promise<OrderedServiceEntity[]> {
     const records = await this.prismaService.orderedServices.findMany({
       where: {
         organizationId: clientOrganizationId,
         serviceId: scopeId,
-        status,
+        status: { in: status.value },
         orderedAt: {
           gte: zonedTimeToUtc(startOfMonth(orderedAt), 'Etc/UTC'),
           lt: orderedAt,

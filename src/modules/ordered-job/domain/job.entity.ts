@@ -39,6 +39,7 @@ import { JobSystemSizeUpdatedDomainEvent } from './events/job-system-size-update
 import { JobMountingTypeUpdatedDomainEvent } from './events/job-mounting-type-updated.domain-event'
 import { JobExpeditedStatusUpdatedDomainEvent } from './events/job-expedited-status-updated.domain-event'
 import { CheckCompletionJob } from './domain-services/check-completion-job.domain-service'
+import { JobSentToClientDomainEvent } from './events/job-sent-to-client.domain-event'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -178,6 +179,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     }
     this.props.updatedBy = editor.userName.fullName
     this.props.dateSentToClient = new Date()
+    this.addEvent(new JobSentToClientDomainEvent({ aggregateId: this.id }))
     return this
   }
 

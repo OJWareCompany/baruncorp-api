@@ -9,6 +9,7 @@ import { OrderedServiceSizeForRevisionEnum } from '../../domain/ordered-service.
 import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-services/revision-type-update-validation.domain-service'
 import { GenerateOrderedScopeModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/ordered-scope-modification-history.decorator'
+import { TieredPricingCalculator } from '../../domain/domain-services/tiered-pricing-calculator.domain-service'
 
 @CommandHandler(UpdateRevisionSizeCommand)
 export class UpdateRevisionSizeService implements ICommandHandler {
@@ -19,6 +20,7 @@ export class UpdateRevisionSizeService implements ICommandHandler {
     private readonly serviceInitialPriceManager: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
 
   @GenerateOrderedScopeModificationHistory({ invokedFrom: 'self' })
@@ -30,6 +32,7 @@ export class UpdateRevisionSizeService implements ICommandHandler {
         this.orderModificationValidator,
         this.serviceInitialPriceManager,
         this.revisionTypeUpdateValidator,
+        this.tieredPricingCalculator,
       )
     } else if (command.revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
       await orderedService.updateRevisionSizeToMinor(this.orderModificationValidator, this.revisionTypeUpdateValidator)

@@ -20,7 +20,6 @@ import { RevisionTypeUpdateValidationDomainService } from './domain-services/rev
 import { OrderedServiceBackToNotStartedDomainEvent } from './events/ordered-service-back-to-not-started.domain-event'
 import { OrderedServicePriceUpdatedDomainEvent } from './events/ordered-service-price-updated.domain-event'
 import { OrderedServiceCompletedDomainEvent } from './events/ordered-service-completed.domain-event'
-import { OrderedScopeStatusChangeValidator } from './domain-services/check-all-related-tasks-completed.domain-service'
 import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canceled.domain-event'
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import { OrderedServiceDeletedDomainEvent } from './events/ordered-service-deleted.domain-event'
@@ -47,6 +46,7 @@ import {
   OrderedServiceRevisionTypeNotEnteredException,
 } from './ordered-service.error'
 import { DuplicatedScopeChecker } from './domain-services/duplicated-scope-checker.domain-service'
+import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -58,6 +58,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
     scopeRevisionChecker: ScopeRevisionChecker,
     duplicatedScopeChecker: DuplicatedScopeChecker,
+    tieredPricingCalculator: TieredPricingCalculator,
   ) {
     const id = v4()
     const props: OrderedServiceProps = {
@@ -80,7 +81,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     }
     entity.props.isRevision = await scopeRevisionChecker.isRevision(entity)
 
-    await entity.determineInitialValues(calcService, orderModificationValidator, revisionTypeUpdateValidator)
+    await entity.determineInitialValues(
+      calcService,
+      orderModificationValidator,
+      revisionTypeUpdateValidator,
+      tieredPricingCalculator,
+    )
 
     entity.addEvent(
       new OrderedServiceCreatedDomainEvent({
@@ -184,9 +190,15 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     calcService: ServiceInitialPriceManager,
     orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    tieredPricingCalculator: TieredPricingCalculator,
   ) {
     this.props.projectPropertyType = projectPropertyType
-    await this.determineInitialValues(calcService, orderModificationValidator, revisionTypeUpdateValidator)
+    await this.determineInitialValues(
+      calcService,
+      orderModificationValidator,
+      revisionTypeUpdateValidator,
+      tieredPricingCalculator,
+    )
     return this
   }
 
@@ -194,14 +206,30 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     calcService: ServiceInitialPriceManager,
     orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    tieredPricingCalculator: TieredPricingCalculator,
   ) {
     if (this.isRevision) {
-      await this.determineInitialRevisionType(calcService, orderModificationValidator, revisionTypeUpdateValidator)
+      await this.determineInitialRevisionType(
+        calcService,
+        orderModificationValidator,
+        revisionTypeUpdateValidator,
+        tieredPricingCalculator,
+      )
     } else {
       await orderModificationValidator.validate(this)
-      const initialValue = await calcService.determinePriceAndPricingType(this, this.sizeForRevision)
-      this.setPrice(initialValue?.price || null)
+      const initialValue = await calcService.determinePriceAndPricingType(
+        this,
+        this.sizeForRevision,
+        tieredPricingCalculator,
+      )
+
       this.setPricingType(initialValue?.pricingType || null)
+      const isTieredPricing = initialValue?.pricingType === OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE
+      if (isTieredPricing) {
+        await this.setTieredPrice(tieredPricingCalculator)
+      } else {
+        this.setPrice(initialValue?.price || null)
+      }
     }
   }
 
@@ -209,14 +237,24 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     calcService: ServiceInitialPriceManager,
     orderModificationValidator: OrderModificationValidator,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    tieredPricingCalculator: TieredPricingCalculator,
   ) {
     const revisionSize = await calcService.determineInitialRevisionSize(this)
     if (revisionSize === OrderedServiceSizeForRevisionEnum.Major) {
-      await this.updateRevisionSizeToMajor(orderModificationValidator, calcService, revisionTypeUpdateValidator)
+      await this.updateRevisionSizeToMajor(
+        orderModificationValidator,
+        calcService,
+        revisionTypeUpdateValidator,
+        tieredPricingCalculator,
+      )
     } else if (revisionSize === OrderedServiceSizeForRevisionEnum.Minor) {
       await this.updateRevisionSizeToMinor(orderModificationValidator, revisionTypeUpdateValidator)
     } else {
-      const initialValue = await calcService.determinePriceAndPricingType(this, this.sizeForRevision)
+      const initialValue = await calcService.determinePriceAndPricingType(
+        this,
+        this.sizeForRevision,
+        tieredPricingCalculator,
+      )
       this.setPrice(initialValue?.price || null)
       this.setPricingType(initialValue?.pricingType || null)
     }
@@ -265,12 +303,17 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     orderModificationValidator: OrderModificationValidator,
     calcService: ServiceInitialPriceManager,
     revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    tieredPricingCalculator: TieredPricingCalculator,
   ): Promise<this> {
     await orderModificationValidator.validate(this)
     await revisionTypeUpdateValidator.validate(this)
     this.props.sizeForRevision = OrderedServiceSizeForRevisionEnum.Major
 
-    const initialValue = await calcService.determinePriceAndPricingType(this, this.sizeForRevision)
+    const initialValue = await calcService.determinePriceAndPricingType(
+      this,
+      this.sizeForRevision,
+      tieredPricingCalculator,
+    )
     this.setPrice(initialValue?.price || null)
     this.setPricingType(initialValue?.pricingType || null)
 
@@ -509,7 +552,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   get isNewResidentialService(): boolean {
     return (
       this.props.projectPropertyType === ProjectPropertyTypeEnum.Residential &&
-      this.props.status === OrderedServiceStatusEnum.Completed &&
+      (this.props.status === OrderedServiceStatusEnum.Completed ||
+        this.props.status === OrderedServiceStatusEnum.Canceled_Invoice) &&
       !this.props.isRevision
     )
   }
@@ -517,7 +561,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   get isNewResidentialPurePrice(): boolean {
     return (
       this.props.projectPropertyType === ProjectPropertyTypeEnum.Residential &&
-      this.props.status === OrderedServiceStatusEnum.Completed &&
+      (this.props.status === OrderedServiceStatusEnum.Completed ||
+        this.props.status === OrderedServiceStatusEnum.Canceled_Invoice) &&
       !this.props.isRevision &&
       !this.props.isManualPrice
     )

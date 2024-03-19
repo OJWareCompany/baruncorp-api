@@ -15,6 +15,8 @@ import { CustomCommercialNewServicePricingTier } from './value-objects/custom-co
 import { CustomPricingInvalidPriceException } from './custom-pricing.error'
 import { CustomResidentialRevisionPricing } from './value-objects/custom-residential-revision-pricing.value-object'
 import { CustomFixedPrice } from './value-objects/custom-fixed-pricing.value-object'
+import { OrderedServiceEntity } from '../../ordered-service/domain/ordered-service.entity'
+import { TieredPricingCalculator } from '../../ordered-service/domain/domain-services/tiered-pricing-calculator.domain-service'
 
 export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   protected _id: string
@@ -164,14 +166,16 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     )
   }
 
-  calcPriceAndPricingType(
-    isRevision: boolean,
+  async calcPriceAndPricingType(
+    orderedService: OrderedServiceEntity,
+    tieredPricingCalculator: TieredPricingCalculator,
     projectType: ProjectPropertyTypeEnum,
     mountingType: MountingTypeEnum,
     systemSize: number | null,
     revisionSize: OrderedServiceSizeForRevisionEnum | null,
-  ): CalcPriceAndPricingReturnType | null {
+  ): Promise<CalcPriceAndPricingReturnType | null> {
     const pricing = this.getProps()
+    const isRevision = orderedService.isRevision
 
     if (this.customPricingType === CustomPricingTypeEnum.custom_fixed && pricing.fixedPricing) {
       return {
@@ -193,7 +197,13 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     if (isRevision && projectType === ProjectPropertyTypeEnum.Residential) {
       return this.calculateResidentialRevisionPrice(projectType, mountingType, revisionSize)
     } else {
-      return this.calculateNonRevisionPrice(projectType, mountingType, systemSize)
+      return await this.calculateNonRevisionPrice(
+        orderedService,
+        tieredPricingCalculator,
+        projectType,
+        mountingType,
+        systemSize,
+      )
     }
   }
 
@@ -238,36 +248,45 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
         }
   }
 
-  private calculateNonRevisionPrice(
+  private async calculateNonRevisionPrice(
+    orderedService: OrderedServiceEntity,
+    tieredPricingCalculator: TieredPricingCalculator,
     projectType: ProjectPropertyTypeEnum,
     mountingType: MountingTypeEnum,
     systemSize: number | null,
-  ): CalcPriceAndPricingReturnType | null {
+  ): Promise<CalcPriceAndPricingReturnType | null> {
     if (projectType === ProjectPropertyTypeEnum.Residential) {
-      return this.calculateResidentialPrice(mountingType)
+      return await this.calculateResidentialPrice(orderedService, mountingType, tieredPricingCalculator)
     } else if (projectType === ProjectPropertyTypeEnum.Commercial && systemSize) {
       return this.calculateCommercialPrice(systemSize, mountingType)
     }
     return null
   }
 
-  private calculateResidentialPrice(mountingType: MountingTypeEnum): CalcPriceAndPricingReturnType | null {
-    if (!this.residentialNewFlatPricing || this.getProps().residentialNewServiceTiers.length > 1) {
+  private async calculateResidentialPrice(
+    orderedService: OrderedServiceEntity,
+    mountingType: MountingTypeEnum,
+    tieredPricingCalculator: TieredPricingCalculator,
+  ): Promise<CalcPriceAndPricingReturnType | null> {
+    if (await tieredPricingCalculator.isTieredPricingScope(orderedService)) {
+      const price = await tieredPricingCalculator.calc(orderedService)
       return {
-        price: null, // Auto Update Price When Invoice Is Created
+        price: await tieredPricingCalculator.calc(orderedService), // Auto Update Price When Invoice Is Created
         pricingType: OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE,
       }
     }
-
-    return mountingType === MountingTypeEnum.Ground_Mount
-      ? {
-          price: this.residentialNewFlatPricing.gmPrice,
-          pricingType: OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_FLAT_PRICE,
-        }
-      : {
-          price: this.residentialNewFlatPricing.price,
-          pricingType: OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_FLAT_PRICE,
-        }
+    if (this.residentialNewFlatPricing) {
+      return mountingType === MountingTypeEnum.Ground_Mount
+        ? {
+            price: this.residentialNewFlatPricing.gmPrice,
+            pricingType: OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_FLAT_PRICE,
+          }
+        : {
+            price: this.residentialNewFlatPricing.price,
+            pricingType: OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_FLAT_PRICE,
+          }
+    }
+    return null
   }
 
   private calculateCommercialPrice(

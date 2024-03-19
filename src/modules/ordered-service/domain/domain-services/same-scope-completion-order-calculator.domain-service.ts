@@ -4,6 +4,7 @@ import { OrderedServiceRepositoryPort } from '../../database/ordered-service.rep
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { OrderedServiceStatusEnum } from '../ordered-service.type'
 import { OrderedServiceEntity } from '../ordered-service.entity'
+import { TieredPricingApplicableStatuses } from '../value-objects/tiered-pricing-applicable-statuses.value-object'
 
 export class SameScopeCompletionOrderCalculator {
   constructor(
@@ -12,11 +13,11 @@ export class SameScopeCompletionOrderCalculator {
   ) {}
 
   async calc(orderedScope: OrderedServiceEntity) {
-    const completedScopesInOrderedMonth = await this.orderedScopeRepo.findPreviousSameScopesCompletedInOrderedMonth(
+    const completedScopesInOrderedMonth = await this.orderedScopeRepo.findPreviousSameScopesInOrderedMonth(
       orderedScope.organizationId,
       orderedScope.serviceId,
       orderedScope.orderedAt,
-      OrderedServiceStatusEnum.Completed,
+      new TieredPricingApplicableStatuses(),
     )
 
     const completedScopes = completedScopesInOrderedMonth.filter((completed) => completed.id !== orderedScope.id)

@@ -195,6 +195,9 @@ export class JobRepository implements JobRepositoryPort {
           },
         },
       },
+      orderBy: {
+        createdAt: 'asc',
+      },
     })
     return records.map((rec) => this.jobMapper.toDomain({ ...rec, prerequisiteTasks }))
   }

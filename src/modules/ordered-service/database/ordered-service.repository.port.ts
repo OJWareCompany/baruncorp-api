@@ -3,6 +3,7 @@ import { UserEntity } from '../../users/domain/user.entity'
 import { OrderedServiceStatusEnum } from '../domain/ordered-service.type'
 import { OrderedServiceEntity } from '../domain/ordered-service.entity'
 import { ValidScopeStatus } from '../domain/value-objects/valid-previously-scope-status.value-object'
+import { TieredPricingApplicableStatuses } from '../domain/value-objects/tiered-pricing-applicable-statuses.value-object'
 
 /**
  * 원칙상 Repository Port(인터페이스)는 Domain 모듈의 파일이다.
@@ -27,11 +28,11 @@ export interface OrderedServiceRepositoryPort {
     orderedAt: Date,
     status: ValidScopeStatus,
   ): Promise<OrderedServiceEntity[]>
-  findPreviousSameScopesCompletedInOrderedMonth(
+  findPreviousSameScopesInOrderedMonth(
     clientOrganizationId: string,
     scopeId: string,
     orderedAt: Date,
-    status: OrderedServiceStatusEnum.Completed,
+    status: TieredPricingApplicableStatuses,
   ): Promise<OrderedServiceEntity[]>
   rollbackUpdatedAtAndEditor(orderedScope: OrderedServiceEntity): Promise<void>
   updateOnlyEditorInfo(entity: OrderedServiceEntity, editor?: UserEntity): Promise<void>

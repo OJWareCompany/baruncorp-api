@@ -6,6 +6,7 @@ import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-s
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { TieredPricingCalculator } from '../../domain/domain-services/tiered-pricing-calculator.domain-service'
 
 export class ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandler {
   constructor(
@@ -13,6 +14,7 @@ export class ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandle
     private readonly calcService: ServiceInitialPriceManager,
     private readonly orderModificationValidator: OrderModificationValidator,
     private readonly revisionTypeUpdateValidator: RevisionTypeUpdateValidationDomainService,
+    private readonly tieredPricingCalculator: TieredPricingCalculator,
   ) {}
   @OnEvent(JobSystemSizeUpdatedDomainEvent.name, { promisify: true, async: true })
   async handle(event: JobSystemSizeUpdatedDomainEvent) {
@@ -22,6 +24,7 @@ export class ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandle
         this.calcService,
         this.orderModificationValidator,
         this.revisionTypeUpdateValidator,
+        this.tieredPricingCalculator,
       )
     }
 
