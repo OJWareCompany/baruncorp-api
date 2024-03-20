@@ -2,8 +2,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Transform } from 'class-transformer'
 import { IsOptional, IsEnum, IsBoolean, IsString } from 'class-validator'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
-import { AutoOnlyJobStatusEnum, JobStatusEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { DESCRIPTION } from '../find-job-paginated/find-job.paginated.request.dto'
+import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
 
 export class FindMyJobPaginatedRequestDto {
   @ApiProperty({ default: '3480 Northwest 33rd Court', description: DESCRIPTION.using_like })

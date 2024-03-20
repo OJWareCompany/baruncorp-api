@@ -11,14 +11,9 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from '../../ordered-service/domain/ordered-service.type'
-import {
-  AutoOnlyJobStatusEnum,
-  JobStatus,
-  JobStatusEnum,
-  LoadCalcOriginEnum,
-  OrderedJobsPriorityEnum,
-} from '../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatus, JobStatusEnum, LoadCalcOriginEnum } from '../domain/job.type'
 import { AddressDto } from './address.dto'
+import { OrderedJobsPriorityEnum, OrderedJobsPriorityLevelEnum } from '../domain/value-objects/priority.value-object'
 
 export class OrderedServiceResponseFields {
   @ApiProperty()
@@ -178,6 +173,10 @@ export class JobResponseDto {
   @ApiProperty({ example: OrderedJobsPriorityEnum.High, enum: OrderedJobsPriorityEnum })
   @IsEnum(OrderedJobsPriorityEnum)
   priority: OrderedJobsPriorityEnum
+
+  @ApiProperty({ example: OrderedJobsPriorityLevelEnum.High, enum: OrderedJobsPriorityLevelEnum })
+  @IsEnum(OrderedJobsPriorityLevelEnum)
+  priorityLevel: OrderedJobsPriorityLevelEnum
 
   @ApiProperty()
   jobName: string

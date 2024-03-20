@@ -1,8 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
-import { AutoOnlyJobStatusEnum, JobStatusEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { Transform } from 'class-transformer'
+import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
 
 export enum DESCRIPTION {
   using_like = 'Using LIKE (중간 값 검색)',

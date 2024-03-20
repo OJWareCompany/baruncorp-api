@@ -5,13 +5,7 @@ import { AssignedTask, NewOrderedServices } from './value-objects/assigned-task.
 import { OrderedServiceSizeForRevisionEnum } from '../../ordered-service/domain/ordered-service.type'
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
-
-export enum OrderedJobsPriorityEnum {
-  Immediate = 'Immediate',
-  High = 'High',
-  Medium = 'Medium',
-  Low = 'Low',
-}
+import { Priority } from './value-objects/priority.value-object'
 
 export enum JobStatusEnum {
   Not_Started = 'Not Started',
@@ -66,6 +60,7 @@ export interface CreateJobProps {
   systemSize: number | null // 가격이 수정됨
   isExpedited: boolean
   loadCalcOrigin: LoadCalcOriginEnum
+  priority: Priority
 
   // 서비스나 태스크의 추가/수정에 영향받는 필드들
   dueDate: Date | null
@@ -93,6 +88,5 @@ export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
 
   orderedServices: OrderedService[]
   assignedTasks: AssignedTask[]
-  priority: OrderedJobsPriorityEnum
   inReview: boolean
 }

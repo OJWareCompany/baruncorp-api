@@ -1,9 +1,9 @@
 import { IsOptional, IsDate, IsEnum, IsBoolean } from 'class-validator'
 import { ApiProperty, OmitType } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
-import { OrderedJobsPriorityEnum } from '../../domain/job.type'
 import { CreateJobRequestDto } from '../create-job/create-job.request.dto'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
+import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
 
 export class UpdateJobRequestDto extends OmitType(CreateJobRequestDto, [
   'taskIds',

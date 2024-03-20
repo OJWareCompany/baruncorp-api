@@ -7,7 +7,8 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PrismaService } from '../../../database/prisma.service'
 import { OrderedJobs, Prisma } from '@prisma/client'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
-import { AutoOnlyJobStatusEnum, JobStatusEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
+import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
+import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
 
 export class FindMyOrderedJobPaginatedQuery extends PaginatedQueryBase {
   readonly userId: string

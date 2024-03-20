@@ -1,7 +1,8 @@
 import { initialize } from '../../../../libs/utils/constructor-initializer'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { MountingTypeEnum } from '../../../project/domain/project.type'
-import { LoadCalcOriginEnum, OrderedJobsPriorityEnum } from '../../domain/job.type'
+import { LoadCalcOriginEnum } from '../../domain/job.type'
+import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
 
 export class UpdateJobCommand {
   readonly jobId: string

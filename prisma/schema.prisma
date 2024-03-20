@@ -463,6 +463,7 @@ model OrderedJobs {
   inReview                                      Boolean               @default(false) @map("in_review")
   invoiceId                                     String?               @map("invoice_id") @db.VarChar(255)
   priority                                      ordered_jobs_priority @default(Medium)
+  priorityLevel                                Int                   @default(3) @db.TinyInt @map("priority_level")
   revisionSize                                  String?               @map("revision_size") @db.VarChar(255)
   pricingType                                   String?               @map("pricing_type") @db.VarChar(255)
   loadCalcOrigin                                String                @default("Self") @map("load_calc_origin") @db.VarChar(255)
@@ -1340,10 +1341,25 @@ model Departments {
   editUserLicense    Boolean  @default(false) @map("edit_user_license")
   editUserPosition   Boolean  @default(false) @map("edit_user_position")
   sendDeliverables   Boolean  @default(false) @map("send_deliverables")
-  editMemberRole   Boolean  @default(false) @map("edit_member_role")
-  editClientRole   Boolean  @default(false) @map("edit_client_role")
+  editMemberRole     Boolean  @default(false) @map("edit_member_role")
+  editClientRole     Boolean  @default(false) @map("edit_client_role")
 
   @@map("departments")
+}
+
+/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
+model intergrated_order_modification_history {
+  entity             String   @db.VarChar(255)
+  entity_id          String   @db.VarChar(255)
+  scope_or_task_name String?  @db.VarChar(255)
+  attribute          String?  @db.VarChar(255)
+  operation          String   @default("Create") @db.VarChar(22)
+  after_value        String?  @db.Text
+  before_value       String?  @db.Text
+  modified_by        String   @default("System") @db.VarChar(255)
+  modified_at        DateTime @default(now()) @db.DateTime(0)
+
+  @@ignore
 }
 
 enum InvoicesStatus {

@@ -4,6 +4,7 @@ import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { AddressDto } from '../../dtos/address.dto'
 import { LoadCalcOriginEnum } from '../../domain/job.type'
 import { Type } from 'class-transformer'
+import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
 
 export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @ApiProperty({})
@@ -47,6 +48,11 @@ export class CreateJobRequestDto {
   @ApiProperty({ enum: MountingTypeEnum, example: MountingTypeEnum.Ground_Mount })
   @IsEnum(MountingTypeEnum)
   readonly mountingType: MountingTypeEnum
+
+  @ApiProperty({ default: OrderedJobsPriorityEnum.Medium, enum: OrderedJobsPriorityEnum })
+  @IsEnum(OrderedJobsPriorityEnum)
+  @IsOptional()
+  readonly priority?: OrderedJobsPriorityEnum
 
   @ApiProperty({ enum: LoadCalcOriginEnum, default: LoadCalcOriginEnum.Self })
   @IsEnum(LoadCalcOriginEnum)

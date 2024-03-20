@@ -31,6 +31,7 @@ export class CreateJobHttpController {
       dueDate: dto.dueDate || null,
       editorUserId: user.id,
       structuralUpgradeNote: dto.structuralUpgradeNote,
+      priority: dto.priority,
     })
     const result = await this.commandBus.execute(command)
     return new IdResponse(result.id)

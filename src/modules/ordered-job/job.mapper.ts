@@ -23,9 +23,10 @@ import {
 } from '../ordered-service/domain/ordered-service.type'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { PricingTypeEnum } from '../invoice/dtos/invoice.response.dto'
-import { JobStatusEnum, OrderedJobsPriorityEnum } from './domain/job.type'
+import { JobStatusEnum } from './domain/job.type'
 import { LoadCalcOriginEnum } from './domain/job.type'
 import { AssignedTaskStatusEnum } from '../assigned-task/domain/assigned-task.type'
+import { OrderedJobsPriorityEnum, Priority } from './domain/value-objects/priority.value-object'
 
 @Injectable()
 export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto> {
@@ -72,7 +73,8 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       editor_user_id: props.editorUserId,
       isManualDueDate: props.isManualDueDate,
       inReview: props.inReview,
-      priority: props.priority,
+      priority: props.priority.name,
+      priorityLevel: props.priority.level,
       completedCancelledDate: props.completedCancelledDate,
       commercialJobPrice: null, //new Prisma.Decimal(props.commercialJobPrice),
       structuralUpgradeNote: props.structuralUpgradeNote,
@@ -250,7 +252,9 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
         editorUserId: record.editor_user_id,
         isManualDueDate: record.isManualDueDate,
         inReview: record.inReview,
-        priority: record.priority as OrderedJobsPriorityEnum,
+        priority: new Priority({
+          priority: record.priority as OrderedJobsPriorityEnum,
+        }),
         completedCancelledDate: record.completedCancelledDate,
         structuralUpgradeNote: record.structuralUpgradeNote,
         propertyOwner: record.propertyOwner,

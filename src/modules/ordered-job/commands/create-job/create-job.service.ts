@@ -11,7 +11,6 @@ import { SERVICE_REPOSITORY } from '../../../service/service.di-token'
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { UserRepositoryPort } from '../../../users/database/user.repository.port'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
-import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
@@ -21,6 +20,7 @@ import { JobMapper } from '../../job.mapper'
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 import { PrismaService } from '../../../database/prisma.service'
+import { OrderedJobsPriorityEnum, Priority } from '../../domain/value-objects/priority.value-object'
 
 @CommandHandler(CreateJobCommand)
 export class CreateJobService implements ICommandHandler {
@@ -83,6 +83,13 @@ export class CreateJobService implements ICommandHandler {
       dueDate: command.dueDate,
       editorUserId: command.editorUserId,
       structuralUpgradeNote: command.structuralUpgradeNote,
+      priority: command.priority
+        ? new Priority({
+            priority: command.priority,
+          })
+        : new Priority({
+            priority: OrderedJobsPriorityEnum.Medium,
+          }),
     })
     const jobRecord = this.jobMapper.toPersistence(jobEntity)
 

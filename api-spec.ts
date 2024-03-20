@@ -326,6 +326,8 @@ export interface CreateJobRequestDto {
   structuralUpgradeNote: string | null
   /** @example "Ground Mount" */
   mountingType: 'Roof Mount' | 'Ground Mount'
+  /** @default "Medium" */
+  priority?: 'Immediate' | 'High' | 'Medium' | 'Low'
   /** @default "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
   /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu."}] */
@@ -353,6 +355,8 @@ export interface UpdateJobRequestDto {
   /** @default 300.1 */
   systemSize: number | null
   structuralUpgradeNote: string | null
+  /** @default "Medium" */
+  priority: 'Immediate' | 'High' | 'Medium' | 'Low'
   /** @default "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
   mailingAddressForWetStamp: AddressDto | null
@@ -369,8 +373,6 @@ export interface UpdateJobRequestDto {
   /** @example "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   inReview: boolean
-  /** @default "Medium" */
-  priority: 'Immediate' | 'High' | 'Medium' | 'Low'
 }
 
 export interface UpdateJobStatusRequestDto {
@@ -520,6 +522,8 @@ export interface JobResponseDto {
   inReview: boolean
   /** @example "High" */
   priority: 'Immediate' | 'High' | 'Medium' | 'Low'
+  /** @example 2 */
+  priorityLevel: 1 | 2 | 3 | 4
   jobName: string
   propertyOwner: string
   projectNumber: string | null

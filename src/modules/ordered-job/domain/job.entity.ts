@@ -13,7 +13,6 @@ import {
   JobStatus,
   JobStatusEnum,
   LoadCalcOriginEnum,
-  OrderedJobsPriorityEnum,
 } from './job.type'
 import { JobCanceledAndKeptInvoiceDomainEvent } from './events/job-canceled-and-kept-invoice.domain-event'
 import { CurrentJobUpdatedDomainEvent } from './events/current-job-updated.domain-event'
@@ -40,6 +39,7 @@ import { JobMountingTypeUpdatedDomainEvent } from './events/job-mounting-type-up
 import { JobExpeditedStatusUpdatedDomainEvent } from './events/job-expedited-status-updated.domain-event'
 import { CheckCompletionJob } from './domain-services/check-completion-job.domain-service'
 import { JobSentToClientDomainEvent } from './events/job-sent-to-client.domain-event'
+import { OrderedJobsPriorityEnum, Priority } from './value-objects/priority.value-object'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -61,7 +61,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
       dateSentToClient: null,
       isManualDueDate: !!create.dueDate,
       inReview: false,
-      priority: OrderedJobsPriorityEnum.Medium,
       completedCancelledDate: null,
     }
 
@@ -291,7 +290,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return
   }
 
-  setPriority(priority: OrderedJobsPriorityEnum) {
+  setPriority(priority: Priority) {
     this.props.priority = priority
     return this
   }

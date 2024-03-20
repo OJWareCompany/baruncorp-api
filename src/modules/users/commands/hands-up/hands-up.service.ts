@@ -37,6 +37,7 @@ export class HandsUpService implements ICommandHandler {
     if (user.getProps().isHandRaisedForTask) throw new BadRequestException('already hand raised ', '77002')
     if (user.getProps().isVendor) throw new ForbiddenException('vendor can not raise a hand', '77001')
 
+    console.log('availableTasks:', availableTasks)
     const pendingTasks = await this.prismaService.assignedTasks.findMany({
       where: {
         is_active: true,
@@ -46,6 +47,7 @@ export class HandsUpService implements ICommandHandler {
       orderBy: [{ is_expedited: 'desc' }, { created_at: 'asc' }],
     })
 
+    console.log('pendingTasks: ', pendingTasks)
     const hasAssigned = await this.assign(user, availableTasks, pendingTasks)
 
     if (hasAssigned) return

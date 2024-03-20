@@ -19,6 +19,7 @@ import { ClientInformation } from '../../domain/value-objects/client-information
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { UpdateJobCommand } from './update-job.command'
+import { Priority } from '../../domain/value-objects/priority.value-object'
 
 @CommandHandler(UpdateJobCommand)
 export class UpdateJobService implements ICommandHandler {
@@ -71,7 +72,11 @@ export class UpdateJobService implements ICommandHandler {
     job.updateUpdatedBy(editor)
     job.updateDueDate(command.dueDate)
     job.setInReview(command.inReview)
-    job.setPriority(command.priority)
+    job.setPriority(
+      new Priority({
+        priority: command.priority,
+      }),
+    )
     job.setStructuralUpgradeNote(command.structuralUpgradeNote)
     job.setLoadCalcOrigin(command.loadCalcOrigin)
 
