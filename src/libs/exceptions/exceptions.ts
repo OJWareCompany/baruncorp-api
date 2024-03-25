@@ -1,4 +1,4 @@
-import { BadRequestException } from '@nestjs/common'
+import { BadRequestException, ForbiddenException } from '@nestjs/common'
 import {
   ARGUMENT_INVALID,
   ARGUMENT_NOT_PROVIDED,
@@ -91,5 +91,11 @@ export class StringIsEmptyException extends BadRequestException {
 export class NegativeNumberException extends BadRequestException {
   constructor() {
     super(`Negative number is invalid.`, '40201')
+  }
+}
+
+export class ViewForbiddenException extends ForbiddenException {
+  constructor() {
+    super(`View Forbidden Exception.`, '40202')
   }
 }

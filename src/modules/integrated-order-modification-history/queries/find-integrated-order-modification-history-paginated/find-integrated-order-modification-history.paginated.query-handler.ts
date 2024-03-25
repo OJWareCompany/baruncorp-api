@@ -8,6 +8,7 @@ import { IntegratedOrderModificationHistoryNotFoundException } from '../../domai
 
 export class FindIntegratedOrderModificationHistoryPaginatedQuery extends PaginatedQueryBase {
   readonly jobId: string
+  readonly departmentId: string | null
   constructor(props: PaginatedParams<FindIntegratedOrderModificationHistoryPaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -21,6 +22,24 @@ export class FindIntegratedOrderModificationHistoryPaginatedQueryHandler impleme
   async execute(
     query: FindIntegratedOrderModificationHistoryPaginatedQuery,
   ): Promise<Paginated<IntegratedOrderModificationHistory>> {
+    const empty = new Paginated({
+      page: query.page,
+      pageSize: query.limit,
+      totalCount: 0,
+      items: [],
+    })
+
+    if (!query.departmentId) return empty
+    // throw new ViewForbiddenException()
+
+    const department = await this.prismaService.departments.findFirst({ where: { id: query.departmentId } })
+    if (!department) return empty
+    // throw new ViewForbiddenException()
+
+    const canView = department.viewTaskCost && department.viewScopePrice
+    if (!canView) return empty
+    // throw new ViewForbiddenException()
+
     const result = await this.prismaService.integratedOrderModificationHistory.findMany({
       skip: query.offset,
       take: query.limit,
