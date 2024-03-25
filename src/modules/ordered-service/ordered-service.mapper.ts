@@ -10,6 +10,7 @@ import {
   OrderedServiceSizeForRevisionEnum,
   OrderedServiceStatusEnum,
 } from './domain/ordered-service.type'
+import { OrderedJobsPriorityEnum, Priority } from '../ordered-job/domain/value-objects/priority.value-object'
 
 @Injectable()
 export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, OrderedServices, OrderedServiceResponseDto> {
@@ -42,6 +43,8 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
       updated_at: props.updatedAt,
       updated_by: props.updatedBy,
       editor_user_id: props.editorUserId,
+      priority: props.priority.name,
+      priorityLevel: props.priority.level,
     }
   }
 
@@ -77,6 +80,7 @@ export class OrderedServiceMapper implements Mapper<OrderedServiceEntity, Ordere
         isExpedited: record.is_expedited,
         updatedBy: record.updated_by,
         editorUserId: record.editor_user_id,
+        priority: new Priority({ priority: record.priority as OrderedJobsPriorityEnum }),
       },
     })
     return entity

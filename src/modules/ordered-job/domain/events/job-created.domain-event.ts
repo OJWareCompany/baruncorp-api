@@ -3,6 +3,7 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/doma
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { NewOrderedServices } from '../value-objects/assigned-task.value-object'
+import { Priority } from '../value-objects/priority.value-object'
 
 /**
  * Entity에서 역할이 다른 로직을 Event를 이용해 분리하고 확장성을 얻는다.
@@ -19,6 +20,7 @@ export class JobCreatedDomainEvent extends DomainEvent {
   readonly mountingType: MountingTypeEnum
   readonly projectType: ProjectPropertyTypeEnum
   readonly editorUserId: string | null
+  readonly priority: Priority
 
   constructor(props: DomainEventProps<JobCreatedDomainEvent>) {
     super(props)

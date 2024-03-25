@@ -61,6 +61,7 @@ import { HoldAssignedTaskService } from './commands/hold-assigned-task/hold-assi
 import { UpdateStatusToInProgressAssignedTaskHttpController } from './commands/update-status-to-in-progress-assigned-task/update-status-to-in-progress-assigned-task.http.controller'
 import { UpdateStatusToInProgressAssignedTaskService } from './commands/update-status-to-in-progress-assigned-task/update-status-to-in-progress-assigned-task.service'
 import { UpdateExpeditedStatusWhenJobExpeditedStatusIsUpdatedDomainEventHandler } from './application/event-handlers/update-expedited-status-when-job-expedited-status-is-updated.domain-event-handler'
+import { UpdatePriorityWhenJobPriorityIsUpdatedDomainEventHandler } from './application/event-handlers/update-priority-when-job-priority-is-updated.domain-event-handler'
 
 const httpControllers = [
   AssignTaskHttpController,
@@ -118,6 +119,7 @@ const eventHandlers: Provider[] = [
   CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler,
   DeleteAssignedTaskWhenOrderedServiceIsDeletedDomainServiceHandler,
   UpdateExpeditedStatusWhenJobExpeditedStatusIsUpdatedDomainEventHandler,
+  UpdatePriorityWhenJobPriorityIsUpdatedDomainEventHandler,
 ]
 const domainServices: Provider[] = [
   CalculateVendorCostDomainService,

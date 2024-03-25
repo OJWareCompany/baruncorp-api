@@ -14,10 +14,10 @@ import { RevisionTypeUpdateValidationDomainService } from '../../domain/domain-s
 import { OrderedServiceRepositoryPort } from '../../database/ordered-service.repository.port'
 import { ORDERED_SERVICE_REPOSITORY } from '../../ordered-service.di-token'
 import { ServiceInitialPriceManager } from '../../domain/ordered-service-manager.domain-service'
+import { TieredPricingCalculator } from '../../domain/domain-services/tiered-pricing-calculator.domain-service'
+import { DuplicatedScopeChecker } from '../../domain/domain-services/duplicated-scope-checker.domain-service'
 import { OrderedServiceEntity } from '../../domain/ordered-service.entity'
 import { ScopeRevisionChecker } from '../../domain/domain-services/scope-revision-checker.domain-service'
-import { DuplicatedScopeChecker } from '../../domain/domain-services/duplicated-scope-checker.domain-service'
-import { TieredPricingCalculator } from '../../domain/domain-services/tiered-pricing-calculator.domain-service'
 
 @Injectable()
 export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
@@ -62,6 +62,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
           isExpedited: job.getProps().isExpedited,
           updatedBy: editor ? editor.userName.fullName : null,
           editorUserId: editor ? editor.id : null,
+          priority: event.priority,
         },
         this.serviceInitialPriceManager,
         this.orderModificationValidator,

@@ -26,6 +26,7 @@ import {
 } from './assigned-task.error'
 import { AssignedTaskCostUpdatedDomainEvent } from './events/assigned-task-cost-updated.domain-event'
 import { ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { Priority } from '../../ordered-job/domain/value-objects/priority.value-object'
 
 export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   protected _id: string
@@ -273,6 +274,10 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
 
   setIsExpedited(isExpedited: boolean) {
     this.props.isExpedited = isExpedited
+  }
+
+  setPriority(priority: Priority) {
+    this.props.priority = priority
   }
 
   async assign(user: UserEntity, orderModificationValidator: OrderModificationValidator): Promise<this> {

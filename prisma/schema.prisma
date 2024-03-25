@@ -184,34 +184,36 @@ model Service {
 }
 
 model OrderedServices {
-  id                       String          @id @default(uuid()) @db.VarChar(255)
-  organizationId           String          @map("organization_id") @db.VarChar(255)
-  organizationName         String          @map("organization_name") @db.VarChar(255)
-  is_expedited             Boolean         @default(false)
-  serviceId                String          @map("service_id") @db.VarChar(255)
-  jobId                    String          @map("job_id") @db.VarChar(255)
-  serviceName              String          @map("service_name") @db.VarChar(255)
-  pricing_type             String?         @db.VarChar(255)
-  price                    Decimal?        @db.Decimal(13, 4)
-  status                   String?         @db.VarChar(255)
-  doneAt                   DateTime?       @map("done_at") @db.DateTime(0)
-  orderedAt                DateTime        @map("ordered_at")
-  description              String?         @db.Text
-  sizeForRevision          String?         @map("size_for_revision") @db.VarChar(255)
-  projectId                String          @map("project_id") @db.VarChar(255)
-  isRevision               Boolean         @default(false) @map("is_revision")
-  isManualPrice            Boolean         @map("is_manual_price")
-  projectPropertyType      String          @map("project_property_type") @db.VarChar(255)
-  mountingType             String          @map("mounting_type") @db.VarChar(255)
-  projectNumber            String?         @map("project_number") @db.VarChar(255)
-  projectPropertyOwnerName String?         @map("project_property_owner_name") @db.VarChar(255)
-  jobName                  String          @map("job_name") @db.VarChar(255)
+  id                       String                    @id @default(uuid()) @db.VarChar(255)
+  organizationId           String                    @map("organization_id") @db.VarChar(255)
+  organizationName         String                    @map("organization_name") @db.VarChar(255)
+  is_expedited             Boolean                   @default(false)
+  serviceId                String                    @map("service_id") @db.VarChar(255)
+  jobId                    String                    @map("job_id") @db.VarChar(255)
+  serviceName              String                    @map("service_name") @db.VarChar(255)
+  pricing_type             String?                   @db.VarChar(255)
+  price                    Decimal?                  @db.Decimal(13, 4)
+  status                   String?                   @db.VarChar(255)
+  doneAt                   DateTime?                 @map("done_at") @db.DateTime(0)
+  orderedAt                DateTime                  @map("ordered_at")
+  description              String?                   @db.Text
+  sizeForRevision          String?                   @map("size_for_revision") @db.VarChar(255)
+  projectId                String                    @map("project_id") @db.VarChar(255)
+  isRevision               Boolean                   @default(false) @map("is_revision")
+  isManualPrice            Boolean                   @map("is_manual_price")
+  projectPropertyType      String                    @map("project_property_type") @db.VarChar(255)
+  mountingType             String                    @map("mounting_type") @db.VarChar(255)
+  projectNumber            String?                   @map("project_number") @db.VarChar(255)
+  projectPropertyOwnerName String?                   @map("project_property_owner_name") @db.VarChar(255)
+  jobName                  String                    @map("job_name") @db.VarChar(255)
   updated_at               DateTime
-  priceOverride            Decimal?        @map("price_override") @db.Decimal(13, 4)
-  updated_by               String?         @db.VarChar(255)
-  editor_user_id           String?         @db.VarChar(255)
-  job                      OrderedJobs     @relation(fields: [jobId], references: [id])
-  service                  Service         @relation(fields: [serviceId], references: [id])
+  priceOverride            Decimal?                  @map("price_override") @db.Decimal(13, 4)
+  updated_by               String?                   @db.VarChar(255)
+  editor_user_id           String?                   @db.VarChar(255)
+  priority                 ordered_services_priority @default(Medium) @map("priority")
+  priorityLevel            Int                       @default(3) @map("priority_level") @db.TinyInt
+  job                      OrderedJobs               @relation(fields: [jobId], references: [id])
+  service                  Service                   @relation(fields: [serviceId], references: [id])
   assignedTasks            AssignedTasks[]
 
   @@map("ordered_services")
@@ -463,7 +465,7 @@ model OrderedJobs {
   inReview                                      Boolean               @default(false) @map("in_review")
   invoiceId                                     String?               @map("invoice_id") @db.VarChar(255)
   priority                                      ordered_jobs_priority @default(Medium)
-  priorityLevel                                Int                   @default(3) @db.TinyInt @map("priority_level")
+  priorityLevel                                 Int                   @default(3) @map("priority_level") @db.TinyInt
   revisionSize                                  String?               @map("revision_size") @db.VarChar(255)
   pricingType                                   String?               @map("pricing_type") @db.VarChar(255)
   loadCalcOrigin                                String                @default("Self") @map("load_calc_origin") @db.VarChar(255)
@@ -722,45 +724,47 @@ model Tasks {
 }
 
 model AssignedTasks {
-  id                       String          @id @map("id") @db.VarChar(255)
-  taskId                   String          @map("task_id") @db.VarChar(255)
-  taskName                 String          @map("task_name") @db.VarChar(255)
-  status                   String          @map("status") @db.VarChar(255)
-  cost                     Decimal?        @db.Decimal(13, 4)
-  is_expedited             Boolean         @default(false)
-  is_active                Boolean         @default(false)
-  isRevision               Boolean         @map("is_revision")
-  isVendor                 Boolean         @map("is_vendor")
-  startedAt                DateTime?       @map("started_at") @db.DateTime(0)
-  doneAt                   DateTime?       @map("done_at") @db.DateTime(0)
-  duration                 Decimal?        @db.Decimal(4, 2)
-  description              String?         @db.Text
-  vendorInvoiceId          String?         @map("vendor_invoice_id") @db.VarChar(255)
-  assigneeId               String?         @map("assignee_id") @db.VarChar(255)
-  assigneeName             String?         @map("assignee_name") @db.VarChar(255)
-  assigneeOrganizationId   String?         @map("assignee_organization_id") @db.VarChar(255)
-  assigneeOrganizationName String?         @map("assignee_organization_name") @db.VarChar(255)
-  orderedServiceId         String          @map("ordered_service_id") @db.VarChar(255)
-  serviceId                String          @map("service_id") @db.VarChar(255)
-  serviceName              String          @map("service_name") @db.VarChar(255)
-  projectId                String          @map("project_id") @db.VarChar(255)
-  projectNumber            String?         @map("project_number") @db.VarChar(255)
-  projectPropertyOwnerName String?         @map("project_property_owner_name") @db.VarChar(255)
-  projectPropertyType      String          @map("project_property_type") @db.VarChar(255)
-  jobId                    String          @map("job_id") @db.VarChar(255)
-  jobName                  String          @map("job_name") @db.VarChar(255)
-  mountingType             String          @map("mounting_type") @db.VarChar(255)
-  organizationId           String          @map("organization_id") @db.VarChar(255)
-  organizationName         String          @map("organization_name") @db.VarChar(255)
+  id                       String                  @id @map("id") @db.VarChar(255)
+  taskId                   String                  @map("task_id") @db.VarChar(255)
+  taskName                 String                  @map("task_name") @db.VarChar(255)
+  status                   String                  @map("status") @db.VarChar(255)
+  cost                     Decimal?                @db.Decimal(13, 4)
+  is_expedited             Boolean                 @default(false)
+  is_active                Boolean                 @default(false)
+  isRevision               Boolean                 @map("is_revision")
+  isVendor                 Boolean                 @map("is_vendor")
+  startedAt                DateTime?               @map("started_at") @db.DateTime(0)
+  doneAt                   DateTime?               @map("done_at") @db.DateTime(0)
+  duration                 Decimal?                @db.Decimal(4, 2)
+  description              String?                 @db.Text
+  vendorInvoiceId          String?                 @map("vendor_invoice_id") @db.VarChar(255)
+  assigneeId               String?                 @map("assignee_id") @db.VarChar(255)
+  assigneeName             String?                 @map("assignee_name") @db.VarChar(255)
+  assigneeOrganizationId   String?                 @map("assignee_organization_id") @db.VarChar(255)
+  assigneeOrganizationName String?                 @map("assignee_organization_name") @db.VarChar(255)
+  orderedServiceId         String                  @map("ordered_service_id") @db.VarChar(255)
+  serviceId                String                  @map("service_id") @db.VarChar(255)
+  serviceName              String                  @map("service_name") @db.VarChar(255)
+  projectId                String                  @map("project_id") @db.VarChar(255)
+  projectNumber            String?                 @map("project_number") @db.VarChar(255)
+  projectPropertyOwnerName String?                 @map("project_property_owner_name") @db.VarChar(255)
+  projectPropertyType      String                  @map("project_property_type") @db.VarChar(255)
+  jobId                    String                  @map("job_id") @db.VarChar(255)
+  jobName                  String                  @map("job_name") @db.VarChar(255)
+  mountingType             String                  @map("mounting_type") @db.VarChar(255)
+  organizationId           String                  @map("organization_id") @db.VarChar(255)
+  organizationName         String                  @map("organization_name") @db.VarChar(255)
   created_at               DateTime
   updated_at               DateTime
-  updated_by               String?         @db.VarChar(255)
-  editor_user_id           String?         @db.VarChar(255)
-  task                     Tasks           @relation(fields: [taskId], references: [id])
-  orderedService           OrderedServices @relation(fields: [orderedServiceId], references: [id])
-  job                      OrderedJobs     @relation(fields: [jobId], references: [id])
-  user                     Users?          @relation(fields: [assigneeId], references: [id])
-  assigneeOrganization     Organizations?  @relation(fields: [assigneeOrganizationId], references: [id])
+  updated_by               String?                 @db.VarChar(255)
+  editor_user_id           String?                 @db.VarChar(255)
+  priority                 assigned_tasks_priority @default(Medium) @map("priority")
+  priorityLevel            Int                     @default(3) @map("priority_level") @db.TinyInt
+  task                     Tasks                   @relation(fields: [taskId], references: [id])
+  orderedService           OrderedServices         @relation(fields: [orderedServiceId], references: [id])
+  job                      OrderedJobs             @relation(fields: [jobId], references: [id])
+  user                     Users?                  @relation(fields: [assigneeId], references: [id])
+  assigneeOrganization     Organizations?          @relation(fields: [assigneeOrganizationId], references: [id])
 
   @@map("assigned_tasks")
 }
@@ -1407,4 +1411,18 @@ enum VendorCreditTransactionsTransactionType {
 
 enum vendor_payments_payment_method {
   Direct
+}
+
+enum assigned_tasks_priority {
+  Immediate
+  High
+  Medium
+  Low
+}
+
+enum ordered_services_priority {
+  Immediate
+  High
+  Medium
+  Low
 }

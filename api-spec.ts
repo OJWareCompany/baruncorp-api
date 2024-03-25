@@ -2313,6 +2313,10 @@ export interface VendorInvoiceLineItemResponse {
   serviceName: string
   serviceId: string
   orderedServiceId: string
+  /** @example "High" */
+  priority: 'Immediate' | 'High' | 'Medium' | 'Low'
+  /** @example 2 */
+  priorityLevel: 1 | 2 | 3 | 4
   serviceDescription: string | null
   taskExpenseTotal: number
   isRevision: boolean

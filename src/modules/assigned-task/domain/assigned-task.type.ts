@@ -1,3 +1,4 @@
+import { Priority } from '../../ordered-job/domain/value-objects/priority.value-object'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 
 export enum AssignedTaskStatusEnum {
@@ -28,6 +29,7 @@ export interface CreateAssignedTaskProps {
   isExpedited: boolean
   updatedBy: string | null
   editorUserId: string | null
+  priority: Priority
 }
 
 export interface AssignedTaskProps extends CreateAssignedTaskProps {

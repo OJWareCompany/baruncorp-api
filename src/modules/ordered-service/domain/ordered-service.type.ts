@@ -1,5 +1,6 @@
 import { AssignedTasks } from '@prisma/client'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
+import { Priority } from '../../ordered-job/domain/value-objects/priority.value-object'
 
 export enum OrderedServiceStatusEnum {
   Not_Started = 'Not Started',
@@ -86,6 +87,7 @@ export interface CreateOrderedServiceProps {
   projectPropertyOwnerName: string | null
   jobName: string
   isExpedited: boolean
+  priority: Priority
   updatedBy: string | null
   editorUserId: string | null
 }

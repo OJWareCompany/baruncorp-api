@@ -37,40 +37,38 @@ export class HandsUpService implements ICommandHandler {
     if (user.getProps().isHandRaisedForTask) throw new BadRequestException('already hand raised ', '77002')
     if (user.getProps().isVendor) throw new ForbiddenException('vendor can not raise a hand', '77001')
 
-    console.log('availableTasks:', availableTasks)
     const pendingTasks = await this.prismaService.assignedTasks.findMany({
       where: {
         is_active: true,
         status: AssignedTaskStatusEnum.Not_Started,
         taskId: { in: availableTasks.map((at) => at.taskId) },
       },
-      orderBy: [{ is_expedited: 'desc' }, { created_at: 'asc' }],
+      orderBy: [{ is_expedited: 'desc' }, { priorityLevel: 'asc' }, { created_at: 'asc' }],
     })
 
-    console.log('pendingTasks: ', pendingTasks)
     const hasAssigned = await this.assign(user, availableTasks, pendingTasks)
 
     if (hasAssigned) return
 
-    // 할당된 태스크가 없다면 손을 들고 종료
-    await Promise.all(
-      availableTasks.map(async (at) => {
-        await this.prismaService.userAvailableTasks.update({
-          where: { id: at.id },
-          data: {
-            isHandRaised: true,
-            raisedAt: new Date(),
-          },
-        })
-      }),
-    )
+    // // 할당된 태스크가 없다면 손을 들고 종료
+    // await Promise.all(
+    //   availableTasks.map(async (at) => {
+    //     await this.prismaService.userAvailableTasks.update({
+    //       where: { id: at.id },
+    //       data: {
+    //         isHandRaised: true,
+    //         raisedAt: new Date(),
+    //       },
+    //     })
+    //   }),
+    // )
 
-    await this.prismaService.users.update({
-      where: { id: command.userId },
-      data: {
-        isHandRaisedForTask: true,
-      },
-    })
+    // await this.prismaService.users.update({
+    //   where: { id: command.userId },
+    //   data: {
+    //     isHandRaisedForTask: true,
+    //   },
+    // })
   }
 
   async assign(
@@ -110,8 +108,9 @@ export class HandsUpService implements ICommandHandler {
 
       // 할당한다.
       const assignedTaskEntity = this.assignedTaskMapper.toDomain(pendingTask)
-      await assignedTaskEntity.assign(user, this.orderModificationValidator) // OK?
-      await this.assignedTaskRepo.update(assignedTaskEntity)
+      console.log(assignedTaskEntity)
+      // await assignedTaskEntity.assign(user, this.orderModificationValidator) // OK?
+      // await this.assignedTaskRepo.update(assignedTaskEntity)
       return true
     }
     return false

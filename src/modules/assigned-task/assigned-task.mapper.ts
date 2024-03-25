@@ -6,7 +6,7 @@ import { AssignedTaskEntity } from './domain/assigned-task.entity'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../project/domain/project.type'
 import { VendorInvoiceLineItemResponse } from '../vendor-invoice/dtos/vendor-invoice-line-item.response.dto'
 import { AssignedTaskStatusEnum } from './domain/assigned-task.type'
-import { Exception } from 'handlebars'
+import { OrderedJobsPriorityEnum, Priority } from '../ordered-job/domain/value-objects/priority.value-object'
 
 @Injectable()
 export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTasks, AssignedTaskResponseDto> {
@@ -47,6 +47,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       updated_at: props.updatedAt,
       updated_by: props.updatedBy,
       editor_user_id: props.editorUserId,
+      priority: props.priority.name,
+      priorityLevel: props.priority.level,
     }
     return record
   }
@@ -88,6 +90,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
         isActive: record.is_active,
         updatedBy: record.updated_by,
         editorUserId: record.editor_user_id,
+        priority: new Priority({ priority: record.priority as OrderedJobsPriorityEnum }),
       },
     })
     return entity
@@ -121,6 +124,8 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
     response.taskName = entity.getProps().taskName
     response.serviceId = entity.getProps().serviceId
     response.orderedServiceId = entity.getProps().orderedServiceId
+    response.priority = entity.getProps().priority.name
+    response.priorityLevel = entity.getProps().priority.level
     return response
   }
 }

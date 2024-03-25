@@ -1,5 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import {
+  OrderedJobsPriorityEnum,
+  OrderedJobsPriorityLevelEnum,
+} from '../../ordered-job/domain/value-objects/priority.value-object'
 
 export class VendorInvoiceLineItemResponse {
   @ApiProperty()
@@ -72,6 +76,14 @@ export class VendorInvoiceLineItemResponse {
   @ApiProperty()
   @IsString()
   orderedServiceId: string
+
+  @ApiProperty({ example: OrderedJobsPriorityEnum.High, enum: OrderedJobsPriorityEnum })
+  @IsEnum(OrderedJobsPriorityEnum)
+  priority: OrderedJobsPriorityEnum
+
+  @ApiProperty({ example: OrderedJobsPriorityLevelEnum.High, enum: OrderedJobsPriorityLevelEnum })
+  @IsEnum(OrderedJobsPriorityLevelEnum)
+  priorityLevel: OrderedJobsPriorityLevelEnum
 
   @ApiProperty()
   @IsString()

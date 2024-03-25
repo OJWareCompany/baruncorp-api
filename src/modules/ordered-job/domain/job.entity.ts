@@ -40,6 +40,7 @@ import { JobExpeditedStatusUpdatedDomainEvent } from './events/job-expedited-sta
 import { CheckCompletionJob } from './domain-services/check-completion-job.domain-service'
 import { JobSentToClientDomainEvent } from './events/job-sent-to-client.domain-event'
 import { OrderedJobsPriorityEnum, Priority } from './value-objects/priority.value-object'
+import { JobPriorityUpdatedDomainEvent } from './events/job-priority-updated.domain-event'
 
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
@@ -78,6 +79,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
         mountingType: create.mountingType as MountingTypeEnum,
         projectType: create.projectPropertyType as ProjectPropertyTypeEnum,
         editorUserId: create.editorUserId,
+        priority: create.priority,
       }),
     )
     return job
@@ -101,6 +103,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   get organizationName() {
     return this.props.organizationName
+  }
+
+  get priority() {
+    return this.props.priority
   }
 
   get invoiceId() {
@@ -292,6 +298,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   setPriority(priority: Priority) {
     this.props.priority = priority
+    this.addEvent(new JobPriorityUpdatedDomainEvent({ aggregateId: this.id, priority: this.props.priority.name }))
     return this
   }
 

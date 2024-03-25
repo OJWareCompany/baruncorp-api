@@ -1,5 +1,6 @@
 import { DomainEvent, DomainEventProps } from '../../../../libs/ddd/domain-event.base'
 import { initialize } from '../../../../libs/utils/constructor-initializer'
+import { Priority } from '../../../ordered-job/domain/value-objects/priority.value-object'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 
 export class OrderedServiceCreatedDomainEvent extends DomainEvent {
@@ -18,6 +19,7 @@ export class OrderedServiceCreatedDomainEvent extends DomainEvent {
   readonly projectPropertyOwnerName: string | null
   readonly jobName: string
   readonly isExpedited: boolean
+  readonly priority: Priority
   readonly editorUserId: string | null
 
   constructor(props: DomainEventProps<OrderedServiceCreatedDomainEvent>) {
