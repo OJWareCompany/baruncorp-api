@@ -104,6 +104,10 @@ export class ServiceInitialPriceManager {
   ): Promise<OrderedServiceSizeForRevisionEnum | null> {
     const organization = await this.organizationRepo.findOneOrThrow(orderedService.organizationId)
 
+    if (orderedService.isRevision && orderedService.projectPropertyType === ProjectPropertyTypeEnum.Commercial) {
+      return OrderedServiceSizeForRevisionEnum.Major
+    }
+
     if (!orderedService.isRevision || orderedService.projectPropertyType !== ProjectPropertyTypeEnum.Residential) {
       return null
     }

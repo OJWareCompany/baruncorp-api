@@ -10,6 +10,7 @@ import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { UpdateProjectCommand } from './update-project.command'
+import { ProjectPropertyTypeUpdateValidator } from '../../domain/domain-services/project-property-type-update-validator.domain-service'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -20,6 +21,7 @@ export class UpdateProjectService implements ICommandHandler {
     private readonly projectValidatorDomainService: ProjectValidatorDomainService,
     private readonly ahjNoteGeneratorDomainService: AhjNoteGeneratorDomainService,
     private readonly filesystemDomainService: FilesystemDomainService,
+    private readonly projectPropertyTypeUpdateValidator: ProjectPropertyTypeUpdateValidator,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
@@ -50,14 +52,17 @@ export class UpdateProjectService implements ICommandHandler {
       })
     }
 
-    project.update({
-      projectPropertyType: command.projectPropertyType,
-      systemSize: command.systemSize,
-      projectPropertyOwner: command.projectPropertyOwner,
-      projectNumber: command.projectNumber,
-      updatedBy: command.updatedByUserId,
-      utilityId: command.utilityId ?? project.getProps().utilityId,
-    })
+    project.update(
+      {
+        projectPropertyType: command.projectPropertyType,
+        systemSize: command.systemSize,
+        projectPropertyOwner: command.projectPropertyOwner,
+        projectNumber: command.projectNumber,
+        updatedBy: command.updatedByUserId,
+        utilityId: command.utilityId ?? project.getProps().utilityId,
+      },
+      this.projectPropertyTypeUpdateValidator,
+    )
 
     /**
      * @FilesystemLogic

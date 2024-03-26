@@ -30,6 +30,7 @@ import { FilesystemDomainService } from '../filesystem/domain/domain-service/fil
 import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
 import { UtilityRepository } from '@modules/utility/database/utility.repository'
 import { UtilityModule } from '@modules/utility/utility.module'
+import { ProjectPropertyTypeUpdateValidator } from './domain/domain-services/project-property-type-update-validator.domain-service'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -70,7 +71,7 @@ const repositories: Provider[] = [
 
 const mappers: Provider[] = [ProjectMapper]
 
-const domainServices: Provider[] = [ProjectValidatorDomainService]
+const domainServices: Provider[] = [ProjectValidatorDomainService, ProjectPropertyTypeUpdateValidator]
 
 @Module({
   imports: [

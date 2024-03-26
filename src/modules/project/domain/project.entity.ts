@@ -14,6 +14,8 @@ import { ProjectAssociatedRegulatoryBody } from './value-objects/project-associa
 import { ProjectPropertyAddressUpdatedDomainEvent } from './events/project-property-address-updated.domain-event'
 import { SystemSizeBadRequestException } from '../../ordered-job/domain/job.error'
 import { ProjectPropertyTypeUpdatedDomainEvent } from './events/project-property-type-updated.domain-event'
+import { ProjectPropertyTypeUpdateValidator } from './domain-services/project-property-type-update-validator.domain-service'
+import { ProjectPropertyUpdateException } from './project.error'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -118,8 +120,10 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     )
   }
 
-  update(props: UpdateProjectProps) {
+  async update(props: UpdateProjectProps, projectPropertyTypeUpdateValidator: ProjectPropertyTypeUpdateValidator) {
     if (this.props.projectPropertyType !== props.projectPropertyType) {
+      const canUpdate = await projectPropertyTypeUpdateValidator.canUpdate(this)
+      if (!canUpdate) throw new ProjectPropertyUpdateException()
       this.props.projectPropertyType = props.projectPropertyType
       this.addEvent(
         new ProjectPropertyTypeUpdatedDomainEvent({

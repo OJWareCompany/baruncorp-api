@@ -1,4 +1,4 @@
-import { BadRequestException, ConflictException, NotFoundException } from '@nestjs/common'
+import { BadRequestException, ConflictException, NotFoundException, UnprocessableEntityException } from '@nestjs/common'
 
 export class ProjectNotFoundException extends NotFoundException {
   constructor() {
@@ -21,6 +21,11 @@ export class ProjectNumberConflictException extends ConflictException {
 export class CoordinatesNotFoundException extends NotFoundException {
   constructor() {
     super('Wrong coordinates.', '30004')
+  }
+}
+export class ProjectPropertyUpdateException extends UnprocessableEntityException {
+  constructor() {
+    super('In projects where more than two Jobs are created, updating the Property field is not possible.', '30005')
   }
 }
 

@@ -29,7 +29,7 @@ export class RevisionTypeUpdateValidationDomainService {
     const organization = await this.organizationRepo.findOneOrThrow(job.organizationId)
     if (!orderedService.isRevision) throw new NewServiceRevisionUpdateException()
     if (orderedService.projectPropertyType !== ProjectPropertyTypeEnum.Residential) {
-      throw new OrderedServiceNonResidentialRevisionTypeUpdateException()
+      // throw new OrderedServiceNonResidentialRevisionTypeUpdateException() // Commercial도 Major로 업데이트 되어야 하는데, 안그래도 되는지 확인해서 안그래도 되면 코드 제거할 것.
     }
 
     // revision type이 고정된 서비스는 업데이트 되면 안된다. (처음 한번만 셋팅)
