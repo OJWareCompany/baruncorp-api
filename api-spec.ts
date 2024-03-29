@@ -205,6 +205,14 @@ export interface ChangeUserRoleRequestDto {
   newRole: 'Special Admin' | 'Admin' | 'Member' | 'Client Company Manager' | 'Client Company Employee' | 'Viewer'
 }
 
+export interface JoinOrganizationRequestDto {
+  /**
+   * @format date-time
+   * @default "2023-09-04"
+   */
+  dateOfJoining?: string | null
+}
+
 export interface AddressDto {
   /** @default "3480 Northwest 33rd Court" */
   street1: string
@@ -4527,6 +4535,26 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         body: data,
         type: ContentType.Json,
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name JoinOrganizationHttpControllerPost
+     * @request POST:/users/{userId}/organizations/{organizationId}/join
+     */
+    joinOrganizationHttpControllerPost: (
+      userId: string,
+      organizationId: string,
+      data: JoinOrganizationRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/users/${userId}/organizations/${organizationId}/join`,
+        method: 'POST',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
 

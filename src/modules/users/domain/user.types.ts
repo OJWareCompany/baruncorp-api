@@ -28,7 +28,7 @@ export interface UserProps extends CreateUserProps {
   availableTasks: AvailableTaskResponseDto[]
   ptos: Pto[]
   ptoDetails: PtoDetail[]
-  role: UserRoleNameEnum
+  role: UserRoleNameEnum // Type과 동일.. 필드 하나 제거하기
   type: string
   isHandRaisedForTask: boolean
   status: UserStatusEnum

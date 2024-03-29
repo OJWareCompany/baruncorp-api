@@ -1,33 +1,24 @@
-/* eslint-disable @typescript-eslint/ban-ts-comment */
-
-import {
-  CanActivate,
-  ExecutionContext,
-  ForbiddenException,
-  Inject,
-  Injectable,
-  UnauthorizedException,
-} from '@nestjs/common'
+import { CanActivate, ExecutionContext, Injectable, UnauthorizedException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { jwtConstants } from '../constants'
 import { Request } from 'express'
-import { USER_REPOSITORY } from '../../users/user.di-tokens'
-import { UserRepository } from '../../users/database/user.repository'
+import { PrismaService } from '../../database/prisma.service'
+import UserMapper from '../../users/user.mapper'
+import { UserNotFoundException } from '../../users/user.error'
+import { AdminOnlyException, LoginException, ProperAuthForbiddenException, TokenNotFoundException } from '../auth.error'
 import { UserRoleNameEnum } from '../../users/domain/value-objects/user-role.vo'
-import { AdminOnlyException, ProperAuthForbiddenException, TokenNotFoundException } from '../auth.error'
 
 @Injectable()
 export class AdminGuard implements CanActivate {
   constructor(
     private readonly jwtService: JwtService,
-    // @ts-ignore
-    @Inject(USER_REPOSITORY) private readonly userRepository: UserRepository,
+    private readonly prismaService: PrismaService,
+    private readonly userMapper: UserMapper,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
     const token = this.extractTokenFromHeader(request) ?? this.extractTokenFromCookie(request)
-
     if (!token) {
       throw new TokenNotFoundException()
     }
@@ -37,11 +28,23 @@ export class AdminGuard implements CanActivate {
         secret: jwtConstants.secret,
       })
       // TODO: what data needed
-      const user = await this.userRepository.findOneByIdOrThrow(payload.id)
-      if (user.role !== UserRoleNameEnum.admin) throw new AdminOnlyException()
-
-      request['user'] = user
-    } catch {
+      const user = await this.prismaService.users.findUnique({
+        where: { id: payload.id },
+        include: {
+          organization: true,
+          userRole: { include: { role: true } },
+          userPosition: { include: { position: true } },
+          licenses: true,
+          availableTasks: { include: { task: true } },
+        },
+      })
+      if (!user) throw new UserNotFoundException()
+      request['user'] = this.userMapper.toDomain(user)
+      if (user.userRole?.roleName !== UserRoleNameEnum.admin) throw new AdminOnlyException()
+    } catch (error) {
+      if (error instanceof UserNotFoundException) {
+        throw new LoginException()
+      }
       throw new ProperAuthForbiddenException()
     }
     return true
@@ -50,7 +53,8 @@ export class AdminGuard implements CanActivate {
   // TODO: Use http-only Cookie
   private extractTokenFromHeader(request: Request): string | undefined {
     const [type, token] = request.headers.authorization?.split(' ') ?? []
-    return type === 'Bearer' ? token : undefined
+    const regExp = /[\{\}\[\]\/\?\*\~\!\@\#\$\%\^\&\*\(\-\_\"\'\,]/
+    return type === 'Bearer' && token && !regExp.test(token[0]) ? token : undefined
   }
 
   private extractTokenFromCookie(request: Request) {

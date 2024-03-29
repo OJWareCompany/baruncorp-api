@@ -29,6 +29,8 @@ import { FindPtoTypePaginatedHttpController } from './queries/find-pto-type-pagi
 import { FindPtoTypePaginatedQueryHandler } from './queries/find-pto-type-paginated/find-pto-type.paginated.query-handler'
 import { UpdatePtoRangeWhenUserUpdatedEventHandler } from './application/event-handlers/update-pto-range-when-user-updated.domain-event-handler'
 import { UpdatePtoRangeService } from './commands/update-pto-range/update-pto-range.service'
+import { UpdatePtoWhenUserJoinClientDomainEventHandler } from './application/event-handlers/update-pto-when-user-join-client-organization.domain-event-handler'
+import { OrganizationModule } from '../organization/organization.module'
 
 const httpControllers = [
   CreatePtoHttpController,
@@ -57,12 +59,16 @@ const queryHandlers: Provider[] = [
   FindPtoAnnualPaginatedQueryHandler,
   FindPtoTypePaginatedQueryHandler,
 ]
-const eventHandlers: Provider[] = [CreatePtoWhenUserCreatedEventHandler, UpdatePtoRangeWhenUserUpdatedEventHandler]
+const eventHandlers: Provider[] = [
+  CreatePtoWhenUserCreatedEventHandler,
+  UpdatePtoRangeWhenUserUpdatedEventHandler,
+  UpdatePtoWhenUserJoinClientDomainEventHandler,
+]
 const repositories: Provider[] = [{ provide: PTO_REPOSITORY, useClass: PtoRepository }]
 const mappers: Provider[] = [PtoMapper]
 
 @Module({
-  imports: [CqrsModule, PrismaModule, PtoTenurePolicyModule, forwardRef(() => UsersModule)],
+  imports: [CqrsModule, PrismaModule, OrganizationModule, PtoTenurePolicyModule, forwardRef(() => UsersModule)],
   providers: [...commandHandlers, ...eventHandlers, ...queryHandlers, ...repositories, ...mappers],
   controllers: [...httpControllers],
   exports: [...repositories, ...mappers],

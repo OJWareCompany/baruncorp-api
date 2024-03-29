@@ -8,7 +8,6 @@ import { UserRepository } from './database/user.repository'
 import { InvitationMailRepository } from './database/invitationMail.repository'
 import UserMapper from './user.mapper'
 import { UserRoleMapper } from './user-role.mapper'
-import { OrganizationMapper } from '../organization/organization.mapper'
 import { CreateUserHttpContoller } from './commands/create-user/create-user.http.controller'
 import { CreateUserService } from './commands/create-user/create-user.service'
 import { FindUsersHttpController } from './queries/find-users/find-user.http.controller'
@@ -47,6 +46,8 @@ import { AssignedTaskModule } from '../assigned-task/assigned-task.module'
 import { PositionModule } from '../position/position.module'
 import { PtoModule } from '../pto/pto.module'
 import { OrderedJobNoteModule } from '../ordered-job-note/job-note.module'
+import { JoinOrganizationHttpController } from './commands/join-organization/join-organization.http.controller'
+import { JoinOrganizationService } from './commands/join-organization/join-organization.service'
 
 const httpControllers = [
   UsersController,
@@ -66,6 +67,7 @@ const httpControllers = [
   ReactivateUserHttpController,
   DeactivateUserHttpController,
   ChangeUserRoleHttpController,
+  JoinOrganizationHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateUserService,
@@ -81,6 +83,7 @@ const commandHandlers: Provider[] = [
   ReactivateUserService,
   DeactivateUserService,
   ChangeUserRoleService,
+  JoinOrganizationService,
 ]
 const queryHandlers: Provider[] = [FindUserQueryHandler]
 const domainServices: Provider[] = [UserManager]

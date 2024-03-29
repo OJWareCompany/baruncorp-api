@@ -1,24 +1,25 @@
+import { UserStatusUpdatedDomainEvent } from '@modules/users/domain/events/user-status-updated.domain-event'
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
-import { CreateUserProps, UserProps, UserStatusEnum } from './user.types'
-import { UserName } from './value-objects/user-name.vo'
-import { Phone } from './value-objects/phone-number.value-object'
-import { UserRoleNameEnum } from './value-objects/user-role.vo'
+import { DepartmentEntity } from '../../department/domain/department.entity'
+import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
 import {
   InvalidClientRoleAssignmentException,
   InvalidMemberRoleAssignmentException,
   PhoneNumberFormatException,
   SpecialAdminExistsException,
 } from '../user.error'
-import { LicenseTypeEnum } from '../../license/dtos/license.response.dto'
+import { CreateUserProps, UserProps, UserStatusEnum } from './user.types'
+import { UserDateOfJoiningUpdatedDomainEvent } from './events/user-date-of-joining-updated.domain-event'
+import { UserJoinedToOrganization } from './events/user-joined-organization.domain-event'
+import { UserCreatedDomainEvent } from './events/user-created.domain-event'
+import { UserRoleNameEnum } from './value-objects/user-role.vo'
 import { Organization } from './value-objects/organization.value-object'
 import { UserManager } from './domain-services/user-manager.domain-service'
-import { UserCreatedDomainEvent } from './events/user-created.domain-event'
-import { UserDateOfJoiningUpdatedDomainEvent } from './events/user-date-of-joining-updated.domain-event'
-import { Pto } from './value-objects/pto.vo'
+import { UserName } from './value-objects/user-name.vo'
+import { Phone } from './value-objects/phone-number.value-object'
 import { PtoDetail } from './value-objects/pto-detail.vo'
-import { UserStatusUpdatedDomainEvent } from '@modules/users/domain/events/user-status-updated.domain-event'
-import { DepartmentEntity } from '../../department/domain/department.entity'
+import { Pto } from './value-objects/pto.vo'
 
 export class UserEntity extends AggregateRoot<UserProps> {
   protected _id: string
@@ -234,6 +235,24 @@ export class UserEntity extends AggregateRoot<UserProps> {
   removeDepartment(): void {
     this.props.departmentId = null
     this.props.departmentName = null
+  }
+
+  joinOrganization(organization: Organization, dateOfJoining: Date | null): void {
+    this.props.organization = organization
+    this.props.dateOfJoining = dateOfJoining
+    if (organization.organizationType === 'administration') {
+      this.props.role = UserRoleNameEnum.member
+      this.props.type = UserRoleNameEnum.member
+      this.props.isVendor = false
+    } else if (organization.organizationType === 'client') {
+      this.props.role = UserRoleNameEnum.client_company_employee
+      this.props.type = UserRoleNameEnum.client_company_employee
+    } else {
+      this.props.role = UserRoleNameEnum.viewer
+      this.props.type = UserRoleNameEnum.viewer
+      this.props.isVendor = false
+    }
+    this.addEvent(new UserJoinedToOrganization({ aggregateId: this.id, organizationId: organization.id }))
   }
 
   public validate(): void {
