@@ -5,6 +5,7 @@ import { Paginated } from '../../../../libs/ddd/repository.port'
 import { PaginatedParams, PaginatedQueryBase } from '../../../../libs/ddd/query.base'
 import { PrismaService } from '../../../database/prisma.service'
 import { IntegratedOrderModificationHistoryNotFoundException } from '../../domain/integrated-order-modification-history.error'
+import { ViewForbiddenException } from '../../../../libs/exceptions/exceptions'
 
 export class FindIntegratedOrderModificationHistoryPaginatedQuery extends PaginatedQueryBase {
   readonly jobId: string
@@ -29,16 +30,13 @@ export class FindIntegratedOrderModificationHistoryPaginatedQueryHandler impleme
       items: [],
     })
 
-    if (!query.departmentId) return empty
-    // throw new ViewForbiddenException()
+    if (!query.departmentId) throw new ViewForbiddenException()
 
     const department = await this.prismaService.departments.findFirst({ where: { id: query.departmentId } })
-    if (!department) return empty
-    // throw new ViewForbiddenException()
+    if (!department) throw new ViewForbiddenException()
 
     const canView = department.viewTaskCost && department.viewScopePrice
-    if (!canView) return empty
-    // throw new ViewForbiddenException()
+    if (!canView) throw new ViewForbiddenException()
 
     const result = await this.prismaService.integratedOrderModificationHistory.findMany({
       skip: query.offset,
@@ -46,10 +44,13 @@ export class FindIntegratedOrderModificationHistoryPaginatedQueryHandler impleme
       where: { jobId: query.jobId },
       orderBy: { modifiedAt: 'desc' },
     })
+
     if (!result) throw new IntegratedOrderModificationHistoryNotFoundException()
+
     const totalCount = await this.prismaService.integratedOrderModificationHistory.count({
       where: { jobId: query.jobId },
     })
+
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
