@@ -47,6 +47,8 @@ import {
 } from './ordered-service.error'
 import { DuplicatedScopeChecker } from './domain-services/duplicated-scope-checker.domain-service'
 import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
+import { ServicePricingTypeEnum } from '../../service/domain/service.type'
+import { CustomPricingTypeEnum } from '../../custom-pricing/commands/create-custom-pricing/create-custom-pricing.command'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -224,7 +226,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       )
 
       this.setPricingType(initialValue?.pricingType || null)
-      const isTieredPricing = initialValue?.pricingType === OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE
+      const isTieredPricing =
+        initialValue?.pricingType === OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE ||
+        OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_PRICE
       if (isTieredPricing) {
         await this.setTieredPrice(tieredPricingCalculator)
       } else {
@@ -549,8 +553,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     )
   }
 
-  get isNewResidentialService(): boolean {
+  get isVolumeTieredPricing(): boolean {
+    const isTieredPricing =
+      this.props.pricingType === OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE ||
+      this.props.pricingType === OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_PRICE
     return (
+      isTieredPricing &&
       this.props.projectPropertyType === ProjectPropertyTypeEnum.Residential &&
       (this.props.status === OrderedServiceStatusEnum.Completed ||
         this.props.status === OrderedServiceStatusEnum.Canceled_Invoice) &&

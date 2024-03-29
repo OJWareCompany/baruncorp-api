@@ -269,10 +269,12 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     tieredPricingCalculator: TieredPricingCalculator,
   ): Promise<CalcPriceAndPricingReturnType | null> {
     if (await tieredPricingCalculator.isTieredPricingScope(orderedService)) {
-      const price = await tieredPricingCalculator.calc(orderedService)
       return {
         price: await tieredPricingCalculator.calc(orderedService), // Auto Update Price When Invoice Is Created
-        pricingType: OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE,
+        pricingType:
+          mountingType === MountingTypeEnum.Ground_Mount
+            ? OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_PRICE
+            : OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE,
       }
     }
     if (this.residentialNewFlatPricing) {

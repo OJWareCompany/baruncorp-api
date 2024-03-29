@@ -484,7 +484,7 @@ model OrderedJobs {
   mountingType                                  String                @map("mounting_type") @db.VarChar(255)
   projectType                                   String                @map("project_type") @db.VarChar(255)
   numberOfWetStamp                              Int?                  @map("number_of_wet_stamp") @db.UnsignedTinyInt
-  dateSentToClient                              DateTime?             @map("date_sent_to_client") @db.Date
+  dateSentToClient                              DateTime?             @map("date_sent_to_client") @db.DateTime(0)
   propertyAddress                               String                @map("property_address") @db.Text
   systemSize                                    Decimal?              @map("system_size") @db.Decimal(10, 2)
   otherComments                                 String?               @map("other_comments") @db.Text

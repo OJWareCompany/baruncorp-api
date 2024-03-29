@@ -17,7 +17,7 @@ export class CalculateInvoiceService {
     let discountAmount = 0
 
     const newResidentialServices = orderedServices.filter((orderedService) => {
-      return orderedService.isNewResidentialService
+      return orderedService.isVolumeTieredPricing
     })
 
     for (const orderedService of newResidentialServices) {
