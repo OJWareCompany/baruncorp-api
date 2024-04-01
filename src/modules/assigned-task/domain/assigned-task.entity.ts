@@ -44,6 +44,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
       startedAt: null,
       doneAt: null,
       cost: null,
+      isManualCost: false,
       isVendor: false,
       vendorInvoiceId: null,
       isActive: false,
@@ -160,7 +161,7 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   ) {
     await orderModificationValidator.validate(this)
     const cost = calcService.calcVendorCost(expensePricing, orderedService)
-    this.setCost(cost)
+    this.setCost(cost, { isManually: false })
   }
 
   // residential revision은 size가 정해지지 않은 경우 complete 될 수 없음
@@ -326,12 +327,10 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
-  enterCostManually(cost: number | null) {
-    this.setCost(cost)
-    return this
-  }
-
-  private setCost(cost: number | null) {
+  setCost(cost: number | null, option: { isManually: boolean }) {
+    // if (this.props.isManualCost && !option.isManually) {
+    //   return this
+    // }
     this.props.cost = cost
     this.addEvent(new AssignedTaskCostUpdatedDomainEvent({ aggregateId: this.id, cost: Number(this.props.cost) }))
     return this

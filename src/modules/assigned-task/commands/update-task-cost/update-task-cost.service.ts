@@ -19,7 +19,7 @@ export class UpdateTaskCostService implements ICommandHandler {
   @GenerateAssignedTaskModificationHistory({ invokedFrom: null, queryScope: 'self' })
   async execute(command: UpdateTaskCostCommand): Promise<void> {
     const entity = await this.assignedTaskRepo.findOneOrThrow(command.assignedTaskId)
-    entity.enterCostManually(command.cost)
+    entity.setCost(command.cost, { isManually: true })
 
     // TODO: Vendor Invoice로 수정
 

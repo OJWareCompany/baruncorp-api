@@ -114,6 +114,7 @@ export class JobToInvoiceResponseMapper {
           projectPropertyType: assignedTask.projectPropertyType as ProjectPropertyTypeEnum,
           mountingType: assignedTask.mountingType as MountingTypeEnum,
           cost: assignedTask.cost ? Number(assignedTask.cost) : null,
+          isManualCost: assignedTask.isManualCost,
           isVendor: assignedTask.isVendor,
           vendorInvoiceId: assignedTask.vendorInvoiceId,
           serviceId: assignedTask.serviceId,

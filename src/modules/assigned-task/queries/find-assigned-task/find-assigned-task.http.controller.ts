@@ -38,6 +38,7 @@ export class FindAssignedTaskHttpController {
       projectPropertyType: result.projectPropertyType,
       mountingType: result.mountingType,
       cost: result.cost ? Number(result.cost) : null,
+      isManualCost: result.isManualCost,
       isVendor: result.isVendor,
       vendorInvoiceId: result.vendorInvoiceId,
       serviceId: result.serviceId,

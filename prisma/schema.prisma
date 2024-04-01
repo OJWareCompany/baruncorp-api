@@ -465,7 +465,6 @@ model OrderedJobs {
   inReview                                      Boolean               @default(false) @map("in_review")
   invoiceId                                     String?               @map("invoice_id") @db.VarChar(255)
   priority                                      ordered_jobs_priority @default(Medium)
-  priorityLevel                                 Int                   @default(3) @map("priority_level") @db.TinyInt
   revisionSize                                  String?               @map("revision_size") @db.VarChar(255)
   pricingType                                   String?               @map("pricing_type") @db.VarChar(255)
   loadCalcOrigin                                String                @default("Self") @map("load_calc_origin") @db.VarChar(255)
@@ -551,6 +550,7 @@ model OrderedJobs {
   editor_user_id                                String?               @db.VarChar(255)
   structuralUpgradeNote                         String?               @map("structural_upgrade_note") @db.Text
   propertyOwner                                 String?               @map("property_owner") @db.VarChar(255)
+  priorityLevel                                 Int                   @default(3) @map("priority_level") @db.TinyInt
   project                                       OrderedProjects?      @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
@@ -729,6 +729,7 @@ model AssignedTasks {
   taskName                 String                  @map("task_name") @db.VarChar(255)
   status                   String                  @map("status") @db.VarChar(255)
   cost                     Decimal?                @db.Decimal(13, 4)
+  isManualCost             Boolean                 @default(false) @map("is_manual_cost")
   is_expedited             Boolean                 @default(false)
   is_active                Boolean                 @default(false)
   isRevision               Boolean                 @map("is_revision")
@@ -1344,26 +1345,11 @@ model Departments {
   editUserTask       Boolean  @default(false) @map("edit_user_task")
   editUserLicense    Boolean  @default(false) @map("edit_user_license")
   editUserPosition   Boolean  @default(false) @map("edit_user_position")
-  sendDeliverables   Boolean  @default(false) @map("send_deliverables")
   editMemberRole     Boolean  @default(false) @map("edit_member_role")
   editClientRole     Boolean  @default(false) @map("edit_client_role")
+  sendDeliverables   Boolean  @default(false) @map("send_deliverables")
 
   @@map("departments")
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by Prisma Client.
-model intergrated_order_modification_history {
-  entity             String   @db.VarChar(255)
-  entity_id          String   @db.VarChar(255)
-  scope_or_task_name String?  @db.VarChar(255)
-  attribute          String?  @db.VarChar(255)
-  operation          String   @default("Create") @db.VarChar(22)
-  after_value        String?  @db.Text
-  before_value       String?  @db.Text
-  modified_by        String   @default("System") @db.VarChar(255)
-  modified_at        DateTime @default(now()) @db.DateTime(0)
-
-  @@ignore
 }
 
 enum InvoicesStatus {

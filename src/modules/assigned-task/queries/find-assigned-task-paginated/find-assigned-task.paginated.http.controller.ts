@@ -54,6 +54,7 @@ export class FindAssignedTaskPaginatedHttpController {
         projectPropertyType: item.projectPropertyType as ProjectPropertyTypeEnum,
         mountingType: item.mountingType as MountingTypeEnum,
         cost: item.cost ? Number(item.cost) : null,
+        isManualCost: item.isManualCost,
         isVendor: item.isVendor,
         vendorInvoiceId: item.vendorInvoiceId,
         serviceId: item.serviceId,

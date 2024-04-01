@@ -35,6 +35,7 @@ export interface CreateAssignedTaskProps {
 export interface AssignedTaskProps extends CreateAssignedTaskProps {
   status: AssignedTaskStatusEnum
   cost: number | null
+  isManualCost: boolean
   isVendor: boolean
   assigneeId: string | null
   assigneeName: string | null

@@ -125,6 +125,10 @@ export class AssignedTaskResponseDto {
   readonly cost: number | null
 
   @ApiProperty()
+  @IsBoolean()
+  readonly isManualCost: boolean
+
+  @ApiProperty()
   readonly prerequisiteTasks: PrerequisiteTaskVO[]
 
   constructor(props: AssignedTaskResponseDto) {

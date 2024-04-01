@@ -424,6 +424,7 @@ export interface AssignedTaskResponseDto {
   createdAt: string | null
   duration: number | null
   cost: number | null
+  isManualCost: boolean
   prerequisiteTasks: PrerequisiteTaskVO[]
 }
 
