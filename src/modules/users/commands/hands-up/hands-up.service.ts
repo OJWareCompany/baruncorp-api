@@ -47,28 +47,27 @@ export class HandsUpService implements ICommandHandler {
     })
 
     const hasAssigned = await this.assign(user, availableTasks, pendingTasks)
-
     if (hasAssigned) return
 
-    // // 할당된 태스크가 없다면 손을 들고 종료
-    // await Promise.all(
-    //   availableTasks.map(async (at) => {
-    //     await this.prismaService.userAvailableTasks.update({
-    //       where: { id: at.id },
-    //       data: {
-    //         isHandRaised: true,
-    //         raisedAt: new Date(),
-    //       },
-    //     })
-    //   }),
-    // )
+    // 할당된 태스크가 없다면 손을 들고 종료
+    await Promise.all(
+      availableTasks.map(async (at) => {
+        await this.prismaService.userAvailableTasks.update({
+          where: { id: at.id },
+          data: {
+            isHandRaised: true,
+            raisedAt: new Date(),
+          },
+        })
+      }),
+    )
 
-    // await this.prismaService.users.update({
-    //   where: { id: command.userId },
-    //   data: {
-    //     isHandRaisedForTask: true,
-    //   },
-    // })
+    await this.prismaService.users.update({
+      where: { id: command.userId },
+      data: {
+        isHandRaisedForTask: true,
+      },
+    })
   }
 
   async assign(
@@ -108,9 +107,8 @@ export class HandsUpService implements ICommandHandler {
 
       // 할당한다.
       const assignedTaskEntity = this.assignedTaskMapper.toDomain(pendingTask)
-      console.log(assignedTaskEntity)
-      // await assignedTaskEntity.assign(user, this.orderModificationValidator) // OK?
-      // await this.assignedTaskRepo.update(assignedTaskEntity)
+      await assignedTaskEntity.assign(user, this.orderModificationValidator) // OK?
+      await this.assignedTaskRepo.update(assignedTaskEntity)
       return true
     }
     return false
