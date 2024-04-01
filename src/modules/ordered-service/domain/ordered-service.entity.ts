@@ -224,11 +224,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
         this.sizeForRevision,
         tieredPricingCalculator,
       )
-
       this.setPricingType(initialValue?.pricingType || null)
       const isTieredPricing =
         initialValue?.pricingType === OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_NEW_PRICE ||
-        OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_PRICE
+        initialValue?.pricingType === OrderedServicePricingTypeEnum.CUSTOM_RESIDENTIAL_GM_PRICE
       if (isTieredPricing) {
         await this.setTieredPrice(tieredPricingCalculator)
       } else {
@@ -454,7 +453,6 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
 
   async setTieredPrice(tieredPricingCalculator: TieredPricingCalculator): Promise<this> {
     if (this.props.isManualPrice) return this
-
     if (await tieredPricingCalculator.isTieredPricingScope(this)) {
       const price = await tieredPricingCalculator.calc(this)
       this.setPrice(price)
@@ -509,6 +507,9 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   }
 
   private setPrice(price: number | null): void {
+    if (this.props.isManualPrice) {
+      return
+    }
     this.props.price = price
     this.addEvent(
       new OrderedServicePriceUpdatedDomainEvent({

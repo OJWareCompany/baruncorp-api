@@ -34,8 +34,11 @@ export class TieredPricingCalculator {
     if (await this.scopeRevisionChecker.isRevision(orderedScope)) {
       return false
     }
+    if (!customPricing) {
+      return false
+    }
 
-    if (!customPricing?.hasNewResidentialTieredPricing) {
+    if (!customPricing.hasNewResidentialTieredPricing) {
       return false
     }
 
