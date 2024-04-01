@@ -8,5 +8,6 @@ export class ProjectPropertyTypeUpdateValidator {
   async canUpdate(project: ProjectEntity) {
     const jobs = await this.jobRepo.findManyBy({ projectId: project.id })
     if (jobs.length > 1) return false
+    else if (jobs.length === 1) return true
   }
 }
