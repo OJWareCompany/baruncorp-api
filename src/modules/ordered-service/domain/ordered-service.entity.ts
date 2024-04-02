@@ -231,7 +231,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       if (isTieredPricing) {
         await this.setTieredPrice(tieredPricingCalculator)
       } else {
-        this.setPrice(initialValue?.price || null)
+        this.setPrice(initialValue?.price || null, { isManually: false })
       }
     }
   }
@@ -258,7 +258,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
         this.sizeForRevision,
         tieredPricingCalculator,
       )
-      this.setPrice(initialValue?.price || null)
+      this.setPrice(initialValue?.price || null, { isManually: false })
       this.setPricingType(initialValue?.pricingType || null)
     }
   }
@@ -317,7 +317,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       this.sizeForRevision,
       tieredPricingCalculator,
     )
-    this.setPrice(initialValue?.price || null)
+    this.setPrice(initialValue?.price || null, { isManually: false })
     this.setPricingType(initialValue?.pricingType || null)
 
     this.addEvent(
@@ -455,7 +455,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     if (this.props.isManualPrice) return this
     if (await tieredPricingCalculator.isTieredPricingScope(this)) {
       const price = await tieredPricingCalculator.calc(this)
-      this.setPrice(price)
+      this.setPrice(price, { isManually: false })
       this.addEvent(
         new OrderedServiceAppliedTieredPricingDomainEvent({
           aggregateId: this.id,
@@ -486,7 +486,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     }
 
     this.props.isManualPrice = true
-    this.setPrice(price)
+    this.setPrice(price, { isManually: true })
   }
 
   setDescription(description: string | null): this {
@@ -497,7 +497,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   private freeCost() {
     if (this.props.sizeForRevision === OrderedServiceSizeForRevisionEnum.Major) return this
     const NO_COST = 0
-    this.setPrice(NO_COST)
+    this.setPrice(NO_COST, { isManually: false })
     return this
   }
 
@@ -506,8 +506,8 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  private setPrice(price: number | null): void {
-    if (this.props.isManualPrice) {
+  private setPrice(price: number | null, option: { isManually: boolean }): void {
+    if (this.props.isManualPrice && !option.isManually) {
       return
     }
     this.props.price = price
@@ -527,7 +527,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
       Number(service.commercialRevisionMinutesPerUnit) + Number.EPSILON,
       Number(service.commercialRevisionCostPerUnit) + Number.EPSILON,
     )
-    this.setPrice(price)
+    this.setPrice(price, { isManually: false })
     return this
   }
 
