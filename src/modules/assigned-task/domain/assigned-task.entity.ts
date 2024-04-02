@@ -328,9 +328,9 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
   }
 
   setCost(cost: number | null, option: { isManually: boolean }) {
-    // if (this.props.isManualCost && !option.isManually) {
-    //   return this
-    // }
+    if (this.props.isManualCost && !option.isManually) {
+      return this
+    }
     this.props.cost = cost
     this.addEvent(new AssignedTaskCostUpdatedDomainEvent({ aggregateId: this.id, cost: Number(this.props.cost) }))
     return this

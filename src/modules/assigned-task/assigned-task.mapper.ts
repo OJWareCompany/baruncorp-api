@@ -34,7 +34,7 @@ export class AssignedTaskMapper implements Mapper<AssignedTaskEntity, AssignedTa
       mountingType: props.mountingType,
       description: props.description,
       serviceId: props.serviceId,
-      cost: props.cost ? new Prisma.Decimal(props.cost.toFixed(4)) : null,
+      cost: props.cost !== null && props.cost !== undefined ? new Prisma.Decimal(props.cost.toFixed(4)) : null,
       isManualCost: props.isManualCost,
       isVendor: props.isVendor,
       vendorInvoiceId: props.vendorInvoiceId,
