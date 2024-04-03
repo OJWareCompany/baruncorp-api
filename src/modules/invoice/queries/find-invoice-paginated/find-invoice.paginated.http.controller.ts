@@ -49,8 +49,8 @@ export class FindInvoicePaginatedHttpController {
             updatedAt: invoice.updatedAt.toISOString(),
             servicePeriodDate: invoice.serviceMonth.toISOString(),
             subtotal: Number(invoice.subTotal),
-            total: Number(invoice.total),
-            discount: Number(invoice.discount),
+            total: Number(invoice.balanceDue), // TODO: balanceDue로 필드명 변경
+            discount: Number(invoice.volumeTierDiscount), // TODO: volumeTierDiscount로 필드명 변경
             clientOrganization: {
               id: invoice.organization.id,
               name: invoice.organization.name,

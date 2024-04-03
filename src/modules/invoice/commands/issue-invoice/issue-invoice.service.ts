@@ -34,8 +34,8 @@ export class IssueInvoiceService implements ICommandHandler {
       subject: `BarunCorp ${formatDate(invoice.getProps().serviceMonth)} Invoice mail`,
       text: `
         subtotal: $${invoice.getProps().subTotal}
-        discount: $${invoice.getProps().discount}
-        total: $${invoice.total}
+        volume tier discount: $${invoice.getProps().volumeTierDiscount}
+        balance due: $${invoice.getProps().balanceDue}
       `,
       from: 'automation@baruncorp.com',
       to: [organization.getProps().invoiceRecipientEmail || 'bs_khm@naver.com'],

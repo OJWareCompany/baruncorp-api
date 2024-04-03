@@ -729,7 +729,6 @@ model AssignedTasks {
   taskName                 String                  @map("task_name") @db.VarChar(255)
   status                   String                  @map("status") @db.VarChar(255)
   cost                     Decimal?                @db.Decimal(13, 4)
-  isManualCost             Boolean                 @default(false) @map("is_manual_cost")
   is_expedited             Boolean                 @default(false)
   is_active                Boolean                 @default(false)
   isRevision               Boolean                 @map("is_revision")
@@ -761,6 +760,7 @@ model AssignedTasks {
   editor_user_id           String?                 @db.VarChar(255)
   priority                 assigned_tasks_priority @default(Medium) @map("priority")
   priorityLevel            Int                     @default(3) @map("priority_level") @db.TinyInt
+  isManualCost             Boolean                 @default(false) @map("is_manual_cost")
   task                     Tasks                   @relation(fields: [taskId], references: [id])
   orderedService           OrderedServices         @relation(fields: [orderedServiceId], references: [id])
   job                      OrderedJobs             @relation(fields: [jobId], references: [id])
@@ -798,9 +798,10 @@ model Invoices {
   updatedAt            DateTime       @default(now()) @updatedAt @map("updatedAt") @db.Timestamp(0)
   clientOrganizationId String         @map("client_organization_id") @db.VarChar(255)
   organizationName     String         @map("organization_name") @db.VarChar(255)
+  balanceDue           Decimal        @map("balance_due") @db.Decimal(13, 4)
   serviceMonth         DateTime       @map("service_month") @db.Date
   subTotal             Decimal        @map("sub_total") @db.Decimal(13, 4)
-  discount             Decimal        @db.Decimal(13, 4)
+  volumeTierDiscount   Decimal        @map("volume_tier_discount") @db.Decimal(13, 4)
   total                Decimal        @db.Decimal(13, 4)
   paymentTotal         Decimal        @default(0.0000) @map("payment_total") @db.Decimal(13, 4)
   issuedAt             DateTime?      @map("issued_at") @db.DateTime(0)

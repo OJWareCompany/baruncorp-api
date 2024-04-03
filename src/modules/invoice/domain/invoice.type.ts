@@ -23,11 +23,12 @@ export interface CreateInvoiceProps {
   organizationName: string
   serviceMonth: Date
   subTotal: number
-  discount: number
-  total: number
+  volumeTierDiscount: number
 }
 
 export interface InvoiceProps extends CreateInvoiceProps {
+  total: number
+  balanceDue: number
   status: InvoiceStatusEnum
   dueDate: Date
   paymentTotal: number

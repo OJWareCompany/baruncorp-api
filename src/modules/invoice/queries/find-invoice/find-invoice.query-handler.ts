@@ -74,8 +74,8 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       updatedAt: invoice.updatedAt.toISOString(),
       servicePeriodDate: invoice.serviceMonth.toISOString(),
       subtotal: Number(invoice.subTotal),
-      discount: Number(invoice.discount),
-      total: Number(invoice.total),
+      discount: Number(invoice.volumeTierDiscount), // TODO: volume tier discount로 필드명 변경하기
+      total: Number(invoice.balanceDue), // TODO: Balance Due로 필드명 변경하기
       clientOrganization: {
         id: invoice.clientOrganizationId,
         name: invoice.organizationName,

@@ -38,19 +38,17 @@ export class CreateInvoiceService implements ICommandHandler {
 
     await Promise.all(calcCost)
 
-    const subTotal = orderedServices.reduce((pre, cur) => {
+    const totalTaskPrice = orderedServices.reduce((pre, cur) => {
       return pre + Number(cur.price)
-    }, 0)
+    }, 0) // TODO: Job Override Price가 존재하면 덮어씌운다.
 
-    const discount = await this.calcInvoiceService.calcDiscountAmount(orderedServices, this.serviceRepo)
+    const volumeTierDiscount = await this.calcInvoiceService.calcDiscountAmount(orderedServices, this.serviceRepo)
 
     const invoice = InvoiceEntity.create({
       ...command,
       organizationName: jobs[0].organizationName,
-      subTotal,
-      discount,
-      // total: subTotal - discount,
-      total: subTotal, // TODO: Job의 Override Price가 생기면 의미 있어지는 필드
+      subTotal: totalTaskPrice + volumeTierDiscount,
+      volumeTierDiscount: volumeTierDiscount,
     })
 
     await this.orderedServiceRepo.update(orderedServices)

@@ -10,8 +10,11 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
 
   static create(create: CreateInvoiceProps) {
     const id = v4()
+    const total = create.subTotal - create.volumeTierDiscount
     const props: InvoiceProps = {
       ...create,
+      total: total,
+      balanceDue: total,
       dueDate: addDays(create.invoiceDate, create.terms),
       status: InvoiceStatusEnum.Unissued,
       paymentTotal: 0,
@@ -54,6 +57,7 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
 
   async determinePaymentTotalAndStatus(invoiceCalculator: InvoiceCalculator) {
     this.props.paymentTotal = await invoiceCalculator.calcPaymentTotal(this)
+    this.props.balanceDue = this.props.balanceDue - this.props.paymentTotal
     if (this.props.paymentTotal >= this.props.total) {
       this.props.status = InvoiceStatusEnum.Paid
     } else {
@@ -62,10 +66,11 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     return this
   }
 
-  updateCost(subTotal: number, discount: number) {
-    this.props.subTotal = subTotal
-    this.props.discount = discount
-    this.props.total = subTotal - discount
+  async updatePrices(totalTaskPrice: number, volumeTierDiscount: number, invoiceCalculator: InvoiceCalculator) {
+    this.props.subTotal = totalTaskPrice + volumeTierDiscount
+    this.props.volumeTierDiscount = volumeTierDiscount
+    this.props.total = this.props.subTotal - volumeTierDiscount
+    await this.determinePaymentTotalAndStatus(invoiceCalculator)
     return this
   }
 
