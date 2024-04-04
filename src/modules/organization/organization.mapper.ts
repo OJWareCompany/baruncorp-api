@@ -54,6 +54,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       isSpecialRevisionPricing: props.isSpecialRevisionPricing,
       numberOfFreeRevisionCount: props.numberOfFreeRevisionCount,
       isVendor: props.isVendor,
+      isTierDiscount: props.isTierDiscount,
     }
     return record
   }
@@ -90,14 +91,14 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       isSpecialRevisionPricing: record.isSpecialRevisionPricing,
       numberOfFreeRevisionCount: record.numberOfFreeRevisionCount,
       isVendor: record.isVendor,
-      isTieredDiscount: true,
+      isTierDiscount: record.isTierDiscount,
     }
     return new OrganizationEntity({ id: record.id, props })
   }
 
   toResponse(entity: OrganizationEntity): OrganizationResponseDto {
     const response = new OrganizationResponseDto()
-    response.id = entity.id
+    const props = entity.getProps()
     response.name = entity.getProps().name
     // response.description = entity.getProps().description
     response.phoneNumber = entity.getProps().phoneNumber
@@ -118,8 +119,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
     response.isVendor = entity.getProps().isVendor
-    response.isTieredDiscount = true
-    response.isDelinquent = entity.getProps().isDelinquent
+    response.isTierDiscount = response.isDelinquent = entity.getProps().isDelinquent
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare
@@ -142,6 +142,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
     response.isVendor = entity.getProps().isVendor
     response.isDelinquent = entity.getProps().isDelinquent
+    response.isTierDiscount = entity.getProps().isTierDiscount
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
     // response.isRevenueShare = entity.getProps().isRevenueShare

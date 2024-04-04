@@ -20,6 +20,10 @@ import { UpdateOrganizationService } from './commands/update-organization/update
 import { UsersModule } from '../users/users.module'
 import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
+import { DetermineTierDiscountWhenCustomPricingIsCreated } from './application/event-handlers/determine-tier-discount-when-custom-pricing-is-created.domain-event-handler'
+import { DetermineTierDiscountWhenCustomPricingIsDeleted } from './application/event-handlers/determine-tier-discount-when-custom-pricing-is-deleted.domain-event-handler'
+import { DetermineTierDiscountWhenCustomPricingCleanedTier } from './application/event-handlers/determine-tier-discount-when-custom-pricing-cleaned-tier.domain-event-handler'
+import { DetermineTierDiscountWhenCustomPricingSetTier } from './application/event-handlers/determine-tier-discount-when-custom-pricing-set-tier.domain-event-handler'
 
 const httpControllers = [
   FindOrganizationHttpController,
@@ -48,11 +52,17 @@ const providers: Provider[] = [
   FilesystemApiService,
 ]
 
+const eventHandlers: Provider[] = [
+  DetermineTierDiscountWhenCustomPricingIsCreated,
+  DetermineTierDiscountWhenCustomPricingIsDeleted,
+  DetermineTierDiscountWhenCustomPricingSetTier,
+  DetermineTierDiscountWhenCustomPricingCleanedTier,
+]
 const mappers: Provider[] = [OrganizationMapper]
 
 @Module({
   imports: [CqrsModule, forwardRef(() => UsersModule)],
-  providers: [...providers, ...queryHandlers, ...repositories, ...mappers],
+  providers: [...providers, ...queryHandlers, ...repositories, ...mappers, ...eventHandlers],
   controllers: [...httpControllers],
   exports: [OrganizationService, ...mappers, ...repositories],
 })

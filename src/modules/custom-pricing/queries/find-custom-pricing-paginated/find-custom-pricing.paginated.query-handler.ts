@@ -21,6 +21,7 @@ export class FindCustomPricingPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindCustomPricingPaginatedQuery): Promise<Paginated<CustomPricings>> {
+    console.log(3)
     const condition: Prisma.CustomPricingsWhereInput = {
       ...(query.organizationId && { organizationId: query.organizationId }),
       ...(query.organizationName && { organizationName: { contains: query.organizationName } }),
@@ -34,6 +35,8 @@ export class FindCustomPricingPaginatedQueryHandler implements IQueryHandler {
       take: query.limit,
     })
     const totalCount = await this.prismaService.customPricings.count({ where: condition })
+
+    console.log(3)
 
     return new Paginated({
       page: query.page,

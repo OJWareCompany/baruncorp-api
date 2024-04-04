@@ -42,6 +42,9 @@ export class OrganizationPaginatedResponseFields {
 
   @ApiProperty()
   isVendor: boolean
+
+  @ApiProperty()
+  isTierDiscount: boolean
 }
 
 export class OrganizationPaginatedResponseDto extends PaginatedResponseDto<OrganizationPaginatedResponseFields> {

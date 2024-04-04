@@ -17,6 +17,9 @@ import { CustomResidentialRevisionPricing } from './value-objects/custom-residen
 import { CustomFixedPrice } from './value-objects/custom-fixed-pricing.value-object'
 import { OrderedServiceEntity } from '../../ordered-service/domain/ordered-service.entity'
 import { TieredPricingCalculator } from '../../ordered-service/domain/domain-services/tiered-pricing-calculator.domain-service'
+import { CustomPricingCleanedTierDomainEvent } from './domain-events/custom-pricing-cleaned-tier.domain-event'
+import { CustomPricingSetTierDomainEvent } from './domain-events/custom-pricing-set-tier.domain-event'
+import { CustomPricingCreatedDomainEvent } from './domain-events/custom-pricing-created.domain-event'
 
 export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
   protected _id: string
@@ -26,7 +29,9 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     const props: CustomPricingProps = {
       ...create,
     }
-    return new CustomPricingEntity({ id, props })
+    const entity = new CustomPricingEntity({ id, props })
+    entity.addEvent(new CustomPricingCreatedDomainEvent({ aggregateId: entity.id }))
+    return entity
   }
 
   get customPricingType(): CustomPricingTypeEnum {
@@ -104,6 +109,7 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
 
   cleanResidentialNewServiceTiers() {
     this.props.residentialNewServiceTiers = []
+    this.addEvent(new CustomPricingCleanedTierDomainEvent({ aggregateId: this.id }))
     return this
   }
 
@@ -116,6 +122,7 @@ export class CustomPricingEntity extends AggregateRoot<CustomPricingProps> {
     }[],
   ) {
     this.props.residentialNewServiceTiers = tiers.map((tier) => new CustomResidentialNewServicePricingTier(tier))
+    this.addEvent(new CustomPricingSetTierDomainEvent({ aggregateId: this.id }))
     return this
   }
 

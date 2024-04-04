@@ -19,5 +19,5 @@ export interface CreateOrganizationProps {
 export interface OrganizationProps extends CreateOrganizationProps {
   organizationType: string
   isDelinquent: boolean
-  isTieredDiscount: boolean
+  isTierDiscount: boolean
 }

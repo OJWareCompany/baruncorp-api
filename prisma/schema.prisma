@@ -45,6 +45,7 @@ model Organizations {
   fullAddress                     String             @map("full_address") @db.VarChar(255)
   isSpecialRevisionPricing        Boolean            @map("is_special_revision_pricing")
   numberOfFreeRevisionCount       Int?               @map("number_of_free_revision_count") @db.UnsignedTinyInt
+  isTierDiscount                Boolean            @default(true) @map("is_tier_discount")
   invitationEmailEntity           InvitationEmails[]
   organizationTypeEntity          OrganizationTypes  @relation(fields: [organizationType], references: [type])
   users                           Users[]
@@ -805,8 +806,8 @@ model Invoices {
   total                Decimal        @db.Decimal(13, 4)
   paymentTotal         Decimal        @default(0.0000) @map("payment_total") @db.Decimal(13, 4)
   issuedAt             DateTime?      @map("issued_at") @db.DateTime(0)
-  amountPaid          Decimal        @db.Decimal(13, 4) @map("amount_paid")
-  appliedCredit       Decimal        @db.Decimal(13, 4) @map("applied_credit")
+  amountPaid           Decimal        @map("amount_paid") @db.Decimal(13, 4)
+  appliedCredit        Decimal        @map("applied_credit") @db.Decimal(13, 4)
   organization         Organizations  @relation(fields: [clientOrganizationId], references: [id])
   jobs                 OrderedJobs[]
   payments             Payments[]

@@ -12,7 +12,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
       ...create,
       organizationType: 'client',
       isDelinquent: false,
-      isTieredDiscount: true,
+      isTierDiscount: true,
     }
 
     return new OrganizationEntity({ id, props })
@@ -68,6 +68,16 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
         userId: userId,
       }),
     )
+  }
+
+  setTierDiscount() {
+    this.props.isTierDiscount = true
+    return this
+  }
+
+  unsetTierDiscount() {
+    this.props.isTierDiscount = false
+    return this
   }
 
   public validate(): void {

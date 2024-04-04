@@ -41,7 +41,7 @@ export class OrganizationResponseDto {
   isDelinquent: boolean
 
   @ApiProperty()
-  isTieredDiscount: boolean
+  isTierDiscount: boolean
 
   @ApiProperty()
   invoiceRecipientEmail: string | null
