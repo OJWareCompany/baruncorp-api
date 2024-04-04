@@ -19,6 +19,8 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
       status: InvoiceStatusEnum.Unissued,
       paymentTotal: 0,
       payments: [],
+      amountPaid: 0,
+      appliedCredit: 0,
       issuedAt: null,
     }
 
@@ -56,6 +58,8 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   }
 
   async determinePaymentTotalAndStatus(invoiceCalculator: InvoiceCalculator) {
+    this.props.amountPaid = await invoiceCalculator.calcAmountPaid(this)
+    this.props.appliedCredit = await invoiceCalculator.calcAppliedCredit(this)
     this.props.paymentTotal = await invoiceCalculator.calcPaymentTotal(this)
     this.props.balanceDue = this.props.total - this.props.paymentTotal
     if (this.props.paymentTotal >= this.props.total) {

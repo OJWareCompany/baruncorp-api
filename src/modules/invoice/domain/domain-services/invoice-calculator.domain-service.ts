@@ -16,8 +16,8 @@ export class InvoiceCalculator {
   ) {}
 
   async isValidAmount(invoice: InvoiceEntity, amount: number): Promise<{ isValid: boolean; exceededAmount: number }> {
-    const paymentAmount = await this.calcPaymentAmount(invoice)
-    const creditPaymentAmount = await this.calcCreditPaymentAmount(invoice)
+    const paymentAmount = await this.calcAmountPaid(invoice)
+    const creditPaymentAmount = await this.calcAppliedCredit(invoice)
     const totalPaidAmount = paymentAmount + creditPaymentAmount + amount
     return {
       isValid: invoice.total >= totalPaidAmount,
@@ -26,19 +26,19 @@ export class InvoiceCalculator {
   }
 
   async calcPaymentTotal(invoice: InvoiceEntity) {
-    const paymentAmount = await this.calcPaymentAmount(invoice)
-    const creditPaymentAmount = await this.calcCreditPaymentAmount(invoice)
+    const paymentAmount = await this.calcAmountPaid(invoice)
+    const creditPaymentAmount = await this.calcAppliedCredit(invoice)
     return paymentAmount + creditPaymentAmount
   }
 
-  private async calcPaymentAmount(invoice: InvoiceEntity): Promise<number> {
+  async calcAmountPaid(invoice: InvoiceEntity): Promise<number> {
     const payments = await this.paymentRepo.findByInvoiceId(invoice.id)
     return payments //
       .filter((payment) => payment.isValid)
       .reduce((pre, cur) => pre + cur.amount, 0)
   }
 
-  private async calcCreditPaymentAmount(invoice: InvoiceEntity): Promise<number> {
+  async calcAppliedCredit(invoice: InvoiceEntity): Promise<number> {
     const creditHistory = await this.clientCreditRepo.find(invoice.clientOrganizationId)
     return creditHistory //
       .filter(

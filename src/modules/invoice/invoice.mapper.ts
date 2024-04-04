@@ -4,6 +4,7 @@ import { Mapper } from '../../libs/ddd/mapper.interface'
 import { InvoiceResponseDto } from './dtos/invoice.response.dto'
 import { InvoiceStatusEnum } from './domain/invoice.type'
 import { InvoiceEntity } from './domain/invoice.entity'
+import { Decimal } from '@prisma/client/runtime/library'
 
 @Injectable()
 export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceResponseDto> {
@@ -27,6 +28,8 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
       balanceDue: new Prisma.Decimal(props.balanceDue.toFixed(4)),
       paymentTotal: new Prisma.Decimal(props.paymentTotal.toFixed(4)),
       issuedAt: props.issuedAt,
+      amountPaid: new Decimal(props.amountPaid),
+      appliedCredit: new Decimal(props.appliedCredit),
     }
     return record
   }
@@ -51,6 +54,8 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
         total: Number(record.total),
         payments: [], //records.payments,
         paymentTotal: Number(record.paymentTotal),
+        amountPaid: Number(record.amountPaid),
+        appliedCredit: Number(record.appliedCredit),
         issuedAt: record.issuedAt,
       },
     })
