@@ -43,8 +43,11 @@ export class FindOverdueInvoicePaginatedHttpController {
             updatedAt: invoice.updatedAt.toISOString(),
             servicePeriodDate: invoice.serviceMonth.toISOString(),
             subtotal: Number(invoice.subTotal),
-            total: Number(invoice.balanceDue), // TODO: balanceDue로 필드명 변경
-            discount: Number(invoice.volumeTierDiscount), // TODO: volumeTierDiscount로 필드명 변경
+            balanceDue: Number(invoice.balanceDue), // TODO: balanceDue로 필드명 변경
+            total: Number(invoice.total), // TODO: balanceDue로 필드명 변경
+            volumeTierDiscount: Number(invoice.volumeTierDiscount),
+            amountPaid: 0,
+            appliedCredit: 0,
             clientOrganization: {
               id: invoice.organization.id,
               name: invoice.organization.name,

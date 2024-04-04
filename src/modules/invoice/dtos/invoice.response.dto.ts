@@ -88,11 +88,23 @@ export class InvoiceResponseDto {
   @ApiProperty()
   @IsNumber()
   @IsOptional()
-  readonly discount: number | null
+  readonly volumeTierDiscount: number | null
 
   @ApiProperty()
   @IsNumber()
   readonly total: number
+
+  @ApiProperty()
+  @IsNumber()
+  readonly balanceDue: number
+
+  @ApiProperty()
+  @IsNumber()
+  readonly amountPaid: number
+
+  @ApiProperty()
+  @IsNumber()
+  readonly appliedCredit: number
 
   @ApiProperty({ type: InvoiceClientOrganization })
   readonly clientOrganization: InvoiceClientOrganization

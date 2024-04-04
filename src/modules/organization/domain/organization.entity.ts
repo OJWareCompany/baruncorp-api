@@ -12,6 +12,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
       ...create,
       organizationType: 'client',
       isDelinquent: false,
+      isTieredDiscount: true,
     }
 
     return new OrganizationEntity({ id, props })

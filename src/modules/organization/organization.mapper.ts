@@ -90,6 +90,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
       isSpecialRevisionPricing: record.isSpecialRevisionPricing,
       numberOfFreeRevisionCount: record.numberOfFreeRevisionCount,
       isVendor: record.isVendor,
+      isTieredDiscount: true,
     }
     return new OrganizationEntity({ id: record.id, props })
   }
@@ -117,6 +118,7 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
     response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
     response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
     response.isVendor = entity.getProps().isVendor
+    response.isTieredDiscount = true
     response.isDelinquent = entity.getProps().isDelinquent
     // response.isActiveContractor = entity.getProps().isActiveContractor
     // response.isActiveWorkResource = entity.getProps().isActiveWorkResource

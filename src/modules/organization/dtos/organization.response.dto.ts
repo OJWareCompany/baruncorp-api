@@ -41,6 +41,9 @@ export class OrganizationResponseDto {
   isDelinquent: boolean
 
   @ApiProperty()
+  isTieredDiscount: boolean
+
+  @ApiProperty()
   invoiceRecipientEmail: string | null
 
   // @ApiProperty({ description: '필요한지 확인 필요' })

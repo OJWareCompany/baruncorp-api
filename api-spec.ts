@@ -245,6 +245,7 @@ export interface OrganizationResponseDto {
   numberOfFreeRevisionCount: number | null
   isVendor: boolean
   isDelinquent: boolean
+  isTieredDiscount: boolean
   invoiceRecipientEmail: string | null
 }
 
@@ -1022,8 +1023,11 @@ export interface InvoiceResponseDto {
   updatedAt: string
   servicePeriodDate: string
   subtotal: number
-  discount: number | null
+  volumeTierDiscount: number | null
   total: number
+  balanceDue: number
+  amountPaid: number
+  appliedCredit: number
   clientOrganization: InvoiceClientOrganization
   lineItems: JobResponseDto[]
   payments: InvoicePayments[]
