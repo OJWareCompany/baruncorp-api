@@ -5,6 +5,7 @@ export enum OrderedJobsPriorityEnum {
   High = 'High',
   Medium = 'Medium',
   Low = 'Low',
+  None = 'None',
 }
 
 export enum OrderedJobsPriorityLevelEnum {
@@ -12,6 +13,7 @@ export enum OrderedJobsPriorityLevelEnum {
   High = 2,
   Medium = 3,
   Low = 4,
+  None = 5,
 }
 
 interface PriorityProps {
@@ -28,7 +30,9 @@ export class Priority extends ValueObject<PriorityProps> {
         ? OrderedJobsPriorityLevelEnum.High
         : OrderedJobsPriorityEnum.Medium
         ? OrderedJobsPriorityLevelEnum.Medium
-        : OrderedJobsPriorityLevelEnum.Low
+        : OrderedJobsPriorityEnum.Low
+        ? OrderedJobsPriorityLevelEnum.Low
+        : OrderedJobsPriorityLevelEnum.None
 
     super({
       name: props.priority,

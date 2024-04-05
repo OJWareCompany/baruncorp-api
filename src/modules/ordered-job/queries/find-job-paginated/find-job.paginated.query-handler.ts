@@ -47,7 +47,7 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
 
     const records = await this.prismaService.orderedJobs.findMany({
       where: condition,
-      orderBy: { createdAt: 'desc' },
+      orderBy: [{ priorityLevel: 'asc' }, { createdAt: 'desc' }],
       take: query.limit,
       skip: query.offset,
     })
