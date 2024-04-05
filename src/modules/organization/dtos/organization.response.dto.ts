@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { IsObject } from 'class-validator'
 import { AddressDto } from '../../ordered-job/dtos/address.dto'
+import { initialize } from '../../../libs/utils/constructor-initializer'
 
 export class OrganizationResponseDto {
   @ApiProperty()
@@ -60,4 +61,7 @@ export class OrganizationResponseDto {
 
   // @ApiProperty({ description: '필요한지 확인 필요' })
   // invoiceRecipient: string | null
+  constructor(props: OrganizationResponseDto) {
+    initialize(this, props)
+  }
 }

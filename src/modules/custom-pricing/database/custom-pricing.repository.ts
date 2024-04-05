@@ -7,12 +7,14 @@ import { Paginated } from '../../../libs/ddd/repository.port'
 import { CustomPricingEntity } from '../domain/custom-pricing.entity'
 import { CustomPricingNotFoundException } from '../domain/custom-pricing.error'
 import { ServiceId } from '../../service/domain/value-objects/service-id.value-object'
+import { EventEmitter2 } from '@nestjs/event-emitter'
 
 @Injectable()
 export class CustomPricingRepository implements CustomPricingRepositoryPort {
   constructor(
     private readonly prismaService: PrismaService,
     private readonly customPricingMapper: CustomPricingMapper,
+    private readonly eventEmitter: EventEmitter2,
   ) {}
 
   find(): Promise<Paginated<CustomPricingEntity>> {
@@ -45,6 +47,8 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
         data: record.customResidentialRevisionPricings,
       })
     }
+
+    await entity.publishEvents(this.eventEmitter)
   }
 
   async update(entity: CustomPricingEntity): Promise<void> {
@@ -88,6 +92,8 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
         data: record.customResidentialRevisionPricings,
       })
     }
+
+    await entity.publishEvents(this.eventEmitter)
   }
 
   async delete(entity: CustomPricingEntity): Promise<void> {
@@ -111,6 +117,7 @@ export class CustomPricingRepository implements CustomPricingRepositoryPort {
     })
 
     await this.prismaService.$executeRaw<CustomPricings>`DELETE FROM custom_pricings WHERE id = ${entity.id}`
+    await entity.publishEvents(this.eventEmitter)
   }
 
   // 조회가 되더라도 실제로는 없을 수 있음 (예를들어 revision pricing이 null일 수 있음, 그런 경우에는 base revision pricing이 적용되어야한다.)

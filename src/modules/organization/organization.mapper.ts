@@ -97,35 +97,34 @@ export class OrganizationMapper implements Mapper<OrganizationEntity, Organizati
   }
 
   toResponse(entity: OrganizationEntity): OrganizationResponseDto {
-    const response = new OrganizationResponseDto()
     const props = entity.getProps()
-    response.name = entity.getProps().name
-    // response.description = entity.getProps().description
-    response.phoneNumber = entity.getProps().phoneNumber
-    response.organizationType = entity.getProps().organizationType
-    response.address = new Address({
-      city: entity.getProps().address.city,
-      country: entity.getProps().address.country,
-      postalCode: entity.getProps().address.postalCode,
-      state: entity.getProps().address.state,
-      street1: entity.getProps().address.street1,
-      street2: entity.getProps().address.street2,
-      coordinates: entity.getProps().address.coordinates,
-      fullAddress: entity.getProps().address.fullAddress,
+
+    const response = new OrganizationResponseDto({
+      id: props.id,
+      name: props.name,
+      description: null,
+      phoneNumber: props.phoneNumber,
+      organizationType: props.organizationType,
+      address: new Address({
+        city: props.address.city,
+        country: props.address.country,
+        postalCode: props.address.postalCode,
+        state: props.address.state,
+        street1: props.address.street1,
+        street2: props.address.street2,
+        coordinates: props.address.coordinates,
+        fullAddress: props.address.fullAddress,
+      }),
+      mountingTypeDefaultValue: props.mountingTypeDefaultValue,
+      projectPropertyTypeDefaultValue: props.projectPropertyTypeDefaultValue,
+      isSpecialRevisionPricing: props.isSpecialRevisionPricing,
+      numberOfFreeRevisionCount: props.numberOfFreeRevisionCount,
+      isVendor: props.isVendor,
+      isTierDiscount: props.isTierDiscount,
+      isDelinquent: props.isDelinquent,
+      invoiceRecipientEmail: props.invoiceRecipientEmail,
     })
 
-    response.mountingTypeDefaultValue = entity.getProps().mountingTypeDefaultValue
-    response.projectPropertyTypeDefaultValue = entity.getProps().projectPropertyTypeDefaultValue
-    response.isSpecialRevisionPricing = entity.getProps().isSpecialRevisionPricing
-    response.numberOfFreeRevisionCount = entity.getProps().numberOfFreeRevisionCount
-    response.isVendor = entity.getProps().isVendor
-    response.isTierDiscount = response.isDelinquent = entity.getProps().isDelinquent
-    // response.isActiveContractor = entity.getProps().isActiveContractor
-    // response.isActiveWorkResource = entity.getProps().isActiveWorkResource
-    // response.isRevenueShare = entity.getProps().isRevenueShare
-    // response.isRevisionRevenueShare = entity.getProps().isRevisionRevenueShare
-    // response.invoiceRecipient = entity.getProps().invoiceRecipient
-    response.invoiceRecipientEmail = entity.getProps().invoiceRecipientEmail
     return response
   }
 
