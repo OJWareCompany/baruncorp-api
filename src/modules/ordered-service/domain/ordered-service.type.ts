@@ -90,6 +90,7 @@ export interface CreateOrderedServiceProps {
   priority: Priority
   updatedBy: string | null
   editorUserId: string | null
+  isRevision: boolean
 }
 
 export interface OrderedServiceProps extends CreateOrderedServiceProps {
@@ -102,5 +103,4 @@ export interface OrderedServiceProps extends CreateOrderedServiceProps {
   assignedTasks: AssignedTasks[]
   isManualPrice: boolean
   pricingType: OrderedServicePricingTypeEnum | null
-  isRevision: boolean
 }

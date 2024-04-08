@@ -15,6 +15,11 @@ export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   @IsString()
   @IsOptional()
   readonly description: string | null
+
+  @ApiProperty()
+  @IsString()
+  @IsOptional()
+  readonly isRevision?: boolean
 }
 
 export class CreateJobRequestDto {
@@ -76,6 +81,7 @@ export class CreateJobRequestDto {
       {
         serviceId: '2a2a256b-57a5-46f5-8cfb-1855cc29238a',
         description: 'This is not on the menu.',
+        isRevision: false,
       },
     ],
   })

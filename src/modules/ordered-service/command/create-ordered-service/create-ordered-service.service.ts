@@ -63,6 +63,7 @@ export class CreateOrderedServiceService implements ICommandHandler {
         jobId: command.jobId,
         serviceId: command.serviceId,
         serviceName: service.name,
+        isRevision: command.isRevision,
         description: command.description,
         projectPropertyType: job.projectPropertyType,
         mountingType: job.mountingType as MountingTypeEnum,

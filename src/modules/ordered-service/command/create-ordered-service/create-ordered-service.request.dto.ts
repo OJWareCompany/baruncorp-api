@@ -14,4 +14,9 @@ export class CreateOrderedServiceRequestDto {
   @IsString()
   @IsOptional()
   readonly description: string | null
+
+  @ApiProperty({ default: '' })
+  @IsString()
+  @IsOptional()
+  readonly isRevision?: boolean | null
 }

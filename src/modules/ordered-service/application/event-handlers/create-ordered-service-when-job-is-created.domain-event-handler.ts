@@ -51,6 +51,7 @@ export class CreateOrderedServiceWhenJobIsCreatedEventHandler {
           jobId: event.aggregateId,
           serviceId: orderedService.serviceId,
           serviceName: orderedService.serviceName,
+          isRevision: orderedService.isRevision,
           description: orderedService.description,
           projectPropertyType: event.projectType as ProjectPropertyTypeEnum,
           mountingType: event.mountingType as MountingTypeEnum,

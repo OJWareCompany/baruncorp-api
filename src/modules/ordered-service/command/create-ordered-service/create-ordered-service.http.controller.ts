@@ -14,7 +14,11 @@ export class CreateOrderedServiceHttpController {
   @Post('')
   @UseGuards(AuthGuard)
   async post(@User() user: UserEntity, @Body() request: CreateOrderedServiceRequestDto): Promise<IdResponse> {
-    const command = new CreateOrderedServiceCommand({ ...request, editorUserId: user.id })
+    const command = new CreateOrderedServiceCommand({
+      ...request,
+      editorUserId: user.id,
+      isRevision: request.isRevision || false,
+    })
     const result: AggregateID = await this.commandBus.execute(command)
     return new IdResponse(result)
   }

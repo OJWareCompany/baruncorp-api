@@ -57,6 +57,7 @@ export class CreateJobService implements ICommandHandler {
         return {
           ...filtered,
           serviceName: service.name,
+          isRevision: filtered.isRevision || false,
         }
       }),
       systemSize: command.systemSize,

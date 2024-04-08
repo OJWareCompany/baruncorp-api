@@ -81,7 +81,12 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     if (await duplicatedScopeChecker.isDuplicated(entity)) {
       throw new OrderedScopeConflictException()
     }
-    entity.props.isRevision = await scopeRevisionChecker.isRevision(entity)
+
+    if (entity.props.serviceName === 'Other') {
+      entity.props.isRevision = create.isRevision
+    } else {
+      entity.props.isRevision = await scopeRevisionChecker.isRevision(entity)
+    }
 
     await entity.determineInitialValues(
       calcService,

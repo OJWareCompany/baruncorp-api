@@ -1,14 +1,15 @@
 import { ValueObject } from '../../../../libs/ddd/value-object.base'
 import { ApiProperty } from '@nestjs/swagger'
 import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
+import { initialize } from '../../../../libs/utils/constructor-initializer'
 
 export class NewOrderedServices {
   serviceId: string
   serviceName: string
   description: string | null
+  isRevision: boolean
   constructor(props: NewOrderedServices) {
-    this.serviceId = props.serviceId
-    this.description = props.description
+    initialize(this, props)
   }
 }
 
