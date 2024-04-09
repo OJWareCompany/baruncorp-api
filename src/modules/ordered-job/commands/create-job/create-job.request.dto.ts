@@ -17,7 +17,7 @@ export class CreateOrderedTaskWhenJobIsCreatedRequestDto {
   readonly description: string | null
 
   @ApiProperty()
-  @IsString()
+  @IsBoolean()
   @IsOptional()
   readonly isRevision?: boolean
 }

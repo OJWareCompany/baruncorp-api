@@ -1928,7 +1928,7 @@ export interface CreateOrderedServiceRequestDto {
   /** @default "" */
   description: string | null
   /** @default "" */
-  isRevision?: boolean | null
+  isRevision?: boolean
 }
 
 export interface UpdateOrderedServiceRequestDto {

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsOptional, IsString } from 'class-validator'
 
 export class CreateOrderedServiceRequestDto {
   @ApiProperty({ default: '' })
@@ -16,7 +16,7 @@ export class CreateOrderedServiceRequestDto {
   readonly description: string | null
 
   @ApiProperty({ default: '' })
-  @IsString()
+  @IsBoolean()
   @IsOptional()
-  readonly isRevision?: boolean | null
+  readonly isRevision?: boolean
 }
