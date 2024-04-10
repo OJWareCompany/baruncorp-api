@@ -34,6 +34,4 @@ services:
       - ./certbot-etc:/etc/letsencrypt
       - ./myweb:/usr/share/nginx/html
     command: certonly --webroot --webroot-path=/usr/share/nginx/html --email gyals0386@gmail.com --agree-tos --no-eff-email --keep-until-expiring -d ${API_HOST} -d ${API_WWW_HOST}
-    env_file:
-      - ./.env.cerbot
 # 도메인 설정, 80포트 443포트 33906포트 열어 놓을 것
