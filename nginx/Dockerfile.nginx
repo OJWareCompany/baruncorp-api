@@ -3,6 +3,10 @@ FROM nginx:alpine
 # Install logrotate
 RUN apk add --no-cache logrotate
 
+COPY ./nginx/nginx.conf /etc/nginx/nginx.conf
+COPY ./nginx/logrotate.conf /etc/logrotate.conf
+
+COPY ./nginx/script.sh /script.sh
 RUN chmod +x /script.sh
 
 ENTRYPOINT ["/script.sh"]

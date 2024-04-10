@@ -2,7 +2,7 @@ version: '3'
 services:
   nginx:
     build:
-      context: .
+      context: ./nginx
       dockerfile: Dockerfile.nginx
     restart: always
     ports:
@@ -12,8 +12,7 @@ services:
       - ./myweb:/usr/share/nginx/html
       - ./certbot-etc:/etc/letsencrypt
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
-      - ./logrotate.conf:/etc/logrotate.conf
-      - ./script.sh:/script.sh
+      - ./nginx-log:/var/log/nginx
 
       # - ./nginx/proxy.conf:/etc/nginx/proxy.conf
       #- ./nginx/templates:/etc/nginx/templates

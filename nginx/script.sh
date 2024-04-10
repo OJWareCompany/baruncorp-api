@@ -1,4 +1,4 @@
 #! /bin/sh
 
-crond
+crond &
 nginx -g 'daemon off;'
