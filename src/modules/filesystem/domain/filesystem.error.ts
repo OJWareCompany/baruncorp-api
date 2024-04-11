@@ -49,9 +49,9 @@ export class GoogleDriveDeliverablesFolderShareLinkNoExistException extends NotF
   }
 }
 
-export class GoogleDriveParentFolderNotFoundException extends NotFoundException {
-  constructor() {
-    super('Not Parent Folder Found', '11009')
+export class GoogleDriveFolderNotFoundException extends NotFoundException {
+  constructor(message = 'Google Drive Folder Not Found') {
+    super(message, '11009')
   }
 }
 
@@ -76,5 +76,11 @@ export class GoogleDriveBadRequestException extends BadRequestException {
 export class GoogleDriveJobNotesFolderNotFoundException extends NotFoundException {
   constructor() {
     super('Not Parent Folder Found', '11013')
+  }
+}
+
+export class GoogleDriveApiException extends InternalServerErrorException {
+  constructor(message = 'Google Api Not Work') {
+    super(message, '11014')
   }
 }

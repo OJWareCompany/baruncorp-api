@@ -4,10 +4,11 @@ import {
   FileServerInternalErrorException,
   FileServerTimeoutException,
   FileServerUnavailableException,
+  GoogleDriveApiException,
   GoogleDriveBadRequestException,
   GoogleDriveConflictException,
   GoogleDriveFailedUpdateFolderException,
-  GoogleDriveParentFolderNotFoundException,
+  GoogleDriveFolderNotFoundException,
 } from '../domain/filesystem.error'
 import {
   CreateGoogleJobFolderRequestPayload,
@@ -48,6 +49,30 @@ const handleRequestError = (errorCode: string) => {
   }
 }
 
+const handleFileServerRequestError = (error: any) => {
+  const errorCode = error.code
+  if (errorCode === 'ECONNREFUSED') {
+    throw new FileServerUnavailableException()
+  } else if (errorCode === 'ETIMEDOUT') {
+    throw new FileServerTimeoutException()
+  }
+
+  const { errorCode: responseErrorCode, message } = JSON.parse(error.response.body)
+  if (responseErrorCode === 'GOOGLE_API_ERROR') {
+    throw new GoogleDriveApiException(message)
+  } else if (responseErrorCode === 'FOLDER_NOT_FOUND_ERROR') {
+    throw new GoogleDriveFolderNotFoundException()
+  } else if (responseErrorCode === 'BAD_REQUEST_ERROR') {
+    throw new GoogleDriveBadRequestException(message)
+  } else if (responseErrorCode === 'FAILED_UPDATE_ERROR') {
+    throw new GoogleDriveFailedUpdateFolderException(message)
+  } else if (responseErrorCode === 'CONFLICT_ERROR') {
+    throw new GoogleDriveConflictException(message)
+  }
+
+  throw new FileServerInternalErrorException()
+}
+
 @Injectable()
 export class FilesystemApiService {
   private baseUrl = `${process.env.FILE_API_URL}/filesystem`
@@ -80,8 +105,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -91,8 +116,8 @@ export class FilesystemApiService {
       const response: GetPropertyTypeFolderResponse = await got.get(url).json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -102,8 +127,8 @@ export class FilesystemApiService {
       const response: GetSharedDriveIdByFolderIdResponse = await got.get(url).json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -119,8 +144,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -142,14 +167,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-
-      const { errorCode } = JSON.parse(error.response.body)
-      if (errorCode === 'PARENT_FOLDER_NOT_FOUND_ERROR') {
-        throw new GoogleDriveParentFolderNotFoundException()
-      }
-
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -171,14 +190,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-
-      const { errorCode } = JSON.parse(error.response.body)
-      if (errorCode === 'PARENT_FOLDER_NOT_FOUND_ERROR') {
-        throw new GoogleDriveParentFolderNotFoundException()
-      }
-
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -194,18 +207,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-
-      const { errorCode, message } = JSON.parse(error.response.body)
-      if (errorCode === 'BAD_REQUEST_ERROR') {
-        throw new GoogleDriveBadRequestException(message)
-      } else if (errorCode === 'FAILED_UPDATE_ERROR') {
-        throw new GoogleDriveFailedUpdateFolderException(message)
-      } else if (errorCode === 'CONFLICT_ERROR') {
-        throw new GoogleDriveConflictException(message)
-      }
-
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -221,8 +224,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -238,8 +241,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
@@ -255,8 +258,8 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
-      if (error.code) handleRequestError(error.code)
-      throw new FileServerInternalErrorException()
+      handleFileServerRequestError(error)
+      throw error
     }
   }
 
