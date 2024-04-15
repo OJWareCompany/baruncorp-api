@@ -158,29 +158,14 @@ export class JobRepository implements JobRepositoryPort {
     const records = await this.prismaService.orderedJobs.findMany({
       where: {
         clientOrganizationId: clientOrganizationId,
-        createdAt: {
+        dateSentToClient: {
           gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
           lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
         },
         jobStatus: {
-          in: [
-            AutoOnlyJobStatusEnum.Sent_To_Client,
-            JobStatusEnum.Completed,
-            JobStatusEnum.Canceled,
-            JobStatusEnum.Canceled_Invoice,
-          ],
+          in: [AutoOnlyJobStatusEnum.Sent_To_Client, JobStatusEnum.Canceled_Invoice],
         },
-        orderedServices: {
-          some: {
-            status: {
-              in: [
-                OrderedServiceStatusEnum.Completed,
-                OrderedServiceStatusEnum.Canceled_Invoice, //
-              ],
-            },
-          },
-        },
-        invoice: null,
+        invoiceId: null,
       },
       include: {
         orderedServices: {
@@ -196,7 +181,7 @@ export class JobRepository implements JobRepositoryPort {
         },
       },
       orderBy: {
-        createdAt: 'asc',
+        dateSentToClient: 'asc',
       },
     })
     return records.map((rec) => this.jobMapper.toDomain({ ...rec, prerequisiteTasks }))
