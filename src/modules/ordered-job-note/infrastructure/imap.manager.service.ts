@@ -22,7 +22,7 @@ export class ImapManagerService {
     private readonly jobNoteRepository: JobNoteRepository,
     private readonly prismaService: PrismaService,
     private readonly mailer: RFIMailer,
-    private readonly filesystemAPiService: FilesystemApiService,
+    private readonly filesystemApiService: FilesystemApiService,
   ) {}
 
   // 앱 실행 시 Imap Server에 Connection 요청
@@ -268,7 +268,7 @@ export class ImapManagerService {
         })
         await this.jobNoteRepository.insert(jobNoteEntity)
 
-        if (parsed.attachments && parsed.attachments.length >= 0) {
+        if (parsed.attachments && parsed.attachments.length > 0) {
           const googleJobFolder = await this.prismaService.googleJobFolder.findFirstOrThrow({
             where: { jobId: equalThreadIdEntity.jobId },
           })
@@ -277,7 +277,7 @@ export class ImapManagerService {
           }
 
           try {
-            const data = await this.filesystemAPiService.requestToPostRfiReplyFiles({
+            const data = await this.filesystemApiService.requestToPostRfiReplyFiles({
               attachments: parsed.attachments,
               jobNoteNumber,
               jobNotesFolderId: googleJobFolder.jobNotesFolderId,
