@@ -27,7 +27,6 @@ export class IssueInvoiceService implements ICommandHandler {
     const organization = await this.organizationRepo.findOneOrThrow(invoice.clientOrganizationId)
 
     invoice.issue()
-    // TODO: issued_at 필드 추가
     await this.invoiceRepo.update(invoice)
 
     const input: IRFIMail = {

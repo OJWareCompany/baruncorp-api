@@ -11,3 +11,8 @@ export class NullPriceExistsException extends BadRequestException {
     super('Null price exists', '70101')
   }
 }
+export class InvoiceEditException extends BadRequestException {
+  constructor() {
+    super('Issued Invoice can not be edit.', '70102')
+  }
+}

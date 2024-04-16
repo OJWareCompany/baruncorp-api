@@ -275,6 +275,11 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
+  unInvoice() {
+    this.props.invoiceId = null
+    return this
+  }
+
   updatePropertyAddress(propertyFullAddress: string) {
     this.props.propertyFullAddress = propertyFullAddress
     this.props.jobName = `Job #${this.props.jobRequestNumber} ${propertyFullAddress}`

@@ -37,6 +37,8 @@ import { CreditTransactionModule } from '../credit-transaction/credit-transactio
 import { PaymentModule } from '../payment/payment.module'
 import { UpdatedInvoiceWhenCreditPaymentIsCanceledEventHandler } from './application/event-handlers/update-invoice-when-credit-payment-is-canceled.domain-event-handler'
 import { OrderedJobNoteModule } from '../ordered-job-note/job-note.module'
+import { ModifyPeriodMonthHttpController } from './commands/modify-period-month/modify-period-month.http.controller'
+import { ModifyPeriodMonthService } from './commands/modify-period-month/modify-period-month.service'
 
 const httpControllers = [
   CreateInvoiceHttpController,
@@ -48,12 +50,14 @@ const httpControllers = [
   IssueInvoiceHttpController,
   FindClientWithOutstandingBalancesHttpController,
   FindOverdueInvoicePaginatedHttpController,
+  ModifyPeriodMonthHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateInvoiceService,
   UpdateInvoiceService,
   DeleteInvoiceService,
   IssueInvoiceService,
+  ModifyPeriodMonthService,
 ]
 const queryHandlers: Provider[] = [
   FindInvoiceQueryHandler,

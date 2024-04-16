@@ -4,6 +4,7 @@ import { CreateInvoiceProps, InvoiceProps, InvoiceStatusEnum, InvoiceTermsEnum }
 import addDays from 'date-fns/addDays'
 import { InvoiceCreatedDomainEvent } from './domain-events/invoice-created.domain-event'
 import { InvoiceCalculator } from './domain-services/invoice-calculator.domain-service'
+import { InvoiceEditException } from './invoice.error'
 
 export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   protected _id: string
@@ -82,6 +83,17 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     this.props.status = InvoiceStatusEnum.Issued
     this.props.issuedAt = new Date()
     return this
+  }
+
+  modifyPeriodMonth(subTotal: number, volumeTierDiscount: number, serviceMonth: Date) {
+    if (this.isIssuedOrPaid) {
+      throw new InvoiceEditException()
+    }
+    this.props.subTotal = subTotal
+    this.props.volumeTierDiscount = volumeTierDiscount
+    this.props.total = subTotal - volumeTierDiscount
+    this.props.balanceDue = subTotal - volumeTierDiscount
+    this.props.serviceMonth = serviceMonth
   }
 
   setInvoiceDate(invoiceDate: Date) {
