@@ -51,13 +51,14 @@ export class CreateJobService implements ICommandHandler {
       loadCalcOrigin: command.loadCalcOrigin,
       organizationId: project.clientOrganizationId,
       organizationName: organization.name,
-      orderedServices: services.map((service) => {
-        const filtered = command.orderedTasks.find((task) => task.serviceId === service.id)
+      orderedServices: command.orderedTasks.map((task) => {
+        const filtered = services.find((service) => service.id === task.serviceId)
         if (!filtered) throw new ServiceNotFoundException()
         return {
-          ...filtered,
-          serviceName: service.name,
-          isRevision: filtered.isRevision || false,
+          serviceId: filtered.id,
+          serviceName: filtered.name,
+          description: task.description,
+          isRevision: !!task.isRevision,
         }
       }),
       systemSize: command.systemSize,
