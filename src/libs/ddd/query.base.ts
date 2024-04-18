@@ -11,7 +11,7 @@ export abstract class QueryBase {}
 export abstract class PaginatedQueryBase extends QueryBase {
   limit: number
   offset: number
-  orderBy: OrderBy
+  orderBy?: OrderBy
   page: number
 
   constructor(props: PaginatedParams<PaginatedQueryBase>) {

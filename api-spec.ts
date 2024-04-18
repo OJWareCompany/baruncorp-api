@@ -3034,6 +3034,8 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
    * @default ""
    */
   propertyOwner?: string | null
+  sortField?: 'dateSentToClient' | 'completedCancelledDate' | 'dueDate' | 'createdAt'
+  sortDirection?: 'asc' | 'desc'
   /**
    * Specifies a limit of returned records
    * @default 20

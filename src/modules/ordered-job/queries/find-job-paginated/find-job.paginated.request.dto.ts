@@ -4,6 +4,8 @@ import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/doma
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { Transform } from 'class-transformer'
 import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
+import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
+import { OrderedJobs } from '@prisma/client'
 
 export enum DESCRIPTION {
   using_like = 'Using LIKE (중간 값 검색)',
@@ -71,4 +73,27 @@ export class FindJobPaginatedRequestDto {
   @IsString()
   @IsOptional()
   readonly propertyOwner?: string | null
+}
+
+enum SortField {
+  dateSentToClient = 'dateSentToClient',
+  completedCancelledDate = 'completedCancelledDate',
+  dueDate = 'dueDate',
+  createdAt = 'createdAt',
+}
+
+enum SortDirection {
+  asc = 'asc',
+  desc = 'desc',
+}
+export class FindJobPaginatedOrderByRequestDto {
+  @ApiProperty({ enum: SortField })
+  @IsEnum(SortField)
+  @IsOptional()
+  readonly sortField?: keyof Pick<OrderedJobs, 'dateSentToClient' | 'completedCancelledDate' | 'dueDate' | 'createdAt'>
+
+  @ApiProperty({ enum: SortDirection })
+  @IsEnum(SortDirection)
+  @IsOptional()
+  readonly sortDirection?: 'asc' | 'desc'
 }

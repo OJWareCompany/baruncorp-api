@@ -2,12 +2,12 @@ import { Controller, Get, HttpStatus, Query } from '@nestjs/common'
 import { QueryBus } from '@nestjs/cqrs'
 import { ApiOperation, ApiResponse } from '@nestjs/swagger'
 import { Paginated } from '../../../../libs/ddd/repository.port'
-import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { JobPaginatedResponseDto } from '../../dtos/job.paginated.response.dto'
 import { FindJobPaginatedQuery } from './find-job.paginated.query-handler'
-import { FindJobPaginatedRequestDto } from './find-job.paginated.request.dto'
+import { FindJobPaginatedOrderByRequestDto, FindJobPaginatedRequestDto } from './find-job.paginated.request.dto'
 import { OrderedJobs } from '@prisma/client'
 import { JobResponseMapper } from '../../job.response.mapper'
+import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 
 @Controller('jobs')
 export class FindJobPaginatedHttpController {
@@ -21,6 +21,7 @@ export class FindJobPaginatedHttpController {
   })
   async findJob(
     @Query() request: FindJobPaginatedRequestDto,
+    @Query() orderQuery: FindJobPaginatedOrderByRequestDto,
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<JobPaginatedResponseDto> {
     const query = new FindJobPaginatedQuery({
@@ -36,6 +37,11 @@ export class FindJobPaginatedHttpController {
       propertyOwner: request.propertyOwner,
       inReview: request.inReview,
       priority: request.priority,
+      orderBy: orderQuery.sortField &&
+        orderQuery.sortDirection && {
+          field: orderQuery.sortField,
+          param: orderQuery.sortDirection,
+        },
     })
 
     const result: Paginated<OrderedJobs> = await this.queryBus.execute(query)

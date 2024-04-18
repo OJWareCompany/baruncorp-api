@@ -20,7 +20,10 @@ export class FindJobPaginatedQuery extends PaginatedQueryBase {
   readonly propertyOwner?: string | null
   readonly inReview?: boolean | null
   readonly priority?: OrderedJobsPriorityEnum | null
-
+  readonly orderBy: {
+    field: keyof Pick<OrderedJobs, 'dateSentToClient' | 'completedCancelledDate' | 'dueDate' | 'createdAt'>
+    param: 'asc' | 'desc'
+  }
   constructor(props: PaginatedParams<FindJobPaginatedQuery>) {
     super(props)
     initialize(this, props)
@@ -45,9 +48,17 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.inReview !== undefined && query.inReview !== null && { inReview: query.inReview }),
     }
 
+    const orderByFields: Array<
+      keyof Pick<OrderedJobs, 'dateSentToClient' | 'completedCancelledDate' | 'dueDate' | 'createdAt'>
+    > = ['dateSentToClient', 'completedCancelledDate', 'dueDate', 'createdAt']
+
     const records = await this.prismaService.orderedJobs.findMany({
       where: condition,
-      orderBy: [{ priorityLevel: 'asc' }, { dueDate: 'asc' }],
+      orderBy: query.orderBy
+        ? {
+            [query.orderBy.field]: query.orderBy.param,
+          }
+        : [{ priorityLevel: 'asc' }, { dueDate: 'asc' }],
       take: query.limit,
       skip: query.offset,
     })

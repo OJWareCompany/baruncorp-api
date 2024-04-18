@@ -31,7 +31,7 @@ export type PaginatedQueryParams = {
   limit: number
   page: number
   offset: number
-  orderBy: OrderBy
+  orderBy: OrderBy | null | undefined
 }
 
 // export interface RepositoryPort<Entity> {
