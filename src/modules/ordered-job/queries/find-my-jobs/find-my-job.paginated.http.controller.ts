@@ -11,6 +11,7 @@ import { JobPaginatedResponseDto } from '../../dtos/job.paginated.response.dto'
 import { FindMyJobPaginatedQuery } from './find-my-job.paginated.query-handler'
 import { FindMyJobPaginatedRequestDto } from './find-my-job.paginated.request.dto'
 import { JobResponseMapper } from '../../job.response.mapper'
+import { FindJobPaginatedOrderByRequestDto } from '../find-job-paginated/find-job.paginated.request.dto'
 
 @Controller('my-jobs')
 export class FindMyJobPaginatedHttpController {
@@ -26,6 +27,7 @@ export class FindMyJobPaginatedHttpController {
   async findJob(
     @User() user: UserEntity,
     @Query() request: FindMyJobPaginatedRequestDto,
+    @Query() orderQuery: FindJobPaginatedOrderByRequestDto,
     @Query() queryParams: PaginatedQueryRequestDto,
   ): Promise<JobPaginatedResponseDto> {
     const query = new FindMyJobPaginatedQuery({
@@ -42,6 +44,11 @@ export class FindMyJobPaginatedHttpController {
       propertyOwner: request.propertyOwner,
       inReview: request.inReview,
       priority: request.priority,
+      orderBy: orderQuery.sortField &&
+        orderQuery.sortDirection && {
+          field: orderQuery.sortField,
+          param: orderQuery.sortDirection,
+        },
     })
 
     const result: Paginated<OrderedJobs> = await this.queryBus.execute(query)
