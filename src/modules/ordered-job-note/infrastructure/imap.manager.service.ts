@@ -220,7 +220,6 @@ export class ImapManagerService {
       if (messages && messages.length > 0) {
         const threadId: string | null | undefined = messages[0].threadId
         const senderEmail: string | undefined = parsed.from?.value[0]?.address
-        const id = messages[0].id
         const receiverEmails: string[] = Array.isArray(parsed.to)
           ? parsed.to.map((address: AddressObject) => address.value[0].address ?? '')
           : parsed.to
@@ -228,8 +227,7 @@ export class ImapManagerService {
           : []
         // console.log(`[fetchAndProcessEmails] from : ${senderEmail}`)
         // console.log(`[fetchAndProcessEmails] ori-to : ${JSON.stringify(parsed.to)}`)
-        // console.log(`MessageId1: ${parsed.messageId}`)
-        // console.log(`MessageId2 : ${id}`)
+        // console.log(`MessageId: ${parsed.messageId}`)
         // console.log(`Found thread ID: ${threadId}`)
         // console.log(`subject : ${parsed.subject!}`)
         // console.log(`parsed.attachments.length : ${parsed.attachments.length!}`)
