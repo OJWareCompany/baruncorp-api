@@ -32,6 +32,7 @@ export class FindMyOrderedJobPaginatedHttpController {
       page: queryParams.page,
       limit: queryParams.limit,
       userId: user.id,
+      organizationId: user.organization.id,
       jobStatus: request.jobStatus,
       projectNumber: request.projectNumber,
       jobName: request.jobName,

@@ -12,6 +12,7 @@ import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.val
 
 export class FindMyOrderedJobPaginatedQuery extends PaginatedQueryBase {
   readonly userId: string
+  readonly organizationId: string
   readonly projectNumber?: string | null
   readonly jobName?: string | null
   readonly propertyFullAddress?: string | null
@@ -34,7 +35,7 @@ export class FindMyOrderedJobPaginatedQueryHandler implements IQueryHandler {
 
   async execute(query: FindMyOrderedJobPaginatedQuery): Promise<Paginated<OrderedJobs>> {
     const condition: Prisma.OrderedJobsWhereInput = {
-      clientUserId: query.userId,
+      clientOrganizationId: query.organizationId,
       ...(query.projectNumber && { project_number: { contains: query.projectNumber } }),
       ...(query.jobName && { jobName: { contains: query.jobName } }),
       ...(query.propertyFullAddress && { propertyFullAddress: { contains: query.propertyFullAddress } }),
@@ -46,6 +47,7 @@ export class FindMyOrderedJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.isExpedited !== undefined && query.isExpedited !== null && { isExpedited: query.isExpedited }),
       ...(query.inReview !== undefined && query.inReview !== null && { inReview: query.inReview }),
     }
+
     const myOrderedJobs = await this.prismaService.orderedJobs.findMany({
       where: condition,
       orderBy: { createdAt: 'desc' },
