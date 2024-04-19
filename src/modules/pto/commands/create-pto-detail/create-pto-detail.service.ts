@@ -4,7 +4,6 @@ import { CommandHandler, ICommandHandler } from '@nestjs/cqrs'
 import { AggregateID } from '../../../../libs/ddd/entity.base'
 import { PtoEntity } from '../../domain/pto.entity'
 import { CreatePtoDetailCommand } from './create-pto-detail.command'
-import { PtoTenurePolicyRepository } from '../../../pto-tenure-policy/database/pto-tenure-policy.repository'
 import { PtoTargetUser } from '../../domain/value-objects/target.user.vo'
 import {
   AnnualPtoNotExceedException,
@@ -14,7 +13,6 @@ import {
   OverlapsPtoException,
 } from '../../domain/pto.error'
 import { PtoDetailEntity } from '../../domain/pto-detail.entity'
-import { Exception } from 'handlebars'
 import { addYears, subDays } from 'date-fns'
 import { PtoRepositoryPort } from '../../database/pto.repository.port'
 import { PTO_REPOSITORY } from '../../pto.di-token'
