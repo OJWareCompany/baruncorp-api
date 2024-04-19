@@ -5,9 +5,7 @@ import { UserNotFoundException } from '../../../users/user.error'
 import { JobNoteEntity } from '../../domain/job-note.entity'
 import { CreateJobNoteCommand } from './create-job-note.command'
 import { JobNoteTypeEnum } from '../../domain/job-note.type'
-import { JOB_NOTE_REPOSITORY } from '../../job-note.di-token'
 import { EmailSendFailedException, ReceiverEmailsFoundException } from '../../domain/job-note.error'
-import { JobNoteRepositoryPort } from '../../database/job-note.repository.port'
 import { CreateJobNoteResponseDto } from '../../dtos/create-job-note.response.dto'
 import { JobNotFoundException } from '../../../../modules/ordered-job/domain/job.error'
 import { JobNoteRepository } from '../../../ordered-job-note/database/job-note.repository'
@@ -41,7 +39,6 @@ export class CreateJobNoteService implements ICommandHandler {
       }
       let emailBody: string | null = command.emailBody
       const subject = `[BARUN CORP] Job #${targetJob.jobRequestNumber} ${targetJob.propertyAddress}`
-
       // Todo. 추후 하드코딩 제거
       emailBody += `<br><br>${creatorUser.full_name}
          <br>Barun Corp
@@ -68,7 +65,6 @@ export class CreateJobNoteService implements ICommandHandler {
         throw new EmailSendFailedException()
       }
     }
-
     // 메시지 넘버 확인
     let maxJobNoteNumber: number = (await this.jobNoteRepository.getMaxJobNoteNumber(command.jobId)) ?? 0
     const entity: JobNoteEntity = JobNoteEntity.create({

@@ -19,12 +19,13 @@ export class RFIMailer {
     const gmail: gmail_v1.Gmail = await this.getGmailClient(oAuth2Client)
 
     const email: string = this.getEmailLine(input).join('\n').trim()
-    // console.log(`input.text : ${input.text}`)
 
     let base64EncodedEmail: string = Buffer.from(email).toString('base64')
     base64EncodedEmail = base64EncodedEmail.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, '')
-
+    // console.log(`base64EncodedEmail: ${base64EncodedEmail}`)
     // console.log(`[RFIMailer] input.threadId ${input.threadId}`)
+    // console.log("전송 시작")
+    // let startTime = new Date();
     const requestBody = { raw: base64EncodedEmail, ...(input.threadId && { threadId: input.threadId }) }
     const res = await gmail.users.messages
       .send({
@@ -35,11 +36,15 @@ export class RFIMailer {
         if (error.status === 404) {
           // Todo. 메일 전송 내역에서 해당 threadID를 가진 메일들을 모두 Delete Forever했을 시 해당 ThreadId로 메일 전송 에러 발생
           // Todo. threadId없이 메일을 보내고, 보낸 메일의 threadId를 job의 threadIds에서 보낸 이메일 주소에 대한 threadIds를 교체
-          console.log(`[sendRFI] error : ${error}`)
+          // console.log(`[sendRFI] error : ${error}`)
         }
+        // console.log(`[sendRFI] error : ${error}`)
       })
-
+    // let endTime = new Date();
+    // let timeTaken = endTime.getTime() - startTime.getTime();
+    // console.log("걸린 시간: " + timeTaken + "ms");
     // console.log(`[sendRFI] threadId : ${res?.data.threadId}`)
+    // console.log(`[sendRFI] id : ${JSON.stringify(res?.data)}`)
     return res?.data
   }
 

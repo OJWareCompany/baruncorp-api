@@ -203,7 +203,9 @@ export class ImapManagerService {
     try {
       const parsed: ParsedMail = await simpleParser(buffer)
       await this.fetchAndProcessEmails(parsed, auth2Client)
-    } catch (e) {}
+    } catch (e) {
+      // console.log(`[processMessageBody] error: ${e}`)
+    }
   }
 
   private async fetchAndProcessEmails(parsed: ParsedMail, auth2Client: OAuth2Client) {
@@ -218,15 +220,16 @@ export class ImapManagerService {
       if (messages && messages.length > 0) {
         const threadId: string | null | undefined = messages[0].threadId
         const senderEmail: string | undefined = parsed.from?.value[0]?.address
-
+        const id = messages[0].id
         const receiverEmails: string[] = Array.isArray(parsed.to)
           ? parsed.to.map((address: AddressObject) => address.value[0].address ?? '')
           : parsed.to
           ? [parsed.to.value[0].address ?? '']
           : []
         // console.log(`[fetchAndProcessEmails] from : ${senderEmail}`)
-        // console.log(`[fetchAndProcessEmails] to : ${receiverEmails.toString()}`)
-        // console.log(`MessageId : ${parsed.messageId}`)
+        // console.log(`[fetchAndProcessEmails] ori-to : ${JSON.stringify(parsed.to)}`)
+        // console.log(`MessageId1: ${parsed.messageId}`)
+        // console.log(`MessageId2 : ${id}`)
         // console.log(`Found thread ID: ${threadId}`)
         // console.log(`subject : ${parsed.subject!}`)
         // console.log(`parsed.attachments.length : ${parsed.attachments.length!}`)
@@ -234,13 +237,7 @@ export class ImapManagerService {
         // console.log(`parsed.html : ${parsed.html}`)
         const plainText: string = htmlToText(parsed.html ? parsed.html : '')
 
-        // console.log(`plainText : ${plainText}`)
-
         if (!threadId || !senderEmail) return
-
-        // 바른코프 직원이 보낸 메일은 버린다(createJobNote에서 이미 RFI 생성)
-        const isBarunUser: boolean = await this.isBaruncorpUserEmail(senderEmail)
-        if (isBarunUser) return
 
         const equalThreadIdEntity: JobNoteEntity | null = await this.jobNoteRepository.findOneFromMailThreadId(threadId)
         // console.log(`equalThreadEntity : ${JSON.stringify(equalThreadIdEntity)}`)
@@ -336,19 +333,20 @@ export class ImapManagerService {
     return replyContent
   }
 
-  private async isBaruncorpUserEmail(email: string) {
-    const barunUser = await this.prismaService.users.findFirst({
-      where: {
-        email: email,
-        organization: {
-          organizationType: 'administration',
-        },
-      },
-      select: {
-        id: true,
-        email: true,
-      },
-    })
-    return !!barunUser
-  }
+  // 기존에 메일 발신자가 바른코프 직원일 경우를 체크하기 위해 만들었으나. 현재 사용하지 않음
+  // private async isBaruncorpUserEmail(email: string) {
+  //   const barunUser = await this.prismaService.users.findFirst({
+  //     where: {
+  //       email: email,
+  //       organization: {
+  //         organizationType: 'administration',
+  //       },
+  //     },
+  //     select: {
+  //       id: true,
+  //       email: true,
+  //     },
+  //   })
+  //   return !!barunUser
+  // }
 }
