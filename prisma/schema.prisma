@@ -475,7 +475,6 @@ model OrderedJobs {
   isExpedited                                   Boolean               @default(false) @map("is_expedited")
   clientUserId                                  String                @map("client_user_id") @db.VarChar(255)
   clientUserName                                String                @map("client_user_name") @db.VarChar(255)
-  jobStatus                                     String?               @map("job_status") @db.Text
   jobName                                       String                @map("job_name") @db.VarChar(255)
   jobRequestNumber                              Int                   @map("job_request_number")
   receivedAt                                    DateTime              @map("received_at") @db.DateTime(0)
@@ -552,12 +551,15 @@ model OrderedJobs {
   structuralUpgradeNote                         String?               @map("structural_upgrade_note") @db.Text
   propertyOwner                                 String?               @map("property_owner") @db.VarChar(255)
   priorityLevel                                 Int                   @default(3) @map("priority_level") @db.TinyInt
+  canceled_at                                   DateTime?             @db.DateTime(0)
+  jobStatus                                     String?               @map("job_status") @db.VarChar(255)
   project                                       OrderedProjects?      @relation(fields: [projectId], references: [id])
   orderedServices                               OrderedServices[]
   assignedTasks                                 AssignedTasks[]
   trackingNumbers                               TrackingNumbers[]
   invoice                                       Invoices?             @relation(fields: [invoiceId], references: [id])
 
+  @@index([dateSentToClient, canceled_at, createdAt, dueDate], map: "IDX_JOB_PRIORITY_UPDATE")
   @@map("ordered_jobs")
 }
 

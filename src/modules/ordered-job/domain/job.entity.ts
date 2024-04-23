@@ -52,6 +52,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
       invoiceId: null,
       revisionSize: null,
       jobRequestNumber: ++create.totalOfJobs,
+      canceledAt: null,
       propertyFullAddress: create.propertyFullAddress,
       jobName: `Job #${create.totalOfJobs} ` + create.propertyFullAddress,
       jobStatus: JobStatusEnum.Not_Started,
@@ -184,6 +185,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
     }
     this.props.updatedBy = editor.userName.fullName
     this.props.dateSentToClient = new Date()
+    this.props.priority = new Priority({
+      priority: OrderedJobsPriorityEnum.None,
+    })
     this.addEvent(new JobSentToClientDomainEvent({ aggregateId: this.id }))
     return this
   }
@@ -244,6 +248,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
   cancel(): this {
     this.props.jobStatus = JobStatusEnum.Canceled
     this.props.completedCancelledDate = new Date()
+    this.props.priority = new Priority({
+      priority: OrderedJobsPriorityEnum.None,
+    })
+    this.props.canceledAt = new Date()
     this.addEvent(new JobCanceledDomainEvent({ aggregateId: this.id }))
     return this
   }
@@ -251,6 +259,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
   cancelAndKeepInvoice(): this {
     this.props.jobStatus = JobStatusEnum.Canceled_Invoice
     this.props.completedCancelledDate = new Date()
+    this.props.priority = new Priority({
+      priority: OrderedJobsPriorityEnum.None,
+    })
+    this.props.canceledAt = new Date()
     this.addEvent(new JobCanceledAndKeptInvoiceDomainEvent({ aggregateId: this.id }))
     return this
   }
@@ -258,6 +270,9 @@ export class JobEntity extends AggregateRoot<JobProps> {
   hold(user: UserEntity): this {
     this.props.updatedBy = user.userName.fullName
     this.props.jobStatus = JobStatusEnum.On_Hold
+    this.props.priority = new Priority({
+      priority: OrderedJobsPriorityEnum.Low,
+    })
     this.addEvent(new JobHeldDomainEvent({ aggregateId: this.id }))
     return this
   }

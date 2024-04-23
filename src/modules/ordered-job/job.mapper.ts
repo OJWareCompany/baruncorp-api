@@ -40,6 +40,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
       loadCalcOrigin: props.loadCalcOrigin,
       propertyAddress: props.propertyFullAddress, // TODO: 컬럼에서 제거 고려 (주소 검색시 프로젝트 테이블에서 검색)
       jobStatus: props.jobStatus,
+      canceled_at: props.canceledAt,
       pricingType: props.pricingType,
       additionalInformationFromClient: props.additionalInformationFromClient,
       clientOrganizationId: props.clientInfo.clientOrganizationId,
@@ -256,6 +257,7 @@ export class JobMapper implements Mapper<JobEntity, OrderedJobs, JobResponseDto>
           priority: record.priority as OrderedJobsPriorityEnum,
         }),
         completedCancelledDate: record.completedCancelledDate,
+        canceledAt: record.canceled_at,
         structuralUpgradeNote: record.structuralUpgradeNote,
         propertyOwner: record.propertyOwner,
       },
