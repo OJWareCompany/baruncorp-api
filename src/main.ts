@@ -20,6 +20,7 @@ async function bootstrap() {
       max: Number(30),
     }),
   )
+
   app.enableCors({
     origin: '*',
     methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE'],
@@ -39,6 +40,10 @@ async function bootstrap() {
     .build()
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, document)
+
+  process.on('uncaughtException', (error) => {
+    console.error('Unhandled Exception', error)
+  })
 
   await app.listen(Number(APP_PORT))
 }
