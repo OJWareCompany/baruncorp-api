@@ -17,6 +17,8 @@ services:
     image: ${API_DOCKER_IMAGE_PATH}
     tty: true
     restart: always
+    ports:
+      - '3000:3000'
     command:
       - bash
       - -c
