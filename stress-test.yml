@@ -1,0 +1,56 @@
+config:
+  # This is a test server run by team Artillery
+  # It's designed to be highly scalable
+  target: https://dev.makevalue.net/prod
+  phases:
+    - duration: 60
+      arrivalRate: 1
+      rampTo: 5
+      name: Warm up phase
+    # - duration: 60
+    #   arrivalRate: 5
+    #   rampTo: 10
+    #   name: Ramp up load
+    # - duration: 30
+    #   arrivalRate: 10
+    #   rampTo: 30
+    #   name: Spike phase
+  processor: './processor.js'
+  payload:
+    path: './accounts.csv'
+    fields:
+      - 'email'
+      - 'password'
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99: 100
+      - http.response_time.p95: 75
+
+before:
+  flow:
+    - log: 'Get auth token'
+    - post:
+        url: '/auth/signin'
+        json:
+          email: '{{ email }}'
+          password: '{{ password }}'
+        capture:
+          - json: $.accessToken
+            as: token
+
+scenarios:
+  - flow:
+      - log: 'Current user email is set to: {{ email }}'
+      - get:
+          url: '/users/profile'
+          headers:
+            authorization: 'Bearer {{ token }}'
+after:
+  flow:
+    - log: 'Invalidate token'
+    - post:
+        url: '/auth/signout'
+        json:
+          token: '{{ token }}'
