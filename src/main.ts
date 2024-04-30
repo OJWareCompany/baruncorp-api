@@ -46,6 +46,7 @@ async function bootstrap() {
 
   process.on('uncaughtException', (error) => {
     console.error('Unhandled Exception', error)
+    // process.exit(1)
   })
 
   await app.listen(Number(APP_PORT))
