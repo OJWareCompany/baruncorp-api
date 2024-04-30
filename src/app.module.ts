@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { APP_FILTER } from '@nestjs/core'
+import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core'
 import { HttpExceptionFilter } from './libs/exceptions/http-exception.filter'
 import { AuthenticationModule } from './modules/auth/authentication.module'
 import { UsersModule } from './modules/users/users.module'
@@ -35,6 +35,7 @@ import { UtilityModule } from '@modules/utility/utility.module'
 import { CreditTransactionModule } from './modules/credit-transaction/credit-transaction.module'
 import { VendorCreditTransactionModule } from './modules/vendor-credit-transaction/vendor-credit-transaction.module'
 import { DepartmentModule } from './modules/department/department.module'
+import { LoggingInterceptor } from './libs/common/interceptor/logging.interceptor'
 
 @Module({
   imports: [
@@ -75,6 +76,10 @@ import { DepartmentModule } from './modules/department/department.module'
   ],
   controllers: [],
   providers: [
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: LoggingInterceptor,
+    },
     {
       provide: APP_FILTER,
       useClass: HttpExceptionFilter,

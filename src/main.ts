@@ -5,6 +5,7 @@ import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger'
 import { rateLimit } from 'express-rate-limit'
 import cookieParser from 'cookie-parser'
 import { AppModule } from './app.module'
+import { LoggingMiddleware } from './libs/common/middleware/logging.middleware'
 
 ConfigModule.forRoot()
 
@@ -12,6 +13,8 @@ const { APP_PORT } = process.env
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
+
+  app.use(new LoggingMiddleware().use)
 
   app.use(
     rateLimit({
