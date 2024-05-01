@@ -29,6 +29,11 @@ services:
       timeout: 1s
       retries: 1
       # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   api_auth:
     image: ${API_DOCKER_IMAGE_PATH}
@@ -44,7 +49,11 @@ services:
       interval: 30s
       timeout: 1s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   api_jobs_get:
     image: ${API_DOCKER_IMAGE_PATH}
@@ -60,7 +69,11 @@ services:
       interval: 30s
       timeout: 1s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   api_jobs_get_2:
     image: ${API_DOCKER_IMAGE_PATH}
@@ -76,7 +89,11 @@ services:
       interval: 30s
       timeout: 1s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   api_other_get:
     image: ${API_DOCKER_IMAGE_PATH}
@@ -94,7 +111,11 @@ services:
       interval: 30s
       timeout: 1s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   api_other_post:
     image: ${API_DOCKER_IMAGE_PATH}
@@ -110,7 +131,11 @@ services:
       interval: 30s
       timeout: 1s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
 
   certbot:
     depends_on:
