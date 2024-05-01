@@ -14,6 +14,9 @@ import { ImapManagerService } from '@modules/ordered-job-note/infrastructure/ima
 
 import { ImapConnectionWhenUserStatusChangedEventHandler } from '@modules/ordered-job-note/application/event-handler/imap-connection-when-user-status-updated.domain-event-handler'
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
+import { ConfigModule } from '@nestjs/config'
+
+ConfigModule.forRoot()
 
 const httpControllers = [CreateJobNoteHttpController, FindJobNotesHttpController]
 const commandHandlers: Provider[] = [CreateJobNoteService]
@@ -43,6 +46,12 @@ const infrastructures: Provider[] = [RFIMailer, ImapManagerService]
 export class OrderedJobNoteModule implements OnModuleInit {
   constructor(private readonly imapManagerService: ImapManagerService) {}
   onModuleInit() {
-    this.imapManagerService.initImapConnection()
+    const imapOnOff = process.env.IMAP_ON_OFF
+    if (imapOnOff === 'true') {
+      this.imapManagerService.initImapConnection()
+      console.log('true imap')
+    } else {
+      console.log('no imap')
+    }
   }
 }
