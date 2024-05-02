@@ -25,6 +25,25 @@ const axios = require('axios') // axios 라이브러리 사용
  * https://github.com/artilleryio/artillery/discussions/2296
  */
 
+async function login({ target, email, password }) {
+  try {
+    const response = await axios.post(`${target}/auth/signin`, {
+      email,
+      password,
+    })
+    const result = {
+      token: response.data.accessToken,
+      refreshToken: response.data.refreshToken,
+    }
+    console.log(`[${email}] login success ${JSON.stringify(result, null, 2)}`)
+    return result
+  } catch (error) {
+    console.error(`[${context.vars.email}] Failed login error occurs`)
+    console.error(error)
+    // throw error
+  }
+}
+
 function createQueryString(qs) {
   const params = []
   for (const key in qs) {
@@ -86,29 +105,14 @@ module.exports = {
   },
   bsLogin: async function (...args) {
     const [context, events] = args
-    console.log('######## Login ######## ')
-    console.log(context.vars.target)
-    try {
-      const response = await axios.post(`${context.vars.target}/auth/signin`, {
-        email: context.vars.email,
-        password: context.vars.password,
-      })
-      context.vars['token'] = response.data.accessToken
-      context.vars['refreshToken'] = response.data.refreshToken
-      console.log(
-        `[${context.vars.email}] login success ${JSON.stringify(
-          {
-            token: context.vars['token'],
-            refreshToken: context.vars['refreshToken'],
-          },
-          null,
-          2,
-        )}`,
-      )
-    } catch (error) {
-      console.error(`[${context.vars.email}] Failed login error occurs`)
-      throw error
-    }
+    console.log('######## Login ########')
+    const { token, refreshToken } = await login({
+      target: context.vars.target,
+      email: context.vars.email,
+      password: context.vars.password,
+    })
+    context.vars['token'] = token
+    context.vars['refreshToken'] = refreshToken
   },
   asLogout: async function (...args) {
     const [context, events] = args
@@ -120,17 +124,9 @@ module.exports = {
       console.log(`[${context.vars.email}] logout success`)
     } catch (error) {
       console.error(`[${context.vars.email}] Failed login error occurs`)
+      console.error(error)
       throw error
     }
-  },
-  /**
-   * @TODO
-   * /api/auth/[...nextauth] 파일이 jwt 파일 참고하여 구현해야함
-   */
-  brUpdateTokenIfTokenExpired: async function (...args) {
-    const [requestParams, context, events, next] = args
-    console.log(`[${context.vars.email}] ######## brUpdateTokenIfTokenExpired ######## (구현해야 함)`)
-    // next() 왜 next 메서드가 없지???...
   },
   brLog: function (...args) {
     const [requestParams, context, events, next] = args
@@ -140,15 +136,25 @@ module.exports = {
     console.log(`[${varaibles.email}] [BeforeRequest] ${requestParams.method} ${path}`)
     next()
   },
-  arLog: function (...args) {
+  arLog: async function (...args) {
     const [requestParams, response, context, events, next] = args
     const varaibles = context.vars
 
     console.log(
       `[${varaibles.email}] [AfterResponse] ${response.client._httpMessage.method} ${response.client._httpMessage.path} ${response.statusCode} ${response.statusMessage}`,
     )
+    // console.log(args)
+    if (response.statusCode === 401) {
+      const { token, refreshToken } = await login({
+        target: context.vars.target,
+        email: context.vars.email,
+        password: context.vars.password,
+      })
+      context.vars['token'] = token
+      context.vars['refreshToken'] = refreshToken
+    }
 
-    next()
+    // next()
   },
   arLogWithBody: function (...args) {
     const [requestParams, response, context, events, next] = args

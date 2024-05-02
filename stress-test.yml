@@ -32,10 +32,6 @@ config:
 scenarios:
   - beforeScenario: 'bsLogin'
     afterScenario: 'asLogout'
-    # beforeRequest:
-    #   - 'brLog'
-    #   - 'brUpdateTokenIfTokenExpired'
-    # afterResponse: 'arLog'
     flow:
       # Home Page Enter Requests
       - log: '[{{ email }}] Enter home page 🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️'
@@ -48,19 +44,19 @@ scenarios:
               as: organizationId
           beforeRequest:
             - 'brLog'
-            - 'brUpdateTokenIfTokenExpired'
+            # - 'brUpdateTokenIfTokenExpired'
           afterResponse: 'arLog'
       - parallel:
           - get:
               url: '/organizations/{{ organizationId }}'
               headers:
                 authorization: 'Bearer {{ token }}'
-              capture:
-                - json: $
-                  as: organization
+              # capture:
+              #   - json: $
+              #     as: organization
               beforeRequest:
                 - 'brLog'
-                - 'brUpdateTokenIfTokenExpired'
+                # - 'brUpdateTokenIfTokenExpired'
               afterResponse: 'arLog'
           - get:
               url: '/users/hands/status'
@@ -68,7 +64,7 @@ scenarios:
                 authorization: 'Bearer {{ token }}'
               beforeRequest:
                 - 'brLog'
-                - 'brUpdateTokenIfTokenExpired'
+                # - 'brUpdateTokenIfTokenExpired'
               afterResponse: 'arLog'
           - get:
               url: '/assigning-task-alerts'
@@ -78,7 +74,7 @@ scenarios:
                 authorization: 'Bearer {{ token }}'
               beforeRequest:
                 - 'brLog'
-                - 'brUpdateTokenIfTokenExpired'
+                # - 'brUpdateTokenIfTokenExpired'
               afterResponse: 'arLog'
           - loop:
               - get:
@@ -91,7 +87,7 @@ scenarios:
                     authorization: 'Bearer {{ token }}'
                   beforeRequest:
                     - 'brLog'
-                    - 'brUpdateTokenIfTokenExpired'
+                    # - 'brUpdateTokenIfTokenExpired'
                   afterResponse: 'arLog'
             over:
               - 'Not Started'
@@ -110,93 +106,85 @@ scenarios:
                 authorization: 'Bearer {{ token }}'
               beforeRequest:
                 - 'brLog'
-                - 'brUpdateTokenIfTokenExpired'
+                # - 'brUpdateTokenIfTokenExpired'
               afterResponse:
                 - 'arLog'
                 - 'arVariableizeInProgressJob'
               capture:
                 - json: $
                   as: 'jobs'
-      - log: '[{{ email }}] Enter Job detail Page 🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️'
+      - log: '[{{ email }}] Job detail Page Entering Looping 🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️'
       # - function: 'fnPrintVars'
-      - get:
-          ifTrue: 'inProgressJob'
-          url: '/jobs/{{ inProgressJob.id }}'
-          headers:
-            authorization: 'Bearer {{ token }}'
-          capture:
-            - json: $
-              as: jobDetail
-          beforeRequest:
-            - 'brLog'
-            - 'brUpdateTokenIfTokenExpired'
-          afterResponse:
-            - 'arLog'
-            - 'arSetAssigneeIdsInJobDetailPage'
-      - parallel:
+      - loop:
+          - log: '[{{ email }}] Job detail Page Enter {{ $loopCount }} {{ jobs.items[{{$loopCount}}].id }} 🖐️'
           - get:
-              ifTrue: 'inProgressJob'
-              url: '/ordered-job-notes/{{ inProgressJob.id }}'
+              url: '/jobs/{{ jobs.items[{{$loopCount}}].id }}'
               headers:
                 authorization: 'Bearer {{ token }}'
+              # capture:
+              #   - json: $
+              #     as: jobDetail
               beforeRequest:
                 - 'brLog'
-                - 'brUpdateTokenIfTokenExpired'
-              afterResponse: 'arLog'
-          - get:
-              ifTrue: 'inProgressJob'
-              url: '/projects/{{ inProgressJob.projectId }}'
-              headers:
-                authorization: 'Bearer {{ token }}'
-              capture:
-                - json: $
-                  as: projectDetail
-              beforeRequest:
-                - 'brLog'
-                - 'brUpdateTokenIfTokenExpired'
-              afterResponse: 'arLog'
-          - get:
-              ifTrue: 'inProgressJob'
-              url: '/utilities'
-              headers:
-                authorization: 'Bearer {{ token }}'
-              qs:
-                limit: 9007199254740991
-                # stateAbbreviation: 'AZ'
-              beforeRequest:
-                - 'brLog'
-                - 'brUpdateTokenIfTokenExpired'
-              afterResponse: 'arLog'
-          - loop:
+                # - 'brUpdateTokenIfTokenExpired'
+              afterResponse:
+                - 'arLog'
+                - 'arSetAssigneeIdsInJobDetailPage'
+          - parallel:
               - get:
-                  ifTrue: 'inProgressJob'
-                  url: '/users'
-                  qs:
-                    organizationId: 'inProgressJob.clientInfo.clientOrganizationId'
-                  limit: 9007199254740991
-                  status: '{{ $loopElement }}'
-                  beforeRequest:
-                    - 'brLog'
-                    - 'brUpdateTokenIfTokenExpired'
-                  afterResponse: 'arLog'
-            over:
-              - 'Active'
-              - 'Invitation Sent'
-              - 'Invitation Not Sent'
-          - loop:
-              - get:
-                  ifTrue: 'inProgressJob'
-                  url: '/assigned-tasks/{{ $loopElement }}/available-workers'
+                  url: '/ordered-job-notes/{{ jobs.items[{{$loopCount}}].id }}'
                   headers:
                     authorization: 'Bearer {{ token }}'
                   beforeRequest:
                     - 'brLog'
-                    - 'brUpdateTokenIfTokenExpired'
+                    # - 'brUpdateTokenIfTokenExpired'
                   afterResponse: 'arLog'
-            over: assigneeIds
-# http://localhost:3000/assigned-tasks/611256de-b1e7-483e-b1b9-341d8b2e6c78/available-workers
-
-# 이거 호출하는 시나리오가 뭔지 확인
-# http://localhost:3000/assigned-tasks/0481ffa0-0978-4b33-b98e-ca9e913a95f3/available-workers
-# http://localhost:3000/assigned-tasks/c26de839-c613-404b-abfd-6413d2a7f4fb/available-workers
-# ...
+              - get:
+                  ifTrue: '{{ jobs.items[{{$loopCount}}].projectId }}'
+                  url: '/projects/{{ jobs.items[{{$loopCount}}].projectId }}'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  # capture:
+                  #   - json: $
+                  #     as: projectDetail
+                  beforeRequest:
+                    - 'brLog'
+                    # - 'brUpdateTokenIfTokenExpired'
+                  afterResponse: 'arLog'
+              - get:
+                  url: '/utilities'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  qs:
+                    limit: 9007199254740991
+                    stateAbbreviation: 'AZ'
+                  beforeRequest:
+                    - 'brLog'
+                    # - 'brUpdateTokenIfTokenExpired'
+                  afterResponse: 'arLog'
+              - loop:
+                  - get:
+                      url: '/users'
+                      qs:
+                        organizationId: 'jobs.items[{{$loopCount}}].clientInfo.clientOrganizationId'
+                      limit: 9007199254740991
+                      status: '{{ $loopElement }}'
+                      beforeRequest:
+                        - 'brLog'
+                        # - 'brUpdateTokenIfTokenExpired'
+                      afterResponse: 'arLog'
+                over:
+                  - 'Active'
+                  - 'Invitation Sent'
+                  - 'Invitation Not Sent'
+              - loop:
+                  - get:
+                      url: '/assigned-tasks/{{ $loopElement }}/available-workers'
+                      headers:
+                        authorization: 'Bearer {{ token }}'
+                      beforeRequest:
+                        - 'brLog'
+                        # - 'brUpdateTokenIfTokenExpired'
+                      afterResponse: 'arLog'
+                over: assigneeIds
+        count: '{{ jobs.totalCount }}'
