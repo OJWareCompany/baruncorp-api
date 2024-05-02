@@ -4,9 +4,7 @@ config:
       target: http://localhost:3000
     production:
       target: https://dev.makevalue.net/prod
-  # target: http://localhost:3000
   processor: './processor.js' # 테스트 스크립트에서 사용할 외부 JS 파일
-  # target: http://localhost:3000
   phases: # 테스트 동안의 부하 프로파일 (테스트 요청 시간과 비율을 의미)
     # 5초 동안 초당 1명의 사용자가 요청
     - duration: 5
@@ -25,9 +23,6 @@ config:
       - http.response_time.p99: 100
       - http.response_time.p95: 75
 
-# before은 한 번만 수행됨. 즉 여기서 설정된 토큰 변수는 특정 vuser의 token이 아니라 전체 vuser들에게 적용됨
-# https://github.com/artilleryio/artillery/issues/842#issuecomment-765496311
-
 # 여러 테스트 시나리오를 정의 - 이 경우 사용자 프로필을 조회하는 단일 시나리오가 존재
 scenarios:
   - beforeScenario: 'bsLogin'
@@ -44,7 +39,6 @@ scenarios:
               as: organizationId
           beforeRequest:
             - 'brLog'
-            # - 'brUpdateTokenIfTokenExpired'
           afterResponse: 'arLog'
       - parallel:
           - get:
@@ -56,7 +50,6 @@ scenarios:
               #     as: organization
               beforeRequest:
                 - 'brLog'
-                # - 'brUpdateTokenIfTokenExpired'
               afterResponse: 'arLog'
           - get:
               url: '/users/hands/status'
@@ -64,7 +57,6 @@ scenarios:
                 authorization: 'Bearer {{ token }}'
               beforeRequest:
                 - 'brLog'
-                # - 'brUpdateTokenIfTokenExpired'
               afterResponse: 'arLog'
           - get:
               url: '/assigning-task-alerts'
@@ -74,7 +66,6 @@ scenarios:
                 authorization: 'Bearer {{ token }}'
               beforeRequest:
                 - 'brLog'
-                # - 'brUpdateTokenIfTokenExpired'
               afterResponse: 'arLog'
           - loop:
               - get:
@@ -87,7 +78,6 @@ scenarios:
                     authorization: 'Bearer {{ token }}'
                   beforeRequest:
                     - 'brLog'
-                    # - 'brUpdateTokenIfTokenExpired'
                   afterResponse: 'arLog'
             over:
               - 'Not Started'
@@ -106,7 +96,6 @@ scenarios:
                 authorization: 'Bearer {{ token }}'
               beforeRequest:
                 - 'brLog'
-                # - 'brUpdateTokenIfTokenExpired'
               afterResponse:
                 - 'arLog'
                 - 'arVariableizeInProgressJob'
@@ -126,7 +115,6 @@ scenarios:
               #     as: jobDetail
               beforeRequest:
                 - 'brLog'
-                # - 'brUpdateTokenIfTokenExpired'
               afterResponse:
                 - 'arLog'
                 - 'arSetAssigneeIdsInJobDetailPage'
@@ -137,7 +125,6 @@ scenarios:
                     authorization: 'Bearer {{ token }}'
                   beforeRequest:
                     - 'brLog'
-                    # - 'brUpdateTokenIfTokenExpired'
                   afterResponse: 'arLog'
               - get:
                   ifTrue: '{{ jobs.items[{{$loopCount}}].projectId }}'
@@ -149,7 +136,6 @@ scenarios:
                   #     as: projectDetail
                   beforeRequest:
                     - 'brLog'
-                    # - 'brUpdateTokenIfTokenExpired'
                   afterResponse: 'arLog'
               - get:
                   url: '/utilities'
@@ -160,7 +146,6 @@ scenarios:
                     stateAbbreviation: 'AZ'
                   beforeRequest:
                     - 'brLog'
-                    # - 'brUpdateTokenIfTokenExpired'
                   afterResponse: 'arLog'
               - loop:
                   - get:
@@ -171,7 +156,6 @@ scenarios:
                       status: '{{ $loopElement }}'
                       beforeRequest:
                         - 'brLog'
-                        # - 'brUpdateTokenIfTokenExpired'
                       afterResponse: 'arLog'
                 over:
                   - 'Active'
@@ -184,7 +168,6 @@ scenarios:
                         authorization: 'Bearer {{ token }}'
                       beforeRequest:
                         - 'brLog'
-                        # - 'brUpdateTokenIfTokenExpired'
                       afterResponse: 'arLog'
                 over: assigneeIds
         count: '{{ jobs.totalCount }}'
