@@ -1,4 +1,4 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor } from '@nestjs/common'
+import { CallHandler, ExecutionContext, Injectable, Logger, NestInterceptor } from '@nestjs/common'
 import { Observable } from 'rxjs'
 import { tap } from 'rxjs/operators'
 import { v4 } from 'uuid'
@@ -14,14 +14,14 @@ export class LoggingInterceptor implements NestInterceptor {
 
     const logMessage = `Method: ${method} | URL: ${url} | UserID: ${userId}`
     const requestId = v4()
-    console.log(`Request started [${requestId}]: ${logMessage}`)
+    // console.log(`Request started [${requestId}]: ${logMessage}`)
     // logger.info(`Request started: ${logMessage}`)
 
     const now = Date.now()
     return next.handle().pipe(
       tap(() => {
         const responseTime = Date.now() - now
-        console.log(`Request completed [${requestId}]: ${logMessage} | ResponseTime: ${responseTime}ms`)
+        Logger.verbose(`Request completed: ${logMessage} | ResponseTime: ${responseTime}ms`)
         // logger.info(`Request completed: ${logMessage} | ResponseTime: ${responseTime}ms`)
       }),
     )
