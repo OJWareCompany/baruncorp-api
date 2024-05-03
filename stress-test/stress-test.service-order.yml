@@ -1,0 +1,113 @@
+config:
+  target: https://dev.makevalue.net/prod
+  # target: http://localhost:3000
+  processor: './processor.js' # 테스트 스크립트에서 사용할 외부 JS 파일
+  phases: # 테스트 동안의 부하 프로파일 (테스트 요청 시간과 비율을 의미)
+    # 5초 동안 초당 1명의 사용자가 요청
+    - duration: 1
+      arrivalRate: 1
+      name: Warm up phase
+  payload:
+    - path: './data/accounts.admin.csv'
+      fields:
+        - 'email'
+        - 'password'
+      order: sequence
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99: 100
+      - http.response_time.p95: 75
+
+# 여러 테스트 시나리오를 정의 - 이 경우 사용자 프로필을 조회하는 단일 시나리오가 존재
+scenarios:
+  - beforeScenario: 'bsLogin'
+    afterScenario: 'asLogout'
+    flow:
+      # Home Page Enter Requests
+      - log: '[{{ email }}] Job Creation 🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️'
+      - loop:
+          - log: '{{ $loopElement }}'
+          - post:
+              url: '/jobs'
+              headers:
+                authorization: 'Bearer {{ token }}'
+              json:
+                additionalInformationFromClient: null
+                clientUserId: '440fc885-c1a9-44fd-a302-d0e7ba6cbc40'
+                deliverablesEmails: ['sangwon@ojware.com']
+                isExpedited: false
+                systemSize: null
+                mountingType: 'Roof Mount'
+                projectId: '{{ $loopElement }}'
+                taskIds:
+                  [{ serviceId: '2a2a256b-57a5-46f5-8cfb-1855cc29238a', description: 'other task', isRevision: false }]
+                mailingAddressForWetStamp: null
+                numberOfWetStamp: null
+                dueDate: null
+                structuralUpgradeNote: null
+                loadCalcOrigin: 'Self'
+              beforeRequest: 'brLog'
+              afterResponse:
+                - 'arLog'
+                - 'arPushJobId'
+        over: # projectIds
+          - '8f107d6a-7884-4ddd-be66-5db20eb70c27'
+          - '662ec4b8-8454-4ae5-a00e-a94edde82853'
+          - '84eef6a6-777d-40cf-8f5b-c42fc37c6400'
+          - 'a7b4a869-4886-409b-8f00-8eaf23de8377'
+          - '44012ada-2204-4e67-9178-0a750adefb50'
+          - '82f89e80-ca56-4588-bdf4-5a314f0481b3'
+          - 'edb1825b-6bbf-448f-b231-dc49d35c09e1'
+          - 'f1c3e15c-0b3b-405f-9f5b-d9754328dd3b'
+          - '76ce5069-d083-48a5-8f55-b8b226cdc2c3'
+          - '60669db5-5c8d-4155-b072-6b4694af2ef7'
+      - log: '잡 생성 완료 🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️ (5초 대기중...)'
+      - loop:
+          - log: '[{{ $loopElement }}] 생성된 Job에 대한 Complete, Send Deliverables 처리'
+          - get:
+              url: '/jobs/{{ $loopElement }}'
+              headers:
+                authorization: 'Bearer {{ token }}'
+              beforeRequest: 'brLog'
+              afterResponse: 'arLog'
+              capture:
+                - json: $
+                  as: jobDetail
+          # - function: 'fnPrintVars'
+          - loop:
+              - log: '태스크 출력: {{ $loopElement }}'
+              - patch: # automation 계정에게 Task 할당
+                  url: '/assigned-tasks/{{ $loopElement.id }}/assign'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  json:
+                    assigneeId: 'f11007d2-f35a-448f-a573-78b826605437'
+                  beforeRequest: 'brLog'
+                  afterResponse: 'arLog'
+              - patch: # Task 완료
+                  url: '/assigned-tasks/complete/{{ $loopElement.id }}'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  beforeRequest: 'brLog'
+                  afterResponse: 'arLog'
+            over: jobDetail.assignedTasks
+          - loop:
+              - log: '주문된 서비스 출력: {{ $loopElement }}'
+              - patch:
+                  url: '/ordered-services/{{ $loopElement.orderedServiceId }}/manual-price'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  json:
+                    price: 15
+                  beforeRequest: 'brLog'
+                  afterResponse: 'arLog'
+            over: jobDetail.orderedServices
+          - patch: # Send Deliverables 처리
+              url: '/jobs/{{ jobDetail.id }}/send-deliverables'
+              headers:
+                authorization: 'Bearer {{ token }}'
+              beforeRequest: 'brLog'
+              afterResponse: 'arLog'
+        over: jobIds

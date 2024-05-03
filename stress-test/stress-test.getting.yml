@@ -1,9 +1,11 @@
 config:
-  environments:
-    local:
-      target: http://localhost:3000
-    production:
-      target: https://dev.makevalue.net/prod
+  target: https://dev.makevalue.net/prod
+  # target: http://localhost:3000
+  # environments:
+  #   local:
+  #     target: http://localhost:3000
+  #   production:
+  #     target: https://dev.makevalue.net/prod
   processor: './processor.js' # 테스트 스크립트에서 사용할 외부 JS 파일
   phases: # 테스트 동안의 부하 프로파일 (테스트 요청 시간과 비율을 의미)
     # 5초 동안 초당 1명의 사용자가 요청
@@ -11,7 +13,7 @@ config:
       arrivalRate: 1
       name: Warm up phase
   payload:
-    path: './accounts.csv'
+    path: './data/accounts.csv'
     fields:
       - 'email'
       - 'password'
@@ -45,18 +47,13 @@ scenarios:
               url: '/organizations/{{ organizationId }}'
               headers:
                 authorization: 'Bearer {{ token }}'
-              # capture:
-              #   - json: $
-              #     as: organization
-              beforeRequest:
-                - 'brLog'
+              beforeRequest: 'brLog'
               afterResponse: 'arLog'
           - get:
               url: '/users/hands/status'
               headers:
                 authorization: 'Bearer {{ token }}'
-              beforeRequest:
-                - 'brLog'
+              beforeRequest: 'brLog'
               afterResponse: 'arLog'
           - get:
               url: '/assigning-task-alerts'
@@ -64,8 +61,7 @@ scenarios:
                 limit: 9007199254740991
               headers:
                 authorization: 'Bearer {{ token }}'
-              beforeRequest:
-                - 'brLog'
+              beforeRequest: 'brLog'
               afterResponse: 'arLog'
           - loop:
               - get:
@@ -76,8 +72,7 @@ scenarios:
                     jobStatus: '{{ $loopElement }}'
                   headers:
                     authorization: 'Bearer {{ token }}'
-                  beforeRequest:
-                    - 'brLog'
+                  beforeRequest: 'brLog'
                   afterResponse: 'arLog'
             over:
               - 'Not Started'
@@ -94,8 +89,7 @@ scenarios:
                 limit: 100
               headers:
                 authorization: 'Bearer {{ token }}'
-              beforeRequest:
-                - 'brLog'
+              beforeRequest: 'brLog'
               afterResponse:
                 - 'arLog'
                 - 'arVariableizeInProgressJob'
@@ -110,11 +104,7 @@ scenarios:
               url: '/jobs/{{ jobs.items[{{$loopCount}}].id }}'
               headers:
                 authorization: 'Bearer {{ token }}'
-              # capture:
-              #   - json: $
-              #     as: jobDetail
-              beforeRequest:
-                - 'brLog'
+              beforeRequest: 'brLog'
               afterResponse:
                 - 'arLog'
                 - 'arSetAssigneeIdsInJobDetailPage'
@@ -123,19 +113,14 @@ scenarios:
                   url: '/ordered-job-notes/{{ jobs.items[{{$loopCount}}].id }}'
                   headers:
                     authorization: 'Bearer {{ token }}'
-                  beforeRequest:
-                    - 'brLog'
+                  beforeRequest: 'brLog'
                   afterResponse: 'arLog'
               - get:
                   ifTrue: '{{ jobs.items[{{$loopCount}}].projectId }}'
                   url: '/projects/{{ jobs.items[{{$loopCount}}].projectId }}'
                   headers:
                     authorization: 'Bearer {{ token }}'
-                  # capture:
-                  #   - json: $
-                  #     as: projectDetail
-                  beforeRequest:
-                    - 'brLog'
+                  beforeRequest: 'brLog'
                   afterResponse: 'arLog'
               - get:
                   url: '/utilities'
@@ -144,8 +129,7 @@ scenarios:
                   qs:
                     limit: 9007199254740991
                     stateAbbreviation: 'AZ'
-                  beforeRequest:
-                    - 'brLog'
+                  beforeRequest: 'brLog'
                   afterResponse: 'arLog'
               - loop:
                   - get:

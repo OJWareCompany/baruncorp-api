@@ -38,9 +38,9 @@ async function login({ target, email, password }) {
     console.log(`[${email}] login success ${JSON.stringify(result, null, 2)}`)
     return result
   } catch (error) {
-    console.error(`[${context.vars.email}] Failed login error occurs`)
+    console.error(`[${email}] Failed login error occurs`)
     console.error(error)
-    // throw error
+    throw error
   }
 }
 
@@ -103,9 +103,29 @@ module.exports = {
 
     next()
   },
+  arPushJobId: function (...args) {
+    const [requestParams, response, context, events, next] = args
+    console.log(`### arPushJobId ###`)
+    const jobId = JSON.parse(response.body).id
+    const jobIds = context.vars.jobIds ? context.vars.jobIds : []
+    // jobIds.push(jobId)
+    // context.vars.jobIds = jobIds
+    if (context.vars.jobIds) {
+      console.log('context.vars.jobIds 이미 존재. 데이터 추가함')
+      context.vars.jobIds.push(jobId)
+    } else {
+      console.log('context.vars.jobIds 초기화')
+      context.vars.jobIds = [jobId]
+    }
+
+    console.log('jobId 출력')
+    console.log(context.vars.jobIds)
+
+    next()
+  },
   bsLogin: async function (...args) {
     const [context, events] = args
-    console.log('######## Login ########')
+    console.log('######## Login ########', context.vars.target)
     const { token, refreshToken } = await login({
       target: context.vars.target,
       email: context.vars.email,

@@ -1,8 +1,8 @@
 ### 실행하는법
 
 ```
-./_issue-tracking/st.local.sh
-./_issue-tracking/st.prod.sh
+./stress-test/stg.sh
+./stress-test/stso.sh
 ```
 
 ---
