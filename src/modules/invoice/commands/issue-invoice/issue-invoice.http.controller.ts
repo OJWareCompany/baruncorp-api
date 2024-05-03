@@ -30,6 +30,8 @@ export class IssueInvoiceHttpController {
     const command = new IssueInvoiceCommand({
       invoiceId: param.invoiceId,
       ...request,
+      issuedBy: user.userName.fullName,
+      issuedByUserId: user.id,
       files: files,
     })
     await this.commandBus.execute(command)
