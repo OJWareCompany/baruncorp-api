@@ -16,7 +16,7 @@ export class FindClientToInvoiceQueryHandler implements IQueryHandler {
   async execute(query: FindClientToInvoiceQuery): Promise<any> {
     // AND created_at < DATE_FORMAT(CURDATE(), '%Y-%m-01')
     const jobs = (await this.prismaService.$queryRaw`
-    SELECT id, client_organization_id, MAX(date_sent_to_client) AS date_sent_to_client
+    SELECT id, client_organization_id, client_organization_name, MAX(date_sent_to_client) AS date_sent_to_client
     FROM ordered_jobs
     WHERE job_status IN('Sent To Client','Canceled (Invoice)')
     AND invoice_id IS NULL
@@ -25,35 +25,29 @@ export class FindClientToInvoiceQueryHandler implements IQueryHandler {
     `) as {
       id: string
       client_organization_id: string
+      client_organization_name: string
       date_sent_to_client: string
     }[]
-
-    const jobs2 = await this.prismaService.orderedJobs.findMany({
-      where: { id: { in: jobs.map((job) => job.id) } },
-      orderBy: { dateSentToClient: 'desc' },
-    })
 
     const result: ClientToInvoiceResponseDto = {
       clientToInvoices: [],
     }
 
-    jobs2.map((job) => {
+    jobs.map((job) => {
       const isExistedClient = result.clientToInvoices.find((client) => {
-        return client.id === job.clientOrganizationId
+        return client.id === job.client_organization_id
       })
 
       if (!isExistedClient) {
         result.clientToInvoices.push({
-          id: job.clientOrganizationId,
-          name: job.clientOrganizationName,
-          date: [job.dateSentToClient ? job.dateSentToClient.toISOString() : job.createdAt.toISOString()],
+          id: job.client_organization_id,
+          name: job.client_organization_name,
+          date: [job.date_sent_to_client],
         })
       }
 
       if (isExistedClient) {
-        isExistedClient.date.push(
-          job.dateSentToClient ? job.dateSentToClient.toISOString() : job.createdAt.toISOString(),
-        )
+        isExistedClient.date.push(job.date_sent_to_client)
       }
     })
 
