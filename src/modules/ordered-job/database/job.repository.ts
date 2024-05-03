@@ -9,7 +9,6 @@ import { JobNotFoundException } from '../domain/job.error'
 import { zonedTimeToUtc } from 'date-fns-tz'
 import { endOfMonth, startOfMonth } from 'date-fns'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../domain/job.type'
-import { OrderedServiceStatusEnum } from '../../ordered-service/domain/ordered-service.type'
 import { UserEntity } from '../../users/domain/user.entity'
 
 type JobModel =
