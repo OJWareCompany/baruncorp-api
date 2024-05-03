@@ -118,8 +118,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
         isVendor: true,
         vendorInvoiceId: null,
         NOT: { cost: null },
-        // TODO: 검토필요, createdAt으로 교체?
-        startedAt: {
+        doneAt: {
           gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
           lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
         },
