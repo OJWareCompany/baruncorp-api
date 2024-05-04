@@ -63,6 +63,9 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     this.props.appliedCredit = await invoiceCalculator.calcAppliedCredit(this)
     this.props.paymentTotal = await invoiceCalculator.calcPaymentTotal(this)
     this.props.balanceDue = this.props.total - this.props.paymentTotal
+
+    if (this.props.status === InvoiceStatusEnum.Unissued) return this
+
     if (this.props.paymentTotal >= this.props.total) {
       this.props.status = InvoiceStatusEnum.Paid
     } else {
@@ -81,6 +84,7 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
 
   issue(): this {
     this.props.status = InvoiceStatusEnum.Issued
+    if (this.total <= 0) this.props.status = InvoiceStatusEnum.Paid
     this.props.issuedAt = new Date()
     return this
   }
