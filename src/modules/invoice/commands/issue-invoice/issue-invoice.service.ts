@@ -48,19 +48,38 @@ export class IssueInvoiceService implements ICommandHandler {
 
     await this.invoiceRepo.update(invoice)
 
-    const tieredDiscountField = organization.getProps().isTierDiscount
-      ? `volume tier discount: $${invoice.getProps().volumeTierDiscount}`
-      : ''
+    // const tieredDiscountField = organization.getProps().isTierDiscount
+    //   ? `volume tier discount: $${invoice.getProps().volumeTierDiscount}`
+    //   : ''
 
     const input: IRFIMail = {
       subject: `BarunCorp ${formatDate(invoice.getProps().serviceMonth)} Invoice mail`,
       text: `
-        subtotal: $${invoice.getProps().subTotal}
-        ${tieredDiscountField}
-        balance due: $${invoice.getProps().balanceDue}
+        Dear ${organization.name},
+        <br>
+        <br>
+        Please find your attached invoice for payment, and let us know if you have any questions or concerns. 
+        <br>
+        <br>
+        We will provide bank details upon request.
+        <br>
+        <br>
+        Thank you for your business!
+        <br>
+        <br>
+        Kind regards,
+        <br>
+        <br>
+        Esther Kim [Payroll Manager]
+        <br>
+        estherk@baruncorp.com
+        <br>
+        (610) 504-2657
+        <br>
+        baruncorp.com
       `,
       from: 'automation@baruncorp.com',
-      to: [organization.getProps().invoiceRecipientEmail || 'bs_khm@naver.com'],
+      to: ['gyals0386@gmail.com'],
       // cc: [],
       threadId: null,
       files: command.files,
