@@ -48,15 +48,20 @@ export class IssueInvoiceService implements ICommandHandler {
 
     await this.invoiceRepo.update(invoice)
 
+    const tieredDiscountField = organization.getProps().isTierDiscount
+      ? `volume tier discount: $${invoice.getProps().volumeTierDiscount}`
+      : ''
+
     const input: IRFIMail = {
       subject: `BarunCorp ${formatDate(invoice.getProps().serviceMonth)} Invoice mail`,
       text: `
         subtotal: $${invoice.getProps().subTotal}
-        volume tier discount: $${invoice.getProps().volumeTierDiscount}
+        ${tieredDiscountField}
         balance due: $${invoice.getProps().balanceDue}
       `,
       from: 'automation@baruncorp.com',
       to: [organization.getProps().invoiceRecipientEmail || 'bs_khm@naver.com'],
+      // cc: [],
       threadId: null,
       files: command.files,
     }
