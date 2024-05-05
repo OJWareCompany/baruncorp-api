@@ -46,7 +46,7 @@ services:
         max-size: '10m'
         max-file: '3'
 
-  api_auth:
+  api_imap:
     image: ${API_DOCKER_IMAGE_PATH}
     tty: true
     restart: always
@@ -56,57 +56,18 @@ services:
     environment:
       - IMAP_ON_OFF=true
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/users || kill 1 # 혹은 로컬 말고 nginx path
-      interval: 30s
-      timeout: 1s
-      retries: 1
-    logging:
-      driver: json-file
-      options:
-        max-size: '10m'
-        max-file: '3'
-
-  api_jobs_get:
-    image: ${API_DOCKER_IMAGE_PATH}
-    tty: true
-    restart: always
-    command: bash -c "pnpm run start:prod"
-    env_file:
-      - ./baruncorp-api/.env
-    environment:
-      - IMAP_ON_OFF=false
-    healthcheck:
       test: wget --spider -T 10 -t 1 https://${API_HOST}/jobs || kill 1 # 혹은 로컬 말고 nginx path
       interval: 30s
       timeout: 1s
       retries: 1
+      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
     logging:
       driver: json-file
       options:
         max-size: '10m'
         max-file: '3'
 
-  api_jobs_get_2:
-    image: ${API_DOCKER_IMAGE_PATH}
-    tty: true
-    restart: always
-    command: bash -c "pnpm run start:prod"
-    env_file:
-      - ./baruncorp-api/.env
-    environment:
-      - IMAP_ON_OFF=false
-    healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/jobs || kill 1 # 혹은 로컬 말고 nginx path
-      interval: 30s
-      timeout: 1s
-      retries: 1
-    logging:
-      driver: json-file
-      options:
-        max-size: '10m'
-        max-file: '3'
-
-  api_other_get:
+  api_get:
     image: ${API_DOCKER_IMAGE_PATH}
     tty: true
     restart: always
@@ -128,7 +89,29 @@ services:
         max-size: '10m'
         max-file: '3'
 
-  api_other_post:
+  api_get2:
+    image: ${API_DOCKER_IMAGE_PATH}
+    tty: true
+    restart: always
+    ports:
+      - '3000:3000'
+    command: bash -c "pnpm run start:prod"
+    env_file:
+      - ./baruncorp-api/.env
+    environment:
+      - IMAP_ON_OFF=false
+    healthcheck:
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects || kill 1 # 혹은 로컬 말고 nginx path
+      interval: 30s
+      timeout: 1s
+      retries: 1
+    logging:
+      driver: json-file
+      options:
+        max-size: '10m'
+        max-file: '3'
+
+  api_post:
     image: ${API_DOCKER_IMAGE_PATH}
     tty: true
     restart: always
