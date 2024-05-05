@@ -14,7 +14,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 || kill 1
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/nginx-health-check || kill 1
       interval: 30s
       timeout: 1s
       retries: 1
