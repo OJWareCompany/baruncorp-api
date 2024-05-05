@@ -14,7 +14,7 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/jobs || kill 1 # 혹은 로컬 말고 nginx path
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 || kill 1
       interval: 30s
       timeout: 1s
       retries: 1
@@ -35,11 +35,10 @@ services:
     environment:
       - IMAP_ON_OFF=false
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/jobs || kill 1 # 혹은 로컬 말고 nginx path
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/jobs?page=1&limit=1 || kill 1
       interval: 30s
       timeout: 1s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
     logging:
       driver: json-file
       options:
@@ -56,11 +55,10 @@ services:
     environment:
       - IMAP_ON_OFF=true
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/jobs || kill 1 # 혹은 로컬 말고 nginx path
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/users?page=1&limit=1 || kill 1
       interval: 30s
       timeout: 1s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
     logging:
       driver: json-file
       options:
@@ -79,7 +77,7 @@ services:
     environment:
       - IMAP_ON_OFF=false
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects || kill 1 # 혹은 로컬 말고 nginx path
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 || kill 1
       interval: 30s
       timeout: 1s
       retries: 1
@@ -101,7 +99,7 @@ services:
     environment:
       - IMAP_ON_OFF=false
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects || kill 1 # 혹은 로컬 말고 nginx path
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 || kill 1
       interval: 30s
       timeout: 1s
       retries: 1
@@ -121,7 +119,7 @@ services:
     environment:
       - IMAP_ON_OFF=false
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects || kill 1 # 혹은 로컬 말고 nginx path
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/projects || kill 1
       interval: 30s
       timeout: 1s
       retries: 1
