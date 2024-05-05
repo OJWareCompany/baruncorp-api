@@ -1,0 +1,157 @@
+config:
+  target: https://dev.makevalue.net/prod
+  # target: http://localhost:3000
+  # environments:
+  #   local:
+  #     target: http://localhost:3000
+  #   production:
+  #     target: https://dev.makevalue.net/prod
+  processor: './processor.js' # 테스트 스크립트에서 사용할 외부 JS 파일
+  phases: # 테스트 동안의 부하 프로파일 (테스트 요청 시간과 비율을 의미)
+    # 5초 동안 초당 1명의 사용자가 요청
+    - duration: 5
+      arrivalRate: 1
+      name: Warm up phase
+  payload:
+    path: './data/accounts.csv'
+    fields:
+      - 'email'
+      - 'password'
+    order: sequence # 데이터를 순차적으로 할당
+  apdex:
+    threshold: 100
+  ensure:
+    thresholds:
+      - http.response_time.p99: 100
+      - http.response_time.p95: 75
+
+# 여러 테스트 시나리오를 정의 - 이 경우 사용자 프로필을 조회하는 단일 시나리오가 존재
+scenarios:
+  - beforeScenario: 'bsLogin'
+    afterScenario: 'asLogout'
+    flow:
+      # Home Page Enter Requests
+      - log: '[{{ email }}] Enter home page 🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️'
+      - get: # GET profile api를 호출해서 organizationId를 가져와야 GET organizations/{organizaionId} API를 호출 가능 - 즉 같은 Parallel로 묶을 수 없음
+          url: '/users/profile'
+          headers:
+            authorization: 'Bearer {{ token }}'
+          capture:
+            - json: $.organizationId
+              as: organizationId
+          beforeRequest:
+            - 'brLog'
+          afterResponse: 'arLog'
+      - parallel:
+          - get:
+              url: '/organizations/{{ organizationId }}'
+              headers:
+                authorization: 'Bearer {{ token }}'
+              beforeRequest: 'brLog'
+              afterResponse: 'arLog'
+          - get:
+              url: '/users/hands/status'
+              headers:
+                authorization: 'Bearer {{ token }}'
+              beforeRequest: 'brLog'
+              afterResponse: 'arLog'
+          - get:
+              url: '/assigning-task-alerts'
+              qs:
+                limit: 9007199254740991
+              headers:
+                authorization: 'Bearer {{ token }}'
+              beforeRequest: 'brLog'
+              afterResponse: 'arLog'
+          - loop:
+              - get:
+                  url: '/jobs'
+                  qs:
+                    page: 1
+                    limit: 100
+                    jobStatus: '{{ $loopElement }}'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  beforeRequest: 'brLog'
+                  afterResponse: 'arLog'
+            over:
+              - 'Not Started'
+              - 'In Progress'
+              - 'Completed'
+              - 'Sent To Client'
+              - 'On Hold'
+              - 'Canceled'
+              - 'Canceled (Invoice)'
+          - get:
+              url: '/jobs'
+              qs:
+                page: 1
+                limit: 100
+              headers:
+                authorization: 'Bearer {{ token }}'
+              beforeRequest: 'brLog'
+              afterResponse:
+                - 'arLog'
+                - 'arVariableizeInProgressJob'
+              capture:
+                - json: $
+                  as: 'jobs'
+      - log: '[{{ email }}] Job detail Page Entering Looping 🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️🖐️'
+      # - function: 'fnPrintVars'
+      - loop:
+          - log: '[{{ email }}] Job detail Page Enter {{ $loopCount }} {{ jobs.items[{{$loopCount}}].id }} 🖐️'
+          - get:
+              url: '/jobs/{{ jobs.items[{{$loopCount}}].id }}'
+              headers:
+                authorization: 'Bearer {{ token }}'
+              beforeRequest: 'brLog'
+              afterResponse:
+                - 'arLog'
+                - 'arSetAssigneeIdsInJobDetailPage'
+          - parallel:
+              - get:
+                  url: '/ordered-job-notes/{{ jobs.items[{{$loopCount}}].id }}'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  beforeRequest: 'brLog'
+                  afterResponse: 'arLog'
+              - get:
+                  ifTrue: '{{ jobs.items[{{$loopCount}}].projectId }}'
+                  url: '/projects/{{ jobs.items[{{$loopCount}}].projectId }}'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  beforeRequest: 'brLog'
+                  afterResponse: 'arLog'
+              - get:
+                  url: '/utilities'
+                  headers:
+                    authorization: 'Bearer {{ token }}'
+                  qs:
+                    limit: 9007199254740991
+                    stateAbbreviation: 'AZ'
+                  beforeRequest: 'brLog'
+                  afterResponse: 'arLog'
+              - loop:
+                  - get:
+                      url: '/users'
+                      qs:
+                        organizationId: 'jobs.items[{{$loopCount}}].clientInfo.clientOrganizationId'
+                      limit: 9007199254740991
+                      status: '{{ $loopElement }}'
+                      beforeRequest:
+                        - 'brLog'
+                      afterResponse: 'arLog'
+                over:
+                  - 'Active'
+                  - 'Invitation Sent'
+                  - 'Invitation Not Sent'
+              - loop:
+                  - get:
+                      url: '/assigned-tasks/{{ $loopElement }}/available-workers'
+                      headers:
+                        authorization: 'Bearer {{ token }}'
+                      beforeRequest:
+                        - 'brLog'
+                      afterResponse: 'arLog'
+                over: assigneeIds
+        count: '{{ jobs.totalCount }}'
