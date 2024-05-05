@@ -20,7 +20,7 @@ async function bootstrap() {
     rateLimit({
       skip: (req, res) => req.path === '/auth/me',
       windowMs: Number(1000),
-      max: Number(30),
+      limit: Number(30),
     }),
   )
 
