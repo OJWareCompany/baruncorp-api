@@ -14,7 +14,7 @@ import { OrderModificationHistoryOperationEnum } from '../../../integrated-order
 
 ConfigModule.forRoot()
 
-const { EMAIL_USER, EMAIL_PASS } = process.env
+const { EMAIL_USER, EMAIL_PASS, APP_MODE } = process.env
 
 @CommandHandler(IssueInvoiceCommand)
 export class IssueInvoiceService implements ICommandHandler {
@@ -52,9 +52,17 @@ export class IssueInvoiceService implements ICommandHandler {
     //   ? `volume tier discount: $${invoice.getProps().volumeTierDiscount}`
     //   : ''
 
+    const to: string[] =
+      APP_MODE === 'production'
+        ? [organization.getProps().invoiceRecipientEmail || 'hyomin@oj.vision']
+        : ['hyomin@oj.vision', 'sangwon@oj.vision']
+    const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
+    console.log(textForDev)
+
     const input: IRFIMail = {
       subject: `BarunCorp ${formatDate(invoice.getProps().serviceMonth)} Invoice mail`,
       text: `
+        ${textForDev}
         Dear ${organization.name},
         <br>
         <br>
@@ -79,7 +87,7 @@ export class IssueInvoiceService implements ICommandHandler {
         baruncorp.com
       `,
       from: 'automation@baruncorp.com',
-      to: ['gyals0386@gmail.com'],
+      to: [...to],
       // cc: [],
       threadId: null,
       files: command.files,

@@ -41,7 +41,10 @@ import { CheckCompletionJob } from './domain-services/check-completion-job.domai
 import { JobSentToClientDomainEvent } from './events/job-sent-to-client.domain-event'
 import { OrderedJobsPriorityEnum, Priority } from './value-objects/priority.value-object'
 import { JobPriorityUpdatedDomainEvent } from './events/job-priority-updated.domain-event'
+import { ConfigModule } from '@nestjs/config'
 
+ConfigModule.forRoot()
+const { APP_MODE } = process.env
 export class JobEntity extends AggregateRoot<JobProps> {
   protected _id: AggregateID
 
@@ -170,11 +173,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
   ) {
     await orderStatusChangeValidator.validateJob(this, AutoOnlyJobStatusEnum.Sent_To_Client)
 
+    const to: string[] = APP_MODE === 'production' ? this.props.deliverablesEmails : ['hyomin@oj.vision']
+    const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
+
     const input: IRFIMail = {
       subject: `BarunCorp Deliverables`,
-      text: `deliverables link: ${deliverablesLink}`,
+      text: textForDev + `deliverables link: ${deliverablesLink}`,
       from: 'automation@baruncorp.com',
-      to: this.props.deliverablesEmails,
+      to: to,
       threadId: null,
       files: null,
     }
