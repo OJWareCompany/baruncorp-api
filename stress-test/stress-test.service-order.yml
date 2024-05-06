@@ -1,5 +1,5 @@
 config:
-  target: https://dev.makevalue.net/prod
+  target: https://dev.makevalue.net
   # target: http://localhost:3000
   processor: './processor.js' # 테스트 스크립트에서 사용할 외부 JS 파일
   phases: # 테스트 동안의 부하 프로파일 (테스트 요청 시간과 비율을 의미)

@@ -1,5 +1,5 @@
 config:
-  target: https://dev.makevalue.net/prod
+  target: https://dev.makevalue.net
   # target: http://localhost:3000
   # environments:
   #   local:
@@ -12,6 +12,13 @@ config:
     - duration: 5
       arrivalRate: 1
       name: Warm up phase
+    - duration: 30m
+      arrivalRate: 1
+      rampTo: 1
+      name: ramp-up phase
+    # - duration: 5
+    #   arrivalRate: 1
+    #   name: Warm up phase
   payload:
     path: './data/accounts.csv'
     fields:
