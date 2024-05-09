@@ -1,3 +1,5 @@
+import { EmailVO } from '../../users/domain/value-objects/email.vo'
+import { InvoiceIssueHistory } from './value-objects/invoice-issue-history.value-object'
 import { PaymentVO } from './value-objects/payment.value-object'
 
 export type InvoiceStatus = 'Unissued' | 'Issued' | 'Paid'
@@ -36,4 +38,6 @@ export interface InvoiceProps extends CreateInvoiceProps {
   amountPaid: number
   appliedCredit: number
   issuedAt: Date | null
+  currentCc: EmailVO[]
+  invoiceIssueHistories: InvoiceIssueHistory[]
 }

@@ -23,14 +23,15 @@ export class IssueInvoiceHttpController {
   @UseFilters(new FileExceptionFilter())
   async patch(
     @User() user: UserEntity,
+    @UploadedFiles() files: Express.Multer.File[],
     @Param() param: IssueInvoiceParamRequestDto,
     @Body() request: IssueInvoiceRequestDto,
-    @UploadedFiles() files: Express.Multer.File[],
   ): Promise<void> {
     const command = new IssueInvoiceCommand({
       invoiceId: param.invoiceId,
       ...request,
-      issuedBy: user.userName.fullName,
+      cc: request.cc,
+      issuedByUserName: user.userName.fullName,
       issuedByUserId: user.id,
       files: files,
     })

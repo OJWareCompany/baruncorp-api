@@ -8,6 +8,7 @@ export interface IRFIMail {
   text: string
   from: string
   to: string[]
+  cc?: string[]
   threadId: string | null
   files: Express.Multer.File[] | null
 }
@@ -68,6 +69,7 @@ export class RFIMailer {
     const boundary = `boundary-${v4()}`
     const emailLines = []
     emailLines.push(`To: ${input.to}`)
+    emailLines.push(`cc: ${input.cc}`)
     emailLines.push(`From: ${input.from}`)
     emailLines.push('Content-type: multipart/mixed; boundary=' + boundary)
     emailLines.push('MIME-Version: 1.0')

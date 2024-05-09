@@ -5,12 +5,18 @@ import { InvoiceResponseDto } from './dtos/invoice.response.dto'
 import { InvoiceStatusEnum } from './domain/invoice.type'
 import { InvoiceEntity } from './domain/invoice.entity'
 import { Decimal } from '@prisma/client/runtime/library'
+import { InvoiceModel } from './database/invoice.repository'
+import { InvoiceIssueHistory } from './domain/value-objects/invoice-issue-history.value-object'
+import { InvoiceRecipientEmail } from './domain/value-objects/invoice-recipient-email.value-object'
+import { EmailVO } from '../users/domain/value-objects/email.vo'
+import { IssuedByUserId } from './domain/value-objects/issued-by-user-id.value-object'
+import { IssuedByUserName } from './domain/value-objects/issued-by-user-name.value-object'
 
 @Injectable()
-export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceResponseDto> {
-  toPersistence(entity: InvoiceEntity): Invoices {
+export class InvoiceMapper implements Mapper<InvoiceEntity, InvoiceModel, InvoiceResponseDto> {
+  toPersistence(entity: InvoiceEntity): InvoiceModel {
     const props = entity.getProps()
-    const record: Invoices = {
+    const record: InvoiceModel = {
       id: props.id,
       status: props.status,
       invoiceDate: props.invoiceDate,
@@ -30,11 +36,23 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
       issuedAt: props.issuedAt,
       amountPaid: new Decimal(props.amountPaid),
       appliedCredit: new Decimal(props.appliedCredit),
+      currentCc: props.currentCc.toString(),
+      invoiceIssueHistories: props.invoiceIssueHistories.map((history) => {
+        return {
+          invoiceId: history.invoiceId,
+          to: history.to.value,
+          cc: history.cc.map((cc) => cc.email).toString(),
+          issuedAt: history.issuedAt,
+          issuedByUserId: history.issuedByUserId.value,
+          issuedByUserName: history.issuedByUserName.value,
+        }
+      }),
     }
+
     return record
   }
 
-  toDomain(record: Invoices): InvoiceEntity {
+  toDomain(record: InvoiceModel): InvoiceEntity {
     const entity = new InvoiceEntity({
       id: record.id,
       createdAt: record.createdAt!,
@@ -57,6 +75,18 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, Invoices, InvoiceRes
         amountPaid: Number(record.amountPaid),
         appliedCredit: Number(record.appliedCredit),
         issuedAt: record.issuedAt,
+        currentCc: record.currentCc?.split(',').map((cc) => new EmailVO(cc)) || [],
+        invoiceIssueHistories: record.invoiceIssueHistories.map(
+          (history) =>
+            new InvoiceIssueHistory({
+              invoiceId: history.invoiceId,
+              to: new InvoiceRecipientEmail({ value: history.to }),
+              cc: history.cc?.split(',').map((cc) => new EmailVO(cc)) || [],
+              issuedAt: history.issuedAt,
+              issuedByUserId: new IssuedByUserId({ value: history.issuedByUserId }),
+              issuedByUserName: new IssuedByUserName({ value: history.issuedByUserName }),
+            }),
+        ),
       },
     })
     return entity

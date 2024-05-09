@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsArray, IsOptional, IsString } from 'class-validator'
+import { Transform } from 'class-transformer'
+import { IsOptional, IsString } from 'class-validator'
 
 class Attachments {
   @ApiProperty()
@@ -42,4 +43,9 @@ export class IssueInvoiceParamRequestDto {
 export class IssueInvoiceRequestDto {
   @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
   readonly files: any[]
+
+  @ApiProperty({ default: ['hyomin@oj.vision'], isArray: true })
+  @Transform(({ value }) => (value ? value.split(',') : []))
+  @IsOptional()
+  readonly cc?: string[]
 }

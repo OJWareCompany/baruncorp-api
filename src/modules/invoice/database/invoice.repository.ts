@@ -1,13 +1,15 @@
 import { EventEmitter2 } from '@nestjs/event-emitter'
 import { Injectable } from '@nestjs/common'
-import { Invoices } from '@prisma/client'
+import { InvoiceIssueHistory, Invoices } from '@prisma/client'
 import { Paginated } from '../../../libs/ddd/repository.port'
 import { PrismaService } from '../../database/prisma.service'
 import { InvoiceNotFoundException } from '../domain/invoice.error'
 import { InvoiceEntity } from '../domain/invoice.entity'
 import { InvoiceMapper } from '../invoice.mapper'
 import { InvoiceRepositoryPort } from './invoice.repository.port'
+import _ from 'lodash'
 
+export type InvoiceModel = Invoices & { invoiceIssueHistories: InvoiceIssueHistory[] }
 @Injectable()
 export class InvoiceRepository implements InvoiceRepositoryPort {
   constructor(
@@ -21,9 +23,10 @@ export class InvoiceRepository implements InvoiceRepositoryPort {
 
   async insert(entity: InvoiceEntity): Promise<void> {
     const record = this.invoiceMapper.toPersistence(entity)
+    const { invoiceIssueHistories, ...restOfRecord } = record
     await this.prismaService.invoices.create({
       data: {
-        ...record,
+        ...restOfRecord,
         dueDate: null,
       },
     })
@@ -33,7 +36,31 @@ export class InvoiceRepository implements InvoiceRepositoryPort {
 
   async update(entity: InvoiceEntity): Promise<void> {
     const record = this.invoiceMapper.toPersistence(entity)
-    await this.prismaService.invoices.update({ where: { id: entity.id }, data: record })
+    const { invoiceIssueHistories, ...restOfRecord } = record
+    await this.prismaService.invoices.update({ where: { id: entity.id }, data: restOfRecord })
+
+    const latestIssuedHistory = invoiceIssueHistories.reduce((latest, item) => {
+      return latest.issuedAt > item.issuedAt ? latest : item
+    })
+
+    const currentHistory = await this.prismaService.invoiceIssueHistory.findFirst({
+      where: { invoiceId: record.id, issuedAt: latestIssuedHistory.issuedAt },
+    })
+
+    if (currentHistory) return
+
+    const timeInSeconds = Math.floor(latestIssuedHistory.issuedAt.getTime() / 1000)
+
+    await this.prismaService.invoiceIssueHistory.create({
+      data: {
+        invoiceId: latestIssuedHistory.invoiceId,
+        to: latestIssuedHistory.to,
+        cc: latestIssuedHistory.cc,
+        issuedAt: new Date(timeInSeconds * 1000),
+        issuedByUserId: latestIssuedHistory.issuedByUserId,
+        issuedByUserName: latestIssuedHistory.issuedByUserName,
+      },
+    })
   }
 
   async delete(id: string): Promise<void> {
@@ -41,12 +68,18 @@ export class InvoiceRepository implements InvoiceRepositoryPort {
   }
 
   async findOne(id: string): Promise<InvoiceEntity | null> {
-    const record = await this.prismaService.invoices.findUnique({ where: { id } })
+    const record = await this.prismaService.invoices.findUnique({
+      where: { id },
+      include: { invoiceIssueHistories: true },
+    })
     return record ? this.invoiceMapper.toDomain(record) : null
   }
 
   async findOneOrThrow(id: string): Promise<InvoiceEntity> {
-    const record = await this.prismaService.invoices.findUnique({ where: { id } })
+    const record: InvoiceModel | null = await this.prismaService.invoices.findUnique({
+      where: { id },
+      include: { invoiceIssueHistories: true },
+    })
     if (!record) throw new InvoiceNotFoundException()
     return this.invoiceMapper.toDomain(record)
   }

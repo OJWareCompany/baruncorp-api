@@ -5,6 +5,11 @@ import addDays from 'date-fns/addDays'
 import { InvoiceCreatedDomainEvent } from './domain-events/invoice-created.domain-event'
 import { InvoiceCalculator } from './domain-services/invoice-calculator.domain-service'
 import { InvoiceEditException } from './invoice.error'
+import { InvoiceIssueHistory } from './value-objects/invoice-issue-history.value-object'
+import { IssuedByUserId } from './value-objects/issued-by-user-id.value-object'
+import { IssuedByUserName } from './value-objects/issued-by-user-name.value-object'
+import { EmailVO } from '../../users/domain/value-objects/email.vo'
+import { InvoiceRecipientEmail } from './value-objects/invoice-recipient-email.value-object'
 
 export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   protected _id: string
@@ -23,6 +28,8 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
       amountPaid: 0,
       appliedCredit: 0,
       issuedAt: null,
+      currentCc: [],
+      invoiceIssueHistories: [],
     }
 
     const entity = new InvoiceEntity({ id, props })
@@ -58,6 +65,10 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     return this.props.subTotal
   }
 
+  get currentCc(): EmailVO[] {
+    return this.props.currentCc
+  }
+
   async determinePaymentTotalAndStatus(invoiceCalculator: InvoiceCalculator) {
     this.props.amountPaid = await invoiceCalculator.calcAmountPaid(this)
     this.props.appliedCredit = await invoiceCalculator.calcAppliedCredit(this)
@@ -82,10 +93,27 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
     return this
   }
 
-  issue(): this {
+  issue(
+    to: InvoiceRecipientEmail,
+    cc: EmailVO[],
+    issuedByUserId: IssuedByUserId,
+    issuedByUserName: IssuedByUserName,
+  ): this {
     this.props.status = InvoiceStatusEnum.Issued
     if (this.total <= 0) this.props.status = InvoiceStatusEnum.Paid
     this.props.issuedAt = new Date()
+    this.props.currentCc = cc
+
+    const invoiceIssueHistory = new InvoiceIssueHistory({
+      invoiceId: this.id,
+      issuedAt: this.props.issuedAt,
+      issuedByUserId: issuedByUserId,
+      issuedByUserName: issuedByUserName,
+      to: to,
+      cc: cc,
+    })
+
+    this.props.invoiceIssueHistories.push(invoiceIssueHistory)
     return this
   }
 

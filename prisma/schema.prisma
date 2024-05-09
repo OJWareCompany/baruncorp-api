@@ -559,7 +559,8 @@ model OrderedJobs {
   trackingNumbers                               TrackingNumbers[]
   invoice                                       Invoices?             @relation(fields: [invoiceId], references: [id])
 
-  @@index([dateSentToClient, canceled_at, createdAt, dueDate], map: "IDX_JOB_PRIORITY_UPDATE")
+  @@index([dateSentToClient, canceled_at, createdAt, dueDate, jobStatus], map: "IDX_JOB_PRIORITY_UPDATE")
+  @@index([priorityLevel, dueDate, jobStatus], map: "IDX_JOB")
   @@map("ordered_jobs")
 }
 
@@ -791,28 +792,30 @@ model CreditTransactions {
 }
 
 model Invoices {
-  id                   String         @id @map("id") @db.VarChar(255)
-  status               InvoicesStatus @default(Unissued) @map("status")
-  invoiceDate          DateTime       @default(now()) @map("invoice_date") @db.Date
-  terms                Int            @default(30) @map("terms") @db.UnsignedTinyInt
-  dueDate              DateTime?      @map("due_date") @db.Date
-  notesToClient        String?        @map("notes_to_client") @db.Text
-  createdAt            DateTime       @default(now()) @map("createdAt") @db.Timestamp(0)
-  updatedAt            DateTime       @default(now()) @updatedAt @map("updatedAt") @db.Timestamp(0)
-  clientOrganizationId String         @map("client_organization_id") @db.VarChar(255)
-  organizationName     String         @map("organization_name") @db.VarChar(255)
-  serviceMonth         DateTime       @map("service_month") @db.Date
-  subTotal             Decimal        @map("sub_total") @db.Decimal(13, 4)
-  volumeTierDiscount   Decimal        @map("volume_tier_discount") @db.Decimal(13, 4)
-  total                Decimal        @db.Decimal(13, 4)
-  paymentTotal         Decimal        @default(0.0000) @map("payment_total") @db.Decimal(13, 4)
-  issuedAt             DateTime?      @map("issued_at") @db.DateTime(0)
-  balanceDue           Decimal        @map("balance_due") @db.Decimal(13, 4)
-  amountPaid           Decimal        @map("amount_paid") @db.Decimal(13, 4)
-  appliedCredit        Decimal        @map("applied_credit") @db.Decimal(13, 4)
-  organization         Organizations  @relation(fields: [clientOrganizationId], references: [id])
-  jobs                 OrderedJobs[]
-  payments             Payments[]
+  id                    String                @id @map("id") @db.VarChar(255)
+  status                InvoicesStatus        @default(Unissued) @map("status")
+  invoiceDate           DateTime              @default(now()) @map("invoice_date") @db.Date
+  terms                 Int                   @default(30) @map("terms") @db.UnsignedTinyInt
+  dueDate               DateTime?             @map("due_date") @db.Date
+  notesToClient         String?               @map("notes_to_client") @db.Text
+  createdAt             DateTime              @default(now()) @map("createdAt") @db.Timestamp(0)
+  updatedAt             DateTime              @default(now()) @updatedAt @map("updatedAt") @db.Timestamp(0)
+  clientOrganizationId  String                @map("client_organization_id") @db.VarChar(255)
+  organizationName      String                @map("organization_name") @db.VarChar(255)
+  serviceMonth          DateTime              @map("service_month") @db.Date
+  subTotal              Decimal               @map("sub_total") @db.Decimal(13, 4)
+  volumeTierDiscount    Decimal               @map("volume_tier_discount") @db.Decimal(13, 4)
+  total                 Decimal               @db.Decimal(13, 4)
+  paymentTotal          Decimal               @default(0.0000) @map("payment_total") @db.Decimal(13, 4)
+  issuedAt              DateTime?             @map("issued_at") @db.DateTime(0)
+  balanceDue            Decimal               @map("balance_due") @db.Decimal(13, 4)
+  amountPaid            Decimal               @map("amount_paid") @db.Decimal(13, 4)
+  appliedCredit         Decimal               @map("applied_credit") @db.Decimal(13, 4)
+  currentCc             String?               @map("current_cc") @db.VarChar(500)
+  organization          Organizations         @relation(fields: [clientOrganizationId], references: [id])
+  jobs                  OrderedJobs[]
+  payments              Payments[]
+  invoiceIssueHistories InvoiceIssueHistory[]
 
   @@index([clientOrganizationId], map: "client_organization_id")
   @@map("invoices")
@@ -1356,6 +1359,19 @@ model Departments {
   sendDeliverables   Boolean  @default(false) @map("send_deliverables")
 
   @@map("departments")
+}
+
+model InvoiceIssueHistory {
+  invoiceId        String   @map("invoice_id") @db.VarChar(255)
+  to               String   @db.VarChar(255)
+  cc               String?  @db.VarChar(500)
+  issuedAt         DateTime @map("issued_at") @db.DateTime(0)
+  issuedByUserId   String   @map("issued_by_user_id") @db.VarChar(255)
+  issuedByUserName String   @map("issued_by_user_name") @db.VarChar(255)
+  invoice          Invoices @relation(fields: [invoiceId], references: [id])
+
+  @@id([invoiceId, issuedAt])
+  @@map("invoice_issue_history")
 }
 
 enum InvoicesStatus {

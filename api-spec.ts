@@ -1062,6 +1062,7 @@ export interface ClientToInvoiceResponseDto {
 
 export interface IssueInvoiceRequestDto {
   files: File[]
+  cc: string[][]
 }
 
 export interface ClientWithOutstandingBalancesResponseDto {

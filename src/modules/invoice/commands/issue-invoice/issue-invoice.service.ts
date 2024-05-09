@@ -5,16 +5,20 @@ import { Inject } from '@nestjs/common'
 import { formatDate } from '../../../../libs/utils/formatDate'
 import { OrganizationRepositoryPort } from '../../../organization/database/organization.repository.port'
 import { ORGANIZATION_REPOSITORY } from '../../../organization/organization.di-token'
-import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
-import { INVOICE_REPOSITORY } from '../../invoice.di-token'
-import { IssueInvoiceCommand } from './issue-invoice.command'
 import { IRFIMail, RFIMailer } from '../../../ordered-job-note/infrastructure/mailer.infrastructure'
 import { PrismaService } from '../../../database/prisma.service'
-import { OrderModificationHistoryOperationEnum } from '../../../integrated-order-modification-history/domain/integrated-order-modification-history.type'
+import { EmailVO } from '../../../users/domain/value-objects/email.vo'
+import { InvoiceRecipientEmail } from '../../domain/value-objects/invoice-recipient-email.value-object'
+import { InvoiceRepositoryPort } from '../../database/invoice.repository.port'
+import { INVOICE_REPOSITORY } from '../../invoice.di-token'
+import { IssuedByUserName } from '../../domain/value-objects/issued-by-user-name.value-object'
+import { IssuedByUserId } from '../../domain/value-objects/issued-by-user-id.value-object'
+import { IssueInvoiceCommand } from './issue-invoice.command'
+import * as _ from 'lodash'
 
 ConfigModule.forRoot()
 
-const { EMAIL_USER, EMAIL_PASS, APP_MODE } = process.env
+const { APP_MODE } = process.env
 
 @CommandHandler(IssueInvoiceCommand)
 export class IssueInvoiceService implements ICommandHandler {
@@ -28,36 +32,22 @@ export class IssueInvoiceService implements ICommandHandler {
   async execute(command: IssueInvoiceCommand): Promise<void> {
     const invoice = await this.invoiceRepo.findOneOrThrow(command.invoiceId)
     const organization = await this.organizationRepo.findOneOrThrow(invoice.clientOrganizationId)
-    invoice.issue()
 
-    await this.prisma.integratedOrderModificationHistory.create({
-      data: {
-        entity: 'Invoice',
-        jobId: invoice.id,
-        entityId: invoice.id,
-        modifiedAt: new Date(), // 받아와야함
-        modifiedBy: 'username: ' + command.issuedBy + ' userId: ' + command.issuedByUserId,
-        scopeOrTaskName: invoice.getProps().serviceMonth.toISOString(),
-        attribute: 'Issue History',
-        operation: OrderModificationHistoryOperationEnum.Update,
-        beforeValue: null,
-        afterValue: null,
-        isDateType: false,
-      },
-    })
+    invoice.issue(
+      new InvoiceRecipientEmail({ value: organization.invoiceRecipientEmail! }),
+      command.cc?.map((email) => new EmailVO(email)) || [],
+      new IssuedByUserId({ value: command.issuedByUserId }),
+      new IssuedByUserName({ value: command.issuedByUserName }),
+    )
 
     await this.invoiceRepo.update(invoice)
 
-    // const tieredDiscountField = organization.getProps().isTierDiscount
-    //   ? `volume tier discount: $${invoice.getProps().volumeTierDiscount}`
-    //   : ''
-
-    const to: string[] =
+    // TODO: Refactor
+    const to: string[] = // 이것도 VO에 셋팅되어야할듯
       APP_MODE === 'production'
         ? [organization.getProps().invoiceRecipientEmail || 'hyomin@oj.vision']
         : ['hyomin@oj.vision', 'sangwon@oj.vision']
     const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
-    console.log(textForDev)
 
     const input: IRFIMail = {
       subject: `BarunCorp ${formatDate(invoice.getProps().serviceMonth)} Invoice mail`,
@@ -87,10 +77,10 @@ export class IssueInvoiceService implements ICommandHandler {
         baruncorp.com
       `,
       from: 'automation@baruncorp.com',
-      to: [...to],
-      // cc: [],
+      to: [...to], // TODO: to도 인보이스 엔티티에 있어야할것 같은 느낌
+      cc: invoice.currentCc.map((cc) => cc.email),
       threadId: null,
-      files: command.files,
+      files: command.files || null,
     }
 
     await this.mailer.sendRFI(input)

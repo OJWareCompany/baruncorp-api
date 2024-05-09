@@ -12,7 +12,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
       ...create,
       organizationType: 'client',
       isDelinquent: false,
-      isTierDiscount: true,
+      isTierDiscount: false,
     }
 
     return new OrganizationEntity({ id, props })
@@ -29,6 +29,10 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
 
   get isSpecialRevisionPricing() {
     return this.props.isSpecialRevisionPricing
+  }
+
+  get invoiceRecipientEmail() {
+    return this.props.invoiceRecipientEmail
   }
 
   update(data: {
