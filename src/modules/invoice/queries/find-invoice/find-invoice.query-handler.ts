@@ -9,7 +9,6 @@ import { PrismaService } from '../../../database/prisma.service'
 import { JobEntity } from '../../../ordered-job/domain/job.entity'
 import { InvoiceNotFoundException } from '../../domain/invoice.error'
 import { InvoiceResponseDto } from '../../dtos/invoice.response.dto'
-import { CreditTransactionTypeEnum } from '../../../credit-transaction/domain/credit-transaction.type'
 
 export class FindInvoiceQuery {
   readonly invoiceId: string
@@ -25,6 +24,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
 
   async execute(query: FindInvoiceQuery): Promise<InvoiceResponseDto> {
     const invoice = await this.prismaService.invoices.findUnique({
+      include: { invoiceIssueHistories: true },
       where: { id: query.invoiceId },
     })
     if (!invoice) throw new InvoiceNotFoundException()
@@ -122,6 +122,16 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       totalOfPayment: Number(invoice.paymentTotal),
       issuedAt: invoice.issuedAt,
       currentCc: invoice.currentCc ? invoice.currentCc.split(',') : [],
+      issueHistory: invoice.invoiceIssueHistories.map((history) => {
+        return {
+          invoiceId: history.invoiceId,
+          to: history.to,
+          cc: history.cc?.split(',') || [],
+          issuedAt: history.issuedAt,
+          issuedByUserId: history.issuedByUserId,
+          issuedByUserName: history.issuedByUserName,
+        }
+      }),
     }
   }
 }

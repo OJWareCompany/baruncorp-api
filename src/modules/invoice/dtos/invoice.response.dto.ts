@@ -48,6 +48,30 @@ export class InvoiceClientOrganization {
   name: string
 }
 
+export class IssueHistory {
+  @ApiProperty()
+  readonly invoiceId: string
+
+  @ApiProperty()
+  readonly to: string
+
+  @ApiProperty()
+  readonly cc: string[]
+
+  @ApiProperty()
+  readonly issuedAt: Date
+
+  @ApiProperty()
+  readonly issuedByUserId: string
+
+  @ApiProperty()
+  readonly issuedByUserName: string
+
+  constructor(props: IssueHistory) {
+    initialize(this, props)
+  }
+}
+
 export class InvoiceResponseDto {
   @ApiProperty()
   @IsString()
@@ -126,6 +150,9 @@ export class InvoiceResponseDto {
 
   @ApiProperty()
   readonly currentCc: string[]
+
+  @ApiProperty()
+  readonly issueHistory: IssueHistory[]
 
   constructor(props: InvoiceResponseDto) {
     initialize(this, props)

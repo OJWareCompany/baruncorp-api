@@ -16,6 +16,12 @@ import { IssuedByUserName } from './domain/value-objects/issued-by-user-name.val
 export class InvoiceMapper implements Mapper<InvoiceEntity, InvoiceModel, InvoiceResponseDto> {
   toPersistence(entity: InvoiceEntity): InvoiceModel {
     const props = entity.getProps()
+
+    const currentCc = props.currentCc
+      .filter((cc) => !!cc.email.length)
+      .map((cc) => cc.email)
+      .toString()
+
     const record: InvoiceModel = {
       id: props.id,
       status: props.status,
@@ -36,12 +42,17 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, InvoiceModel, Invoic
       issuedAt: props.issuedAt,
       amountPaid: new Decimal(props.amountPaid),
       appliedCredit: new Decimal(props.appliedCredit),
-      currentCc: props.currentCc.map((cc) => cc.email).toString(),
+      currentCc: !!currentCc.length ? currentCc : null,
       invoiceIssueHistories: props.invoiceIssueHistories.map((history) => {
+        const cc = history.cc
+          .filter((cc) => !!cc.email.length)
+          .map((cc) => cc.email)
+          .toString()
+
         return {
           invoiceId: history.invoiceId,
           to: history.to.value,
-          cc: history.cc.map((cc) => cc.email).toString(),
+          cc: !!cc.length ? cc : null,
           issuedAt: history.issuedAt,
           issuedByUserId: history.issuedByUserId.value,
           issuedByUserName: history.issuedByUserName.value,
@@ -89,6 +100,7 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, InvoiceModel, Invoic
         ),
       },
     })
+
     return entity
   }
 

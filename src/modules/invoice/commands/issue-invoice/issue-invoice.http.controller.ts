@@ -30,11 +30,12 @@ export class IssueInvoiceHttpController {
     const command = new IssueInvoiceCommand({
       invoiceId: param.invoiceId,
       ...request,
-      cc: request.cc,
+      cc: request.cc?.filter((email) => !!email.length) || [],
       issuedByUserName: user.userName.fullName,
       issuedByUserId: user.id,
       files: files,
     })
+
     await this.commandBus.execute(command)
   }
 }

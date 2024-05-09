@@ -37,6 +37,7 @@ export class FindInvoicePaginatedQueryHandler implements IQueryHandler {
       include: {
         organization: true,
         jobs: true,
+        invoiceIssueHistories: true,
       },
       orderBy: { createdAt: 'desc' },
       skip: query.offset,

@@ -61,6 +61,7 @@ export class FindOverdueInvoicePaginatedHttpController {
             totalOfPayment: Number(invoice.paymentTotal),
             issuedAt: invoice.issuedAt,
             currentCc: invoice.currentCc ? invoice.currentCc.split(',') : [],
+            issueHistory: [],
           }
         }),
       ),
