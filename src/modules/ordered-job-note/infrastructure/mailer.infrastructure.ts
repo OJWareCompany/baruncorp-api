@@ -34,6 +34,7 @@ export class RFIMailer {
         requestBody: requestBody,
       })
       .catch((error) => {
+        console.log(error)
         if (error.status === 404) {
           // Todo. 메일 전송 내역에서 해당 threadID를 가진 메일들을 모두 Delete Forever했을 시 해당 ThreadId로 메일 전송 에러 발생
           // Todo. threadId없이 메일을 보내고, 보낸 메일의 threadId를 job의 threadIds에서 보낸 이메일 주소에 대한 threadIds를 교체
@@ -69,7 +70,9 @@ export class RFIMailer {
     const boundary = `boundary-${v4()}`
     const emailLines = []
     emailLines.push(`To: ${input.to}`)
-    emailLines.push(`cc: ${input.cc}`)
+    if (input.cc) {
+      emailLines.push(`cc: ${input.cc}`)
+    }
     emailLines.push(`From: ${input.from}`)
     emailLines.push('Content-type: multipart/mixed; boundary=' + boundary)
     emailLines.push('MIME-Version: 1.0')
