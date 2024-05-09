@@ -49,11 +49,17 @@ export class IssueInvoiceService implements ICommandHandler {
         : ['hyomin@oj.vision', 'sangwon@oj.vision']
     const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
 
+    let clientOrganizationName = organization.name
+
+    if (organization.name[organization.name.length - 1] === '_') {
+      clientOrganizationName = organization.name.slice(0, -1)
+    }
+
     const input: IRFIMail = {
       subject: `BarunCorp ${formatDate(invoice.getProps().serviceMonth)} Invoice mail`,
       text: `
         ${textForDev}
-        Dear ${organization.name},
+        Dear ${clientOrganizationName},
         <br>
         <br>
         Please find your attached invoice for payment, and let us know if you have any questions or concerns. 
@@ -82,8 +88,6 @@ export class IssueInvoiceService implements ICommandHandler {
       threadId: null,
       files: command.files || null,
     }
-
-    console.log(invoice.currentCc)
 
     await this.mailer.sendRFI(input)
   }

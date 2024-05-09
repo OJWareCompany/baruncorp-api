@@ -19,8 +19,7 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
   }
 
   get name() {
-    if (this.props.name[this.props.name.length - 1] === '_') return this.props.name.slice(0, -1)
-    else return this.props.name
+    return this.props.name
   }
 
   get numberOfFreeRevisionCount() {
