@@ -36,7 +36,7 @@ export class InvoiceMapper implements Mapper<InvoiceEntity, InvoiceModel, Invoic
       issuedAt: props.issuedAt,
       amountPaid: new Decimal(props.amountPaid),
       appliedCredit: new Decimal(props.appliedCredit),
-      currentCc: props.currentCc.toString(),
+      currentCc: props.currentCc.map((cc) => cc.email).toString(),
       invoiceIssueHistories: props.invoiceIssueHistories.map((history) => {
         return {
           invoiceId: history.invoiceId,

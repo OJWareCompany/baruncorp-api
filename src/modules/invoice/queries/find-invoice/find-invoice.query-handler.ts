@@ -121,6 +121,7 @@ export class FindInvoiceQueryHandler implements IQueryHandler {
       ].sort((a, b) => new Date(b.paymentDate).getTime() - new Date(a.paymentDate).getTime()),
       totalOfPayment: Number(invoice.paymentTotal),
       issuedAt: invoice.issuedAt,
+      currentCc: invoice.currentCc ? invoice.currentCc.split(',') : [],
     }
   }
 }

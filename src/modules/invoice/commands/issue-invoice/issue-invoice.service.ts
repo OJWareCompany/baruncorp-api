@@ -83,6 +83,8 @@ export class IssueInvoiceService implements ICommandHandler {
       files: command.files || null,
     }
 
+    console.log(invoice.currentCc)
+
     await this.mailer.sendRFI(input)
   }
 }

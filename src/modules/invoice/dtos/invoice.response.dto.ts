@@ -124,6 +124,9 @@ export class InvoiceResponseDto {
   @IsDate()
   readonly issuedAt: Date | null
 
+  @ApiProperty()
+  readonly currentCc: string[]
+
   constructor(props: InvoiceResponseDto) {
     initialize(this, props)
   }

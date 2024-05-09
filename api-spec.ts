@@ -1036,6 +1036,7 @@ export interface InvoiceResponseDto {
   totalOfPayment: number
   /** @format date-time */
   issuedAt: string | null
+  currentCc: string[]
 }
 
 export interface InvoicePaginatedResponseDto {
