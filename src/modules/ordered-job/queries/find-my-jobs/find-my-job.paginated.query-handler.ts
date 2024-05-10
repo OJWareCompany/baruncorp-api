@@ -25,6 +25,11 @@ export class FindMyJobPaginatedQuery extends PaginatedQueryBase {
     field: keyof Pick<OrderedJobs, 'dateSentToClient' | 'completedCancelledDate' | 'dueDate' | 'createdAt'>
     param: 'asc' | 'desc'
   }
+  readonly taskName?: string | null
+  readonly taskAssigneeName?: string | null
+  readonly clientOrganizationName?: string | null
+  readonly dateSentToClientStart?: Date | null
+  readonly dateSentToClientEnd?: Date | null
 
   constructor(props: PaginatedParams<FindMyJobPaginatedQuery>) {
     super(props)
@@ -49,11 +54,22 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.priority && { priority: query.priority }),
       ...(query.isExpedited !== undefined && query.isExpedited !== null && { isExpedited: query.isExpedited }),
       ...(query.inReview !== undefined && query.inReview !== null && { inReview: query.inReview }),
+      ...(query.clientOrganizationName && { clientOrganizationName: { contains: query.clientOrganizationName } }),
       assignedTasks: {
         some: {
           assigneeId: query.userId,
+          ...(query.taskName && { taskName: { contains: query.taskName } }),
+          ...(query.taskAssigneeName && { assigneeName: { contains: query.taskAssigneeName } }),
         },
       },
+
+      ...(query.dateSentToClientStart &&
+        query.dateSentToClientEnd && {
+          dateSentToClient: {
+            gte: query.dateSentToClientStart,
+            lte: query.dateSentToClientEnd,
+          },
+        }),
     }
 
     const myJobs = await this.prismaService.orderedJobs.findMany({

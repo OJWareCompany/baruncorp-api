@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { Transform } from 'class-transformer'
-import { IsString, IsOptional, IsEnum, IsBoolean } from 'class-validator'
+import { Transform, Type } from 'class-transformer'
+import { IsString, IsOptional, IsEnum, IsBoolean, IsDate } from 'class-validator'
 import { ProjectPropertyTypeEnum, MountingTypeEnum } from '../../../project/domain/project.type'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
 import { DESCRIPTION } from '../find-job-paginated/find-job.paginated.request.dto'
@@ -68,4 +68,26 @@ export class FindMyOrderedJobPaginatedRequestDto {
   @IsString()
   @IsOptional()
   readonly propertyOwner?: string | null
+
+  @ApiProperty({ description: DESCRIPTION.using_like })
+  @IsString()
+  @IsOptional()
+  readonly taskName?: string | null
+
+  @ApiProperty({ description: DESCRIPTION.using_like })
+  @IsString()
+  @IsOptional()
+  readonly taskAssigneeName?: string | null
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  @IsOptional()
+  readonly dateSentToClientStart?: Date | null
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  @IsOptional()
+  readonly dateSentToClientEnd?: Date | null
 }

@@ -1,10 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsDate, IsEnum, IsOptional, IsString } from 'class-validator'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../../project/domain/project.type'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../../domain/job.type'
-import { Transform } from 'class-transformer'
+import { Transform, Type } from 'class-transformer'
 import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
-import { PaginatedQueryRequestDto } from '../../../../libs/api/paginated-query.request.dto'
 import { OrderedJobs } from '@prisma/client'
 
 export enum DESCRIPTION {
@@ -17,12 +16,12 @@ export class FindJobPaginatedRequestDto {
   @IsOptional()
   readonly jobName?: string | null
 
-  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
+  @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly projectNumber?: string | null
 
-  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
+  @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly propertyFullAddress?: string | null
@@ -69,10 +68,43 @@ export class FindJobPaginatedRequestDto {
   @IsOptional()
   readonly priority?: OrderedJobsPriorityEnum | null
 
-  @ApiProperty({ default: '', description: DESCRIPTION.using_like })
+  @ApiProperty({ description: DESCRIPTION.using_like })
   @IsString()
   @IsOptional()
   readonly propertyOwner?: string | null
+
+  @ApiProperty({ description: DESCRIPTION.using_like })
+  @IsString()
+  @IsOptional()
+  readonly taskName?: string | null
+
+  @ApiProperty({ description: DESCRIPTION.using_like })
+  @IsString()
+  @IsOptional()
+  readonly taskAssigneeName?: string | null
+
+  @ApiProperty({ description: DESCRIPTION.using_like })
+  @IsString()
+  @IsOptional()
+  readonly clientOrganizationName?: string | null
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  @IsOptional()
+  readonly dateSentToClientStart?: Date | null
+
+  @ApiProperty()
+  @IsDate()
+  @Type(() => Date)
+  @IsOptional()
+  readonly dateSentToClientEnd?: Date | null
+
+  /**
+   * 태스크 이름
+   * 작업자 이름
+   * 보낸 날짜
+   */
 }
 
 enum SortField {

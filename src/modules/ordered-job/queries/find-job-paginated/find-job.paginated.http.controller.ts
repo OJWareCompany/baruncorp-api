@@ -27,16 +27,7 @@ export class FindJobPaginatedHttpController {
     const query = new FindJobPaginatedQuery({
       page: queryParams.page,
       limit: queryParams.limit,
-      jobStatus: request.jobStatus,
-      projectNumber: request.projectNumber,
-      jobName: request.jobName,
-      propertyFullAddress: request.propertyFullAddress,
-      projectPropertyType: request.projectPropertyType,
-      mountingType: request.mountingType,
-      isExpedited: request.isExpedited,
-      propertyOwner: request.propertyOwner,
-      inReview: request.inReview,
-      priority: request.priority,
+      ...request,
       orderBy: orderQuery.sortField &&
         orderQuery.sortDirection && {
           field: orderQuery.sortField,
