@@ -23,16 +23,24 @@ interface PriorityProps {
 
 export class Priority extends ValueObject<PriorityProps> {
   constructor(props: { priority: OrderedJobsPriorityEnum }) {
-    const priorityLevel =
-      props.priority === OrderedJobsPriorityEnum.Immediate
-        ? OrderedJobsPriorityLevelEnum.Immediate
-        : OrderedJobsPriorityEnum.High
-        ? OrderedJobsPriorityLevelEnum.High
-        : OrderedJobsPriorityEnum.Medium
-        ? OrderedJobsPriorityLevelEnum.Medium
-        : OrderedJobsPriorityEnum.Low
-        ? OrderedJobsPriorityLevelEnum.Low
-        : OrderedJobsPriorityLevelEnum.None
+    let priorityLevel
+
+    switch (props.priority) {
+      case OrderedJobsPriorityEnum.Immediate:
+        priorityLevel = OrderedJobsPriorityLevelEnum.Immediate
+        break
+      case OrderedJobsPriorityEnum.High:
+        priorityLevel = OrderedJobsPriorityLevelEnum.High
+        break
+      case OrderedJobsPriorityEnum.Medium:
+        priorityLevel = OrderedJobsPriorityLevelEnum.Medium
+        break
+      case OrderedJobsPriorityEnum.Low:
+        priorityLevel = OrderedJobsPriorityLevelEnum.Low
+        break
+      default:
+        priorityLevel = OrderedJobsPriorityLevelEnum.None
+    }
 
     super({
       name: props.priority,
