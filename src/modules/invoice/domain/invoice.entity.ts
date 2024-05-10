@@ -10,6 +10,11 @@ import { IssuedByUserId } from './value-objects/issued-by-user-id.value-object'
 import { IssuedByUserName } from './value-objects/issued-by-user-name.value-object'
 import { EmailVO } from '../../users/domain/value-objects/email.vo'
 import { InvoiceRecipientEmail } from './value-objects/invoice-recipient-email.value-object'
+import { ConfigModule } from '@nestjs/config'
+
+ConfigModule.forRoot()
+
+const { APP_MODE } = process.env
 
 export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   protected _id: string
@@ -66,7 +71,11 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   }
 
   get currentCc(): EmailVO[] {
-    return this.props.currentCc
+    const currentCc =
+      APP_MODE === 'production'
+        ? this.props.currentCc
+        : this.props.currentCc.filter((cc) => cc.email.endsWith('oj.vision'))
+    return currentCc
   }
 
   async determinePaymentTotalAndStatus(invoiceCalculator: InvoiceCalculator) {

@@ -43,10 +43,12 @@ export class IssueInvoiceService implements ICommandHandler {
     await this.invoiceRepo.update(invoice)
 
     // TODO: Refactor
+    const isDevEmail = organization.getProps().invoiceRecipientEmail?.endsWith('oj.vision')
+    const devEmail = !!isDevEmail ? [organization.getProps().invoiceRecipientEmail!] : ['hyomin@oj.vision']
+
+    // const to: string[] = APP_MODE === 'production' ? this.props.deliverablesEmails : devEmail
     const to: string[] = // 이것도 VO에 셋팅되어야할듯
-      APP_MODE === 'production'
-        ? [organization.getProps().invoiceRecipientEmail || 'hyomin@oj.vision']
-        : ['hyomin@oj.vision', 'sangwon@oj.vision']
+      APP_MODE === 'production' ? [organization.getProps().invoiceRecipientEmail || 'hyomin@oj.vision'] : devEmail
     const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
 
     let clientOrganizationName = organization.name

@@ -173,7 +173,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
   ) {
     await orderStatusChangeValidator.validateJob(this, AutoOnlyJobStatusEnum.Sent_To_Client)
 
-    const to: string[] = APP_MODE === 'production' ? this.props.deliverablesEmails : ['hyomin@oj.vision']
+    const devEmails = this.props.deliverablesEmails.filter((email) => email.endsWith('oj.vision'))
+    const devEmail = devEmails.length ? devEmails : ['hyomin@oj.vision']
+
+    const to: string[] = APP_MODE === 'production' ? this.props.deliverablesEmails : devEmail
     const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
 
     const input: IRFIMail = {

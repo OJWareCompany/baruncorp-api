@@ -43,8 +43,12 @@ export class CreateJobNoteService implements ICommandHandler {
       if (!command.receiverEmails || command.receiverEmails.length === 0) {
         throw new ReceiverEmailsFoundException()
       }
-      const to: string[] =
-        APP_MODE === 'production' ? command.receiverEmails : ['hyomin@oj.vision', 'sangwon@oj.vision']
+
+      const devEmails = command.receiverEmails.filter((email) => email.endsWith('oj.vision'))
+      const devEmail = devEmails.length ? devEmails : ['hyomin@oj.vision']
+
+      const to: string[] = APP_MODE === 'production' ? command.receiverEmails : devEmail
+
       let emailBody: string | null = command.emailBody
       const subject = `[BARUN CORP] Job #${targetJob.jobRequestNumber} ${targetJob.propertyAddress}`
       // Todo. 추후 하드코딩 제거

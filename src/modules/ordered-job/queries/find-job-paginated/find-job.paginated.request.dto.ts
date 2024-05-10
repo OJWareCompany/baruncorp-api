@@ -99,12 +99,6 @@ export class FindJobPaginatedRequestDto {
   @Type(() => Date)
   @IsOptional()
   readonly dateSentToClientEnd?: Date | null
-
-  /**
-   * 태스크 이름
-   * 작업자 이름
-   * 보낸 날짜
-   */
 }
 
 enum SortField {
