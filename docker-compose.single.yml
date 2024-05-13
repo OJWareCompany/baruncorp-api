@@ -38,7 +38,11 @@ services:
     env_file:
       - ./baruncorp-api/.env
     healthcheck:
-      test: wget --spider -T 10 -t 1 https://${API_HOST}/prod/projects || kill 1
+      test:
+        [
+          'CMD-SHELL',
+          'wget --spider -T 10 -t 1 https://${API_HOST}/prod/projects || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/prod/projects 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
+        ]
       interval: 10s
       timeout: 1s
       retries: 1
