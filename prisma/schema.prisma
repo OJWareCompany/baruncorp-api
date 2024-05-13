@@ -1161,15 +1161,16 @@ model InformationHistories {
 
 /// This model or at least one of its fields has comments in the database, and requires an additional setup for migrations: Read more: https://pris.ly/d/database-comments
 model GoogleJobFolder {
-  id                          String  @id @map("id") @db.VarChar(255)
-  shareLink                   String? @map("share_link") @db.VarChar(255)
-  deliverablesFolderId        String? @map("deliverables_folder_id") @db.VarChar(255)
-  deliverablesFolderShareLink String? @map("deliverables_folder_share_link") @db.VarChar(255)
-  jobId                       String? @map("job_id") @db.VarChar(255)
-  jobNotesFolderId            String? @unique(map: "google_job_folder_UN") @map("job_notes_folder_id") @db.VarChar(255)
-  jobNotesFolderShareLink     String? @map("job_notes_folder_share_link") @db.VarChar(255)
-  sharedDriveId               String? @map("shared_drive_id") @db.VarChar(255)
-  count                       Int?    @map("count") @db.UnsignedSmallInt
+  id                          String   @id @map("id") @db.VarChar(255)
+  shareLink                   String?  @map("share_link") @db.VarChar(255)
+  deliverablesFolderId        String?  @map("deliverables_folder_id") @db.VarChar(255)
+  deliverablesFolderShareLink String?  @map("deliverables_folder_share_link") @db.VarChar(255)
+  jobId                       String?  @map("job_id") @db.VarChar(255)
+  jobNotesFolderId            String?  @unique(map: "google_job_folder_UN") @map("job_notes_folder_id") @db.VarChar(255)
+  jobNotesFolderShareLink     String?  @map("job_notes_folder_share_link") @db.VarChar(255)
+  sharedDriveId               String?  @map("shared_drive_id") @db.VarChar(255)
+  count                       Int?     @map("count") @db.UnsignedSmallInt
+  parentless                  Boolean? @default(false)
 
   @@index([sharedDriveId], map: "google_job_folder_google_shared_drive_fkey")
   @@index([jobId], map: "google_job_folder_FK")
@@ -1177,10 +1178,11 @@ model GoogleJobFolder {
 }
 
 model GoogleProjectFolder {
-  id            String  @id @map("id") @db.VarChar(255)
-  shareLink     String? @map("share_link") @db.VarChar(255)
-  projectId     String? @map("project_id") @db.VarChar(255)
-  sharedDriveId String? @map("shared_drive_id") @db.VarChar(255)
+  id            String   @id @map("id") @db.VarChar(255)
+  shareLink     String?  @map("share_link") @db.VarChar(255)
+  projectId     String?  @map("project_id") @db.VarChar(255)
+  sharedDriveId String?  @map("shared_drive_id") @db.VarChar(255)
+  parentless    Boolean? @default(false)
 
   @@index([sharedDriveId], map: "google_project_folder_google_shared_drive_fkey")
   @@index([projectId], map: "google_project_folder_FK")

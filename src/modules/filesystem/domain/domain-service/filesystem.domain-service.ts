@@ -107,6 +107,10 @@ export class FilesystemDomainService {
       googleJobFolderData: {
         id: jobFolder.id,
         shareLink: jobFolder.shareLink,
+        /**
+         * @TODO 'parentless: false' 하드 코딩된거 수정
+         */
+        parentless: false,
         deliverablesFolderId: deliverablesFolder.id,
         deliverablesFolderShareLink: deliverablesFolder.shareLink,
         jobId,
@@ -247,7 +251,7 @@ export class FilesystemDomainService {
   async createGoogleProjectFolder(
     organizationId: string,
     projectId: string,
-    projectPropertyType: string,
+    projectPropertyType: ProjectPropertyTypeEnum,
     projectFullAddress: string,
   ): Promise<{
     googleProjectFolderData: GoogleProjectFolder
@@ -271,8 +275,12 @@ export class FilesystemDomainService {
       )
     }
 
-    const createProjectFolderResponseData = await this.filesystemApiService.requestToCreateProjectFolder({
+    const createProjectFolderResponseData = await this.filesystemApiService.requestToNewCreateProjectFolder({
+      sharedDrive: highVerSharedDrive.organizationName,
+      // TODO: highVerSharedDrive.version은 무조건 string, 데이터베이스 필드 null될 수 없도록 수정할 것
+      sharedDriveVersion: highVerSharedDrive.version as string,
       sharedDriveId: highVerSharedDrive.id,
+      propertyType: projectPropertyType,
       propertyTypeFolderId: propertyTypeFolderId,
       projectName: projectFullAddress,
     })
@@ -281,6 +289,7 @@ export class FilesystemDomainService {
       googleProjectFolderData: {
         id: createProjectFolderResponseData.projectFolder.id,
         shareLink: createProjectFolderResponseData.projectFolder.shareLink,
+        parentless: createProjectFolderResponseData.projectFolder.parentless,
         projectId,
         sharedDriveId: highVerSharedDrive.id,
       },

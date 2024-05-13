@@ -59,12 +59,21 @@ export type CreateGoogleProjectFolderRequestPayload = {
   propertyTypeFolderId: string
   projectName: string
 }
+export type NewCreateGoogleProjectFolderRequestPayload = {
+  sharedDrive: string
+  sharedDriveVersion: string
+  sharedDriveId: string
+  propertyType: string
+  propertyTypeFolderId: string
+  projectName: string
+}
 export type CreateGoogleProjectFolderResponseData = {
   projectFolder: {
     id: string
     name: string
     shareLink: string
     matchedExistingData: boolean
+    parentless: boolean
   }
 }
 export type CreateGoogleProjectFolderResponse = {

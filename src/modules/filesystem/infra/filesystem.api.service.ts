@@ -27,6 +27,7 @@ import {
   GetPropertyTypeFolderResponseData,
   GetSharedDriveIdByFolderIdResponse,
   GetSharedDriveIdByFolderIdResponseData,
+  NewCreateGoogleProjectFolderRequestPayload,
   PostRfiReplyFilesRequestPayload,
   PostRfiReplyFilesResponse,
   PostRfiReplyFilesResponseData,
@@ -160,6 +161,35 @@ export class FilesystemApiService {
         .post(url, {
           json: {
             sharedDriveId,
+            propertyTypeFolderId,
+            projectName,
+          },
+        })
+        .json()
+      return response.data
+    } catch (error: any) {
+      handleFileServerRequestError(error)
+      throw error
+    }
+  }
+
+  async requestToNewCreateProjectFolder({
+    sharedDrive,
+    sharedDriveVersion,
+    sharedDriveId,
+    propertyType,
+    propertyTypeFolderId,
+    projectName,
+  }: NewCreateGoogleProjectFolderRequestPayload): Promise<CreateGoogleProjectFolderResponseData> {
+    try {
+      const url = `${this.baseUrl}/project`
+      const response: CreateGoogleProjectFolderResponse = await got
+        .post(url, {
+          json: {
+            sharedDrive,
+            sharedDriveVersion,
+            sharedDriveId,
+            propertyType,
             propertyTypeFolderId,
             projectName,
           },
