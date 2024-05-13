@@ -36,9 +36,9 @@ export class CreateJobNoteService implements ICommandHandler {
 
     const receiverEmails: string[] = Array.isArray(command.receiverEmails)
       ? command.receiverEmails
-      : [...command.receiverEmails!]
-
+      : [command.receiverEmails!]
     console.log('receiverEmails: ', receiverEmails)
+
     let resData: gmail_v1.Schema$Message | null | undefined = null
     let emailThreadId: string | null = null
 
@@ -92,7 +92,7 @@ export class CreateJobNoteService implements ICommandHandler {
       content: content,
       jobNoteNumber: ++maxJobNoteNumber,
       senderEmail: senderEmail,
-      receiverEmails: command.type === JobNoteTypeEnum.RFI ? command.receiverEmails : null,
+      receiverEmails: command.type === JobNoteTypeEnum.RFI ? [command.receiverEmails!] : null,
       emailThreadId: emailThreadId,
     })
 

@@ -38,7 +38,6 @@ export class CreateJobNoteHttpController {
     @Body() request: CreateJobNoteRequestDto,
     @UploadedFiles() files: Express.Multer.File[],
   ): Promise<CreateJobNoteResponseDto> {
-    console.log(request.receiverEmails)
     const command: CreateJobNoteCommand = new CreateJobNoteCommand({
       jobId: request.jobId,
       creatorUserId: user.id,
