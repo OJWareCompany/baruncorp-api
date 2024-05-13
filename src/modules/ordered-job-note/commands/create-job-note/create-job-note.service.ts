@@ -38,6 +38,7 @@ export class CreateJobNoteService implements ICommandHandler {
       ? command.receiverEmails
       : [...command.receiverEmails!]
 
+    console.log('receiverEmails: ', receiverEmails)
     let resData: gmail_v1.Schema$Message | null | undefined = null
     let emailThreadId: string | null = null
 

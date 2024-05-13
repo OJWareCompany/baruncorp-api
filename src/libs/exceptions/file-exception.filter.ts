@@ -5,6 +5,7 @@ export class FileExceptionFilter implements ExceptionFilter {
   catch(exception: any, host: ArgumentsHost) {
     const ctx = host.switchToHttp()
     const response = ctx.getResponse()
+    console.log(exception)
     // if (exception.code === 'LIMIT_FILE_SIZE') {
     if (exception.response.statusCode === HttpStatus.PAYLOAD_TOO_LARGE) {
       // 파일 용량 제한을 위반했을 경우
