@@ -34,20 +34,24 @@ export class CreateJobNoteService implements ICommandHandler {
 
     const content: string = command.content
 
+    const receiverEmails: string[] = Array.isArray(command.receiverEmails)
+      ? command.receiverEmails
+      : [...command.receiverEmails!]
+
     let resData: gmail_v1.Schema$Message | null | undefined = null
     let emailThreadId: string | null = null
 
     const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
 
     if (command.type === JobNoteTypeEnum.RFI) {
-      if (!command.receiverEmails || command.receiverEmails.length === 0) {
+      if (!receiverEmails || receiverEmails.length === 0) {
         throw new ReceiverEmailsFoundException()
       }
 
-      const devEmails = command.receiverEmails.filter((email) => email.endsWith('oj.vision'))
+      const devEmails = receiverEmails?.filter((email) => email.endsWith('oj.vision'))
       const devEmail = devEmails.length ? devEmails : ['hyomin@oj.vision']
 
-      const to: string[] = APP_MODE === 'production' ? command.receiverEmails : devEmail
+      const to: string[] = APP_MODE === 'production' ? receiverEmails : devEmail
 
       let emailBody: string | null = command.emailBody
       const subject = `[BARUN CORP] Job #${targetJob.jobRequestNumber} ${targetJob.propertyAddress}`
