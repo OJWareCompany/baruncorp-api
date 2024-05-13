@@ -1,0 +1,55 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: ./nginx
+      dockerfile: Dockerfile.nginx
+    command: bash -c "nginx -s reload"
+    restart: always
+    ports:
+      - '80:80'
+      - '443:443'
+    volumes:
+      - ./certbot-etc:/etc/letsencrypt
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./logs:/var/log/nginx
+    healthcheck:
+      # test: wget --spider -T 10 -t 1 https://${API_HOST}/prod/jobs || kill 1
+      test:
+        [
+          'CMD-SHELL',
+          'wget --spider -T 10 -t 1 https://${API_HOST}/prod/jobs || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/prod/jobs 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
+        ]
+      interval: 10s
+      timeout: 1s
+      retries: 1
+
+  api_server:
+    image: ${API_DOCKER_IMAGE_PATH}
+    tty: true
+    restart: always
+    ports:
+      - '3000:3000'
+    command:
+      - bash
+      - -c
+      - |
+        pnpm run start:prod
+    env_file:
+      - ./baruncorp-api/.env
+    healthcheck:
+      test: wget --spider -T 10 -t 1 https://${API_HOST}/prod/projects || kill 1
+      interval: 10s
+      timeout: 1s
+      retries: 1
+
+  certbot:
+    depends_on:
+      - nginx
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - ./certbot-etc:/etc/letsencrypt
+      - ./myweb:/usr/share/nginx/html
+    command: certonly --webroot --webroot-path=/usr/share/nginx/html --email gyals0386@gmail.com --agree-tos --no-eff-email --keep-until-expiring -d ${API_HOST} -d ${API_WWW_HOST}
+# 도메인 설정, 80포트 443포트 33906포트 열어 놓을 것
