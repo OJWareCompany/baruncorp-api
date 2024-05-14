@@ -1,8 +1,13 @@
+import { ConfigModule } from '@nestjs/config'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { OrganizationCreatedDomainEvent } from './events/organization-created.domain-event'
 import { CreateOrganizationProps, OrganizationProps } from './organization.types'
 import { v4 } from 'uuid'
+
+ConfigModule.forRoot()
+const { APP_MODE } = process.env
+
 export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
   protected _id: string
 
@@ -30,8 +35,17 @@ export class OrganizationEntity extends AggregateRoot<OrganizationProps> {
     return this.props.isSpecialRevisionPricing
   }
 
-  get invoiceRecipientEmail() {
-    return this.props.invoiceRecipientEmail
+  get invoiceRecipientEmail(): string {
+    if (!this.props.invoiceRecipientEmail) throw new Error('No Invoice Recipient Email')
+    return APP_MODE === 'production' ? this.props.invoiceRecipientEmail : this.getDevInvoiceRecipientEmail()
+  }
+
+  private getDevInvoiceRecipientEmail(): string {
+    const isDevEmail = !!this.props.invoiceRecipientEmail?.endsWith('oj.vision')
+    if (!!isDevEmail && this.props.invoiceRecipientEmail) {
+      return this.props.invoiceRecipientEmail
+    }
+    return 'hyomin@oj.vision'
   }
 
   update(data: {
