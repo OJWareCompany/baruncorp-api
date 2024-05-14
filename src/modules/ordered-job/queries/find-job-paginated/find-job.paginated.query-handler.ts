@@ -40,6 +40,8 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindJobPaginatedQuery): Promise<Paginated<OrderedJobs>> {
+    const taskName = query.taskName ? { taskName: { contains: query.taskName } } : undefined
+    const assigneeName = query.taskAssigneeName ? { assigneeName: { contains: query.taskAssigneeName } } : undefined
     const condition: Prisma.OrderedJobsWhereInput = {
       ...(query.projectNumber && { project_number: { contains: query.projectNumber } }),
       ...(query.jobName && { jobName: { contains: query.jobName } }),
@@ -61,14 +63,12 @@ export class FindJobPaginatedQueryHandler implements IQueryHandler {
           },
         }),
 
-      ...((query.taskName || query.taskAssigneeName) && {
-        assignedTasks: {
-          some: {
-            ...(query.taskName && { taskName: { contains: query.taskName } }),
-            ...(query.taskAssigneeName && { assigneeName: { contains: query.taskAssigneeName } }),
-          },
-        },
-      }),
+      /**
+       * 검색한 태스크명을 가진 태스크가 포함되었으면서
+       * 검색한 작업자명을 가진 태스크가 포함된 잡
+       * (태스크명+작업자명을 가진 태스크가 포함된 잡을 검색하는게 아님)
+       */
+      AND: [{ assignedTasks: { some: taskName } }, { assignedTasks: { some: assigneeName } }],
     }
 
     const records = await this.prismaService.orderedJobs.findMany({

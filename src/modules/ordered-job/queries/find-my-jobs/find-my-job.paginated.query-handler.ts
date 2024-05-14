@@ -42,6 +42,8 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
   constructor(private readonly prismaService: PrismaService) {}
 
   async execute(query: FindMyJobPaginatedQuery): Promise<Paginated<OrderedJobs>> {
+    const taskName = query.taskName ? { taskName: { contains: query.taskName } } : undefined
+    const assigneeName = query.taskAssigneeName ? { assigneeName: { contains: query.taskAssigneeName } } : undefined
     // TODO: totalCount때문에 풀스캔하게됨
     const condition: Prisma.OrderedJobsWhereInput = {
       ...(query.jobStatus && { jobStatus: query.jobStatus }),
@@ -55,13 +57,12 @@ export class FindMyJobPaginatedQueryHandler implements IQueryHandler {
       ...(query.isExpedited !== undefined && query.isExpedited !== null && { isExpedited: query.isExpedited }),
       ...(query.inReview !== undefined && query.inReview !== null && { inReview: query.inReview }),
       ...(query.clientOrganizationName && { clientOrganizationName: { contains: query.clientOrganizationName } }),
-      assignedTasks: {
-        some: {
-          assigneeId: query.userId,
-          ...(query.taskName && { taskName: { contains: query.taskName } }),
-          ...(query.taskAssigneeName && { assigneeName: { contains: query.taskAssigneeName } }),
-        },
-      },
+
+      AND: [
+        { assignedTasks: { some: { assigneeId: query.userId } } }, // 나의 태스크가 포함 되었으면서
+        { assignedTasks: { some: { ...taskName } } }, // 검색한 문자열을 포함한 태스크명을 가진 태스크가 포함되었으면서
+        { assignedTasks: { some: { ...assigneeName } } }, // 검색한 문자열을 포함한 작업자명을 가진 태스크가 포함되었으면서
+      ],
 
       ...(query.dateSentToClientStart &&
         query.dateSentToClientEnd && {
