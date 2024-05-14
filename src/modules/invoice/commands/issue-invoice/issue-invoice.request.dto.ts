@@ -47,8 +47,14 @@ export class IssueInvoiceRequestDto {
   readonly files: any[]
 
   @ApiProperty({ default: ['hyomin@oj.vision'] })
-  @Transform(({ value }) => processEmails(value))
+  @Transform(({ value }) => {
+    // console.log(value)
+    const result = processEmails(value)
+    // console.log(result)
+    return result
+  })
   // @Transform(({ value }) => (value ? value.split(',') : []))
+  @IsEmail({}, { each: true })
   @IsOptional()
   readonly cc?: string[]
 }
