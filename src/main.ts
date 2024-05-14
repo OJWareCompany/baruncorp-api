@@ -16,13 +16,13 @@ async function bootstrap() {
 
   app.use(new LoggingMiddleware().use)
 
-  app.use(
-    rateLimit({
-      skip: (req, res) => req.path === '/auth/me',
-      windowMs: Number(1000),
-      limit: Number(30),
-    }),
-  )
+  // app.use(
+  //   rateLimit({
+  //     skip: (req, res) => req.path === '/auth/me',
+  //     windowMs: Number(1000),
+  //     limit: Number(30),
+  //   }),
+  // )
 
   app.enableCors({
     origin: '*',
