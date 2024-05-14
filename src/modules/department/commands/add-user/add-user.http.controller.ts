@@ -9,7 +9,6 @@ export class AddUserHttpController {
 
   @Post(':departmentId/add-user')
   async add(@Param() param: AddUserRequestParamDto, @Body() request: AddUserRequestDto) {
-    console.log({ userId: request.userId, departmentId: param.departmentId })
     const command = new AddUserCommand({ userId: request.userId, departmentId: param.departmentId })
     await this.commandBus.execute(command)
   }
