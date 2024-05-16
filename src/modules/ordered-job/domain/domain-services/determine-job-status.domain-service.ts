@@ -26,13 +26,11 @@ export class DetermineJobStatus {
       return JobStatusEnum.Canceled_Invoice
     }
 
-    const isNotStarted = orderedServices.every((os) => os.status === OrderedServiceStatusEnum.Not_Started)
-
-    if (isNotStarted) {
+    if (this.isNotStarted(orderedServices)) {
       return JobStatusEnum.Not_Started
     }
 
-    if (this.isInProgressFn(orderedServices)) {
+    if (this.isInProgress(orderedServices)) {
       return JobStatusEnum.In_Progress
     }
 
@@ -40,25 +38,31 @@ export class DetermineJobStatus {
   }
 
   /**
+   * Not Started 조건
+   * 1. In Progress 혹은 Completed 스코프가 존재하지 않으며 Not Started 스코프가 포함될 때
+   *  -> In Progress 상태가 아니며, Not Started 상태를 포함할 때
+   */
+  isNotStarted(orderedServices: OrderedServiceEntity[]): boolean {
+    const isNotInProgress = !this.isInProgress(orderedServices)
+    const isSomeNotStarted = orderedServices.some((os) => os.status === OrderedServiceStatusEnum.Not_Started)
+    return isNotInProgress && isSomeNotStarted
+  }
+
+  /**
    * In Progress 조건
    * 1. 스코프 일부가 In Progress
-   * 2. Not Started 스코프를 제외한 나머지 스코프가 Job Completed 조건에 부합
+   * 2. Not Started 스코프를 하나 이상 가지며 Not Started 스코프를 제외한 나머지 스코프가 Job Completed 조건에 부합
    */
-  isInProgressFn(orderedServices: OrderedServiceEntity[]): boolean {
-    const inProgressRequiredStatuses: OrderedScopeStatus[] = [
-      OrderedServiceStatusEnum.Canceled,
-      OrderedServiceStatusEnum.Canceled_Invoice,
-      OrderedServiceStatusEnum.Completed,
-      OrderedServiceStatusEnum.Not_Started,
-    ]
-
+  isInProgress(orderedServices: OrderedServiceEntity[]): boolean {
     const someInProgress = orderedServices.some((os) => os.status === OrderedServiceStatusEnum.In_Progress)
 
-    const almostDoneAndSomeNotStarted =
-      orderedServices.every((os) => inProgressRequiredStatuses.includes(os.status)) &&
-      orderedServices.some((os) => os.status === OrderedServiceStatusEnum.Not_Started)
+    const someNotStarted = orderedServices.some((os) => os.status === OrderedServiceStatusEnum.Not_Started)
 
-    return someInProgress || almostDoneAndSomeNotStarted
+    const isDoneWithoutNotStarted =
+      someNotStarted &&
+      this.isCompletion(orderedServices.filter((os) => os.status !== OrderedServiceStatusEnum.Not_Started))
+
+    return someInProgress || isDoneWithoutNotStarted
   }
 
   /**
@@ -90,3 +94,9 @@ export class DetermineJobStatus {
     )
   }
 }
+
+/**
+ * Not Started 스코프가 일부 존재할때
+ * 1. In Progress인 경우 = In Progress 혹은 Completed 스코프가 존재할 때
+ * 2. Not Started인 경우 = In Progress 혹은 Completed 스코프가 존재하지 않을 때
+ */
