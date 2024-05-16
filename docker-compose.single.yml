@@ -37,6 +37,8 @@ services:
         pnpm run start:prod
     env_file:
       - ./baruncorp-api/.env
+    environment:
+      - IMAP_ON_OFF=false
     healthcheck:
       test:
         [
@@ -45,6 +47,25 @@ services:
         ]
       interval: 10s
       timeout: 1s
+      retries: 1
+
+  api_imap:
+    image: ${API_DOCKER_IMAGE_PATH}
+    tty: true
+    restart: always
+    command:
+      - bash
+      - -c
+      - |
+        pnpm run start:prod
+    env_file:
+      - ./baruncorp-api/.env
+    environment:
+      - IMAP_ON_OFF=true
+    healthcheck:
+      test: wget --spider -T 30 -t 1 http://localhost:3000/jobs || kill 1
+      interval: 30s
+      timeout: 30s
       retries: 1
 
   certbot:
