@@ -21,10 +21,6 @@ export class ActivateTaskWhenTaskIsCreatedDomainEventHandler {
   @OnEvent(AssignedTaskCreatedDomainEvent.name, { async: true, promisify: true })
   @GenerateAssignedTaskModificationHistory({ queryScope: 'job', invokedFrom: null })
   async handle(event: AssignedTaskCreatedDomainEvent) {
-    // const assignedTask = await this.assignedTaskRepo.findOneOrThrow(event.aggregateId)
-    // await assignedTask.determineActiveStatus(this.determineActiveStatusService, this.prismaService)
-    // await this.assignedTaskRepo.update(assignedTask)
-
     /**
      * 모든 태스크가 생성된 이후에 활성화 여부를 판단할수있다.
      */

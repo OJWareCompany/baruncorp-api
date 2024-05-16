@@ -31,7 +31,7 @@ import { RejectAssignedTaskHttpController } from './commands/reject-assigned-tas
 import { RejectAssignedTaskService } from './commands/reject-assigned-task/reject-assigned-task.service'
 import { FindRejectedTaskReasonPaginatedQueryHandler } from './queries/find-rejected-task-reason-paginated/find-rejected-task-reason.paginated.query-handler'
 import { ActivateTaskWhenTaskIsCreatedDomainEventHandler } from './application/event-handlers/activate-task-when-task-is-created.domain-event-handler'
-import { ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/activate-other-tasks-when-task-is-completed.domain-event-handler'
+import { ActivateTasksWhenTaskIsUpdatedDomainEventHandler } from './application/event-handlers/activate-tasks-when-task-status-is-updated.domain-event-handler'
 import { DetermineActiveStatusDomainService } from './domain/domain-services/determine-active-status.domain-service'
 import { AssignTaskWhenTaskIsActivatedDomainEventHandler } from './application/event-handlers/assign-task-when-task-is-activated.domain-event-handler'
 import { OrderedServiceModule } from '../ordered-service/ordered-service.module'
@@ -111,7 +111,7 @@ const eventHandlers: Provider[] = [
   HoldAssignedTaskWhenOrderedScopeIsHeldDomainEventHandler,
   UpdateCostWhenOrderedServicePriceIsUpdatedDomainEventHandler,
   UpdateCostWhenTaskIsAssignedDomainEventHandler,
-  ActivateOtherTasksWhenTaskIsCompletedDomainEventHandler,
+  ActivateTasksWhenTaskIsUpdatedDomainEventHandler,
   ActivateTaskWhenTaskIsCreatedDomainEventHandler,
   AssignTaskWhenTaskIsActivatedDomainEventHandler,
   BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler,
