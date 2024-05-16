@@ -233,7 +233,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
   async determineCurrentStatus(determineJobStatus: DetermineJobStatus) {
     // TODO: throw Err if already updated same status
     const resultStatus = await determineJobStatus.determineCurrentStatus(this)
-    console.log('job resultStatus: ', resultStatus)
     if (this.props.jobStatus === resultStatus) {
       throw new JobStatusNotUpdatedException()
     }

@@ -24,9 +24,7 @@ export class UpdateOrderedServiceStatusWhenTaskStatusUpdatedDomainEventHandler {
 
     try {
       await orderedService.determineStatus(this.determineOrderedServiceStatus)
-      console.log('UpdateOrderedServiceStatusWhenTaskStatusUpdatedDomainEventHandler')
       await this.orderedServiceRepo.update(orderedService)
-      console.log('[END] UpdateOrderedServiceStatusWhenTaskStatusUpdatedDomainEventHandler')
     } catch (error) {
       if (error instanceof OrderedServiceStatusNotUpdatedException) return
       throw error
