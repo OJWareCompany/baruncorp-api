@@ -29,6 +29,7 @@ import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import {
   JobMissingDeliverablesEmailException,
+  JobStatusNotUpdatedException,
   NumberOfWetStampBadRequestException,
   SystemSizeBadRequestException,
 } from './job.error'
@@ -37,11 +38,12 @@ import { JobProjectPropertyTypeUpdatedDomainEvent } from './events/job-project-p
 import { JobSystemSizeUpdatedDomainEvent } from './events/job-system-size-updated.domain-event'
 import { JobMountingTypeUpdatedDomainEvent } from './events/job-mounting-type-updated.domain-event'
 import { JobExpeditedStatusUpdatedDomainEvent } from './events/job-expedited-status-updated.domain-event'
-import { CheckCompletionJob } from './domain-services/check-completion-job.domain-service'
 import { JobSentToClientDomainEvent } from './events/job-sent-to-client.domain-event'
 import { OrderedJobsPriorityEnum, Priority } from './value-objects/priority.value-object'
 import { JobPriorityUpdatedDomainEvent } from './events/job-priority-updated.domain-event'
 import { ConfigModule } from '@nestjs/config'
+import { DetermineJobStatus } from './domain-services/determine-job-status.domain-service'
+import { DoneRequiredStatuses } from './value-objects/completion-required-statuses.value-object'
 
 ConfigModule.forRoot()
 const { APP_MODE } = process.env
@@ -190,14 +192,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
     await mailer.sendRFI(input)
     if (this.props.jobStatus !== JobStatusEnum.Canceled_Invoice) {
-      this.props.jobStatus = AutoOnlyJobStatusEnum.Sent_To_Client
+      this.setStatus(AutoOnlyJobStatusEnum.Sent_To_Client)
     }
     this.props.updatedBy = editor.userName.fullName
     this.props.dateSentToClient = new Date()
-    this.props.priority = new Priority({
-      priority: OrderedJobsPriorityEnum.None,
-    })
-    this.addEvent(new JobSentToClientDomainEvent({ aggregateId: this.id }))
     return this
   }
 
@@ -223,66 +221,55 @@ export class JobEntity extends AggregateRoot<JobProps> {
   ): Promise<this> {
     await orderModificationValidator.validateJob(this)
     await orderStatusChangeValidator.validateJob(this, JobStatusEnum.Not_Started)
-    this.props.jobStatus = JobStatusEnum.Not_Started
-    this.addEvent(new JobNotStartedDomainEvent({ aggregateId: this.id }))
+    this.setStatus(JobStatusEnum.Not_Started)
     return this
   }
 
   start(): this {
-    this.props.jobStatus = JobStatusEnum.In_Progress
-    this.addEvent(new JobStartedDomainEvent({ aggregateId: this.id }))
+    this.setStatus(JobStatusEnum.In_Progress)
     return this
   }
 
-  async determineCurrentStatus(checkCompletionJob: CheckCompletionJob) {
-    this.props.jobStatus = await checkCompletionJob.determineCurrentStatus(this)
-    const is: JobStatus[] = [(JobStatusEnum.Canceled, JobStatusEnum.Canceled_Invoice, JobStatusEnum.Completed)]
-    if (is.includes(this.props.jobStatus)) {
+  async determineCurrentStatus(determineJobStatus: DetermineJobStatus) {
+    // TODO: throw Err if already updated same status
+    const resultStatus = await determineJobStatus.determineCurrentStatus(this)
+    console.log('job resultStatus: ', resultStatus)
+    if (this.props.jobStatus === resultStatus) {
+      throw new JobStatusNotUpdatedException()
+    }
+
+    this.setStatus(resultStatus)
+
+    const isDone: JobStatus[] = new DoneRequiredStatuses().value
+    if (isDone.includes(this.props.jobStatus)) {
       this.props.completedCancelledDate = new Date()
     }
     return this
   }
 
   complete(): this {
-    this.props.jobStatus = JobStatusEnum.Completed
+    this.setStatus(JobStatusEnum.Completed)
     this.props.completedCancelledDate = new Date()
-    this.addEvent(
-      new JobCompletedDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
     return this
   }
 
   cancel(): this {
-    this.props.jobStatus = JobStatusEnum.Canceled
+    this.setStatus(JobStatusEnum.Canceled)
     this.props.completedCancelledDate = new Date()
-    this.props.priority = new Priority({
-      priority: OrderedJobsPriorityEnum.None,
-    })
     this.props.canceledAt = new Date()
-    this.addEvent(new JobCanceledDomainEvent({ aggregateId: this.id }))
     return this
   }
 
   cancelAndKeepInvoice(): this {
-    this.props.jobStatus = JobStatusEnum.Canceled_Invoice
+    this.setStatus(JobStatusEnum.Canceled_Invoice)
     this.props.completedCancelledDate = new Date()
-    this.props.priority = new Priority({
-      priority: OrderedJobsPriorityEnum.None,
-    })
     this.props.canceledAt = new Date()
-    this.addEvent(new JobCanceledAndKeptInvoiceDomainEvent({ aggregateId: this.id }))
     return this
   }
 
   hold(user: UserEntity): this {
     this.props.updatedBy = user.userName.fullName
-    this.props.jobStatus = JobStatusEnum.On_Hold
-    this.props.priority = new Priority({
-      priority: OrderedJobsPriorityEnum.Low,
-    })
-    this.addEvent(new JobHeldDomainEvent({ aggregateId: this.id }))
+    this.setStatus(JobStatusEnum.On_Hold)
     return this
   }
 
@@ -325,7 +312,61 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return
   }
 
-  setPriority(priority: Priority) {
+  setStatus(status: JobStatus) {
+    this.props.jobStatus = status
+
+    switch (this.props.jobStatus) {
+      case JobStatusEnum.On_Hold:
+        this.props.priority = new Priority({
+          priority: OrderedJobsPriorityEnum.Low,
+        })
+        this.addEvent(new JobHeldDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.Canceled:
+        this.props.priority = new Priority({
+          priority: OrderedJobsPriorityEnum.None,
+        })
+        this.addEvent(new JobCanceledDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.Canceled_Invoice:
+        this.props.priority = new Priority({
+          priority: OrderedJobsPriorityEnum.None,
+        })
+        this.addEvent(new JobCanceledAndKeptInvoiceDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.Not_Started:
+        this.props.priority = new Priority({
+          priority: OrderedJobsPriorityEnum.None,
+        })
+        this.addEvent(new JobNotStartedDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.In_Progress:
+        this.addEvent(new JobStartedDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.Completed:
+        this.addEvent(
+          new JobCompletedDomainEvent({
+            aggregateId: this.id,
+          }),
+        )
+        break
+
+      case AutoOnlyJobStatusEnum.Sent_To_Client:
+        this.props.priority = new Priority({
+          priority: OrderedJobsPriorityEnum.None,
+        })
+        this.addEvent(new JobSentToClientDomainEvent({ aggregateId: this.id }))
+      default:
+        break
+    }
+  }
+
+  private setPriority(priority: Priority) {
     this.props.priority = priority
     this.addEvent(new JobPriorityUpdatedDomainEvent({ aggregateId: this.id, priority: this.props.priority.name }))
     return this

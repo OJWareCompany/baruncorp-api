@@ -11,8 +11,8 @@ import { ServiceModule } from '../service/service.module'
 import { PrismaModule } from '../database/prisma.module'
 import { UsersModule } from '../users/users.module'
 import { UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler } from './application/event-handlers/update-job-revision-size-when-ordered-service-revision-size-updated.domain-event-handler'
+import { UpdateJobStatusWhenOrderedServiceStatusUpdatedDomainEventHandler } from './application/event-handlers/update-job-status-when-ordered-service-status-updated.domain-event-handler copy'
 import { UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler } from './application/event-handlers/update-pricing-type-when-ordered-service-applied.domain-event-handler'
-import { StartJobWhenOrderedServiceIsStartedDomainEventHandler } from './application/event-handlers/start-job-when-ordered-service-is-started.domain-event-handler'
 import { UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler } from './application/event-handlers/update-invoice-id-when-invoice-is-created.domain-event-handler'
 import { UpdateJobNameWhenProjectIsUpdatedDomainEventHandler } from './application/event-handlers/update-job-name-when-project-is-updated.domain-event-handler'
 import { UpdateDueDateWhenScopeIsOrderedDomainEventHandler } from './application/event-handlers/update-due-date-when-scope-is-ordered.domain-event-handler'
@@ -27,6 +27,7 @@ import { FindJobPaginatedHttpController } from './queries/find-job-paginated/fin
 import { UpdateJobStatusHttpController } from './commands/update-job-status/update-job-status.http.controller'
 import { FindJobToInvoiceQueryHandler } from './queries/find-job-to-invoice/find-job-to-invoice.query-handler'
 import { FindJobPaginatedQueryHandler } from './queries/find-job-paginated/find-job.paginated.query-handler'
+import { JobToInvoiceResponseMapper } from './job-to-invoice.response.mapper'
 import { OrderStatusChangeValidator } from './domain/domain-services/order-status-change-validator.domain-service'
 import { OrderModificationValidator } from './domain/domain-services/order-modification-validator.domain-service'
 import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
@@ -48,11 +49,7 @@ import { CreateJobService } from './commands/create-job/create-job.service'
 import { JOB_REPOSITORY } from './job.di-token'
 import { JobRepository } from './database/job.repository'
 import { JobMapper } from './job.mapper'
-import { CompleteJobWhenOrderedServiceIsCompletedDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-completed.domain-event-handler'
-import { CheckCompletionJob } from './domain/domain-services/check-completion-job.domain-service'
-import { CompleteJobWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
-import { CompleteJobWhenOrderedServiceIsCanceledDomainEventHandler } from './application/event-handlers/complete-job-when-ordered-service-is-canceled.domain-event-handler'
-import { JobToInvoiceResponseMapper } from './job-to-invoice.response.mapper'
+import { DetermineJobStatus } from './domain/domain-services/determine-job-status.domain-service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -82,15 +79,12 @@ const queryHandlers: Provider[] = [
 ]
 const eventHandlers: Provider[] = [
   UpdateJobNameWhenProjectIsUpdatedDomainEventHandler,
-  StartJobWhenOrderedServiceIsStartedDomainEventHandler,
   UpdateJobRevisionSizeWhenOrderedServiceRevisionSizeUpdatedDomainEventHandler,
   UpdatePricingTypeWhenOrderedServiceAppliedDomainEventHandler,
   UpdateInvoiceIdWhenInvoiceIsCreatedDomainEventHandler,
   UpdateDueDateWhenScopeIsOrderedDomainEventHandler,
   UpdateProjectPropertyTypeWhenProjectIdUpdatedDomainEventHandler,
-  CompleteJobWhenOrderedServiceIsCompletedDomainEventHandler,
-  CompleteJobWhenOrderedServiceIsCanceledDomainEventHandler,
-  CompleteJobWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler,
+  UpdateJobStatusWhenOrderedServiceStatusUpdatedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: JOB_REPOSITORY, useClass: JobRepository }]
 const mappers: Provider[] = [JobMapper, JobResponseMapper, JobToInvoiceResponseMapper]
@@ -100,7 +94,7 @@ const domainServices: Provider[] = [
   OrderStatusChangeValidator,
   OrderModificationValidator,
   OrderDeletionValidator,
-  CheckCompletionJob,
+  DetermineJobStatus,
 ]
 
 @Module({

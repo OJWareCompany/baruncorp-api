@@ -6,7 +6,6 @@ import { UpdateOrderedServiceToNotStartedWhenJobIsStartedDomainEventHandler } fr
 import { UpdateOrderedServicePriceWhenTaskDurationUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-service-price-when-task-duration-updated.domain-event-handler'
 import { DeleteOrderedServiceWhenJobIsDeletedDomainServiceHandler } from './application/event-handlers/delete-ordered-service-when-job-is-deleted.domain-service-handler'
 import { CancelOrderedServiceWhenJobIsCanceledDomainEventHandler } from './application/event-handlers/cancel-ordered-service-when-job-is-canceled.domain-event-handler'
-import { StartOrderedServiceWhenTaskIsAssignedDomainEventHandler } from './application/event-handlers/start-ordered-service-when-task-is-assigned.domain-event-handler'
 import { HoldOrderedServiceWhenJobIsHeldDomainEventHandler } from './application/event-handlers/hold-ordered-service-when-job-is-held.domain-event-handler'
 import { CreateOrderedServiceWhenJobIsCreatedEventHandler } from './application/event-handlers/create-ordered-service-when-job-is-created.domain-event-handler'
 import { FindOrderedServicePaginatedHttpController } from './queries/find-ordered-service-paginated/find-ordered-service-paginated.http.controller'
@@ -17,7 +16,6 @@ import { UpdateOrderedScopeStatusHttpController } from './command/update-ordered
 import { UpdateOrderedServiceHttpController } from './command/update-ordered-service/update-ordered-service.http.controller'
 import { CreateOrderedServiceHttpController } from './command/create-ordered-service/create-ordered-service.http.controller'
 import { SameScopeCompletionOrderCalculator } from './domain/domain-services/same-scope-completion-order-calculator.domain-service'
-import { OrderedScopeStatusChangeValidator } from './domain/domain-services/check-all-related-tasks-completed.domain-service'
 import { FindOrderedServiceHttpController } from './queries/find-ordered-service/find-ordered-service.http.controller'
 import { UpdateRevisionSizeHttpController } from './command/update-revision-size/update-revision-size.http.controller'
 import { UpdateManualPriceHttpController } from './command/update-manual-price/update-manual-price.http.controller'
@@ -46,7 +44,8 @@ import { DuplicatedScopeChecker } from './domain/domain-services/duplicated-scop
 import { ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-job-system-size-is-updated.domain-service'
 import { ResetOrderedServicePriceWhenMountingTypeIsUpdatedDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-mounting-type-is-updated.domain-service'
 import { ResetOrderedServicePriceWhenJobIsSentToClientDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-job-is-sent-to-client.domain-service'
-import { CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler } from './application/event-handlers/complete-ordered-service-when-task-is-completed.domain-event-handler'
+import { UpdateOrderedServiceStatusWhenTaskStatusUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-service-status-when-task-status-is-updated.domain-event-handler'
+import { DetermineOrderedServiceStatus } from './domain/domain-services/determine-ordered-service-status.domain-service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,
@@ -70,7 +69,6 @@ const queryHandlers: Provider[] = [
   FindOrderedServicePaginatedQueryHandler,
 ]
 const eventHandlers: Provider[] = [
-  StartOrderedServiceWhenTaskIsAssignedDomainEventHandler,
   CreateOrderedServiceWhenJobIsCreatedEventHandler,
   CancelOrderedServiceWhenJobIsCanceledDomainEventHandler,
   CancelOrderedServiceWhenJobIsCanceledAndKeptInvoiceDomainEventHandler,
@@ -82,18 +80,18 @@ const eventHandlers: Provider[] = [
   ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandler,
   ResetOrderedServicePriceWhenMountingTypeIsUpdatedDomainEventHandler,
   ResetOrderedServicePriceWhenJobIsSentToClientDomainEventHandler,
-  CompleteOrderedServiceWhenTaskIsCompletedDomainEventHandler,
+  UpdateOrderedServiceStatusWhenTaskStatusUpdatedDomainEventHandler,
 ]
 const repositories: Provider[] = [{ provide: ORDERED_SERVICE_REPOSITORY, useClass: OrderedServiceRepository }]
 
 const domainServices: Provider[] = [
   ServiceInitialPriceManager,
-  OrderedScopeStatusChangeValidator,
   RevisionTypeUpdateValidationDomainService,
   ScopeRevisionChecker,
   SameScopeCompletionOrderCalculator,
   TieredPricingCalculator,
   DuplicatedScopeChecker,
+  DetermineOrderedServiceStatus,
 ]
 
 const mappers: Provider[] = [OrderedServiceMapper]

@@ -36,7 +36,7 @@ export class UpdateOrderedScopeStatusService implements ICommandHandler {
 
     switch (command.status) {
       case OrderedServiceStatusEnum.Not_Started:
-        orderedScope.backToNotStarted('manually')
+        orderedScope.backToNotStarted({ invokedBy: 'manually' })
         break
       case OrderedServiceStatusEnum.In_Progress:
         orderedScope.start()

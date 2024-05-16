@@ -15,7 +15,7 @@ export class UpdateOrderedServiceToNotStartedWhenJobIsStartedDomainEventHandler 
   @GenerateOrderedScopeModificationHistory({ invokedFrom: 'job' })
   async handle(event: JobStartedDomainEvent) {
     const orderedServices = await this.orderedServiceRepo.findBy({ jobId: event.aggregateId })
-    orderedServices.map((orderedService) => orderedService.backToNotStarted(event))
+    orderedServices.map((orderedService) => orderedService.backToNotStarted({ invokedBy: 'job' }))
     await this.orderedServiceRepo.update(orderedServices)
   }
 }

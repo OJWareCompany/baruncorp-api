@@ -5,10 +5,8 @@ import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { MountingTypeEnum, ProjectPropertyTypeEnum } from '../../project/domain/project.type'
 import { JobCanceledAndKeptInvoiceDomainEvent } from '../../ordered-job/domain/events/job-canceled-and-kept-invoice.domain-event'
 import { OrderModificationValidator } from '../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
-import { JobNotStartedDomainEvent } from '../../ordered-job/domain/events/job-not-started.domain-event'
 import { JobCanceledDomainEvent } from '../../ordered-job/domain/events/job-canceled.domain-event'
 import { OrderDeletionValidator } from '../../ordered-job/domain/domain-services/order-deletion-validator.domain-service'
-import { JobStartedDomainEvent } from '../../ordered-job/domain/events/job-started.domain-event'
 import {
   JobSendableToClientPriceNotSetException,
   JobSendableToClientScopesInCompletedException,
@@ -24,7 +22,6 @@ import { OrderedServiceCanceledDomainEvent } from './events/ordered-service-canc
 import { OrderedServiceCreatedDomainEvent } from './events/ordered-service-created.domain-event'
 import { OrderedServiceDeletedDomainEvent } from './events/ordered-service-deleted.domain-event'
 import { OrderedServiceStartedDomainEvent } from './events/ordered-service-started.domain-event'
-import { OrderedServiceResetDomainEvent } from './events/ordered-service-reset.domain-event'
 import { OrderedServiceHeldDomainEvent } from './events/ordered-service-held.domain-event'
 import { ServiceInitialPriceManager } from './ordered-service-manager.domain-service'
 import { TieredPricingCalculator } from './domain-services/tiered-pricing-calculator.domain-service'
@@ -41,14 +38,12 @@ import {
 import {
   OrderedScopeConflictException,
   OrderedServiceFreeRevisionManualPriceUpdateException,
-  OrderedServiceHoldableException,
   OrderedServiceInvalidRevisionSizeForManualPriceUpdateException,
   OrderedServiceRevisionTypeNotEnteredException,
 } from './ordered-service.error'
 import { DuplicatedScopeChecker } from './domain-services/duplicated-scope-checker.domain-service'
-import { PricingTypeEnum } from '../../invoice/dtos/invoice.response.dto'
-import { ServicePricingTypeEnum } from '../../service/domain/service.type'
-import { CustomPricingTypeEnum } from '../../custom-pricing/commands/create-custom-pricing/create-custom-pricing.command'
+import { OrderedServiceStatusUpdatedDomainEvent } from './events/ordered-service-status-updated.domain-event'
+import { DetermineOrderedServiceStatus } from './domain-services/determine-ordered-service-status.domain-service'
 
 export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
   protected _id: string
@@ -334,128 +329,6 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
-  cancel(option: JobCanceledDomainEvent | JobCanceledAndKeptInvoiceDomainEvent | 'manually'): this {
-    const permittedAutoUpdateStatus = [
-      OrderedServiceStatusEnum.In_Progress,
-      OrderedServiceStatusEnum.Not_Started,
-      AutoOnlyOrderedServiceStatusEnum.On_Hold,
-    ]
-    const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
-    if (option !== 'manually' && !isIncludedFromAutoUpdate) {
-      // throw new OrderedServiceAutoCancelableException()
-      return this
-    }
-
-    this.props.status = OrderedServiceStatusEnum.Canceled
-    this.props.doneAt = new Date()
-    this.addEvent(
-      new OrderedServiceCanceledDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
-    this.freeCost()
-    return this
-  }
-
-  cancelAndKeepInvoice() {
-    this.props.status = OrderedServiceStatusEnum.Canceled_Invoice
-    this.props.doneAt = null
-    this.addEvent(
-      new OrderedServiceCanceledAndKeptInvoiceDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
-    return this
-  }
-
-  backToNotStarted(option: JobNotStartedDomainEvent | JobStartedDomainEvent | 'manually'): this {
-    const permittedAutoUpdateStatus: OrderedScopeStatus[] = [
-      // OrderedServiceStatusEnum.Canceled,
-      AutoOnlyOrderedServiceStatusEnum.On_Hold,
-    ]
-    const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
-    if (option !== 'manually' && !isIncludedFromAutoUpdate) {
-      // throw new OrderedServiceAutoStartableException()
-      return this
-    }
-    this.props.status = OrderedServiceStatusEnum.Not_Started
-    this.props.doneAt = null
-    this.addEvent(
-      new OrderedServiceBackToNotStartedDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
-    return this
-  }
-
-  hold() {
-    const invalidStatus = [
-      OrderedServiceStatusEnum.Canceled,
-      OrderedServiceStatusEnum.Canceled_Invoice,
-      OrderedServiceStatusEnum.Completed,
-      AutoOnlyOrderedServiceStatusEnum.On_Hold,
-    ]
-
-    if (invalidStatus.includes(this.props.status)) {
-      // throw new OrderedServiceHoldableException()
-      return
-    }
-
-    this.props.status = AutoOnlyOrderedServiceStatusEnum.On_Hold
-    this.addEvent(
-      new OrderedServiceHeldDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
-    return this
-  }
-
-  start() {
-    this.props.status = OrderedServiceStatusEnum.In_Progress
-    this.addEvent(
-      new OrderedServiceStartedDomainEvent({
-        aggregateId: this.id,
-        jobId: this.jobId,
-      }),
-    )
-    return this
-  }
-
-  reset() {
-    this.props.status = OrderedServiceStatusEnum.Not_Started
-    this.props.sizeForRevision = null
-    // this.props.price = null
-
-    this.addEvent(
-      new OrderedServiceResetDomainEvent({
-        aggregateId: this.id,
-      }),
-    )
-    return 1
-  }
-
-  // async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator): Promise<this> {
-  async validateAndComplete(): Promise<this> {
-    if (this.isRevision && !this.isRevisionTypeEntered) {
-      throw new OrderedServiceRevisionTypeNotEnteredException()
-    }
-    // await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
-    this.complete()
-    return this
-  }
-
-  private async complete(): Promise<this> {
-    this.props.status = OrderedServiceStatusEnum.Completed
-    this.props.doneAt = new Date()
-    this.addEvent(
-      new OrderedServiceCompletedDomainEvent({
-        aggregateId: this.id,
-        jobId: this.props.jobId,
-      }),
-    )
-    return this
-  }
-
   async setTieredPrice(tieredPricingCalculator: TieredPricingCalculator): Promise<this> {
     if (this.props.isManualPrice) return this
     if (await tieredPricingCalculator.isTieredPricingScope(this)) {
@@ -541,6 +414,171 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     const units: number = (hoursWorked * 60) / minutesPerUnit
     const totalCost: number = units * costPerUnit
     return totalCost
+  }
+
+  async determineStatus(determineOrderedServiceStatus: DetermineOrderedServiceStatus): Promise<void> {
+    const status = await determineOrderedServiceStatus.determine(this)
+
+    if (this.props.status === status) {
+      throw new Error()
+    }
+
+    if (status === OrderedServiceStatusEnum.Completed) {
+      this.validateAndComplete()
+    }
+
+    if (status === OrderedServiceStatusEnum.Not_Started) {
+      this.backToNotStarted({ invokedBy: 'task' })
+    }
+
+    if (status === OrderedServiceStatusEnum.In_Progress) {
+      this.start()
+    }
+
+    if (status === AutoOnlyOrderedServiceStatusEnum.On_Hold) {
+      // 태스크를 취소하는 것이 아닌, Scope를 On Hold 하도록 한다.
+    }
+
+    if (status === OrderedServiceStatusEnum.Canceled) {
+      /**
+       * 태스크를 취소하는 것이 아닌, Scope를 Canceled 하도록 한다.
+       * 1. 태스크가 전부 취소 상태일 때 인보이스 여부를 알 수 없다.
+       */
+    }
+  }
+
+  private setStatus(status: OrderedServiceStatusEnum | AutoOnlyOrderedServiceStatusEnum) {
+    this.props.status = status
+    this.addEvent(new OrderedServiceStatusUpdatedDomainEvent({ aggregateId: this.id }))
+
+    switch (this.props.status) {
+      case OrderedServiceStatusEnum.Not_Started:
+        this.addEvent(
+          new OrderedServiceBackToNotStartedDomainEvent({
+            aggregateId: this.id,
+          }),
+        )
+        break
+
+      case OrderedServiceStatusEnum.In_Progress:
+        this.addEvent(
+          new OrderedServiceStartedDomainEvent({
+            aggregateId: this.id,
+            jobId: this.jobId,
+          }),
+        )
+        break
+
+      case OrderedServiceStatusEnum.Completed:
+        this.addEvent(
+          new OrderedServiceCompletedDomainEvent({
+            aggregateId: this.id,
+            jobId: this.props.jobId,
+          }),
+        )
+        break
+
+      case OrderedServiceStatusEnum.Canceled:
+        this.addEvent(
+          new OrderedServiceCanceledDomainEvent({
+            aggregateId: this.id,
+          }),
+        )
+        break
+
+      case OrderedServiceStatusEnum.Canceled_Invoice:
+        this.addEvent(
+          new OrderedServiceCanceledAndKeptInvoiceDomainEvent({
+            aggregateId: this.id,
+          }),
+        )
+        break
+
+      case AutoOnlyOrderedServiceStatusEnum.On_Hold:
+        this.addEvent(
+          new OrderedServiceHeldDomainEvent({
+            aggregateId: this.id,
+          }),
+        )
+        break
+    }
+  }
+
+  cancel(option: JobCanceledDomainEvent | JobCanceledAndKeptInvoiceDomainEvent | 'manually'): this {
+    const permittedAutoUpdateStatus = [
+      OrderedServiceStatusEnum.In_Progress,
+      OrderedServiceStatusEnum.Not_Started,
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
+    ]
+    const isIncludedFromAutoUpdate = permittedAutoUpdateStatus.includes(this.props.status)
+    if (option !== 'manually' && !isIncludedFromAutoUpdate) {
+      // throw new OrderedServiceAutoCancelableException()
+      return this
+    }
+
+    this.setStatus(OrderedServiceStatusEnum.Canceled)
+    this.props.doneAt = new Date()
+    this.freeCost()
+    return this
+  }
+
+  cancelAndKeepInvoice() {
+    this.setStatus(OrderedServiceStatusEnum.Canceled_Invoice)
+    this.props.doneAt = null
+    return this
+  }
+
+  backToNotStarted(option: { invokedBy: 'job' | 'task' | 'manually' }): this {
+    const permittedAutoUpdateStatusWhenInvokedByJob: OrderedScopeStatus[] = [
+      // OrderedServiceStatusEnum.Canceled,
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
+    ]
+    const isIncludedFromAutoUpdate = permittedAutoUpdateStatusWhenInvokedByJob.includes(this.props.status)
+    if (option.invokedBy === 'job' && !isIncludedFromAutoUpdate) {
+      return this
+    }
+
+    this.setStatus(OrderedServiceStatusEnum.Not_Started)
+    this.props.doneAt = null
+    return this
+  }
+
+  hold() {
+    const invalidStatus = [
+      OrderedServiceStatusEnum.Canceled,
+      OrderedServiceStatusEnum.Canceled_Invoice,
+      OrderedServiceStatusEnum.Completed,
+      AutoOnlyOrderedServiceStatusEnum.On_Hold,
+    ]
+
+    if (invalidStatus.includes(this.props.status)) {
+      // throw new OrderedServiceHoldableException()
+      return
+    }
+
+    this.setStatus(AutoOnlyOrderedServiceStatusEnum.On_Hold)
+    return this
+  }
+
+  start() {
+    this.setStatus(OrderedServiceStatusEnum.In_Progress)
+    return this
+  }
+
+  // async validateAndComplete(orderedScopeStatusChangeValidator: OrderedScopeStatusChangeValidator): Promise<this> {
+  async validateAndComplete(): Promise<this> {
+    if (this.isRevision && !this.isRevisionTypeEntered) {
+      throw new OrderedServiceRevisionTypeNotEnteredException()
+    }
+    // await orderedScopeStatusChangeValidator.validate(this, OrderedServiceStatusEnum.Completed)
+    this.complete()
+    return this
+  }
+
+  private async complete(): Promise<this> {
+    this.setStatus(OrderedServiceStatusEnum.Completed)
+    this.props.doneAt = new Date()
+    return this
   }
 
   async determinePriceWhenInvoice(tieredPricingCalculator: TieredPricingCalculator): Promise<this> {

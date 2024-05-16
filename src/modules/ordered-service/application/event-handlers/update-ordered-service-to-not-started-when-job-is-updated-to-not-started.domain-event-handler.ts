@@ -16,7 +16,7 @@ export class UpdateOrderedServiceToNotStartedWhenJobIsUpdatedToNotStartedDomainE
   async handle(event: JobNotStartedDomainEvent) {
     const orderedServices = await this.orderedServiceRepo.findBy({ jobId: event.aggregateId })
 
-    orderedServices.map((orderedService) => orderedService.backToNotStarted(event))
+    orderedServices.map((orderedService) => orderedService.backToNotStarted({ invokedBy: 'job' }))
     await this.orderedServiceRepo.update(orderedServices)
   }
 }

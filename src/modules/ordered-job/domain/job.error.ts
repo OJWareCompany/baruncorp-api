@@ -82,3 +82,9 @@ export class JobPendingException extends UnprocessableEntityException {
     super('There are pending tasks, please try again.', '40015')
   }
 }
+
+export class JobStatusNotUpdatedException extends UnprocessableEntityException {
+  constructor() {
+    super('Job status update failed as it is already in the desired state.', '40016')
+  }
+}

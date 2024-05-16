@@ -105,3 +105,9 @@ export class OrderedServiceRevisionTypeNotEnteredException extends Unprocessable
     super('The Revision Scope can be updated to a completed status after entering the Revision Type.', '40316')
   }
 }
+
+export class OrderedServiceStatusNotUpdatedException extends UnprocessableEntityException {
+  constructor() {
+    super('Ordered service status update failed as it is already in the desired state.', '40317')
+  }
+}
