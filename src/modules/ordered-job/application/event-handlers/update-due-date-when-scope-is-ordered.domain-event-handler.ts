@@ -7,6 +7,7 @@ import { JobRepositoryPort } from '../../database/job.repository.port'
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
 import { GenerateJobModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/job-modification-history.decorator'
+import { DetermineJobStatus } from '../../domain/domain-services/determine-job-status.domain-service'
 
 /**
  * 처음에 주문 했을때 due date를 이미 입력했다면 due date는 고정된다.
@@ -22,12 +23,14 @@ export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
     @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
     private readonly totalDurationCalculator: TotalDurationCalculator,
+    private readonly checkCompletionJob: DetermineJobStatus,
   ) {}
   @OnEvent(OrderedServiceCreatedDomainEvent.name, { async: true, promisify: true })
   @GenerateJobModificationHistory({ invokedFrom: 'scope' })
   async handle(event: OrderedServiceCreatedDomainEvent): Promise<void> {
     const job = await this.jobRepo.findJobOrThrow(event.jobId)
     const dueDate = await this.totalDurationCalculator.calcDueDate(job)
+    await job.determineCurrentStatus(this.checkCompletionJob)
     job.updateDueDate(dueDate)
     await this.jobRepo.update(job)
   }

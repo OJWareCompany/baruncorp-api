@@ -40,12 +40,12 @@ import { ServiceModule } from '../service/service.module'
 import { PrismaModule } from '../database/prisma.module'
 import { UsersModule } from '../users/users.module'
 import { JobModule } from '../ordered-job/job.module'
-import { DuplicatedScopeChecker } from './domain/domain-services/duplicated-scope-checker.domain-service'
 import { ResetOrderedServicePriceWhenJobSystemSizeIsUpdatedDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-job-system-size-is-updated.domain-service'
 import { ResetOrderedServicePriceWhenMountingTypeIsUpdatedDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-mounting-type-is-updated.domain-service'
-import { ResetOrderedServicePriceWhenJobIsSentToClientDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-job-is-sent-to-client.domain-service'
 import { UpdateOrderedServiceStatusWhenTaskStatusUpdatedDomainEventHandler } from './application/event-handlers/update-ordered-service-status-when-task-status-is-updated.domain-event-handler'
+import { ResetOrderedServicePriceWhenJobIsSentToClientDomainEventHandler } from './application/event-handlers/reset-ordered-service-price-when-job-is-sent-to-client.domain-service'
 import { DetermineOrderedServiceStatus } from './domain/domain-services/determine-ordered-service-status.domain-service'
+import { DuplicatedScopeChecker } from './domain/domain-services/duplicated-scope-checker.domain-service'
 
 const httpControllers = [
   CreateOrderedServiceHttpController,

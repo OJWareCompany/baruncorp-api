@@ -22,7 +22,6 @@ export class UpdateJobStatusWhenOrderedServiceStatusUpdatedDomainEventHandler {
   async handle(event: OrderedServiceStatusUpdatedDomainEvent) {
     const orderedService = await this.orderedServiceRepo.findOneOrThrow(event.aggregateId)
     const job = await this.jobRepository.findJobOrThrow(orderedService.jobId)
-    console.log('job event handler')
     try {
       await job.determineCurrentStatus(this.checkCompletionJob)
       await this.jobRepository.update(job)
