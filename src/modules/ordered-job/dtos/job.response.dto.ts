@@ -233,6 +233,9 @@ export class JobResponseDto {
   @IsString()
   shareLink: string | null
 
+  @ApiProperty({ example: false })
+  parentlessFolder?: boolean
+
   constructor(props: JobResponseDto) {
     initialize(this, props)
   }

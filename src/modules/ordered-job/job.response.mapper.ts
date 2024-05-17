@@ -178,6 +178,7 @@ export class JobResponseMapper {
       // isManualDueDate: job.isManualDueDate,
       jobFolderId: jobFolder?.id ?? null,
       shareLink: jobFolder?.shareLink ?? null,
+      parentlessFolder: jobFolder?.parentless ?? false,
       inReview: job.inReview,
       priority: job.priority as OrderedJobsPriorityEnum,
       priorityLevel: job.priorityLevel,

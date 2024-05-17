@@ -87,6 +87,7 @@ export class FindProjectDetailHttpController {
 
     response.projectFolderId = result.projectFolderId ?? null
     response.shareLink = result.shareLink ?? null
+    response.parentlessFolder = result.parentless ?? false
 
     return response
   }

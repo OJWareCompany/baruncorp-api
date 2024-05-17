@@ -441,28 +441,28 @@ export interface OrderedServiceResponseFields {
   sizeForRevision: 'Major' | 'Minor' | null
   serviceName: string
   pricingType:
-    | 'Base Residential New Price'
-    | 'Base Residential GM Price'
-    | 'Base Residential Revision Price'
-    | 'Base Residential Revision GM Price'
-    | 'Base Commercial New Price'
-    | 'Base Commercial GM Price'
-    | 'Base Commercial Revision Price'
-    | 'Base Commercial Revision GM Price'
-    | 'Base Fixed Price'
-    | 'Custom Residential New Price'
-    | 'Custom Residential GM Price'
-    | 'Custom Residential New Flat Price'
-    | 'Custom Residential GM Flat Price'
-    | 'Custom Residential Revision Price'
-    | 'Custom Residential Revision GM Price'
-    | 'Custom Commercial New Price'
-    | 'Custom Commercial GM Price'
-    | 'Custom Fixed Price'
-    | 'Custom Special Revision Price'
-    | 'Custom Special Revision Free'
-    | 'Base Minor Revision Free'
-    | 'No Pricing Type'
+  | 'Base Residential New Price'
+  | 'Base Residential GM Price'
+  | 'Base Residential Revision Price'
+  | 'Base Residential Revision GM Price'
+  | 'Base Commercial New Price'
+  | 'Base Commercial GM Price'
+  | 'Base Commercial Revision Price'
+  | 'Base Commercial Revision GM Price'
+  | 'Base Fixed Price'
+  | 'Custom Residential New Price'
+  | 'Custom Residential GM Price'
+  | 'Custom Residential New Flat Price'
+  | 'Custom Residential GM Flat Price'
+  | 'Custom Residential Revision Price'
+  | 'Custom Residential Revision GM Price'
+  | 'Custom Commercial New Price'
+  | 'Custom Commercial GM Price'
+  | 'Custom Fixed Price'
+  | 'Custom Special Revision Price'
+  | 'Custom Special Revision Free'
+  | 'Base Minor Revision Free'
+  | 'No Pricing Type'
   isRevision: boolean
   description: string | null
   price: number | null
@@ -518,13 +518,13 @@ export interface JobResponseDto {
   jobRequestNumber: number
   /** @example "In Progress" */
   jobStatus:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Canceled (Invoice)'
-    | 'Sent To Client'
+  | 'Not Started'
+  | 'In Progress'
+  | 'On Hold'
+  | 'Canceled'
+  | 'Completed'
+  | 'Canceled (Invoice)'
+  | 'Sent To Client'
   /** @example "Self" */
   loadCalcOrigin: 'Self' | 'Client Provided'
   assignedTasks: AssignedTaskResponseDto[]
@@ -1871,12 +1871,12 @@ export interface Engineering {
   ofWetStamps: string | null
   /** @default "ANSI B (11x17 INCH)" */
   wetStampSize:
-    | 'ANSI A (8.5x11 INCH)'
-    | 'ANSI B (11x17 INCH)'
-    | 'ANSI D (22x34 INCH)'
-    | 'ARCH D (24x36 INCH)'
-    | 'See Notes'
-    | null
+  | 'ANSI A (8.5x11 INCH)'
+  | 'ANSI B (11x17 INCH)'
+  | 'ANSI D (22x34 INCH)'
+  | 'ARCH D (24x36 INCH)'
+  | 'See Notes'
+  | null
   /** @default "engineeringNotes..." */
   engineeringNotes: string | null
 }
@@ -3026,14 +3026,14 @@ export interface FindJobPaginatedHttpControllerFindJobParams {
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
   jobStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Canceled (Invoice)'
-    | 'Sent To Client'
-    | null
+  | 'Not Started'
+  | 'In Progress'
+  | 'On Hold'
+  | 'Canceled'
+  | 'Completed'
+  | 'Canceled (Invoice)'
+  | 'Sent To Client'
+  | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -3090,14 +3090,14 @@ export interface FindMyJobPaginatedHttpControllerFindJobParams {
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
   jobStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Canceled (Invoice)'
-    | 'Sent To Client'
-    | null
+  | 'Not Started'
+  | 'In Progress'
+  | 'On Hold'
+  | 'Canceled'
+  | 'Completed'
+  | 'Canceled (Invoice)'
+  | 'Sent To Client'
+  | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -3179,14 +3179,14 @@ export interface FindMyOrderedJobPaginatedHttpControllerFindJobParams {
   projectPropertyType?: 'Residential' | 'Commercial' | null
   /** @default "Completed" */
   jobStatus?:
-    | 'Not Started'
-    | 'In Progress'
-    | 'On Hold'
-    | 'Canceled'
-    | 'Completed'
-    | 'Canceled (Invoice)'
-    | 'Sent To Client'
-    | null
+  | 'Not Started'
+  | 'In Progress'
+  | 'On Hold'
+  | 'Canceled'
+  | 'Completed'
+  | 'Canceled (Invoice)'
+  | 'Sent To Client'
+  | null
   /** @default "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   /** @default false */
@@ -5089,21 +5089,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<
         void,
         | {
-            /** @example 404 */
-            statusCode: number
-            /** @example "Service is not found." */
-            message: string
-            /** @example "40102" */
-            error?: string
-          }
+          /** @example 404 */
+          statusCode: number
+          /** @example "Service is not found." */
+          message: string
+          /** @example "40102" */
+          error?: string
+        }
         | {
-            /** @example 409 */
-            statusCode: number
-            /** @example "This service name is already existed." */
-            message: string
-            /** @example "40100" */
-            error?: string
-          }
+          /** @example 409 */
+          statusCode: number
+          /** @example "This service name is already existed." */
+          message: string
+          /** @example "40100" */
+          error?: string
+        }
       >({
         path: `/services/${serviceId}`,
         method: 'PUT',
@@ -5745,21 +5745,21 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<
         IdResponse,
         | {
-            /** @example 404 */
-            statusCode: number
-            /** @example "Not Organization Found" */
-            message: string
-            /** @example "20002" */
-            error?: string
-          }
+          /** @example 404 */
+          statusCode: number
+          /** @example "Not Organization Found" */
+          message: string
+          /** @example "20002" */
+          error?: string
+        }
         | {
-            /** @example 409 */
-            statusCode: number
-            /** @example "CustomPricing is Already Existed" */
-            message: string
-            /** @example "30101" */
-            error?: string
-          }
+          /** @example 409 */
+          statusCode: number
+          /** @example "CustomPricing is Already Existed" */
+          message: string
+          /** @example "30101" */
+          error?: string
+        }
       >({
         path: `/custom-pricings`,
         method: 'POST',

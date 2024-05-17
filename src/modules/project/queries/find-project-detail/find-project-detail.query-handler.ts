@@ -17,6 +17,7 @@ export type FindProjectDetailReturnType = OrderedProjects & { organization: Orga
 } & {
   projectFolderId?: string | null
   shareLink?: string | null
+  parentless?: boolean
 }
 
 @QueryHandler(FindProjectDetailQuery)
@@ -47,6 +48,7 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
     const projectFolder = await this.prismaService.googleProjectFolder.findFirst({ where: { projectId: record.id } })
     record.projectFolderId = projectFolder?.id ?? null
     record.shareLink = projectFolder?.shareLink ?? null
+    record.parentless = projectFolder?.parentless ?? false
 
     return record
   }
