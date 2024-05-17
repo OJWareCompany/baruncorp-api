@@ -27,7 +27,6 @@ import {
   GetPropertyTypeFolderResponseData,
   GetSharedDriveIdByFolderIdResponse,
   GetSharedDriveIdByFolderIdResponseData,
-  NewCreateGoogleProjectFolderRequestPayload,
   PostRfiReplyFilesRequestPayload,
   PostRfiReplyFilesResponse,
   PostRfiReplyFilesResponseData,
@@ -151,7 +150,10 @@ export class FilesystemApiService {
   }
 
   async requestToCreateProjectFolder({
+    sharedDriveName,
+    sharedDriveVersion,
     sharedDriveId,
+    propertyType,
     propertyTypeFolderId,
     projectName,
   }: CreateGoogleProjectFolderRequestPayload): Promise<CreateGoogleProjectFolderResponseData> {
@@ -160,33 +162,7 @@ export class FilesystemApiService {
       const response: CreateGoogleProjectFolderResponse = await got
         .post(url, {
           json: {
-            sharedDriveId,
-            propertyTypeFolderId,
-            projectName,
-          },
-        })
-        .json()
-      return response.data
-    } catch (error: any) {
-      handleFileServerRequestError(error)
-      throw error
-    }
-  }
-
-  async requestToNewCreateProjectFolder({
-    sharedDrive,
-    sharedDriveVersion,
-    sharedDriveId,
-    propertyType,
-    propertyTypeFolderId,
-    projectName,
-  }: NewCreateGoogleProjectFolderRequestPayload): Promise<CreateGoogleProjectFolderResponseData> {
-    try {
-      const url = `${this.baseUrl}/project`
-      const response: CreateGoogleProjectFolderResponse = await got
-        .post(url, {
-          json: {
-            sharedDrive,
+            sharedDriveName,
             sharedDriveVersion,
             sharedDriveId,
             propertyType,
@@ -203,18 +179,28 @@ export class FilesystemApiService {
   }
 
   async requestToCreateJobFolder({
+    sharedDriveName,
+    sharedDriveVersion,
     sharedDriveId,
+    propertyType,
+    projectName,
     projectFolderId,
     jobName,
+    parentlessProjectFolder,
   }: CreateGoogleJobFolderRequestPayload): Promise<CreateGoogleJobFolderResponseData> {
     try {
       const url = `${this.baseUrl}/job`
       const response: CreateGoogleJobFolderResponse = await got
         .post(url, {
           json: {
+            sharedDriveName,
+            sharedDriveVersion,
             sharedDriveId,
+            propertyType,
+            projectName,
             projectFolderId,
             jobName,
+            parentlessProjectFolder,
           },
         })
         .json()

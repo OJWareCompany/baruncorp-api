@@ -24,8 +24,9 @@ export class FilesystemDomainService {
    * create Job Folder
    */
   async createGoogleJobFolder(
+    organizationId: string,
     projectId: string,
-    projectPropertyType: string,
+    projectPropertyType: ProjectPropertyTypeEnum,
     projectFullAddress: string,
     jobId: string,
     projectTotalOfJobs: number,
@@ -33,6 +34,10 @@ export class FilesystemDomainService {
     googleJobFolderData: GoogleJobFolder
     rollback: () => Promise<void>
   }> {
+    /**
+     * 1-1)
+     * projectId와 관련 있는 projectFolder들 조회
+     */
     const projectFolders = await this.prismaService.googleProjectFolder.findMany({
       where: { projectId: projectId },
     })
@@ -41,19 +46,29 @@ export class FilesystemDomainService {
     }
 
     /**
-     * 프로젝트 폴더가 포함된 공유 드라이브 중에 최고 버전의 공유 드라이브 조회
+     * 1-2)
+     * projectFolder들의 sharedDriveId들 조회
      */
-    const sharedDriveIdsRelatedToProject = projectFolders.map((pf) => pf.sharedDriveId as string)
-    const highVerSharedDriveRelatedToProject = await this.prismaService.googleSharedDrive.findFirst({
-      where: { id: { in: sharedDriveIdsRelatedToProject } },
+    const sharedDriveIdsRelatedToProjectId = projectFolders.map((pf) => pf.sharedDriveId as string)
+
+    /**
+     * 1-3)
+     * sharedDriveIds들 중에 가장 version이 높은 sharedDrive 조회
+     */
+    const highVerSharedDriveRelatedToProjectId = await this.prismaService.googleSharedDrive.findFirst({
+      where: { id: { in: sharedDriveIdsRelatedToProjectId } },
       orderBy: { version: 'desc' },
     })
-    if (!highVerSharedDriveRelatedToProject) {
+    if (!highVerSharedDriveRelatedToProjectId) {
       throw new GoogleDriveSharedDriveNotFoundException()
     }
 
+    /**
+     * 2)
+     * organizationId와 관련 있는 sharedDrive 중에 가장 버전이 높은 sharedDrive
+     */
     const highVerSharedDriveRelatedToOrganizationId = await this.prismaService.googleSharedDrive.findFirst({
-      where: { organizationId: highVerSharedDriveRelatedToProject.organizationId },
+      where: { organizationId },
       orderBy: { version: 'desc' },
     })
     if (!highVerSharedDriveRelatedToOrganizationId) {
@@ -61,45 +76,88 @@ export class FilesystemDomainService {
     }
 
     /**
+     * 아래 코드로 진행하기 전에 위 과정에 대한 설명 필요
+     * @description 1-1, 1-2, 1-3, 2번 과정을 거친 이유
+     * - 'FV'라는 조직이 있다고 가정
+     * - 'FV'는 001, 002, 003 버전의 공유 드라이브를 가지고 있다고 가정
+     *  - 새로운 Job은 무조건 003 버전의 공유 드라이브에 생성돼야 함
+     * - 사용자가 주문한 Job을 'A'라는 프로젝트 폴더 아래에 만들어야 하는 상황
+     * - 001, 002 버전의 공유 드라이브에는 'A'라는 프로젝트 폴더가 있을지 모르나, 003 버전의 공유 드라이브에는 'A'라는 프로젝트 폴더가 있을 거란 보장이 없음
+     * - 주문된 Job은 003 공유 드라이브에 생성돼야 하기 때문에 'A' 프로젝트 폴더가 003 버전의 공유 드라이브에 생겨야 한다
+     * - 위 과정은 003 버전 공유 드라이브에 'A' 프로젝트를 만들어야 하냐 마냐를 판별하기 위한 사전 작업임
+     */
+
+    /**
      * 프로젝트와 관련있는 프로젝트 폴더 중에서 가장 공유 드라이브 버전이 높은게 있는가?
      */
-    let projectFolder
-    if (highVerSharedDriveRelatedToProject.id !== highVerSharedDriveRelatedToOrganizationId.id) {
-      const propertyTypeFolderId =
-        projectPropertyType === 'Residential'
-          ? highVerSharedDriveRelatedToOrganizationId.residentialFolderId
-          : highVerSharedDriveRelatedToOrganizationId.commercialFolderId
-      if (!propertyTypeFolderId) {
-        throw new DataIntegrityException(
-          `Invalid propertyTypeFolderId. Check record of google_shared_drive table with '${highVerSharedDriveRelatedToOrganizationId.id}' id`,
-        )
-      }
+    let projectFolder = null
+    if (highVerSharedDriveRelatedToProjectId.id !== highVerSharedDriveRelatedToOrganizationId.id) {
+      /**
+       * ----------------------------------------
+       * Project Folder를 새로 만들어야 하는 케이스    |
+       * ----------------------------------------
+       */
+
+      /**
+       * @description
+       * highVerSharedDriveRelatedToProjectId이 아닌 highVerSharedDriveRelatedToOrganizationId로 부터
+       * residentialFolderId, commercialFolderId을 가져오는 이유는??
+       * 003 버전에 Job이 생성되야 하는 Job이 생성되야 하는 상위 폴더인 프로젝트 폴더가
+       * 003 버전 공유 드라이브에 존재하지 않기 때문에 새로 만들어야 함
+       */
+      const { residentialFolderId, commercialFolderId } = highVerSharedDriveRelatedToOrganizationId
+      // TODO 데이터베이스 수정 필요. 시스템 상 Null이 될 수가 없음.
+      const propertyTypeFolderId = (
+        projectPropertyType === 'Residential' ? residentialFolderId : commercialFolderId
+      ) as string
 
       const createProjectFolderResponseData = await this.filesystemApiService.requestToCreateProjectFolder({
+        sharedDriveName: highVerSharedDriveRelatedToOrganizationId.organizationName,
+        sharedDriveVersion: highVerSharedDriveRelatedToOrganizationId.version as string, // TODO DB 수정해야 함. 시스템 상 Null이 될 수가 없음
         sharedDriveId: highVerSharedDriveRelatedToOrganizationId.id,
+        propertyType: projectPropertyType,
         propertyTypeFolderId: propertyTypeFolderId,
         projectName: projectFullAddress,
       })
-      projectFolder = createProjectFolderResponseData.projectFolder
-      await this.prismaService.googleProjectFolder.create({
-        data: {
-          id: projectFolder.id,
-          shareLink: projectFolder.shareLink,
-          projectId: projectId,
-          sharedDriveId: highVerSharedDriveRelatedToOrganizationId.id,
-        },
-      })
+
+      const googleProjectFolderData = {
+        id: createProjectFolderResponseData.projectFolder.id,
+        shareLink: createProjectFolderResponseData.projectFolder.shareLink,
+        parentless: createProjectFolderResponseData.projectFolder.parentless,
+        projectId,
+        sharedDriveId: highVerSharedDriveRelatedToOrganizationId.id,
+      }
+
+      await this.prismaService.googleProjectFolder.create({ data: googleProjectFolderData })
+
+      projectFolder = googleProjectFolderData
     } else {
-      projectFolder = projectFolders.find((pf) => pf.sharedDriveId === highVerSharedDriveRelatedToProject.id)
+      /**
+       * ---------------------------------------------------------------------
+       * Project Folder가 가장 버전이 높은 공유 드라이브에도 존재해서 만들 필요 없는 경우    |
+       * ---------------------------------------------------------------------
+       */
+      projectFolder = projectFolders.find((pf) => pf.sharedDriveId === highVerSharedDriveRelatedToProjectId.id)
     }
+    /**
+     * @TODO
+     * 사실 시스템 상으로 projectFolder가 안만들어질 수가 없는데 일단 방어적으로 코드 작성
+     * 좀 더 세부적으로 예외 처리 해야 하는 것 아닌지??
+     */
     if (!projectFolder) {
       throw new GoogleDriveProjectFolderNotFoundException()
     }
 
     const createJobFolderResponseData = await this.filesystemApiService.requestToCreateJobFolder({
-      sharedDriveId: highVerSharedDriveRelatedToProject.id,
+      sharedDriveName: highVerSharedDriveRelatedToOrganizationId.organizationName,
+      sharedDriveVersion: highVerSharedDriveRelatedToOrganizationId.version as string, // TODO DB 수정해야 함. 시스템 상 Null이 될 수가 없음,
+      sharedDriveId: highVerSharedDriveRelatedToOrganizationId.id, // 과거에 왜 highVerSharedDriveRelatedToProjectId를 사용했지??
+      propertyType: projectPropertyType,
+      projectName: projectFullAddress,
       projectFolderId: projectFolder.id,
       jobName: `Job ${projectTotalOfJobs + 1}`,
+      // project folder가 parentless => job folder도 parentless
+      parentlessProjectFolder: projectFolder.parentless as boolean, // TODO DB 수정해야 함. 시스템 상 Null이 될 수가 없음,
     })
 
     const { jobFolder, deliverablesFolder, jobNotesFolder } = createJobFolderResponseData
@@ -107,20 +165,21 @@ export class FilesystemDomainService {
       googleJobFolderData: {
         id: jobFolder.id,
         shareLink: jobFolder.shareLink,
-        /**
-         * @TODO 'parentless: false' 하드 코딩된거 수정
-         */
-        parentless: false,
+        parentless: jobFolder.parentless,
         deliverablesFolderId: deliverablesFolder.id,
         deliverablesFolderShareLink: deliverablesFolder.shareLink,
         jobId,
         jobNotesFolderId: jobNotesFolder.id,
         jobNotesFolderShareLink: jobNotesFolder.shareLink,
-        sharedDriveId: highVerSharedDriveRelatedToProject.id,
+        sharedDriveId: highVerSharedDriveRelatedToOrganizationId.id,
         count: 0,
+        projectId,
       },
       rollback: async () => {
-        await this.rollbackCreateGoogleJobFolder(highVerSharedDriveRelatedToProject.id, createJobFolderResponseData)
+        await this.rollbackCreateGoogleJobFolder(
+          highVerSharedDriveRelatedToOrganizationId.id,
+          createJobFolderResponseData,
+        )
       },
     }
   }
@@ -265,18 +324,15 @@ export class FilesystemDomainService {
       throw new GoogleDriveSharedDriveNotFoundException()
     }
 
-    const propertyTypeFolderId =
+    // TODO 데이터베이스 수정 필요. 시스템 상 Null이 될 수가 없음.
+    const propertyTypeFolderId = (
       projectPropertyType === 'Residential'
         ? highVerSharedDrive.residentialFolderId
         : highVerSharedDrive.commercialFolderId
-    if (!propertyTypeFolderId) {
-      throw new DataIntegrityException(
-        `Invalid propertyTypeFolderId. Check record of google_shared_drive table with '${highVerSharedDrive.id}' id`,
-      )
-    }
+    ) as string
 
-    const createProjectFolderResponseData = await this.filesystemApiService.requestToNewCreateProjectFolder({
-      sharedDrive: highVerSharedDrive.organizationName,
+    const createProjectFolderResponseData = await this.filesystemApiService.requestToCreateProjectFolder({
+      sharedDriveName: highVerSharedDrive.organizationName,
       // TODO: highVerSharedDrive.version은 무조건 string, 데이터베이스 필드 null될 수 없도록 수정할 것
       sharedDriveVersion: highVerSharedDrive.version as string,
       sharedDriveId: highVerSharedDrive.id,

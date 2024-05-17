@@ -100,6 +100,7 @@ export class CreateJobService implements ICommandHandler {
      * @FilesystemLogic
      */
     const { googleJobFolderData, rollback } = await this.filesystemDomainService.createGoogleJobFolder(
+      clientUser.organization.id,
       command.projectId,
       project.projectPropertyType,
       project.projectPropertyAddress.fullAddress,

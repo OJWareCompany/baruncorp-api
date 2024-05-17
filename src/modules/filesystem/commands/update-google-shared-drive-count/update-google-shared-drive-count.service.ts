@@ -45,7 +45,7 @@ export class UpdateGoogleSharedDriveCountService implements ICommandHandler {
           residentialFolderId: residentialFolder.id,
           commercialFolderId: commercialFolder.id,
           organizationId: sharedDriveResult.organizationId,
-          organizationName: sharedDrive.name,
+          organizationName: sharedDriveResult.organizationName,
           count: 0,
           version: nextSharedDriveVersion,
         },

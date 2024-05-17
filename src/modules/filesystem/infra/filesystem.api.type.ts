@@ -55,15 +55,10 @@ export type GetSharedDriveIdByFolderIdResponseData = {
  * CreateGoogleProjectFolder
  */
 export type CreateGoogleProjectFolderRequestPayload = {
-  sharedDriveId: string
-  propertyTypeFolderId: string
-  projectName: string
-}
-export type NewCreateGoogleProjectFolderRequestPayload = {
-  sharedDrive: string
+  sharedDriveName: string
   sharedDriveVersion: string
   sharedDriveId: string
-  propertyType: string
+  propertyType: ProjectPropertyTypeEnum
   propertyTypeFolderId: string
   projectName: string
 }
@@ -85,9 +80,14 @@ export type CreateGoogleProjectFolderResponse = {
  * CreateGoogleJobFolder
  */
 export type CreateGoogleJobFolderRequestPayload = {
+  sharedDriveName: string
+  sharedDriveVersion: string
   sharedDriveId: string
+  propertyType: ProjectPropertyTypeEnum
+  projectName: string
   projectFolderId: string
   jobName: string
+  parentlessProjectFolder: boolean
 }
 export type CreateGoogleJobFolderResponse = {
   message: string
@@ -99,6 +99,7 @@ export type CreateGoogleJobFolderResponseData = {
     name: string
     shareLink: string
     matchedExistingData: boolean
+    parentless: boolean
   }
   deliverablesFolder: {
     id: string
