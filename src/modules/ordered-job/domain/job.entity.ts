@@ -230,9 +230,10 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  async determineCurrentStatus(determineJobStatus: DetermineJobStatus) {
-    // TODO: throw Err if already updated same status
+  async determineCurrentStatusOrThrow(determineJobStatus: DetermineJobStatus) {
     const resultStatus = await determineJobStatus.determineCurrentStatus(this)
+
+    // Job의 상태가 변경되지 않는다면 이벤트를 발행하지 않기 위해 예외처리한다.
     if (this.props.jobStatus === resultStatus) {
       throw new JobStatusNotUpdatedException()
     }

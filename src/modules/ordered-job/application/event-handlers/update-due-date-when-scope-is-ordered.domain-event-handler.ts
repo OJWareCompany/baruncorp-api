@@ -29,7 +29,11 @@ export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
   @GenerateJobModificationHistory({ invokedFrom: 'scope' })
   async handle(event: OrderedServiceCreatedDomainEvent): Promise<void> {
     const job = await this.jobRepo.findJobOrThrow(event.jobId)
-    await job.determineCurrentStatus(this.checkCompletionJob)
+    try {
+      await job.determineCurrentStatusOrThrow(this.checkCompletionJob)
+    } catch (error) {
+      // 새로운 상태로 업데이트 되지 않아도 다음 로직을 이어가도록
+    }
     await job.updateDueDate({ calculator: this.totalDurationCalculator })
     await this.jobRepo.update(job)
   }
