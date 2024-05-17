@@ -20,6 +20,7 @@ export class CreateJobCommand {
   readonly priority?: OrderedJobsPriorityEnum
   readonly loadCalcOrigin: LoadCalcOriginEnum
   readonly dueDate: Date | null
+  readonly isManualDueDate?: boolean
   readonly editorUserId: string
   readonly structuralUpgradeNote: string | null
 

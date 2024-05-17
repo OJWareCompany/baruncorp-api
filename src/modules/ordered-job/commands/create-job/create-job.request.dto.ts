@@ -102,6 +102,11 @@ export class CreateJobRequestDto {
   @IsBoolean()
   readonly isExpedited: boolean
 
+  @ApiProperty({ default: false })
+  @IsBoolean()
+  @IsOptional()
+  readonly isManualDueDate?: boolean
+
   @ApiProperty({ description: 'dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.', default: null })
   @IsOptional()
   @IsDate()

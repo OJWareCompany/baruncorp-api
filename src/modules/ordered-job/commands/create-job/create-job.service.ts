@@ -83,6 +83,7 @@ export class CreateJobService implements ICommandHandler {
       mountingType: command.mountingType,
       projectPropertyType: project.projectPropertyType as ProjectPropertyTypeEnum,
       dueDate: command.dueDate,
+      isManualDueDate: command.isManualDueDate !== undefined ? command.isManualDueDate : !!command.dueDate,
       editorUserId: command.editorUserId,
       structuralUpgradeNote: command.structuralUpgradeNote,
       priority: command.priority

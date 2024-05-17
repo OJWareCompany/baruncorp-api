@@ -44,6 +44,7 @@ import { JobPriorityUpdatedDomainEvent } from './events/job-priority-updated.dom
 import { ConfigModule } from '@nestjs/config'
 import { DetermineJobStatus } from './domain-services/determine-job-status.domain-service'
 import { DoneRequiredStatuses } from './value-objects/completion-required-statuses.value-object'
+import { TotalDurationCalculator } from './domain-services/total-duration-calculator.domain-service'
 
 ConfigModule.forRoot()
 const { APP_MODE } = process.env
@@ -66,7 +67,6 @@ export class JobEntity extends AggregateRoot<JobProps> {
       orderedServices: [],
       pricingType: null,
       dateSentToClient: null,
-      isManualDueDate: !!create.dueDate,
       inReview: false,
       completedCancelledDate: null,
     }
@@ -385,8 +385,12 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return (this.props.inReview = inReview)
   }
 
-  updateDueDate(dueDate: Date) {
-    this.props.dueDate = dueDate
+  async updateDueDate(option: { calculator?: TotalDurationCalculator; manualDate?: Date }) {
+    if (option.calculator) {
+      this.props.dueDate = await option.calculator.calcDueDate(this)
+    } else if (option.manualDate) {
+      this.props.dueDate = option.manualDate
+    }
     return this
   }
 

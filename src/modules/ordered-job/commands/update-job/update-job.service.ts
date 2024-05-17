@@ -70,7 +70,9 @@ export class UpdateJobService implements ICommandHandler {
     job.updateAdditionalInformationFromClient(command.additionalInformationFromClient)
     job.updateIsExpedited(command.isExpedited)
     job.updateUpdatedBy(editor)
-    job.updateDueDate(command.dueDate)
+    if (command.isManualDueDate) {
+      job.updateDueDate({ manualDate: command.dueDate })
+    }
     job.setInReview(command.inReview)
     job.setStructuralUpgradeNote(command.structuralUpgradeNote)
     job.setLoadCalcOrigin(command.loadCalcOrigin)

@@ -64,6 +64,7 @@ export interface CreateJobProps {
 
   // 서비스나 태스크의 추가/수정에 영향받는 필드들
   dueDate: Date | null
+  isManualDueDate: boolean
 
   numberOfWetStamp: number | null
   orderedServices: NewOrderedServices[]
@@ -75,7 +76,6 @@ export interface JobProps extends Omit<CreateJobProps, 'totalOfJobs'> {
   receivedAt: Date
   isCurrentJob?: boolean
   dateSentToClient: Date | null
-  isManualDueDate: boolean
   completedCancelledDate: Date | null
   canceledAt: Date | null
 
