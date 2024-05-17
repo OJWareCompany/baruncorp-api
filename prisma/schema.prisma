@@ -1171,6 +1171,7 @@ model GoogleJobFolder {
   sharedDriveId               String?  @map("shared_drive_id") @db.VarChar(255)
   count                       Int?     @map("count") @db.UnsignedSmallInt
   parentless                  Boolean? @default(false)
+  projectId                   String?  @map("project_id") @db.VarChar(255)
 
   @@index([sharedDriveId], map: "google_job_folder_google_shared_drive_fkey")
   @@index([jobId], map: "google_job_folder_FK")
