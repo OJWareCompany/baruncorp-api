@@ -4,7 +4,7 @@ import { RFIMailer } from '@modules/ordered-job-note/infrastructure/mailer.infra
 import * as xoauth2 from 'xoauth2'
 import { OAuth2Client } from 'google-auth-library'
 import { gmail_v1 } from 'googleapis'
-import { AddressObject, ParsedMail, simpleParser } from 'mailparser'
+import { AddressObject, Attachment, ParsedMail, simpleParser } from 'mailparser'
 import { JobNoteRepository } from '@modules/ordered-job-note/database/job-note.repository'
 import { JobNoteEntity } from '@modules/ordered-job-note/domain/job-note.entity'
 import { JobNoteTypeEnum } from '@modules/ordered-job-note/domain/job-note.type'
@@ -13,6 +13,7 @@ import { UserStatusEnum } from '@modules/users/domain/user.types'
 import { GetAccessTokenResponse } from 'google-auth-library/build/src/auth/oauth2client'
 import { FilesystemApiService } from '../../filesystem/infra/filesystem.api.service'
 import { GoogleDriveJobNotesFolderNotFoundException } from '../../filesystem/domain/filesystem.error'
+import * as cheerio from 'cheerio'
 import { htmlToText } from 'html-to-text'
 
 @Injectable()
@@ -230,10 +231,17 @@ export class ImapManagerService {
         // console.log(`MessageId: ${parsed.messageId}`)
         // console.log(`Found thread ID: ${threadId}`)
         // console.log(`subject : ${parsed.subject!}`)
-        // console.log(`parsed.attachments.length : ${parsed.attachments.length!}`)
+        // console.log(`parsed.attachments.length : ${parsed.attachments.length}`)
         // console.log(`parsed.text : ${parsed.text}`)
         // console.log(`parsed.html : ${parsed.html}`)
-        const plainText: string = htmlToText(parsed.html ? parsed.html : '')
+
+        // 본문에 포함된 미디어 컨텐츠 제거.
+        const $: cheerio.CheerioAPI = cheerio.load(parsed.html || '')
+        $('img[src]').each((_, elem) => {
+          $(elem).remove()
+        })
+        const modifiedHtml: string = $.html()
+        const plainText: string = htmlToText(modifiedHtml)
 
         if (!threadId || !senderEmail) return
 
@@ -247,9 +255,7 @@ export class ImapManagerService {
         )
         const jobNoteNumber = maxJobNoteNumber ? maxJobNoteNumber + 1 : 1
 
-        // const filteredContent: string = parsed.text ? this.parseEmailMainContent(parsed.text) : ''
         const filteredContent: string = plainText ? this.parseEmailMainContent(plainText) : ''
-        // console.log(`filteredContent : ${filteredContent}`)
 
         const jobNoteEntity = JobNoteEntity.create({
           jobId: equalThreadIdEntity.jobId,
