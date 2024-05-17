@@ -1,13 +1,12 @@
 import { OnEvent } from '@nestjs/event-emitter'
-import { OrderedServiceCreatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-created.domain-event'
-import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
 import { Inject } from '@nestjs/common'
-import { JOB_REPOSITORY } from '../../job.di-token'
-import { JobRepositoryPort } from '../../database/job.repository.port'
-import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
-import { ProjectRepositoryPort } from '../../../project/database/project.repository.port'
+import { OrderedServiceCreatedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-created.domain-event'
 import { GenerateJobModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/job-modification-history.decorator'
+import { JobDueDateNotUpdatedException, JobStatusNotUpdatedException } from '../../domain/job.error'
+import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
 import { DetermineJobStatus } from '../../domain/domain-services/determine-job-status.domain-service'
+import { JobRepositoryPort } from '../../database/job.repository.port'
+import { JOB_REPOSITORY } from '../../job.di-token'
 
 /**
  * 처음에 주문 했을때 due date를 이미 입력했다면 due date는 고정된다.
@@ -21,7 +20,6 @@ import { DetermineJobStatus } from '../../domain/domain-services/determine-job-s
 export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
   constructor(
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
-    @Inject(PROJECT_REPOSITORY) private readonly projectRepo: ProjectRepositoryPort,
     private readonly totalDurationCalculator: TotalDurationCalculator,
     private readonly checkCompletionJob: DetermineJobStatus,
   ) {}
@@ -29,12 +27,34 @@ export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
   @GenerateJobModificationHistory({ invokedFrom: 'scope' })
   async handle(event: OrderedServiceCreatedDomainEvent): Promise<void> {
     const job = await this.jobRepo.findJobOrThrow(event.jobId)
+
+    // TODO: UpdateJobStatusWhenOrderedServiceStatusUpdatedDomainEventHandler 중복 로직
+    let statusChanged = true
+    let dueDateChanged = true
+
     try {
       await job.determineCurrentStatusOrThrow(this.checkCompletionJob)
     } catch (error) {
       // 새로운 상태로 업데이트 되지 않아도 다음 로직을 이어가도록
+      if (error instanceof JobStatusNotUpdatedException) {
+        statusChanged = false
+      } else {
+        throw error
+      }
     }
-    await job.updateDueDate({ calculator: this.totalDurationCalculator })
-    await this.jobRepo.update(job)
+
+    try {
+      await job.updateDueDateOrThrow({ calculator: this.totalDurationCalculator })
+    } catch (error) {
+      if (error instanceof JobDueDateNotUpdatedException) {
+        dueDateChanged = false
+      } else {
+        throw error
+      }
+    }
+
+    if (statusChanged || dueDateChanged) {
+      await this.jobRepo.update(job)
+    }
   }
 }

@@ -28,6 +28,7 @@ import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import {
+  JobDueDateNotUpdatedException,
   JobMissingDeliverablesEmailException,
   JobStatusNotUpdatedException,
   NumberOfWetStampBadRequestException,
@@ -45,6 +46,7 @@ import { ConfigModule } from '@nestjs/config'
 import { DetermineJobStatus } from './domain-services/determine-job-status.domain-service'
 import { DoneRequiredStatuses } from './value-objects/completion-required-statuses.value-object'
 import { TotalDurationCalculator } from './domain-services/total-duration-calculator.domain-service'
+import { areDatesEqualIgnoringMilliseconds } from '../../../libs/utils/areDatesEqualIgnoringMilliseconds.util'
 
 ConfigModule.forRoot()
 const { APP_MODE } = process.env
@@ -161,6 +163,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this.props.orderedServices.map((orderedService) => orderedService.billingCode)
   }
 
+  get dueDate() {
+    return this.props.dueDate
+  }
+
+  get isManualDueDate() {
+    return this.props.isManualDueDate
+  }
+
   isSendableOrThrow() {
     if (!this.props.deliverablesEmails.length) {
       throw new JobMissingDeliverablesEmailException()
@@ -232,7 +242,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   async determineCurrentStatusOrThrow(determineJobStatus: DetermineJobStatus) {
     const resultStatus = await determineJobStatus.determineCurrentStatus(this)
-
+    this.props.jobStatus = JobStatusEnum.In_Progress
     // Job의 상태가 변경되지 않는다면 이벤트를 발행하지 않기 위해 예외처리한다.
     if (this.props.jobStatus === resultStatus) {
       throw new JobStatusNotUpdatedException()
@@ -386,12 +396,33 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return (this.props.inReview = inReview)
   }
 
-  async updateDueDate(option: { calculator?: TotalDurationCalculator; manualDate?: Date }) {
+  // TODO: Update Priority
+  async updateDueDateOrThrow(option: { calculator?: TotalDurationCalculator; manualDate?: Date }) {
     if (option.calculator) {
-      this.props.dueDate = await option.calculator.calcDueDate(this)
+      if (this.props.isManualDueDate) {
+        throw new Error('A manually entered Due Date will not be automatically updated.')
+      }
+      this.setDueDate(await option.calculator.calcDueDate(this))
     } else if (option.manualDate) {
-      this.props.dueDate = option.manualDate
+      this.props.isManualDueDate = true
+      this.setDueDate(option.manualDate)
     }
+    return this
+  }
+
+  private setDueDate(dueDate: Date) {
+    if (this.props.dueDate) {
+      const isSameDate = areDatesEqualIgnoringMilliseconds(this.props.dueDate, dueDate)
+      if (isSameDate) {
+        throw new JobDueDateNotUpdatedException()
+      }
+    }
+
+    if (!this.props.dueDate && !dueDate) {
+      throw new JobDueDateNotUpdatedException()
+    }
+
+    this.props.dueDate = dueDate
     return this
   }
 

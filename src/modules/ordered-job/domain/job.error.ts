@@ -88,3 +88,9 @@ export class JobStatusNotUpdatedException extends UnprocessableEntityException {
     super('Job status update failed as it is already in the desired state.', '40016')
   }
 }
+
+export class JobDueDateNotUpdatedException extends UnprocessableEntityException {
+  constructor() {
+    super('Job Due Date update failed as it is already in the desired deu date.', '40017')
+  }
+}

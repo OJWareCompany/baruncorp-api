@@ -14,12 +14,15 @@ import { UserRepositoryPort } from '../../../users/database/user.repository.port
 import { PROJECT_REPOSITORY } from '../../../project/project.di-token'
 import { INVOICE_REPOSITORY } from '../../../invoice/invoice.di-token'
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
-import { IssuedJobUpdateException, JobCompletedUpdateException, NoUpdateException } from '../../domain/job.error'
+import {
+  IssuedJobUpdateException,
+  JobCompletedUpdateException,
+  JobDueDateNotUpdatedException,
+} from '../../domain/job.error'
 import { ClientInformation } from '../../domain/value-objects/client-information.value-object'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { UpdateJobCommand } from './update-job.command'
-import { Priority } from '../../domain/value-objects/priority.value-object'
 
 @CommandHandler(UpdateJobCommand)
 export class UpdateJobService implements ICommandHandler {
@@ -71,7 +74,12 @@ export class UpdateJobService implements ICommandHandler {
     job.updateIsExpedited(command.isExpedited)
     job.updateUpdatedBy(editor)
     if (command.isManualDueDate) {
-      job.updateDueDate({ manualDate: command.dueDate })
+      try {
+        job.updateDueDateOrThrow({ manualDate: command.dueDate })
+      } catch (error) {
+        if (error instanceof JobDueDateNotUpdatedException) {
+        }
+      }
     }
     job.setInReview(command.inReview)
     job.setStructuralUpgradeNote(command.structuralUpgradeNote)
