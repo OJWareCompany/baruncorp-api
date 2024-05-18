@@ -175,7 +175,7 @@ export class JobResponseMapper {
       state: stateName,
       dateSentToClient: job.dateSentToClient,
       dueDate: job.dueDate ? job.dueDate : null,
-      isManualDueDate: job.isManualDueDate,
+      // isManualDueDate: job.isManualDueDate,
       jobFolderId: jobFolder?.id ?? null,
       shareLink: jobFolder?.shareLink ?? null,
       inReview: job.inReview,

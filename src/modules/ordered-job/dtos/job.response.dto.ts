@@ -216,9 +216,9 @@ export class JobResponseDto {
   @IsOptional()
   dueDate: Date | null
 
-  @ApiProperty()
-  @IsBoolean()
-  isManualDueDate: boolean
+  // @ApiProperty()
+  // @IsBoolean()
+  // isManualDueDate: boolean
 
   @ApiProperty()
   @IsDate()
