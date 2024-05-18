@@ -29,13 +29,13 @@ export class MakeDeliverablesEmailContents {
         job.getProps().clientInfo.clientContactEmail
       }</a></p>
     <p><strong>Project Number</strong><br>
-    ${job.getProps().projectNumber}</p>
+    ${job.getProps().projectNumber || ''}</p>
     <p><strong>Property Address</strong><br>
     <a href="https://www.google.com/maps/search/428+South+Spencer,+Mesa,+Arizona+85204?entry=gmail&amp;source=g">${
       project.projectPropertyAddress.fullAddress
     }</a></p>
     <p><strong>Property Owner Name</strong><br>
-    ${project.projectPropertyOwnerName}</p>
+    ${project.projectPropertyOwnerName || ''}</p>
     <p><strong>Property Type</strong><br>
     ${project.projectPropertyType}</p>
     <p><strong>Deliverables</strong><br>
