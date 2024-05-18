@@ -30,7 +30,7 @@ export class UpdateJobStatusWhenOrderedServiceStatusUpdatedDomainEventHandler {
     let dueDateChanged = true
 
     try {
-      await job.determineCurrentStatusOrThrow(this.checkCompletionJob)
+      await job.determineCurrentStatusOrThrow(this.checkCompletionJob, this.totalDurationCalculator)
     } catch (error) {
       if (error instanceof JobStatusNotUpdatedException) {
         statusChanged = false

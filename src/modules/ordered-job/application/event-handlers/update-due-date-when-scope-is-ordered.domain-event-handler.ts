@@ -33,7 +33,7 @@ export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
     let dueDateChanged = true
 
     try {
-      await job.determineCurrentStatusOrThrow(this.checkCompletionJob)
+      await job.determineCurrentStatusOrThrow(this.checkCompletionJob, this.totalDurationCalculator)
     } catch (error) {
       // 새로운 상태로 업데이트 되지 않아도 다음 로직을 이어가도록
       if (error instanceof JobStatusNotUpdatedException) {

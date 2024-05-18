@@ -28,6 +28,7 @@ import { JobCreatedDomainEvent } from './events/job-created.domain-event'
 import { JobHeldDomainEvent } from './events/job-held.domain-event'
 import { ClientInformation } from './value-objects/client-information.value-object'
 import {
+  JobDueDateManualEntryException,
   JobDueDateNotUpdatedException,
   JobMissingDeliverablesEmailException,
   JobStatusNotUpdatedException,
@@ -202,7 +203,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
     await mailer.sendRFI(input)
     if (this.props.jobStatus !== JobStatusEnum.Canceled_Invoice) {
-      this.setStatus(AutoOnlyJobStatusEnum.Sent_To_Client)
+      await this.setStatus(AutoOnlyJobStatusEnum.Sent_To_Client, null)
     }
     this.props.updatedBy = editor.userName.fullName
     this.props.dateSentToClient = new Date()
@@ -228,27 +229,27 @@ export class JobEntity extends AggregateRoot<JobProps> {
   async backToNotStart(
     orderStatusChangeValidator: OrderStatusChangeValidator,
     orderModificationValidator: OrderModificationValidator,
+    calculator: TotalDurationCalculator,
   ): Promise<this> {
     await orderModificationValidator.validateJob(this)
     await orderStatusChangeValidator.validateJob(this, JobStatusEnum.Not_Started)
-    this.setStatus(JobStatusEnum.Not_Started)
+    await this.setStatus(JobStatusEnum.Not_Started, calculator)
     return this
   }
 
-  start(): this {
-    this.setStatus(JobStatusEnum.In_Progress)
+  async start(calculator: TotalDurationCalculator): Promise<this> {
+    await this.setStatus(JobStatusEnum.In_Progress, calculator)
     return this
   }
 
-  async determineCurrentStatusOrThrow(determineJobStatus: DetermineJobStatus) {
+  async determineCurrentStatusOrThrow(determineJobStatus: DetermineJobStatus, calculator: TotalDurationCalculator) {
     const resultStatus = await determineJobStatus.determineCurrentStatus(this)
-    this.props.jobStatus = JobStatusEnum.In_Progress
     // Job의 상태가 변경되지 않는다면 이벤트를 발행하지 않기 위해 예외처리한다.
     if (this.props.jobStatus === resultStatus) {
       throw new JobStatusNotUpdatedException()
     }
 
-    this.setStatus(resultStatus)
+    await this.setStatus(resultStatus, calculator)
 
     const isDone: JobStatus[] = new DoneRequiredStatuses().value
     if (isDone.includes(this.props.jobStatus)) {
@@ -257,29 +258,29 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return this
   }
 
-  complete(): this {
-    this.setStatus(JobStatusEnum.Completed)
+  async complete(calculator: TotalDurationCalculator): Promise<this> {
+    await this.setStatus(JobStatusEnum.Completed, calculator)
     this.props.completedCancelledDate = new Date()
     return this
   }
 
-  cancel(): this {
-    this.setStatus(JobStatusEnum.Canceled)
-    this.props.completedCancelledDate = new Date()
-    this.props.canceledAt = new Date()
-    return this
-  }
-
-  cancelAndKeepInvoice(): this {
-    this.setStatus(JobStatusEnum.Canceled_Invoice)
+  async cancel(): Promise<this> {
+    await this.setStatus(JobStatusEnum.Canceled, null)
     this.props.completedCancelledDate = new Date()
     this.props.canceledAt = new Date()
     return this
   }
 
-  hold(user: UserEntity): this {
+  async cancelAndKeepInvoice(): Promise<this> {
+    await this.setStatus(JobStatusEnum.Canceled_Invoice, null)
+    this.props.completedCancelledDate = new Date()
+    this.props.canceledAt = new Date()
+    return this
+  }
+
+  async hold(user: UserEntity): Promise<this> {
     this.props.updatedBy = user.userName.fullName
-    this.setStatus(JobStatusEnum.On_Hold)
+    await this.setStatus(JobStatusEnum.On_Hold, null)
     return this
   }
 
@@ -322,64 +323,115 @@ export class JobEntity extends AggregateRoot<JobProps> {
     return
   }
 
-  setStatus(status: JobStatus) {
-    this.props.jobStatus = status
-
-    switch (this.props.jobStatus) {
-      case JobStatusEnum.On_Hold:
-        this.props.priority = new Priority({
-          priority: OrderedJobsPriorityEnum.Low,
-        })
-        this.addEvent(new JobHeldDomainEvent({ aggregateId: this.id }))
-        break
-
-      case JobStatusEnum.Canceled:
-        this.props.priority = new Priority({
-          priority: OrderedJobsPriorityEnum.None,
-        })
-        this.addEvent(new JobCanceledDomainEvent({ aggregateId: this.id }))
-        break
-
-      case JobStatusEnum.Canceled_Invoice:
-        this.props.priority = new Priority({
-          priority: OrderedJobsPriorityEnum.None,
-        })
-        this.addEvent(new JobCanceledAndKeptInvoiceDomainEvent({ aggregateId: this.id }))
-        break
-
+  private async setStatus(status: JobStatus, calculator: TotalDurationCalculator | null) {
+    switch (status) {
       case JobStatusEnum.Not_Started:
-        this.props.priority = new Priority({
-          priority: OrderedJobsPriorityEnum.None,
-        })
+        if (!calculator) throw new Error('It needs calculator when status is updated.')
+        await this.updateDueDateOrThrow({ calculator })
         this.addEvent(new JobNotStartedDomainEvent({ aggregateId: this.id }))
         break
 
       case JobStatusEnum.In_Progress:
+        if (!calculator) throw new Error('It needs calculator when status is updated.')
+        await this.updateDueDateOrThrow({ calculator })
         this.addEvent(new JobStartedDomainEvent({ aggregateId: this.id }))
         break
 
       case JobStatusEnum.Completed:
-        this.addEvent(
-          new JobCompletedDomainEvent({
-            aggregateId: this.id,
-          }),
-        )
+        if (!calculator) throw new Error('It needs calculator when status is updated.')
+        await this.updateDueDateOrThrow({ calculator })
+        this.addEvent(new JobCompletedDomainEvent({ aggregateId: this.id }))
         break
 
       case AutoOnlyJobStatusEnum.Sent_To_Client:
-        this.props.priority = new Priority({
-          priority: OrderedJobsPriorityEnum.None,
-        })
         this.addEvent(new JobSentToClientDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.Canceled:
+        this.addEvent(new JobCanceledDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.Canceled_Invoice:
+        this.addEvent(new JobCanceledAndKeptInvoiceDomainEvent({ aggregateId: this.id }))
+        break
+
+      case JobStatusEnum.On_Hold:
+        this.addEvent(new JobHeldDomainEvent({ aggregateId: this.id }))
+        break
+    }
+
+    this.props.jobStatus = status
+    this.updatePriority()
+  }
+
+  /**
+   * 여기서는 Job의 상태에 따라 계산하는 것을 하면 안될것 같은 느낌? 모르겠다..하
+   */
+  private updatePriority() {
+    switch (this.props.jobStatus) {
+      case JobStatusEnum.Not_Started:
+        this.props.priority = this.calcPriority()
+        break
+
+      case JobStatusEnum.In_Progress:
+        this.props.priority = this.calcPriority()
+        break
+
+      case JobStatusEnum.Completed:
+        this.props.priority = this.calcPriority()
+        break
+
+      case AutoOnlyJobStatusEnum.Sent_To_Client:
+        this.props.priority = new Priority({ priority: OrderedJobsPriorityEnum.None })
+        break
+
+      case JobStatusEnum.Canceled:
+        this.props.priority = new Priority({ priority: OrderedJobsPriorityEnum.None })
+        break
+
+      case JobStatusEnum.Canceled_Invoice:
+        this.props.priority = new Priority({ priority: OrderedJobsPriorityEnum.None })
+        break
+
+      case JobStatusEnum.On_Hold:
+        this.props.priority = new Priority({ priority: OrderedJobsPriorityEnum.Low })
+        break
+
       default:
         break
     }
-  }
 
-  private setPriority(priority: Priority) {
-    this.props.priority = priority
     this.addEvent(new JobPriorityUpdatedDomainEvent({ aggregateId: this.id, priority: this.props.priority.name }))
     return this
+  }
+
+  private calcPriority(): Priority {
+    if (!this.props.dueDate) return this.props.priority
+
+    /**
+     * 주문 시점을 기준으로 마감기한(주어진 작업 시간)을 계산한다.
+     *
+     * TODO: 추후에 due_date은 병렬 작업, 보류 기간이 고려되어 계산된 상태여야 한다.
+     */
+    const totalWorkingHours = (this.props.dueDate.getTime() - this.createdAt.getTime()) / (1000 * 60 * 60)
+
+    // 주문 시점을 기준으로 작업이 진행된 시간을 계산한다.
+    const now = new Date()
+    const elapsedWorkingHours = (now.getTime() - this.createdAt.getTime()) / (1000 * 60 * 60)
+
+    /**
+     * 주어진 작업시간을 71% 이상 사용했다면
+     * 마감 기한까지 29% 이하로 남았다면
+     */
+    if (elapsedWorkingHours >= 0.71 * totalWorkingHours) {
+      return new Priority({ priority: OrderedJobsPriorityEnum.Immediate })
+    } else if (elapsedWorkingHours >= 0.41 * totalWorkingHours) {
+      return new Priority({ priority: OrderedJobsPriorityEnum.High })
+    } else if (elapsedWorkingHours >= 0.21 * totalWorkingHours) {
+      return new Priority({ priority: OrderedJobsPriorityEnum.Medium })
+    } else {
+      return new Priority({ priority: OrderedJobsPriorityEnum.Low })
+    }
   }
 
   setStructuralUpgradeNote(structuralUpgradeNote: string | null) {
@@ -400,13 +452,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
   async updateDueDateOrThrow(option: { calculator?: TotalDurationCalculator; manualDate?: Date }) {
     if (option.calculator) {
       if (this.props.isManualDueDate) {
-        throw new Error('A manually entered Due Date will not be automatically updated.')
+        throw new JobDueDateManualEntryException()
       }
       this.setDueDate(await option.calculator.calcDueDate(this))
     } else if (option.manualDate) {
       this.props.isManualDueDate = true
       this.setDueDate(option.manualDate)
     }
+    this.updatePriority()
     return this
   }
 

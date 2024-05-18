@@ -23,6 +23,7 @@ export class JobCompletedUpdateException extends BadRequestException {
     super("Job Completed Can't Update", '40006')
   }
 }
+
 export class JobIncludingCompletedTaskDeleteException extends BadRequestException {
   constructor() {
     super('Job including completed task can`t be deleted.', '40001')
@@ -92,5 +93,11 @@ export class JobStatusNotUpdatedException extends UnprocessableEntityException {
 export class JobDueDateNotUpdatedException extends UnprocessableEntityException {
   constructor() {
     super('Job Due Date update failed as it is already in the desired deu date.', '40017')
+  }
+}
+
+export class JobDueDateManualEntryException extends UnprocessableEntityException {
+  constructor() {
+    super('Job Due Date update failed because a manually entered Due Date cannot be updated automatically.', '40018')
   }
 }

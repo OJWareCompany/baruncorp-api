@@ -7,6 +7,7 @@ import { UserRepositoryPort } from '../../../users/database/user.repository.port
 import { USER_REPOSITORY } from '../../../users/user.di-tokens'
 import { OrderStatusChangeValidator } from '../../domain/domain-services/order-status-change-validator.domain-service'
 import { OrderModificationValidator } from '../../domain/domain-services/order-modification-validator.domain-service'
+import { TotalDurationCalculator } from '../../domain/domain-services/total-duration-calculator.domain-service'
 import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { JobStatusEnum } from '../../domain/job.type'
@@ -20,6 +21,7 @@ export class UpdateJobStatusService implements ICommandHandler {
     @Inject(USER_REPOSITORY) private readonly userRepo: UserRepositoryPort,
     private readonly orderStatusChangeValidator: OrderStatusChangeValidator,
     private readonly orderModificationValidator: OrderModificationValidator,
+    private readonly totalDurationCalculator: TotalDurationCalculator,
   ) {}
 
   @GenerateJobModificationHistory({ invokedFrom: 'self' })
@@ -28,22 +30,26 @@ export class UpdateJobStatusService implements ICommandHandler {
     const editor = await this.userRepo.findOneByIdOrThrow(command.editorUserId)
     switch (command.status) {
       case JobStatusEnum.Not_Started:
-        await job.backToNotStart(this.orderStatusChangeValidator, this.orderModificationValidator)
+        await job.backToNotStart(
+          this.orderStatusChangeValidator,
+          this.orderModificationValidator,
+          this.totalDurationCalculator,
+        )
         break
       case JobStatusEnum.In_Progress:
-        job.start()
+        await job.start(this.totalDurationCalculator)
         break
       case JobStatusEnum.Completed:
-        job.complete()
+        await job.complete(this.totalDurationCalculator)
         break
       case JobStatusEnum.Canceled:
-        job.cancel()
+        await job.cancel()
         break
       case JobStatusEnum.Canceled_Invoice:
-        job.cancelAndKeepInvoice()
+        await job.cancelAndKeepInvoice()
         break
       case JobStatusEnum.On_Hold:
-        job.hold(editor)
+        await job.hold(editor)
         break
     }
 
