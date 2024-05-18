@@ -236,6 +236,10 @@ export class JobResponseDto {
   @ApiProperty({ example: false })
   parentlessFolder?: boolean
 
+  @ApiProperty({ example: '002' })
+  @IsString()
+  sharedDriveVersion?: string | null
+
   constructor(props: JobResponseDto) {
     initialize(this, props)
   }

@@ -88,6 +88,7 @@ export class FindProjectDetailHttpController {
     response.projectFolderId = result.projectFolderId ?? null
     response.shareLink = result.shareLink ?? null
     response.parentlessFolder = result.parentless ?? false
+    response.sharedDriveVersion = result.sharedDriveVersion ?? null
 
     return response
   }

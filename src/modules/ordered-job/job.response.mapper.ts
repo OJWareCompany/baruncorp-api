@@ -21,7 +21,9 @@ export class JobResponseMapper {
   constructor(private readonly prismaService: PrismaService) {}
   async toResponse(job: OrderedJobs): Promise<JobResponseDto> {
     const jobFolder = await this.prismaService.googleJobFolder.findFirst({ where: { jobId: job.id } })
-    // if (!jobFolder) throw new GoogleDriveJobFolderNotFoundException()
+    const sharedDrive = await this.prismaService.googleSharedDrive.findFirst({
+      where: { id: jobFolder?.sharedDriveId as string },
+    })
 
     const currentJobId = await this.prismaService.orderedJobs.findFirst({
       select: { id: true },
@@ -179,6 +181,7 @@ export class JobResponseMapper {
       jobFolderId: jobFolder?.id ?? null,
       shareLink: jobFolder?.shareLink ?? null,
       parentlessFolder: jobFolder?.parentless ?? false,
+      sharedDriveVersion: sharedDrive?.version ?? null,
       inReview: job.inReview,
       priority: job.priority as OrderedJobsPriorityEnum,
       priorityLevel: job.priorityLevel,

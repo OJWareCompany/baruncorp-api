@@ -103,4 +103,8 @@ export class ProjectResponseDto {
 
   @ApiProperty({ example: false })
   parentlessFolder?: boolean
+
+  @ApiProperty({ example: '002' })
+  @IsString()
+  sharedDriveVersion: string | null
 }

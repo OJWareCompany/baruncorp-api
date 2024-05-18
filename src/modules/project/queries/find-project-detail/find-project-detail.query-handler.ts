@@ -18,6 +18,7 @@ export type FindProjectDetailReturnType = OrderedProjects & { organization: Orga
   projectFolderId?: string | null
   shareLink?: string | null
   parentless?: boolean
+  sharedDriveVersion?: string | null
 }
 
 @QueryHandler(FindProjectDetailQuery)
@@ -46,9 +47,13 @@ export class FindProjectDetailQueryHandler implements IQueryHandler {
     if (!record) throw new ProjectNotFoundException()
 
     const projectFolder = await this.prismaService.googleProjectFolder.findFirst({ where: { projectId: record.id } })
+    const sharedDrive = await this.prismaService.googleSharedDrive.findFirst({
+      where: { id: projectFolder?.sharedDriveId as string },
+    })
     record.projectFolderId = projectFolder?.id ?? null
     record.shareLink = projectFolder?.shareLink ?? null
     record.parentless = projectFolder?.parentless ?? false
+    record.sharedDriveVersion = sharedDrive?.version ?? null
 
     return record
   }
