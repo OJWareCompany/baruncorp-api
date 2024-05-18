@@ -48,6 +48,7 @@ import { DetermineJobStatus } from './domain-services/determine-job-status.domai
 import { DoneRequiredStatuses } from './value-objects/completion-required-statuses.value-object'
 import { TotalDurationCalculator } from './domain-services/total-duration-calculator.domain-service'
 import { areDatesEqualIgnoringMilliseconds } from '../../../libs/utils/areDatesEqualIgnoringMilliseconds.util'
+import { MakeDeliverablesEmailContents } from './domain-services/make-deliverables-email-contents.domain-service'
 
 ConfigModule.forRoot()
 const { APP_MODE } = process.env
@@ -180,28 +181,14 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
   async sendToClient(
     editor: UserEntity,
+    mailContents: IRFIMail,
     mailer: RFIMailer,
-    deliverablesLink: string,
     orderStatusChangeValidator: OrderStatusChangeValidator,
   ) {
     await orderStatusChangeValidator.validateJob(this, AutoOnlyJobStatusEnum.Sent_To_Client)
 
-    const devEmails = this.props.deliverablesEmails.filter((email) => email.endsWith('oj.vision'))
-    const devEmail = devEmails.length ? devEmails : ['hyomin@oj.vision']
+    await mailer.sendRFI(mailContents)
 
-    const to: string[] = APP_MODE === 'production' ? this.props.deliverablesEmails : devEmail
-    const textForDev = APP_MODE === 'production' ? '' : 'THIS IS FROM DEVELOPMENT SERVER'
-
-    const input: IRFIMail = {
-      subject: `BarunCorp Deliverables`,
-      text: textForDev + `deliverables link: ${deliverablesLink}`,
-      from: 'automation@baruncorp.com',
-      to: to,
-      threadId: null,
-      files: null,
-    }
-
-    await mailer.sendRFI(input)
     if (this.props.jobStatus !== JobStatusEnum.Canceled_Invoice) {
       await this.setStatus(AutoOnlyJobStatusEnum.Sent_To_Client, null)
     }

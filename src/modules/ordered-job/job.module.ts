@@ -50,6 +50,7 @@ import { JOB_REPOSITORY } from './job.di-token'
 import { JobRepository } from './database/job.repository'
 import { JobMapper } from './job.mapper'
 import { DetermineJobStatus } from './domain/domain-services/determine-job-status.domain-service'
+import { MakeDeliverablesEmailContents } from './domain/domain-services/make-deliverables-email-contents.domain-service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -95,6 +96,7 @@ const domainServices: Provider[] = [
   OrderModificationValidator,
   OrderDeletionValidator,
   DetermineJobStatus,
+  MakeDeliverablesEmailContents,
 ]
 
 @Module({
