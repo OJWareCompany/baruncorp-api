@@ -1,4 +1,4 @@
-import { IsDate, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
+import { IsBoolean, IsDate, IsEnum, IsNumber, IsOptional, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { initialize } from '../../../libs/utils/constructor-initializer'
 import { AssignedTaskResponseDto } from '../../assigned-task/dtos/assigned-task.response.dto'
@@ -215,6 +215,10 @@ export class JobResponseDto {
   @IsDate()
   @IsOptional()
   dueDate: Date | null
+
+  @ApiProperty()
+  @IsBoolean()
+  isManualDueDate: boolean
 
   @ApiProperty()
   @IsDate()

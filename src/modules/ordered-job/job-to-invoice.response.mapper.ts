@@ -182,6 +182,7 @@ export class JobToInvoiceResponseMapper {
       state: stateName,
       dateSentToClient: job.dateSentToClient,
       dueDate: job.dueDate ? job.dueDate : null,
+      isManualDueDate: job.isManualDueDate,
       jobFolderId: jobFolder?.id ?? null,
       shareLink: jobFolder?.shareLink ?? null,
       inReview: job.inReview,
