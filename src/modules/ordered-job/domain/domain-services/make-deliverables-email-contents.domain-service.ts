@@ -2,12 +2,18 @@ import { ConfigModule } from '@nestjs/config'
 import { IRFIMail } from '../../../ordered-job-note/infrastructure/mailer.infrastructure'
 import { JobEntity } from '../job.entity'
 import { ProjectEntity } from '../../../project/domain/project.entity'
+import { TrackingNumbersResponseDto } from '../../../tracking-numbers/dtos/tracking-numbers.response.dto'
 
 ConfigModule.forRoot()
 const { APP_MODE } = process.env
 
 export class MakeDeliverablesEmailContents {
-  format(project: ProjectEntity, job: JobEntity, deliverablesFolderShareLink: string): IRFIMail {
+  format(
+    project: ProjectEntity,
+    job: JobEntity,
+    deliverablesFolderShareLink: string,
+    trackings: TrackingNumbersResponseDto[],
+  ): IRFIMail {
     const devEmails = job.deliverablesEmails.filter((email) => email.endsWith('oj.vision'))
     const devEmail = devEmails.length ? devEmails : ['hyomin@oj.vision']
     const to: string[] = APP_MODE === 'production' ? job.deliverablesEmails : devEmail
@@ -38,6 +44,7 @@ export class MakeDeliverablesEmailContents {
     ${project.projectPropertyOwnerName || ''}</p>
     <p><strong>Property Type</strong><br>
     ${project.projectPropertyType}</p>
+    ${trackings.map(this.formatTracking)}
     <p><strong>Deliverables</strong><br>
     <a href="${deliverablesFolderShareLink}">Click to View Deliverables</a></p>
     <p><strong>Are Structural Upgrades Required?</strong><br>
@@ -61,5 +68,14 @@ export class MakeDeliverablesEmailContents {
     }
 
     return input
+  }
+
+  formatTracking(tracking: TrackingNumbersResponseDto) {
+    return `
+    <p><strong>${tracking.courierName} Tracking Numbers</strong><br>
+    ${tracking.trackingNumber}
+    <p><strong>${tracking.courierName} Tracking Link</strong><br>
+    <a href="${tracking.trackingNumberUri}">Click to Track Packages</a></p>
+    `
   }
 }
