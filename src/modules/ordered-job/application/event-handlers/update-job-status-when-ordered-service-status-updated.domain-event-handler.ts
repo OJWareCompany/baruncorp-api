@@ -35,7 +35,7 @@ export class UpdateJobStatusWhenOrderedServiceStatusUpdatedDomainEventHandler {
       if (error instanceof JobStatusNotUpdatedException) {
         statusChanged = false
       } else {
-        throw error
+        // throw error
       }
     }
 
@@ -45,7 +45,7 @@ export class UpdateJobStatusWhenOrderedServiceStatusUpdatedDomainEventHandler {
       if (error instanceof JobDueDateNotUpdatedException) {
         dueDateChanged = false
       } else {
-        throw error
+        // throw error
       }
     }
 

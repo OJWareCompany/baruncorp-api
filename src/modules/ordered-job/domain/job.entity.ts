@@ -314,19 +314,25 @@ export class JobEntity extends AggregateRoot<JobProps> {
     switch (status) {
       case JobStatusEnum.Not_Started:
         if (!calculator) throw new Error('It needs calculator when status is updated.')
-        await this.updateDueDateOrThrow({ calculator })
+        try {
+          await this.updateDueDateOrThrow({ calculator })
+        } catch (error) {}
         this.addEvent(new JobNotStartedDomainEvent({ aggregateId: this.id }))
         break
 
       case JobStatusEnum.In_Progress:
         if (!calculator) throw new Error('It needs calculator when status is updated.')
-        await this.updateDueDateOrThrow({ calculator })
+        try {
+          await this.updateDueDateOrThrow({ calculator })
+        } catch (error) {}
         this.addEvent(new JobStartedDomainEvent({ aggregateId: this.id }))
         break
 
       case JobStatusEnum.Completed:
         if (!calculator) throw new Error('It needs calculator when status is updated.')
-        await this.updateDueDateOrThrow({ calculator })
+        try {
+          await this.updateDueDateOrThrow({ calculator })
+        } catch (error) {}
         this.addEvent(new JobCompletedDomainEvent({ aggregateId: this.id }))
         break
 
@@ -349,6 +355,7 @@ export class JobEntity extends AggregateRoot<JobProps> {
 
     this.props.jobStatus = status
     this.updatePriority()
+    return this
   }
 
   /**

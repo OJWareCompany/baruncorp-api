@@ -17,6 +17,8 @@ import { JOB_REPOSITORY } from '../../job.di-token'
  * 1. duration을 scope에 설정된 기준으로 자동 계산
  * 2. 직접 입력
  */
+
+// Update Due Date & Status
 export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
   constructor(
     @Inject(JOB_REPOSITORY) private readonly jobRepo: JobRepositoryPort,
@@ -39,7 +41,7 @@ export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
       if (error instanceof JobStatusNotUpdatedException) {
         statusChanged = false
       } else {
-        throw error
+        // throw error
       }
     }
 
@@ -49,7 +51,7 @@ export class UpdateDueDateWhenScopeIsOrderedDomainEventHandler {
       if (error instanceof JobDueDateNotUpdatedException) {
         dueDateChanged = false
       } else {
-        throw error
+        // throw error
       }
     }
 
