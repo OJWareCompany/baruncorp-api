@@ -22,11 +22,12 @@ export class CreateJobNoteRequestDto {
   @IsEnum(JobNoteTypeEnum)
   readonly type: JobNoteTypeEnum
 
-  @ApiProperty({ default: 'yunwoo@oj.vision' })
+  @ApiProperty({ default: ['yunwoo@oj.vision'] })
+  @IsArray()
   @IsEmail({}, { each: true })
-  @Transform(({ value }) => processEmails(value))
+  // @Transform(({ value }) => processEmails(value))
   @IsOptional()
-  readonly receiverEmails?: string
+  readonly receiverEmails?: string[]
 
   @ApiProperty({ type: 'array', items: { type: 'string', format: 'binary' } })
   readonly files: any[]

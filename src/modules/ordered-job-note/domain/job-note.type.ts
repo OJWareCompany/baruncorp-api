@@ -9,7 +9,7 @@ export interface CreateJobNoteProps {
   content: string
   jobNoteNumber: number
   senderEmail: string | null
-  receiverEmails: string[] | null
+  receiverEmails?: string[] | null
   emailThreadId: string | null
 }
 

@@ -721,8 +721,8 @@ export interface CreateJobNoteRequestDto {
   emailBody?: string
   /** @default "JobNote" */
   type: 'JobNote' | 'RFI'
-  /** @default "yunwoo@oj.vision" */
-  receiverEmails?: string
+  /** @default ["yunwoo@oj.vision"] */
+  receiverEmails?: string[]
   files: File[]
 }
 

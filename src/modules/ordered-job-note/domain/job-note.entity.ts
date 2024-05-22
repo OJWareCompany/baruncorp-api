@@ -29,7 +29,7 @@ export class JobNoteEntity extends AggregateRoot<JobNoteProps> {
     this.props.senderEmail = senderEmail
   }
 
-  get receiverEmails(): string[] | null {
+  get receiverEmails(): string[] | null | undefined {
     return this.props.receiverEmails
   }
 
