@@ -25,7 +25,7 @@ export class CreateJobNoteRequestDto {
   @ApiProperty({ default: ['yunwoo@oj.vision'] })
   @IsArray()
   @IsEmail({}, { each: true })
-  // @Transform(({ value }) => processEmails(value))
+  @Transform(({ value }) => processEmails(value))
   @IsOptional()
   readonly receiverEmails?: string[]
 
