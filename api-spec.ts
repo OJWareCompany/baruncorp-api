@@ -583,6 +583,14 @@ export interface JobToInvoiceResponseDto {
   total: number
 }
 
+export interface UpdateJobDueDateRequestDto {
+  /**
+   * @format date-time
+   * @default "2024-05-23T02:10:09.044Z"
+   */
+  dueDate: string
+}
+
 export interface CommercialTier {
   /** @default 0.01 */
   startingPoint: number
@@ -4979,6 +4987,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       this.request<void, any>({
         path: `/jobs/${jobId}/send-deliverables`,
         method: 'PATCH',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateJobDueDateHttpControllerUpdateJob
+     * @request PATCH:/jobs/{jobId}/due-date
+     */
+    updateJobDueDateHttpControllerUpdateJob: (
+      jobId: string,
+      data: UpdateJobDueDateRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/jobs/${jobId}/due-date`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }

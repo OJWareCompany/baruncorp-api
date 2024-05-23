@@ -51,6 +51,8 @@ import { JobRepository } from './database/job.repository'
 import { JobMapper } from './job.mapper'
 import { DetermineJobStatus } from './domain/domain-services/determine-job-status.domain-service'
 import { MakeDeliverablesEmailContents } from './domain/domain-services/make-deliverables-email-contents.domain-service'
+import { UpdateJobDueDateHttpController } from './commands/update-job-due-date/update-job-due-date.http.controller'
+import { UpdateJobDueDateService } from './commands/update-job-due-date/update-job-due-date.service'
 
 const httpControllers = [
   CreateJobHttpController,
@@ -63,6 +65,7 @@ const httpControllers = [
   FindJobToInvoiceHttpController,
   SendDeliverablesHttpController,
   FindMyOrderedJobPaginatedHttpController,
+  UpdateJobDueDateHttpController,
 ]
 const commandHandlers: Provider[] = [
   CreateJobService,
@@ -70,6 +73,7 @@ const commandHandlers: Provider[] = [
   UpdateJobStatusService,
   DeleteJobService,
   SendDeliverablesService,
+  UpdateJobDueDateService,
 ]
 const queryHandlers: Provider[] = [
   FindJobQueryHandler,
