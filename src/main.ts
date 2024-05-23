@@ -43,9 +43,16 @@ async function bootstrap() {
   const document = SwaggerModule.createDocument(app, config)
   SwaggerModule.setup('api', app, document)
 
-  process.on('uncaughtException', (error) => {
-    console.error('Unhandled Exception', error)
+  process.on('uncaughtException', (err) => {
+    console.log(`Uncaught Exception: ${err.message}`)
+    console.log(err.stack)
     // process.exit(1)
+    // Optionally, restart the process or exit
+  })
+
+  process.on('unhandledRejection', (reason, promise) => {
+    console.log(`Unhandled Rejection: ${reason}`)
+    // Optionally, restart the process or exit
   })
 
   await app.listen(Number(APP_PORT))
