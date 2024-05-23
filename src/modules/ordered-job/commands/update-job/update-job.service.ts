@@ -73,14 +73,6 @@ export class UpdateJobService implements ICommandHandler {
     job.updateAdditionalInformationFromClient(command.additionalInformationFromClient)
     job.updateIsExpedited(command.isExpedited)
     job.updateUpdatedBy(editor)
-    if (command.isManualDueDate) {
-      try {
-        job.updateDueDateOrThrow({ manualDate: command.dueDate })
-      } catch (error) {
-        if (error instanceof JobDueDateNotUpdatedException) {
-        }
-      }
-    }
     job.setInReview(command.inReview)
     job.setStructuralUpgradeNote(command.structuralUpgradeNote)
     job.setLoadCalcOrigin(command.loadCalcOrigin)

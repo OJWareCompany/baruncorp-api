@@ -6,16 +6,11 @@ import { MountingTypeEnum } from '../../../project/domain/project.type'
 import { OrderedJobsPriorityEnum } from '../../domain/value-objects/priority.value-object'
 
 export class UpdateJobRequestDto extends OmitType(CreateJobRequestDto, [
+  'dueDate',
   'taskIds',
   'projectId',
   'mountingType',
 ] as const) {
-  @ApiProperty()
-  @IsOptional()
-  @IsDate()
-  @Type(() => Date)
-  readonly dueDate: Date
-
   @ApiProperty({ enum: MountingTypeEnum, example: MountingTypeEnum.Ground_Mount })
   @IsEnum(MountingTypeEnum)
   @IsOptional()

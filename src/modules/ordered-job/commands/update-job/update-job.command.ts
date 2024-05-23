@@ -16,7 +16,6 @@ export class UpdateJobCommand {
   readonly mountingType?: MountingTypeEnum | null
   readonly structuralUpgradeNote: string | null
   readonly isExpedited: boolean
-  readonly dueDate: Date
   readonly isManualDueDate?: boolean
   readonly inReview: boolean
   readonly priority: OrderedJobsPriorityEnum

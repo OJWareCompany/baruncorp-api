@@ -379,12 +379,6 @@ export interface UpdateJobRequestDto {
   isExpedited: boolean
   /** @default false */
   isManualDueDate?: boolean
-  /**
-   * dueDate를 입력하지 않으면 태스크에 설정된 duration으로 자동 계산된다.
-   * @format date-time
-   * @default null
-   */
-  dueDate: string | null
   /** @example "Ground Mount" */
   mountingType?: 'Roof Mount' | 'Ground Mount' | null
   inReview: boolean

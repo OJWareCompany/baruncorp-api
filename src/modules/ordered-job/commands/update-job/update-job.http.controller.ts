@@ -31,7 +31,6 @@ export class UpdateJobHttpController {
       isExpedited: dto.isExpedited,
       inReview: dto.inReview,
       priority: dto.priority,
-      dueDate: dto.dueDate || null,
       structuralUpgradeNote: dto.structuralUpgradeNote,
       loadCalcOrigin: dto.loadCalcOrigin,
     })
