@@ -39,6 +39,8 @@ export class InvoiceRepository implements InvoiceRepositoryPort {
     const { invoiceIssueHistories, ...restOfRecord } = record
     await this.prismaService.invoices.update({ where: { id: entity.id }, data: restOfRecord })
 
+    if (!invoiceIssueHistories.length) return
+
     const latestIssuedHistory = invoiceIssueHistories.reduce((latest, item) => {
       return latest.issuedAt > item.issuedAt ? latest : item
     })

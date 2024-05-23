@@ -127,7 +127,7 @@ export class InvoiceEntity extends AggregateRoot<InvoiceProps> {
   }
 
   modifyPeriodMonth(subTotal: number, volumeTierDiscount: number, serviceMonth: Date) {
-    if (this.isIssuedOrPaid) {
+    if (this.props.status === InvoiceStatusEnum.Paid) {
       throw new InvoiceEditException()
     }
     this.props.subTotal = subTotal
