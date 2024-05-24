@@ -161,6 +161,7 @@ export class ImapManagerService {
       }
       // console.log(`[ImapManagerService][connectToMailbox][openInbox] box : ${JSON.stringify(box)}`);
       imap.on('mail', (numNewMsgs: string) => this.onNewMail(auth2Client, imap, numNewMsgs))
+      // .on('error', (error: Error) => console.log(error, '[ERROR!]'))
     })
   }
 
