@@ -171,6 +171,11 @@ export class AssignedTaskEntity extends AggregateRoot<AssignedTaskProps> {
     return this
   }
 
+  async start() {
+    this.setStatus(AssignedTaskStatusEnum.In_Progress)
+    return this
+  }
+
   async backToNotStarted(
     option: OrderedServiceBackToNotStartedDomainEvent | OrderedServiceStartedDomainEvent,
     orderModificationValidator: OrderModificationValidator,

@@ -528,6 +528,10 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     return this
   }
 
+  isAssigned() {
+    return this.props.assignedTasks.some((task) => !!task.assigneeId)
+  }
+
   backToNotStarted(option: { invokedBy: 'job' | 'task' | 'manually' }): this {
     const permittedAutoUpdateStatusWhenInvokedByJob: OrderedScopeStatus[] = [
       // OrderedServiceStatusEnum.Canceled,

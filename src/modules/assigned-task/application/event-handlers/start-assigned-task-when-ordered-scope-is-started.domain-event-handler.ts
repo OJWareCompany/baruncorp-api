@@ -3,16 +3,14 @@ import { Inject, Injectable } from '@nestjs/common'
 import { OnEvent } from '@nestjs/event-emitter'
 import { GenerateAssignedTaskModificationHistory } from '../../../integrated-order-modification-history/domain/domain-services/assignd-task-modification-history.decorator'
 import { OrderedServiceStartedDomainEvent } from '../../../ordered-service/domain/events/ordered-service-started.domain-event'
-import { OrderModificationValidator } from '../../../ordered-job/domain/domain-services/order-modification-validator.domain-service'
 import { AssignedTaskRepositoryPort } from '../../database/assigned-task.repository.port'
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 
 @Injectable()
-export class BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler {
+export class StartAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,
-    private readonly orderModificationValidator: OrderModificationValidator,
   ) {}
 
   @OnEvent(OrderedServiceStartedDomainEvent.name, { async: true, promisify: true })
@@ -22,11 +20,7 @@ export class BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler {
       orderedServiceId: event.aggregateId,
     })
 
-    await Promise.all(
-      assignedTasks.map(async (assignedTask) => {
-        await assignedTask.backToNotStarted(event, this.orderModificationValidator)
-      }),
-    )
+    assignedTasks.map((assignedTask) => assignedTask.start())
 
     await this.assignedTaskRepo.update(assignedTasks)
   }

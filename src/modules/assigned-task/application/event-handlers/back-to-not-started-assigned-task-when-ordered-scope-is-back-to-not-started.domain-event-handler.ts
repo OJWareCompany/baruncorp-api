@@ -8,7 +8,7 @@ import { AssignedTaskRepositoryPort } from '../../database/assigned-task.reposit
 import { ASSIGNED_TASK_REPOSITORY } from '../../assigned-task.di-token'
 
 @Injectable()
-export class BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler {
+export class BackToNotStartedAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler {
   constructor(
     // @ts-ignore
     @Inject(ASSIGNED_TASK_REPOSITORY) private readonly assignedTaskRepo: AssignedTaskRepositoryPort,

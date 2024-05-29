@@ -39,8 +39,8 @@ import { InvoiceModule } from '../invoice/invoice.module'
 import { UsersModule } from '../users/users.module'
 import { JobModule } from '../ordered-job/job.module'
 import { ExpensePricingModule } from '../expense-pricing/expense-pricing.module'
-import { BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-started.domain-event-handler'
-import { BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-back-to-not-started.domain-event-handler'
+import { StartAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler } from './application/event-handlers/start-assigned-task-when-ordered-scope-is-started.domain-event-handler'
+import { BackToNotStartedAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler } from './application/event-handlers/back-to-not-started-assigned-task-when-ordered-scope-is-back-to-not-started.domain-event-handler'
 import { CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler } from './application/event-handlers/cancel-assigned-task-when-ordered-service-is-canceled-and-kept-invoice.domain-event-handler'
 import { IntegratedOrderModificationHistoryModule } from '../integrated-order-modification-history/integrated-order-modification-history.module'
 import { DeleteAssignedTaskWhenOrderedServiceIsDeletedDomainServiceHandler } from './application/event-handlers/delete-assigned-task-when-ordered-service-is-deleted.domain-service-handler'
@@ -114,8 +114,8 @@ const eventHandlers: Provider[] = [
   ActivateTasksWhenTaskIsUpdatedDomainEventHandler,
   ActivateTaskWhenTaskIsCreatedDomainEventHandler,
   AssignTaskWhenTaskIsActivatedDomainEventHandler,
-  BackToAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler,
-  BackToAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler,
+  BackToNotStartedAssignedTaskWhenOrderedScopeIsBackToNotStartedDomainEventHandler,
+  StartAssignedTaskWhenOrderedScopeIsStartedDomainEventHandler,
   CancelAssignedTaskWhenOrderedServiceIsCanceledAndKeptInvoiceDomainEventHandler,
   DeleteAssignedTaskWhenOrderedServiceIsDeletedDomainServiceHandler,
   UpdateExpeditedStatusWhenJobExpeditedStatusIsUpdatedDomainEventHandler,
