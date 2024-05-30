@@ -537,7 +537,7 @@ model OrderedJobs {
   restrictedAccess                              Boolean?              @map("restricted_access")
   serviceOrderId                                Int?                  @map("service_order_id")
   showClientStructuralUpgradeMessage            Boolean?              @map("show_client_structural_upgrade_message")
-  sixMonthsPrior                                DateTime?             @map("six_months_prior") @db.Date
+  sixMonthsPrior                                DateTime?             @map("six_months_prior") @db.DateTime(0)
   standardPricing                               Boolean?              @map("standard_pricing")
   structuralOrElectricalPEAndWetStampSelectedGl Boolean?              @map("structural_or_electrical_pe_and_wet_stamp_selected_gl")
   mailingAdderssCity                            String?               @map("mailing_adderss_city") @db.VarChar(255)
@@ -794,15 +794,15 @@ model CreditTransactions {
 model Invoices {
   id                    String                @id @map("id") @db.VarChar(255)
   status                InvoicesStatus        @default(Unissued) @map("status")
-  invoiceDate           DateTime              @default(now()) @map("invoice_date") @db.Date
+  invoiceDate           DateTime              @map("invoice_date") @db.DateTime(0)
   terms                 Int                   @default(30) @map("terms") @db.UnsignedTinyInt
-  dueDate               DateTime?             @map("due_date") @db.Date
+  dueDate               DateTime?             @map("due_date") @db.DateTime(0)
   notesToClient         String?               @map("notes_to_client") @db.Text
   createdAt             DateTime              @default(now()) @map("createdAt") @db.Timestamp(0)
   updatedAt             DateTime              @default(now()) @updatedAt @map("updatedAt") @db.Timestamp(0)
   clientOrganizationId  String                @map("client_organization_id") @db.VarChar(255)
   organizationName      String                @map("organization_name") @db.VarChar(255)
-  serviceMonth          DateTime              @map("service_month") @db.Date
+  serviceMonth          DateTime              @map("service_month") @db.DateTime(0)
   subTotal              Decimal               @map("sub_total") @db.Decimal(13, 4)
   volumeTierDiscount    Decimal               @map("volume_tier_discount") @db.Decimal(13, 4)
   total                 Decimal               @db.Decimal(13, 4)
@@ -943,7 +943,7 @@ model VendorInvoices {
   dueDate                 DateTime?        @map("due_date") @db.DateTime(0)
   daysPastDue             DateTime?        @map("days_past_due") @db.DateTime(0)
   note                    String?          @map("note") @db.Text
-  serviceMonth            DateTime         @map("service_month") @db.Date
+  serviceMonth            DateTime         @map("service_month") @db.DateTime(0)
   subTotal                Decimal          @map("sub_total") @db.Decimal(13, 4)
   total                   Decimal          @map("total") @db.Decimal(13, 4)
   invoiceTotalDifference  Decimal          @map("invoice_total_difference") @db.Decimal(13, 4)
