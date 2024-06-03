@@ -6,8 +6,7 @@ import { AssignedTaskMapper } from '../assigned-task.mapper'
 import { AssignedTaskRepositoryPort } from './assigned-task.repository.port'
 import { AssignedTaskEntity } from '../domain/assigned-task.entity'
 import { AssignedTaskNotFoundException } from '../domain/assigned-task.error'
-import { zonedTimeToUtc } from 'date-fns-tz'
-import { endOfMonth, startOfMonth } from 'date-fns'
+import { addMonths } from 'date-fns'
 import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
 import { PaginatedQueryBase } from '../../../libs/ddd/query.base'
 import { UserEntity } from '../../users/domain/user.entity'
@@ -119,8 +118,20 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
         vendorInvoiceId: null,
         NOT: { cost: null },
         doneAt: {
-          gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
-          lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+          // gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
+          // lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+
+          /**
+           * 클라이언트에서 일광절약시간 적용 후 UTC로 변환해서 넘겨주게 되면 이 로직으로 수정할 것
+           */
+          // gte: serviceMonth,
+          // lte: addMonths(serviceMonth, 1), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+
+          /**
+           * 임시 쿼리 (클라이언트에서 UTC 00:00:00으로 보내주고 있음, 나중에 일광절약시간으로인해 시차가 변하므로 클라이언트에서 준 값을 가지고 쿼리해야함)
+           */
+          gte: convertTo(serviceMonth),
+          lte: convertTo(addMonths(serviceMonth, 1)), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
         },
       },
     })
@@ -137,12 +148,35 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
         NOT: { cost: null },
         // TODO: 검토필요, createdAt으로 교체?
         startedAt: {
-          gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
-          lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+          // gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
+          // lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+
+          /**
+           * 클라이언트에서 일광절약시간 적용 후 UTC로 변환해서 넘겨주게 되면 이 로직으로 수정할 것
+           */
+          // gte: serviceMonth,
+          // lte: addMonths(serviceMonth, 1), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+
+          /**
+           * 임시 쿼리 (클라이언트에서 UTC 00:00:00으로 보내주고 있음, 나중에 일광절약시간으로인해 시차가 변하므로 클라이언트에서 준 값을 가지고 쿼리해야함)
+           */
+          gte: convertTo(serviceMonth),
+          lte: convertTo(addMonths(serviceMonth, 1)), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
         },
       },
     })
 
     return result
   }
+}
+
+function convertTo(date: Date): Date {
+  const year = date.getUTCFullYear()
+  const month = date.getUTCMonth()
+  const day = date.getUTCDate()
+
+  // Create a new Date object for the first day of the month at 00:00:00 UTC
+  const utcDate = new Date(Date.UTC(year, month, day, 4, 0, 0))
+
+  return utcDate
 }

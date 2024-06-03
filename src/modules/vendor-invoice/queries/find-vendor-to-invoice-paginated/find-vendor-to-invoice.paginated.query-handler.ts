@@ -27,13 +27,13 @@ export class FindVendorToInvoicePaginatedQueryHandler implements IQueryHandler {
     `
 
     const vendorsLineItems: any[] = await this.prismaService.$queryRaw`
-    SELECT assignee_organization_name, assignee_organization_id, MAX(done_at) AS done_at
+    SELECT assignee_organization_name, assignee_organization_id, MAX(CONVERT_TZ(done_at, 'UTC', 'America/New_York')) AS done_at
     FROM assigned_tasks at
     WHERE at.status = 'Completed'
     AND at.is_vendor = 1
     AND at.vendor_invoice_id IS NULL
     AND at.cost IS NOT NULL
-    GROUP BY assignee_organization_id, DATE_FORMAT(at.done_at,'%Y-%m')
+    GROUP BY assignee_organization_id, DATE_FORMAT(CONVERT_TZ(at.done_at, 'UTC', 'America/New_York'), '%Y-%m')
     ORDER BY done_at DESC;
     `
 

@@ -16,11 +16,14 @@ export class FindClientToInvoiceQueryHandler implements IQueryHandler {
   async execute(query: FindClientToInvoiceQuery): Promise<any> {
     // AND created_at < DATE_FORMAT(CURDATE(), '%Y-%m-01')
     const jobs = (await this.prismaService.$queryRaw`
-    SELECT id, client_organization_id, client_organization_name, MAX(date_sent_to_client) AS date_sent_to_client
+    SELECT  id, 
+            client_organization_id,
+            client_organization_name,
+            MAX(CONVERT_TZ(date_sent_to_client, 'UTC', 'America/New_York')) AS date_sent_to_client
     FROM ordered_jobs
     WHERE job_status IN('Sent To Client','Canceled (Invoice)')
     AND invoice_id IS NULL
-    GROUP BY client_organization_id, DATE_FORMAT(date_sent_to_client, '%Y-%m')
+    GROUP BY client_organization_id, DATE_FORMAT(CONVERT_TZ(date_sent_to_client, 'UTC', 'America/New_York'), '%Y-%m')
     ORDER BY date_sent_to_client DESC;
     `) as {
       id: string
