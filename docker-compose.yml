@@ -14,122 +14,60 @@ services:
       - ./nginx/nginx.conf:/etc/nginx/nginx.conf
       - ./logs:/var/log/nginx
     healthcheck:
+      # test: wget --spider -T 10 -t 1 https://${API_HOST}/prod/jobs || kill 1
       test:
         [
           'CMD-SHELL',
-          'wget --spider -T 10 -t 1 https://${API_HOST}/nginx-health-check || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/nginx-health-check 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
+          'wget --spider -T 10 -t 3 https://${API_HOST}/prod/jobs || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/prod/jobs 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
         ]
-      interval: 30s
-      timeout: 1s
+      interval: 31s
+      timeout: 31s
       retries: 1
-      # start_period: 30s # 실패를 무시할 뿐, test 커맨드는 container health와 상관 없이 응답이 없으면 무조건 컨테이너를 kill 한다.
 
-  api_socket:
+  api_server:
     image: ${API_DOCKER_IMAGE_PATH}
     tty: true
     restart: always
-    command: bash -c "pnpm run start:prod"
+    ports:
+      - '3000:3000'
+    command:
+      - bash
+      - -c
+      - |
+        pnpm run start:prod
     env_file:
       - ./baruncorp-api/.env
-    volumes:
-      - ./logs:/var/log/nginx # 별 이유 없음, 그냥 nginx랑 동일하게 하기 위해서 이렇게 경로 설정함
     environment:
       - IMAP_ON_OFF=false
     healthcheck:
+      #test: wget --spider -T 10 -t 3 https://${API_HOST}/prod/projects || kill 1
       test:
         [
           'CMD-SHELL',
-          'wget --spider -T 10 -t 1 https://${API_HOST}/jobs?page=1&limit=1 || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/jobs?page=1&limit=1 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
+          'wget --spider -T 10 -t 3 https://${API_HOST}/prod/projects || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/prod/jobs 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
         ]
-      interval: 30s
-      timeout: 1s
+      interval: 31s
+      timeout: 31s
       retries: 1
 
   api_imap:
     image: ${API_DOCKER_IMAGE_PATH}
     tty: true
     restart: always
-    command: bash -c "pnpm run start:prod"
+    command:
+      - bash
+      - -c
+      - |
+        pnpm run start:prod
     env_file:
       - ./baruncorp-api/.env
     environment:
       - IMAP_ON_OFF=true
     healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'wget --spider -T 10 -t 1 https://${API_HOST}/users?page=1&limit=1 || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/users?page=1&limit=1 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
-        ]
+      test: wget --spider -T 30 -t 1 http://localhost:3000/jobs || kill 1
       interval: 30s
-      timeout: 1s
+      timeout: 30s
       retries: 1
-    volumes:
-      - ./logs:/var/log/nginx # 별 이유 없음, 그냥 nginx랑 동일하게 하기 위해서 이렇게 경로 설정함
-
-  api_get:
-    image: ${API_DOCKER_IMAGE_PATH}
-    tty: true
-    restart: always
-    ports:
-      - '3000:3000'
-    command: bash -c "pnpm run start:prod"
-    env_file:
-      - ./baruncorp-api/.env
-    environment:
-      - IMAP_ON_OFF=false
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
-        ]
-      interval: 30s
-      timeout: 1s
-      retries: 1
-    volumes:
-      - ./logs:/var/log/nginx # 별 이유 없음, 그냥 nginx랑 동일하게 하기 위해서 이렇게 경로 설정함
-
-  api_get2:
-    image: ${API_DOCKER_IMAGE_PATH}
-    tty: true
-    restart: always
-    command: bash -c "pnpm run start:prod"
-    env_file:
-      - ./baruncorp-api/.env
-    environment:
-      - IMAP_ON_OFF=false
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
-        ]
-      interval: 30s
-      timeout: 1s
-      retries: 1
-    volumes:
-      - ./logs:/var/log/nginx # 별 이유 없음, 그냥 nginx랑 동일하게 하기 위해서 이렇게 경로 설정함
-
-  api_post:
-    image: ${API_DOCKER_IMAGE_PATH}
-    tty: true
-    restart: always
-    command: bash -c "pnpm run start:prod"
-    env_file:
-      - ./baruncorp-api/.env
-    environment:
-      - IMAP_ON_OFF=false
-    healthcheck:
-      test:
-        [
-          'CMD-SHELL',
-          'wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 || { echo "$(date ''+%Y-%m-%d %H:%M:%S'') - Health check failed, trying alternative endpoint." | tee -a /var/log/nginx/health-check.log; wget --spider -T 10 -t 1 https://${API_HOST}/projects?page=1&limit=1 2>&1 | tee -a /var/log/nginx/health-check.log && kill 1; }',
-        ]
-      interval: 30s
-      timeout: 1s
-      retries: 1
-    volumes:
-      - ./logs:/var/log/nginx # 별 이유 없음, 그냥 nginx랑 동일하게 하기 위해서 이렇게 경로 설정함
 
   certbot:
     depends_on:
