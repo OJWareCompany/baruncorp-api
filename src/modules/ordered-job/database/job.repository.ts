@@ -6,10 +6,10 @@ import { JobMapper } from '../job.mapper'
 import { JobEntity } from '../domain/job.entity'
 import { PrismaService } from '../../../modules/database/prisma.service'
 import { JobNotFoundException } from '../domain/job.error'
-import { utcToZonedTime, zonedTimeToUtc } from 'date-fns-tz'
-import { addMonths, endOfMonth, startOfMonth } from 'date-fns'
+import { addMonths, endOfMonth, lastDayOfMonth, startOfMonth } from 'date-fns'
 import { AutoOnlyJobStatusEnum, JobStatusEnum } from '../domain/job.type'
 import { UserEntity } from '../../users/domain/user.entity'
+import { fromZonedTime } from 'date-fns-tz'
 
 type JobModel =
   | OrderedJobs & {
@@ -169,6 +169,25 @@ export class JobRepository implements JobRepositoryPort {
    * P.S. 일광 절약 시간제때문에 시차가 변화되어 년/월/일만 받아서 04:00:00시간으로 하드코딩 하는것은 불가능
    */
   async findJobsToInvoice(clientOrganizationId: string, serviceMonth: Date): Promise<JobEntity[]> {
+    /**
+     * 문제1.
+     * 5월 1일에서 addMonth하면 5월 30일이 된다.
+     */
+
+    /**
+     * startOfMonth는 2024-04-01T04:00:00.000Z를 반환하지만, 사실 Locale(EST)로 변환한 것
+     */
+    const toZonedString = serviceMonth.toISOString().split('Z')[0]
+    // const startDate = startOfMonth(toZonedString)
+    // const lastDate = endOfMonth(toZonedString)
+    const toUTC = fromZonedTime(serviceMonth.toISOString().split('Z')[0], 'America/New_York')
+    /**
+     * 00:00:00Z를 사용해서 1일부터 말일까지를 구한다.
+     * 그 후에 fromZonedTime을 사용해서 UTC시간을 구한다.
+     */
+
+    // console.log('toZoned: ', toZonedString, 'toUTC: ', toUTC, 'addMonth', addMonths(toUTC, 1))
+
     const prerequisiteTasks = await this.prismaService.prerequisiteTasks.findMany()
     const records = await this.prismaService.orderedJobs.findMany({
       where: {
@@ -177,8 +196,8 @@ export class JobRepository implements JobRepositoryPort {
           /**
            * 처음 로직
            */
-          // gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
-          // lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+          // gte: fromZonedTime(startOfMonth(serviceMonth), 'Etc/UTC'),
+          // lte: fromZonedTime(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
 
           /**
            * 클라이언트에서 일광절약시간 기준으로 선택해서 UTC로 변환해서 넘겨줘야함
@@ -186,9 +205,11 @@ export class JobRepository implements JobRepositoryPort {
           // gte: serviceMonth,
           // lte: addMonths(serviceMonth, 1), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
 
-          // 임시로 04시 더함 (클라이언트에서 UTC 00:00:00으로 보내주고있음)
-          gte: convertTo(serviceMonth),
-          lte: convertTo(addMonths(serviceMonth, 1)), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+          /**
+           * 클라이언트에서 00:00:00Z를 보내면 여기서 EST기준으로..
+           */
+          gte: toUTC,
+          lte: addMonths(toUTC, 1), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
         },
         jobStatus: {
           in: [AutoOnlyJobStatusEnum.Sent_To_Client, JobStatusEnum.Canceled_Invoice],
@@ -215,14 +236,13 @@ export class JobRepository implements JobRepositoryPort {
     return records.map((rec) => this.jobMapper.toDomain({ ...rec, prerequisiteTasks }))
   }
 }
+// function convertTo(date: Date): Date {
+//   const year = date.getUTCFullYear()
+//   const month = date.getUTCMonth()
+//   const day = date.getUTCDate()
 
-function convertTo(date: Date): Date {
-  const year = date.getUTCFullYear()
-  const month = date.getUTCMonth()
-  const day = date.getUTCDate()
+//   // Create a new Date object for the first day of the month at 00:00:00 UTC
+//   const utcDate = new Date(Date.UTC(year, month, day, 4, 0, 0))
 
-  // Create a new Date object for the first day of the month at 00:00:00 UTC
-  const utcDate = new Date(Date.UTC(year, month, day, 4, 0, 0))
-
-  return utcDate
-}
+//   return utcDate
+// }

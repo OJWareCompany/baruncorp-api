@@ -1,7 +1,6 @@
 import { v4 } from 'uuid'
 import { AggregateRoot } from '../../../libs/ddd/aggregate-root.base'
 import { CreateInvoiceProps, InvoiceProps, InvoiceStatusEnum, InvoiceTermsEnum } from './invoice.type'
-import addDays from 'date-fns/addDays'
 import { InvoiceCreatedDomainEvent } from './domain-events/invoice-created.domain-event'
 import { InvoiceCalculator } from './domain-services/invoice-calculator.domain-service'
 import { InvoiceEditException } from './invoice.error'
@@ -11,6 +10,7 @@ import { IssuedByUserName } from './value-objects/issued-by-user-name.value-obje
 import { EmailVO } from '../../users/domain/value-objects/email.vo'
 import { InvoiceRecipientEmail } from './value-objects/invoice-recipient-email.value-object'
 import { ConfigModule } from '@nestjs/config'
+import { addDays } from 'date-fns'
 
 ConfigModule.forRoot()
 

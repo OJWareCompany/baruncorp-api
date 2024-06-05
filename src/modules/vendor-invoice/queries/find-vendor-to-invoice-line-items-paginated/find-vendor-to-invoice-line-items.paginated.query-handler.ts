@@ -9,9 +9,6 @@ import { Inject } from '@nestjs/common'
 import { ASSIGNED_TASK_REPOSITORY } from '../../../assigned-task/assigned-task.di-token'
 import { AssignedTaskRepositoryPort } from '../../../assigned-task/database/assigned-task.repository.port'
 import { AssignedTaskMapper } from '../../../assigned-task/assigned-task.mapper'
-import { AssignedTaskStatusEnum } from '../../../assigned-task/domain/assigned-task.type'
-import { zonedTimeToUtc } from 'date-fns-tz'
-import { endOfMonth, startOfMonth } from 'date-fns'
 
 export class FindVendorToInvoiceLineItemsQuery extends PaginatedQueryBase {
   readonly clientOrganizationId: string
