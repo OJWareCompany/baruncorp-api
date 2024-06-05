@@ -1169,7 +1169,7 @@ model GoogleJobFolder {
   jobNotesFolderId            String?  @unique(map: "google_job_folder_UN") @map("job_notes_folder_id") @db.VarChar(255)
   jobNotesFolderShareLink     String?  @map("job_notes_folder_share_link") @db.VarChar(255)
   sharedDriveId               String?  @map("shared_drive_id") @db.VarChar(255)
-  count                       Int?     @map("count") @db.UnsignedMediumInt
+  count                       Int?     @map("count") @db.MediumInt
   parentless                  Boolean? @default(false)
   projectId                   String?  @map("project_id") @db.VarChar(255)
 
