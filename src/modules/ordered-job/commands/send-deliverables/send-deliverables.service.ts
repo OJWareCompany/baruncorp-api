@@ -19,6 +19,8 @@ import { JobRepositoryPort } from '../../database/job.repository.port'
 import { JOB_REPOSITORY } from '../../job.di-token'
 import { SendDeliverablesCommand } from './send-deliverables.command'
 import { TrackingNumbersResponseDto } from '../../../tracking-numbers/dtos/tracking-numbers.response.dto'
+import { FilesystemApiService } from '@src/modules/filesystem/infra/filesystem.api.service'
+import { FilesystemDomainService } from '@src/modules/filesystem/domain/domain-service/filesystem.domain-service'
 
 @CommandHandler(SendDeliverablesCommand)
 export class SendDeliverablesService implements ICommandHandler {
@@ -31,6 +33,8 @@ export class SendDeliverablesService implements ICommandHandler {
     private readonly makeDeliverablesEmailContents: MakeDeliverablesEmailContents,
     private readonly mailer: RFIMailer,
     private readonly prismaService: PrismaService,
+    private readonly filesystemApiService: FilesystemApiService,
+    private readonly filesystemDomainService: FilesystemDomainService,
   ) {}
 
   @GenerateJobModificationHistory({ invokedFrom: 'self' })
@@ -93,5 +97,37 @@ export class SendDeliverablesService implements ICommandHandler {
     await job.sendToClient(editor, emailContents, this.mailer, this.orderStatusChangeValidator)
 
     await this.jobRepository.update(job) // 업데이트 코드가 실행되기전까지 예외처리 되지 않으면 이력 생성해도 무관하다.
+
+    /**
+     * @FilesystemLogic
+     * - job.sentToClient(...) 로직을 통해서 job 상태가 변경됨
+     * - jobRepository.update 로직을 통해서 job 상태가 실제로 sentToClient로 변경됨
+     * - job 상태 변경 내용이 DB에 반영되야 실제로 상태가 변경됐다고 생각하고 아래 코드 수행
+     *
+     * await 하지 않는 이유
+     *   - API 요청으로 인해 구글 드라이브의 JobFolder 내의 파일 및 폴더 개수를 카운팅 하는 로직이 수행되는데 이때 시간이 꽤나 걸릴 수 있음
+     *   - 그러므로 파일 서버로의 API 요청은 await 하지 말고 then, catch 절로 처리 하자
+     */
+    const jobFolderId = jobFolder.id
+    const sharedDriveId = jobFolder.sharedDriveId
+
+    if (!sharedDriveId) return
+
+    this.filesystemApiService
+      .requestToPostCountJobFolder(sharedDriveId, jobFolderId)
+      .then(async (data) => {
+        await this.filesystemDomainService.reflectGoogleJobFolderCountingResult({
+          jobFolderId,
+          sharedDriveId,
+          count: data.count,
+        })
+      })
+      .catch(async (error) => {
+        console.error(error)
+        await this.filesystemDomainService.reflectGoogleJobFolderCountingError({
+          jobFolderId,
+          sharedDriveId,
+        })
+      })
   }
 }

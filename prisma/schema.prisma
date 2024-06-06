@@ -1198,6 +1198,7 @@ model GoogleSharedDrive {
   organizationName    String  @map("organization_name")
   count               Int?    @default(0) @db.UnsignedMediumInt
   version             String? @db.Char(3)
+  isHighestVersion    Boolean @default(true) @map("is_highest_version")
 
   @@index([organizationId], map: "shared_drive_FK")
   @@map("google_shared_drive")

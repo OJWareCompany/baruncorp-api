@@ -11,10 +11,20 @@ import { FilesystemDomainService } from './domain/domain-service/filesystem.doma
 import { GoogleAhjNoteFolderDomainService } from './domain/domain-service/google-ahj-note-folder.domain-service'
 import { CreateGoogleAhjNoteFolderHttpController } from './commands/create-google-ahj-note-folder/create-google-ahj-note-folder.http.controller'
 import { CreateGoogleAhjNoteFolderService } from './commands/create-google-ahj-note-folder/create-google-ahj-note-folder.service'
+import { UpgradeGoogleSharedDriveVersionHttpController } from './commands/upgrade-google-shared-drive-version/upgrade-google-shared-drive-version.http.controller'
+import { UpgradeGoogleSharedDriveVersionService } from './commands/upgrade-google-shared-drive-version/upgrade-google-shared-drive-version.service'
 
-const httpControllers = [CreateGoogleJobNoteFolderHttpController, CreateGoogleAhjNoteFolderHttpController]
+const httpControllers = [
+  CreateGoogleJobNoteFolderHttpController,
+  CreateGoogleAhjNoteFolderHttpController,
+  UpgradeGoogleSharedDriveVersionHttpController,
+]
 
-const commandHandlers: Provider[] = [CreateGoogleJobNoteFolderService, CreateGoogleAhjNoteFolderService]
+const commandHandlers: Provider[] = [
+  CreateGoogleJobNoteFolderService,
+  CreateGoogleAhjNoteFolderService,
+  UpgradeGoogleSharedDriveVersionService,
+]
 
 const repositories: Provider[] = [
   {

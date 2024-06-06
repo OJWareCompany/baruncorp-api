@@ -27,6 +27,8 @@ import {
   GetPropertyTypeFolderResponseData,
   GetSharedDriveIdByFolderIdResponse,
   GetSharedDriveIdByFolderIdResponseData,
+  PostCountJobFolderResponse,
+  PostCountJobFolderResponseData,
   PostRfiReplyFilesRequestPayload,
   PostRfiReplyFilesResponse,
   PostRfiReplyFilesResponseData,
@@ -105,6 +107,27 @@ export class FilesystemApiService {
         .json()
       return response.data
     } catch (error: any) {
+      handleFileServerRequestError(error)
+      throw error
+    }
+  }
+
+  async requestToPostCountJobFolder(
+    sharedDriveId: string,
+    jobFolderId: string,
+  ): Promise<PostCountJobFolderResponseData> {
+    try {
+      const url = `${this.baseUrl}/countJobFolderItems`
+      const response: PostCountJobFolderResponse = await got
+        .post(url, {
+          json: {
+            sharedDriveId,
+            jobFolderId,
+          },
+        })
+        .json()
+      return response.data
+    } catch (error) {
       handleFileServerRequestError(error)
       throw error
     }

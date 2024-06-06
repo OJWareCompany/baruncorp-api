@@ -21,6 +21,129 @@ export class FilesystemDomainService {
   ) {}
 
   /**
+   * jobFolder 카운팅을 정상적으로 한 케이스
+   * - googleJobFolder의 count 값 수정
+   * - googleSharedDrive이 count 값 +count로 수정
+   */
+  async reflectGoogleJobFolderCountingResult({
+    jobFolderId,
+    sharedDriveId,
+    count,
+  }: {
+    jobFolderId: string
+    sharedDriveId: string
+    count: number
+  }) {
+    const jobFolder = await this.prismaService.googleJobFolder.findFirstOrThrow({ where: { id: jobFolderId } })
+    const jobFolderCount = jobFolder.count ?? 0
+    // resend이고 이미 값이 제대로 기록되있는 경우는 Early Return
+    if (jobFolderCount > 0) return
+    /**
+     * `(jobFolderCount === -1)`는 이전에 계산 과정에서 에러가 발생해서 공유 드라이브에 임의 값인 100이 계산되었다는 의미
+     * 그러므로 이 경우엔 (-100 + count) 값을 increment로 해줌
+     *   - count가 24인 경우 => -76이 적용
+     *   - count가 176인 경우 => +76이 적용
+     */
+    const sharedDriveCountIncrement = jobFolderCount === -1 ? -100 + count : count
+    await this.prismaService.googleJobFolder.update({
+      where: { id: jobFolderId },
+      data: { count },
+    })
+    await this.prismaService.googleSharedDrive.update({
+      where: { id: sharedDriveId },
+      data: { count: { increment: sharedDriveCountIncrement } },
+    })
+  }
+
+  /**
+   * jobFolder 카운팅 하다가 에러가 발생한 케이스
+   * - googleJobFolder의 count 값 -1로 수정
+   *   - 에러가 발생했단걸 표시하기 위함
+   * - googleSharedDrive이 count 값 +100로 수정
+   *   - 에러인 경우 sharedDrive에 임의로 +100개 카운팅
+   */
+  async reflectGoogleJobFolderCountingError({
+    jobFolderId,
+    sharedDriveId,
+  }: {
+    jobFolderId: string
+    sharedDriveId: string
+  }) {
+    await this.prismaService.googleJobFolder.update({
+      where: { id: jobFolderId },
+      data: { count: -1 },
+    })
+    await this.prismaService.googleSharedDrive.update({
+      where: { id: sharedDriveId! },
+      data: { count: { increment: 100 } },
+    })
+  }
+
+  /**
+   * 다음 버전의 공유 드라이브 생성
+   * Example) 'GreenLancer 003' => 'GreenLancer 004'
+   */
+  async upgradeSharedDriveVersion({
+    currentSharedDriveId,
+    version,
+    organizationId,
+    organizationName,
+  }: {
+    currentSharedDriveId: string
+    version: string
+    organizationId: string
+    organizationName: string
+  }) {
+    const nextSharedDriveVersion = String(parseInt(version) + 1).padStart(3, '0')
+    const nextSharedDriveName = `${organizationName} ${nextSharedDriveVersion}`
+
+    const createGoogleSharedDriveResponseData = await this.filesystemApiService.requestToCreateGoogleSharedDrive(
+      nextSharedDriveName,
+    )
+    const {
+      sharedDrive: newVersionSharedDrive,
+      residentialFolder: newVersionResidentialFolder,
+      commercialFolder: newVersionCommercialFolder,
+    } = createGoogleSharedDriveResponseData
+
+    // 이미 존재하는 공유 드라이브면 return (다른 API 요청에 의해 이미 Next Version Shared Drive가 만들어진 경우임)
+    if (newVersionSharedDrive.matchedExistingData) return
+
+    try {
+      await this.prismaService.$transaction([
+        this.prismaService.googleSharedDrive.update({
+          where: { id: currentSharedDriveId },
+          data: { isHighestVersion: false },
+        }),
+        this.prismaService.googleSharedDrive.create({
+          data: {
+            id: newVersionSharedDrive.id,
+            residentialFolderId: newVersionResidentialFolder.id,
+            commercialFolderId: newVersionCommercialFolder.id,
+            organizationId: organizationId,
+            organizationName: organizationName,
+            count: 0,
+            version: nextSharedDriveVersion,
+            isHighestVersion: true,
+          },
+        }),
+      ])
+    } catch (error) {
+      /**
+       * 실패 시 생성한 newVersionSharedDrive 제거해야 함
+       */
+      await this.filesystemApiService.requestToDeleteItemsInSharedDrive({
+        sharedDrive: {
+          id: newVersionSharedDrive.id,
+          delete: true,
+        },
+        itemIds: [newVersionResidentialFolder.id, newVersionCommercialFolder.id],
+      })
+      throw error
+    }
+  }
+
+  /**
    * create Job Folder
    */
   async createGoogleJobFolder(
@@ -420,6 +543,7 @@ export class FilesystemDomainService {
         organizationName: organizationName,
         count: 0,
         version: '001',
+        isHighestVersion: true,
       },
       rollback: async () => {
         await this.rollbackCreateGoogleSharedDrive(createGoogleSharedDriveResponseData)

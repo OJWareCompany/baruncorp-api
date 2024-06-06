@@ -23,6 +23,17 @@ export type PostRfiReplyFilesResponseData = {
 }
 
 /**
+ * PostCountJobFolder
+ */
+export type PostCountJobFolderResponse = {
+  message: string
+  data: PostCountJobFolderResponseData
+}
+export type PostCountJobFolderResponseData = {
+  count: number
+}
+
+/**
  * GetPropertyTypeFolder
  */
 export type GetPropertyTypeFolderResponse = {
