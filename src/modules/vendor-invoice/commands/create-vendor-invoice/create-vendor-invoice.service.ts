@@ -46,7 +46,9 @@ export class CreateVendorInvoiceService implements ICommandHandler {
         return pre + Number(cur.getProps().cost)
       }, 0), // 외주업체에서 실제 청구한 금액 (직접 입력)
       invoiceTotalDifference: 0, // 서브토탈 - 토탈
-      internalTotalBalanceDue: 0, // TODO: 미지불액
+      internalTotalBalanceDue: tasksToInvoice.reduce((pre, cur) => {
+        return pre + Number(cur.getProps().cost)
+      }, 0), // 미지불액
       countLineItems: tasksToInvoice.length,
     })
 
