@@ -266,12 +266,14 @@ export class GeographyRepository implements GeographyRepositoryPort {
       ...(searchQuery.geoId && { geoId: searchQuery.geoId }),
       ...(searchQuery.fullAhjName && { fullAhjName: { contains: searchQuery.fullAhjName } }),
       ...(searchQuery.name && { name: { contains: searchQuery.name } }),
+      ...(searchQuery.type && { type: searchQuery.type }),
     }
 
     const result = await this.prismaService.aHJNotes.findMany({
       where: whereInput,
       orderBy: {
-        updatedAt: 'desc', // 수정/생성 날짜 데이터가 없음
+        // updatedAt: 'desc', // 수정/생성 날짜 데이터가 없음
+        name: 'asc',
       },
       skip: offset,
       take: pageSize,

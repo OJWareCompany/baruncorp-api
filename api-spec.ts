@@ -3699,6 +3699,8 @@ export interface GeographyControllerGetFindNotesParams {
   page?: number
   /** @default "1239525" */
   geoId?: string | null
+  /** @default "STATE" */
+  type?: 'STATE' | 'COUNTY' | 'COUNTY SUBDIVISIONS' | 'PLACE' | null
   /** Using LIKE (중간 값 검색) */
   fullAhjName?: string | null
   /** Using LIKE (중간 값 검색) */
