@@ -10,6 +10,7 @@ import { addMonths } from 'date-fns'
 import { AssignedTaskStatusEnum } from '../domain/assigned-task.type'
 import { PaginatedQueryBase } from '../../../libs/ddd/query.base'
 import { UserEntity } from '../../users/domain/user.entity'
+import { fromZonedTime } from 'date-fns-tz'
 
 @Injectable()
 export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
@@ -107,6 +108,12 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
     serviceMonth: Date,
     query?: PaginatedQueryBase,
   ): Promise<AssignedTaskEntity[]> {
+    /**
+     * startOfMonth는 2024-04-01T04:00:00.000Z를 반환하지만, 사실 Locale(EST)로 변환한 것
+     */
+    const toZonedString = serviceMonth.toISOString().split('Z')[0]
+    const toUTC = fromZonedTime(toZonedString, 'America/New_York')
+
     // cost not null, completed, is vendor, date
     const records = await this.prismaService.assignedTasks.findMany({
       ...(query && { skip: query.offset }),
@@ -130,8 +137,8 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
           /**
            * 임시 쿼리 (클라이언트에서 UTC 00:00:00으로 보내주고 있음, 나중에 일광절약시간으로인해 시차가 변하므로 클라이언트에서 준 값을 가지고 쿼리해야함)
            */
-          gte: convertTo(serviceMonth),
-          lte: convertTo(addMonths(serviceMonth, 1)), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+          gte: toUTC,
+          lte: addMonths(toUTC, 1),
         },
       },
     })
@@ -139,6 +146,12 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
   }
 
   async countTasksToVendorInvoice(organizationId: string, serviceMonth: Date): Promise<number> {
+    /**
+     * startOfMonth는 2024-04-01T04:00:00.000Z를 반환하지만, 사실 Locale(EST)로 변환한 것
+     */
+    const toZonedString = serviceMonth.toISOString().split('Z')[0]
+    const toUTC = fromZonedTime(toZonedString, 'America/New_York')
+
     const result = await this.prismaService.assignedTasks.count({
       where: {
         assigneeOrganizationId: organizationId,
@@ -147,7 +160,7 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
         isVendor: true,
         NOT: { cost: null },
         // TODO: 검토필요, createdAt으로 교체?
-        startedAt: {
+        doneAt: {
           // gte: zonedTimeToUtc(startOfMonth(serviceMonth), 'Etc/UTC'),
           // lte: zonedTimeToUtc(endOfMonth(serviceMonth), 'Etc/UTC'), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
 
@@ -160,8 +173,8 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
           /**
            * 임시 쿼리 (클라이언트에서 UTC 00:00:00으로 보내주고 있음, 나중에 일광절약시간으로인해 시차가 변하므로 클라이언트에서 준 값을 가지고 쿼리해야함)
            */
-          gte: convertTo(serviceMonth),
-          lte: convertTo(addMonths(serviceMonth, 1)), // serviceMonth가 UTC이니까 UTC를 UTC로 바꾸면 그대로.
+          gte: toUTC,
+          lte: addMonths(toUTC, 1),
         },
       },
     })
@@ -170,13 +183,13 @@ export class AssignedTaskRepository implements AssignedTaskRepositoryPort {
   }
 }
 
-function convertTo(date: Date): Date {
-  const year = date.getUTCFullYear()
-  const month = date.getUTCMonth()
-  const day = date.getUTCDate()
+// function convertTo(date: Date): Date {
+//   const year = date.getUTCFullYear()
+//   const month = date.getUTCMonth()
+//   const day = date.getUTCDate()
 
-  // Create a new Date object for the first day of the month at 00:00:00 UTC
-  const utcDate = new Date(Date.UTC(year, month, day, 4, 0, 0))
+//   // Create a new Date object for the first day of the month at 00:00:00 UTC
+//   const utcDate = new Date(Date.UTC(year, month, day, 4, 0, 0))
 
-  return utcDate
-}
+//   return utcDate
+// }
