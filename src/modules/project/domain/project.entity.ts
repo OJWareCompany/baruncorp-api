@@ -120,6 +120,16 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
     )
   }
 
+  updateProjectAssociatedRegulatory(projectAssociatedRegulatory: ProjectAssociatedRegulatoryBody) {
+    this.props.projectAssociatedRegulatory = new ProjectAssociatedRegulatoryBody({
+      stateId: projectAssociatedRegulatory.stateId, // 무조건 결과값 받아온다고 가정
+      countyId: projectAssociatedRegulatory.countyId,
+      countySubdivisionsId: projectAssociatedRegulatory.countySubdivisionsId,
+      placeId: projectAssociatedRegulatory.placeId,
+    })
+    return this
+  }
+
   async update(props: UpdateProjectProps, projectPropertyTypeUpdateValidator: ProjectPropertyTypeUpdateValidator) {
     if (this.props.projectPropertyType !== props.projectPropertyType) {
       const canUpdate = await projectPropertyTypeUpdateValidator.canUpdate(this)

@@ -1792,6 +1792,17 @@ export interface ProjectsCountResponseDto {
   jobsCount: number
 }
 
+export interface UpdateProjectAssociatedRegulatoryRequestDto {
+  /** @default "12" */
+  stateId: string
+  /** @default "12011" */
+  countyId: string | null
+  /** @default "1201191098" */
+  countySubdivisionsId: string | null
+  /** @default "1239525" */
+  placeId: string | null
+}
+
 export interface AhjNoteListResponseDto {
   geoId: string
   name: string
@@ -6495,6 +6506,25 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
         path: `/projects/${projectId}`,
         method: 'GET',
         format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name UpdateProjectAssociatedRegulatoryHttpControllerUpdate
+     * @request PATCH:/projects/{projectId}/associatedRegulatory
+     */
+    updateProjectAssociatedRegulatoryHttpControllerUpdate: (
+      projectId: string,
+      data: UpdateProjectAssociatedRegulatoryRequestDto,
+      params: RequestParams = {},
+    ) =>
+      this.request<void, any>({
+        path: `/projects/${projectId}/associatedRegulatory`,
+        method: 'PATCH',
+        body: data,
+        type: ContentType.Json,
         ...params,
       }),
   }

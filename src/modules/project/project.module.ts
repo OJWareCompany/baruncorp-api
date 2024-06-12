@@ -31,6 +31,8 @@ import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
 import { UtilityRepository } from '@modules/utility/database/utility.repository'
 import { UtilityModule } from '@modules/utility/utility.module'
 import { ProjectPropertyTypeUpdateValidator } from './domain/domain-services/project-property-type-update-validator.domain-service'
+import { UpdateProjectAssociatedRegulatoryHttpController } from './commands/update-project-associated-regulatory/update-project-associated-regulatory.http.controller'
+import { UpdateProjectAssociatedRegulatoryService } from './commands/update-project-associated-regulatory/update-project-associated-regulatory.service'
 
 const httpControllers = [
   SearchCensusHttpController,
@@ -40,6 +42,7 @@ const httpControllers = [
   FindProjectsHttpController,
   FindProjectDetailHttpController,
   FindProjectsCountHttpController,
+  UpdateProjectAssociatedRegulatoryHttpController,
 ]
 
 const providers: Provider[] = [CensusSearchCoordinatesService, FilesystemApiService, FilesystemDomainService]
@@ -49,6 +52,7 @@ const commandHandlers: Provider[] = [
   CreateProjectService,
   UpdateProjectService,
   DeleteProjectService,
+  UpdateProjectAssociatedRegulatoryService,
 ]
 
 const eventHandlers: Provider[] = [
