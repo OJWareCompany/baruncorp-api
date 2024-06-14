@@ -42,7 +42,6 @@ export class FindPtoPaginatedQueryHandler implements IQueryHandler {
     const entities: PtoEntity[] = await this.ptoRepository.findMany(condition, query.offset, query.limit)
 
     const totalCount: number = await this.ptoRepository.getCount(condition)
-
     return new Paginated({
       page: query.page,
       pageSize: query.limit,
@@ -51,15 +50,15 @@ export class FindPtoPaginatedQueryHandler implements IQueryHandler {
         const props = entity.getProps()
         const ptoDtos: PtoResponseDto = {
           id: props.id,
-          userDateOfJoining: props.dateOfJoining.toISOString().split('T')[0],
+          userDateOfJoining: props.dateOfJoining.toISOString(),
           userFirstName: props.targetUser ? props.targetUser.firstName : '',
           userLastName: props.targetUser ? props.targetUser.lastName : '',
           tenure: props.tenure,
           total: props.total,
           availablePto: entity.getUsablePtoValue(),
           isPaid: props.isPaid,
-          startedAt: props.startedAt ? props.startedAt.toISOString().split('T')[0] : '',
-          endedAt: props.endedAt ? props.endedAt.toISOString().split('T')[0] : '',
+          startedAt: props.startedAt ? props.startedAt.toISOString() : '',
+          endedAt: props.endedAt ? props.endedAt.toISOString() : '',
         }
         return ptoDtos
       }),

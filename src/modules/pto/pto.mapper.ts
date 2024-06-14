@@ -106,11 +106,11 @@ export class PtoMapper implements Mapper<PtoEntity, PtoModel, PtoResponseDto> {
     const props = entity.getProps()
     const response = new PtoResponseDto({
       id: props.id,
-      userDateOfJoining: props.dateOfJoining.toISOString().split('T')[0],
+      userDateOfJoining: props.dateOfJoining.toISOString(),
       userFirstName: props.targetUser ? props.targetUser.firstName : '',
       userLastName: props.targetUser ? props.targetUser.lastName : '',
-      startedAt: props.startedAt ? props.startedAt.toISOString().split('T')[0] : '',
-      endedAt: props.endedAt ? props.endedAt.toISOString().split('T')[0] : '',
+      startedAt: props.startedAt ? props.startedAt.toISOString() : '',
+      endedAt: props.endedAt ? props.endedAt.toISOString() : '',
       tenure: props.tenure,
       total: props.total,
       availablePto: entity.getUsablePtoValue(),
