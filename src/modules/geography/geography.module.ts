@@ -11,6 +11,8 @@ import { AhjNoteGeneratorDomainService } from './domain/domain-services/ahj-gene
 import { FilesystemApiService } from '../filesystem/infra/filesystem.api.service'
 import { FilesystemDomainService } from '../filesystem/domain/domain-service/filesystem.domain-service'
 import { GoogleAhjNoteFolderDomainService } from '../filesystem/domain/domain-service/google-ahj-note-folder.domain-service'
+import { FindSearchCensusHttpController } from './queries/find-search-census/find-search-census.http.controller'
+import { CensusSearchCoordinatesService } from '../project/infra/census/census.search.coordinates.request.dto'
 
 const repositories: Provider[] = [{ provide: GEOGRAPHY_REPOSITORY, useClass: GeographyRepository }]
 const mappers: Provider[] = [AhjNoteMapper, AhjNoteHistoryMapper]
@@ -19,13 +21,15 @@ const services: Provider[] = [
   FilesystemApiService,
   FilesystemDomainService,
   GoogleAhjNoteFolderDomainService,
+  CensusSearchCoordinatesService,
 ]
 const domainServices: Provider[] = [AhjNoteGeneratorDomainService]
+const controllers: any[] = [GeographyController, FindSearchCensusHttpController]
 
 @Module({
   imports: [PrismaModule, forwardRef(() => UsersModule)],
   providers: [...services, ...repositories, ...mappers, ...domainServices],
-  controllers: [GeographyController],
+  controllers: [...controllers],
   exports: [AhjNoteGeneratorDomainService, ...repositories, ...mappers],
 })
 export class GeographyModule {}

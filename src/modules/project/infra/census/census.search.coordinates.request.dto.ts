@@ -20,6 +20,9 @@ export type censusSearchContents = {
   'Incorporated Places'?: CensusPlace[]
 }
 
+/**
+ * @example https://geocoding.geo.census.gov/geocoder/geographies/coordinates?x=-73.95&y=40.76&benchmark=4&vintage=4
+ */
 @Injectable()
 export class CensusSearchCoordinatesService {
   private baseUrl = 'https://geocoding.geo.census.gov'

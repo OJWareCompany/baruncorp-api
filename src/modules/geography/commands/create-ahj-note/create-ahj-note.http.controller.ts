@@ -1,6 +1,8 @@
 import { Body, Controller, Post } from '@nestjs/common'
 import { AddressFromMapBox } from '../../../project/infra/census/census.type.dto'
 import { CreateAhjNoteService } from './create-ahj-note.service'
+import { CensusResponseDto } from '../../../project/infra/census/census.response.dto'
+import { ApiResponse } from '@nestjs/swagger'
 
 // TODO: Census 검색결과 반환해야함.
 @Controller('search-census')
@@ -11,7 +13,8 @@ export class SearchCensusHttpController {
    * Census 결과와 상관 없이 프로젝트는 생성되어야함
    */
   @Post('')
-  async postSearchCensus(@Body() createProjectDto: AddressFromMapBox): Promise<void> {
+  @ApiResponse({ type: CensusResponseDto })
+  async postSearchCensus(@Body() createProjectDto: AddressFromMapBox): Promise<CensusResponseDto> {
     return await this.ahjnoteService.searchCensusAndCreateNote(createProjectDto)
   }
 }

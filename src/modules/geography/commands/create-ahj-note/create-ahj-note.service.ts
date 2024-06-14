@@ -17,6 +17,6 @@ export class CreateAhjNoteService {
     const { coordinates } = createProjectDto
     const censusResponse = await this.censusSearchCoordinatesService.search(coordinates)
     if (!censusResponse) throw new CoordinatesNotFoundException()
-    await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
+    return await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
   }
 }

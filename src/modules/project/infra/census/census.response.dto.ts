@@ -26,7 +26,17 @@ export class CensusResponseDto {
     const countySubdivisions = response['County Subdivisions']?.[0]
     this.countySubdivisions = plainToInstance(CensusCountySubdivisions, countySubdivisions)
 
-    const place = response['Incorporated Places']?.[0]
+    // const place = response['Incorporated Places']?.[0]
+
+    const copy: any = { ...response }
+    let place = null
+    for (const key in copy) {
+      if (Array.isArray(copy[key])) {
+        place = copy[key].find((obj: { hasOwnProperty: (arg0: string) => any }) => obj.hasOwnProperty('PLACECC'))
+        if (place) break
+      }
+    }
+
     this.place = plainToInstance(CensusPlace, place)
   }
 }

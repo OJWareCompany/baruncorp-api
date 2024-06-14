@@ -1647,6 +1647,102 @@ export interface AddressFromMapBox {
   coordinates: number[]
 }
 
+export interface CensusState {
+  AREALAND: number
+  AREAWATER: number
+  CENTLAT: string
+  CENTLON: string
+  DIVISION: string
+  INTPTLAT: string
+  INTPTLON: string
+  MTFCC: string
+  OBJECTID: number
+  OID: string
+  REGION: string
+  ansiCode: string
+  stateName: string
+  funcStat: string
+  geoId: string
+  lsadCode: string
+  stateLongName: string
+  stateCode: string
+  abbreviation: string
+}
+
+export interface CensusCounties {
+  AREALAND: number
+  AREAWATER: number
+  CENTLAT: string
+  CENTLON: string
+  COUNTYCC: string
+  INTPTLAT: string
+  INTPTLON: string
+  MTFCC: string
+  OBJECTID: number
+  OID: string
+  ansiCode: string
+  countyName: string
+  countyCode: string
+  funcStat: string
+  geoId: string
+  lsadCode: string
+  countyLongName: string
+  stateCode: string
+}
+
+export interface CensusCountySubdivisions {
+  MTFCC: string
+  AREALAND: number
+  AREAWATER: number
+  CENTLAT: string
+  CENTLON: string
+  COUSUB: string
+  COUSUBCC: string
+  INTPTLAT: string
+  INTPTLON: string
+  OBJECTID: number
+  OID: string
+  ansiCode: string
+  name: string
+  countyCode: string
+  funcStat: string
+  geoId: string
+  lsadCode: string
+  longName: string
+  stateCode: string
+}
+
+export interface CensusPlace {
+  MTFCC: string
+  CBSAPCI: string
+  CENTLAT: string
+  CENTLON: string
+  NECTAPCI: string
+  OBJECTID: number
+  OID: string
+  INTPTLAT: string
+  INTPTLON: string
+  AREALAND: number
+  AREAWATER: number
+  DISP_CLR: number
+  placeName: string
+  funcStat: string
+  geoId: string
+  lsadCode: string
+  placeLongName: string
+  placeFips: string
+  placeC: string
+  ansiCode: string
+  stateCode: string
+}
+
+export interface CensusResponseDto {
+  state: CensusState
+  county: CensusCounties
+  countySubdivisions: CensusCountySubdivisions | null
+  place: CensusPlace
+}
+
 export interface CreateProjectRequestDto {
   /** @default "Residential" */
   projectPropertyType: 'Residential' | 'Commercial'
@@ -6422,11 +6518,28 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @request POST:/search-census
      */
     searchCensusHttpControllerPostSearchCensus: (data: AddressFromMapBox, params: RequestParams = {}) =>
-      this.request<void, any>({
+      this.request<CensusResponseDto, CensusResponseDto>({
         path: `/search-census`,
         method: 'POST',
         body: data,
         type: ContentType.Json,
+        format: 'json',
+        ...params,
+      }),
+
+    /**
+     * No description
+     *
+     * @name FindSearchCensusHttpControllerSearchCensus
+     * @request GET:/search-census
+     */
+    findSearchCensusHttpControllerSearchCensus: (data: AddressFromMapBox, params: RequestParams = {}) =>
+      this.request<CensusResponseDto, CensusResponseDto>({
+        path: `/search-census`,
+        method: 'GET',
+        body: data,
+        type: ContentType.Json,
+        format: 'json',
         ...params,
       }),
   }

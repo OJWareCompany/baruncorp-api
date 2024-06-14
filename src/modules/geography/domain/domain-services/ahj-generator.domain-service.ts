@@ -78,5 +78,7 @@ export class AhjNoteGeneratorDomainService {
      * @FilesystemLogic
      */
     await this.googleAhjNoteFolderDomainService.createAhjNoteFolders(ahjNoteFolderDatas)
+
+    return censusResponseDto
   }
 }
