@@ -106,7 +106,7 @@ export class ProjectMapper implements Mapper<ProjectEntity, OrderedProjects, Pro
         projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
           stateId: record.stateId,
           countyId: record.countyId,
-          countySubdivisionsId: record.countyId,
+          countySubdivisionsId: record.countySubdivisionsId,
           placeId: record.placeId,
         }),
         updatedBy: record.lastModifiedBy,
