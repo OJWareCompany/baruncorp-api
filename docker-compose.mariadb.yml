@@ -1,12 +1,16 @@
+# backup_mariadb.sh 파일을 참고할 것
 version: '3'
 services:
   db:
+    container_name: mariadb
     image: 'mariadb:10.11.4'
     restart: always
     ports:
-      - '33906:3306'
-    environment:
-      MARIADB_ROOT_PASSWORD: example
+      - '${DB_PORT}:3306'
+    env_file:
+      - ./.env
     volumes:
       - ./mariadb/conf:/etc/mysql/conf.d
       - ./mariadb/data:/var/lib/mysql
+      - ./backup:/backup
+      - ./mariadb/cron:/custom_mariadb
