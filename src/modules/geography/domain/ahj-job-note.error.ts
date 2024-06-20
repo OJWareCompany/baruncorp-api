@@ -23,3 +23,9 @@ export class AhjNoteHistoryNotFoundException extends NotFoundException {
     super('Not ahj note found.', '70002')
   }
 }
+
+export class StateNotFoundException extends NotFoundException {
+  constructor() {
+    super('Not state found.', '70003')
+  }
+}

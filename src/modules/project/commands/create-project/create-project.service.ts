@@ -4,7 +4,6 @@ import { Inject } from '@nestjs/common'
 import { Address } from '../../../organization/domain/value-objects/address.vo'
 import { ProjectAssociatedRegulatoryBody } from '../../domain/value-objects/project-associated-regulatory-body.value-object'
 import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
-import { CoordinatesNotFoundException } from '../../domain/project.error'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { ProjectEntity } from '../../domain/project.entity'
@@ -16,8 +15,7 @@ import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-
 import { PrismaService } from './../../../database/prisma.service'
 import { ProjectMapper } from '../../project.mapper'
 import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
-import { UTILITY_REPOSITORY } from '@modules/utility/utility.di-token'
-import { UtilityRepositoryPort } from '@modules/utility/database/utility.repository.port'
+import { StateNotFoundException } from '../../../license/domain/license.error'
 
 // 유지보수 용이함을 위해 서비스 파일을 책임별로 따로 관리한다.
 
@@ -42,7 +40,16 @@ export class CreateProjectService implements ICommandHandler {
     // TODO: 비동기 이벤트로 처리하기. 완료되면 프로젝트의 정보를 수정하는 것으로
     const censusResponse = await this.censusSearchCoordinatesService.search(command.projectPropertyAddress.coordinates)
     // if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-    await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
+    if (censusResponse) {
+      await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
+    }
+
+    const state = await this.prismaService.states.findFirst({
+      where: { stateName: command.projectPropertyAddress.state },
+    })
+    if (!state) {
+      throw new StateNotFoundException()
+    }
 
     const organization = await this.organizationRepo.findOneOrThrow(command.clientOrganizationId)
 
@@ -57,10 +64,10 @@ export class CreateProjectService implements ICommandHandler {
       organizationName: organization.name,
       updatedBy: command.userId,
       projectAssociatedRegulatory: new ProjectAssociatedRegulatoryBody({
-        stateId: censusResponse.state.geoId, // 무조건 결과값 받아온다고 가정
-        countyId: censusResponse?.county?.geoId,
+        stateId: censusResponse?.state?.geoId || state.geoId, // 무조건 결과값 받아온다고 가정
+        countyId: censusResponse?.county?.geoId || null,
         countySubdivisionsId: censusResponse?.countySubdivisions?.geoId || null,
-        placeId: censusResponse?.place?.geoId,
+        placeId: censusResponse?.place?.geoId || null,
       }),
       utilityId: command.utilityId ?? null,
     })

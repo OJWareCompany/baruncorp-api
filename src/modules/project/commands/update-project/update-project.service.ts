@@ -5,12 +5,13 @@ import { AhjNoteGeneratorDomainService } from '../../../geography/domain/domain-
 import { FilesystemDomainService } from '../../../filesystem/domain/domain-service/filesystem.domain-service'
 import { CensusSearchCoordinatesService } from '../../infra/census/census.search.coordinates.request.dto'
 import { ProjectValidatorDomainService } from '../../domain/domain-services/project-validator.domain-service'
-import { CoordinatesNotFoundException } from '../../domain/project.error'
 import { ProjectPropertyTypeEnum } from '../../domain/project.type'
 import { ProjectRepositoryPort } from '../../database/project.repository.port'
 import { PROJECT_REPOSITORY } from '../../project.di-token'
 import { UpdateProjectCommand } from './update-project.command'
 import { ProjectPropertyTypeUpdateValidator } from '../../domain/domain-services/project-property-type-update-validator.domain-service'
+import { PrismaService } from '../../../database/prisma.service'
+import { StateNotFoundException } from '../../../license/domain/license.error'
 
 @CommandHandler(UpdateProjectCommand)
 export class UpdateProjectService implements ICommandHandler {
@@ -22,6 +23,7 @@ export class UpdateProjectService implements ICommandHandler {
     private readonly ahjNoteGeneratorDomainService: AhjNoteGeneratorDomainService,
     private readonly filesystemDomainService: FilesystemDomainService,
     private readonly projectPropertyTypeUpdateValidator: ProjectPropertyTypeUpdateValidator,
+    private readonly prismaService: PrismaService,
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
@@ -38,13 +40,23 @@ export class UpdateProjectService implements ICommandHandler {
       const censusResponse = await this.censusSearchCoordinatesService.search(
         command.projectPropertyAddress.coordinates,
       )
-      if (!censusResponse.state.geoId) throw new CoordinatesNotFoundException()
-      await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
+
+      if (censusResponse) {
+        await this.ahjNoteGeneratorDomainService.generateOrUpdate(censusResponse)
+      }
+
+      const state = await this.prismaService.states.findFirst({
+        where: { stateName: command.projectPropertyAddress.state },
+      })
+
+      if (!state) {
+        throw new StateNotFoundException()
+      }
 
       project.updatePropertyAddress({
         projectPropertyAddress: command.projectPropertyAddress,
         projectAssociatedRegulatory: {
-          stateId: censusResponse.state.geoId, // 무조건 결과값 받아온다고 가정
+          stateId: censusResponse?.state?.geoId || state.geoId, // 무조건 결과값 받아온다고 가정
           countyId: censusResponse?.county?.geoId || null,
           countySubdivisionsId: censusResponse?.countySubdivisions?.geoId || null,
           placeId: censusResponse?.place?.geoId || null,
