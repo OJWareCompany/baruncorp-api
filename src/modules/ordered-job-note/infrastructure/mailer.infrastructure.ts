@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common'
-import { compute_v1, gmail_v1, google } from 'googleapis'
+import { gmail_v1, google } from 'googleapis'
 import { OAuth2Client } from 'google-auth-library'
 import { v4 } from 'uuid'
+import { GoogleWorkspaceUserOnlyException } from '../domain/job-note.error'
 
 export interface IRFIMail {
   subject: string
@@ -39,6 +40,9 @@ export class RFIMailer {
           // Todo. 메일 전송 내역에서 해당 threadID를 가진 메일들을 모두 Delete Forever했을 시 해당 ThreadId로 메일 전송 에러 발생
           // Todo. threadId없이 메일을 보내고, 보낸 메일의 threadId를 job의 threadIds에서 보낸 이메일 주소에 대한 threadIds를 교체
           // console.log(`[sendRFI] error : ${error}`)
+        }
+        if (error.response.data.error === 'invalid_grant') {
+          throw new GoogleWorkspaceUserOnlyException()
         }
         // console.log(`[sendRFI] error : ${error}`)
       })

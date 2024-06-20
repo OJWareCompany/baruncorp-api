@@ -17,3 +17,9 @@ export class EmailSendFailedException extends BadRequestException {
     super('Failed to send email. Please check the email address', '21103')
   }
 }
+
+export class GoogleWorkspaceUserOnlyException extends BadRequestException {
+  constructor() {
+    super('Only users registered with Google Workspace can use the mention feature.', '21104')
+  }
+}
