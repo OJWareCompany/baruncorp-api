@@ -149,7 +149,7 @@ export class JobResponseDto {
   })
   jobStatus: JobStatus
 
-  @ApiProperty({ example: LoadCalcOriginEnum.Self, enum: LoadCalcOriginEnum })
+  @ApiProperty({ example: LoadCalcOriginEnum.ByBarunCorp, enum: LoadCalcOriginEnum })
   loadCalcOrigin: LoadCalcOriginEnum
 
   @ApiProperty({ example: AssignedTaskResponseDto, type: AssignedTaskResponseDto, isArray: true })

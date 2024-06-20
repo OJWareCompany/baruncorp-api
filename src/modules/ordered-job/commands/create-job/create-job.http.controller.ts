@@ -27,7 +27,7 @@ export class CreateJobHttpController {
       numberOfWetStamp: dto.numberOfWetStamp,
       mountingType: dto.mountingType,
       isExpedited: dto.isExpedited,
-      loadCalcOrigin: dto.loadCalcOrigin || LoadCalcOriginEnum.Self,
+      loadCalcOrigin: dto.loadCalcOrigin || LoadCalcOriginEnum.ByBarunCorp,
       dueDate: dto.dueDate || null,
       editorUserId: user.id,
       structuralUpgradeNote: dto.structuralUpgradeNote,

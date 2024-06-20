@@ -59,7 +59,7 @@ export class CreateJobRequestDto {
   @IsOptional()
   readonly priority?: OrderedJobsPriorityEnum
 
-  @ApiProperty({ enum: LoadCalcOriginEnum, default: LoadCalcOriginEnum.Self })
+  @ApiProperty({ enum: LoadCalcOriginEnum, default: LoadCalcOriginEnum.ByBarunCorp })
   @IsEnum(LoadCalcOriginEnum)
   @IsOptional()
   readonly loadCalcOrigin: LoadCalcOriginEnum

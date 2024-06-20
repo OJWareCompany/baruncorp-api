@@ -23,7 +23,7 @@ export enum AutoOnlyJobStatusEnum {
 export type JobStatus = JobStatusEnum | AutoOnlyJobStatusEnum
 
 export enum LoadCalcOriginEnum {
-  Self = 'Self',
+  ByBarunCorp = 'By Barun Corp',
   ClientProvided = 'Client Provided',
 }
 

@@ -339,8 +339,8 @@ export interface CreateJobRequestDto {
   mountingType: 'Roof Mount' | 'Ground Mount'
   /** @default "Medium" */
   priority?: 'Immediate' | 'High' | 'Medium' | 'Low' | 'None'
-  /** @default "Self" */
-  loadCalcOrigin: 'Self' | 'Client Provided'
+  /** @default "By Barun Corp" */
+  loadCalcOrigin: 'By Barun Corp' | 'Client Provided'
   /** @default [{"serviceId":"e5d81943-3fef-416d-a85b-addb8be296c0","description":""},{"serviceId":"99ff64ee-fe47-4235-a026-db197628d077","description":""},{"serviceId":"5c29f1ae-d50b-4400-a6fb-b1a2c87126e9","description":""},{"serviceId":"2a2a256b-57a5-46f5-8cfb-1855cc29238a","description":"This is not on the menu.","isRevision":false}] */
   taskIds: CreateOrderedTaskWhenJobIsCreatedRequestDto[]
   mailingAddressForWetStamp: AddressDto | null
@@ -370,8 +370,8 @@ export interface UpdateJobRequestDto {
   structuralUpgradeNote: string | null
   /** @default "Medium" */
   priority: 'Immediate' | 'High' | 'Medium' | 'Low' | 'None'
-  /** @default "Self" */
-  loadCalcOrigin: 'Self' | 'Client Provided'
+  /** @default "By Barun Corp" */
+  loadCalcOrigin: 'By Barun Corp' | 'Client Provided'
   mailingAddressForWetStamp: AddressDto | null
   /** @default 3 */
   numberOfWetStamp: number | null
@@ -519,8 +519,8 @@ export interface JobResponseDto {
     | 'Completed'
     | 'Canceled (Invoice)'
     | 'Sent To Client'
-  /** @example "Self" */
-  loadCalcOrigin: 'Self' | 'Client Provided'
+  /** @example "By Barun Corp" */
+  loadCalcOrigin: 'By Barun Corp' | 'Client Provided'
   assignedTasks: AssignedTaskResponseDto[]
   orderedServices: OrderedServiceResponseFields[]
   clientInfo: ClientInformationFields
