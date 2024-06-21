@@ -27,7 +27,6 @@ export class UpdateProjectService implements ICommandHandler {
   ) {}
 
   async execute(command: UpdateProjectCommand): Promise<void> {
-    console.log(command)
     const project = await this.projectRepository.findOneOrThrow({ id: command.projectId })
     await this.projectValidatorDomainService.validateForUpdate(project, command)
 
@@ -37,10 +36,10 @@ export class UpdateProjectService implements ICommandHandler {
     const fromProjectFolderName = project.projectPropertyAddress.fullAddress
     const fromProjectPropertyType = project.projectPropertyType as ProjectPropertyTypeEnum
 
-    const noCoordinates =
-      command.projectPropertyAddress.coordinates[0] === 0 && command.projectPropertyAddress.coordinates[1] === 0
-
-    if (!project.deepEqualsPropertyAddressCoordinates(command.projectPropertyAddress.coordinates) || noCoordinates) {
+    if (
+      !project.deepEqualsPropertyAddressCoordinates(command.projectPropertyAddress.coordinates) ||
+      !project.isSameAddress(command.projectPropertyAddress)
+    ) {
       const censusResponse = await this.censusSearchCoordinatesService.search(
         command.projectPropertyAddress.coordinates,
       )

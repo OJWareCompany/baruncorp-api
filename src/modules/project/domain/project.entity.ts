@@ -16,6 +16,7 @@ import { SystemSizeBadRequestException } from '../../ordered-job/domain/job.erro
 import { ProjectPropertyTypeUpdatedDomainEvent } from './events/project-property-type-updated.domain-event'
 import { ProjectPropertyTypeUpdateValidator } from './domain-services/project-property-type-update-validator.domain-service'
 import { ProjectPropertyUpdateException } from './project.error'
+import _ from 'lodash'
 
 export class ProjectEntity extends AggregateRoot<ProjectProps> {
   protected _id: string
@@ -98,6 +99,10 @@ export class ProjectEntity extends AggregateRoot<ProjectProps> {
       this.props.hasHistoryStructuralPEStamp = true
     }
     return this
+  }
+
+  isSameAddress(newPropertyAddressProps: Address) {
+    return _.isEqual(this.props.projectPropertyAddress, newPropertyAddressProps)
   }
 
   updatePropertyAddress(updatePropertyAddressProps: UpdatePropertyAddressProps) {
