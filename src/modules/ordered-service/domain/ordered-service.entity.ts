@@ -352,7 +352,7 @@ export class OrderedServiceEntity extends AggregateRoot<OrderedServiceProps> {
     orderModificationValidator: OrderModificationValidator,
     price: number,
   ) {
-    await orderModificationValidator.validate(this)
+    // await orderModificationValidator.validate(this)
 
     if (this.isResidentialRevision && this.sizeForRevision !== 'Major') {
       throw new OrderedServiceInvalidRevisionSizeForManualPriceUpdateException()
