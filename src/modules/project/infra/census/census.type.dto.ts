@@ -1,5 +1,5 @@
-import { Exclude, Expose } from 'class-transformer'
-import { IsArray } from 'class-validator'
+import { Exclude, Expose, Type } from 'class-transformer'
+import { IsArray, IsNotEmpty, IsNumber, Max, Min } from 'class-validator'
 import { AHJType } from '../../../geography/dto/ahj-note.response.dto'
 import { ApiProperty } from '@nestjs/swagger'
 import { language } from 'googleapis/build/src/apis/language'
@@ -8,6 +8,18 @@ export class AddressFromMapBox {
   @ApiProperty({ default: [-97.87, 34] })
   @IsArray()
   readonly coordinates: number[]
+}
+
+export class AddressFromMapBoxRequestQueryDto {
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  readonly x: number
+
+  @ApiProperty()
+  @IsNumber()
+  @Type(() => Number)
+  readonly y: number
 }
 
 export class CensusState {

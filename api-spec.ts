@@ -3752,6 +3752,11 @@ export interface FindPaymentPaginatedHttpControllerGetParams {
   page?: number
 }
 
+export interface FindSearchCensusHttpControllerSearchCensusParams {
+  x: number
+  y: number
+}
+
 export interface FindProjectsHttpControllerFindUsersParams {
   /** @default "" */
   organizationId?: string | null
@@ -6533,12 +6538,14 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
      * @name FindSearchCensusHttpControllerSearchCensus
      * @request GET:/search-census
      */
-    findSearchCensusHttpControllerSearchCensus: (data: AddressFromMapBox, params: RequestParams = {}) =>
+    findSearchCensusHttpControllerSearchCensus: (
+      query: FindSearchCensusHttpControllerSearchCensusParams,
+      params: RequestParams = {},
+    ) =>
       this.request<CensusResponseDto, CensusResponseDto>({
         path: `/search-census`,
         method: 'GET',
-        body: data,
-        type: ContentType.Json,
+        query: query,
         format: 'json',
         ...params,
       }),
