@@ -121,3 +121,16 @@ pnpm cqrs:generate init book-store
 
 GM은 Ground Mount를 의미한다, 프로젝트의 설치 타입에는 Roof Mount, Ground Mount, 또는 두가지를 혼용하는 경우가 있는데
 Grount Mount 유형의 경우 비용을 더 많이 받기때문에 GM Price라는 가격 필드가 따로 있다.
+
+### 도커 이미지 배포하기
+
+<b>이미지 빌드하기</b>
+docker build --platform linux/amd64 -t luckyhyom/barun-api-prod .
+<b>이미지 배포하기</b>
+docker push luckyhyom/barun-api-prod
+
+### 도커 이미지 받아오기
+
+ec2에 접속해서 도커 컴포즈 파일이 있는 위치에서 아래 명령어 실행
+docker compose pull
+![alt text](image.png)
