@@ -537,6 +537,7 @@ export interface JobResponseDto {
   jobName: string
   propertyOwner: string
   projectNumber: string | null
+  invoiceId: string | null
   isCurrentJob?: boolean
   /** @format date-time */
   dateSentToClient: string | null

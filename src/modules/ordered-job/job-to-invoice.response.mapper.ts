@@ -142,6 +142,7 @@ export class JobToInvoiceResponseMapper {
       receivedAt: job.receivedAt.toISOString(),
       isExpedited: job.isExpedited,
       jobName: job.jobName,
+      invoiceId: job.invoiceId,
       clientInfo: {
         clientOrganizationId: job.clientOrganizationId,
         clientOrganizationName: job.clientOrganizationName,

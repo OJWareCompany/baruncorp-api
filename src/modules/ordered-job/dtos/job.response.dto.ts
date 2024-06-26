@@ -188,6 +188,9 @@ export class JobResponseDto {
   projectNumber: string | null
 
   @ApiProperty()
+  invoiceId: string | null
+
+  @ApiProperty()
   isCurrentJob?: boolean
 
   @ApiProperty()
