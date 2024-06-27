@@ -17,8 +17,8 @@ export class FindProjectsCountHttpController {
     const projectsCount = await this.prismaService.orderedProjects.count({ select: { id: true } })
     const jobsCount = await this.prismaService.orderedJobs.count({ select: { id: true } })
     return {
-      projectsCount: 77310 || projectsCount.id,
-      jobsCount: 135929 || jobsCount.id,
+      projectsCount: 92206 + Number(projectsCount.id),
+      jobsCount: 164603 + Number(jobsCount.id),
     }
   }
 }
