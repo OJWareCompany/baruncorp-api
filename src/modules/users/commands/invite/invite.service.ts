@@ -14,7 +14,7 @@ import { IRFIMail, RFIMailer } from '../../../ordered-job-note/infrastructure/ma
 
 ConfigModule.forRoot()
 
-const { EMAIL_USER, EMAIL_PASS } = process.env
+const { EMAIL_USER, EMAIL_PASS, WEB_URL } = process.env
 
 @CommandHandler(InviteCommand)
 export class InviteService implements ICommandHandler {
@@ -40,7 +40,7 @@ export class InviteService implements ICommandHandler {
 
     const input: IRFIMail = {
       subject: 'BarunCorp Invitation Email',
-      text: `https://baruncorp-web.vercel.app/signup?userId=${user.id}`,
+      text: `${WEB_URL}/signup?userId=${user.id}`,
       from: 'automation@baruncorp.com',
       to: [command.email],
       threadId: null,

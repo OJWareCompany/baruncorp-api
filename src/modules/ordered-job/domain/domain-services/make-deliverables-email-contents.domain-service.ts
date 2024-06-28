@@ -5,7 +5,7 @@ import { ProjectEntity } from '../../../project/domain/project.entity'
 import { TrackingNumbersResponseDto } from '../../../tracking-numbers/dtos/tracking-numbers.response.dto'
 
 ConfigModule.forRoot()
-const { APP_MODE } = process.env
+const { APP_MODE, WEB_URL } = process.env
 
 export class MakeDeliverablesEmailContents {
   format(
@@ -50,7 +50,7 @@ export class MakeDeliverablesEmailContents {
     <p><strong>Are Structural Upgrades Required?</strong><br>
     ${job.getProps().structuralUpgradeNote ? job.getProps().structuralUpgradeNote : ''}</br>
     <p><strong>Service Order</strong></p>
-    <a href="https://baruncorp-web.vercel.app/jobs/${job.id}">Click To Service Order</a></p>
+    <a href="${WEB_URL}/jobs/${job.id}">Click To Service Order</a></p>
 
     <br><br>
     <br>Barun Corp
